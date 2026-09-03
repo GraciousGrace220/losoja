@@ -57,7 +57,36 @@ function getBusinesses() {
         const saved = localStorage.getItem(BUSINESSES_KEY);
 
         if (saved) {
-            return JSON.parse(saved);
+            const savedBusinesses = JSON.parse(saved);
+
+            if (Array.isArray(savedBusinesses)) {
+
+                // Add any missing default businesses
+                const existingIds = savedBusinesses.map(function (business) {
+                    return String(business.id);
+                });
+
+                const missingDefaults = defaultBusinesses.filter(function (business) {
+                    return !existingIds.includes(String(business.id));
+                });
+
+                if (missingDefaults.length > 0) {
+
+                    const combinedBusinesses = [
+                        ...savedBusinesses,
+                        ...missingDefaults
+                    ];
+
+                    localStorage.setItem(
+                        BUSINESSES_KEY,
+                        JSON.stringify(combinedBusinesses)
+                    );
+
+                    return combinedBusinesses;
+                }
+
+                return savedBusinesses;
+            }
         }
 
         localStorage.setItem(
@@ -68,6 +97,7 @@ function getBusinesses() {
         return defaultBusinesses;
 
     } catch (error) {
+
         console.error(
             "Could not load businesses:",
             error
@@ -76,7 +106,6 @@ function getBusinesses() {
         return defaultBusinesses;
     }
 }
-
 
 // ================================
 // SAVE BUSINESSES
