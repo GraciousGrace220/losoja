@@ -56,38 +56,69 @@ function getBusinesses() {
     try {
         const saved = localStorage.getItem(BUSINESSES_KEY);
 
-        if (saved) {
-            const savedBusinesses = JSON.parse(saved);
+        if (!saved) {
+            localStorage.setItem(
+                BUSINESSES_KEY,
+                JSON.stringify(defaultBusinesses)
+            );
 
-            if (Array.isArray(savedBusinesses)) {
-
-                // Add any missing default businesses
-                const existingIds = savedBusinesses.map(function (business) {
-                    return String(business.id);
-                });
-
-                const missingDefaults = defaultBusinesses.filter(function (business) {
-                    return !existingIds.includes(String(business.id));
-                });
-
-                if (missingDefaults.length > 0) {
-
-                    const combinedBusinesses = [
-                        ...savedBusinesses,
-                        ...missingDefaults
-                    ];
-
-                    localStorage.setItem(
-                        BUSINESSES_KEY,
-                        JSON.stringify(combinedBusinesses)
-                    );
-
-                    return combinedBusinesses;
-                }
-
-                return savedBusinesses;
-            }
+            return defaultBusinesses;
         }
+
+        let savedBusinesses = JSON.parse(saved);
+
+        if (!Array.isArray(savedBusinesses)) {
+            savedBusinesses = [];
+        }
+
+        // Make sure the original demo businesses always exist
+        // and have the correct information.
+        defaultBusinesses.forEach(function (defaultBusiness) {
+
+            const existingIndex = savedBusinesses.findIndex(
+                function (business) {
+                    return String(business.id) ===
+                           String(defaultBusiness.id);
+                }
+            );
+
+            if (existingIndex === -1) {
+
+                savedBusinesses.push(defaultBusiness);
+
+            } else {
+
+                savedBusinesses[existingIndex] = {
+                    ...defaultBusiness,
+                    ...savedBusinesses[existingIndex]
+                };
+
+            }
+
+        });
+
+        localStorage.setItem(
+            BUSINESSES_KEY,
+            JSON.stringify(savedBusinesses)
+        );
+
+        return savedBusinesses;
+
+    } catch (error) {
+
+        console.error(
+            "Could not load businesses:",
+            error
+        );
+
+        localStorage.setItem(
+            BUSINESSES_KEY,
+            JSON.stringify(defaultBusinesses)
+        );
+
+        return defaultBusinesses;
+    }
+}
 
         localStorage.setItem(
             BUSINESSES_KEY,
