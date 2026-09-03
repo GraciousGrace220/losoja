@@ -25,35 +25,41 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     // ================================
-    // LOGIN / SIGNUP BUTTONS
+    // LOGIN BUTTONS
     // ================================
 
-    const loginButtons = document.querySelectorAll(
-        "#loginBtn, .login-btn"
-    );
+    document.querySelectorAll("#loginBtn, .login-btn").forEach(function (button) {
 
-    loginButtons.forEach(function (button) {
         button.addEventListener("click", function (event) {
+
             event.preventDefault();
+
             openModal("loginModal");
+
         });
-    });
 
-
-    const signupButtons = document.querySelectorAll(
-        "#signupBtn, .signup-btn"
-    );
-
-    signupButtons.forEach(function (button) {
-        button.addEventListener("click", function (event) {
-            event.preventDefault();
-            openModal("signupModal");
-        });
     });
 
 
     // ================================
-    // CLOSE BUTTONS
+    // SIGN UP BUTTONS
+    // ================================
+
+    document.querySelectorAll("#signupBtn, .signup-btn").forEach(function (button) {
+
+        button.addEventListener("click", function (event) {
+
+            event.preventDefault();
+
+            openModal("signupModal");
+
+        });
+
+    });
+
+
+    // ================================
+    // CLOSE MODALS
     // ================================
 
     document.querySelectorAll(".modal-close").forEach(function (button) {
@@ -80,7 +86,9 @@ document.addEventListener("DOMContentLoaded", function () {
         modal.addEventListener("click", function (event) {
 
             if (event.target === modal) {
+
                 modal.classList.remove("active");
+
             }
 
         });
@@ -97,7 +105,9 @@ document.addEventListener("DOMContentLoaded", function () {
         if (event.key === "Escape") {
 
             document.querySelectorAll(".modal.active").forEach(function (modal) {
+
                 modal.classList.remove("active");
+
             });
 
         }
@@ -117,16 +127,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
             event.preventDefault();
 
-            const searchInput = document.getElementById("searchInput");
-            const locationInput = document.getElementById("locationInput");
+            const searchInput =
+                document.getElementById("searchInput");
 
-            const search = searchInput
-                ? searchInput.value.trim()
-                : "";
+            const locationInput =
+                document.getElementById("locationInput");
 
-            const location = locationInput
-                ? locationInput.value.trim()
-                : "";
+            const search =
+                searchInput
+                    ? searchInput.value.trim()
+                    : "";
+
+            const location =
+                locationInput
+                    ? locationInput.value.trim()
+                    : "";
 
             if (typeof window.searchBusinesses === "function") {
 
@@ -134,7 +149,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
             } else {
 
-                showNotification("Search is loading. Please try again.");
+                if (typeof window.showNotification === "function") {
+
+                    window.showNotification(
+                        "Search is still loading. Please try again."
+                    );
+
+                }
 
             }
 
@@ -151,7 +172,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         button.addEventListener("click", function () {
 
-            const category = button.getAttribute("data-category");
+            const category =
+                button.getAttribute("data-category");
 
             if (
                 category &&
@@ -175,16 +197,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
         button.addEventListener("click", function () {
 
-            const searchTerm = button.getAttribute("data-search");
+            const searchTerm =
+                button.getAttribute("data-search");
 
-            const searchInput = document.getElementById("searchInput");
+            const searchInput =
+                document.getElementById("searchInput");
 
             if (searchInput) {
+
                 searchInput.value = searchTerm;
+
             }
 
             if (typeof window.searchBusinesses === "function") {
+
                 window.searchBusinesses(searchTerm, "");
+
             }
 
         });
@@ -193,7 +221,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     // ================================
-    // ADD BUSINESS BUTTONS
+    // ADD BUSINESS
     // ================================
 
     document.querySelectorAll(
@@ -217,13 +245,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
     document.addEventListener("click", function (event) {
 
-        const button = event.target.closest("[data-business-id]");
+        const button =
+            event.target.closest("[data-business-id]");
 
         if (!button) {
             return;
         }
 
-        const businessId = button.getAttribute("data-business-id");
+        const businessId =
+            button.getAttribute("data-business-id");
 
         if (
             businessId &&
@@ -238,16 +268,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     // ================================
-    // NOTIFICATION
+    // NOTIFICATIONS
     // ================================
 
     window.showNotification = function (message) {
 
-        let notification = document.getElementById("notification");
+        let notification =
+            document.getElementById("notification");
 
         if (!notification) {
 
-            notification = document.createElement("div");
+            notification =
+                document.createElement("div");
 
             notification.id = "notification";
 
@@ -271,14 +303,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     // ================================
-    // YEAR IN FOOTER
+    // FOOTER YEAR
     // ================================
 
-    const yearElement = document.getElementById("currentYear");
+    const yearElement =
+        document.getElementById("currentYear");
 
     if (yearElement) {
 
-        yearElement.textContent = new Date().getFullYear();
+        yearElement.textContent =
+            new Date().getFullYear();
 
     }
 
