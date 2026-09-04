@@ -1,24 +1,7 @@
 const LOSOJA_SUPABASE_URL = "https://ycxshwgeebskdozmornh.supabase.co";
 const LOSOJA_SUPABASE_KEY = "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
 
-function losojaSupabaseHeaders() {
-    return {
-        "apikey": LOSOJA_SUPABASE_KEY,
-        "Authorization": "Bearer " + LOSOJA_SUPABASE_KEY,
-        "Content-Type": "application/json"
-    };
-}
-
 window.addBusiness = async function (businessData) {
-
-    const user = JSON.parse(
-        localStorage.getItem("losoja_current_user") || "null"
-    );
-
-    if (!user) {
-        showNotification("Please log in first.");
-        return false;
-    }
 
     const business = {
         name: String(businessData.name || "").trim(),
@@ -37,13 +20,14 @@ window.addBusiness = async function (businessData) {
     }
 
     try {
-
         const response = await fetch(
             LOSOJA_SUPABASE_URL + "/rest/v1/businesses",
             {
                 method: "POST",
                 headers: {
-                    ...losojaSupabaseHeaders(),
+                    "apikey": LOSOJA_SUPABASE_KEY,
+                    "Authorization": "Bearer " + LOSOJA_SUPABASE_KEY,
+                    "Content-Type": "application/json",
                     "Prefer": "return=minimal"
                 },
                 body: JSON.stringify(business)
@@ -51,12 +35,10 @@ window.addBusiness = async function (businessData) {
         );
 
         if (!response.ok) {
-            const errorText = await response.text();
-
             console.error(
-                "LosOja Supabase error:",
+                "Supabase error:",
                 response.status,
-                errorText
+                await response.text()
             );
 
             showNotification("Business could not be saved.");
@@ -72,25 +54,17 @@ window.addBusiness = async function (businessData) {
         return true;
 
     } catch (error) {
-
-        console.error("LosOja save error:", error);
-
-        showNotification(
-            "Could not connect to LosOja database."
-        );
-
+        console.error("LosOja error:", error);
+        showNotification("Could not connect to the database.");
         return false;
     }
 };
-
 
 document.addEventListener("DOMContentLoaded", function () {
 
     const form = document.getElementById("addBusinessForm");
 
-    if (!form) {
-        return;
-    }
+    if (!form) return;
 
     form.addEventListener("submit", async function (event) {
 
@@ -108,14 +82,11 @@ document.addEventListener("DOMContentLoaded", function () {
         const success = await window.addBusiness(businessData);
 
         if (success) {
-
             form.reset();
 
             if (typeof closeModal === "function") {
                 closeModal("addBusinessModal");
             }
         }
-
     });
-
 });
