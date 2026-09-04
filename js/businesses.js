@@ -5,7 +5,7 @@ const BUSINESSES_KEY = "losoja_businesses";
 
 const DEFAULT_BUSINESSES = [
     {
-        id: 1,
+        id: "default-1",
         ownerId: "system",
         name: "Taste Haven",
         category: "Food",
@@ -17,7 +17,7 @@ const DEFAULT_BUSINESSES = [
         reviews: 12
     },
     {
-        id: 2,
+        id: "default-2",
         ownerId: "system",
         name: "Urban Style",
         category: "Fashion",
@@ -29,7 +29,7 @@ const DEFAULT_BUSINESSES = [
         reviews: 8
     },
     {
-        id: 3,
+        id: "default-3",
         ownerId: "system",
         name: "Tech Hub Nigeria",
         category: "Technology",
@@ -41,7 +41,7 @@ const DEFAULT_BUSINESSES = [
         reviews: 15
     },
     {
-        id: 4,
+        id: "default-4",
         ownerId: "system",
         name: "Glow Beauty Studio",
         category: "Beauty",
@@ -62,6 +62,10 @@ function supabaseHeaders() {
     };
 }
 
+/* =========================
+   LOCAL STORAGE
+========================= */
+
 function getBusinesses() {
     try {
         const saved = JSON.parse(
@@ -72,13 +76,10 @@ function getBusinesses() {
             return saved;
         }
     } catch (error) {
-        console.error("Could not read local businesses:", error);
+        console.error("Could not read businesses:", error);
     }
 
-    localStorage.setItem(
-        BUSINESSES_KEY,
-        JSON.stringify(DEFAULT_BUSINESSES)
-    );
+    saveBusinesses(DEFAULT_BUSINESSES);
 
     return DEFAULT_BUSINESSES;
 }
@@ -93,6 +94,10 @@ function saveBusinesses(businesses) {
 window.getBusinesses = getBusinesses;
 window.saveBusinesses = saveBusinesses;
 
+/* =========================
+   LOAD FROM SUPABASE
+========================= */
+
 async function loadBusinessesFromSupabase() {
     try {
         const response = await fetch(
@@ -105,46 +110,86 @@ async function loadBusinessesFromSupabase() {
         );
 
         if (!response.ok) {
+            const errorText = await response.text();
+
             throw new Error(
-                "Supabase returned " + response.status
+                "Supabase returned " +
+                response.status +
+                ": " +
+                errorText
             );
         }
 
         const data = await response.json();
 
-        if (Array.isArray(data)) {
-            const businesses = data.map(function (business) {
-                return {
-                    id: business.id,
-                    ownerId: business.owner_id,
-                    name: business.name,
-                    category: business.category,
-                    location: business.location,
-                    description: business.description || "",
-                    phone: business.phone || "",
-                    email: business.email || "",
-                    rating: Number(business.rating || 0),
-                    reviews: Number(business.reviews || 0)
-                };
-            });
-
-            if (businesses.length > 0) {
-                saveBusinesses(businesses);
-                renderBusinesses(businesses);
-            }
+        if (!Array.isArray(data)) {
+            throw new Error(
+                "Supabase returned an invalid response."
+            );
         }
+
+        const remoteBusinesses = data.map(function (business) {
+            return {
+                id: business.id,
+                ownerId: business.owner_id,
+                name: business.name || "",
+                category: business.category || "",
+                location: business.location || "",
+                description: business.description || "",
+                phone: business.phone || "",
+                email: business.email || "",
+                rating: Number(business.rating || 0),
+                reviews: Number(business.reviews || 0)
+            };
+        });
+
+        /*
+         * Keep the sample businesses and add
+         * businesses from Supabase.
+         */
+        const businesses = [
+            ...DEFAULT_BUSINESSES,
+            ...remoteBusinesses
+        ];
+
+        saveBusinesses(businesses);
+
+        renderBusinesses(businesses);
+
+        console.log(
+            "LosOja: loaded " +
+            remoteBusinesses.length +
+            " businesses from Supabase."
+        );
+
+        return businesses;
+
     } catch (error) {
         console.error(
-            "Supabase business loading failed:",
+            "LosOja: Supabase business loading failed:",
             error
         );
+
+        /*
+         * If Supabase is temporarily unavailable,
+         * keep showing the locally saved businesses.
+         */
+        renderBusinesses(getBusinesses());
+
+        return getBusinesses();
     }
 }
 
-window.loadBusinessesFromSupabase = loadBusinessesFromSupabase;
+window.loadBusinessesFromSupabase =
+    loadBusinessesFromSupabase;
+
+/* =========================
+   RENDER BUSINESSES
+========================= */
 
 function renderBusinesses(businesses) {
-    const grid = document.getElementById("businessGrid");
+    const grid =
+        document.getElementById("businessGrid");
 
     if (!grid) return;
 
@@ -155,18 +200,25 @@ function renderBusinesses(businesses) {
                 <p>Try another search or category.</p>
             </div>
         `;
+
         return;
     }
 
     grid.innerHTML = businesses.map(function (business) {
         return `
             <div class="business-card">
+
                 <div class="business-image">
-                    <span>${escapeHTML(business.category)}</span>
+                    <span>
+                        ${escapeHTML(business.category)}
+                    </span>
                 </div>
 
                 <div class="business-content">
-                    <h3>${escapeHTML(business.name)}</h3>
+
+                    <h3>
+                        ${escapeHTML(business.name)}
+                    </h3>
 
                     <div class="business-category">
                         ${escapeHTML(business.category)}
@@ -177,22 +229,31 @@ function renderBusinesses(businesses) {
                     </div>
 
                     <div class="rating">
-                        ⭐ ${Number(business.rating || 0).toFixed(1)}
-                        (${Number(business.reviews || 0)} reviews)
+                        ⭐ ${Number(
+                            business.rating || 0
+                        ).toFixed(1)}
+                        (${Number(
+                            business.reviews || 0
+                        )} reviews)
                     </div>
 
                     <p class="business-description">
-                        ${escapeHTML(business.description || "")}
+                        ${escapeHTML(
+                            business.description || ""
+                        )}
                     </p>
 
                     <div class="business-actions">
+
                         <button
                             type="button"
                             class="btn btn-primary"
                             data-business-id="${business.id}">
                             View Details
                         </button>
+
                     </div>
+
                 </div>
             </div>
         `;
@@ -201,7 +262,14 @@ function renderBusinesses(businesses) {
 
 window.renderBusinesses = renderBusinesses;
 
-window.searchBusinesses = function (searchTerm, locationTerm) {
+/* =========================
+   SEARCH
+========================= */
+
+window.searchBusinesses = function (
+    searchTerm,
+    locationTerm
+) {
     const businesses = getBusinesses();
 
     const search = String(searchTerm || "")
@@ -212,54 +280,89 @@ window.searchBusinesses = function (searchTerm, locationTerm) {
         .trim()
         .toLowerCase();
 
-    const filtered = businesses.filter(function (business) {
-        const matchesSearch =
-            !search ||
-            String(business.name).toLowerCase().includes(search) ||
-            String(business.category).toLowerCase().includes(search) ||
-            String(business.description || "")
-                .toLowerCase()
-                .includes(search);
+    const filtered = businesses.filter(
+        function (business) {
 
-        const matchesLocation =
-            !location ||
-            String(business.location)
-                .toLowerCase()
-                .includes(location);
+            const matchesSearch =
+                !search ||
+                String(business.name)
+                    .toLowerCase()
+                    .includes(search) ||
+                String(business.category)
+                    .toLowerCase()
+                    .includes(search) ||
+                String(business.description || "")
+                    .toLowerCase()
+                    .includes(search);
 
-        return matchesSearch && matchesLocation;
-    });
+            const matchesLocation =
+                !location ||
+                String(business.location)
+                    .toLowerCase()
+                    .includes(location);
 
-    renderBusinesses(filtered);
-};
-
-window.filterBusinessesByCategory = function (category) {
-    const businesses = getBusinesses();
-
-    if (!category || category.toLowerCase() === "all") {
-        renderBusinesses(businesses);
-        return;
-    }
-
-    const filtered = businesses.filter(function (business) {
-        return String(business.category)
-            .toLowerCase()
-            .includes(String(category).toLowerCase());
-    });
+            return (
+                matchesSearch &&
+                matchesLocation
+            );
+        }
+    );
 
     renderBusinesses(filtered);
 };
+
+/* =========================
+   CATEGORY FILTER
+========================= */
+
+window.filterBusinessesByCategory =
+    function (category) {
+
+        const businesses = getBusinesses();
+
+        if (
+            !category ||
+            String(category).toLowerCase() === "all"
+        ) {
+            renderBusinesses(businesses);
+            return;
+        }
+
+        const filtered = businesses.filter(
+            function (business) {
+
+                return String(
+                    business.category
+                )
+                    .toLowerCase()
+                    .includes(
+                        String(category).toLowerCase()
+                    );
+            }
+        );
+
+        renderBusinesses(filtered);
+    };
+
+/* =========================
+   OPEN BUSINESS
+========================= */
 
 window.openBusiness = function (businessId) {
+
     const businesses = getBusinesses();
 
-    const business = businesses.find(function (item) {
-        return String(item.id) === String(businessId);
-    });
+    const business = businesses.find(
+        function (item) {
+            return String(item.id) ===
+                String(businessId);
+        }
+    );
 
     if (!business) return;
 
-    const modal = document.getElementById("businessModal");
+    const modal =
+        document.getElementById("businessModal");
 
     if (!modal) return;
 
@@ -271,38 +374,56 @@ window.openBusiness = function (businessId) {
 
     let reviewsHTML = "";
 
-    if (typeof window.getBusinessReviews === "function") {
+    if (
+        typeof window.getBusinessReviews ===
+        "function"
+    ) {
         const reviews =
-            window.getBusinessReviews(business.id);
+            window.getBusinessReviews(
+                business.id
+            );
 
         if (reviews.length > 0) {
+
             reviewsHTML = `
                 <div class="business-reviews">
+
                     <h3>Reviews</h3>
 
-                    ${reviews.map(function (review) {
-                        return `
-                            <div class="review-item">
-                                <strong>
-                                    ${escapeHTML(review.userName)}
-                                </strong>
+                    ${reviews.map(
+                        function (review) {
 
-                                <div>
-                                    ⭐ ${review.rating}/5
+                            return `
+                                <div class="review-item">
+
+                                    <strong>
+                                        ${escapeHTML(
+                                            review.userName
+                                        )}
+                                    </strong>
+
+                                    <div>
+                                        ⭐ ${review.rating}/5
+                                    </div>
+
+                                    <p>
+                                        ${escapeHTML(
+                                            review.comment
+                                        )}
+                                    </p>
+
                                 </div>
+                            `;
+                        }
+                    ).join("")}
 
-                                <p>
-                                    ${escapeHTML(review.comment)}
-                                </p>
-                            </div>
-                        `;
-                    }).join("")}
                 </div>
             `;
         }
     }
 
     details.innerHTML = `
+
         <button
             type="button"
             class="modal-close"
@@ -310,7 +431,9 @@ window.openBusiness = function (businessId) {
             ×
         </button>
 
-        <h2>${escapeHTML(business.name)}</h2>
+        <h2>
+            ${escapeHTML(business.name)}
+        </h2>
 
         <p>
             <strong>Category:</strong>
@@ -324,22 +447,40 @@ window.openBusiness = function (businessId) {
 
         <p>
             <strong>Rating:</strong>
-            ⭐ ${Number(business.rating || 0).toFixed(1)}
+            ⭐ ${Number(
+                business.rating || 0
+            ).toFixed(1)}
         </p>
 
         <p>
-            ${escapeHTML(business.description || "")}
+            ${escapeHTML(
+                business.description || ""
+            )}
         </p>
 
         ${
             business.phone
-                ? `<p><strong>Phone:</strong> ${escapeHTML(business.phone)}</p>`
+                ? `
+                    <p>
+                        <strong>Phone:</strong>
+                        ${escapeHTML(
+                            business.phone
+                        )}
+                    </p>
+                `
                 : ""
         }
 
         ${
             business.email
-                ? `<p><strong>Email:</strong> ${escapeHTML(business.email)}</p>`
+                ? `
+                    <p>
+                        <strong>Email:</strong>
+                        ${escapeHTML(
+                            business.email
+                        )}
+                    </p>
+                `
                 : ""
         }
 
@@ -356,7 +497,12 @@ window.openBusiness = function (businessId) {
     openModal("businessModal");
 };
 
+/* =========================
+   SECURITY
+========================= */
+
 function escapeHTML(value) {
+
     return String(value ?? "")
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
@@ -365,8 +511,18 @@ function escapeHTML(value) {
         .replace(/'/g, "&#039;");
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-    renderBusinesses(getBusinesses());
+/* =========================
+   START WEBSITE
+========================= */
 
-    loadBusinessesFromSupabase();
-});
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        renderBusinesses(
+            getBusinesses()
+        );
+
+        loadBusinessesFromSupabase();
+    }
+);
