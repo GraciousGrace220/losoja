@@ -1,249 +1,539 @@
-document.addEventListener("DOMContentLoaded", function () {
+const SUPABASE_URL = "https://ycxshwgeebskdozmornh.supabase.co";
+const SUPABASE_KEY = "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
 
-    const USERS_KEY = "losoja_users";
-    const CURRENT_USER_KEY = "losoja_current_user";
+const CURRENT_SESSION_KEY = "losoja_supabase_session";
 
-    function getUsers() {
-        try {
-            return JSON.parse(localStorage.getItem(USERS_KEY)) || [];
-        } catch (error) {
-            return [];
-        }
-    }
+/* ================================
+   SUPABASE HEADERS
+================================ */
 
-    function saveUsers(users) {
-        localStorage.setItem(USERS_KEY, JSON.stringify(users));
-    }
-
-    function getCurrentUser() {
-        try {
-            return JSON.parse(localStorage.getItem(CURRENT_USER_KEY));
-        } catch (error) {
-            return null;
-        }
-    }
-
-    function setCurrentUser(user) {
-        if (user) {
-            localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(user));
-        } else {
-const headerActions = document.querySelector(".header-actions");
-
-if (headerActions) {
-    headerActions.classList.remove("logged-in");
-}
-            localStorage.removeItem(CURRENT_USER_KEY);
-        }
-    }
-
-    // ================================
-    // SIGN UP
-    // ================================
-
-    const signupForm = document.getElementById("signupForm");
-
-    if (signupForm) {
-        signupForm.addEventListener("submit", function (event) {
-            event.preventDefault();
-
-            const name = document.getElementById("signupName")?.value.trim();
-            const email = document.getElementById("signupEmail")?.value.trim().toLowerCase();
-            const password = document.getElementById("signupPassword")?.value;
-
-            if (!name || !email || !password) {
-                showNotification("Please fill in all fields.");
-                return;
-            }
-
-            const users = getUsers();
-
-            const existingUser = users.find(function (user) {
-                return user.email === email;
-            });
-
-            if (existingUser) {
-                showNotification("An account with this email already exists.");
-                return;
-            }
-
-            const newUser = {
-                id: Date.now().toString(),
-                name: name,
-                email: email,
-                password: password,
-                createdAt: new Date().toISOString()
-            };
-
-            users.push(newUser);
-            saveUsers(users);
-
-            setCurrentUser({
-                id: newUser.id,
-                name: newUser.name,
-                email: newUser.email
-            });
-
-            signupForm.reset();
-
-            closeModal("signupModal");
-
-            updateAuthUI();
-
-            showNotification("Account created successfully!");
-
-        });
-    }
-
-    // ================================
-    // LOGIN
-    // ================================
-
-    const loginForm = document.getElementById("loginForm");
-
-    if (loginForm) {
-        loginForm.addEventListener("submit", function (event) {
-            event.preventDefault();
-
-            const email = document.getElementById("loginEmail")?.value.trim().toLowerCase();
-            const password = document.getElementById("loginPassword")?.value;
-
-            if (!email || !password) {
-                showNotification("Please enter your email and password.");
-                return;
-            }
-
-            const users = getUsers();
-
-            const user = users.find(function (account) {
-                return account.email === email &&
-                       account.password === password;
-            });
-
-            if (!user) {
-                showNotification("Incorrect email or password.");
-                return;
-            }
-
-            setCurrentUser({
-                id: user.id,
-                name: user.name,
-                email: user.email
-            });
-
-            loginForm.reset();
-
-            closeModal("loginModal");
-
-            updateAuthUI();
-
-            showNotification("Welcome back, " + user.name + "!");
-
-        });
-    }
-
-    // ================================
-    // LOGOUT
-    // ================================
-
-    window.logoutUser = function () {
-
-        setCurrentUser(null);
-
-        updateAuthUI();
-
-        showNotification("You have been logged out.");
-
+function supabaseAuthHeaders(accessToken) {
+    const headers = {
+        "apikey": SUPABASE_KEY,
+        "Content-Type": "application/json"
     };
 
-    // ================================
-    // AUTH UI
-    // ================================
+    if (accessToken) {
+        headers["Authorization"] = "Bearer " + accessToken;
+    }
 
-    window.updateAuthUI = function () {
+    return headers;
+}
 
-        const currentUser = getCurrentUser();
+/* ================================
+   SESSION
+================================ */
 
-        const loginButtons = document.querySelectorAll(
+function getSupabaseSession() {
+    try {
+        const saved = localStorage.getItem(
+            CURRENT_SESSION_KEY
+        );
+
+        if (!saved) {
+            return null;
+        }
+
+        return JSON.parse(saved);
+
+    } catch (error) {
+        console.error(
+            "Could not read Supabase session:",
+            error
+        );
+
+        return null;
+    }
+}
+
+function saveSupabaseSession(session) {
+
+    if (session) {
+        localStorage.setItem(
+            CURRENT_SESSION_KEY,
+            JSON.stringify(session)
+        );
+    } else {
+        localStorage.removeItem(
+            CURRENT_SESSION_KEY
+        );
+    }
+}
+
+window.getSupabaseSession = getSupabaseSession;
+
+/* ================================
+   CURRENT USER
+================================ */
+
+window.getCurrentUser = function () {
+
+    const session = getSupabaseSession();
+
+    if (!session || !session.user) {
+        return null;
+    }
+
+    return session.user;
+};
+
+/* ================================
+   SIGN UP
+================================ */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const signupForm =
+            document.getElementById("signupForm");
+
+        if (signupForm) {
+
+            signupForm.addEventListener(
+                "submit",
+                async function (event) {
+
+                    event.preventDefault();
+
+                    const name =
+                        document
+                            .getElementById("signupName")
+                            ?.value
+                            .trim();
+
+                    const email =
+                        document
+                            .getElementById("signupEmail")
+                            ?.value
+                            .trim()
+                            .toLowerCase();
+
+                    const password =
+                        document
+                            .getElementById("signupPassword")
+                            ?.value;
+
+                    if (!name || !email || !password) {
+
+                        showNotification(
+                            "Please fill in all fields."
+                        );
+
+                        return;
+                    }
+
+                    if (password.length < 6) {
+
+                        showNotification(
+                            "Password must be at least 6 characters."
+                        );
+
+                        return;
+                    }
+
+                    const submitButton =
+                        signupForm.querySelector(
+                            'button[type="submit"]'
+                        );
+
+                    if (submitButton) {
+                        submitButton.disabled = true;
+                        submitButton.textContent =
+                            "Creating account...";
+                    }
+
+                    try {
+
+                        const response =
+                            await fetch(
+                                SUPABASE_URL +
+                                "/auth/v1/signup",
+                                {
+                                    method: "POST",
+
+                                    headers:
+                                        supabaseAuthHeaders(),
+
+                                    body: JSON.stringify({
+                                        email: email,
+                                        password: password,
+                                        data: {
+                                            name: name
+                                        }
+                                    })
+                                }
+                            );
+
+                        const data =
+                            await response.json();
+
+                        if (!response.ok) {
+
+                            throw new Error(
+                                data.message ||
+                                data.msg ||
+                                data.error_description ||
+                                data.error ||
+                                "Could not create account."
+                            );
+                        }
+
+                        /*
+                         * Supabase may require email
+                         * confirmation before creating
+                         * an active session.
+                         */
+
+                        if (data.access_token) {
+
+                            saveSupabaseSession({
+                                access_token:
+                                    data.access_token,
+
+                                refresh_token:
+                                    data.refresh_token,
+
+                                user:
+                                    data.user
+                            });
+
+                            signupForm.reset();
+
+                            closeModal(
+                                "signupModal"
+                            );
+
+                            updateAuthUI();
+
+                            showNotification(
+                                "Account created successfully!"
+                            );
+
+                        } else {
+
+                            signupForm.reset();
+
+                            closeModal(
+                                "signupModal"
+                            );
+
+                            showNotification(
+                                "Account created. Please check your email to confirm your account, then log in."
+                            );
+                        }
+
+                    } catch (error) {
+
+                        console.error(
+                            "Signup error:",
+                            error
+                        );
+
+                        showNotification(
+                            error.message ||
+                            "Could not create account."
+                        );
+
+                    } finally {
+
+                        if (submitButton) {
+
+                            submitButton.disabled =
+                                false;
+
+                            submitButton.textContent =
+                                "Sign Up";
+                        }
+                    }
+                }
+            );
+        }
+
+        /* ================================
+           LOGIN
+        ================================ */
+
+        const loginForm =
+            document.getElementById("loginForm");
+
+        if (loginForm) {
+
+            loginForm.addEventListener(
+                "submit",
+                async function (event) {
+
+                    event.preventDefault();
+
+                    const email =
+                        document
+                            .getElementById("loginEmail")
+                            ?.value
+                            .trim()
+                            .toLowerCase();
+
+                    const password =
+                        document
+                            .getElementById("loginPassword")
+                            ?.value;
+
+                    if (!email || !password) {
+
+                        showNotification(
+                            "Please enter your email and password."
+                        );
+
+                        return;
+                    }
+
+                    const submitButton =
+                        loginForm.querySelector(
+                            'button[type="submit"]'
+                        );
+
+                    if (submitButton) {
+                        submitButton.disabled = true;
+                        submitButton.textContent =
+                            "Logging in...";
+                    }
+
+                    try {
+
+                        const response =
+                            await fetch(
+                                SUPABASE_URL +
+                                "/auth/v1/token?grant_type=password",
+                                {
+                                    method: "POST",
+
+                                    headers:
+                                        supabaseAuthHeaders(),
+
+                                    body: JSON.stringify({
+                                        email: email,
+                                        password: password
+                                    })
+                                }
+                            );
+
+                        const data =
+                            await response.json();
+
+                        if (!response.ok) {
+
+                            throw new Error(
+                                data.msg ||
+                                data.message ||
+                                data.error_description ||
+                                data.error ||
+                                "Incorrect email or password."
+                            );
+                        }
+
+                        saveSupabaseSession({
+                            access_token:
+                                data.access_token,
+
+                            refresh_token:
+                                data.refresh_token,
+
+                            user:
+                                data.user
+                        });
+
+                        loginForm.reset();
+
+                        closeModal("loginModal");
+
+                        updateAuthUI();
+
+                        const userName =
+                            data.user?.user_metadata?.name ||
+                            data.user?.email ||
+                            "there";
+
+                        showNotification(
+                            "Welcome back, " +
+                            userName +
+                            "!"
+                        );
+
+                    } catch (error) {
+
+                        console.error(
+                            "Login error:",
+                            error
+                        );
+
+                        showNotification(
+                            error.message ||
+                            "Could not log in."
+                        );
+
+                    } finally {
+
+                        if (submitButton) {
+
+                            submitButton.disabled =
+                                false;
+
+                            submitButton.textContent =
+                                "Login";
+                        }
+                    }
+                }
+            );
+        }
+
+        /* ================================
+           INITIAL AUTH UI
+        ================================ */
+
+        updateAuthUI();
+    }
+);
+
+/* ================================
+   LOGOUT
+================================ */
+
+window.logoutUser = function () {
+
+    saveSupabaseSession(null);
+
+    updateAuthUI();
+
+    showNotification(
+        "You have been logged out."
+    );
+};
+
+/* ================================
+   AUTH UI
+================================ */
+
+window.updateAuthUI = function () {
+
+    const currentUser =
+        window.getCurrentUser();
+
+    const loginButtons =
+        document.querySelectorAll(
             "#loginBtn, .login-btn"
         );
 
-        const signupButtons = document.querySelectorAll(
+    const signupButtons =
+        document.querySelectorAll(
             "#signupBtn, .signup-btn"
         );
 
-        const userArea = document.getElementById("userArea");
+    const userArea =
+        document.getElementById(
+            "userArea"
+        );
 
-        if (currentUser) {
-const headerActions = document.querySelector(".header-actions");
+    const headerActions =
+        document.querySelector(
+            ".header-actions"
+        );
 
-if (headerActions) {
-    headerActions.classList.add("logged-in");
-}
-            loginButtons.forEach(function (button) {
-                button.style.display = "none";
-            });
+    if (currentUser) {
 
-            signupButtons.forEach(function (button) {
-                button.style.display = "none";
-            });
-
-            if (userArea) {
-                userArea.innerHTML = `
-                    <span class="user-name">
-                        Hi, ${escapeAuthHTML(currentUser.name)}
-                    </span>
-                    <button class="btn btn-outline" onclick="logoutUser()">
-                        Logout
-                    </button>
-                `;
-            }
-
-        } else {
-
-            loginButtons.forEach(function (button) {
-                button.style.display = "";
-            });
-
-            signupButtons.forEach(function (button) {
-                button.style.display = "";
-            });
-
-            if (userArea) {
-                userArea.innerHTML = "";
-            }
+        if (headerActions) {
+            headerActions.classList.add(
+                "logged-in"
+            );
         }
-    };
 
-    // ================================
-    // SWITCH LOGIN / SIGNUP
-    // ================================
+        loginButtons.forEach(
+            function (button) {
+                button.style.display = "none";
+            }
+        );
 
-    window.showSignup = function () {
-        closeModal("loginModal");
-        openModal("signupModal");
-    };
+        signupButtons.forEach(
+            function (button) {
+                button.style.display = "none";
+            }
+        );
 
-    window.showLogin = function () {
-        closeModal("signupModal");
-        openModal("loginModal");
-    };
+        if (userArea) {
 
-    // ================================
-    // HTML SAFETY
-    // ================================
+            const userName =
+                currentUser
+                    .user_metadata
+                    ?.name ||
+                currentUser.email ||
+                "User";
 
-    function escapeAuthHTML(value) {
+            userArea.innerHTML = `
+                <span class="user-name">
+                    Hi, ${escapeAuthHTML(userName)}
+                </span>
 
-        return String(value)
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
+                <button
+                    class="btn btn-outline"
+                    type="button"
+                    onclick="logoutUser()">
+                    Logout
+                </button>
+            `;
+        }
 
+    } else {
+
+        if (headerActions) {
+            headerActions.classList.remove(
+                "logged-in"
+            );
+        }
+
+        loginButtons.forEach(
+            function (button) {
+                button.style.display = "";
+            }
+        );
+
+        signupButtons.forEach(
+            function (button) {
+                button.style.display = "";
+            }
+        );
+
+        if (userArea) {
+            userArea.innerHTML = "";
+        }
     }
+};
 
-    // Update interface when page loads
-    updateAuthUI();
+/* ================================
+   LOGIN / SIGNUP SWITCH
+================================ */
 
-});
+window.showSignup = function () {
+
+    closeModal("loginModal");
+
+    openModal("signupModal");
+};
+
+window.showLogin = function () {
+
+    closeModal("signupModal");
+
+    openModal("loginModal");
+};
+
+/* ================================
+   HTML SAFETY
+================================ */
+
+function escapeAuthHTML(value) {
+
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
