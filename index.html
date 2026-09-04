@@ -1,1536 +1,466 @@
-
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>FindIt Naija - Find Nigerian Businesses</title>
+    <title>LosOja - Find Businesses in Nigeria</title>
 
     <meta
         name="description"
-        content="FindIt Naija helps you discover businesses, services and places across Nigeria."
+        content="LosOja helps you discover businesses, services and places across Nigeria."
     >
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        body {
-            margin: 0;
-            font-family: Arial, Helvetica, sans-serif;
-            background: #f5f7f9;
-            color: #222;
-        }
-
-        button,
-        input,
-        textarea,
-        select {
-            font: inherit;
-        }
-
-        button {
-            cursor: pointer;
-        }
-
-        /* =========================
-           HEADER
-        ========================== */
-
-        header {
-            background: #008751;
-            color: white;
-            padding: 15px 5%;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 20px;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.12);
-        }
-
-        .logo {
-            font-size: 25px;
-            font-weight: bold;
-            white-space: nowrap;
-        }
-
-        .logo span {
-            color: #ffd700;
-        }
-
-        nav {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-            justify-content: flex-end;
-        }
-
-        nav button {
-            border: none;
-            background: transparent;
-            color: white;
-            padding: 9px 12px;
-            border-radius: 6px;
-            font-weight: bold;
-        }
-
-        nav button:hover {
-            background: rgba(255,255,255,0.15);
-        }
-
-        .logout-btn {
-            background: #c62828 !important;
-        }
-
-        /* =========================
-           PAGE SYSTEM
-        ========================== */
-
-        .page {
-            display: none;
-        }
-
-        .page.active {
-            display: block;
-        }
-
-        /* =========================
-           HERO
-        ========================== */
-
-        .hero {
-            background: linear-gradient(
-                135deg,
-                #008751,
-                #006b40
-            );
-            color: white;
-            text-align: center;
-            padding: 70px 20px 75px;
-        }
-
-        .hero h1 {
-            margin: 0 0 15px;
-            font-size: clamp(32px, 6vw, 55px);
-        }
-
-        .hero p {
-            margin: 0 auto 28px;
-            max-width: 700px;
-            font-size: 18px;
-            line-height: 1.6;
-        }
-
-        .search-box {
-            max-width: 750px;
-            margin: auto;
-            display: flex;
-            gap: 10px;
-        }
-
-        .search-box input {
-            flex: 1;
-            padding: 16px;
-            border: none;
-            border-radius: 8px;
-            outline: none;
-            font-size: 16px;
-        }
-
-        .search-btn {
-            padding: 0 24px;
-            border: none;
-            border-radius: 8px;
-            background: #ffd700;
-            color: #222;
-            font-weight: bold;
-        }
-
-        .search-btn:hover {
-            background: #ffca00;
-        }
-
-        /* =========================
-           CONTAINER
-        ========================== */
-
-        .container {
-            width: 90%;
-            max-width: 1200px;
-            margin: auto;
-        }
-
-        section.content-section {
-            padding: 45px 0;
-        }
-
-        .section-title {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .section-title h2 {
-            margin: 0 0 8px;
-            font-size: 30px;
-        }
-
-        .section-title p {
-            color: #666;
-            margin: 0;
-        }
-
-        /* =========================
-           CATEGORIES
-        ========================== */
-
-        .categories {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-            gap: 15px;
-        }
-
-        .category {
-            background: white;
-            border: 1px solid #e5e5e5;
-            border-radius: 10px;
-            padding: 20px 10px;
-            text-align: center;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .category:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 18px rgba(0,0,0,0.08);
-            border-color: #008751;
-        }
-
-        .category-icon {
-            font-size: 30px;
-            margin-bottom: 8px;
-        }
-
-        .category strong {
-            display: block;
-            font-size: 14px;
-        }
-
-        /* =========================
-           BUSINESS GRID
-        ========================== */
-
-        .business-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 22px;
-        }
-
-        .business-card {
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 3px 15px rgba(0,0,0,0.08);
-            transition: 0.2s;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .business-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
-        }
-
-        .business-image {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            background: #e8ecef;
-        }
-
-        .business-image.placeholder {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #777;
-            font-size: 50px;
-        }
-
-        .business-card-body {
-            padding: 18px;
-            flex: 1;
-        }
-
-        .business-card h3 {
-            margin: 0 0 8px;
-            font-size: 21px;
-        }
-
-        .business-card h3 button {
-            background: none;
-            border: none;
-            padding: 0;
-            color: #222;
-            text-align: left;
-            font-weight: bold;
-        }
-
-        .business-card h3 button:hover {
-            color: #008751;
-        }
-
-        .category-label {
-            display: inline-block;
-            background: #e7f6ef;
-            color: #008751;
-            padding: 5px 9px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        .business-info {
-            color: #555;
-            font-size: 14px;
-            line-height: 1.6;
-        }
-
-        .business-description {
-            margin-top: 10px;
-            color: #555;
-            line-height: 1.6;
-            word-break: break-word;
-        }
-
-        .business-actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            padding: 0 18px 18px;
-        }
-
-        .btn {
-            border: none;
-            border-radius: 7px;
-            padding: 10px 13px;
-            font-weight: bold;
-        }
-
-        .btn-primary {
-            background: #008751;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #006d41;
-        }
-
-        .btn-secondary {
-            background: #edf1f3;
-            color: #222;
-        }
-
-        .btn-danger {
-            background: #c62828;
-            color: white;
-        }
-
-        .btn-warning {
-            background: #f5b400;
-            color: #222;
-        }
-
-        .btn-small {
-            padding: 7px 10px;
-            font-size: 13px;
-        }
-
-        /* =========================
-           RATINGS
-        ========================== */
-
-        .stars {
-            color: #f4b400;
-            letter-spacing: 1px;
-            font-size: 17px;
-        }
-
-        .rating-summary {
-            margin: 7px 0;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .rating-number {
-            font-weight: bold;
-        }
-
-        .rating-count {
-            color: #777;
-            font-size: 13px;
-        }
-
-        /* =========================
-           FORMS
-        ========================== */
-
-        .form-container {
-            max-width: 700px;
-            margin: 45px auto;
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 18px rgba(0,0,0,0.08);
-        }
-
-        .form-container h2 {
-            margin-top: 0;
-        }
-
-        .form-group {
-            margin-bottom: 17px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 7px;
-            font-weight: bold;
-        }
-
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #d7dce0;
-            border-radius: 7px;
-            outline: none;
-        }
-
-        .form-group input:focus,
-        .form-group textarea:focus,
-        .form-group select:focus {
-            border-color: #008751;
-        }
-
-        .form-group textarea {
-            min-height: 130px;
-            resize: vertical;
-        }
-
-        .form-help {
-            font-size: 12px;
-            color: #777;
-            margin-top: 5px;
-        }
-
-        /* =========================
-           ALERTS
-        ========================== */
-
-        .alert {
-            display: none;
-            padding: 12px 15px;
-            border-radius: 7px;
-            margin-bottom: 18px;
-            line-height: 1.5;
-        }
-
-        .alert.show {
-            display: block;
-        }
-
-        .alert.success {
-            background: #e6f6ed;
-            color: #126b3b;
-        }
-
-        .alert.error {
-            background: #fdeaea;
-            color: #9c1c1c;
-        }
-
-        .alert.info {
-            background: #eaf3ff;
-            color: #155b9d;
-        }
-
-        /* =========================
-           AUTH
-        ========================== */
-
-        .auth-tabs {
-            display: flex;
-            margin-bottom: 25px;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .auth-tab {
-            flex: 1;
-            border: none;
-            background: none;
-            padding: 13px;
-            font-weight: bold;
-            color: #777;
-        }
-
-        .auth-tab.active {
-            color: #008751;
-            border-bottom: 3px solid #008751;
-        }
-
-        /* =========================
-           DASHBOARD
-        ========================== */
-
-        .dashboard-header {
-            padding: 45px 0 20px;
-        }
-
-        .dashboard-header h1 {
-            margin-bottom: 5px;
-        }
-
-        .dashboard-header p {
-            color: #666;
-        }
-
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-            padding-bottom: 50px;
-        }
-
-        .dashboard-card {
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 3px 15px rgba(0,0,0,0.08);
-        }
-
-        .dashboard-card img {
-            width: 100%;
-            height: 180px;
-            object-fit: cover;
-        }
-
-        .dashboard-card-content {
-            padding: 18px;
-        }
-
-        .dashboard-card h3 {
-            margin-top: 0;
-        }
-
-        .dashboard-actions {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        /* =========================
-           REVIEWS
-        ========================== */
-
-        .reviews-section {
-            margin-top: 18px;
-            border-top: 1px solid #eee;
-            padding-top: 15px;
-        }
-
-        .reviews-toggle {
-            width: 100%;
-            text-align: left;
-            border: none;
-            background: #f5f7f9;
-            padding: 11px;
-            border-radius: 7px;
-            font-weight: bold;
-        }
-
-        .reviews-content {
-            display: none;
-            margin-top: 12px;
-        }
-
-        .reviews-content.show {
-            display: block;
-        }
-
-        .review-form {
-            background: #f8fafb;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-        }
-
-        .review-form label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 6px;
-        }
-
-        .review-form select,
-        .review-form textarea {
-            width: 100%;
-            padding: 9px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            margin-bottom: 10px;
-        }
-
-        .review-form textarea {
-            min-height: 85px;
-            resize: vertical;
-        }
-
-        .review {
-            border-bottom: 1px solid #eee;
-            padding: 13px 0;
-        }
-
-        .review:last-child {
-            border-bottom: none;
-        }
-
-        .review-header {
-            display: flex;
-            justify-content: space-between;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .review-user {
-            font-weight: bold;
-        }
-
-        .review-date {
-            color: #888;
-            font-size: 12px;
-        }
-
-        .review-text {
-            margin: 8px 0;
-            line-height: 1.5;
-            white-space: pre-wrap;
-            word-break: break-word;
-        }
-
-        .review-actions {
-            display: flex;
-            gap: 7px;
-        }
-
-        /* =========================
-           BUSINESS PROFILE
-        ========================== */
-
-        .profile-page {
-            padding: 35px 0 60px;
-        }
-
-        .back-button {
-            margin-bottom: 20px;
-        }
-
-        .profile-card {
-            background: white;
-            border-radius: 14px;
-            overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-        }
-
-        .profile-hero {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            min-height: 350px;
-        }
-
-        .profile-image {
-            width: 100%;
-            height: 100%;
-            min-height: 350px;
-            object-fit: cover;
-            background: #e8ecef;
-        }
-
-        .profile-image-placeholder {
-            min-height: 350px;
-            background: #e8ecef;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 90px;
-            color: #888;
-        }
-
-        .profile-info {
-            padding: 40px;
-        }
-
-        .profile-info h1 {
-            font-size: 38px;
-            margin: 10px 0;
-        }
-
-        .profile-category {
-            display: inline-block;
-            background: #e7f6ef;
-            color: #008751;
-            padding: 7px 12px;
-            border-radius: 20px;
-            font-weight: bold;
-        }
-
-        .profile-detail {
-            margin: 15px 0;
-            color: #555;
-            line-height: 1.6;
-        }
-
-        .profile-actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 25px;
-        }
-
-        .profile-description {
-            padding: 30px 40px;
-            border-top: 1px solid #eee;
-        }
-
-        .profile-description h2 {
-            margin-top: 0;
-        }
-
-        .profile-reviews {
-            padding: 30px 40px;
-            border-top: 1px solid #eee;
-        }
-
-        .profile-reviews h2 {
-            margin-top: 0;
-        }
-
-        .profile-review-list {
-            margin-top: 20px;
-        }
-
-        /* =========================
-           MODAL
-        ========================== */
-
-        .modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.55);
-            z-index: 2000;
-            overflow-y: auto;
-            padding: 30px 15px;
-        }
-
-        .modal.show {
-            display: block;
-        }
-
-        .modal-content {
-            max-width: 700px;
-            margin: auto;
-            background: white;
-            border-radius: 12px;
-            padding: 30px;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            gap: 15px;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .modal-header h2 {
-            margin: 0;
-        }
-
-        .close-btn {
-            border: none;
-            background: #eee;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            font-size: 20px;
-        }
-
-        /* =========================
-           EMPTY / LOADING
-        ========================== */
-
-        .loading,
-        .empty-state {
-            text-align: center;
-            padding: 45px 20px;
-            color: #666;
-            grid-column: 1 / -1;
-        }
-
-        .empty-state h3 {
-            color: #333;
-        }
-
-        /* =========================
-           FOOTER
-        ========================== */
-
-        footer {
-            background: #1d2622;
-            color: #ddd;
-            padding: 35px 20px;
-            text-align: center;
-            margin-top: 30px;
-        }
-
-        footer strong {
-            color: white;
-        }
-
-        /* =========================
-           LOCATION DISCOVERY
-        ========================== */
-        .location-tools { display:flex; justify-content:center; align-items:center; gap:10px; flex-wrap:wrap; margin-top:18px; }
-        .location-status { max-width:750px; margin:12px auto 0; padding:10px 14px; border-radius:8px; background:rgba(255,255,255,0.14); color:white; font-size:14px; display:none; }
-        .location-status.show { display:block; }
-        .distance-badge { display:inline-block; margin-top:8px; background:#eef7f2; color:#008751; padding:5px 9px; border-radius:20px; font-size:12px; font-weight:bold; }
-        .coordinates-box { background:#f5f8fa; border:1px solid #e1e6e9; border-radius:8px; padding:12px; margin-top:8px; }
-        .coordinates-box strong { color:#008751; }
-
-        /* =========================
-           RESPONSIVE
-        ========================== */
-
-        @media (max-width: 800px) {
-            header {
-                align-items: flex-start;
-                flex-direction: column;
-            }
-
-            nav {
-                width: 100%;
-                justify-content: flex-start;
-            }
-
-            .search-box {
-                flex-direction: column;
-            }
-
-            .search-btn {
-                padding: 13px;
-            }
-
-            .profile-hero {
-                grid-template-columns: 1fr;
-            }
-
-            .profile-info {
-                padding: 25px;
-            }
-
-            .profile-info h1 {
-                font-size: 30px;
-            }
-
-            .profile-description,
-            .profile-reviews {
-                padding: 25px;
-            }
-        }
-
-        @media (max-width: 500px) {
-            .container {
-                width: 92%;
-            }
-
-            nav button {
-                padding: 8px 9px;
-                font-size: 13px;
-            }
-
-            .hero {
-                padding: 50px 15px 55px;
-            }
-
-            .hero p {
-                font-size: 16px;
-            }
-
-            .form-container {
-                width: 92%;
-                padding: 22px;
-            }
-
-            .business-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .profile-image,
-            .profile-image-placeholder {
-                min-height: 230px;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
 
 <header>
-    <div class="logo">
-        FindIt <span>Naija</span>
-    </div>
+    <div class="container navbar">
 
-    <nav>
-        <button onclick="showPage('home')">Home</button>
+        <a href="index.html" class="logo">
+            Los<span>Oja</span>
+        </a>
 
-        <button onclick="showPage('addBusiness')" id="addBusinessNav">
-            Add Business
-        </button>
+        <nav class="nav-links">
+            <a href="#home">Home</a>
+            <a href="#categories">Categories</a>
+            <a href="#businesses">Businesses</a>
+            <a href="#how-it-works">How It Works</a>
+            <a href="#about">About</a>
+        </nav>
 
-        <button
-            onclick="showPage('dashboard')"
-            id="dashboardNav"
-            style="display:none;"
-        >
-            My Businesses
-        </button>
-
-        <button onclick="showPage('auth')" id="loginNav">
-            Login
-        </button>
-
-        <button
-            onclick="logout()"
-            id="logoutNav"
-            class="logout-btn"
-            style="display:none;"
-        >
-            Logout
-        </button>
-    </nav>
-</header>
-
-
-<!-- =========================
-     HOME PAGE
-========================== -->
-
-<section id="homePage" class="page active">
-
-    <div class="hero">
-        <h1>Find Businesses in Nigeria</h1>
-
-        <p>
-            Discover local businesses, services and places around you with
-            FindIt Naija.
-        </p>
-
-        <div class="search-box">
-            <input
-                type="text"
-                id="searchInput"
-                placeholder="Search businesses, categories or locations..."
-                autocomplete="off"
-            >
+        <div class="header-actions">
 
             <button
-                class="search-btn"
-                onclick="performSearch()"
-            >
-                Search
-            </button>
-        </div>
-
-        <div class="location-tools">
-            <button type="button" class="btn btn-secondary" onclick="findBusinessesNearMe()">📍 Businesses Near Me</button>
-            <button type="button" class="btn btn-secondary" id="showAllBusinessesBtn" onclick="showAllBusinesses()" style="display:none;">Show All Businesses</button>
-        </div>
-        <div id="locationStatus" class="location-status"></div>
-    </div>
-
-
-    <section class="content-section">
-        <div class="container">
-
-            <div class="section-title">
-                <h2>Browse Categories</h2>
-                <p>Find the type of business you're looking for.</p>
-            </div>
-
-            <div class="categories">
-
-                <div class="category" onclick="filterCategory('Restaurant')">
-                    <div class="category-icon">🍴</div>
-                    <strong>Restaurants</strong>
-                </div>
-
-                <div class="category" onclick="filterCategory('Hotel')">
-                    <div class="category-icon">🏨</div>
-                    <strong>Hotels</strong>
-                </div>
-
-                <div class="category" onclick="filterCategory('Shopping')">
-                    <div class="category-icon">🛍️</div>
-                    <strong>Shopping</strong>
-                </div>
-
-                <div class="category" onclick="filterCategory('Fashion')">
-                    <div class="category-icon">👗</div>
-                    <strong>Fashion</strong>
-                </div>
-
-                <div class="category" onclick="filterCategory('Beauty')">
-                    <div class="category-icon">💇</div>
-                    <strong>Beauty</strong>
-                </div>
-
-                <div class="category" onclick="filterCategory('Health')">
-                    <div class="category-icon">🏥</div>
-                    <strong>Health</strong>
-                </div>
-
-                <div class="category" onclick="filterCategory('Education')">
-                    <div class="category-icon">📚</div>
-                    <strong>Education</strong>
-                </div>
-
-                <div class="category" onclick="filterCategory('Technology')">
-                    <div class="category-icon">💻</div>
-                    <strong>Technology</strong>
-                </div>
-
-                <div class="category" onclick="filterCategory('Services')">
-                    <div class="category-icon">🔧</div>
-                    <strong>Services</strong>
-                </div>
-
-                <div class="category" onclick="filterCategory('Other')">
-                    <div class="category-icon">📍</div>
-                    <strong>Other</strong>
-                </div>
-
-            </div>
-
-        </div>
-    </section>
-
-
-    <section class="content-section">
-        <div class="container">
-
-            <div class="section-title">
-                <h2>Discover Businesses</h2>
-                <p id="businessResultsText">
-                    Businesses listed on FindIt Naija
-                </p>
-            </div>
-
-            <div
-                id="businessGrid"
-                class="business-grid"
-            >
-                <div class="loading">
-                    Loading businesses...
-                </div>
-            </div>
-
-        </div>
-    </section>
-
-</section>
-
-
-<!-- =========================
-     AUTH PAGE
-========================== -->
-
-<section id="authPage" class="page">
-
-    <div class="form-container">
-
-        <div class="auth-tabs">
-
-            <button
-                id="loginTab"
-                class="auth-tab active"
-                onclick="switchAuth('login')"
-            >
+                type="button"
+                class="btn btn-outline"
+                id="loginBtn">
                 Login
             </button>
 
             <button
-                id="signupTab"
-                class="auth-tab"
-                onclick="switchAuth('signup')"
-            >
-                Create Account
+                type="button"
+                class="btn btn-primary"
+                id="signupBtn">
+                Sign Up
+            </button>
+
+            <div id="userArea"></div>
+
+        </div>
+
+    </div>
+</header>
+
+
+<main id="home">
+
+    <!-- HERO -->
+    <section class="hero">
+
+        <div class="container">
+
+            <h1>Find Businesses Across Nigeria</h1>
+
+            <p>
+                Discover local businesses, services and places around you
+                with LosOja.
+            </p>
+
+            <form
+                class="search-box"
+                id="searchForm">
+
+                <input
+                    type="search"
+                    id="searchInput"
+                    name="search"
+                    placeholder="Search businesses, services or categories..."
+                    autocomplete="off"
+                >
+
+                <select
+                    id="locationInput"
+                    name="location"
+                    aria-label="Choose location">
+
+                    <option value="">All Nigeria</option>
+                    <option value="Lagos">Lagos</option>
+                    <option value="Abuja">Abuja</option>
+                    <option value="Port Harcourt">
+                        Port Harcourt
+                    </option>
+                    <option value="Ibadan">Ibadan</option>
+                    <option value="Kano">Kano</option>
+                    <option value="Benin City">
+                        Benin City
+                    </option>
+                    <option value="Enugu">Enugu</option>
+                    <option value="Other">Other</option>
+
+                </select>
+
+                <button
+                    type="submit"
+                    class="search-btn">
+                    Search
+                </button>
+
+            </form>
+
+            <div class="popular-searches">
+
+                <span>Popular:</span>
+
+                <button
+                    type="button"
+                    data-search="Food">
+                    Food
+                </button>
+
+                <button
+                    type="button"
+                    data-search="Fashion">
+                    Fashion
+                </button>
+
+                <button
+                    type="button"
+                    data-search="Technology">
+                    Technology
+                </button>
+
+                <button
+                    type="button"
+                    data-search="Beauty">
+                    Beauty
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- CATEGORIES -->
+    <section
+        class="section"
+        id="categories">
+
+        <div class="container">
+
+            <div class="section-title">
+
+                <h2>Explore Categories</h2>
+
+                <p>
+                    Find the type of business or service you need.
+                </p>
+
+            </div>
+
+            <div class="categories">
+
+                <button
+                    type="button"
+                    class="category-card"
+                    data-category="Food">
+
+                    <div class="category-icon">🍔</div>
+                    <h3>Food</h3>
+
+                </button>
+
+                <button
+                    type="button"
+                    class="category-card"
+                    data-category="Fashion">
+
+                    <div class="category-icon">👗</div>
+                    <h3>Fashion</h3>
+
+                </button>
+
+                <button
+                    type="button"
+                    class="category-card"
+                    data-category="Technology">
+
+                    <div class="category-icon">💻</div>
+                    <h3>Technology</h3>
+
+                </button>
+
+                <button
+                    type="button"
+                    class="category-card"
+                    data-category="Beauty">
+
+                    <div class="category-icon">💇</div>
+                    <h3>Beauty</h3>
+
+                </button>
+
+                <button
+                    type="button"
+                    class="category-card"
+                    data-category="Health">
+
+                    <div class="category-icon">🏥</div>
+                    <h3>Health</h3>
+
+                </button>
+
+                <button
+                    type="button"
+                    class="category-card"
+                    data-category="Education">
+
+                    <div class="category-icon">📚</div>
+                    <h3>Education</h3>
+
+                </button>
+
+                <button
+                    type="button"
+                    class="category-card"
+                    data-category="Services">
+
+                    <div class="category-icon">🛠️</div>
+                    <h3>Services</h3>
+
+                </button>
+
+                <button
+                    type="button"
+                    class="category-card"
+                    data-category="Shopping">
+
+                    <div class="category-icon">🛍️</div>
+                    <h3>Shopping</h3>
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- BUSINESSES -->
+    <section
+        class="section"
+        id="businesses">
+
+        <div class="container">
+
+            <div class="section-title">
+
+                <h2>Discover Businesses</h2>
+
+                <p id="businessResultsText">
+                    Discover businesses listed on LosOja.
+                </p>
+
+            </div>
+
+            <div
+                class="business-grid"
+                id="businessGrid">
+
+                <div class="loading">
+                    Loading businesses...
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- HOW IT WORKS -->
+    <section
+        class="section"
+        id="how-it-works">
+
+        <div class="container">
+
+            <div class="section-title">
+
+                <h2>How LosOja Works</h2>
+
+                <p>
+                    Finding a business is simple.
+                </p>
+
+            </div>
+
+            <div class="steps">
+
+                <div class="step">
+
+                    <div class="step-number">1</div>
+
+                    <h3>Search</h3>
+
+                    <p>
+                        Search for a business, service or category.
+                    </p>
+
+                </div>
+
+                <div class="step">
+
+                    <div class="step-number">2</div>
+
+                    <h3>Discover</h3>
+
+                    <p>
+                        Explore businesses and learn more about what
+                        they offer.
+                    </p>
+
+                </div>
+
+                <div class="step">
+
+                    <div class="step-number">3</div>
+
+                    <h3>Connect</h3>
+
+                    <p>
+                        View business details and connect with the
+                        businesses you find.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- BUSINESS CTA -->
+    <section class="business-cta">
+
+        <div class="container">
+
+            <h2>Have a Business?</h2>
+
+            <p>
+                Add your business to LosOja and help customers
+                discover what you offer.
+            </p>
+
+            <button
+                type="button"
+                class="btn btn-light add-business-btn"
+                id="addBusinessBtn">
+
+                Add Your Business
+
             </button>
 
         </div>
 
+    </section>
 
-        <div id="authAlert" class="alert"></div>
+
+    <!-- ABOUT -->
+    <section
+        class="section"
+        id="about">
+
+        <div class="container">
+
+            <div class="section-title">
+
+                <h2>About LosOja</h2>
+
+            </div>
+
+            <div class="about-content">
+
+                <p>
+                    LosOja is a Nigerian business discovery platform
+                    designed to make it easier for people to find local
+                    businesses, services and opportunities.
+                </p>
+
+                <p>
+                    Businesses can create listings while customers can
+                    search, explore and review businesses.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
 
 
-        <!-- LOGIN -->
+<!-- LOGIN MODAL -->
+<div
+    class="modal"
+    id="loginModal">
+
+    <div class="modal-content">
+
+        <button
+            type="button"
+            class="modal-close"
+            aria-label="Close">
+            ×
+        </button>
+
+        <h2>Login to LosOja</h2>
 
         <form id="loginForm">
 
-            <h2>Welcome Back</h2>
-
             <div class="form-group">
-                <label for="loginEmail">Email</label>
+
+                <label for="loginEmail">
+                    Email
+                </label>
 
                 <input
                     type="email"
                     id="loginEmail"
                     required
-                    autocomplete="email"
-                >
+                    autocomplete="email">
+
             </div>
 
             <div class="form-group">
-                <label for="loginPassword">Password</label>
+
+                <label for="loginPassword">
+                    Password
+                </label>
 
                 <input
                     type="password"
                     id="loginPassword"
                     required
-                    autocomplete="current-password"
-                >
+                    autocomplete="current-password">
+
             </div>
 
             <button
                 type="submit"
-                class="btn btn-primary"
-            >
+                class="btn btn-primary form-submit">
+
                 Login
-            </button>
 
-        </form>
-
-
-        <!-- SIGNUP -->
-
-        <form
-            id="signupForm"
-            style="display:none;"
-        >
-
-            <h2>Create Your Account</h2>
-
-            <div class="form-group">
-                <label for="signupName">Your Name</label>
-
-                <input
-                    type="text"
-                    id="signupName"
-                    required
-                    maxlength="100"
-                >
-            </div>
-
-            <div class="form-group">
-                <label for="signupEmail">Email</label>
-
-                <input
-                    type="email"
-                    id="signupEmail"
-                    required
-                    autocomplete="email"
-                >
-            </div>
-
-            <div class="form-group">
-                <label for="signupPassword">Password</label>
-
-                <input
-                    type="password"
-                    id="signupPassword"
-                    required
-                    minlength="6"
-                    autocomplete="new-password"
-                >
-
-                <div class="form-help">
-                    Password must contain at least 6 characters.
-                </div>
-            </div>
-
-            <button
-                type="submit"
-                class="btn btn-primary"
-            >
-                Create Account
-            </button>
-
-        </form>
-
-    </div>
-
-</section>
-
-
-<!-- =========================
-     ADD BUSINESS PAGE
-========================== -->
-
-<section id="addBusinessPage" class="page">
-
-    <div class="form-container">
-
-        <h2>Add Your Business</h2>
-
-        <p>
-            List your business on FindIt Naija so people can discover it.
-        </p>
-
-        <div id="addBusinessAlert" class="alert"></div>
-
-        <form id="addBusinessForm">
-
-            <div class="form-group">
-                <label for="businessName">
-                    Business Name *
-                </label>
-
-                <input
-                    type="text"
-                    id="businessName"
-                    required
-                    maxlength="150"
-                >
-            </div>
-
-
-            <div class="form-group">
-                <label for="businessCategory">
-                    Category *
-                </label>
-
-                <select
-                    id="businessCategory"
-                    required
-                >
-                    <option value="">Select a category</option>
-                    <option value="Restaurant">Restaurant</option>
-                    <option value="Hotel">Hotel</option>
-                    <option value="Shopping">Shopping</option>
-                    <option value="Fashion">Fashion</option>
-                    <option value="Beauty">Beauty</option>
-                    <option value="Health">Health</option>
-                    <option value="Education">Education</option>
-                    <option value="Technology">Technology</option>
-                    <option value="Services">Services</option>
-                    <option value="Other">Other</option>
-                </select>
-            </div>
-
-
-            <div class="form-group">
-                <label for="businessLocation">
-                    Location *
-                </label>
-
-                <input
-                    type="text"
-                    id="businessLocation"
-                    placeholder="e.g. GRA, Port Harcourt, Rivers State"
-                    required
-                    maxlength="250"
-                >
-                <button type="button" class="btn btn-secondary btn-small" onclick="useMyLocationForBusiness('add')" style="margin-top:8px;">📍 Use My Current Location</button>
-                <div id="addLocationStatus" class="form-help"></div>
-                <input type="hidden" id="businessLatitude">
-                <input type="hidden" id="businessLongitude">
-            </div>
-
-
-            <div class="form-group">
-                <label for="businessPhone">
-                    Phone Number
-                </label>
-
-                <input
-                    type="tel"
-                    id="businessPhone"
-                    placeholder="e.g. 08012345678"
-                    maxlength="30"
-                >
-            </div>
-
-
-            <div class="form-group">
-                <label for="businessDescription">
-                    Description *
-                </label>
-
-                <textarea
-                    id="businessDescription"
-                    placeholder="Tell people about your business..."
-                    required
-                    maxlength="3000"
-                ></textarea>
-            </div>
-
-
-            <div class="form-group">
-                <label for="businessImage">
-                    Business Photo
-                </label>
-
-                <input
-                    type="file"
-                    id="businessImage"
-                    accept="image/jpeg,image/png,image/webp"
-                >
-
-                <div class="form-help">
-                    JPEG, PNG or WebP. Maximum size: 5 MB.
-                </div>
-            </div>
-
-
-            <button
-                type="submit"
-                class="btn btn-primary"
-            >
-                Add Business
-            </button>
-
-        </form>
-
-    </div>
-
-</section>
-
-
-<!-- =========================
-     DASHBOARD
-========================== -->
-
-<section id="dashboardPage" class="page">
-
-    <div class="container">
-
-        <div class="dashboard-header">
-            <h1>My Businesses</h1>
-
-            <p>
-                Manage the businesses you have listed on FindIt Naija.
-            </p>
-
-            <div id="dashboardAlert" class="alert"></div>
-        </div>
-
-        <div
-            id="dashboardGrid"
-            class="dashboard-grid"
-        >
-            <div class="loading">
-                Loading your businesses...
-            </div>
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- =========================
-     BUSINESS PROFILE PAGE
-========================== -->
-
-<section id="profilePage" class="page">
-
-    <div class="container profile-page">
-
-        <button
-            class="btn btn-secondary back-button"
-            onclick="closeBusinessProfile()"
-        >
-            ← Back to Businesses
-        </button>
-
-        <div id="profileContent">
-            <div class="loading">
-                Loading business profile...
-            </div>
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- =========================
-     EDIT BUSINESS MODAL
-========================== -->
-
-<div
-    id="editBusinessModal"
-    class="modal"
->
-
-    <div class="modal-content">
-
-        <div class="modal-header">
-
-            <h2>Edit Business</h2>
-
-            <button
-                class="close-btn"
-                onclick="closeEditModal()"
-            >
-                ×
-            </button>
-
-        </div>
-
-        <div id="editBusinessAlert" class="alert"></div>
-
-        <form id="editBusinessForm">
-
-            <input
-                type="hidden"
-                id="editBusinessId"
-            >
-
-
-            <div class="form-group">
-                <label for="editBusinessName">
-                    Business Name *
-                </label>
-
-                <input
-                    type="text"
-                    id="editBusinessName"
-                    required
-                    maxlength="150"
-                >
-            </div>
-
-
-            <div class="form-group">
-                <label for="editBusinessCategory">
-                    Category *
-                </label>
-
-                <select
-                    id="editBusinessCategory"
-                    required
-                >
-                    <option value="">Select a category</option>
-                    <option value="Restaurant">Restaurant</option>
-                    <option value="Hotel">Hotel</option>
-                    <option value="Shopping">Shopping</option>
-                    <option value="Fashion">Fashion</option>
-                    <option value="Beauty">Beauty</option>
-                    <option value="Health">Health</option>
-                    <option value="Education">Education</option>
-                    <option value="Technology">Technology</option>
-                    <option value="Services">Services</option>
-                    <option value="Other">Other</option>
-                </select>
-            </div>
-
-
-            <div class="form-group">
-                <label for="editBusinessLocation">
-                    Location *
-                </label>
-
-                <input
-                    type="text"
-                    id="editBusinessLocation"
-                    required
-                    maxlength="250"
-                >
-                <button type="button" class="btn btn-secondary btn-small" onclick="useMyLocationForBusiness('edit')" style="margin-top:8px;">📍 Update With My Current Location</button>
-                <div id="editLocationStatus" class="form-help"></div>
-                <input type="hidden" id="editBusinessLatitude">
-                <input type="hidden" id="editBusinessLongitude">
-            </div>
-
-
-            <div class="form-group">
-                <label for="editBusinessPhone">
-                    Phone Number
-                </label>
-
-                <input
-                    type="tel"
-                    id="editBusinessPhone"
-                    maxlength="30"
-                >
-            </div>
-
-
-            <div class="form-group">
-                <label for="editBusinessDescription">
-                    Description *
-                </label>
-
-                <textarea
-                    id="editBusinessDescription"
-                    required
-                    maxlength="3000"
-                ></textarea>
-            </div>
-
-
-            <div class="form-group">
-                <label for="editBusinessImage">
-                    Replace Business Photo
-                </label>
-
-                <input
-                    type="file"
-                    id="editBusinessImage"
-                    accept="image/jpeg,image/png,image/webp"
-                >
-
-                <div class="form-help">
-                    Leave empty to keep the current photo.
-                </div>
-            </div>
-
-
-            <button
-                type="submit"
-                class="btn btn-primary"
-            >
-                Save Changes
-            </button>
-
-            <button
-                type="button"
-                class="btn btn-secondary"
-                onclick="closeEditModal()"
-            >
-                Cancel
             </button>
 
         </form>
@@ -1540,3406 +470,318 @@
 </div>
 
 
-<!-- =========================
-     FOOTER
-========================== -->
-
-<footer>
-    <p>
-        <strong>FindIt Naija</strong>
-    </p>
-
-    <p>
-        Discover businesses. Support local businesses. Grow Nigeria.
-    </p>
-
-    <p>
-        © 2026 FindIt Naija. All rights reserved.
-    </p>
-</footer>
-
-
-<!-- SUPABASE -->
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-
-<script>
-
-    /* =========================================================
-       SUPABASE CONFIGURATION
-    ========================================================== */
-
-    const SUPABASE_URL =
-        "https://ycxshwgeebskdozmornh.supabase.co";
-
-    const SUPABASE_ANON_KEY =
-        "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
-
-    const supabaseClient =
-        window.supabase.createClient(
-            SUPABASE_URL,
-            SUPABASE_ANON_KEY
-        );
-
-
-    const STORAGE_BUCKET =
-        "business-images";
-
-
-    /* =========================================================
-       GLOBAL VARIABLES
-    ========================================================== */
-
-    let currentUser = null;
-
-    let allBusinesses = [];
-
-    let currentReviews = {};
-
-    let currentSearch = "";
-
-    let currentCategory = "";
-
-    let userLatitude = null;
-    let userLongitude = null;
-    let nearMeMode = false;
-    const NEAR_ME_RADIUS_KM = 50;
-
-
-    /* =========================================================
-       PAGE NAVIGATION
-    ========================================================== */
-
-    function showPage(pageName) {
-
-        const pages = document.querySelectorAll(".page");
-
-        pages.forEach(page => {
-            page.classList.remove("active");
-        });
-
-
-        if (pageName === "home") {
-
-            document
-                .getElementById("homePage")
-                .classList.add("active");
-
-            loadBusinesses();
-
-            return;
-        }
-
-
-        if (pageName === "auth") {
-
-            document
-                .getElementById("authPage")
-                .classList.add("active");
-
-            return;
-        }
-
-
-        if (pageName === "addBusiness") {
-
-            if (!currentUser) {
-
-                showPage("auth");
-
-                switchAuth("login");
-
-                showAlert(
-                    "authAlert",
-                    "Please log in before adding a business.",
-                    "info"
-                );
-
-                return;
-            }
-
-            document
-                .getElementById("addBusinessPage")
-                .classList.add("active");
-
-            return;
-        }
-
-
-        if (pageName === "dashboard") {
-
-            if (!currentUser) {
-
-                showPage("auth");
-
-                switchAuth("login");
-
-                return;
-            }
-
-            document
-                .getElementById("dashboardPage")
-                .classList.add("active");
-
-            loadMyBusinesses();
-
-            return;
-        }
-
-
-        if (pageName === "profile") {
-
-            document
-                .getElementById("profilePage")
-                .classList.add("active");
-
-            return;
-        }
-    }
-
-
-    /* =========================================================
-       AUTH TABS
-    ========================================================== */
-
-    function switchAuth(type) {
-
-        const loginForm =
-            document.getElementById("loginForm");
-
-        const signupForm =
-            document.getElementById("signupForm");
-
-        const loginTab =
-            document.getElementById("loginTab");
-
-        const signupTab =
-            document.getElementById("signupTab");
-
-
-        hideAlert("authAlert");
-
-
-        if (type === "login") {
-
-            loginForm.style.display = "block";
-
-            signupForm.style.display = "none";
-
-            loginTab.classList.add("active");
-
-            signupTab.classList.remove("active");
-
-        } else {
-
-            loginForm.style.display = "none";
-
-            signupForm.style.display = "block";
-
-            loginTab.classList.remove("active");
-
-            signupTab.classList.add("active");
-        }
-    }
-
-
-    /* =========================================================
-       ALERT HELPERS
-    ========================================================== */
-
-    function showAlert(
-        elementId,
-        message,
-        type = "info"
-    ) {
-
-        const element =
-            document.getElementById(elementId);
-
-        if (!element) return;
-
-        element.textContent = message;
-
-        element.className =
-            "alert show " + type;
-    }
-
-
-    function hideAlert(elementId) {
-
-        const element =
-            document.getElementById(elementId);
-
-        if (!element) return;
-
-        element.className = "alert";
-
-        element.textContent = "";
-    }
-
-
-    /* =========================================================
-       HTML ESCAPING
-    ========================================================== */
-
-    function escapeHTML(value) {
-
-        if (value === null || value === undefined) {
-            return "";
-        }
-
-        return String(value)
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
-    }
-
-
-    function escapeJS(value) {
-
-        return String(value || "")
-            .replace(/\\/g, "\\\\")
-            .replace(/'/g, "\\'")
-            .replace(/"/g, '\\"')
-            .replace(/\n/g, "\\n")
-            .replace(/\r/g, "\\r");
-    }
-
-
-    /* =========================================================
-       AUTH
-    ========================================================== */
-
-    async function checkAuth() {
-
-        try {
-
-            const {
-                data,
-                error
-            } = await supabaseClient.auth.getUser();
-
-
-            if (error) {
-                currentUser = null;
-            } else {
-                currentUser = data.user || null;
-            }
-
-
-            updateNavigation();
-
-        } catch (error) {
-
-            console.error("Auth check error:", error);
-
-            currentUser = null;
-
-            updateNavigation();
-        }
-    }
-
-
-    function updateNavigation() {
-
-        const loginNav =
-            document.getElementById("loginNav");
-
-        const logoutNav =
-            document.getElementById("logoutNav");
-
-        const dashboardNav =
-            document.getElementById("dashboardNav");
-
-
-        if (currentUser) {
-
-            loginNav.style.display = "none";
-
-            logoutNav.style.display = "inline-block";
-
-            dashboardNav.style.display = "inline-block";
-
-        } else {
-
-            loginNav.style.display = "inline-block";
-
-            logoutNav.style.display = "none";
-
-            dashboardNav.style.display = "none";
-        }
-    }
-
-
-    supabaseClient.auth.onAuthStateChange(
-        async (event, session) => {
-
-            currentUser =
-                session?.user || null;
-
-            updateNavigation();
-
-            if (event === "SIGNED_OUT") {
-
-                currentUser = null;
-
-                showPage("home");
-            }
-        }
-    );
-
-
-    /* =========================================================
-       SIGN UP
-    ========================================================== */
-
-    document
-        .getElementById("signupForm")
-        .addEventListener("submit", async function(event) {
-
-            event.preventDefault();
-
-            hideAlert("authAlert");
-
-
-            const name =
-                document
-                    .getElementById("signupName")
-                    .value
-                    .trim();
-
-            const email =
-                document
-                    .getElementById("signupEmail")
-                    .value
-                    .trim();
-
-            const password =
-                document
-                    .getElementById("signupPassword")
-                    .value;
-
-
-            if (!name || !email || !password) {
-
-                showAlert(
-                    "authAlert",
-                    "Please fill in all fields.",
-                    "error"
-                );
-
-                return;
-            }
-
-
-            const button =
-                this.querySelector("button[type='submit']");
-
-            button.disabled = true;
-
-            button.textContent = "Creating account...";
-
-
-            try {
-
-                const {
-                    data,
-                    error
-                } = await supabaseClient.auth.signUp({
-
-                    email: email,
-
-                    password: password,
-
-                    options: {
-                        data: {
-                            display_name: name
-                        }
-                    }
-                });
-
-
-                if (error) {
-                    throw error;
-                }
-
-
-                if (data.session) {
-
-                    showAlert(
-                        "authAlert",
-                        "Account created successfully!",
-                        "success"
-                    );
-
-                    currentUser = data.user;
-
-                    updateNavigation();
-
-                    setTimeout(() => {
-                        showPage("home");
-                    }, 700);
-
-                } else {
-
-                    showAlert(
-                        "authAlert",
-                        "Account created. Please check your email if email confirmation is enabled.",
-                        "success"
-                    );
-                }
-
-
-            } catch (error) {
-
-                console.error(error);
-
-                showAlert(
-                    "authAlert",
-                    error.message || "Unable to create account.",
-                    "error"
-                );
-
-            } finally {
-
-                button.disabled = false;
-
-                button.textContent = "Create Account";
-            }
-        });
-
-
-    /* =========================================================
-       LOGIN
-    ========================================================== */
-
-    document
-        .getElementById("loginForm")
-        .addEventListener("submit", async function(event) {
-
-            event.preventDefault();
-
-            hideAlert("authAlert");
-
-
-            const email =
-                document
-                    .getElementById("loginEmail")
-                    .value
-                    .trim();
-
-            const password =
-                document
-                    .getElementById("loginPassword")
-                    .value;
-
-
-            const button =
-                this.querySelector("button[type='submit']");
-
-            button.disabled = true;
-
-            button.textContent = "Logging in...";
-
-
-            try {
-
-                const {
-                    data,
-                    error
-                } =
-                    await supabaseClient.auth.signInWithPassword({
-
-                        email: email,
-
-                        password: password
-                    });
-
-
-                if (error) {
-                    throw error;
-                }
-
-
-                currentUser = data.user;
-
-                updateNavigation();
-
-
-                showAlert(
-                    "authAlert",
-                    "Login successful!",
-                    "success"
-                );
-
-
-                this.reset();
-
-
-                setTimeout(() => {
-                    showPage("home");
-                }, 500);
-
-
-            } catch (error) {
-
-                console.error(error);
-
-                showAlert(
-                    "authAlert",
-                    error.message || "Unable to log in.",
-                    "error"
-                );
-
-            } finally {
-
-                button.disabled = false;
-
-                button.textContent = "Login";
-            }
-        });
-
-
-    /* =========================================================
-       LOGOUT
-    ========================================================== */
-
-    async function logout() {
-
-        try {
-
-            const {
-                error
-            } = await supabaseClient.auth.signOut();
-
-
-            if (error) {
-                throw error;
-            }
-
-
-            currentUser = null;
-
-            updateNavigation();
-
-            closeBusinessProfile();
-
-            showPage("home");
-
-
-        } catch (error) {
-
-            console.error(error);
-
-            alert(
-                error.message ||
-                "Unable to log out."
-            );
-        }
-    }
-
-
-    /* =========================================================
-       IMAGE VALIDATION
-    ========================================================== */
-
-    function validateImage(file) {
-
-        if (!file) {
-            return true;
-        }
-
-
-        const allowedTypes = [
-            "image/jpeg",
-            "image/png",
-            "image/webp"
-        ];
-
-
-        if (!allowedTypes.includes(file.type)) {
-
-            alert(
-                "Please choose a JPEG, PNG or WebP image."
-            );
-
-            return false;
-        }
-
-
-        const maxSize =
-            5 * 1024 * 1024;
-
-
-        if (file.size > maxSize) {
-
-            alert(
-                "Image must be 5 MB or smaller."
-            );
-
-            return false;
-        }
-
-
-        return true;
-    }
-
-
-    /* =========================================================
-       UPLOAD IMAGE
-    ========================================================== */
-
-    async function uploadBusinessImage(file) {
-
-        if (!currentUser || !file) {
-            return null;
-        }
-
-
-        if (!validateImage(file)) {
-            throw new Error("Invalid image.");
-        }
-
-
-        const extension =
-            file.name
-                .split(".")
-                .pop()
-                .toLowerCase();
-
-
-        const fileName =
-            currentUser.id +
-            "/" +
-            crypto.randomUUID() +
-            "." +
-            extension;
-
-
-        const {
-            error
-        } = await supabaseClient.storage
-            .from(STORAGE_BUCKET)
-            .upload(
-                fileName,
-                file,
-                {
-                    cacheControl: "3600",
-                    upsert: false,
-                    contentType: file.type
-                }
-            );
-
-
-        if (error) {
-            throw error;
-        }
-
-
-        const {
-            data
-        } = supabaseClient.storage
-            .from(STORAGE_BUCKET)
-            .getPublicUrl(fileName);
-
-
-        return data.publicUrl;
-    }
-
-
-    /* =========================================================
-       STORAGE PATH FROM PUBLIC URL
-    ========================================================== */
-
-    function getStoragePathFromUrl(url) {
-
-        if (!url) {
-            return null;
-        }
-
-
-        const marker =
-            "/storage/v1/object/public/" +
-            STORAGE_BUCKET +
-            "/";
-
-
-        const index =
-            url.indexOf(marker);
-
-
-        if (index === -1) {
-            return null;
-        }
-
-
-        return decodeURIComponent(
-            url.substring(
-                index + marker.length
-            )
-        );
-    }
-
-
-    /* =========================================================
-       DELETE BUSINESS IMAGE
-    ========================================================== */
-
-    async function deleteBusinessImage(url) {
-
-        const path =
-            getStoragePathFromUrl(url);
-
-
-        if (!path) {
-            return;
-        }
-
-
-        const {
-            error
-        } = await supabaseClient.storage
-            .from(STORAGE_BUCKET)
-            .remove([path]);
-
-
-        if (error) {
-
-            console.warn(
-                "Could not delete image:",
-                error
-            );
-        }
-    }
-
-
-    /* =========================================================
-       LOCATION HELPERS
-    ========================================================== */
-
-    function getCurrentPosition() {
-        return new Promise((resolve, reject) => {
-            if (!navigator.geolocation) { reject(new Error("Location services are not supported by this browser.")); return; }
-            navigator.geolocation.getCurrentPosition(
-                position => resolve(position),
-                error => {
-                    let message = "Unable to get your location.";
-                    if (error.code === 1) message = "Location permission was denied. Please allow location access and try again.";
-                    if (error.code === 2) message = "Your location could not be determined. Please try again.";
-                    if (error.code === 3) message = "Location request timed out. Please try again.";
-                    reject(new Error(message));
-                },
-                { enableHighAccuracy: true, timeout: 15000, maximumAge: 60000 }
-            );
-        });
-    }
-
-    function isValidCoordinate(value) { return value !== null && value !== undefined && value !== "" && Number.isFinite(Number(value)); }
-
-    function distanceInKm(lat1, lon1, lat2, lon2) {
-        const radians = degrees => degrees * Math.PI / 180;
-        const earthRadius = 6371;
-        const dLat = radians(lat2 - lat1);
-        const dLon = radians(lon2 - lon1);
-        const a = Math.sin(dLat / 2) ** 2 + Math.cos(radians(lat1)) * Math.cos(radians(lat2)) * Math.sin(dLon / 2) ** 2;
-        return earthRadius * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    }
-
-    function formatDistance(distance) {
-        if (!Number.isFinite(distance)) return "";
-        return distance < 1 ? `${Math.round(distance * 1000)} m away` : `${distance.toFixed(1)} km away`;
-    }
-
-    function setLocationStatus(message) {
-        const el = document.getElementById("locationStatus");
-        if (!el) return;
-        el.textContent = message;
-        el.classList.add("show");
-    }
-
-    function clearLocationStatus() {
-        const el = document.getElementById("locationStatus");
-        if (!el) return;
-        el.textContent = "";
-        el.classList.remove("show");
-    }
-
-    async function findBusinessesNearMe() {
-        setLocationStatus("Getting your location...");
-        try {
-            const position = await getCurrentPosition();
-            userLatitude = position.coords.latitude;
-            userLongitude = position.coords.longitude;
-            nearMeMode = true;
-            const nearby = allBusinesses.map(business => {
-                const copy = { ...business };
-                copy.distance_km = isValidCoordinate(business.latitude) && isValidCoordinate(business.longitude)
-                    ? distanceInKm(userLatitude, userLongitude, Number(business.latitude), Number(business.longitude)) : Infinity;
-                return copy;
-            }).filter(business => business.distance_km <= NEAR_ME_RADIUS_KM)
-              .sort((a, b) => a.distance_km - b.distance_km);
-            document.getElementById("showAllBusinessesBtn").style.display = "inline-block";
-            renderBusinesses(nearby, true);
-            setLocationStatus(nearby.length
-                ? `Showing ${nearby.length} nearby business${nearby.length === 1 ? "" : "es"} within ${NEAR_ME_RADIUS_KM} km, nearest first.`
-                : `No businesses with saved GPS coordinates were found within ${NEAR_ME_RADIUS_KM} km.`);
-        } catch (error) {
-            console.error(error);
-            setLocationStatus(error.message);
-            alert(error.message);
-        }
-    }
-
-    function showAllBusinesses() {
-        nearMeMode = false; userLatitude = null; userLongitude = null;
-        clearLocationStatus();
-        document.getElementById("showAllBusinessesBtn").style.display = "none";
-        loadBusinesses(currentSearch);
-    }
-
-    async function useMyLocationForBusiness(mode) {
-        const ids = mode === "edit" ? {status:"editLocationStatus",lat:"editBusinessLatitude",lng:"editBusinessLongitude",location:"editBusinessLocation"} : {status:"addLocationStatus",lat:"businessLatitude",lng:"businessLongitude",location:"businessLocation"};
-        const status = document.getElementById(ids.status);
-        if (status) status.textContent = "Getting your location...";
-        try {
-            const position = await getCurrentPosition();
-            const lat = position.coords.latitude, lng = position.coords.longitude;
-            document.getElementById(ids.lat).value = lat;
-            document.getElementById(ids.lng).value = lng;
-            const input = document.getElementById(ids.location);
-            if (!input.value.trim()) input.value = `Current location (${lat.toFixed(5)}, ${lng.toFixed(5)})`;
-            if (status) status.textContent = `GPS location saved. Accuracy: approximately ${Math.round(position.coords.accuracy)} metres.`;
-        } catch (error) {
-            if (status) status.textContent = error.message;
-            alert(error.message);
-        }
-    }
-
-    /* =========================================================
-       ADD BUSINESS
-    ========================================================== */
-
-    document
-        .getElementById("addBusinessForm")
-        .addEventListener("submit", async function(event) {
-
-            event.preventDefault();
-
-            hideAlert("addBusinessAlert");
-
-
-            if (!currentUser) {
-
-                showAlert(
-                    "addBusinessAlert",
-                    "Please log in first.",
-                    "error"
-                );
-
-                return;
-            }
-
-
-            const name =
-                document
-                    .getElementById("businessName")
-                    .value
-                    .trim();
-
-            const category =
-                document
-                    .getElementById("businessCategory")
-                    .value;
-
-            const location =
-                document
-                    .getElementById("businessLocation")
-                    .value
-                    .trim();
-
-            const phone =
-                document
-                    .getElementById("businessPhone")
-                    .value
-                    .trim();
-
-            const description =
-                document
-                    .getElementById("businessDescription")
-                    .value
-                    .trim();
-
-            const latitudeValue = document.getElementById("businessLatitude").value;
-            const longitudeValue = document.getElementById("businessLongitude").value;
-            const latitude = isValidCoordinate(latitudeValue) ? Number(latitudeValue) : null;
-            const longitude = isValidCoordinate(longitudeValue) ? Number(longitudeValue) : null;
-
-            const imageFile =
-                document
-                    .getElementById("businessImage")
-                    .files[0];
-
-
-            if (!name || !category || !location || !description) {
-
-                showAlert(
-                    "addBusinessAlert",
-                    "Please complete all required fields.",
-                    "error"
-                );
-
-                return;
-            }
-
-
-            if (
-                imageFile &&
-                !validateImage(imageFile)
-            ) {
-                return;
-            }
-
-
-            const button =
-                this.querySelector("button[type='submit']");
-
-            button.disabled = true;
-
-            button.textContent = "Adding business...";
-
-
-            let imageUrl = null;
-
-
-            try {
-
-                if (imageFile) {
-
-                    imageUrl =
-                        await uploadBusinessImage(
-                            imageFile
-                        );
-                }
-
-
-                const {
-                    data,
-                    error
-                } =
-                    await supabaseClient
-                        .from("businesses")
-                        .insert({
-
-                            name: name,
-
-                            category: category,
-
-                            location: location,
-
-                            phone: phone,
-
-                            description: description,
-
-                            user_id: currentUser.id,
-
-                            image_url: imageUrl,
-
-                            latitude: latitude,
-
-                            longitude: longitude
-
-                        })
-                        .select()
-                        .single();
-
-
-                if (error) {
-
-                    if (imageUrl) {
-                        await deleteBusinessImage(imageUrl);
-                    }
-
-                    throw error;
-                }
-
-
-                showAlert(
-                    "addBusinessAlert",
-                    "Your business has been added to FindIt Naija!",
-                    "success"
-                );
-
-
-                this.reset();
-
-
-                await loadBusinesses();
-
-
-                setTimeout(() => {
-
-                    openBusinessProfile(
-                        data.id
-                    );
-
-                }, 600);
-
-
-            } catch (error) {
-
-                console.error(error);
-
-                showAlert(
-                    "addBusinessAlert",
-                    error.message ||
-                    "Unable to add your business.",
-                    "error"
-                );
-
-            } finally {
-
-                button.disabled = false;
-
-                button.textContent = "Add Business";
-            }
-        });
-
-
-    /* =========================================================
-       LOAD BUSINESSES
-    ========================================================== */
-
-    async function loadBusinesses(searchTerm = "") {
-
-        const grid =
-            document.getElementById("businessGrid");
-
-
-        grid.innerHTML =
-            `<div class="loading">
-                Loading businesses...
-            </div>`;
-
-
-        try {
-
-            let query =
-                supabaseClient
-                    .from("businesses")
-                    .select("*")
-                    .order(
-                        "created_at",
-                        { ascending: false }
-                    );
-
-
-            const safeTerm =
-                String(searchTerm || "")
-                    .trim()
-                    .replace(/%/g, "")
-                    .replace(/_/g, "");
-
-
-            if (safeTerm) {
-
-                query =
-                    query.or(
-                        "name.ilike.%" +
-                        safeTerm +
-                        "%," +
-                        "category.ilike.%" +
-                        safeTerm +
-                        "%," +
-                        "location.ilike.%" +
-                        safeTerm +
-                        "%," +
-                        "description.ilike.%" +
-                        safeTerm +
-                        "%"
-                    );
-            }
-
-
-            if (currentCategory) {
-
-                query =
-                    query.eq(
-                        "category",
-                        currentCategory
-                    );
-            }
-
-
-            const {
-                data,
-                error
-            } = await query;
-
-
-            if (error) {
-                throw error;
-            }
-
-
-            allBusinesses =
-                data || [];
-
-
-            await attachReviewStats(
-                allBusinesses
-            );
-
-
-            renderBusinesses(
-                allBusinesses
-            );
-
-
-        } catch (error) {
-
-            console.error(error);
-
-            grid.innerHTML =
-                `<div class="empty-state">
-                    <h3>Unable to load businesses</h3>
-                    <p>${escapeHTML(error.message || "Please try again.")}</p>
-                </div>`;
-        }
-    }
-
-
-    /* =========================================================
-       ATTACH REVIEW STATS
-    ========================================================== */
-
-    async function attachReviewStats(businesses) {
-
-        if (!businesses.length) {
-            return;
-        }
-
-
-        const ids =
-            businesses.map(
-                business => business.id
-            );
-
-
-        try {
-
-            const {
-                data,
-                error
-            } =
-                await supabaseClient
-                    .from("reviews")
-                    .select(
-                        "business_id,rating"
-                    )
-                    .in(
-                        "business_id",
-                        ids
-                    );
-
-
-            if (error) {
-                throw error;
-            }
-
-
-            const stats = {};
-
-
-            (data || []).forEach(review => {
-
-                if (!stats[review.business_id]) {
-
-                    stats[review.business_id] = {
-                        total: 0,
-                        count: 0
-                    };
-                }
-
-
-                stats[review.business_id].total +=
-                    Number(review.rating);
-
-
-                stats[review.business_id].count++;
-            });
-
-
-            businesses.forEach(business => {
-
-                const stat =
-                    stats[business.id];
-
-
-                if (stat && stat.count) {
-
-                    business.average_rating =
-                        stat.total / stat.count;
-
-                    business.review_count =
-                        stat.count;
-
-                } else {
-
-                    business.average_rating = 0;
-
-                    business.review_count = 0;
-                }
-            });
-
-
-        } catch (error) {
-
-            console.warn(
-                "Unable to load rating stats:",
-                error
-            );
-
-
-            businesses.forEach(business => {
-
-                business.average_rating =
-                    business.average_rating || 0;
-
-                business.review_count =
-                    business.review_count || 0;
-            });
-        }
-    }
-
-
-    /* =========================================================
-       STAR DISPLAY
-    ========================================================== */
-
-    function createStars(rating) {
-
-        const rounded =
-            Math.round(Number(rating) || 0);
-
-
-        let result = "";
-
-
-        for (let i = 1; i <= 5; i++) {
-
-            result +=
-                i <= rounded
-                    ? "★"
-                    : "☆";
-        }
-
-
-        return result;
-    }
-
-
-    /* =========================================================
-       BUSINESS CARD
-    ========================================================== */
-
-    function createBusinessCard(business) {
-
-        const image =
-            business.image_url
-                ? `
-                    <img
-                        class="business-image"
-                        src="${escapeHTML(business.image_url)}"
-                        alt="${escapeHTML(business.name)}"
-                        loading="lazy"
-                        onclick="openBusinessProfile('${escapeJS(business.id)}')"
-                        style="cursor:pointer;"
-                    >
-                  `
-                : `
-                    <div
-                        class="business-image placeholder"
-                        onclick="openBusinessProfile('${escapeJS(business.id)}')"
-                        style="cursor:pointer;"
-                    >
-                        🏢
-                    </div>
-                  `;
-
-
-        const rating =
-            Number(
-                business.average_rating || 0
-            );
-
-
-        const ratingText =
-            business.review_count
-                ? rating.toFixed(1)
-                : "No ratings yet";
-
-
-        const phone =
-            business.phone
-                ? escapeHTML(business.phone)
-                : "Phone not provided";
-
-
-        return `
-            <article class="business-card">
-
-                ${image}
-
-                <div class="business-card-body">
-
-                    <span class="category-label">
-                        ${escapeHTML(business.category)}
-                    </span>
-
-                    <h3>
-                        <button
-                            onclick="openBusinessProfile('${escapeJS(business.id)}')"
-                        >
-                            ${escapeHTML(business.name)}
-                        </button>
-                    </h3>
-
-                    <div class="rating-summary">
-
-                        <span class="stars">
-                            ${createStars(rating)}
-                        </span>
-
-                        <span class="rating-number">
-                            ${ratingText}
-                        </span>
-
-                        <span class="rating-count">
-                            ${
-                                business.review_count
-                                    ? `(${business.review_count} review${business.review_count === 1 ? "" : "s"})`
-                                    : ""
-                            }
-                        </span>
-
-                    </div>
-
-                    <div class="business-info">
-                        📍 ${escapeHTML(business.location)}
-                    </div>
-                    ${Number.isFinite(Number(business.distance_km)) ? `<div class="distance-badge">📍 ${escapeHTML(formatDistance(Number(business.distance_km)))}</div>` : ""}
-
-                    <div class="business-info">
-                        📞 ${phone}
-                    </div>
-
-                    <div class="business-description">
-                        ${escapeHTML(
-                            truncateText(
-                                business.description,
-                                130
-                            )
-                        )}
-                    </div>
-
-                </div>
-
-
-                <div class="business-actions">
-
-                    <button
-                        class="btn btn-primary btn-small"
-                        onclick="openBusinessProfile('${escapeJS(business.id)}')"
-                    >
-                        View Profile
-                    </button>
-
-                    ${
-                        business.phone
-                        ? `
-                            <button
-                                class="btn btn-secondary btn-small"
-                                onclick="callBusiness('${escapeJS(business.phone)}')"
-                            >
-                                📞 Call
-                            </button>
-                        `
-                        : ""
-                    }
-
-                    <button
-                        class="btn btn-secondary btn-small"
-                        onclick="openDirections('${escapeJS(business.location)}')"
-                    >
-                        📍 Directions
-                    </button>
-
-                </div>
-
-            </article>
-        `;
-    }
-
-
-    function truncateText(text, length) {
-
-        const value =
-            String(text || "");
-
-
-        if (value.length <= length) {
-            return value;
-        }
-
-
-        return value.substring(
-            0,
-            length
-        ) + "...";
-    }
-
-
-    function renderBusinesses(businesses, isNearMe = false) {
-
-        const grid =
-            document.getElementById("businessGrid");
-
-        const resultsText =
-            document.getElementById(
-                "businessResultsText"
-            );
-
-
-        if (!businesses.length) {
-
-            grid.innerHTML =
-                `
-                <div class="empty-state">
-
-                    <h3>No businesses found</h3>
-
-                    <p>
-                        Try another search or category.
-                    </p>
-
-                </div>
-                `;
-
-
-            resultsText.textContent =
-                "No businesses found";
-
-            return;
-        }
-
-
-        resultsText.textContent =
-            isNearMe
-                ? `${businesses.length} nearby business${businesses.length === 1 ? "" : "es"} found`
-                : `${businesses.length} business${businesses.length === 1 ? "" : "es"} found`;
-
-
-        grid.innerHTML =
-            businesses
-                .map(createBusinessCard)
-                .join("");
-    }
-
-
-    /* =========================================================
-       SEARCH
-    ========================================================== */
-
-    function performSearch() {
-
-        currentSearch =
-            document
-                .getElementById("searchInput")
-                .value
-                .trim();
-
-
-        currentCategory = "";
-
-        loadBusinesses(
-            currentSearch
-        );
-    }
-
-
-    document
-        .getElementById("searchInput")
-        .addEventListener(
-            "keydown",
-            function(event) {
-
-                if (event.key === "Enter") {
-                    performSearch();
-                }
-            }
-        );
-
-
-    function filterCategory(category) {
-
-        currentCategory =
-            category;
-
-        currentSearch = "";
-
-        document
-            .getElementById("searchInput")
-            .value = "";
-
-
-        loadBusinesses();
-    }
-
-
-    /* =========================================================
-       CALL BUSINESS
-    ========================================================== */
-
-    function callBusiness(phone) {
-
-        if (!phone) {
-
-            alert(
-                "This business has not provided a phone number."
-            );
-
-            return;
-        }
-
-
-        window.location.href =
-            "tel:" + phone;
-    }
-
-
-    /* =========================================================
-       DIRECTIONS
-    ========================================================== */
-
-    function openDirections(location) {
-
-        if (!location) {
-            return;
-        }
-
-
-        const url =
-            "https://www.google.com/maps/search/?api=1&query=" +
-            encodeURIComponent(location);
-
-
-        window.open(
-            url,
-            "_blank",
-            "noopener,noreferrer"
-        );
-    }
-
-
-    /* =========================================================
-       BUSINESS PROFILE
-    ========================================================== */
-
-    async function openBusinessProfile(
-        businessId,
-        updateHash = true
-    ) {
-
-        showPage("profile");
-
-
-        const content =
-            document.getElementById(
-                "profileContent"
-            );
-
-
-        content.innerHTML =
-            `
-            <div class="loading">
-                Loading business profile...
-            </div>
-            `;
-
-
-        try {
-
-            let business =
-                allBusinesses.find(
-                    item => item.id === businessId
-                );
-
-
-            if (!business) {
-
-                const {
-                    data,
-                    error
-                } =
-                    await supabaseClient
-                        .from("businesses")
-                        .select("*")
-                        .eq("id", businessId)
-                        .single();
-
-
-                if (error) {
-                    throw error;
-                }
-
-
-                business = data;
-
-
-                await attachReviewStats(
-                    [business]
-                );
-            }
-
-
-            if (updateHash) {
-
-                history.pushState(
-                    null,
-                    "",
-                    "#business=" +
-                    encodeURIComponent(
-                        businessId
-                    )
-                );
-            }
-
-
-            await renderBusinessProfile(
-                business
-            );
-
-
-        } catch (error) {
-
-            console.error(error);
-
-            content.innerHTML =
-                `
-                <div class="empty-state">
-
-                    <h3>Business not found</h3>
-
-                    <p>
-                        ${escapeHTML(
-                            error.message ||
-                            "This business may have been removed."
-                        )}
-                    </p>
-
-                </div>
-                `;
-        }
-    }
-
-
-    async function renderBusinessProfile(
-        business
-    ) {
-
-        const content =
-            document.getElementById(
-                "profileContent"
-            );
-
-
-        const rating =
-            Number(
-                business.average_rating || 0
-            );
-
-
-        const reviewCount =
-            Number(
-                business.review_count || 0
-            );
-
-
-        const imageHTML =
-            business.image_url
-                ? `
-                    <img
-                        class="profile-image"
-                        src="${escapeHTML(business.image_url)}"
-                        alt="${escapeHTML(business.name)}"
-                    >
-                  `
-                : `
-                    <div class="profile-image-placeholder">
-                        🏢
-                    </div>
-                  `;
-
-
-        content.innerHTML =
-            `
-            <div class="profile-card">
-
-                <div class="profile-hero">
-
-                    ${imageHTML}
-
-                    <div class="profile-info">
-
-                        <span class="profile-category">
-                            ${escapeHTML(
-                                business.category
-                            )}
-                        </span>
-
-                        <h1>
-                            ${escapeHTML(
-                                business.name
-                            )}
-                        </h1>
-
-
-                        <div class="rating-summary">
-
-                            <span class="stars">
-                                ${createStars(rating)}
-                            </span>
-
-                            <span class="rating-number">
-                                ${
-                                    reviewCount
-                                        ? rating.toFixed(1)
-                                        : "No ratings"
-                                }
-                            </span>
-
-                            <span class="rating-count">
-                                ${
-                                    reviewCount
-                                        ? `(${reviewCount} review${reviewCount === 1 ? "" : "s"})`
-                                        : ""
-                                }
-                            </span>
-
-                        </div>
-
-
-                        <div class="profile-detail">
-                            📍 <strong>Location:</strong><br>
-                            ${escapeHTML(
-                                business.location
-                            )}
-                            ${Number.isFinite(Number(business.distance_km)) ? `<br><span class="distance-badge">📍 ${escapeHTML(formatDistance(Number(business.distance_km)))}</span>` : ""}
-                        </div>
-
-
-                        ${
-                            business.phone
-                            ? `
-                                <div class="profile-detail">
-                                    📞 <strong>Phone:</strong><br>
-                                    ${escapeHTML(
-                                        business.phone
-                                    )}
-                                </div>
-                              `
-                            : ""
-                        }
-
-
-                        <div class="profile-actions">
-
-                            ${
-                                business.phone
-                                ? `
-                                    <button
-                                        class="btn btn-primary"
-                                        onclick="callBusiness('${escapeJS(business.phone)}')"
-                                    >
-                                        📞 Call Business
-                                    </button>
-                                  `
-                                : ""
-                            }
-
-                            <button
-                                class="btn btn-secondary"
-                                onclick="openDirections('${escapeJS(business.location)}')"
-                            >
-                                📍 Get Directions
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <div class="profile-description">
-
-                    <h2>About This Business</h2>
-
-                    <p>
-                        ${escapeHTML(
-                            business.description ||
-                            "No description provided."
-                        )}
-                    </p>
-
-                </div>
-
-
-                <div class="profile-reviews">
-
-                    <h2>
-                        Reviews & Ratings
-                    </h2>
-
-                    <div
-                        id="profileReviewArea"
-                        class="profile-review-list"
-                    >
-                        Loading reviews...
-                    </div>
-
-                </div>
+<!-- SIGN UP MODAL -->
+<div
+    class="modal"
+    id="signupModal">
+
+    <div class="modal-content">
+
+        <button
+            type="button"
+            class="modal-close"
+            aria-label="Close">
+            ×
+        </button>
+
+        <h2>Create a LosOja Account</h2>
+
+        <form id="signupForm">
+
+            <div class="form-group">
+
+                <label for="signupName">
+                    Full Name
+                </label>
+
+                <input
+                    type="text"
+                    id="signupName"
+                    required
+                    autocomplete="name">
 
             </div>
-            `;
+
+            <div class="form-group">
+
+                <label for="signupEmail">
+                    Email
+                </label>
+
+                <input
+                    type="email"
+                    id="signupEmail"
+                    required
+                    autocomplete="email">
+
+            </div>
+
+            <div class="form-group">
+
+                <label for="signupPassword">
+                    Password
+                </label>
+
+                <input
+                    type="password"
+                    id="signupPassword"
+                    required
+                    autocomplete="new-password">
+
+            </div>
+
+            <button
+                type="submit"
+                class="btn btn-primary form-submit">
+
+                Create Account
+
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
 
 
-        await loadProfileReviews(
-            business.id
-        );
-    }
+<!-- ADD BUSINESS MODAL -->
+<div
+    class="modal"
+    id="addBusinessModal">
 
+    <div class="modal-content large">
 
-    async function loadProfileReviews(
-        businessId
-    ) {
+        <button
+            type="button"
+            class="modal-close"
+            aria-label="Close">
+            ×
+        </button>
 
-        const area =
-            document.getElementById(
-                "profileReviewArea"
-            );
+        <h2>Add Your Business</h2>
 
+        <form id="addBusinessForm">
 
-        if (!area) {
-            return;
-        }
+            <div class="form-group">
 
+                <label for="businessName">
+                    Business Name *
+                </label>
 
-        try {
+                <input
+                    type="text"
+                    id="businessName"
+                    required>
 
-            const {
-                data,
-                error
-            } =
-                await supabaseClient
-                    .from("reviews")
-                    .select("*")
-                    .eq(
-                        "business_id",
-                        businessId
-                    )
-                    .order(
-                        "created_at",
-                        { ascending: false }
-                    );
+            </div>
 
+            <div class="form-group">
 
-            if (error) {
-                throw error;
-            }
-
-
-            currentReviews[businessId] =
-                data || [];
-
-
-            let html = "";
-
-
-            if (currentUser) {
-
-                const existingReview =
-                    (data || []).find(
-                        review =>
-                            review.user_id ===
-                            currentUser.id
-                    );
-
-
-                html +=
-                    createReviewForm(
-                        businessId,
-                        existingReview
-                    );
-
-            } else {
-
-                html +=
-                    `
-                    <div class="review-form">
-
-                        <p>
-                            Please log in to leave a review.
-                        </p>
-
-                        <button
-                            class="btn btn-primary"
-                            onclick="showPage('auth')"
-                        >
-                            Login to Review
-                        </button>
-
-                    </div>
-                    `;
-            }
-
-
-            if (!data || !data.length) {
-
-                html +=
-                    `
-                    <div class="empty-state">
-                        <p>
-                            No reviews yet. Be the first to review this business!
-                        </p>
-                    </div>
-                    `;
-
-            } else {
-
-                html +=
-                    data
-                        .map(
-                            review =>
-                                createReviewHTML(
-                                    review,
-                                    businessId
-                                )
-                        )
-                        .join("");
-            }
-
-
-            area.innerHTML = html;
-
-
-        } catch (error) {
-
-            console.error(error);
-
-            area.innerHTML =
-                `
-                <div class="alert show error">
-                    Unable to load reviews.
-                </div>
-                `;
-        }
-    }
-
-
-    function closeBusinessProfile() {
-
-        history.pushState(
-            null,
-            "",
-            window.location.pathname +
-            window.location.search
-        );
-
-
-        showPage("home");
-    }
-
-
-    /* =========================================================
-       REVIEW FORM
-    ========================================================== */
-
-    function createReviewForm(
-        businessId,
-        existingReview = null
-    ) {
-
-        const prefix =
-            existingReview
-                ? "edit-review-" +
-                  existingReview.id
-                : "new-review-" +
-                  businessId;
-
-
-        const rating =
-            existingReview
-                ? existingReview.rating
-                : 5;
-
-
-        const text =
-            existingReview
-                ? existingReview.review || ""
-                : "";
-
-
-        return `
-            <div
-                class="review-form"
-                id="${escapeHTML(prefix)}"
-            >
-
-                <h3>
-                    ${
-                        existingReview
-                            ? "Edit Your Review"
-                            : "Write a Review"
-                    }
-                </h3>
-
-                <label for="${escapeHTML(prefix)}-rating">
-                    Rating
+                <label for="businessCategory">
+                    Category *
                 </label>
 
                 <select
-                    id="${escapeHTML(prefix)}-rating"
-                >
-                    <option
-                        value="5"
-                        ${Number(rating) === 5 ? "selected" : ""}
-                    >
-                        ★★★★★ - 5
+                    id="businessCategory"
+                    required>
+
+                    <option value="">
+                        Select a category
                     </option>
 
-                    <option
-                        value="4"
-                        ${Number(rating) === 4 ? "selected" : ""}
-                    >
-                        ★★★★☆ - 4
+                    <option value="Food">
+                        Food
                     </option>
 
-                    <option
-                        value="3"
-                        ${Number(rating) === 3 ? "selected" : ""}
-                    >
-                        ★★★☆☆ - 3
+                    <option value="Fashion">
+                        Fashion
                     </option>
 
-                    <option
-                        value="2"
-                        ${Number(rating) === 2 ? "selected" : ""}
-                    >
-                        ★★☆☆☆ - 2
+                    <option value="Technology">
+                        Technology
                     </option>
 
-                    <option
-                        value="1"
-                        ${Number(rating) === 1 ? "selected" : ""}
-                    >
-                        ★☆☆☆☆ - 1
+                    <option value="Beauty">
+                        Beauty
                     </option>
+
+                    <option value="Health">
+                        Health
+                    </option>
+
+                    <option value="Education">
+                        Education
+                    </option>
+
+                    <option value="Services">
+                        Services
+                    </option>
+
+                    <option value="Shopping">
+                        Shopping
+                    </option>
+
+                    <option value="Other">
+                        Other
+                    </option>
+
                 </select>
 
+            </div>
 
-                <label for="${escapeHTML(prefix)}-text">
-                    Review
+            <div class="form-group">
+
+                <label for="businessLocation">
+                    Location *
+                </label>
+
+                <input
+                    type="text"
+                    id="businessLocation"
+                    placeholder="e.g. Lagos, Nigeria"
+                    required>
+
+            </div>
+
+            <div class="form-group">
+
+                <label for="businessDescription">
+                    Description
                 </label>
 
                 <textarea
-                    id="${escapeHTML(prefix)}-text"
-                    maxlength="1000"
-                    placeholder="Share your experience..."
-                >${escapeHTML(text)}</textarea>
-
-
-                ${
-                    existingReview
-                    ? `
-                        <button
-                            class="btn btn-primary btn-small"
-                            onclick="updateReview(
-                                '${escapeJS(existingReview.id)}',
-                                '${escapeJS(businessId)}',
-                                '${escapeJS(prefix)}'
-                            )"
-                        >
-                            Save Review
-                        </button>
-
-                        <button
-                            class="btn btn-secondary btn-small"
-                            onclick="loadProfileReviews('${escapeJS(businessId)}')"
-                        >
-                            Cancel
-                        </button>
-                      `
-                    : `
-                        <button
-                            class="btn btn-primary btn-small"
-                            onclick="submitReview(
-                                '${escapeJS(businessId)}',
-                                '${escapeJS(prefix)}'
-                            )"
-                        >
-                            Submit Review
-                        </button>
-                      `
-                }
+                    id="businessDescription"
+                    placeholder="Tell customers about your business..."></textarea>
 
             </div>
-        `;
-    }
 
+            <div class="form-group">
 
-    /* =========================================================
-       REVIEW HTML
-    ========================================================== */
+                <label for="businessPhone">
+                    Phone
+                </label>
 
-    function createReviewHTML(
-        review,
-        businessId
-    ) {
-
-        const isOwner =
-            currentUser &&
-            review.user_id === currentUser.id;
-
-
-        const created =
-            review.created_at
-                ? new Date(
-                    review.created_at
-                  ).toLocaleDateString()
-                : "";
-
-
-        return `
-            <div class="review">
-
-                <div class="review-header">
-
-                    <div>
-
-                        <div class="review-user">
-                            ${
-                                isOwner
-                                    ? "You"
-                                    : "FindIt Naija User"
-                            }
-                        </div>
-
-                        <div class="stars">
-                            ${createStars(
-                                review.rating
-                            )}
-                        </div>
-
-                    </div>
-
-                    <div class="review-date">
-                        ${escapeHTML(created)}
-                    </div>
-
-                </div>
-
-
-                ${
-                    review.review
-                    ? `
-                        <div class="review-text">
-                            ${escapeHTML(
-                                review.review
-                            )}
-                        </div>
-                      `
-                    : ""
-                }
-
-
-                ${
-                    isOwner
-                    ? `
-                        <div class="review-actions">
-
-                            <button
-                                class="btn btn-warning btn-small"
-                                onclick="editReview(
-                                    '${escapeJS(review.id)}',
-                                    '${escapeJS(businessId)}'
-                                )"
-                            >
-                                Edit
-                            </button>
-
-                            <button
-                                class="btn btn-danger btn-small"
-                                onclick="deleteReview(
-                                    '${escapeJS(review.id)}',
-                                    '${escapeJS(businessId)}'
-                                )"
-                            >
-                                Delete
-                            </button>
-
-                        </div>
-                      `
-                    : ""
-                }
+                <input
+                    type="tel"
+                    id="businessPhone"
+                    placeholder="Business phone number">
 
             </div>
-        `;
-    }
 
+            <div class="form-group">
 
-    /* =========================================================
-       SUBMIT REVIEW
-    ========================================================== */
+                <label for="businessEmail">
+                    Email
+                </label>
 
-    async function submitReview(
-        businessId,
-        formPrefix
-    ) {
-
-        if (!currentUser) {
-
-            showPage("auth");
-
-            return;
-        }
-
-
-        const rating =
-            Number(
-                document
-                    .getElementById(
-                        formPrefix + "-rating"
-                    )
-                    .value
-            );
-
-
-        const reviewText =
-            document
-                .getElementById(
-                    formPrefix + "-text"
-                )
-                .value
-                .trim();
-
-
-        try {
-
-            const {
-                error
-            } =
-                await supabaseClient
-                    .from("reviews")
-                    .insert({
-
-                        business_id:
-                            businessId,
-
-                        user_id:
-                            currentUser.id,
-
-                        rating:
-                            rating,
-
-                        review:
-                            reviewText || null
-                    });
-
-
-            if (error) {
-                throw error;
-            }
-
-
-            await loadProfileReviews(
-                businessId
-            );
-
-
-            await loadBusinesses(
-                currentSearch
-            );
-
-
-        } catch (error) {
-
-            console.error(error);
-
-            alert(
-                error.message ||
-                "Unable to submit review."
-            );
-        }
-    }
-
-
-    /* =========================================================
-       EDIT REVIEW
-    ========================================================== */
-
-    async function editReview(
-        reviewId,
-        businessId
-    ) {
-
-        if (!currentUser) {
-            return;
-        }
-
-
-        const review =
-            (currentReviews[businessId] || [])
-                .find(
-                    item =>
-                        item.id === reviewId
-                );
-
-
-        if (!review) {
-            return;
-        }
-
-
-        await loadProfileReviews(
-            businessId
-        );
-
-
-        const form =
-            document.getElementById(
-                "edit-review-" +
-                reviewId
-            );
-
-
-        if (form) {
-
-            form.scrollIntoView({
-                behavior: "smooth",
-                block: "center"
-            });
-        }
-    }
-
-
-    /* =========================================================
-       UPDATE REVIEW
-    ========================================================== */
-
-    async function updateReview(
-        reviewId,
-        businessId,
-        formPrefix
-    ) {
-
-        if (!currentUser) {
-            return;
-        }
-
-
-        const rating =
-            Number(
-                document
-                    .getElementById(
-                        formPrefix + "-rating"
-                    )
-                    .value
-            );
-
-
-        const reviewText =
-            document
-                .getElementById(
-                    formPrefix + "-text"
-                )
-                .value
-                .trim();
-
-
-        try {
-
-            const {
-                error
-            } =
-                await supabaseClient
-                    .from("reviews")
-                    .update({
-
-                        rating:
-                            rating,
-
-                        review:
-                            reviewText || null
-
-                    })
-                    .eq(
-                        "id",
-                        reviewId
-                    )
-                    .eq(
-                        "user_id",
-                        currentUser.id
-                    );
-
-
-            if (error) {
-                throw error;
-            }
-
-
-            await loadProfileReviews(
-                businessId
-            );
-
-
-            await loadBusinesses(
-                currentSearch
-            );
-
-
-        } catch (error) {
-
-            console.error(error);
-
-            alert(
-                error.message ||
-                "Unable to update review."
-            );
-        }
-    }
-
-
-    /* =========================================================
-       DELETE REVIEW
-    ========================================================== */
-
-    async function deleteReview(
-        reviewId,
-        businessId
-    ) {
-
-        if (!currentUser) {
-            return;
-        }
-
-
-        const confirmed =
-            confirm(
-                "Delete your review?"
-            );
-
-
-        if (!confirmed) {
-            return;
-        }
-
-
-        try {
-
-            const {
-                error
-            } =
-                await supabaseClient
-                    .from("reviews")
-                    .delete()
-                    .eq(
-                        "id",
-                        reviewId
-                    )
-                    .eq(
-                        "user_id",
-                        currentUser.id
-                    );
-
-
-            if (error) {
-                throw error;
-            }
-
-
-            await loadProfileReviews(
-                businessId
-            );
-
-
-            await loadBusinesses(
-                currentSearch
-            );
-
-
-        } catch (error) {
-
-            console.error(error);
-
-            alert(
-                error.message ||
-                "Unable to delete review."
-            );
-        }
-    }
-
-
-    /* =========================================================
-       DASHBOARD
-    ========================================================== */
-
-    async function loadMyBusinesses() {
-
-        const grid =
-            document.getElementById(
-                "dashboardGrid"
-            );
-
-
-        if (!currentUser) {
-
-            grid.innerHTML =
-                `
-                <div class="empty-state">
-                    <h3>Please log in</h3>
-                </div>
-                `;
-
-            return;
-        }
-
-
-        grid.innerHTML =
-            `
-            <div class="loading">
-                Loading your businesses...
-            </div>
-            `;
-
-
-        try {
-
-            const {
-                data,
-                error
-            } =
-                await supabaseClient
-                    .from("businesses")
-                    .select("*")
-                    .eq(
-                        "user_id",
-                        currentUser.id
-                    )
-                    .order(
-                        "created_at",
-                        {
-                            ascending: false
-                        }
-                    );
-
-
-            if (error) {
-                throw error;
-            }
-
-
-            const businesses =
-                data || [];
-
-
-            await attachReviewStats(
-                businesses
-            );
-
-
-            if (!businesses.length) {
-
-                grid.innerHTML =
-                    `
-                    <div class="empty-state">
-
-                        <h3>
-                            You haven't added a business yet.
-                        </h3>
-
-                        <p>
-                            Add your first business to FindIt Naija.
-                        </p>
-
-                        <button
-                            class="btn btn-primary"
-                            onclick="showPage('addBusiness')"
-                        >
-                            Add Business
-                        </button>
-
-                    </div>
-                    `;
-
-                return;
-            }
-
-
-            grid.innerHTML =
-                businesses
-                    .map(
-                        createDashboardCard
-                    )
-                    .join("");
-
-
-        } catch (error) {
-
-            console.error(error);
-
-            grid.innerHTML =
-                `
-                <div class="empty-state">
-
-                    <h3>
-                        Unable to load your businesses
-                    </h3>
-
-                    <p>
-                        ${escapeHTML(
-                            error.message || ""
-                        )}
-                    </p>
-
-                </div>
-                `;
-        }
-    }
-
-
-    function createDashboardCard(
-        business
-    ) {
-
-        const image =
-            business.image_url
-                ? `
-                    <img
-                        src="${escapeHTML(business.image_url)}"
-                        alt="${escapeHTML(business.name)}"
-                    >
-                  `
-                : `
-                    <div
-                        class="profile-image-placeholder"
-                        style="min-height:180px;"
-                    >
-                        🏢
-                    </div>
-                  `;
-
-
-        return `
-            <div class="dashboard-card">
-
-                ${image}
-
-                <div class="dashboard-card-content">
-
-                    <span class="category-label">
-                        ${escapeHTML(
-                            business.category
-                        )}
-                    </span>
-
-                    <h3>
-                        ${escapeHTML(
-                            business.name
-                        )}
-                    </h3>
-
-                    <div class="business-info">
-                        📍 ${escapeHTML(
-                            business.location
-                        )}
-                    </div>
-                    ${isValidCoordinate(business.latitude) && isValidCoordinate(business.longitude) ? `<div class="coordinates-box"><strong>GPS location saved</strong><br>${Number(business.latitude).toFixed(5)}, ${Number(business.longitude).toFixed(5)}</div>` : `<div class="form-help">No GPS location saved yet.</div>`}
-
-                    ${
-                        business.phone
-                        ? `
-                            <div class="business-info">
-                                📞 ${escapeHTML(
-                                    business.phone
-                                )}
-                            </div>
-                          `
-                        : ""
-                    }
-
-
-                    <div class="rating-summary">
-
-                        <span class="stars">
-                            ${createStars(
-                                business.average_rating
-                            )}
-                        </span>
-
-                        <span class="rating-number">
-                            ${
-                                business.review_count
-                                    ? Number(
-                                        business.average_rating
-                                      ).toFixed(1)
-                                    : "No ratings"
-                            }
-                        </span>
-
-                        <span class="rating-count">
-                            ${
-                                business.review_count
-                                    ? `(${business.review_count})`
-                                    : ""
-                            }
-                        </span>
-
-                    </div>
-
-
-                    <div class="dashboard-actions">
-
-                        <button
-                            class="btn btn-primary btn-small"
-                            onclick="openBusinessProfile('${escapeJS(business.id)}')"
-                        >
-                            View
-                        </button>
-
-                        <button
-                            class="btn btn-secondary btn-small"
-                            onclick="openEditModal('${escapeJS(business.id)}')"
-                        >
-                            ✏️ Edit
-                        </button>
-
-                        <button
-                            class="btn btn-danger btn-small"
-                            onclick="deleteBusiness('${escapeJS(business.id)}')"
-                        >
-                            🗑️ Delete
-                        </button>
-
-                    </div>
-
-                </div>
+                <input
+                    type="email"
+                    id="businessEmail"
+                    placeholder="Business email">
 
             </div>
-        `;
-    }
 
+            <button
+                type="submit"
+                class="btn btn-primary form-submit">
 
-    /* =========================================================
-       OPEN EDIT MODAL
-    ========================================================== */
-
-    async function openEditModal(
-        businessId
-    ) {
+                Add Business
 
-        if (!currentUser) {
-            return;
-        }
+            </button>
 
+        </form>
 
-        try {
+    </div>
 
-            const {
-                data,
-                error
-            } =
-                await supabaseClient
-                    .from("businesses")
-                    .select("*")
-                    .eq(
-                        "id",
-                        businessId
-                    )
-                    .eq(
-                        "user_id",
-                        currentUser.id
-                    )
-                    .single();
+</div>
 
 
-            if (error) {
-                throw error;
-            }
+<!-- BUSINESS DETAILS MODAL -->
+<div
+    class="modal"
+    id="businessModal">
 
+    <div class="modal-content large">
 
-            document
-                .getElementById(
-                    "editBusinessId"
-                )
-                .value =
-                data.id;
+        <div class="business-details"></div>
 
+    </div>
 
-            document
-                .getElementById(
-                    "editBusinessName"
-                )
-                .value =
-                data.name || "";
+</div>
 
 
-            document
-                .getElementById(
-                    "editBusinessCategory"
-                )
-                .value =
-                data.category || "";
+<!-- FOOTER -->
+<footer>
 
+    <div class="container">
 
-            document
-                .getElementById(
-                    "editBusinessLocation"
-                )
-                .value =
-                data.location || "";
+        <div class="footer-grid">
 
-            document.getElementById("editBusinessLatitude").value = isValidCoordinate(data.latitude) ? data.latitude : "";
-            document.getElementById("editBusinessLongitude").value = isValidCoordinate(data.longitude) ? data.longitude : "";
-            document.getElementById("editLocationStatus").textContent = isValidCoordinate(data.latitude) && isValidCoordinate(data.longitude) ? `GPS: ${Number(data.latitude).toFixed(5)}, ${Number(data.longitude).toFixed(5)}` : "No GPS location saved yet.";
+            <div>
 
+                <h3>LosOja</h3>
 
-            document
-                .getElementById(
-                    "editBusinessPhone"
-                )
-                .value =
-                data.phone || "";
+                <p>
+                    Find businesses. Discover services.
+                    Explore Nigeria.
+                </p>
 
+            </div>
 
-            document
-                .getElementById(
-                    "editBusinessDescription"
-                )
-                .value =
-                data.description || "";
+            <div>
 
+                <h3>Quick Links</h3>
 
-            document
-                .getElementById(
-                    "editBusinessImage"
-                )
-                .value = "";
+                <p>
+                    <a href="#home">Home</a>
+                </p>
 
+                <p>
+                    <a href="#categories">Categories</a>
+                </p>
 
-            document
-                .getElementById(
-                    "editBusinessModal"
-                )
-                .classList
-                .add("show");
+                <p>
+                    <a href="#businesses">Businesses</a>
+                </p>
 
+            </div>
 
-        } catch (error) {
+            <div>
 
-            console.error(error);
+                <h3>For Businesses</h3>
 
-            alert(
-                error.message ||
-                "Unable to load business."
-            );
-        }
-    }
+                <p>
+                    <button
+                        type="button"
+                        class="btn btn-light add-business-btn">
+                        Add Your Business
+                    </button>
+                </p>
 
+            </div>
 
-    function closeEditModal() {
+        </div>
 
-        document
-            .getElementById(
-                "editBusinessModal"
-            )
-            .classList
-            .remove("show");
+        <div class="footer-bottom">
 
+            © <span id="currentYear"></span>
+            LosOja. All rights reserved.
 
-        hideAlert(
-            "editBusinessAlert"
-        );
-        const locationStatus = document.getElementById("editLocationStatus");
-        if (locationStatus) locationStatus.textContent = "";
-    }
+        </div>
 
+    </div>
 
-    /* =========================================================
-       EDIT BUSINESS FORM
-    ========================================================== */
+</footer>
 
-    document
-        .getElementById("editBusinessForm")
-        .addEventListener("submit", async function(event) {
 
-            event.preventDefault();
-
-            hideAlert("editBusinessAlert");
-
-
-            if (!currentUser) {
-                return;
-            }
-
-
-            const businessId =
-                document
-                    .getElementById(
-                        "editBusinessId"
-                    )
-                    .value;
-
-
-            const name =
-                document
-                    .getElementById(
-                        "editBusinessName"
-                    )
-                    .value
-                    .trim();
-
-
-            const category =
-                document
-                    .getElementById(
-                        "editBusinessCategory"
-                    )
-                    .value;
-
-
-            const location =
-                document
-                    .getElementById(
-                        "editBusinessLocation"
-                    )
-                    .value
-                    .trim();
-
-
-            const phone =
-                document
-                    .getElementById(
-                        "editBusinessPhone"
-                    )
-                    .value
-                    .trim();
-
-
-            const description =
-                document
-                    .getElementById(
-                        "editBusinessDescription"
-                    )
-                    .value
-                    .trim();
-
-
-            const imageFile =
-                document
-                    .getElementById(
-                        "editBusinessImage"
-                    )
-                    .files[0];
-
-
-            if (
-                !name ||
-                !category ||
-                !location ||
-                !description
-            ) {
-
-                showAlert(
-                    "editBusinessAlert",
-                    "Please complete all required fields.",
-                    "error"
-                );
-
-                return;
-            }
-
-
-            if (
-                imageFile &&
-                !validateImage(imageFile)
-            ) {
-                return;
-            }
-
-
-            const button =
-                this.querySelector(
-                    "button[type='submit']"
-                );
-
-
-            button.disabled = true;
-
-            button.textContent =
-                "Saving...";
-
-
-            try {
-
-                const {
-                    data: oldBusiness,
-                    error: fetchError
-                } =
-                    await supabaseClient
-                        .from("businesses")
-                        .select("*")
-                        .eq(
-                            "id",
-                            businessId
-                        )
-                        .eq(
-                            "user_id",
-                            currentUser.id
-                        )
-                        .single();
-
-
-                if (fetchError) {
-                    throw fetchError;
-                }
-
-
-                let newImageUrl =
-                    oldBusiness.image_url;
-
-
-                if (imageFile) {
-
-                    newImageUrl =
-                        await uploadBusinessImage(
-                            imageFile
-                        );
-                }
-
-
-                const {
-                    error
-                } =
-                    await supabaseClient
-                        .from("businesses")
-                        .update({
-
-                            name: name,
-
-                            category: category,
-
-                            location: location,
-
-                            phone: phone,
-
-                            description: description,
-
-                            image_url:
-                                newImageUrl,
-
-                            latitude: latitude,
-                            longitude: longitude
-
-                        })
-                        .eq(
-                            "id",
-                            businessId
-                        )
-                        .eq(
-                            "user_id",
-                            currentUser.id
-                        );
-
-
-                if (error) {
-
-                    if (
-                        imageFile &&
-                        newImageUrl &&
-                        newImageUrl !==
-                        oldBusiness.image_url
-                    ) {
-
-                        await deleteBusinessImage(
-                            newImageUrl
-                        );
-                    }
-
-                    throw error;
-                }
-
-
-                if (
-                    imageFile &&
-                    oldBusiness.image_url
-                ) {
-
-                    await deleteBusinessImage(
-                        oldBusiness.image_url
-                    );
-                }
-
-
-                showAlert(
-                    "editBusinessAlert",
-                    "Business updated successfully!",
-                    "success"
-                );
-
-
-                await loadMyBusinesses();
-
-                await loadBusinesses(
-                    currentSearch
-                );
-
-
-                setTimeout(
-                    closeEditModal,
-                    700
-                );
-
-
-            } catch (error) {
-
-                console.error(error);
-
-                showAlert(
-                    "editBusinessAlert",
-                    error.message ||
-                    "Unable to update business.",
-                    "error"
-                );
-
-            } finally {
-
-                button.disabled = false;
-
-                button.textContent =
-                    "Save Changes";
-            }
-        });
-
-
-    /* =========================================================
-       DELETE BUSINESS
-    ========================================================== */
-
-    async function deleteBusiness(
-        businessId
-    ) {
-
-        if (!currentUser) {
-            return;
-        }
-
-
-        const confirmed =
-            confirm(
-                "Are you sure you want to delete this business? This cannot be undone."
-            );
-
-
-        if (!confirmed) {
-            return;
-        }
-
-
-        try {
-
-            const {
-                data: business,
-                error: fetchError
-            } =
-                await supabaseClient
-                    .from("businesses")
-                    .select("*")
-                    .eq(
-                        "id",
-                        businessId
-                    )
-                    .eq(
-                        "user_id",
-                        currentUser.id
-                    )
-                    .single();
-
-
-            if (fetchError) {
-                throw fetchError;
-            }
-
-
-            const {
-                error
-            } =
-                await supabaseClient
-                    .from("businesses")
-                    .delete()
-                    .eq(
-                        "id",
-                        businessId
-                    )
-                    .eq(
-                        "user_id",
-                        currentUser.id
-                    );
-
-
-            if (error) {
-                throw error;
-            }
-
-
-            if (business.image_url) {
-
-                await deleteBusinessImage(
-                    business.image_url
-                );
-            }
-
-
-            await loadMyBusinesses();
-
-            await loadBusinesses(
-                currentSearch
-            );
-
-
-            alert(
-                "Business deleted successfully."
-            );
-
-
-        } catch (error) {
-
-            console.error(error);
-
-            alert(
-                error.message ||
-                "Unable to delete business."
-            );
-        }
-    }
-
-
-    /* =========================================================
-       HASH / PROFILE URL HANDLING
-    ========================================================== */
-
-    async function handleHash() {
-
-        const hash =
-            window.location.hash;
-
-
-        const match =
-            hash.match(
-                /^#business=([^&]+)/
-            );
-
-
-        if (match) {
-
-            const businessId =
-                decodeURIComponent(
-                    match[1]
-                );
-
-
-            await openBusinessProfile(
-                businessId,
-                false
-            );
-
-        } else {
-
-            const activeProfile =
-                document
-                    .getElementById(
-                        "profilePage"
-                    )
-                    .classList
-                    .contains("active");
-
-
-            if (activeProfile) {
-                showPage("home");
-            }
-        }
-    }
-
-
-    window.addEventListener(
-        "popstate",
-        handleHash
-    );
-
-
-    window.addEventListener(
-        "hashchange",
-        handleHash
-    );
-
-
-    /* =========================================================
-       CLOSE MODAL WHEN CLICKING OUTSIDE
-    ========================================================== */
-
-    document
-        .getElementById(
-            "editBusinessModal"
-        )
-        .addEventListener(
-            "click",
-            function(event) {
-
-                if (
-                    event.target === this
-                ) {
-
-                    closeEditModal();
-                }
-            }
-        );
-
-
-    /* =========================================================
-       INITIALIZE APP
-    ========================================================== */
-
-    async function initializeApp() {
-
-        await checkAuth();
-
-        await loadBusinesses();
-
-        await handleHash();
-    }
-
-
-    initializeApp();
-
-</script>
+<!-- JAVASCRIPT -->
+<script src="js/app.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/businesses.js"></script>
+<script src="js/reviews.js"></script>
+<script src="js/dashboard.js"></script>
 
 </body>
-</html>            const latitudeValue = document.getElementById("editBusinessLatitude").value;
-            const longitudeValue = document.getElementById("editBusinessLongitude").value;
-            const latitude = isValidCoordinate(latitudeValue) ? Number(latitudeValue) : null;
-            const longitude = isValidCoordinate(longitudeValue) ? Number(longitudeValue) : null;
-
-
+</html>
+```
