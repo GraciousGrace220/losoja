@@ -1,45 +1,52 @@
+const SUPABASE_URL = "https://ycxshwgeebskdozmornh.supabase.co";
+const SUPABASE_KEY = "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
+
 const BUSINESSES_KEY = "losoja_businesses";
 
-const defaultBusinesses = [
+const DEFAULT_BUSINESSES = [
     {
-        id: "1",
+        id: 1,
+        ownerId: "system",
         name: "Taste Haven",
         category: "Food",
         location: "Lagos, Nigeria",
-        description: "Delicious meals and great local food.",
+        description: "Delicious Nigerian and international meals.",
         phone: "",
         email: "",
         rating: 4.5,
         reviews: 12
     },
     {
-        id: "2",
+        id: 2,
+        ownerId: "system",
         name: "Urban Style",
         category: "Fashion",
         location: "Lagos, Nigeria",
-        description: "Modern fashion and stylish clothing.",
+        description: "Modern fashion and clothing.",
         phone: "",
         email: "",
         rating: 4.7,
         reviews: 8
     },
     {
-        id: "3",
+        id: 3,
+        ownerId: "system",
         name: "Tech Hub Nigeria",
         category: "Technology",
         location: "Abuja, Nigeria",
-        description: "Technology products, services and support.",
+        description: "Technology products and services.",
         phone: "",
         email: "",
         rating: 4.6,
         reviews: 15
     },
     {
-        id: "4",
+        id: 4,
+        ownerId: "system",
         name: "Glow Beauty Studio",
         category: "Beauty",
         location: "Lagos, Nigeria",
-        description: "Beauty, hair and personal care services.",
+        description: "Beauty and personal care services.",
         phone: "",
         email: "",
         rating: 4.8,
@@ -47,100 +54,34 @@ const defaultBusinesses = [
     }
 ];
 
-
-// ================================
-// GET BUSINESSES
-// ================================
+function supabaseHeaders() {
+    return {
+        "apikey": SUPABASE_KEY,
+        "Authorization": "Bearer " + SUPABASE_KEY,
+        "Content-Type": "application/json"
+    };
+}
 
 function getBusinesses() {
     try {
-        const saved = localStorage.getItem(BUSINESSES_KEY);
+        const saved = JSON.parse(
+            localStorage.getItem(BUSINESSES_KEY)
+        );
 
-        if (!saved) {
-            localStorage.setItem(
-                BUSINESSES_KEY,
-                JSON.stringify(defaultBusinesses)
-            );
-
-            return defaultBusinesses;
+        if (Array.isArray(saved) && saved.length > 0) {
+            return saved;
         }
-
-        let savedBusinesses = JSON.parse(saved);
-
-        if (!Array.isArray(savedBusinesses)) {
-            savedBusinesses = [];
-        }
-
-        // Make sure the original demo businesses always exist
-        // and have the correct information.
-        defaultBusinesses.forEach(function (defaultBusiness) {
-
-            const existingIndex = savedBusinesses.findIndex(
-                function (business) {
-                    return String(business.id) ===
-                           String(defaultBusiness.id);
-                }
-            );
-
-            if (existingIndex === -1) {
-
-                savedBusinesses.push(defaultBusiness);
-
-            } else {
-
-                savedBusinesses[existingIndex] = {
-                    ...defaultBusiness,
-                    ...savedBusinesses[existingIndex]
-                };
-
-            }
-
-        });
-
-        localStorage.setItem(
-            BUSINESSES_KEY,
-            JSON.stringify(savedBusinesses)
-        );
-
-        return savedBusinesses;
-
     } catch (error) {
-
-        console.error(
-            "Could not load businesses:",
-            error
-        );
-
-        localStorage.setItem(
-            BUSINESSES_KEY,
-            JSON.stringify(defaultBusinesses)
-        );
-
-        return defaultBusinesses;
+        console.error("Could not read local businesses:", error);
     }
+
+    localStorage.setItem(
+        BUSINESSES_KEY,
+        JSON.stringify(DEFAULT_BUSINESSES)
+    );
+
+    return DEFAULT_BUSINESSES;
 }
-
-        localStorage.setItem(
-            BUSINESSES_KEY,
-            JSON.stringify(defaultBusinesses)
-        );
-
-        return defaultBusinesses;
-
-    } catch (error) {
-
-        console.error(
-            "Could not load businesses:",
-            error
-        );
-
-        return defaultBusinesses;
-    }
-}
-
-// ================================
-// SAVE BUSINESSES
-// ================================
 
 function saveBusinesses(businesses) {
     localStorage.setItem(
@@ -152,520 +93,280 @@ function saveBusinesses(businesses) {
 window.getBusinesses = getBusinesses;
 window.saveBusinesses = saveBusinesses;
 
+async function loadBusinessesFromSupabase() {
+    try {
+        const response = await fetch(
+            SUPABASE_URL +
+            "/rest/v1/businesses?select=*&order=created_at.desc",
+            {
+                method: "GET",
+                headers: supabaseHeaders()
+            }
+        );
 
-// ================================
-// SEARCH BUSINESSES
-// ================================
-
-window.searchBusinesses = function (
-    searchTerm,
-    locationTerm
-) {
-
-    const businesses = getBusinesses();
-
-    const search =
-        (searchTerm || "")
-            .toLowerCase()
-            .trim();
-
-    const location =
-        (locationTerm || "")
-            .toLowerCase()
-            .trim();
-
-    const results = businesses.filter(
-        function (business) {
-
-            const searchableText = [
-                business.name,
-                business.category,
-                business.location,
-                business.description
-            ]
-                .join(" ")
-                .toLowerCase();
-
-            const matchesSearch =
-                !search ||
-                searchableText.includes(search);
-
-            const matchesLocation =
-                !location ||
-                business.location
-                    .toLowerCase()
-                    .includes(location);
-
-            return (
-                matchesSearch &&
-                matchesLocation
+        if (!response.ok) {
+            throw new Error(
+                "Supabase returned " + response.status
             );
         }
-    );
 
-    renderBusinesses(results);
+        const data = await response.json();
 
-    const resultsSection =
-        document.getElementById("businesses");
-
-    if (resultsSection) {
-        resultsSection.scrollIntoView({
-            behavior: "smooth"
-        });
-    }
-};
-
-
-// ================================
-// FILTER BY CATEGORY
-// ================================
-
-window.filterBusinessesByCategory =
-    function (category) {
-
-        const businesses = getBusinesses();
-
-        if (!category) {
-            renderBusinesses(businesses);
-            return;
-        }
-
-        const categoryLower =
-            category.toLowerCase();
-
-        const results =
-            businesses.filter(
-                function (business) {
-
-                    return (
-                        business.category
-                            .toLowerCase() ===
-                        categoryLower
-                    );
-                }
-            );
-
-        renderBusinesses(results);
-
-        const resultsSection =
-            document.getElementById(
-                "businesses"
-            );
-
-        if (resultsSection) {
-            resultsSection.scrollIntoView({
-                behavior: "smooth"
+        if (Array.isArray(data)) {
+            const businesses = data.map(function (business) {
+                return {
+                    id: business.id,
+                    ownerId: business.owner_id,
+                    name: business.name,
+                    category: business.category,
+                    location: business.location,
+                    description: business.description || "",
+                    phone: business.phone || "",
+                    email: business.email || "",
+                    rating: Number(business.rating || 0),
+                    reviews: Number(business.reviews || 0)
+                };
             });
+
+            if (businesses.length > 0) {
+                saveBusinesses(businesses);
+                renderBusinesses(businesses);
+            }
         }
-    };
+    } catch (error) {
+        console.error(
+            "Supabase business loading failed:",
+            error
+        );
+    }
+}
 
-
-// ================================
-// DISPLAY BUSINESSES
-// ================================
+window.loadBusinessesFromSupabase = loadBusinessesFromSupabase;
 
 function renderBusinesses(businesses) {
+    const grid = document.getElementById("businessGrid");
 
-    const container =
-        document.getElementById(
-            "businessGrid"
-        ) ||
-        document.querySelector(
-            ".business-grid"
-        );
+    if (!grid) return;
 
-    if (!container) {
-        return;
-    }
-
-    if (
-        !businesses ||
-        businesses.length === 0
-    ) {
-
-        container.innerHTML = `
+    if (!businesses || businesses.length === 0) {
+        grid.innerHTML = `
             <div class="empty-state">
                 <h3>No businesses found</h3>
-                <p>
-                    Try another search or choose
-                    a different category.
-                </p>
+                <p>Try another search or category.</p>
             </div>
         `;
-
         return;
     }
 
-    container.innerHTML =
-        businesses.map(
-            function (business) {
+    grid.innerHTML = businesses.map(function (business) {
+        return `
+            <div class="business-card">
+                <div class="business-image">
+                    <span>${escapeHTML(business.category)}</span>
+                </div>
 
-                const rating =
-                    typeof business.rating ===
-                    "number"
-                        ? business.rating.toFixed(1)
-                        : "0.0";
+                <div class="business-content">
+                    <h3>${escapeHTML(business.name)}</h3>
 
-                const reviewCount =
-                    Number(business.reviews) || 0;
-
-                return `
-                    <div class="business-card">
-
-                        <div class="business-image">
-                            🏪
-                        </div>
-
-                        <div class="business-content">
-
-                            <span class="business-category">
-                                ${escapeHTML(
-                                    business.category
-                                )}
-                            </span>
-
-                            <h3>
-                                ${escapeHTML(
-                                    business.name
-                                )}
-                            </h3>
-
-                            <div class="business-location">
-                                📍 ${escapeHTML(
-                                    business.location
-                                )}
-                            </div>
-
-                            <div class="rating">
-                                ⭐ ${rating}
-                                <span>
-                                    (${reviewCount} reviews)
-                                </span>
-                            </div>
-
-                            <p class="business-description">
-                                ${escapeHTML(
-                                    business.description
-                                )}
-                            </p>
-
-                            <div class="business-actions">
-
-                                <button
-                                    class="btn btn-primary"
-                                    data-business-id="${escapeHTML(
-                                        business.id
-                                    )}"
-                                >
-                                    View Details
-                                </button>
-
-                            </div>
-
-                        </div>
-
+                    <div class="business-category">
+                        ${escapeHTML(business.category)}
                     </div>
-                `;
 
-            }
-        ).join("");
+                    <div class="business-location">
+                        📍 ${escapeHTML(business.location)}
+                    </div>
+
+                    <div class="rating">
+                        ⭐ ${Number(business.rating || 0).toFixed(1)}
+                        (${Number(business.reviews || 0)} reviews)
+                    </div>
+
+                    <p class="business-description">
+                        ${escapeHTML(business.description || "")}
+                    </p>
+
+                    <div class="business-actions">
+                        <button
+                            type="button"
+                            class="btn btn-primary"
+                            data-business-id="${business.id}">
+                            View Details
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join("");
 }
 
-window.renderBusinesses =
-    renderBusinesses;
+window.renderBusinesses = renderBusinesses;
 
+window.searchBusinesses = function (searchTerm, locationTerm) {
+    const businesses = getBusinesses();
 
-// ================================
-// OPEN BUSINESS DETAILS
-// ================================
+    const search = String(searchTerm || "")
+        .trim()
+        .toLowerCase();
 
-window.openBusiness =
-    function (businessId) {
+    const location = String(locationTerm || "")
+        .trim()
+        .toLowerCase();
 
-        const businesses =
-            getBusinesses();
+    const filtered = businesses.filter(function (business) {
+        const matchesSearch =
+            !search ||
+            String(business.name).toLowerCase().includes(search) ||
+            String(business.category).toLowerCase().includes(search) ||
+            String(business.description || "")
+                .toLowerCase()
+                .includes(search);
 
-        const business =
-            businesses.find(
-                function (item) {
+        const matchesLocation =
+            !location ||
+            String(business.location)
+                .toLowerCase()
+                .includes(location);
 
-                    return (
-                        String(item.id) ===
-                        String(businessId)
-                    );
-                }
-            );
+        return matchesSearch && matchesLocation;
+    });
 
-        if (!business) {
+    renderBusinesses(filtered);
+};
 
-            showNotification(
-                "Business not found."
-            );
+window.filterBusinessesByCategory = function (category) {
+    const businesses = getBusinesses();
 
-            return;
-        }
+    if (!category || category.toLowerCase() === "all") {
+        renderBusinesses(businesses);
+        return;
+    }
 
-        const modal =
-            document.getElementById(
-                "businessModal"
-            );
+    const filtered = businesses.filter(function (business) {
+        return String(business.category)
+            .toLowerCase()
+            .includes(String(category).toLowerCase());
+    });
 
-        if (!modal) {
+    renderBusinesses(filtered);
+};
 
-            showNotification(
-                business.name +
-                " - " +
-                business.location
-            );
+window.openBusiness = function (businessId) {
+    const businesses = getBusinesses();
 
-            return;
-        }
+    const business = businesses.find(function (item) {
+        return String(item.id) === String(businessId);
+    });
 
-        const content =
-            modal.querySelector(
-                ".business-details"
-            ) ||
-            modal.querySelector(
-                ".modal-content"
-            );
+    if (!business) return;
 
-        if (!content) {
-            return;
-        }
+    const modal = document.getElementById("businessModal");
 
+    if (!modal) return;
 
-        // Get reviews for this business
+    const details =
+        modal.querySelector(".business-details") ||
+        modal.querySelector(".modal-content");
+
+    if (!details) return;
+
+    let reviewsHTML = "";
+
+    if (typeof window.getBusinessReviews === "function") {
         const reviews =
-            typeof window.getBusinessReviews ===
-            "function"
-                ? window.getBusinessReviews(
-                    business.id
-                )
-                : [];
+            window.getBusinessReviews(business.id);
 
-
-        // Build reviews HTML
-        let reviewsHTML = "";
-
-        if (reviews.length === 0) {
-
+        if (reviews.length > 0) {
             reviewsHTML = `
-                <div class="reviews-section">
-                    <h3>Customer Reviews</h3>
-                    <p>
-                        No customer reviews yet.
-                        Be the first to leave one!
-                    </p>
-                </div>
-            `;
+                <div class="business-reviews">
+                    <h3>Reviews</h3>
 
-        } else {
+                    ${reviews.map(function (review) {
+                        return `
+                            <div class="review-item">
+                                <strong>
+                                    ${escapeHTML(review.userName)}
+                                </strong>
 
-            reviewsHTML = `
-                <div class="reviews-section">
-
-                    <h3>
-                        Customer Reviews
-                    </h3>
-
-                    ${reviews.map(
-                        function (review) {
-
-                            const stars =
-                                "⭐".repeat(
-                                    Number(
-                                        review.rating
-                                    )
-                                );
-
-                            const reviewDate =
-                                review.createdAt
-                                    ? new Date(
-                                        review.createdAt
-                                      ).toLocaleDateString()
-                                    : "";
-
-                            return `
-                                <div class="review-item">
-
-                                    <div class="review-header">
-
-                                        <strong>
-                                            ${escapeHTML(
-                                                review.userName
-                                            )}
-                                        </strong>
-
-                                        <span>
-                                            ${reviewDate}
-                                        </span>
-
-                                    </div>
-
-                                    <div class="review-rating">
-                                        ${stars}
-                                        ${Number(
-                                            review.rating
-                                        )}/5
-                                    </div>
-
-                                    <p>
-                                        ${escapeHTML(
-                                            review.comment
-                                        )}
-                                    </p>
-
+                                <div>
+                                    ⭐ ${review.rating}/5
                                 </div>
-                            `;
 
-                        }
-                    ).join("")}
-
+                                <p>
+                                    ${escapeHTML(review.comment)}
+                                </p>
+                            </div>
+                        `;
+                    }).join("")}
                 </div>
             `;
         }
+    }
 
+    details.innerHTML = `
+        <button
+            type="button"
+            class="modal-close"
+            onclick="closeModal('businessModal')">
+            ×
+        </button>
 
-        content.innerHTML = `
+        <h2>${escapeHTML(business.name)}</h2>
 
-            <button
-                class="modal-close"
-                onclick="closeModal('businessModal')"
-            >
-                ×
-            </button>
+        <p>
+            <strong>Category:</strong>
+            ${escapeHTML(business.category)}
+        </p>
 
-            <div class="business-image">
-                🏪
-            </div>
+        <p>
+            <strong>Location:</strong>
+            ${escapeHTML(business.location)}
+        </p>
 
-            <h2>
-                ${escapeHTML(
-                    business.name
-                )}
-            </h2>
+        <p>
+            <strong>Rating:</strong>
+            ⭐ ${Number(business.rating || 0).toFixed(1)}
+        </p>
 
-            <p class="business-category">
-                ${escapeHTML(
-                    business.category
-                )}
-            </p>
+        <p>
+            ${escapeHTML(business.description || "")}
+        </p>
 
-            <p class="business-location">
-                📍 ${escapeHTML(
-                    business.location
-                )}
-            </p>
+        ${
+            business.phone
+                ? `<p><strong>Phone:</strong> ${escapeHTML(business.phone)}</p>`
+                : ""
+        }
 
-            <div class="rating">
+        ${
+            business.email
+                ? `<p><strong>Email:</strong> ${escapeHTML(business.email)}</p>`
+                : ""
+        }
 
-                ⭐ ${
-                    typeof business.rating ===
-                    "number"
-                        ? business.rating.toFixed(1)
-                        : "0.0"
-                }
+        <button
+            type="button"
+            class="btn btn-primary"
+            onclick="addReview('${business.id}')">
+            Leave a Review
+        </button>
 
-                <span>
-                    (${Number(
-                        business.reviews
-                    ) || 0} reviews)
-                </span>
+        ${reviewsHTML}
+    `;
 
-            </div>
-
-            <p>
-                ${escapeHTML(
-                    business.description
-                )}
-            </p>
-
-            ${
-                business.phone
-                    ? `
-                        <p>
-                            📞 ${escapeHTML(
-                                business.phone
-                            )}
-                        </p>
-                    `
-                    : ""
-            }
-
-            ${
-                business.email
-                    ? `
-                        <p>
-                            ✉️ ${escapeHTML(
-                                business.email
-                            )}
-                        </p>
-                    `
-                    : ""
-            }
-
-            <br>
-
-            <button
-                class="btn btn-primary"
-                onclick="addReview(
-                    '${escapeHTML(
-                        business.id
-                    )}'
-                )"
-            >
-                Leave a Review
-            </button>
-
-            ${reviewsHTML}
-
-        `;
-
-        openModal("businessModal");
-    };
-
-
-// ================================
-// ESCAPE HTML
-// ================================
+    openModal("businessModal");
+};
 
 function escapeHTML(value) {
-
     return String(value ?? "")
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-        .replace(
-            /</g,
-            "&lt;"
-        )
-        .replace(
-            />/g,
-            "&gt;"
-        )
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-        .replace(
-            /'/g,
-            "&#039;"
-        );
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
 
+document.addEventListener("DOMContentLoaded", function () {
+    renderBusinesses(getBusinesses());
 
-// ================================
-// INITIAL DISPLAY
-// ================================
-
-document.addEventListener(
-    "DOMContentLoaded",
-    function () {
-
-        renderBusinesses(
-            getBusinesses()
-        );
-
-    }
-);
+    loadBusinessesFromSupabase();
+});
