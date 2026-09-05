@@ -1,30 +1,43 @@
-const LOSOJA_SUPABASE_URL =
+const SUPABASE_URL =
     "https://ycxshwgeebskdozmornh.supabase.co";
 
-const LOSOJA_SUPABASE_KEY =
+const SUPABASE_KEY =
     "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
+
+const CURRENT_SESSION_KEY =
+    "losoja_supabase_session";
 
 
 /* =========================================================
-   NOTIFICATION
+   SUPABASE HEADERS
 ========================================================= */
 
-function showLosOjaNotification(message) {
+function getBusinessHeaders() {
+
+    const session =
+        getLosOjaSession();
+
+    const headers = {
+        "apikey": SUPABASE_KEY,
+        "Content-Type": "application/json",
+        "Prefer": "return=representation"
+    };
 
     if (
-        typeof window.showNotification === "function" &&
-        window.showNotification !== showLosOjaNotification
+        session &&
+        session.access_token
     ) {
-        window.showNotification(message);
-        return;
+        headers["Authorization"] =
+            "Bearer " +
+            session.access_token;
     }
 
-    alert(message);
+    return headers;
 }
 
 
 /* =========================================================
-   GET CURRENT SUPABASE SESSION
+   GET CURRENT SESSION
 ========================================================= */
 
 function getLosOjaSession() {
@@ -33,7 +46,7 @@ function getLosOjaSession() {
 
         const saved =
             localStorage.getItem(
-                "losoja_supabase_session"
+                CURRENT_SESSION_KEY
             );
 
         if (!saved) {
@@ -45,7 +58,7 @@ function getLosOjaSession() {
     } catch (error) {
 
         console.error(
-            "LosOja: Could not read session:",
+            "LosOja session error:",
             error
         );
 
@@ -55,35 +68,48 @@ function getLosOjaSession() {
 
 
 /* =========================================================
-   SUPABASE HEADERS
+   GET CURRENT USER
 ========================================================= */
 
-function getBusinessHeaders(accessToken) {
+function getLosOjaUser() {
 
-    const headers = {
+    const session =
+        getLosOjaSession();
 
-        "apikey":
-            LOSOJA_SUPABASE_KEY,
-
-        "Content-Type":
-            "application/json",
-
-        "Prefer":
-            "return=representation"
-
-    };
-
-
-    if (accessToken) {
-
-        headers["Authorization"] =
-            "Bearer " +
-            accessToken;
-
+    if (
+        !session ||
+        !session.user
+    ) {
+        return null;
     }
 
+    return session.user;
+}
 
-    return headers;
+
+/* =========================================================
+   NOTIFICATION
+========================================================= */
+
+function showLosOjaNotification(
+    message,
+    type = "info"
+) {
+
+    if (
+        typeof window.showNotification ===
+        "function"
+    ) {
+
+        window.showNotification(
+            message,
+            type
+        );
+
+        return;
+    }
+
+    alert(message);
 }
 
 
@@ -91,116 +117,85 @@ function getBusinessHeaders(accessToken) {
    ADD BUSINESS
 ========================================================= */
 
-window.addBusiness = async function (businessData) {
+window.addBusiness = async function (
+    businessData
+) {
 
     console.log(
-        "LosOja: addBusiness() started."
+        "LosOja: Starting business save..."
     );
-
-
-    /* -----------------------------------------
-       CHECK LOGIN
-    ----------------------------------------- */
 
     const session =
         getLosOjaSession();
 
+    const user =
+        getLosOjaUser();
+
+    /* -----------------------------------------------------
+       CHECK LOGIN
+    ----------------------------------------------------- */
 
     if (
         !session ||
-        !session.user ||
-        !session.access_token
+        !session.access_token ||
+        !user ||
+        !user.id
     ) {
 
-        console.error(
-            "LosOja: No valid authenticated session found."
-        );
-
         showLosOjaNotification(
-            "Please log in to add a business."
+            "Please log in before adding your business."
         );
 
         return false;
     }
 
 
-    const user =
-        session.user;
+    /* -----------------------------------------------------
+       VALIDATE BUSINESS DATA
+    ----------------------------------------------------- */
+
+    const name =
+        String(
+            businessData?.name || ""
+        ).trim();
+
+    const category =
+        String(
+            businessData?.category || ""
+        ).trim();
+
+    const location =
+        String(
+            businessData?.location || ""
+        ).trim();
+
+    const description =
+        String(
+            businessData?.description || ""
+        ).trim();
+
+    const phone =
+        String(
+            businessData?.phone || ""
+        ).trim();
+
+    const email =
+        String(
+            businessData?.email || ""
+        ).trim();
 
 
-    console.log(
-        "LosOja: Authenticated user:",
-        user.id
-    );
-
-
-    /* -----------------------------------------
-       COLLECT BUSINESS DATA
-    ----------------------------------------- */
-
-    const business = {
-
-        /*
-         * IMPORTANT:
-         * The Supabase businesses table uses
-         * USER_ID, not OWNER_ID.
-         */
-        user_id:
-            user.id,
-
-        name:
-            String(
-                businessData.name || ""
-            ).trim(),
-
-        category:
-            String(
-                businessData.category || ""
-            ).trim(),
-
-        location:
-            String(
-                businessData.location || ""
-            ).trim(),
-
-        description:
-            String(
-                businessData.description || ""
-            ).trim(),
-
-        phone:
-            String(
-                businessData.phone || ""
-            ).trim(),
-
-        email:
-            String(
-                businessData.email || ""
-            ).trim(),
-
-        rating:
-            0,
-
-        reviews:
-            0
-    };
-
-
-    /* -----------------------------------------
-       VALIDATION
-    ----------------------------------------- */
-
-    if (!business.name) {
+    if (!name) {
 
         showLosOjaNotification(
-            "Please enter the business name."
+            "Please enter your business name."
         );
 
         return false;
     }
 
 
-    if (!business.category) {
+    if (!category) {
 
         showLosOjaNotification(
             "Please select a business category."
@@ -210,39 +205,66 @@ window.addBusiness = async function (businessData) {
     }
 
 
-    if (!business.location) {
+    if (!location) {
 
         showLosOjaNotification(
-            "Please enter the business location."
+            "Please enter your business location."
         );
 
         return false;
     }
 
 
+    /* -----------------------------------------------------
+       DATABASE OBJECT
+
+       IMPORTANT:
+       These are ONLY columns that actually exist
+       in your businesses table.
+    ----------------------------------------------------- */
+
+    const business = {
+
+        user_id: user.id,
+
+        name: name,
+
+        category: category,
+
+        location: location,
+
+        description:
+            description || null,
+
+        phone:
+            phone || null,
+
+        email:
+            email || null
+    };
+
+
     console.log(
-        "LosOja: Business being sent to Supabase:",
+        "LosOja business being sent:",
         business
     );
 
 
-    /* -----------------------------------------
+    /* -----------------------------------------------------
        SAVE TO SUPABASE
-    ----------------------------------------- */
+    ----------------------------------------------------- */
 
     try {
 
         const response =
             await fetch(
-                LOSOJA_SUPABASE_URL +
+                SUPABASE_URL +
                 "/rest/v1/businesses",
                 {
                     method: "POST",
 
                     headers:
-                        getBusinessHeaders(
-                            session.access_token
-                        ),
+                        getBusinessHeaders(),
 
                     body:
                         JSON.stringify(
@@ -257,26 +279,24 @@ window.addBusiness = async function (businessData) {
 
 
         console.log(
-            "LosOja: Supabase status:",
+            "LosOja Supabase status:",
             response.status
         );
 
-
         console.log(
-            "LosOja: Supabase response:",
+            "LosOja Supabase response:",
             responseText
         );
 
 
-        /* -----------------------------------------
+        /* -------------------------------------------------
            HANDLE ERROR
-        ----------------------------------------- */
+        ------------------------------------------------- */
 
         if (!response.ok) {
 
             let errorMessage =
                 "Business could not be saved.";
-
 
             try {
 
@@ -285,170 +305,92 @@ window.addBusiness = async function (businessData) {
                         responseText
                     );
 
-
                 errorMessage =
                     errorData.message ||
+                    errorData.msg ||
                     errorData.details ||
                     errorData.hint ||
                     errorData.error ||
                     errorMessage;
 
-
             } catch (parseError) {
 
                 if (responseText) {
-
                     errorMessage =
                         responseText;
-
                 }
-
             }
 
 
             console.error(
-                "LosOja: SUPABASE SAVE ERROR:",
-                {
-                    status:
-                        response.status,
-
-                    response:
-                        responseText,
-
-                    business:
-                        business
-                }
+                "LosOja business save error:",
+                errorMessage
             );
 
 
-            if (
-                response.status === 401 ||
-                response.status === 403
-            ) {
-
-                showLosOjaNotification(
-                    "You are not authorized to add this business.\n\n" +
-                    errorMessage
-                );
-
-            } else {
-
-                showLosOjaNotification(
-                    "Business could not be saved.\n\n" +
-                    errorMessage
-                );
-
-            }
-
+            showLosOjaNotification(
+                "Business could not be saved: " +
+                errorMessage
+            );
 
             return false;
         }
 
 
-        /* -----------------------------------------
+        /* -------------------------------------------------
            SUCCESS
-        ----------------------------------------- */
+        ------------------------------------------------- */
 
         let savedBusiness = null;
 
-
         try {
 
-            const returnedData =
+            savedBusiness =
                 JSON.parse(
                     responseText
                 );
 
-
-            if (
-                Array.isArray(
-                    returnedData
-                ) &&
-                returnedData.length > 0
-            ) {
-
-                savedBusiness =
-                    returnedData[0];
-
-            }
-
         } catch (parseError) {
 
             console.warn(
-                "LosOja: Could not parse saved business response.",
-                parseError
+                "Could not parse saved business response."
             );
-
         }
 
 
         console.log(
-            "LosOja: BUSINESS SAVED SUCCESSFULLY:",
+            "LosOja business saved successfully:",
             savedBusiness
         );
 
 
-        /* -----------------------------------------
-           RELOAD BUSINESSES
-        ----------------------------------------- */
+        /* -------------------------------------------------
+           REFRESH BUSINESS LIST
+        ------------------------------------------------- */
 
         if (
-            typeof window.loadBusinessesFromSupabase ===
+            typeof window
+                .loadBusinessesFromSupabase ===
             "function"
         ) {
 
             try {
 
-                await window.loadBusinessesFromSupabase();
+                await window
+                    .loadBusinessesFromSupabase();
 
             } catch (loadError) {
 
-                console.error(
-                    "LosOja: Business saved but reload failed:",
+                console.warn(
+                    "Business saved, but list refresh failed:",
                     loadError
                 );
-
             }
-
         }
 
 
-        /* -----------------------------------------
-           SUCCESS MESSAGE
-        ----------------------------------------- */
-
         showLosOjaNotification(
-            "Business added successfully!"
-        );
-
-
-        /* -----------------------------------------
-           SCROLL TO BUSINESSES
-        ----------------------------------------- */
-
-        setTimeout(
-            function () {
-
-                const businessesSection =
-                    document.getElementById(
-                        "businesses"
-                    );
-
-
-                if (businessesSection) {
-
-                    businessesSection.scrollIntoView({
-                        behavior:
-                            "smooth",
-
-                        block:
-                            "start"
-                    });
-
-                }
-
-            },
-            200
+            "Your business was added successfully!"
         );
 
 
@@ -458,21 +400,18 @@ window.addBusiness = async function (businessData) {
     } catch (error) {
 
         console.error(
-            "LosOja: Database connection error:",
+            "LosOja business save network error:",
             error
         );
 
 
         showLosOjaNotification(
-            "Could not connect to the database.\n\n" +
-            error.message
+            "Could not connect to the database. Please try again."
         );
 
 
         return false;
-
     }
-
 };
 
 
@@ -492,7 +431,7 @@ document.addEventListener(
 
         if (!form) {
 
-            console.warn(
+            console.error(
                 "LosOja: #addBusinessForm was not found."
             );
 
@@ -501,7 +440,7 @@ document.addEventListener(
 
 
         console.log(
-            "LosOja: Add Business form found."
+            "LosOja: Add Business form connected."
         );
 
 
@@ -517,6 +456,131 @@ document.addEventListener(
                 );
 
 
+                /* -----------------------------------------
+                   CHECK LOGIN
+                ----------------------------------------- */
+
+                const session =
+                    getLosOjaSession();
+
+                const user =
+                    getLosOjaUser();
+
+
+                if (
+                    !session ||
+                    !session.access_token ||
+                    !user ||
+                    !user.id
+                ) {
+
+                    showLosOjaNotification(
+                        "Please log in before adding a business."
+                    );
+
+                    return;
+                }
+
+
+                /* -----------------------------------------
+                   GET FORM FIELDS
+                ----------------------------------------- */
+
+                const nameInput =
+                    document.getElementById(
+                        "businessName"
+                    );
+
+                const categoryInput =
+                    document.getElementById(
+                        "businessCategory"
+                    );
+
+                const locationInput =
+                    document.getElementById(
+                        "businessLocation"
+                    );
+
+                const descriptionInput =
+                    document.getElementById(
+                        "businessDescription"
+                    );
+
+                const phoneInput =
+                    document.getElementById(
+                        "businessPhone"
+                    );
+
+                const emailInput =
+                    document.getElementById(
+                        "businessEmail"
+                    );
+
+
+                /* -----------------------------------------
+                   VERIFY FIELDS EXIST
+                ----------------------------------------- */
+
+                if (
+                    !nameInput ||
+                    !categoryInput ||
+                    !locationInput
+                ) {
+
+                    console.error(
+                        "LosOja: One or more required form fields are missing."
+                    );
+
+                    showLosOjaNotification(
+                        "The business form is not configured correctly."
+                    );
+
+                    return;
+                }
+
+
+                /* -----------------------------------------
+                   COLLECT DATA
+                ----------------------------------------- */
+
+                const businessData = {
+
+                    name:
+                        nameInput.value.trim(),
+
+                    category:
+                        categoryInput.value.trim(),
+
+                    location:
+                        locationInput.value.trim(),
+
+                    description:
+                        descriptionInput
+                            ? descriptionInput.value.trim()
+                            : "",
+
+                    phone:
+                        phoneInput
+                            ? phoneInput.value.trim()
+                            : "",
+
+                    email:
+                        emailInput
+                            ? emailInput.value.trim()
+                            : ""
+                };
+
+
+                console.log(
+                    "LosOja form data:",
+                    businessData
+                );
+
+
+                /* -----------------------------------------
+                   SUBMIT BUTTON
+                ----------------------------------------- */
+
                 const submitButton =
                     form.querySelector(
                         'button[type="submit"]'
@@ -530,145 +594,10 @@ document.addEventListener(
 
                     submitButton.textContent =
                         "Saving...";
-
                 }
 
 
                 try {
-
-                    /* -----------------------------------------
-                       GET FORM ELEMENTS
-                    ----------------------------------------- */
-
-                    const nameElement =
-                        document.getElementById(
-                            "businessName"
-                        );
-
-                    const categoryElement =
-                        document.getElementById(
-                            "businessCategory"
-                        );
-
-                    const locationElement =
-                        document.getElementById(
-                            "businessLocation"
-                        );
-
-                    const descriptionElement =
-                        document.getElementById(
-                            "businessDescription"
-                        );
-
-                    const phoneElement =
-                        document.getElementById(
-                            "businessPhone"
-                        );
-
-                    const emailElement =
-                        document.getElementById(
-                            "businessEmail"
-                        );
-
-
-                    /* -----------------------------------------
-                       CHECK REQUIRED FIELDS
-                    ----------------------------------------- */
-
-                    if (!nameElement) {
-
-                        showLosOjaNotification(
-                            "Business name field was not found."
-                        );
-
-                        return;
-                    }
-
-
-                    if (!categoryElement) {
-
-                        showLosOjaNotification(
-                            "Business category field was not found."
-                        );
-
-                        return;
-                    }
-
-
-                    if (!locationElement) {
-
-                        showLosOjaNotification(
-                            "Business location field was not found."
-                        );
-
-                        return;
-                    }
-
-
-                    /* -----------------------------------------
-                       CHECK SESSION
-                    ----------------------------------------- */
-
-                    const session =
-                        getLosOjaSession();
-
-
-                    if (
-                        !session ||
-                        !session.user ||
-                        !session.access_token
-                    ) {
-
-                        showLosOjaNotification(
-                            "Please log in before adding your business."
-                        );
-
-                        return;
-                    }
-
-
-                    /* -----------------------------------------
-                       COLLECT FORM DATA
-                    ----------------------------------------- */
-
-                    const businessData = {
-
-                        name:
-                            nameElement.value,
-
-                        category:
-                            categoryElement.value,
-
-                        location:
-                            locationElement.value,
-
-                        description:
-                            descriptionElement
-                                ? descriptionElement.value
-                                : "",
-
-                        phone:
-                            phoneElement
-                                ? phoneElement.value
-                                : "",
-
-                        email:
-                            emailElement
-                                ? emailElement.value
-                                : ""
-
-                    };
-
-
-                    console.log(
-                        "LosOja: Business form data:",
-                        businessData
-                    );
-
-
-                    /* -----------------------------------------
-                       SAVE
-                    ----------------------------------------- */
 
                     const success =
                         await window.addBusiness(
@@ -676,23 +605,23 @@ document.addEventListener(
                         );
 
 
-                    /* -----------------------------------------
-                       SUCCESS
-                    ----------------------------------------- */
-
                     if (success) {
 
                         form.reset();
 
 
+                        /* -----------------------------
+                           CLOSE ADD BUSINESS MODAL
+                        ----------------------------- */
+
                         if (
-                            typeof window.closeModal ===
+                            typeof window
+                                .closeAddBusinessModal ===
                             "function"
                         ) {
 
-                            window.closeModal(
-                                "addBusinessModal"
-                            );
+                            window
+                                .closeAddBusinessModal();
 
                         } else {
 
@@ -700,7 +629,6 @@ document.addEventListener(
                                 document.getElementById(
                                     "addBusinessModal"
                                 );
-
 
                             if (modal) {
 
@@ -713,26 +641,12 @@ document.addEventListener(
                                     "true"
                                 );
 
+                                document.body.classList.remove(
+                                    "modal-open"
+                                );
                             }
-
                         }
-
                     }
-
-
-                } catch (error) {
-
-                    console.error(
-                        "LosOja: Add Business form error:",
-                        error
-                    );
-
-
-                    showLosOjaNotification(
-                        "Something went wrong while adding the business.\n\n" +
-                        error.message
-                    );
-
 
                 } finally {
 
@@ -743,13 +657,20 @@ document.addEventListener(
 
                         submitButton.textContent =
                             "Add Business";
-
                     }
-
                 }
-
             }
         );
-
     }
 );
+
+
+/* =========================================================
+   EXPOSE SESSION FUNCTIONS
+========================================================= */
+
+window.getLosOjaSession =
+    getLosOjaSession;
+
+window.getLosOjaUser =
+    getLosOjaUser;
