@@ -155,8 +155,7 @@ window.addBusiness = async function (businessData) {
          * owner_id connects this business to the
          * authenticated Supabase user.
          */
-        owner_id:
-            user.id,
+       user_id: user.id,
 
         name:
             String(
