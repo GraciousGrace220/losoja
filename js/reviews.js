@@ -1,188 +1,160 @@
-const REVIEWS_KEY = "losoja_reviews";
+/**
+ * LosOja - Reviews system
+ */
 
+const Reviews = {
+    STORAGE_KEY: 'losoja_reviews',
 
-// ================================
-// GET REVIEWS
-// ================================
+    init() {
+        // No global binding needed; rendered on demand
+    },
 
-function getReviews() {
-    try {
-        return JSON.parse(
-            localStorage.getItem(REVIEWS_KEY)
-        ) || [];
-    } catch (error) {
-        return [];
-    }
-}
+    getAll() {
+        try {
+            return JSON.parse(localStorage.getItem(this.STORAGE_KEY)) || [];
+        } catch {
+            return [];
+        }
+    },
 
+    saveAll(list) {
+        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(list));
+    },
 
-// ================================
-// SAVE REVIEWS
-// ================================
+    getForBusiness(businessId) {
+        return this.getAll()
+            .filter(r => r.businessId === businessId)
+            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    },
 
-function saveReviews(reviews) {
-    localStorage.setItem(
-        REVIEWS_KEY,
-        JSON.stringify(reviews)
-    );
-}
+    getStats(businessId) {
+        const reviews = this.getForBusiness(businessId);
+        if (reviews.length === 0) return { avg: 0, count: 0 };
+        const sum = reviews.reduce((acc, r) => acc + r.rating, 0);
+        return {
+            avg: sum / reviews.length,
+            count: reviews.length
+        };
+    },
 
-window.getReviews = getReviews;
-window.saveReviews = saveReviews;
+    add({ businessId, rating, text }) {
+        const user = Auth.getCurrentUser();
+        if (!user) return { success: false, message: 'Please login to leave a review.' };
+        if (!rating || rating < 1 || rating > 5) {
+            return { success: false, message: 'Please select a rating.' };
+        }
 
+        const list = this.getAll();
+        const already = list.find(r => r.businessId === businessId && r.userId === user.id);
+        if (already) {
+            return { success: false, message: 'You have already reviewed this business.' };
+        }
 
-// ================================
-// ADD REVIEW
-// ================================
+        const review = {
+            id: App.generateId(),
+            businessId,
+            userId: user.id,
+            userName: user.name,
+            rating: Number(rating),
+            text: (text || '').trim(),
+            createdAt: new Date().toISOString()
+        };
+        list.push(review);
+        this.saveAll(list);
+        return { success: true, review };
+    },
 
-window.addReview = function (businessId) {
+    renderForBusiness(businessId) {
+        const section = document.getElementById('reviewsSection');
+        if (!section) return;
 
-    const currentUser = JSON.parse(
-        localStorage.getItem("losoja_current_user")
-    );
+        const reviews = this.getForBusiness(businessId);
+        const isLoggedIn = Auth.isLoggedIn();
 
-    if (!currentUser) {
-        showNotification(
-            "Please log in before leaving a review."
-        );
+        let formHtml = '';
+        if (isLoggedIn) {
+            formHtml = `
+                <form class="review-form" id="reviewForm">
+                    <div class="star-rating" id="starRating">
+                        <button type="button" data-value="1">★</button>
+                        <button type="button" data-value="2">★</button>
+                        <button type="button" data-value="3">★</button>
+                        <button type="button" data-value="4">★</button>
+                        <button type="button" data-value="5">★</button>
+                    </div>
+                    <textarea id="reviewText" placeholder="Share your experience (optional)..." rows="3"></textarea>
+                    <p id="reviewError" class="form-error hidden"></p>
+                    <button type="submit" class="btn btn-primary">Submit Review</button>
+                </form>
+            `;
+        } else {
+            formHtml = `
+                <p style="margin-bottom:1rem;color:var(--text-muted);font-size:0.9rem;">
+                    <button type="button" class="btn btn-outline" id="loginToReview">Login</button>
+                    to leave a review.
+                </p>
+            `;
+        }
 
-        openModal("loginModal");
-        return;
-    }
+        const listHtml = reviews.length
+            ? reviews.map(r => `
+                <div class="review-item">
+                    <div class="review-header">
+                        <span class="reviewer">${App.escapeHtml(r.userName)}</span>
+                        <span class="review-stars">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</span>
+                    </div>
+                    ${r.text ? `<p class="review-text">${App.escapeHtml(r.text)}</p>` : ''}
+                    <div class="review-date">${App.formatDate(r.createdAt)}</div>
+                </div>
+            `).join('')
+            : '<p style="color:var(--text-muted);font-size:0.9rem;">No reviews yet. Be the first!</p>';
 
-    const ratingInput = prompt(
-        "Give this business a rating from 1 to 5:"
-    );
+        section.innerHTML = `
+            <h3>Reviews (${reviews.length})</h3>
+            ${formHtml}
+            <div class="review-list">${listHtml}</div>
+        `;
 
-    if (ratingInput === null) {
-        return;
-    }
+        if (isLoggedIn) {
+            let selectedRating = 0;
+            const stars = section.querySelectorAll('#starRating button');
+            stars.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    selectedRating = Number(btn.dataset.value);
+                    stars.forEach(s => {
+                        s.classList.toggle('active', Number(s.dataset.value) <= selectedRating);
+                    });
+                });
+            });
 
-    const rating = Number(ratingInput);
+            section.querySelector('#reviewForm')?.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const text = section.querySelector('#reviewText')?.value || '';
+                const errorEl = section.querySelector('#reviewError');
+                const result = this.add({ businessId, rating: selectedRating, text });
 
-    if (
-        !Number.isInteger(rating) ||
-        rating < 1 ||
-        rating > 5
-    ) {
-        showNotification(
-            "Please enter a rating from 1 to 5."
-        );
-        return;
-    }
-
-    const comment = prompt(
-        "Write a short review:"
-    );
-
-    if (
-        comment === null ||
-        !comment.trim()
-    ) {
-        showNotification(
-            "Please enter a review."
-        );
-        return;
-    }
-
-    const reviews = getReviews();
-
-    const newReview = {
-        id: Date.now().toString(),
-        businessId: String(businessId),
-        userId: currentUser.id,
-        userName: currentUser.name,
-        rating: rating,
-        comment: comment.trim(),
-        createdAt: new Date().toISOString()
-    };
-
-    reviews.push(newReview);
-
-    saveReviews(reviews);
-
-    updateBusinessRating(businessId);
-
-    showNotification(
-        "Thank you! Your review has been added."
-    );
-
-    // Refresh business information
-    if (typeof window.openBusiness === "function") {
-        window.openBusiness(businessId);
+                if (!result.success) {
+                    if (errorEl) {
+                        errorEl.textContent = result.message;
+                        errorEl.classList.remove('hidden');
+                    }
+                    return;
+                }
+                App.showToast('Review submitted!');
+                this.renderForBusiness(businessId);
+                if (typeof Businesses !== 'undefined') {
+                    Businesses.render();
+                }
+            });
+        } else {
+            section.querySelector('#loginToReview')?.addEventListener('click', () => {
+                App.closeModal('businessModal');
+                App.openModal('loginModal');
+            });
+        }
     }
 };
 
-
-// ================================
-// UPDATE BUSINESS RATING
-// ================================
-
-function updateBusinessRating(businessId) {
-
-    const businesses =
-        typeof window.getBusinesses === "function"
-            ? window.getBusinesses()
-            : [];
-
-    const reviews = getReviews();
-
-    const business = businesses.find(function (item) {
-        return String(item.id) === String(businessId);
-    });
-
-    if (!business) {
-        return;
-    }
-
-    const businessReviews = reviews.filter(
-        function (review) {
-            return String(review.businessId) ===
-                   String(businessId);
-        }
-    );
-
-    if (businessReviews.length === 0) {
-        return;
-    }
-
-    const total = businessReviews.reduce(
-        function (sum, review) {
-            return sum + Number(review.rating);
-        },
-        0
-    );
-
-    const average =
-        total / businessReviews.length;
-
-    business.rating =
-        Number(average.toFixed(1));
-
-    business.reviews =
-        businessReviews.length;
-
-    if (
-        typeof window.saveBusinesses ===
-        "function"
-    ) {
-        window.saveBusinesses(businesses);
-    }
-}
-
-
-// ================================
-// GET BUSINESS REVIEWS
-// ================================
-
-window.getBusinessReviews = function (
-    businessId
-) {
-
-    return getReviews().filter(
-        function (review) {
-            return String(review.businessId) ===
-                   String(businessId);
-        }
-    );
-};
+document.addEventListener('DOMContentLoaded', () => {
+    Reviews.init();
+});
