@@ -4,12 +4,19 @@
 LosOja - Business Management
 js/businesses.js
 
-Handles:
+RESPONSIBILITIES:
 - Loading businesses from Supabase
 - Displaying businesses
 - Viewing business details
-- Adding/saving businesses
-- Notifications
+- Opening/closing business modals
+- Connecting the Add Business form to app.js
+
+IMPORTANT:
+The actual business SAVE operation is handled by
+window.addBusiness() in app.js.
+
+This prevents two different scripts from submitting
+the same form at the same time.
 =========================================================
 */
 
@@ -20,10 +27,6 @@ Handles:
 
     /* =====================================================
        SUPABASE CONFIGURATION
-       
-       IMPORTANT:
-       We use UNIQUE variable names here so this file does
-       not conflict with app.js.
     ===================================================== */
 
     let losojaBusinessesClient = null;
@@ -36,7 +39,7 @@ Handles:
 
 
     /* =====================================================
-       CREATE BUSINESS SUPABASE CLIENT
+       CREATE SUPABASE CLIENT
     ===================================================== */
 
     function initializeBusinessSupabase() {
@@ -59,7 +62,6 @@ Handles:
                 );
 
                 return true;
-
             }
 
         } catch (error) {
@@ -76,7 +78,6 @@ Handles:
         );
 
         return false;
-
     }
 
 
@@ -95,7 +96,7 @@ Handles:
 
 
     /* =====================================================
-       INITIALIZE
+       INITIALIZE BUSINESS SYSTEM
     ===================================================== */
 
     function initializeBusinessSystem() {
@@ -123,10 +124,6 @@ Handles:
 
     /* =====================================================
        ADD BUSINESS BUTTONS
-       
-       Works with:
-       #addBusinessBtn
-       .add-business-btn
     ===================================================== */
 
     function setupAddBusinessButtons() {
@@ -157,7 +154,6 @@ Handles:
                 ) {
 
                     return;
-
                 }
 
 
@@ -210,7 +206,6 @@ Handles:
             );
 
             return;
-
         }
 
 
@@ -288,6 +283,14 @@ Handles:
 
 
     /* =====================================================
+       MAKE MODAL CLOSE AVAILABLE TO OTHER SCRIPTS
+    ===================================================== */
+
+    window.closeAddBusinessModal =
+        closeAddBusinessModal;
+
+
+    /* =====================================================
        MODAL CLOSING
     ===================================================== */
 
@@ -306,7 +309,6 @@ Handles:
                     ) {
 
                         return;
-
                     }
 
 
@@ -363,7 +365,6 @@ Handles:
                     ) {
 
                         return;
-
                     }
 
 
@@ -411,6 +412,12 @@ Handles:
 
     /* =====================================================
        ADD BUSINESS FORM
+       
+       IMPORTANT:
+       app.js owns the actual submit operation.
+
+       businesses.js ONLY connects the form to
+       window.addBusiness().
     ===================================================== */
 
     function setupAddBusinessForm() {
@@ -428,371 +435,18 @@ Handles:
             );
 
             return;
-
         }
 
 
-        if (
-            form.dataset.submitListenerAttached ===
-            "true"
-        ) {
-
-            return;
-
-        }
-
-
-        form.dataset.submitListenerAttached =
-            "true";
-
-
-        form.addEventListener(
-            "submit",
-            handleAddBusinessSubmit
-        );
-
+        /*
+         * DO NOT attach another submit handler here.
+         *
+         * app.js already owns the form submission.
+         */
 
         console.log(
-            "LosOja: Add Business form listener attached."
+            "LosOja: Add Business form detected."
         );
-
-    }
-
-
-    /* =====================================================
-       SAVE BUSINESS
-    ===================================================== */
-
-    async function handleAddBusinessSubmit(event) {
-
-        event.preventDefault();
-
-
-        const form =
-            event.currentTarget;
-
-
-        if (!form.checkValidity()) {
-
-            form.reportValidity();
-
-            return;
-
-        }
-
-
-        const submitButton =
-            form.querySelector(
-                'button[type="submit"]'
-            );
-
-
-        const originalButtonText =
-            submitButton
-                ? submitButton.textContent
-                : "Add Business";
-
-
-        try {
-
-            if (submitButton) {
-
-                submitButton.disabled =
-                    true;
-
-                submitButton.textContent =
-                    "Saving...";
-
-            }
-
-
-            /* ---------------------------------------------
-               GET FORM VALUES
-            --------------------------------------------- */
-
-            const businessName =
-                getValue(
-                    "businessName"
-                );
-
-
-            const category =
-                getValue(
-                    "businessCategory"
-                );
-
-
-            const location =
-                getValue(
-                    "businessLocation"
-                );
-
-
-            /* ---------------------------------------------
-               VALIDATION
-            --------------------------------------------- */
-
-            if (!businessName) {
-
-                throw new Error(
-                    "Please enter your business name."
-                );
-
-            }
-
-
-            if (!category) {
-
-                throw new Error(
-                    "Please select a business category."
-                );
-
-            }
-
-
-            if (!location) {
-
-                throw new Error(
-                    "Please enter your business location."
-                );
-
-            }
-
-
-            /* ---------------------------------------------
-               CHECK SUPABASE
-            --------------------------------------------- */
-
-            if (!losojaBusinessesClient) {
-
-                initializeBusinessSupabase();
-
-            }
-
-
-            if (!losojaBusinessesClient) {
-
-                throw new Error(
-                    "Supabase is not connected."
-                );
-
-            }
-
-
-            /* ---------------------------------------------
-               BUSINESS DATA
-               
-               Only use the columns currently confirmed
-               in the businesses table.
-            --------------------------------------------- */
-
-            const businessData = {
-
-                name:
-                    businessName,
-
-                category:
-                    category,
-
-                location:
-                    location
-
-            };
-
-
-            console.log(
-                "LosOja: Saving business:",
-                businessData
-            );
-
-
-            /* ---------------------------------------------
-               INSERT
-            --------------------------------------------- */
-
-            const result =
-                await losojaBusinessesClient
-                    .from("businesses")
-                    .insert(
-                        businessData
-                    );
-
-
-            /* ---------------------------------------------
-               CHECK ERROR
-            --------------------------------------------- */
-
-            if (result.error) {
-
-                console.error(
-                    "LosOja Supabase INSERT ERROR:",
-                    result.error
-                );
-
-                throw result.error;
-
-            }
-
-
-            /* ---------------------------------------------
-               SUCCESS
-            --------------------------------------------- */
-
-            console.log(
-                "LosOja: BUSINESS SAVED SUCCESSFULLY!"
-            );
-
-
-            showNotification(
-                "Your business has been submitted successfully!",
-                "success"
-            );
-
-
-            form.reset();
-
-
-            setTimeout(
-                function () {
-
-                    closeAddBusinessModal();
-
-                },
-                700
-            );
-
-
-            setTimeout(
-                function () {
-
-                    loadBusinessesFromSupabase();
-
-                },
-                900
-            );
-
-
-        } catch (error) {
-
-            console.error(
-                "LosOja: FAILED TO SAVE BUSINESS:",
-                error
-            );
-
-
-            let errorMessage =
-                "We could not save your business.";
-
-
-            if (
-                error &&
-                error.message
-            ) {
-
-                errorMessage =
-                    error.message;
-
-            }
-
-
-            const lowerMessage =
-                errorMessage.toLowerCase();
-
-
-            if (
-                lowerMessage.includes(
-                    "row-level security"
-                ) ||
-                lowerMessage.includes(
-                    "violates row-level security policy"
-                )
-            ) {
-
-                errorMessage =
-                    "Supabase is blocking new business submissions. The database security policy needs to allow business submissions.";
-
-            }
-
-
-            else if (
-                lowerMessage.includes(
-                    "permission denied"
-                )
-            ) {
-
-                errorMessage =
-                    "Supabase denied permission to add this business.";
-
-            }
-
-
-            else if (
-                lowerMessage.includes(
-                    "column"
-                ) &&
-                lowerMessage.includes(
-                    "does not exist"
-                )
-            ) {
-
-                errorMessage =
-                    "The business information does not match the businesses table.";
-
-            }
-
-
-            showNotification(
-                errorMessage,
-                "error"
-            );
-
-        }
-
-
-        finally {
-
-            if (submitButton) {
-
-                submitButton.disabled =
-                    false;
-
-                submitButton.textContent =
-                    originalButtonText;
-
-            }
-
-        }
-
-    }
-
-
-    /* =====================================================
-       GET FORM VALUE
-    ===================================================== */
-
-    function getValue(id) {
-
-        const element =
-            document.getElementById(
-                id
-            );
-
-
-        if (!element) {
-
-            console.warn(
-                "LosOja: form field not found:",
-                id
-            );
-
-            return "";
-
-        }
-
-
-        return String(
-            element.value || ""
-        ).trim();
 
     }
 
@@ -823,6 +477,11 @@ Handles:
 
         try {
 
+            console.log(
+                "LosOja: Loading businesses..."
+            );
+
+
             const result =
                 await losojaBusinessesClient
                     .from("businesses")
@@ -832,12 +491,11 @@ Handles:
             if (result.error) {
 
                 console.error(
-                    "LosOja: could not load businesses:",
+                    "LosOja: Could not load businesses:",
                     result.error
                 );
 
                 return;
-
             }
 
 
@@ -846,7 +504,7 @@ Handles:
 
 
             console.log(
-                "LosOja: businesses loaded:",
+                "LosOja: Businesses loaded:",
                 businesses.length
             );
 
@@ -859,13 +517,25 @@ Handles:
         } catch (error) {
 
             console.error(
-                "LosOja: business loading error:",
+                "LosOja: Business loading error:",
                 error
             );
 
         }
 
     }
+
+
+    /*
+     * IMPORTANT:
+     * Make this function available to app.js.
+     *
+     * app.js tries to call:
+     * window.loadBusinessesFromSupabase()
+     */
+
+    window.loadBusinessesFromSupabase =
+        loadBusinessesFromSupabase;
 
 
     /* =====================================================
@@ -883,6 +553,11 @@ Handles:
 
 
         if (!grid) {
+
+            console.warn(
+                "LosOja: #businessGrid was not found."
+            );
+
             return;
         }
 
@@ -891,7 +566,21 @@ Handles:
 
 
         if (!Array.isArray(businesses)) {
+
             businesses = [];
+
+        }
+
+
+        if (businesses.length === 0) {
+
+            grid.innerHTML = `
+                <div class="no-businesses">
+                    <p>No businesses have been added yet.</p>
+                </div>
+            `;
+
+            return;
         }
 
 
@@ -975,6 +664,20 @@ Handles:
             );
 
 
+        const rating =
+            Number(
+                business.rating || 0
+            );
+
+
+        const reviews =
+            Number(
+                business.reviews ||
+                business.review_count ||
+                0
+            );
+
+
         article.innerHTML = `
 
             <div class="business-image">
@@ -998,11 +701,11 @@ Handles:
                     </span>
 
                     <span>
-                        0.0
+                        ${rating.toFixed(1)}
                     </span>
 
                     <span class="review-count">
-                        (0)
+                        (${reviews})
                     </span>
 
                 </div>
@@ -1059,7 +762,6 @@ Handles:
                 ) {
 
                     return;
-
                 }
 
 
@@ -1089,7 +791,6 @@ Handles:
                             );
 
                             return;
-
                         }
 
 
@@ -1177,6 +878,11 @@ Handles:
 
 
         if (!modal) {
+
+            console.warn(
+                "LosOja: businessModal was not found."
+            );
+
             return;
         }
 
@@ -1285,7 +991,6 @@ Handles:
         ) {
 
             return;
-
         }
 
 
@@ -1343,7 +1048,6 @@ Handles:
             alert(message);
 
             return;
-
         }
 
 
@@ -1396,6 +1100,15 @@ Handles:
     }
 
 
+    /*
+     * Make notification available globally.
+     * This allows app.js to use the same notification.
+     */
+
+    window.showNotification =
+        showNotification;
+
+
     /* =====================================================
        ESCAPE HTML
     ===================================================== */
@@ -1439,12 +1152,24 @@ Handles:
 
         return String(value)
             .replace(
+                /&/g,
+                "&amp;"
+            )
+            .replace(
                 /"/g,
                 "&quot;"
             )
             .replace(
                 /'/g,
                 "&#039;"
+            )
+            .replace(
+                /</g,
+                "&lt;"
+            )
+            .replace(
+                />/g,
+                "&gt;"
             );
 
     }
@@ -1467,6 +1192,19 @@ Handles:
             if (!closeButton) {
                 return;
             }
+
+
+            if (
+                closeButton.dataset.listenerAttached ===
+                "true"
+            ) {
+
+                return;
+            }
+
+
+            closeButton.dataset.listenerAttached =
+                "true";
 
 
             closeButton.addEventListener(
@@ -1508,7 +1246,6 @@ Handles:
             ) {
 
                 return;
-
             }
 
 
