@@ -1,777 +1,1438 @@
 ```javascript
-const LOSOJA_BUSINESSES_URL =
-    "https://ycxshwgeebskdozmornh.supabase.co";
+/*
+=========================================================
+LosOja - Business Management
+js/businesses.js
 
-const LOSOJA_BUSINESSES_KEY =
-    "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
+Handles:
+- Loading businesses from Supabase
+- Displaying businesses
+- Searching/filtering
+- Viewing business details
+- Adding/saving businesses
+- Notifications
+=========================================================
+*/
 
-const BUSINESSES_KEY = "losoja_businesses";
+(function () {
 
+    "use strict";
 
-/* =========================================
-   DEFAULT BUSINESSES
-========================================= */
+    /* =====================================================
+       SUPABASE CONFIGURATION
+    ===================================================== */
 
-const DEFAULT_BUSINESSES = [
-    {
-        id: "default-1",
-        ownerId: "system",
-        name: "Taste Haven",
-        category: "Food",
-        location: "Lagos, Nigeria",
-        description: "Delicious Nigerian and international meals.",
-        phone: "",
-        email: "",
-        rating: 4.5,
-        reviews: 12
-    },
-    {
-        id: "default-2",
-        ownerId: "system",
-        name: "Urban Style",
-        category: "Fashion",
-        location: "Lagos, Nigeria",
-        description: "Modern fashion and clothing.",
-        phone: "",
-        email: "",
-        rating: 4.7,
-        reviews: 8
-    },
-    {
-        id: "default-3",
-        ownerId: "system",
-        name: "Tech Hub Nigeria",
-        category: "Technology",
-        location: "Abuja, Nigeria",
-        description: "Technology products and services.",
-        phone: "",
-        email: "",
-        rating: 4.6,
-        reviews: 15
-    },
-    {
-        id: "default-4",
-        ownerId: "system",
-        name: "Glow Beauty Studio",
-        category: "Beauty",
-        location: "Lagos, Nigeria",
-        description: "Beauty and personal care services.",
-        phone: "",
-        email: "",
-        rating: 4.8,
-        reviews: 20
-    }
-];
+    let supabaseClient = null;
 
+    /*
+       Use an existing Supabase client if another
+       JavaScript file has already created one.
+    */
 
-/* =========================================
-   SUPABASE HEADERS
-========================================= */
-
-function getSupabaseHeaders() {
-    return {
-        "apikey": LOSOJA_BUSINESSES_KEY,
-        "Authorization":
-            "Bearer " + LOSOJA_BUSINESSES_KEY,
-        "Content-Type": "application/json"
-    };
-}
-
-
-/* =========================================
-   LOCAL STORAGE
-========================================= */
-
-function getBusinesses() {
-    try {
-        const saved =
-            localStorage.getItem(BUSINESSES_KEY);
-
-        if (saved) {
-            const businesses =
-                JSON.parse(saved);
-
-            if (Array.isArray(businesses)) {
-                return businesses;
-            }
-        }
-    } catch (error) {
-        console.error(
-            "LosOja: Could not read local businesses:",
-            error
-        );
+    if (
+        window.supabaseClient &&
+        typeof window.supabaseClient.from === "function"
+    ) {
+        supabaseClient = window.supabaseClient;
     }
 
-    saveBusinesses(DEFAULT_BUSINESSES);
+    /*
+       Otherwise create the client here.
+    */
 
-    return DEFAULT_BUSINESSES;
-}
+    const SUPABASE_URL =
+        window.SUPABASE_URL ||
+        window.LOSOJA_SUPABASE_URL ||
+        "";
 
+    const SUPABASE_ANON_KEY =
+        window.SUPABASE_ANON_KEY ||
+        window.LOSOJA_SUPABASE_ANON_KEY ||
+        "";
 
-function saveBusinesses(businesses) {
-    try {
-        localStorage.setItem(
-            BUSINESSES_KEY,
-            JSON.stringify(businesses)
-        );
-    } catch (error) {
-        console.error(
-            "LosOja: Could not save businesses locally:",
-            error
-        );
-    }
-}
+    if (
+        !supabaseClient &&
+        window.supabase &&
+        typeof window.supabase.createClient === "function" &&
+        SUPABASE_URL &&
+        SUPABASE_ANON_KEY
+    ) {
 
-
-window.getBusinesses = getBusinesses;
-window.saveBusinesses = saveBusinesses;
-
-
-/* =========================================
-   ESCAPE HTML
-========================================= */
-
-function escapeHTML(value) {
-    return String(value ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-}
-
-
-/* =========================================
-   RENDER BUSINESSES
-========================================= */
-
-function renderBusinesses(businesses) {
-
-    const grid =
-        document.getElementById("businessGrid");
-
-    if (!grid) {
-        console.error(
-            "LosOja: businessGrid was not found."
-        );
-        return;
-    }
-
-    if (!Array.isArray(businesses)) {
-        businesses = [];
-    }
-
-
-    if (businesses.length === 0) {
-
-        grid.innerHTML = `
-            <div class="empty-state">
-                <h3>No businesses found</h3>
-                <p>
-                    Try another search or category.
-                </p>
-            </div>
-        `;
-
-        return;
-    }
-
-
-    grid.innerHTML = businesses.map(
-        function (business) {
-
-            return `
-                <div class="business-card">
-
-                    <div class="business-image">
-                        <span>
-                            ${escapeHTML(
-                                business.category
-                            )}
-                        </span>
-                    </div>
-
-                    <div class="business-content">
-
-                        <h3>
-                            ${escapeHTML(
-                                business.name
-                            )}
-                        </h3>
-
-                        <div class="business-category">
-                            ${escapeHTML(
-                                business.category
-                            )}
-                        </div>
-
-                        <div class="business-location">
-                            📍
-                            ${escapeHTML(
-                                business.location
-                            )}
-                        </div>
-
-                        <div class="rating">
-                            ⭐
-                            ${Number(
-                                business.rating || 0
-                            ).toFixed(1)}
-
-                            (${Number(
-                                business.reviews || 0
-                            )} reviews)
-                        </div>
-
-                        <p class="business-description">
-                            ${escapeHTML(
-                                business.description || ""
-                            )}
-                        </p>
-
-                        <div class="business-actions">
-
-                            <button
-                                type="button"
-                                class="btn btn-primary"
-                                data-business-id="${escapeHTML(
-                                    business.id
-                                )}">
-                                View Details
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                </div>
-            `;
-        }
-    ).join("");
-}
-
-
-window.renderBusinesses =
-    renderBusinesses;
-
-
-/* =========================================
-   LOAD FROM SUPABASE
-========================================= */
-
-async function loadBusinessesFromSupabase() {
-
-    try {
-
-        const response = await fetch(
-            LOSOJA_BUSINESSES_URL +
-            "/rest/v1/businesses?select=*",
-            {
-                method: "GET",
-                headers: getSupabaseHeaders()
-            }
-        );
-
-
-        if (!response.ok) {
-
-            const errorText =
-                await response.text();
-
-            throw new Error(
-                "Supabase returned " +
-                response.status +
-                ": " +
-                errorText
+        supabaseClient =
+            window.supabase.createClient(
+                SUPABASE_URL,
+                SUPABASE_ANON_KEY
             );
+
+    }
+
+
+    /* =====================================================
+       DOM READY
+    ===================================================== */
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+            initializeBusinessSystem();
+
         }
+    );
 
 
-        const data =
-            await response.json();
+    /* =====================================================
+       INITIALIZE
+    ===================================================== */
 
-
-        if (!Array.isArray(data)) {
-
-            throw new Error(
-                "Supabase returned invalid business data."
-            );
-        }
-
-
-        const remoteBusinesses =
-            data.map(function (business) {
-
-                return {
-
-                    id:
-                        business.id ||
-                        "business-" +
-                        Date.now(),
-
-                    ownerId:
-                        business.owner_id ||
-                        "",
-
-                    name:
-                        business.name ||
-                        "",
-
-                    category:
-                        business.category ||
-                        "",
-
-                    location:
-                        business.location ||
-                        "",
-
-                    description:
-                        business.description ||
-                        "",
-
-                    phone:
-                        business.phone ||
-                        "",
-
-                    email:
-                        business.email ||
-                        "",
-
-                    rating:
-                        Number(
-                            business.rating || 0
-                        ),
-
-                    reviews:
-                        Number(
-                            business.reviews || 0
-                        )
-                };
-            });
-
-
-        /*
-         * Keep the demo businesses and add
-         * businesses from Supabase.
-         */
-        const allBusinesses = [
-            ...DEFAULT_BUSINESSES,
-            ...remoteBusinesses
-        ];
-
-
-        saveBusinesses(allBusinesses);
-
-        renderBusinesses(allBusinesses);
-
+    function initializeBusinessSystem() {
 
         console.log(
-            "LosOja: Supabase loaded " +
-            remoteBusinesses.length +
-            " businesses."
+            "LosOja businesses.js initialized."
         );
 
-
-        return allBusinesses;
-
-
-    } catch (error) {
-
-        console.error(
-            "LosOja: Could not load Supabase businesses:",
-            error
+        console.log(
+            "Supabase connected:",
+            !!supabaseClient
         );
 
+        setupAddBusinessButton();
 
-        /*
-         * Supabase failure must NEVER leave
-         * the website stuck on Loading.
-         */
-        const localBusinesses =
-            getBusinesses();
+        setupAddBusinessForm();
 
+        setupBusinessCards();
 
-        renderBusinesses(
-            localBusinesses
-        );
+        setupViewAllBusinesses();
 
+        loadBusinessesFromSupabase();
 
-        return localBusinesses;
     }
-}
 
 
-window.loadBusinessesFromSupabase =
-    loadBusinessesFromSupabase;
+    /* =====================================================
+       ADD BUSINESS BUTTON
+    ===================================================== */
 
+    function setupAddBusinessButton() {
 
-/* =========================================
-   SEARCH
-========================================= */
+        const buttons = [
 
-window.searchBusinesses =
-    function (searchTerm, locationTerm) {
+            document.getElementById(
+                "addBusinessBtn"
+            ),
 
-        const businesses =
-            getBusinesses();
+            document.getElementById(
+                "footerAddBusinessBtn"
+            )
 
-        const search =
-            String(searchTerm || "")
-                .trim()
-                .toLowerCase();
+        ];
 
-        const location =
-            String(locationTerm || "")
-                .trim()
-                .toLowerCase();
+        buttons.forEach(function (button) {
 
+            if (!button) {
+                return;
+            }
 
-        const filtered =
-            businesses.filter(
-                function (business) {
+            if (
+                button.dataset.businessListenerAttached ===
+                "true"
+            ) {
+                return;
+            }
 
-                    const name =
-                        String(
-                            business.name || ""
-                        ).toLowerCase();
+            button.dataset.businessListenerAttached =
+                "true";
 
-                    const category =
-                        String(
-                            business.category || ""
-                        ).toLowerCase();
+            button.addEventListener(
+                "click",
+                function (event) {
 
-                    const description =
-                        String(
-                            business.description || ""
-                        ).toLowerCase();
+                    event.preventDefault();
 
-                    const businessLocation =
-                        String(
-                            business.location || ""
-                        ).toLowerCase();
+                    openAddBusinessModal();
 
-
-                    const matchesSearch =
-                        !search ||
-                        name.includes(search) ||
-                        category.includes(search) ||
-                        description.includes(search);
-
-
-                    const matchesLocation =
-                        !location ||
-                        businessLocation.includes(location);
-
-
-                    return (
-                        matchesSearch &&
-                        matchesLocation
-                    );
                 }
             );
 
+        });
 
-        renderBusinesses(filtered);
-    };
+    }
 
 
-/* =========================================
-   CATEGORY FILTER
-========================================= */
+    /* =====================================================
+       OPEN ADD BUSINESS MODAL
+    ===================================================== */
 
-window.filterBusinessesByCategory =
-    function (category) {
+    function openAddBusinessModal() {
 
-        const businesses =
-            getBusinesses();
+        const modal =
+            document.getElementById(
+                "addBusinessModal"
+            );
 
+        if (!modal) {
+
+            console.error(
+                "LosOja: addBusinessModal was not found."
+            );
+
+            showNotification(
+                "The business form could not be opened.",
+                "error"
+            );
+
+            return;
+
+        }
+
+        modal.classList.add("active");
+
+        modal.setAttribute(
+            "aria-hidden",
+            "false"
+        );
+
+        document.body.classList.add(
+            "modal-open"
+        );
+
+        setTimeout(function () {
+
+            const nameInput =
+                document.getElementById(
+                    "businessName"
+                );
+
+            if (nameInput) {
+                nameInput.focus();
+            }
+
+        }, 100);
+
+    }
+
+
+    /* =====================================================
+       CLOSE ADD BUSINESS MODAL
+    ===================================================== */
+
+    function closeAddBusinessModal() {
+
+        const modal =
+            document.getElementById(
+                "addBusinessModal"
+            );
+
+        if (!modal) {
+            return;
+        }
+
+        modal.classList.remove("active");
+
+        modal.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+        document.body.classList.remove(
+            "modal-open"
+        );
+
+    }
+
+
+    /* =====================================================
+       MODAL CLOSING
+    ===================================================== */
+
+    function setupModalClosing() {
+
+        document
+            .querySelectorAll(
+                "[data-close-modal]"
+            )
+            .forEach(function (button) {
+
+                if (
+                    button.dataset.closeListenerAttached ===
+                    "true"
+                ) {
+                    return;
+                }
+
+                button.dataset.closeListenerAttached =
+                    "true";
+
+                button.addEventListener(
+                    "click",
+                    function () {
+
+                        const modal =
+                            button.closest(
+                                ".modal"
+                            );
+
+                        if (modal) {
+
+                            modal.classList.remove(
+                                "active"
+                            );
+
+                            modal.setAttribute(
+                                "aria-hidden",
+                                "true"
+                            );
+
+                        }
+
+                        document.body.classList.remove(
+                            "modal-open"
+                        );
+
+                    }
+                );
+
+            });
+
+
+        document
+            .querySelectorAll(
+                ".modal-overlay"
+            )
+            .forEach(function (overlay) {
+
+                if (
+                    overlay.dataset.overlayListenerAttached ===
+                    "true"
+                ) {
+                    return;
+                }
+
+                overlay.dataset.overlayListenerAttached =
+                    "true";
+
+                overlay.addEventListener(
+                    "click",
+                    function () {
+
+                        const modal =
+                            overlay.closest(
+                                ".modal"
+                            );
+
+                        if (modal) {
+
+                            modal.classList.remove(
+                                "active"
+                            );
+
+                            modal.setAttribute(
+                                "aria-hidden",
+                                "true"
+                            );
+
+                        }
+
+                        document.body.classList.remove(
+                            "modal-open"
+                        );
+
+                    }
+                );
+
+            });
+
+    }
+
+
+    /* =====================================================
+       ADD BUSINESS FORM
+    ===================================================== */
+
+    function setupAddBusinessForm() {
+
+        const form =
+            document.getElementById(
+                "addBusinessForm"
+            );
+
+        if (!form) {
+
+            console.error(
+                "LosOja: addBusinessForm was not found."
+            );
+
+            return;
+
+        }
 
         if (
-            !category ||
-            String(category)
-                .toLowerCase() === "all"
+            form.dataset.submitListenerAttached ===
+            "true"
         ) {
+            return;
+        }
+
+        form.dataset.submitListenerAttached =
+            "true";
+
+        form.addEventListener(
+            "submit",
+            handleAddBusinessSubmit
+        );
+
+        setupModalClosing();
+
+    }
+
+
+    /* =====================================================
+       SAVE BUSINESS
+    ===================================================== */
+
+    async function handleAddBusinessSubmit(event) {
+
+        event.preventDefault();
+
+        const form =
+            event.currentTarget;
+
+        if (!form.checkValidity()) {
+
+            form.reportValidity();
+
+            return;
+
+        }
+
+        const submitButton =
+            form.querySelector(
+                'button[type="submit"]'
+            );
+
+        const originalButtonText =
+            submitButton
+                ? submitButton.textContent
+                : "Add Business";
+
+
+        try {
+
+            if (submitButton) {
+
+                submitButton.disabled =
+                    true;
+
+                submitButton.textContent =
+                    "Saving...";
+
+            }
+
+
+            /* ---------------------------------------------
+               GET FORM VALUES
+            --------------------------------------------- */
+
+            const businessName =
+                getValue("businessName");
+
+            const category =
+                getValue("businessCategory");
+
+            const location =
+                getValue("businessLocation");
+
+
+            /* ---------------------------------------------
+               VALIDATION
+            --------------------------------------------- */
+
+            if (!businessName) {
+
+                throw new Error(
+                    "Please enter your business name."
+                );
+
+            }
+
+            if (!category) {
+
+                throw new Error(
+                    "Please select a business category."
+                );
+
+            }
+
+            if (!location) {
+
+                throw new Error(
+                    "Please enter your business location."
+                );
+
+            }
+
+
+            /* ---------------------------------------------
+               CHECK SUPABASE
+            --------------------------------------------- */
+
+            if (!supabaseClient) {
+
+                throw new Error(
+                    "Supabase is not connected. Check your Supabase URL and anon key."
+                );
+
+            }
+
+
+            /*
+               IMPORTANT:
+
+               The current businesses table is being treated
+               as containing these columns:
+
+               id
+               name
+               category
+               location
+
+               Therefore we only send columns that are known
+               to exist.
+            */
+
+            const businessData = {
+
+                name:
+                    businessName,
+
+                category:
+                    category,
+
+                location:
+                    location
+
+            };
+
+
+            console.log(
+                "LosOja: attempting to save:",
+                businessData
+            );
+
+
+            /* ---------------------------------------------
+               INSERT BUSINESS
+            --------------------------------------------- */
+
+            const result =
+                await supabaseClient
+                    .from("businesses")
+                    .insert(
+                        businessData
+                    );
+
+
+            /* ---------------------------------------------
+               CHECK SUPABASE ERROR
+            --------------------------------------------- */
+
+            if (result.error) {
+
+                console.error(
+                    "LosOja SUPABASE ERROR:",
+                    result.error
+                );
+
+                console.error(
+                    "Error message:",
+                    result.error.message
+                );
+
+                console.error(
+                    "Error details:",
+                    result.error.details
+                );
+
+                console.error(
+                    "Error hint:",
+                    result.error.hint
+                );
+
+                throw result.error;
+
+            }
+
+
+            /* ---------------------------------------------
+               SUCCESS
+            --------------------------------------------- */
+
+            console.log(
+                "LosOja: BUSINESS SAVED SUCCESSFULLY!"
+            );
+
+
+            showNotification(
+                "Your business has been submitted successfully!",
+                "success"
+            );
+
+
+            form.reset();
+
+
+            setTimeout(
+                function () {
+
+                    closeAddBusinessModal();
+
+                },
+                700
+            );
+
+
+            setTimeout(
+                function () {
+
+                    loadBusinessesFromSupabase();
+
+                },
+                900
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "LosOja: FAILED TO SAVE BUSINESS:",
+                error
+            );
+
+
+            let errorMessage =
+                "We could not save your business.";
+
+
+            if (
+                error &&
+                error.message
+            ) {
+
+                errorMessage =
+                    error.message;
+
+            }
+
+
+            const lowerMessage =
+                errorMessage.toLowerCase();
+
+
+            /* ---------------------------------------------
+               FRIENDLY ERROR MESSAGES
+            --------------------------------------------- */
+
+            if (
+                lowerMessage.includes(
+                    "row-level security"
+                ) ||
+                lowerMessage.includes(
+                    "violates row-level security policy"
+                )
+            ) {
+
+                errorMessage =
+                    "Supabase is blocking new business submissions. The database security policy needs to allow business submissions.";
+
+            }
+
+
+            else if (
+                lowerMessage.includes(
+                    "permission denied"
+                )
+            ) {
+
+                errorMessage =
+                    "Supabase denied permission to add this business.";
+
+            }
+
+
+            else if (
+                lowerMessage.includes(
+                    "relation"
+                ) &&
+                lowerMessage.includes(
+                    "does not exist"
+                )
+            ) {
+
+                errorMessage =
+                    "The Supabase businesses table could not be found.";
+
+            }
+
+
+            else if (
+                lowerMessage.includes(
+                    "column"
+                ) &&
+                lowerMessage.includes(
+                    "does not exist"
+                )
+            ) {
+
+                errorMessage =
+                    "The business information does not match the businesses table in Supabase.";
+
+            }
+
+
+            showNotification(
+                errorMessage,
+                "error"
+            );
+
+        }
+
+
+        finally {
+
+            if (submitButton) {
+
+                submitButton.disabled =
+                    false;
+
+                submitButton.textContent =
+                    originalButtonText;
+
+            }
+
+        }
+
+    }
+
+
+    /* =====================================================
+       GET FORM VALUE
+    ===================================================== */
+
+    function getValue(id) {
+
+        const element =
+            document.getElementById(id);
+
+        if (!element) {
+
+            console.warn(
+                "LosOja: form field not found:",
+                id
+            );
+
+            return "";
+
+        }
+
+        return String(
+            element.value || ""
+        ).trim();
+
+    }
+
+
+    /* =====================================================
+       LOAD BUSINESSES
+    ===================================================== */
+
+    async function loadBusinessesFromSupabase() {
+
+        if (!supabaseClient) {
+
+            console.warn(
+                "LosOja: Supabase client unavailable."
+            );
+
+            return;
+
+        }
+
+        try {
+
+            /*
+               Do NOT order by created_at.
+
+               The current businesses table shown in
+               Supabase does not establish that a
+               created_at column exists.
+            */
+
+            const result =
+                await supabaseClient
+                    .from("businesses")
+                    .select("*");
+
+
+            if (result.error) {
+
+                console.error(
+                    "LosOja: could not load businesses:",
+                    result.error
+                );
+
+                return;
+
+            }
+
+
+            const businesses =
+                result.data || [];
+
+
+            console.log(
+                "LosOja: businesses loaded:",
+                businesses.length
+            );
+
 
             renderBusinesses(
                 businesses
             );
 
+
+        } catch (error) {
+
+            console.error(
+                "LosOja: business loading error:",
+                error
+            );
+
+        }
+
+    }
+
+
+    /* =====================================================
+       RENDER BUSINESSES
+    ===================================================== */
+
+    function renderBusinesses(
+        businesses
+    ) {
+
+        const grid =
+            document.getElementById(
+                "businessGrid"
+            );
+
+        if (!grid) {
             return;
         }
 
+        grid.innerHTML = "";
 
-        const filtered =
-            businesses.filter(
-                function (business) {
+        businesses.forEach(
+            function (business) {
 
-                    return String(
-                        business.category || ""
-                    )
-                        .toLowerCase()
-                        .includes(
-                            String(category)
-                                .toLowerCase()
-                        );
-                }
-            );
-
-
-        renderBusinesses(filtered);
-    };
-
-
-/* =========================================
-   OPEN BUSINESS DETAILS
-========================================= */
-
-window.openBusiness =
-    function (businessId) {
-
-        const businesses =
-            getBusinesses();
-
-
-        const business =
-            businesses.find(
-                function (item) {
-
-                    return String(
-                        item.id
-                    ) === String(
-                        businessId
+                const card =
+                    createBusinessCard(
+                        business
                     );
-                }
+
+                grid.appendChild(
+                    card
+                );
+
+            }
+        );
+
+        setupBusinessCards();
+
+    }
+
+
+    /* =====================================================
+       CREATE BUSINESS CARD
+    ===================================================== */
+
+    function createBusinessCard(
+        business
+    ) {
+
+        const article =
+            document.createElement(
+                "article"
+            );
+
+        article.className =
+            "business-card";
+
+        article.dataset.category =
+            business.category || "";
+
+        article.dataset.location =
+            business.location || "";
+
+        article.dataset.name =
+            business.name || "";
+
+
+        const category =
+            escapeHtml(
+                business.category ||
+                "Business"
+            );
+
+        const name =
+            escapeHtml(
+                business.name ||
+                "Unnamed Business"
+            );
+
+        const location =
+            escapeHtml(
+                business.location ||
+                "Nigeria"
+            );
+
+        const description =
+            escapeHtml(
+                business.description ||
+                "Discover this business on LosOja."
             );
 
 
-        if (!business) {
-            return;
-        }
+        article.innerHTML = `
 
+            <div class="business-image">
+                🏪
+            </div>
+
+            <div class="business-content">
+
+                <div class="business-category">
+                    ${category}
+                </div>
+
+                <h3>
+                    ${name}
+                </h3>
+
+                <div class="business-rating">
+
+                    <span class="stars">
+                        ★★★★★
+                    </span>
+
+                    <span>
+                        0.0
+                    </span>
+
+                    <span class="review-count">
+                        (0)
+                    </span>
+
+                </div>
+
+                <p class="business-location">
+                    📍 ${location}
+                </p>
+
+                <p class="business-description">
+                    ${description}
+                </p>
+
+                <button
+                    type="button"
+                    class="business-link"
+                    data-business-id="${escapeAttribute(
+                        business.id || ""
+                    )}">
+                    View Business →
+                </button>
+
+            </div>
+
+        `;
+
+
+        article.businessData =
+            business;
+
+
+        return article;
+
+    }
+
+
+    /* =====================================================
+       BUSINESS CARD BUTTONS
+    ===================================================== */
+
+    function setupBusinessCards() {
+
+        const buttons =
+            document.querySelectorAll(
+                ".business-link"
+            );
+
+        buttons.forEach(
+            function (button) {
+
+                if (
+                    button.dataset.businessListenerAttached ===
+                    "true"
+                ) {
+                    return;
+                }
+
+                button.dataset.businessListenerAttached =
+                    "true";
+
+                button.addEventListener(
+                    "click",
+                    function () {
+
+                        const card =
+                            button.closest(
+                                ".business-card"
+                            );
+
+                        if (!card) {
+                            return;
+                        }
+
+                        if (card.businessData) {
+
+                            showBusinessDetails(
+                                card.businessData
+                            );
+
+                            return;
+
+                        }
+
+                        const businessName =
+                            button.dataset.business ||
+                            card.dataset.name ||
+                            "Business";
+
+                        showExistingBusinessDetails(
+                            card,
+                            businessName
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       EXISTING BUSINESS DETAILS
+    ===================================================== */
+
+    function showExistingBusinessDetails(
+        card,
+        businessName
+    ) {
+
+        const category =
+            card.dataset.category ||
+            "Business";
+
+        const location =
+            card.dataset.location ||
+            "Nigeria";
+
+        const descriptionElement =
+            card.querySelector(
+                ".business-description"
+            );
+
+        const description =
+            descriptionElement
+                ? descriptionElement.textContent
+                : "Business information available on LosOja.";
+
+
+        showBusinessDetails({
+
+            name:
+                businessName,
+
+            category:
+                category,
+
+            location:
+                location,
+
+            description:
+                description
+
+        });
+
+    }
+
+
+    /* =====================================================
+       BUSINESS DETAILS MODAL
+    ===================================================== */
+
+    function showBusinessDetails(
+        business
+    ) {
 
         const modal =
             document.getElementById(
                 "businessModal"
             );
 
-
         if (!modal) {
             return;
         }
 
 
-        const details =
-            modal.querySelector(
-                ".business-details"
+        const title =
+            document.getElementById(
+                "businessModalTitle"
+            );
+
+        const category =
+            document.getElementById(
+                "businessModalCategory"
+            );
+
+        const location =
+            document.getElementById(
+                "businessModalLocation"
+            );
+
+        const description =
+            document.getElementById(
+                "businessModalDescription"
             );
 
 
-        if (!details) {
+        if (title) {
+
+            title.textContent =
+                business.name ||
+                "Business";
+
+        }
+
+
+        if (category) {
+
+            category.textContent =
+                business.category ||
+                "Business";
+
+        }
+
+
+        if (location) {
+
+            location.textContent =
+                "📍 " +
+                (
+                    business.location ||
+                    "Nigeria"
+                );
+
+        }
+
+
+        if (description) {
+
+            description.textContent =
+                business.description ||
+                "Business information available on LosOja.";
+
+        }
+
+
+        modal.classList.add(
+            "active"
+        );
+
+        modal.setAttribute(
+            "aria-hidden",
+            "false"
+        );
+
+        document.body.classList.add(
+            "modal-open"
+        );
+
+    }
+
+
+    /* =====================================================
+       VIEW ALL BUSINESSES
+    ===================================================== */
+
+    function setupViewAllBusinesses() {
+
+        const button =
+            document.getElementById(
+                "viewAllBusinessesBtn"
+            );
+
+        if (!button) {
             return;
         }
 
-
-        let reviewsHTML = "";
-
-
         if (
-            typeof window.getBusinessReviews ===
-            "function"
+            button.dataset.listenerAttached ===
+            "true"
         ) {
-
-            const reviews =
-                window.getBusinessReviews(
-                    business.id
-                );
-
-
-            if (
-                Array.isArray(reviews) &&
-                reviews.length > 0
-            ) {
-
-                reviewsHTML = `
-                    <div class="business-reviews">
-
-                        <h3>Reviews</h3>
-
-                        ${reviews.map(
-                            function (review) {
-
-                                return `
-                                    <div class="review-item">
-
-                                        <strong>
-                                            ${escapeHTML(
-                                                review.userName
-                                            )}
-                                        </strong>
-
-                                        <div>
-                                            ⭐
-                                            ${Number(
-                                                review.rating || 0
-                                            )}/5
-                                        </div>
-
-                                        <p>
-                                            ${escapeHTML(
-                                                review.comment
-                                            )}
-                                        </p>
-
-                                    </div>
-                                `;
-                            }
-                        ).join("")}
-
-                    </div>
-                `;
-            }
+            return;
         }
 
+        button.dataset.listenerAttached =
+            "true";
 
-        details.innerHTML = `
+        button.addEventListener(
+            "click",
+            function () {
 
-            <button
-                type="button"
-                class="modal-close"
-                onclick="closeModal('businessModal')">
-                ×
-            </button>
+                const section =
+                    document.getElementById(
+                        "businesses"
+                    );
 
-            <h2>
-                ${escapeHTML(
-                    business.name
-                )}
-            </h2>
+                if (section) {
 
-            <p>
-                <strong>Category:</strong>
-                ${escapeHTML(
-                    business.category
-                )}
-            </p>
+                    section.scrollIntoView({
+                        behavior: "smooth"
+                    });
 
-            <p>
-                <strong>Location:</strong>
-                ${escapeHTML(
-                    business.location
-                )}
-            </p>
+                }
 
-            <p>
-                <strong>Rating:</strong>
-                ⭐
-                ${Number(
-                    business.rating || 0
-                ).toFixed(1)}
-            </p>
-
-            <p>
-                ${escapeHTML(
-                    business.description || ""
-                )}
-            </p>
-
-            ${
-                business.phone
-                    ? `
-                        <p>
-                            <strong>Phone:</strong>
-                            ${escapeHTML(
-                                business.phone
-                            )}
-                        </p>
-                    `
-                    : ""
             }
+        );
 
-            ${
-                business.email
-                    ? `
-                        <p>
-                            <strong>Email:</strong>
-                            ${escapeHTML(
-                                business.email
-                            )}
-                        </p>
-                    `
-                    : ""
-            }
-
-            <button
-                type="button"
-                class="btn btn-primary"
-                onclick="addReview('${escapeHTML(
-                    business.id
-                )}')">
-                Leave a Review
-            </button>
-
-            ${reviewsHTML}
-        `;
+    }
 
 
-        if (
-            typeof window.openModal ===
-            "function"
-        ) {
+    /* =====================================================
+       NOTIFICATIONS
+    ===================================================== */
 
-            window.openModal(
-                "businessModal"
+    function showNotification(
+        message,
+        type
+    ) {
+
+        const notification =
+            document.getElementById(
+                "notification"
             );
 
-        } else {
+        const messageElement =
+            document.getElementById(
+                "notificationMessage"
+            );
 
-            modal.classList.add("active");
+
+        if (!notification) {
+
+            alert(message);
+
+            return;
 
         }
-    };
 
 
-/* =========================================
-   START LOSOJA
-========================================= */
+        if (messageElement) {
 
-function startBusinesses() {
+            messageElement.textContent =
+                message;
 
-    const localBusinesses =
-        getBusinesses();
+        }
 
 
-    /*
-     * IMPORTANT:
-     * Render local businesses immediately.
-     */
-    renderBusinesses(
-        localBusinesses
-    );
+        notification.classList.remove(
+            "success",
+            "error",
+            "active"
+        );
 
 
-    /*
-     * Then contact Supabase.
-     */
-    loadBusinessesFromSupabase();
-}
+        if (type) {
+
+            notification.classList.add(
+                type
+            );
+
+        }
 
 
-/*
- * Start after HTML has loaded.
- */
-if (
-    document.readyState ===
-    "loading"
-) {
+        notification.classList.add(
+            "active"
+        );
+
+
+        clearTimeout(
+            notification._hideTimer
+        );
+
+
+        notification._hideTimer =
+            setTimeout(
+                function () {
+
+                    notification.classList.remove(
+                        "active"
+                    );
+
+                },
+                5000
+            );
+
+    }
+
+
+    /* =====================================================
+       ESCAPE HTML
+    ===================================================== */
+
+    function escapeHtml(
+        value
+    ) {
+
+        return String(value)
+            .replace(
+                /&/g,
+                "&amp;"
+            )
+            .replace(
+                /</g,
+                "&lt;"
+            )
+            .replace(
+                />/g,
+                "&gt;"
+            )
+            .replace(
+                /"/g,
+                "&quot;"
+            )
+            .replace(
+                /'/g,
+                "&#039;"
+            );
+
+    }
+
+
+    /* =====================================================
+       ESCAPE ATTRIBUTE
+    ===================================================== */
+
+    function escapeAttribute(
+        value
+    ) {
+
+        return String(value)
+            .replace(
+                /"/g,
+                "&quot;"
+            )
+            .replace(
+                /'/g,
+                "&#039;"
+            );
+
+    }
+
+
+    /* =====================================================
+       NOTIFICATION CLOSE BUTTON
+    ===================================================== */
 
     document.addEventListener(
         "DOMContentLoaded",
-        startBusinesses
+        function () {
+
+            const closeButton =
+                document.getElementById(
+                    "notificationClose"
+                );
+
+            if (!closeButton) {
+                return;
+            }
+
+            closeButton.addEventListener(
+                "click",
+                function () {
+
+                    const notification =
+                        document.getElementById(
+                            "notification"
+                        );
+
+                    if (notification) {
+
+                        notification.classList.remove(
+                            "active"
+                        );
+
+                    }
+
+                }
+            );
+
+        }
     );
 
-} else {
 
-    startBusinesses();
+    /* =====================================================
+       ESC KEY
+    ===================================================== */
 
-}
+    document.addEventListener(
+        "keydown",
+        function (event) {
+
+            if (
+                event.key !==
+                "Escape"
+            ) {
+                return;
+            }
+
+            document
+                .querySelectorAll(
+                    ".modal.active"
+                )
+                .forEach(
+                    function (modal) {
+
+                        modal.classList.remove(
+                            "active"
+                        );
+
+                        modal.setAttribute(
+                            "aria-hidden",
+                            "true"
+                        );
+
+                    }
+                );
+
+            document.body.classList.remove(
+                "modal-open"
+            );
+
+        }
+    );
+
+})();
 ```
