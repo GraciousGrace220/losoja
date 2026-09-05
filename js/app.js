@@ -1,4 +1,3 @@
-```javascript
 const LOSOJA_SUPABASE_URL =
     "https://ycxshwgeebskdozmornh.supabase.co";
 
@@ -12,10 +11,6 @@ const LOSOJA_SUPABASE_KEY =
 
 function showLosOjaNotification(message) {
 
-    /*
-     * Use an existing notification function if another
-     * script has provided one.
-     */
     if (
         typeof window.showNotification === "function" &&
         window.showNotification !== showLosOjaNotification
@@ -60,13 +55,10 @@ function getLosOjaSession() {
 
 
 /* =========================================================
-   GET AUTHENTICATED HEADERS
+   SUPABASE HEADERS
 ========================================================= */
 
-function getBusinessHeaders() {
-
-    const session =
-        getLosOjaSession();
+function getBusinessHeaders(accessToken) {
 
     const headers = {
 
@@ -78,33 +70,16 @@ function getBusinessHeaders() {
 
         "Prefer":
             "return=representation"
+
     };
 
 
-    /*
-     * IMPORTANT:
-     * If the user is logged in, use their access token.
-     * This allows Supabase Row Level Security policies
-     * to recognize the authenticated user.
-     */
-    if (
-        session &&
-        session.access_token
-    ) {
+    if (accessToken) {
 
         headers["Authorization"] =
             "Bearer " +
-            session.access_token;
+            accessToken;
 
-    } else {
-
-        /*
-         * Fall back to the public key for read requests.
-         * Inserts should still require a logged-in user.
-         */
-        headers["Authorization"] =
-            "Bearer " +
-            LOSOJA_SUPABASE_KEY;
     }
 
 
@@ -117,6 +92,11 @@ function getBusinessHeaders() {
 ========================================================= */
 
 window.addBusiness = async function (businessData) {
+
+    console.log(
+        "LosOja: addBusiness() started."
+    );
+
 
     /* -----------------------------------------
        CHECK LOGIN
@@ -132,6 +112,10 @@ window.addBusiness = async function (businessData) {
         !session.access_token
     ) {
 
+        console.error(
+            "LosOja: No valid authenticated session found."
+        );
+
         showLosOjaNotification(
             "Please log in to add a business."
         );
@@ -144,6 +128,12 @@ window.addBusiness = async function (businessData) {
         session.user;
 
 
+    console.log(
+        "LosOja: Authenticated user:",
+        user.id
+    );
+
+
     /* -----------------------------------------
        COLLECT BUSINESS DATA
     ----------------------------------------- */
@@ -152,10 +142,11 @@ window.addBusiness = async function (businessData) {
 
         /*
          * IMPORTANT:
-         * owner_id connects this business to the
-         * authenticated Supabase user.
+         * The Supabase businesses table uses
+         * USER_ID, not OWNER_ID.
          */
-       user_id: user.id,
+        user_id:
+            user.id,
 
         name:
             String(
@@ -230,7 +221,7 @@ window.addBusiness = async function (businessData) {
 
 
     console.log(
-        "LosOja: Saving business:",
+        "LosOja: Business being sent to Supabase:",
         business
     );
 
@@ -249,7 +240,9 @@ window.addBusiness = async function (businessData) {
                     method: "POST",
 
                     headers:
-                        getBusinessHeaders(),
+                        getBusinessHeaders(
+                            session.access_token
+                        ),
 
                     body:
                         JSON.stringify(
@@ -268,6 +261,7 @@ window.addBusiness = async function (businessData) {
             response.status
         );
 
+
         console.log(
             "LosOja: Supabase response:",
             responseText
@@ -275,7 +269,7 @@ window.addBusiness = async function (businessData) {
 
 
         /* -----------------------------------------
-           HANDLE SUPABASE ERROR
+           HANDLE ERROR
         ----------------------------------------- */
 
         if (!response.ok) {
@@ -292,34 +286,13 @@ window.addBusiness = async function (businessData) {
                     );
 
 
-                if (
-                    errorData.message
-                ) {
+                errorMessage =
+                    errorData.message ||
+                    errorData.details ||
+                    errorData.hint ||
+                    errorData.error ||
+                    errorMessage;
 
-                    errorMessage =
-                        errorData.message;
-
-                } else if (
-                    errorData.details
-                ) {
-
-                    errorMessage =
-                        errorData.details;
-
-                } else if (
-                    errorData.hint
-                ) {
-
-                    errorMessage =
-                        errorData.hint;
-
-                } else if (
-                    errorData.error
-                ) {
-
-                    errorMessage =
-                        errorData.error;
-                }
 
             } catch (parseError) {
 
@@ -327,21 +300,26 @@ window.addBusiness = async function (businessData) {
 
                     errorMessage =
                         responseText;
+
                 }
+
             }
 
 
             console.error(
-                "LosOja SUPABASE ERROR:",
-                response.status,
-                responseText
+                "LosOja: SUPABASE SAVE ERROR:",
+                {
+                    status:
+                        response.status,
+
+                    response:
+                        responseText,
+
+                    business:
+                        business
+                }
             );
 
-
-            /*
-             * Give a more useful message for the
-             * most common authentication/RLS errors.
-             */
 
             if (
                 response.status === 401 ||
@@ -349,9 +327,8 @@ window.addBusiness = async function (businessData) {
             ) {
 
                 showLosOjaNotification(
-                    "You are not authorized to add a business.\n\n" +
-                    errorMessage +
-                    "\n\nPlease make sure you are logged in."
+                    "You are not authorized to add this business.\n\n" +
+                    errorMessage
                 );
 
             } else {
@@ -360,6 +337,7 @@ window.addBusiness = async function (businessData) {
                     "Business could not be saved.\n\n" +
                     errorMessage
                 );
+
             }
 
 
@@ -368,7 +346,7 @@ window.addBusiness = async function (businessData) {
 
 
         /* -----------------------------------------
-           BUSINESS SAVED
+           SUCCESS
         ----------------------------------------- */
 
         let savedBusiness = null;
@@ -391,6 +369,7 @@ window.addBusiness = async function (businessData) {
 
                 savedBusiness =
                     returnedData[0];
+
             }
 
         } catch (parseError) {
@@ -399,11 +378,12 @@ window.addBusiness = async function (businessData) {
                 "LosOja: Could not parse saved business response.",
                 parseError
             );
+
         }
 
 
         console.log(
-            "LosOja: Business saved successfully:",
+            "LosOja: BUSINESS SAVED SUCCESSFULLY:",
             savedBusiness
         );
 
@@ -424,15 +404,17 @@ window.addBusiness = async function (businessData) {
             } catch (loadError) {
 
                 console.error(
-                    "LosOja: Business was saved, but reload failed:",
+                    "LosOja: Business saved but reload failed:",
                     loadError
                 );
+
             }
+
         }
 
 
         /* -----------------------------------------
-           SUCCESS
+           SUCCESS MESSAGE
         ----------------------------------------- */
 
         showLosOjaNotification(
@@ -440,10 +422,10 @@ window.addBusiness = async function (businessData) {
         );
 
 
-        /*
-         * Scroll to the business section so the user
-         * can immediately see the listing.
-         */
+        /* -----------------------------------------
+           SCROLL TO BUSINESSES
+        ----------------------------------------- */
+
         setTimeout(
             function () {
 
@@ -452,12 +434,17 @@ window.addBusiness = async function (businessData) {
                         "businesses"
                     );
 
+
                 if (businessesSection) {
 
                     businessesSection.scrollIntoView({
-                        behavior: "smooth",
-                        block: "start"
+                        behavior:
+                            "smooth",
+
+                        block:
+                            "start"
                     });
+
                 }
 
             },
@@ -483,7 +470,9 @@ window.addBusiness = async function (businessData) {
 
 
         return false;
+
     }
+
 };
 
 
@@ -523,9 +512,10 @@ document.addEventListener(
                 event.preventDefault();
 
 
-                /* -----------------------------------------
-                   PREVENT DOUBLE SUBMISSION
-                ----------------------------------------- */
+                console.log(
+                    "LosOja: Add Business form submitted."
+                );
+
 
                 const submitButton =
                     form.querySelector(
@@ -540,6 +530,7 @@ document.addEventListener(
 
                     submitButton.textContent =
                         "Saving...";
+
                 }
 
 
@@ -581,7 +572,7 @@ document.addEventListener(
 
 
                     /* -----------------------------------------
-                       CHECK REQUIRED ELEMENTS
+                       CHECK REQUIRED FIELDS
                     ----------------------------------------- */
 
                     if (!nameElement) {
@@ -615,7 +606,7 @@ document.addEventListener(
 
 
                     /* -----------------------------------------
-                       CHECK LOGIN BEFORE SUBMITTING
+                       CHECK SESSION
                     ----------------------------------------- */
 
                     const session =
@@ -665,11 +656,12 @@ document.addEventListener(
                             emailElement
                                 ? emailElement.value
                                 : ""
+
                     };
 
 
                     console.log(
-                        "LosOja: Business form submitted:",
+                        "LosOja: Business form data:",
                         businessData
                     );
 
@@ -709,13 +701,22 @@ document.addEventListener(
                                     "addBusinessModal"
                                 );
 
+
                             if (modal) {
 
                                 modal.classList.remove(
                                     "active"
                                 );
+
+                                modal.setAttribute(
+                                    "aria-hidden",
+                                    "true"
+                                );
+
                             }
+
                         }
+
                     }
 
 
@@ -742,10 +743,13 @@ document.addEventListener(
 
                         submitButton.textContent =
                             "Add Business";
+
                     }
+
                 }
+
             }
         );
+
     }
 );
-```
