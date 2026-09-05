@@ -7,7 +7,6 @@ js/businesses.js
 Handles:
 - Loading businesses from Supabase
 - Displaying businesses
-- Searching/filtering
 - Viewing business details
 - Adding/saving businesses
 - Notifications
@@ -18,51 +17,65 @@ Handles:
 
     "use strict";
 
+
     /* =====================================================
        SUPABASE CONFIGURATION
+       
+       IMPORTANT:
+       We use UNIQUE variable names here so this file does
+       not conflict with app.js.
     ===================================================== */
 
-    let supabaseClient = null;
+    let losojaBusinessesClient = null;
 
-    /*
-       Use an existing Supabase client if another
-       JavaScript file has already created one.
-    */
+    const LOSOJA_BUSINESS_SUPABASE_URL =
+        "https://ycxshwgeebskdozmornh.supabase.co";
 
-    if (
-        window.supabaseClient &&
-        typeof window.supabaseClient.from === "function"
-    ) {
-        supabaseClient = window.supabaseClient;
-    }
+    const LOSOJA_BUSINESS_SUPABASE_KEY =
+        "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
 
-    /*
-       Otherwise create the client here.
-    */
 
-    const SUPABASE_URL =
-        window.SUPABASE_URL ||
-        window.LOSOJA_SUPABASE_URL ||
-        "";
+    /* =====================================================
+       CREATE BUSINESS SUPABASE CLIENT
+    ===================================================== */
 
-    const SUPABASE_ANON_KEY =
-        window.SUPABASE_ANON_KEY ||
-        window.LOSOJA_SUPABASE_ANON_KEY ||
-        "";
+    function initializeBusinessSupabase() {
 
-    if (
-        !supabaseClient &&
-        window.supabase &&
-        typeof window.supabase.createClient === "function" &&
-        SUPABASE_URL &&
-        SUPABASE_ANON_KEY
-    ) {
+        try {
 
-        supabaseClient =
-            window.supabase.createClient(
-                SUPABASE_URL,
-                SUPABASE_ANON_KEY
+            if (
+                window.supabase &&
+                typeof window.supabase.createClient === "function"
+            ) {
+
+                losojaBusinessesClient =
+                    window.supabase.createClient(
+                        LOSOJA_BUSINESS_SUPABASE_URL,
+                        LOSOJA_BUSINESS_SUPABASE_KEY
+                    );
+
+                console.log(
+                    "LosOja businesses.js: Supabase client ready."
+                );
+
+                return true;
+
+            }
+
+        } catch (error) {
+
+            console.error(
+                "LosOja businesses.js: Could not create Supabase client:",
+                error
             );
+
+        }
+
+        console.error(
+            "LosOja businesses.js: Supabase library is unavailable."
+        );
+
+        return false;
 
     }
 
@@ -91,14 +104,13 @@ Handles:
             "LosOja businesses.js initialized."
         );
 
-        console.log(
-            "Supabase connected:",
-            !!supabaseClient
-        );
+        initializeBusinessSupabase();
 
-        setupAddBusinessButton();
+        setupAddBusinessButtons();
 
         setupAddBusinessForm();
+
+        setupModalClosing();
 
         setupBusinessCards();
 
@@ -110,51 +122,66 @@ Handles:
 
 
     /* =====================================================
-       ADD BUSINESS BUTTON
+       ADD BUSINESS BUTTONS
+       
+       Works with:
+       #addBusinessBtn
+       .add-business-btn
     ===================================================== */
 
-    function setupAddBusinessButton() {
+    function setupAddBusinessButtons() {
 
-        const buttons = [
-
-            document.getElementById(
-                "addBusinessBtn"
-            ),
-
-            document.getElementById(
-                "footerAddBusinessBtn"
-            )
-
-        ];
-
-        buttons.forEach(function (button) {
-
-            if (!button) {
-                return;
-            }
-
-            if (
-                button.dataset.businessListenerAttached ===
-                "true"
-            ) {
-                return;
-            }
-
-            button.dataset.businessListenerAttached =
-                "true";
-
-            button.addEventListener(
-                "click",
-                function (event) {
-
-                    event.preventDefault();
-
-                    openAddBusinessModal();
-
-                }
+        const buttons =
+            document.querySelectorAll(
+                "#addBusinessBtn, .add-business-btn"
             );
 
-        });
+
+        console.log(
+            "LosOja: Add Business buttons found:",
+            buttons.length
+        );
+
+
+        buttons.forEach(
+            function (button) {
+
+                if (!button) {
+                    return;
+                }
+
+
+                if (
+                    button.dataset.businessListenerAttached ===
+                    "true"
+                ) {
+
+                    return;
+
+                }
+
+
+                button.dataset.businessListenerAttached =
+                    "true";
+
+
+                button.addEventListener(
+                    "click",
+                    function (event) {
+
+                        event.preventDefault();
+
+                        console.log(
+                            "LosOja: Add Business button clicked."
+                        );
+
+                        openAddBusinessModal();
+
+                    }
+                );
+
+            }
+        );
 
     }
 
@@ -169,6 +196,7 @@ Handles:
             document.getElementById(
                 "addBusinessModal"
             );
+
 
         if (!modal) {
 
@@ -185,29 +213,41 @@ Handles:
 
         }
 
-        modal.classList.add("active");
+
+        modal.classList.add(
+            "active"
+        );
+
 
         modal.setAttribute(
             "aria-hidden",
             "false"
         );
 
+
         document.body.classList.add(
             "modal-open"
         );
 
-        setTimeout(function () {
 
-            const nameInput =
-                document.getElementById(
-                    "businessName"
-                );
+        setTimeout(
+            function () {
 
-            if (nameInput) {
-                nameInput.focus();
-            }
+                const nameInput =
+                    document.getElementById(
+                        "businessName"
+                    );
 
-        }, 100);
+
+                if (nameInput) {
+
+                    nameInput.focus();
+
+                }
+
+            },
+            100
+        );
 
     }
 
@@ -223,16 +263,22 @@ Handles:
                 "addBusinessModal"
             );
 
+
         if (!modal) {
             return;
         }
 
-        modal.classList.remove("active");
+
+        modal.classList.remove(
+            "active"
+        );
+
 
         modal.setAttribute(
             "aria-hidden",
             "true"
         );
+
 
         document.body.classList.remove(
             "modal-open"
@@ -249,98 +295,116 @@ Handles:
 
         document
             .querySelectorAll(
-                "[data-close-modal]"
+                ".modal-close, [data-close-modal]"
             )
-            .forEach(function (button) {
+            .forEach(
+                function (button) {
 
-                if (
-                    button.dataset.closeListenerAttached ===
-                    "true"
-                ) {
-                    return;
-                }
+                    if (
+                        button.dataset.closeListenerAttached ===
+                        "true"
+                    ) {
 
-                button.dataset.closeListenerAttached =
-                    "true";
+                        return;
 
-                button.addEventListener(
-                    "click",
-                    function () {
+                    }
 
-                        const modal =
-                            button.closest(
-                                ".modal"
-                            );
 
-                        if (modal) {
+                    button.dataset.closeListenerAttached =
+                        "true";
 
-                            modal.classList.remove(
-                                "active"
-                            );
 
-                            modal.setAttribute(
-                                "aria-hidden",
-                                "true"
+                    button.addEventListener(
+                        "click",
+                        function () {
+
+                            const modal =
+                                button.closest(
+                                    ".modal"
+                                );
+
+
+                            if (modal) {
+
+                                modal.classList.remove(
+                                    "active"
+                                );
+
+
+                                modal.setAttribute(
+                                    "aria-hidden",
+                                    "true"
+                                );
+
+                            }
+
+
+                            document.body.classList.remove(
+                                "modal-open"
                             );
 
                         }
+                    );
 
-                        document.body.classList.remove(
-                            "modal-open"
-                        );
-
-                    }
-                );
-
-            });
+                }
+            );
 
 
         document
             .querySelectorAll(
                 ".modal-overlay"
             )
-            .forEach(function (overlay) {
+            .forEach(
+                function (overlay) {
 
-                if (
-                    overlay.dataset.overlayListenerAttached ===
-                    "true"
-                ) {
-                    return;
-                }
+                    if (
+                        overlay.dataset.overlayListenerAttached ===
+                        "true"
+                    ) {
 
-                overlay.dataset.overlayListenerAttached =
-                    "true";
+                        return;
 
-                overlay.addEventListener(
-                    "click",
-                    function () {
+                    }
 
-                        const modal =
-                            overlay.closest(
-                                ".modal"
-                            );
 
-                        if (modal) {
+                    overlay.dataset.overlayListenerAttached =
+                        "true";
 
-                            modal.classList.remove(
-                                "active"
-                            );
 
-                            modal.setAttribute(
-                                "aria-hidden",
-                                "true"
+                    overlay.addEventListener(
+                        "click",
+                        function () {
+
+                            const modal =
+                                overlay.closest(
+                                    ".modal"
+                                );
+
+
+                            if (modal) {
+
+                                modal.classList.remove(
+                                    "active"
+                                );
+
+
+                                modal.setAttribute(
+                                    "aria-hidden",
+                                    "true"
+                                );
+
+                            }
+
+
+                            document.body.classList.remove(
+                                "modal-open"
                             );
 
                         }
+                    );
 
-                        document.body.classList.remove(
-                            "modal-open"
-                        );
-
-                    }
-                );
-
-            });
+                }
+            );
 
     }
 
@@ -356,6 +420,7 @@ Handles:
                 "addBusinessForm"
             );
 
+
         if (!form) {
 
             console.error(
@@ -366,22 +431,30 @@ Handles:
 
         }
 
+
         if (
             form.dataset.submitListenerAttached ===
             "true"
         ) {
+
             return;
+
         }
+
 
         form.dataset.submitListenerAttached =
             "true";
+
 
         form.addEventListener(
             "submit",
             handleAddBusinessSubmit
         );
 
-        setupModalClosing();
+
+        console.log(
+            "LosOja: Add Business form listener attached."
+        );
 
     }
 
@@ -394,8 +467,10 @@ Handles:
 
         event.preventDefault();
 
+
         const form =
             event.currentTarget;
+
 
         if (!form.checkValidity()) {
 
@@ -405,10 +480,12 @@ Handles:
 
         }
 
+
         const submitButton =
             form.querySelector(
                 'button[type="submit"]'
             );
+
 
         const originalButtonText =
             submitButton
@@ -434,13 +511,21 @@ Handles:
             --------------------------------------------- */
 
             const businessName =
-                getValue("businessName");
+                getValue(
+                    "businessName"
+                );
+
 
             const category =
-                getValue("businessCategory");
+                getValue(
+                    "businessCategory"
+                );
+
 
             const location =
-                getValue("businessLocation");
+                getValue(
+                    "businessLocation"
+                );
 
 
             /* ---------------------------------------------
@@ -455,6 +540,7 @@ Handles:
 
             }
 
+
             if (!category) {
 
                 throw new Error(
@@ -462,6 +548,7 @@ Handles:
                 );
 
             }
+
 
             if (!location) {
 
@@ -476,29 +563,28 @@ Handles:
                CHECK SUPABASE
             --------------------------------------------- */
 
-            if (!supabaseClient) {
+            if (!losojaBusinessesClient) {
+
+                initializeBusinessSupabase();
+
+            }
+
+
+            if (!losojaBusinessesClient) {
 
                 throw new Error(
-                    "Supabase is not connected. Check your Supabase URL and anon key."
+                    "Supabase is not connected."
                 );
 
             }
 
 
-            /*
-               IMPORTANT:
-
-               The current businesses table is being treated
-               as containing these columns:
-
-               id
-               name
-               category
-               location
-
-               Therefore we only send columns that are known
-               to exist.
-            */
+            /* ---------------------------------------------
+               BUSINESS DATA
+               
+               Only use the columns currently confirmed
+               in the businesses table.
+            --------------------------------------------- */
 
             const businessData = {
 
@@ -515,17 +601,17 @@ Handles:
 
 
             console.log(
-                "LosOja: attempting to save:",
+                "LosOja: Saving business:",
                 businessData
             );
 
 
             /* ---------------------------------------------
-               INSERT BUSINESS
+               INSERT
             --------------------------------------------- */
 
             const result =
-                await supabaseClient
+                await losojaBusinessesClient
                     .from("businesses")
                     .insert(
                         businessData
@@ -533,29 +619,14 @@ Handles:
 
 
             /* ---------------------------------------------
-               CHECK SUPABASE ERROR
+               CHECK ERROR
             --------------------------------------------- */
 
             if (result.error) {
 
                 console.error(
-                    "LosOja SUPABASE ERROR:",
+                    "LosOja Supabase INSERT ERROR:",
                     result.error
-                );
-
-                console.error(
-                    "Error message:",
-                    result.error.message
-                );
-
-                console.error(
-                    "Error details:",
-                    result.error.details
-                );
-
-                console.error(
-                    "Error hint:",
-                    result.error.hint
                 );
 
                 throw result.error;
@@ -628,10 +699,6 @@ Handles:
                 errorMessage.toLowerCase();
 
 
-            /* ---------------------------------------------
-               FRIENDLY ERROR MESSAGES
-            --------------------------------------------- */
-
             if (
                 lowerMessage.includes(
                     "row-level security"
@@ -661,21 +728,6 @@ Handles:
 
             else if (
                 lowerMessage.includes(
-                    "relation"
-                ) &&
-                lowerMessage.includes(
-                    "does not exist"
-                )
-            ) {
-
-                errorMessage =
-                    "The Supabase businesses table could not be found.";
-
-            }
-
-
-            else if (
-                lowerMessage.includes(
                     "column"
                 ) &&
                 lowerMessage.includes(
@@ -684,7 +736,7 @@ Handles:
             ) {
 
                 errorMessage =
-                    "The business information does not match the businesses table in Supabase.";
+                    "The business information does not match the businesses table.";
 
             }
 
@@ -721,7 +773,10 @@ Handles:
     function getValue(id) {
 
         const element =
-            document.getElementById(id);
+            document.getElementById(
+                id
+            );
+
 
         if (!element) {
 
@@ -733,6 +788,7 @@ Handles:
             return "";
 
         }
+
 
         return String(
             element.value || ""
@@ -747,7 +803,14 @@ Handles:
 
     async function loadBusinessesFromSupabase() {
 
-        if (!supabaseClient) {
+        if (!losojaBusinessesClient) {
+
+            initializeBusinessSupabase();
+
+        }
+
+
+        if (!losojaBusinessesClient) {
 
             console.warn(
                 "LosOja: Supabase client unavailable."
@@ -757,18 +820,11 @@ Handles:
 
         }
 
+
         try {
 
-            /*
-               Do NOT order by created_at.
-
-               The current businesses table shown in
-               Supabase does not establish that a
-               created_at column exists.
-            */
-
             const result =
-                await supabaseClient
+                await losojaBusinessesClient
                     .from("businesses")
                     .select("*");
 
@@ -825,11 +881,19 @@ Handles:
                 "businessGrid"
             );
 
+
         if (!grid) {
             return;
         }
 
+
         grid.innerHTML = "";
+
+
+        if (!Array.isArray(businesses)) {
+            businesses = [];
+        }
+
 
         businesses.forEach(
             function (business) {
@@ -839,12 +903,14 @@ Handles:
                         business
                     );
 
+
                 grid.appendChild(
                     card
                 );
 
             }
         );
+
 
         setupBusinessCards();
 
@@ -864,14 +930,18 @@ Handles:
                 "article"
             );
 
+
         article.className =
             "business-card";
+
 
         article.dataset.category =
             business.category || "";
 
+
         article.dataset.location =
             business.location || "";
+
 
         article.dataset.name =
             business.name || "";
@@ -883,17 +953,20 @@ Handles:
                 "Business"
             );
 
+
         const name =
             escapeHtml(
                 business.name ||
                 "Unnamed Business"
             );
 
+
         const location =
             escapeHtml(
                 business.location ||
                 "Nigeria"
             );
+
 
         const description =
             escapeHtml(
@@ -976,6 +1049,7 @@ Handles:
                 ".business-link"
             );
 
+
         buttons.forEach(
             function (button) {
 
@@ -983,11 +1057,15 @@ Handles:
                     button.dataset.businessListenerAttached ===
                     "true"
                 ) {
+
                     return;
+
                 }
+
 
                 button.dataset.businessListenerAttached =
                     "true";
+
 
                 button.addEventListener(
                     "click",
@@ -998,9 +1076,11 @@ Handles:
                                 ".business-card"
                             );
 
+
                         if (!card) {
                             return;
                         }
+
 
                         if (card.businessData) {
 
@@ -1012,10 +1092,11 @@ Handles:
 
                         }
 
+
                         const businessName =
-                            button.dataset.business ||
                             card.dataset.name ||
                             "Business";
+
 
                         showExistingBusinessDetails(
                             card,
@@ -1044,14 +1125,17 @@ Handles:
             card.dataset.category ||
             "Business";
 
+
         const location =
             card.dataset.location ||
             "Nigeria";
+
 
         const descriptionElement =
             card.querySelector(
                 ".business-description"
             );
+
 
         const description =
             descriptionElement
@@ -1091,6 +1175,7 @@ Handles:
                 "businessModal"
             );
 
+
         if (!modal) {
             return;
         }
@@ -1101,15 +1186,18 @@ Handles:
                 "businessModalTitle"
             );
 
+
         const category =
             document.getElementById(
                 "businessModalCategory"
             );
 
+
         const location =
             document.getElementById(
                 "businessModalLocation"
             );
+
 
         const description =
             document.getElementById(
@@ -1160,10 +1248,12 @@ Handles:
             "active"
         );
 
+
         modal.setAttribute(
             "aria-hidden",
             "false"
         );
+
 
         document.body.classList.add(
             "modal-open"
@@ -1183,19 +1273,25 @@ Handles:
                 "viewAllBusinessesBtn"
             );
 
+
         if (!button) {
             return;
         }
+
 
         if (
             button.dataset.listenerAttached ===
             "true"
         ) {
+
             return;
+
         }
+
 
         button.dataset.listenerAttached =
             "true";
+
 
         button.addEventListener(
             "click",
@@ -1205,6 +1301,7 @@ Handles:
                     document.getElementById(
                         "businesses"
                     );
+
 
                 if (section) {
 
@@ -1233,6 +1330,7 @@ Handles:
             document.getElementById(
                 "notification"
             );
+
 
         const messageElement =
             document.getElementById(
@@ -1365,9 +1463,11 @@ Handles:
                     "notificationClose"
                 );
 
+
             if (!closeButton) {
                 return;
             }
+
 
             closeButton.addEventListener(
                 "click",
@@ -1377,6 +1477,7 @@ Handles:
                         document.getElementById(
                             "notification"
                         );
+
 
                     if (notification) {
 
@@ -1405,8 +1506,11 @@ Handles:
                 event.key !==
                 "Escape"
             ) {
+
                 return;
+
             }
+
 
             document
                 .querySelectorAll(
@@ -1419,6 +1523,7 @@ Handles:
                             "active"
                         );
 
+
                         modal.setAttribute(
                             "aria-hidden",
                             "true"
@@ -1426,6 +1531,7 @@ Handles:
 
                     }
                 );
+
 
             document.body.classList.remove(
                 "modal-open"
