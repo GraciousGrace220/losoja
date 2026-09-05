@@ -1,539 +1,200 @@
-const SUPABASE_URL = "https://ycxshwgeebskdozmornh.supabase.co";
-const SUPABASE_KEY = "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
+/**
+ * LosOja - Authentication (localStorage)
+ */
 
-const CURRENT_SESSION_KEY = "losoja_supabase_session";
+const Auth = {
+    STORAGE_KEY: 'losoja_users',
+    SESSION_KEY: 'losoja_session',
 
-/* ================================
-   SUPABASE HEADERS
-================================ */
+    init() {
+        this.bindEvents();
+        this.updateUI();
+    },
 
-function supabaseAuthHeaders(accessToken) {
-    const headers = {
-        "apikey": SUPABASE_KEY,
-        "Content-Type": "application/json"
-    };
+    getUsers() {
+        try {
+            return JSON.parse(localStorage.getItem(this.STORAGE_KEY)) || [];
+        } catch {
+            return [];
+        }
+    },
 
-    if (accessToken) {
-        headers["Authorization"] = "Bearer " + accessToken;
-    }
+    saveUsers(users) {
+        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(users));
+    },
 
-    return headers;
-}
-
-/* ================================
-   SESSION
-================================ */
-
-function getSupabaseSession() {
-    try {
-        const saved = localStorage.getItem(
-            CURRENT_SESSION_KEY
-        );
-
-        if (!saved) {
+    getSession() {
+        try {
+            return JSON.parse(localStorage.getItem(this.SESSION_KEY));
+        } catch {
             return null;
         }
+    },
 
-        return JSON.parse(saved);
+    setSession(user) {
+        localStorage.setItem(this.SESSION_KEY, JSON.stringify({
+            id: user.id,
+            name: user.name,
+            email: user.email
+        }));
+    },
 
-    } catch (error) {
-        console.error(
-            "Could not read Supabase session:",
-            error
-        );
+    clearSession() {
+        localStorage.removeItem(this.SESSION_KEY);
+    },
 
-        return null;
-    }
-}
+    getCurrentUser() {
+        return this.getSession();
+    },
 
-function saveSupabaseSession(session) {
+    isLoggedIn() {
+        return !!this.getSession();
+    },
 
-    if (session) {
-        localStorage.setItem(
-            CURRENT_SESSION_KEY,
-            JSON.stringify(session)
-        );
-    } else {
-        localStorage.removeItem(
-            CURRENT_SESSION_KEY
-        );
-    }
-}
-
-window.getSupabaseSession = getSupabaseSession;
-
-/* ================================
-   CURRENT USER
-================================ */
-
-window.getCurrentUser = function () {
-
-    const session = getSupabaseSession();
-
-    if (!session || !session.user) {
-        return null;
-    }
-
-    return session.user;
-};
-
-/* ================================
-   SIGN UP
-================================ */
-
-document.addEventListener(
-    "DOMContentLoaded",
-    function () {
-
-        const signupForm =
-            document.getElementById("signupForm");
-
-        if (signupForm) {
-
-            signupForm.addEventListener(
-                "submit",
-                async function (event) {
-
-                    event.preventDefault();
-
-                    const name =
-                        document
-                            .getElementById("signupName")
-                            ?.value
-                            .trim();
-
-                    const email =
-                        document
-                            .getElementById("signupEmail")
-                            ?.value
-                            .trim()
-                            .toLowerCase();
-
-                    const password =
-                        document
-                            .getElementById("signupPassword")
-                            ?.value;
-
-                    if (!name || !email || !password) {
-
-                        showNotification(
-                            "Please fill in all fields."
-                        );
-
-                        return;
-                    }
-
-                    if (password.length < 6) {
-
-                        showNotification(
-                            "Password must be at least 6 characters."
-                        );
-
-                        return;
-                    }
-
-                    const submitButton =
-                        signupForm.querySelector(
-                            'button[type="submit"]'
-                        );
-
-                    if (submitButton) {
-                        submitButton.disabled = true;
-                        submitButton.textContent =
-                            "Creating account...";
-                    }
-
-                    try {
-
-                        const response =
-                            await fetch(
-                                SUPABASE_URL +
-                                "/auth/v1/signup",
-                                {
-                                    method: "POST",
-
-                                    headers:
-                                        supabaseAuthHeaders(),
-
-                                    body: JSON.stringify({
-                                        email: email,
-                                        password: password,
-                                        data: {
-                                            name: name
-                                        }
-                                    })
-                                }
-                            );
-
-                        const data =
-                            await response.json();
-
-                        if (!response.ok) {
-
-                            throw new Error(
-                                data.message ||
-                                data.msg ||
-                                data.error_description ||
-                                data.error ||
-                                "Could not create account."
-                            );
-                        }
-
-                        /*
-                         * Supabase may require email
-                         * confirmation before creating
-                         * an active session.
-                         */
-
-                        if (data.access_token) {
-
-                            saveSupabaseSession({
-                                access_token:
-                                    data.access_token,
-
-                                refresh_token:
-                                    data.refresh_token,
-
-                                user:
-                                    data.user
-                            });
-
-                            signupForm.reset();
-
-                            closeModal(
-                                "signupModal"
-                            );
-
-                            updateAuthUI();
-
-                            showNotification(
-                                "Account created successfully!"
-                            );
-
-                        } else {
-
-                            signupForm.reset();
-
-                            closeModal(
-                                "signupModal"
-                            );
-
-                            showNotification(
-                                "Account created. Please check your email to confirm your account, then log in."
-                            );
-                        }
-
-                    } catch (error) {
-
-                        console.error(
-                            "Signup error:",
-                            error
-                        );
-
-                        showNotification(
-                            error.message ||
-                            "Could not create account."
-                        );
-
-                    } finally {
-
-                        if (submitButton) {
-
-                            submitButton.disabled =
-                                false;
-
-                            submitButton.textContent =
-                                "Sign Up";
-                        }
-                    }
-                }
-            );
+    signup(name, email, password) {
+        const users = this.getUsers();
+        const existing = users.find(u => u.email.toLowerCase() === email.toLowerCase());
+        if (existing) {
+            return { success: false, message: 'An account with this email already exists.' };
+        }
+        if (password.length < 6) {
+            return { success: false, message: 'Password must be at least 6 characters.' };
         }
 
-        /* ================================
-           LOGIN
-        ================================ */
+        const user = {
+            id: App.generateId(),
+            name: name.trim(),
+            email: email.trim().toLowerCase(),
+            password,
+            createdAt: new Date().toISOString()
+        };
+        users.push(user);
+        this.saveUsers(users);
+        this.setSession(user);
+        return { success: true, user };
+    },
 
-        const loginForm =
-            document.getElementById("loginForm");
-
-        if (loginForm) {
-
-            loginForm.addEventListener(
-                "submit",
-                async function (event) {
-
-                    event.preventDefault();
-
-                    const email =
-                        document
-                            .getElementById("loginEmail")
-                            ?.value
-                            .trim()
-                            .toLowerCase();
-
-                    const password =
-                        document
-                            .getElementById("loginPassword")
-                            ?.value;
-
-                    if (!email || !password) {
-
-                        showNotification(
-                            "Please enter your email and password."
-                        );
-
-                        return;
-                    }
-
-                    const submitButton =
-                        loginForm.querySelector(
-                            'button[type="submit"]'
-                        );
-
-                    if (submitButton) {
-                        submitButton.disabled = true;
-                        submitButton.textContent =
-                            "Logging in...";
-                    }
-
-                    try {
-
-                        const response =
-                            await fetch(
-                                SUPABASE_URL +
-                                "/auth/v1/token?grant_type=password",
-                                {
-                                    method: "POST",
-
-                                    headers:
-                                        supabaseAuthHeaders(),
-
-                                    body: JSON.stringify({
-                                        email: email,
-                                        password: password
-                                    })
-                                }
-                            );
-
-                        const data =
-                            await response.json();
-
-                        if (!response.ok) {
-
-                            throw new Error(
-                                data.msg ||
-                                data.message ||
-                                data.error_description ||
-                                data.error ||
-                                "Incorrect email or password."
-                            );
-                        }
-
-                        saveSupabaseSession({
-                            access_token:
-                                data.access_token,
-
-                            refresh_token:
-                                data.refresh_token,
-
-                            user:
-                                data.user
-                        });
-
-                        loginForm.reset();
-
-                        closeModal("loginModal");
-
-                        updateAuthUI();
-
-                        const userName =
-                            data.user?.user_metadata?.name ||
-                            data.user?.email ||
-                            "there";
-
-                        showNotification(
-                            "Welcome back, " +
-                            userName +
-                            "!"
-                        );
-
-                    } catch (error) {
-
-                        console.error(
-                            "Login error:",
-                            error
-                        );
-
-                        showNotification(
-                            error.message ||
-                            "Could not log in."
-                        );
-
-                    } finally {
-
-                        if (submitButton) {
-
-                            submitButton.disabled =
-                                false;
-
-                            submitButton.textContent =
-                                "Login";
-                        }
-                    }
-                }
-            );
+    login(email, password) {
+        const users = this.getUsers();
+        const user = users.find(
+            u => u.email.toLowerCase() === email.trim().toLowerCase() && u.password === password
+        );
+        if (!user) {
+            return { success: false, message: 'Invalid email or password.' };
         }
+        this.setSession(user);
+        return { success: true, user };
+    },
 
-        /* ================================
-           INITIAL AUTH UI
-        ================================ */
+    logout() {
+        this.clearSession();
+        this.updateUI();
+        App.showToast('You have been logged out.');
+    },
 
-        updateAuthUI();
-    }
-);
+    updateUI() {
+        const user = this.getCurrentUser();
+        const loginBtn = document.getElementById('loginBtn');
+        const signupBtn = document.getElementById('signupBtn');
+        const userArea = document.getElementById('userArea');
+        const dashLink = document.getElementById('dashboardNavLink');
+        const mobileAuth = document.getElementById('mobileAuthLinks');
 
-/* ================================
-   LOGOUT
-================================ */
-
-window.logoutUser = function () {
-
-    saveSupabaseSession(null);
-
-    updateAuthUI();
-
-    showNotification(
-        "You have been logged out."
-    );
-};
-
-/* ================================
-   AUTH UI
-================================ */
-
-window.updateAuthUI = function () {
-
-    const currentUser =
-        window.getCurrentUser();
-
-    const loginButtons =
-        document.querySelectorAll(
-            "#loginBtn, .login-btn"
-        );
-
-    const signupButtons =
-        document.querySelectorAll(
-            "#signupBtn, .signup-btn"
-        );
-
-    const userArea =
-        document.getElementById(
-            "userArea"
-        );
-
-    const headerActions =
-        document.querySelector(
-            ".header-actions"
-        );
-
-    if (currentUser) {
-
-        if (headerActions) {
-            headerActions.classList.add(
-                "logged-in"
-            );
-        }
-
-        loginButtons.forEach(
-            function (button) {
-                button.style.display = "none";
+        if (user) {
+            if (loginBtn) loginBtn.classList.add('hidden');
+            if (signupBtn) signupBtn.classList.add('hidden');
+            if (mobileAuth) mobileAuth.classList.add('hidden');
+            if (dashLink) dashLink.classList.remove('hidden');
+            if (userArea) {
+                userArea.classList.remove('hidden');
+                const initials = user.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+                userArea.innerHTML = `
+                    <div class="user-avatar">${App.escapeHtml(initials)}</div>
+                    <span class="user-name">${App.escapeHtml(user.name)}</span>
+                    <button type="button" class="btn btn-outline" id="logoutBtn">Logout</button>
+                `;
+                document.getElementById('logoutBtn')?.addEventListener('click', () => this.logout());
             }
-        );
-
-        signupButtons.forEach(
-            function (button) {
-                button.style.display = "none";
+        } else {
+            if (loginBtn) loginBtn.classList.remove('hidden');
+            if (signupBtn) signupBtn.classList.remove('hidden');
+            if (mobileAuth) mobileAuth.classList.remove('hidden');
+            if (dashLink) dashLink.classList.add('hidden');
+            if (userArea) {
+                userArea.classList.add('hidden');
+                userArea.innerHTML = '';
             }
-        );
-
-        if (userArea) {
-
-            const userName =
-                currentUser
-                    .user_metadata
-                    ?.name ||
-                currentUser.email ||
-                "User";
-
-            userArea.innerHTML = `
-                <span class="user-name">
-                    Hi, ${escapeAuthHTML(userName)}
-                </span>
-
-                <button
-                    class="btn btn-outline"
-                    type="button"
-                    onclick="logoutUser()">
-                    Logout
-                </button>
-            `;
+            if (typeof Dashboard !== 'undefined') Dashboard.hide();
         }
+    },
 
-    } else {
+    bindEvents() {
+        const openLogin = () => {
+            App.closeAllModals();
+            App.openModal('loginModal');
+            document.getElementById('navLinks')?.classList.remove('open');
+        };
+        const openSignup = () => {
+            App.closeAllModals();
+            App.openModal('signupModal');
+            document.getElementById('navLinks')?.classList.remove('open');
+        };
 
-        if (headerActions) {
-            headerActions.classList.remove(
-                "logged-in"
-            );
-        }
+        document.getElementById('loginBtn')?.addEventListener('click', openLogin);
+        document.getElementById('signupBtn')?.addEventListener('click', openSignup);
+        document.getElementById('mobileLoginBtn')?.addEventListener('click', openLogin);
+        document.getElementById('mobileSignupBtn')?.addEventListener('click', openSignup);
 
-        loginButtons.forEach(
-            function (button) {
-                button.style.display = "";
+        document.getElementById('switchToSignup')?.addEventListener('click', () => {
+            App.closeModal('loginModal');
+            App.openModal('signupModal');
+        });
+        document.getElementById('switchToLogin')?.addEventListener('click', () => {
+            App.closeModal('signupModal');
+            App.openModal('loginModal');
+        });
+
+        document.getElementById('loginForm')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const errorEl = document.getElementById('loginError');
+
+            const result = this.login(email, password);
+            if (!result.success) {
+                errorEl.textContent = result.message;
+                errorEl.classList.remove('hidden');
+                return;
             }
-        );
+            errorEl.classList.add('hidden');
+            App.closeModal('loginModal');
+            this.updateUI();
+            App.showToast(`Welcome back, ${result.user.name}!`);
+            e.target.reset();
+        });
 
-        signupButtons.forEach(
-            function (button) {
-                button.style.display = "";
+        document.getElementById('signupForm')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            const errorEl = document.getElementById('signupError');
+
+            const result = this.signup(name, email, password);
+            if (!result.success) {
+                errorEl.textContent = result.message;
+                errorEl.classList.remove('hidden');
+                return;
             }
-        );
-
-        if (userArea) {
-            userArea.innerHTML = "";
-        }
+            errorEl.classList.add('hidden');
+            App.closeModal('signupModal');
+            this.updateUI();
+            App.showToast(`Account created! Welcome, ${result.user.name}!`);
+            e.target.reset();
+        });
     }
 };
 
-/* ================================
-   LOGIN / SIGNUP SWITCH
-================================ */
-
-window.showSignup = function () {
-
-    closeModal("loginModal");
-
-    openModal("signupModal");
-};
-
-window.showLogin = function () {
-
-    closeModal("signupModal");
-
-    openModal("loginModal");
-};
-
-/* ================================
-   HTML SAFETY
-================================ */
-
-function escapeAuthHTML(value) {
-
-    return String(value ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-}
+document.addEventListener('DOMContentLoaded', () => {
+    Auth.init();
+});
