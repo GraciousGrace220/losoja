@@ -1490,4 +1490,23 @@
 
 
 </body>
-</html>
+</html>   /* =====================================================
+    AUTH BUTTONS
+   Prevent desktop and mobile Login/Sign Up controls
+   from appearing at the same time.
+===================================================== */
+
+.mobile-auth-links {
+    display: none;
+}
+
+@media (max-width: 700px) {
+
+    .mobile-auth-links {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+}     
