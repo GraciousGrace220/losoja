@@ -1308,7 +1308,23 @@ Handles:
         }
     }
 
+function clearError(elementId) {
+    const element = document.getElementById(elementId);
 
+    if (!element) return;
+
+    element.textContent = "";
+    element.classList.add("hidden");
+}
+
+function showError(elementId, message) {
+    const element = document.getElementById(elementId);
+
+    if (!element) return;
+
+    element.textContent = message || "Something went wrong.";
+    element.classList.remove("hidden");
+}
     function setupEditBusinessForm() {
 
         const form =
