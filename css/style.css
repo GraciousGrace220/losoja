@@ -739,21 +739,32 @@ footer a:hover {
     }
 }
 
-/* Make account buttons visible */
+/* ================================
+   HEADER ACCOUNT / LOGIN STATE
+   ================================ */
+
 .header-actions {
-    display: flex !important;
+    display: flex;
     align-items: center;
     gap: 10px;
 }
 
-.header-actions .btn {
-    display: inline-flex !important;
-    visibility: visible !important;
+/* Hidden elements must stay hidden */
+.hidden {
+    display: none !important;
 }
 
-
-/* Hide Login and Sign Up after login */
+/* Logged-in state */
 .header-actions.logged-in #loginBtn,
 .header-actions.logged-in #signupBtn {
     display: none !important;
+}
+
+@media (max-width: 700px) {
+    .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+};
 }
