@@ -1,3 +1,4 @@
+```css
 /* ================================
    LOSOJA - MAIN WEBSITE STYLES
    ================================ */
@@ -17,9 +18,10 @@
     --radius: 10px;
 }
 
+
 /* ================================
    RESET
-   ================================ */
+================================ */
 
 * {
     margin: 0;
@@ -54,9 +56,10 @@ button {
     cursor: pointer;
 }
 
+
 /* ================================
    CONTAINER
-   ================================ */
+================================ */
 
 .container {
     width: 90%;
@@ -64,11 +67,12 @@ button {
     margin: 0 auto;
 }
 
+
 /* ================================
    HEADER
-   ================================ */
+================================ */
 
-header {
+.site-header {
     background: var(--white);
     border-bottom: 1px solid var(--border);
     position: sticky;
@@ -76,7 +80,7 @@ header {
     z-index: 1000;
 }
 
-.navbar {
+.header-inner {
     min-height: 70px;
     display: flex;
     align-items: center;
@@ -90,43 +94,93 @@ header {
     color: var(--green);
 }
 
-.logo span {
-    color: var(--black);
-}
 
-.nav-links {
+/* ================================
+   DESKTOP NAVIGATION
+================================ */
+
+.main-nav {
     display: flex;
     align-items: center;
     gap: 25px;
-    list-style: none;
 }
 
-.nav-links a {
+.main-nav a {
     color: var(--gray-dark);
     font-weight: 600;
     transition: 0.2s;
 }
 
-.nav-links a:hover {
+.main-nav a:hover {
     color: var(--green);
 }
 
-.nav-buttons {
+
+/* ================================
+   HEADER ACTIONS
+================================ */
+
+.header-actions {
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
-.menu-toggle {
+.header-actions.logged-in #loginBtn,
+.header-actions.logged-in #signupBtn {
+    display: none !important;
+}
+
+.user-area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+
+/* ================================
+   MOBILE MENU BUTTON
+================================ */
+
+.mobile-menu-btn {
     display: none;
     border: none;
     background: transparent;
     font-size: 28px;
+    color: var(--black);
+    padding: 5px;
 }
+
+
+/* ================================
+   MOBILE NAVIGATION
+================================ */
+
+/*
+   IMPORTANT:
+   Mobile navigation is hidden by default.
+
+   It becomes visible ONLY when JavaScript
+   adds the "open" class.
+*/
+
+.mobile-nav {
+    display: none;
+}
+
+
+/* ================================
+   MOBILE AUTH LINKS
+================================ */
+
+.mobile-auth-links {
+    display: none;
+}
+
 
 /* ================================
    BUTTONS
-   ================================ */
+================================ */
 
 .btn {
     border: none;
@@ -167,15 +221,25 @@ header {
     color: white;
 }
 
+
 /* ================================
    HERO
-   ================================ */
+================================ */
 
 .hero {
-    background: linear-gradient(135deg, var(--green), var(--green-dark));
+    background: linear-gradient(
+        135deg,
+        var(--green),
+        var(--green-dark)
+    );
     color: var(--white);
     padding: 80px 20px;
     text-align: center;
+}
+
+.hero-content {
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .hero h1 {
@@ -191,7 +255,12 @@ header {
     opacity: 0.95;
 }
 
-.search-box {
+
+/* ================================
+   SEARCH
+================================ */
+
+.search-form {
     max-width: 900px;
     margin: 0 auto;
     background: var(--white);
@@ -202,27 +271,36 @@ header {
     box-shadow: var(--shadow);
 }
 
-.search-box input {
+.search-field {
     flex: 1;
+    text-align: left;
+}
+
+.search-field label {
+    display: block;
+    color: var(--gray-dark);
+    font-size: 12px;
+    font-weight: 700;
+    margin: 3px 12px 3px;
+}
+
+.search-field input {
+    width: 100%;
     border: none;
     outline: none;
-    padding: 14px;
+    padding: 10px 12px;
     font-size: 16px;
     color: var(--black);
 }
 
-.search-box button {
-    border: none;
-    border-radius: 7px;
-    padding: 0 25px;
-    background: var(--green);
-    color: white;
-    font-weight: 700;
+.search-btn {
+    align-self: stretch;
 }
+
 
 /* ================================
    SECTIONS
-   ================================ */
+================================ */
 
 .section {
     padding: 70px 0;
@@ -242,13 +320,14 @@ header {
     color: var(--gray);
 }
 
+
 /* ================================
    CATEGORIES
-   ================================ */
+================================ */
 
-.categories {
+.category-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 18px;
 }
 
@@ -269,17 +348,15 @@ header {
 }
 
 .category-icon {
+    display: block;
     font-size: 35px;
     margin-bottom: 10px;
 }
 
-.category-card h3 {
-    font-size: 17px;
-}
 
 /* ================================
    BUSINESS GRID
-   ================================ */
+================================ */
 
 .business-grid {
     display: grid;
@@ -344,9 +421,10 @@ header {
     flex-wrap: wrap;
 }
 
+
 /* ================================
    RATING
-   ================================ */
+================================ */
 
 .rating {
     color: var(--yellow);
@@ -354,17 +432,18 @@ header {
     margin: 7px 0;
 }
 
+
 /* ================================
    HOW IT WORKS
-   ================================ */
+================================ */
 
-.steps {
+.steps-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 25px;
 }
 
-.step {
+.step-card {
     text-align: center;
     padding: 30px 20px;
     background: var(--white);
@@ -386,38 +465,41 @@ header {
     font-weight: 800;
 }
 
-.step h3 {
+.step-card h3 {
     margin-bottom: 8px;
 }
 
-.step p {
+.step-card p {
     color: var(--gray);
 }
 
+
 /* ================================
    BUSINESS CTA
-   ================================ */
+================================ */
 
-.business-cta {
+.cta-box {
     background: var(--green);
     color: white;
     padding: 65px 20px;
     text-align: center;
+    border-radius: var(--radius);
 }
 
-.business-cta h2 {
+.cta-box h2 {
     font-size: 34px;
     margin-bottom: 12px;
 }
 
-.business-cta p {
+.cta-box p {
     max-width: 650px;
     margin: 0 auto 25px;
 }
 
+
 /* ================================
    ABOUT
-   ================================ */
+================================ */
 
 .about-content {
     max-width: 850px;
@@ -430,9 +512,10 @@ header {
     margin-bottom: 15px;
 }
 
+
 /* ================================
    FOOTER
-   ================================ */
+================================ */
 
 footer {
     background: #111;
@@ -467,9 +550,10 @@ footer a:hover {
     color: #aaa;
 }
 
+
 /* ================================
    MODALS
-   ================================ */
+================================ */
 
 .modal {
     display: none;
@@ -482,7 +566,8 @@ footer a:hover {
     padding: 20px;
 }
 
-.modal.active {
+.modal.active,
+.modal.open {
     display: flex;
 }
 
@@ -515,9 +600,10 @@ footer a:hover {
     margin-bottom: 20px;
 }
 
+
 /* ================================
    FORMS
-   ================================ */
+================================ */
 
 .form-group {
     margin-bottom: 17px;
@@ -556,9 +642,10 @@ footer a:hover {
     border: none;
 }
 
+
 /* ================================
-   NOTIFICATION
-   ================================ */
+   NOTIFICATION / TOAST
+================================ */
 
 .notification {
     position: fixed;
@@ -577,9 +664,30 @@ footer a:hover {
     display: block;
 }
 
+.toast {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    background: #222;
+    color: white;
+    padding: 14px 20px;
+    border-radius: 7px;
+    box-shadow: var(--shadow);
+    z-index: 5000;
+}
+
+.toast.hidden {
+    display: none !important;
+}
+
+.toast.show {
+    display: block;
+}
+
+
 /* ================================
    POPULAR SEARCHES
-   ================================ */
+================================ */
 
 .popular-searches {
     margin-top: 18px;
@@ -598,11 +706,13 @@ footer a:hover {
     margin-left: 8px;
 }
 
-/* ================================
-   EMPTY STATE
-   ================================ */
 
-.empty-state {
+/* ================================
+   EMPTY / NO RESULTS
+================================ */
+
+.empty-state,
+.no-results {
     background: white;
     border-radius: var(--radius);
     padding: 40px 20px;
@@ -615,12 +725,23 @@ footer a:hover {
     margin-bottom: 8px;
 }
 
+
 /* ================================
-   RESPONSIVE DESIGN
-   ================================ */
+   HIDDEN
+================================ */
+
+.hidden {
+    display: none !important;
+}
+
+
+/* ================================
+   RESPONSIVE - TABLET
+================================ */
 
 @media (max-width: 900px) {
-    .categories {
+
+    .category-grid {
         grid-template-columns: repeat(2, 1fr);
     }
 
@@ -628,7 +749,7 @@ footer a:hover {
         grid-template-columns: repeat(2, 1fr);
     }
 
-    .steps {
+    .steps-grid {
         grid-template-columns: 1fr;
     }
 
@@ -640,39 +761,72 @@ footer a:hover {
     .hero h1 {
         font-size: 40px;
     }
+
 }
 
+
+/* ================================
+   RESPONSIVE - MOBILE
+================================ */
+
 @media (max-width: 700px) {
-    .menu-toggle {
+
+    .main-nav {
+        display: none;
+    }
+
+    .header-actions {
+        display: none;
+    }
+
+    .mobile-menu-btn {
         display: block;
     }
 
-    .nav-links {
+
+    /*
+       Mobile menu stays hidden until
+       JavaScript adds .open.
+    */
+
+    .mobile-nav {
         display: none;
-        position: absolute;
-        top: 70px;
-        left: 0;
-        right: 0;
-        background: white;
-        padding: 20px;
-        flex-direction: column;
+        background: var(--white);
+        border-top: 1px solid var(--border);
         border-bottom: 1px solid var(--border);
+        padding: 15px 20px;
     }
 
-    .nav-links.active {
+    .mobile-nav.open {
         display: flex;
+        flex-direction: column;
+        gap: 14px;
     }
 
-    .nav-buttons {
-        display: none;
+    .mobile-nav > a {
+        color: var(--gray-dark);
+        font-weight: 600;
+        padding: 5px 0;
     }
 
-    .search-box {
+    .mobile-nav > a:hover {
+        color: var(--green);
+    }
+
+    .mobile-auth-links {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 8px;
+    }
+
+
+    .search-form {
         flex-direction: column;
     }
 
-    .search-box button {
-        padding: 14px;
+    .search-btn {
+        width: 100%;
     }
 
     .business-grid {
@@ -698,14 +852,21 @@ footer a:hover {
     .section-title h2 {
         font-size: 28px;
     }
+
 }
 
+
+/* ================================
+   SMALL PHONES
+================================ */
+
 @media (max-width: 450px) {
+
     .container {
         width: 94%;
     }
 
-    .categories {
+    .category-grid {
         grid-template-columns: 1fr;
     }
 
@@ -716,79 +877,15 @@ footer a:hover {
     .modal-content {
         padding: 22px;
     }
-}
-
-
-
-
-
-
-
-
-/* ================================
-   MOBILE NAVIGATION BUTTONS
-================================ */
-
-.mobile-nav-actions {
-    display: none;
-}
-
-
-/* ================================
-   MOBILE AUTH LINKS
-================================ */
-
-.mobile-auth-links {
-    display: none;
-}
-
-
-/* ================================
-   HEADER ACCOUNT / LOGIN STATE
-================================ */
-
-.header-actions {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-
-/* Hidden elements must stay hidden */
-
-.hidden {
-    display: none !important;
-}
-
-
-/* Logged-in state */
-
-.header-actions.logged-in #loginBtn,
-.header-actions.logged-in #signupBtn {
-    display: none !important;
-}
-
-
-/* ================================
-   MOBILE
-================================ */
-
-@media (max-width: 700px) {
-
-    .mobile-nav-actions {
-        display: flex;
-        gap: 10px;
-        margin-top: 15px;
-    }
 
     .mobile-auth-links {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-top: 15px;
+        flex-direction: column;
+        align-items: stretch;
     }
 
-    .header-actions {
-        display: none;
+    .mobile-auth-links .btn {
+        width: 100%;
     }
+
 }
+```
