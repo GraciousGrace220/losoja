@@ -11,7 +11,6 @@ Handles:
 - Editing businesses
 - Deleting businesses
 - Searching businesses
-- Notifications
 =========================================================
 */
 
@@ -22,9 +21,6 @@ Handles:
 
     /* =====================================================
        SUPABASE CONFIGURATION
-
-       Unique variable names are used here so this file
-       does not conflict with auth.js or app.js.
     ===================================================== */
 
     const LOSOJA_BUSINESSES_URL =
@@ -34,16 +30,12 @@ Handles:
         "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
 
 
-    /* =====================================================
-       LOCAL STORAGE
-    ===================================================== */
-
     const BUSINESSES_CACHE_KEY =
         "losoja_businesses_cache";
 
 
     /* =====================================================
-       HELPERS
+       SESSION
     ===================================================== */
 
     function getSession() {
@@ -51,7 +43,9 @@ Handles:
         try {
 
             const raw =
-                localStorage.getItem("losoja_supabase_session");
+                localStorage.getItem(
+                    "losoja_supabase_session"
+                );
 
             if (!raw) {
                 return null;
@@ -62,7 +56,7 @@ Handles:
         } catch (error) {
 
             console.error(
-                "Could not read Supabase session:",
+                "Could not read session:",
                 error
             );
 
@@ -105,16 +99,24 @@ Handles:
     }
 
 
-    function supabaseHeaders(includeAuth = true) {
+    function supabaseHeaders(
+        includeAuth = true
+    ) {
 
         const headers = {
-            "apikey": LOSOJA_BUSINESSES_KEY,
-            "Content-Type": "application/json"
+            "apikey":
+                LOSOJA_BUSINESSES_KEY,
+            "Content-Type":
+                "application/json"
         };
 
-        const token = getAccessToken();
+        const token =
+            getAccessToken();
 
-        if (includeAuth && token) {
+        if (
+            includeAuth &&
+            token
+        ) {
             headers["Authorization"] =
                 "Bearer " + token;
         }
@@ -123,7 +125,13 @@ Handles:
     }
 
 
-    async function getResponseError(response) {
+    /* =====================================================
+       ERROR MESSAGE
+    ===================================================== */
+
+    async function getResponseError(
+        response
+    ) {
 
         try {
 
@@ -147,9 +155,16 @@ Handles:
     }
 
 
+    /* =====================================================
+       HTML ESCAPE
+    ===================================================== */
+
     function escapeHTML(value) {
 
-        if (value === null || value === undefined) {
+        if (
+            value === null ||
+            value === undefined
+        ) {
             return "";
         }
 
@@ -162,28 +177,25 @@ Handles:
     }
 
 
-    function notify(message, type = "success") {
+    /* =====================================================
+       NOTIFICATION
+    ===================================================== */
+
+    function notify(
+        message,
+        type = "success"
+    ) {
 
         if (
             typeof window.showNotification ===
             "function"
         ) {
+
             window.showNotification(
                 message,
                 type
             );
-            return;
-        }
 
-        if (
-            typeof window.App !== "undefined" &&
-            typeof window.App.showNotification ===
-            "function"
-        ) {
-            window.App.showNotification(
-                message,
-                type
-            );
             return;
         }
 
@@ -191,46 +203,111 @@ Handles:
     }
 
 
-    function clearError(elementId) {
+    /* =====================================================
+       ERROR HELPERS
+    ===================================================== */
+
+    function clearError(
+        elementId
+    ) {
 
         const element =
-            document.getElementById(elementId);
+            document.getElementById(
+                elementId
+            );
 
         if (!element) {
             return;
         }
 
         element.textContent = "";
-        element.classList.add("hidden");
+
+        element.classList.add(
+            "hidden"
+        );
     }
 
 
-    function showError(elementId, message) {
+    function showError(
+        elementId,
+        message
+    ) {
 
         const element =
-            document.getElementById(elementId);
+            document.getElementById(
+                elementId
+            );
 
         if (!element) {
-            console.error(message);
+
+            console.error(
+                message
+            );
+
             return;
         }
 
         element.textContent =
-            message || "Something went wrong.";
+            message ||
+            "Something went wrong.";
 
-        element.classList.remove("hidden");
+        element.classList.remove(
+            "hidden"
+        );
     }
 
 
-    function openModalSafe(id) {
+    /* =====================================================
+       MODAL HELPERS
+    ===================================================== */
+
+    function openModalSafe(
+        id
+    ) {
+
+        const modal =
+            document.getElementById(id);
+
+        if (!modal) {
+
+            console.error(
+                "Modal not found:",
+                id
+            );
+
+            return;
+        }
+
+        /*
+         * Use the site's normal modal function if available.
+         */
 
         if (
             typeof window.openModal ===
             "function"
         ) {
+
             window.openModal(id);
-            return;
+
+        } else {
+
+            modal.classList.add(
+                "active"
+            );
+
+            modal.classList.add(
+                "open"
+            );
+
+            document.body.style.overflow =
+                "hidden";
         }
+    }
+
+
+    function closeModalSafe(
+        id
+    ) {
 
         const modal =
             document.getElementById(id);
@@ -238,34 +315,27 @@ Handles:
         if (!modal) {
             return;
         }
-
-        modal.classList.add("active");
-        modal.classList.add("open");
-        document.body.style.overflow = "hidden";
-    }
-
-
-    function closeModalSafe(id) {
 
         if (
             typeof window.closeModal ===
             "function"
         ) {
+
             window.closeModal(id);
-            return;
+
+        } else {
+
+            modal.classList.remove(
+                "active"
+            );
+
+            modal.classList.remove(
+                "open"
+            );
+
+            document.body.style.overflow =
+                "";
         }
-
-        const modal =
-            document.getElementById(id);
-
-        if (!modal) {
-            return;
-        }
-
-        modal.classList.remove("active");
-        modal.classList.remove("open");
-
-        document.body.style.overflow = "";
     }
 
 
@@ -273,13 +343,17 @@ Handles:
        CACHE
     ===================================================== */
 
-    function saveBusinessesCache(businesses) {
+    function saveBusinessesCache(
+        businesses
+    ) {
 
         try {
 
             localStorage.setItem(
                 BUSINESSES_CACHE_KEY,
-                JSON.stringify(businesses)
+                JSON.stringify(
+                    businesses
+                )
             );
 
         } catch (error) {
@@ -308,7 +382,9 @@ Handles:
             const businesses =
                 JSON.parse(raw);
 
-            return Array.isArray(businesses)
+            return Array.isArray(
+                businesses
+            )
                 ? businesses
                 : [];
 
@@ -330,6 +406,7 @@ Handles:
                 "businessesGrid"
             );
 
+
         if (container) {
 
             container.innerHTML = `
@@ -338,6 +415,7 @@ Handles:
                 </div>
             `;
         }
+
 
         try {
 
@@ -349,10 +427,14 @@ Handles:
                     "&order=created_at.desc",
                     {
                         method: "GET",
+
                         headers:
-                            supabaseHeaders(false)
+                            supabaseHeaders(
+                                false
+                            )
                     }
                 );
+
 
             if (!response.ok) {
 
@@ -361,24 +443,32 @@ Handles:
                         response
                     );
 
-                throw new Error(error);
+                throw new Error(
+                    error
+                );
             }
+
 
             const businesses =
                 await response.json();
+
+
+            window.losojaBusinesses =
+                businesses;
+
 
             saveBusinessesCache(
                 businesses
             );
 
-            window.losojaBusinesses =
-                businesses;
 
             renderBusinesses(
                 businesses
             );
 
+
             return businesses;
+
 
         } catch (error) {
 
@@ -387,10 +477,14 @@ Handles:
                 error
             );
 
+
             const cached =
                 getBusinessesCache();
 
-            if (cached.length > 0) {
+
+            if (
+                cached.length > 0
+            ) {
 
                 window.losojaBusinesses =
                     cached;
@@ -401,6 +495,7 @@ Handles:
 
                 return cached;
             }
+
 
             if (container) {
 
@@ -415,13 +510,14 @@ Handles:
                 `;
             }
 
+
             return [];
         }
     }
 
 
     /* =====================================================
-       GET CURRENT BUSINESS LIST
+       GET BUSINESSES
     ===================================================== */
 
     function getBusinesses() {
@@ -431,55 +527,12 @@ Handles:
                 window.losojaBusinesses
             )
         ) {
+
             return window.losojaBusinesses;
         }
 
+
         return getBusinessesCache();
-    }
-
-
-    /* =====================================================
-       RENDER BUSINESSES
-    ===================================================== */
-
-    function renderBusinesses(
-        businesses
-    ) {
-
-        const container =
-            document.getElementById(
-                "businessesGrid"
-            );
-
-        if (!container) {
-            return;
-        }
-
-        if (
-            !Array.isArray(businesses) ||
-            businesses.length === 0
-        ) {
-
-            container.innerHTML = `
-                <div class="empty-state">
-                    <h3>No businesses found</h3>
-                    <p>
-                        Try another search or add a business.
-                    </p>
-                </div>
-            `;
-
-            return;
-        }
-
-        container.innerHTML =
-            businesses
-                .map(function (business) {
-                    return businessCard(
-                        business
-                    );
-                })
-                .join("");
     }
 
 
@@ -498,25 +551,34 @@ Handles:
                 )
             );
 
+
         const name =
             escapeHTML(
-                business.name || "Unnamed Business"
+                business.name ||
+                "Unnamed Business"
             );
+
 
         const category =
             escapeHTML(
-                business.category || "Other"
+                business.category ||
+                "Other"
             );
+
 
         const location =
             escapeHTML(
-                business.location || "Nigeria"
+                business.location ||
+                "Nigeria"
             );
+
 
         const description =
             escapeHTML(
-                business.description || ""
+                business.description ||
+                ""
             );
+
 
         return `
             <div
@@ -550,6 +612,7 @@ Handles:
 
                 </div>
 
+
                 <div class="business-card-actions">
 
                     <button
@@ -560,6 +623,7 @@ Handles:
                         View Details
                     </button>
 
+
                     <button
                         type="button"
                         class="btn btn-secondary"
@@ -567,6 +631,7 @@ Handles:
                     >
                         Edit
                     </button>
+
 
                     <button
                         type="button"
@@ -584,22 +649,80 @@ Handles:
 
 
     /* =====================================================
+       RENDER BUSINESSES
+    ===================================================== */
+
+    function renderBusinesses(
+        businesses
+    ) {
+
+        const container =
+            document.getElementById(
+                "businessesGrid"
+            );
+
+
+        if (!container) {
+            return;
+        }
+
+
+        if (
+            !Array.isArray(
+                businesses
+            ) ||
+            businesses.length === 0
+        ) {
+
+            container.innerHTML = `
+                <div class="empty-state">
+
+                    <h3>
+                        No businesses found
+                    </h3>
+
+                    <p>
+                        Try another search or add a business.
+                    </p>
+
+                </div>
+            `;
+
+            return;
+        }
+
+
+        container.innerHTML =
+            businesses
+                .map(
+                    function (business) {
+
+                        return businessCard(
+                            business
+                        );
+
+                    }
+                )
+                .join("");
+    }
+
+
+    /* =====================================================
        VIEW BUSINESS DETAILS
-
-       IMPORTANT:
-       index.html uses:
-
-       businessDetailsModal
-       businessDetails
-
-       NOT businessModal.
     ===================================================== */
 
     window.openBusiness =
         function (businessId) {
 
+            console.log(
+                "Opening business:",
+                businessId
+            );
+
+
             const businesses =
                 getBusinesses();
+
 
             const business =
                 businesses.find(
@@ -613,6 +736,7 @@ Handles:
 
                     }
                 );
+
 
             if (!business) {
 
@@ -630,15 +754,20 @@ Handles:
             }
 
 
+            /*
+             * THIS MUST MATCH index.html
+             */
+
             const modal =
                 document.getElementById(
                     "businessDetailsModal"
                 );
 
+
             if (!modal) {
 
                 console.error(
-                    "businessDetailsModal was not found in index.html"
+                    "businessDetailsModal was not found."
                 );
 
                 return;
@@ -650,43 +779,63 @@ Handles:
                     "businessDetails"
                 );
 
+
             if (!details) {
 
                 console.error(
-                    "businessDetails was not found in index.html"
+                    "businessDetails was not found."
                 );
 
                 return;
             }
 
 
+            /*
+             * Build the details content.
+             */
+
             details.innerHTML = `
 
                 <h2>
                     ${escapeHTML(
-                        business.name || ""
+                        business.name ||
+                        "Business"
                     )}
                 </h2>
 
+
                 <p>
-                    <strong>Category:</strong>
+                    <strong>
+                        Category:
+                    </strong>
+
                     ${escapeHTML(
-                        business.category || ""
+                        business.category ||
+                        "Other"
                     )}
                 </p>
 
+
                 <p>
-                    <strong>Location:</strong>
+                    <strong>
+                        Location:
+                    </strong>
+
                     ${escapeHTML(
-                        business.location || ""
+                        business.location ||
+                        "Nigeria"
                     )}
                 </p>
+
 
                 ${
                     business.description
                         ? `
                             <p>
-                                <strong>Description:</strong>
+                                <strong>
+                                    Description:
+                                </strong>
+
                                 ${escapeHTML(
                                     business.description
                                 )}
@@ -695,11 +844,15 @@ Handles:
                         : ""
                 }
 
+
                 ${
                     business.phone
                         ? `
                             <p>
-                                <strong>Phone:</strong>
+                                <strong>
+                                    Phone:
+                                </strong>
+
                                 ${escapeHTML(
                                     business.phone
                                 )}
@@ -707,6 +860,7 @@ Handles:
                         `
                         : ""
                 }
+
 
                 <div class="business-detail-actions">
 
@@ -735,8 +889,26 @@ Handles:
             `;
 
 
-            openModalSafe(
-                "businessDetailsModal"
+            /*
+             * Open the modal AFTER the content has
+             * been inserted.
+             */
+
+            modal.classList.add(
+                "active"
+            );
+
+            modal.classList.add(
+                "open"
+            );
+
+
+            document.body.style.overflow =
+                "hidden";
+
+
+            console.log(
+                "Business details opened successfully."
             );
         };
 
@@ -753,9 +925,11 @@ Handles:
                     "addBusinessForm"
                 );
 
+
             if (form) {
                 form.reset();
             }
+
 
             clearError(
                 "businessFormError"
@@ -772,7 +946,7 @@ Handles:
 
 
     /* =====================================================
-       SETUP ADD BUSINESS BUTTONS
+       ADD BUSINESS BUTTONS
     ===================================================== */
 
     function setupAddBusinessButtons() {
@@ -784,6 +958,7 @@ Handles:
                 '#addBusinessButton,' +
                 '.add-business-btn'
             );
+
 
         buttons.forEach(
             function (button) {
@@ -817,9 +992,11 @@ Handles:
                 "addBusinessForm"
             );
 
+
         if (!form) {
             return;
         }
+
 
         if (
             form.dataset.bound ===
@@ -827,6 +1004,7 @@ Handles:
         ) {
             return;
         }
+
 
         form.dataset.bound =
             "true";
@@ -837,6 +1015,7 @@ Handles:
             async function (event) {
 
                 event.preventDefault();
+
 
                 clearError(
                     "businessFormError"
@@ -854,11 +1033,15 @@ Handles:
                 const user =
                     getCurrentUserSafe();
 
+
                 const token =
                     getAccessToken();
 
 
-                if (!user || !token) {
+                if (
+                    !user ||
+                    !token
+                ) {
 
                     notify(
                         "Please log in before adding a business.",
@@ -916,7 +1099,7 @@ Handles:
 
                     showError(
                         "businessFormError",
-                        "Please enter or select a category."
+                        "Please enter the business category."
                     );
 
                     return;
@@ -933,6 +1116,12 @@ Handles:
                     return;
                 }
 
+
+                /*
+                 * IMPORTANT:
+                 * These are the actual columns in
+                 * your Supabase businesses table.
+                 */
 
                 const business = {
 
@@ -953,7 +1142,6 @@ Handles:
 
                     phone:
                         phone
-
                 };
 
 
@@ -980,12 +1168,14 @@ Handles:
                             LOSOJA_BUSINESSES_URL +
                             "/rest/v1/businesses",
                             {
-                                method: "POST",
+                                method:
+                                    "POST",
 
                                 headers: {
                                     ...supabaseHeaders(
                                         true
                                     ),
+
                                     "Prefer":
                                         "return=representation"
                                 },
@@ -1016,47 +1206,36 @@ Handles:
 
 
                     const savedBusiness =
-                        Array.isArray(saved)
+                        Array.isArray(
+                            saved
+                        )
                             ? saved[0]
                             : saved;
 
 
-                    if (
-                        savedBusiness &&
-                        savedBusiness.id
-                    ) {
-
-                        const current =
-                            getBusinesses();
-
-                        const updated =
-                            [
-                                savedBusiness,
-                                ...current.filter(
-                                    function (item) {
-
-                                        return String(
-                                            item.id
-                                        ) !== String(
-                                            savedBusiness.id
-                                        );
-
-                                    }
-                                )
-                            ];
+                    const current =
+                        getBusinesses();
 
 
-                        window.losojaBusinesses =
-                            updated;
+                    const updated =
+                        [
+                            savedBusiness,
+                            ...current
+                        ];
 
-                        saveBusinessesCache(
-                            updated
-                        );
 
-                        renderBusinesses(
-                            updated
-                        );
-                    }
+                    window.losojaBusinesses =
+                        updated;
+
+
+                    saveBusinessesCache(
+                        updated
+                    );
+
+
+                    renderBusinesses(
+                        updated
+                    );
 
 
                     form.reset();
@@ -1105,7 +1284,6 @@ Handles:
                         submitButton.textContent =
                             "Add Business";
                     }
-
                 }
 
             }
@@ -1122,6 +1300,7 @@ Handles:
 
             const businesses =
                 getBusinesses();
+
 
             const business =
                 businesses.find(
@@ -1153,25 +1332,30 @@ Handles:
                     "editBusinessId"
                 );
 
+
             const nameField =
                 document.getElementById(
                     "editBusinessName"
                 );
+
 
             const categoryField =
                 document.getElementById(
                     "editBusinessCategory"
                 );
 
+
             const locationField =
                 document.getElementById(
                     "editBusinessLocation"
                 );
 
+
             const descriptionField =
                 document.getElementById(
                     "editBusinessDescription"
                 );
+
 
             const phoneField =
                 document.getElementById(
@@ -1184,25 +1368,30 @@ Handles:
                     business.id || "";
             }
 
+
             if (nameField) {
                 nameField.value =
                     business.name || "";
             }
+
 
             if (categoryField) {
                 categoryField.value =
                     business.category || "";
             }
 
+
             if (locationField) {
                 locationField.value =
                     business.location || "";
             }
 
+
             if (descriptionField) {
                 descriptionField.value =
                     business.description || "";
             }
+
 
             if (phoneField) {
                 phoneField.value =
@@ -1232,9 +1421,11 @@ Handles:
                 "editBusinessForm"
             );
 
+
         if (!form) {
             return;
         }
+
 
         if (
             form.dataset.bound ===
@@ -1242,6 +1433,7 @@ Handles:
         ) {
             return;
         }
+
 
         form.dataset.bound =
             "true";
@@ -1262,11 +1454,15 @@ Handles:
                 const user =
                     getCurrentUserSafe();
 
+
                 const token =
                     getAccessToken();
 
 
-                if (!user || !token) {
+                if (
+                    !user ||
+                    !token
+                ) {
 
                     notify(
                         "Please log in first.",
@@ -1311,7 +1507,6 @@ Handles:
                             "editBusinessPhone"
                         )?.value.trim() ||
                         null
-
                 };
 
 
@@ -1386,12 +1581,14 @@ Handles:
                                 id
                             ),
                             {
-                                method: "PATCH",
+                                method:
+                                    "PATCH",
 
                                 headers: {
                                     ...supabaseHeaders(
                                         true
                                     ),
+
                                     "Prefer":
                                         "return=representation"
                                 },
@@ -1422,7 +1619,9 @@ Handles:
 
 
                     const updatedBusiness =
-                        Array.isArray(updated)
+                        Array.isArray(
+                            updated
+                        )
                             ? updated[0]
                             : updated;
 
@@ -1433,6 +1632,7 @@ Handles:
 
                         const businesses =
                             getBusinesses();
+
 
                         const newList =
                             businesses.map(
@@ -1453,9 +1653,11 @@ Handles:
                         window.losojaBusinesses =
                             newList;
 
+
                         saveBusinessesCache(
                             newList
                         );
+
 
                         renderBusinesses(
                             newList
@@ -1506,7 +1708,6 @@ Handles:
                         submitButton.textContent =
                             "Save Changes";
                     }
-
                 }
 
             }
@@ -1524,11 +1725,15 @@ Handles:
             const user =
                 getCurrentUserSafe();
 
+
             const token =
                 getAccessToken();
 
 
-            if (!user || !token) {
+            if (
+                !user ||
+                !token
+            ) {
 
                 notify(
                     "Please log in first.",
@@ -1541,6 +1746,7 @@ Handles:
 
             const businesses =
                 getBusinesses();
+
 
             const business =
                 businesses.find(
@@ -1569,9 +1775,9 @@ Handles:
 
             const confirmed =
                 confirm(
-                    "Are you sure you want to delete \"" +
+                    'Are you sure you want to delete "' +
                     business.name +
-                    "\"?"
+                    '"?'
                 );
 
 
@@ -1591,7 +1797,8 @@ Handles:
                             businessId
                         ),
                         {
-                            method: "DELETE",
+                            method:
+                                "DELETE",
 
                             headers:
                                 supabaseHeaders(
@@ -1631,9 +1838,11 @@ Handles:
                 window.losojaBusinesses =
                     remaining;
 
+
                 saveBusinessesCache(
                     remaining
                 );
+
 
                 renderBusinesses(
                     remaining
@@ -1653,6 +1862,7 @@ Handles:
                     error
                 );
 
+
                 notify(
                     "Business could not be deleted: " +
                     error.message,
@@ -1663,7 +1873,7 @@ Handles:
 
 
     /* =====================================================
-       SEARCH BUSINESSES
+       SEARCH
     ===================================================== */
 
     function searchBusinesses(
@@ -1672,6 +1882,7 @@ Handles:
 
         const businesses =
             getBusinesses();
+
 
         const term =
             String(
@@ -1728,7 +1939,6 @@ Handles:
                         .includes(term)
 
                     );
-
                 }
             );
 
@@ -1794,7 +2004,7 @@ Handles:
 
 
     /* =====================================================
-       SEARCH FORM
+       SEARCH SETUP
     ===================================================== */
 
     function setupSearch() {
@@ -1804,10 +2014,12 @@ Handles:
                 "searchInput"
             );
 
+
         const searchButton =
             document.getElementById(
                 "searchButton"
             );
+
 
         if (searchButton) {
 
@@ -1864,9 +2076,11 @@ Handles:
                     "searchInput"
                 );
 
+
             if (input) {
                 input.value = term;
             }
+
 
             searchBusinesses(
                 term
@@ -1889,7 +2103,7 @@ Handles:
 
 
     /* =====================================================
-       INITIALIZATION
+       INITIALIZE
     ===================================================== */
 
     function initBusinesses() {
