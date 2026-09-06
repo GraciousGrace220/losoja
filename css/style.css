@@ -158,14 +158,36 @@ button {
 
 /*
    IMPORTANT:
-   Mobile navigation is hidden by default.
 
-   It becomes visible ONLY when JavaScript
+   The mobile navigation MUST be hidden
+   on desktop.
+
+   It becomes visible only when JavaScript
    adds the "open" class.
 */
 
 .mobile-nav {
-    display: none;
+    display: none !important;
+    background: var(--white);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 15px 20px;
+}
+
+.mobile-nav.open {
+    display: flex !important;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.mobile-nav > a {
+    color: var(--gray-dark);
+    font-weight: 600;
+    padding: 5px 0;
+}
+
+.mobile-nav > a:hover {
+    color: var(--green);
 }
 
 
@@ -281,7 +303,7 @@ button {
     color: var(--gray-dark);
     font-size: 12px;
     font-weight: 700;
-    margin: 3px 12px 3px;
+    margin: 3px 12px;
 }
 
 .search-field input {
@@ -642,6 +664,12 @@ footer a:hover {
     border: none;
 }
 
+.form-error {
+    color: #c62828;
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+
 
 /* ================================
    NOTIFICATION / TOAST
@@ -761,7 +789,6 @@ footer a:hover {
     .hero h1 {
         font-size: 40px;
     }
-
 }
 
 
@@ -783,14 +810,13 @@ footer a:hover {
         display: block;
     }
 
-
     /*
-       Mobile menu stays hidden until
-       JavaScript adds .open.
+       Mobile navigation is STILL hidden
+       until the menu button is pressed.
     */
 
     .mobile-nav {
-        display: none;
+        display: none !important;
         background: var(--white);
         border-top: 1px solid var(--border);
         border-bottom: 1px solid var(--border);
@@ -798,7 +824,7 @@ footer a:hover {
     }
 
     .mobile-nav.open {
-        display: flex;
+        display: flex !important;
         flex-direction: column;
         gap: 14px;
     }
@@ -819,7 +845,6 @@ footer a:hover {
         gap: 10px;
         margin-top: 8px;
     }
-
 
     .search-form {
         flex-direction: column;
@@ -852,7 +877,6 @@ footer a:hover {
     .section-title h2 {
         font-size: 28px;
     }
-
 }
 
 
@@ -886,6 +910,5 @@ footer a:hover {
     .mobile-auth-links .btn {
         width: 100%;
     }
-
 }
 ```
