@@ -2227,42 +2227,18 @@ function setupCategoryFilter() {
        OPTIONAL CATEGORY SELECT
     --------------------------------------------- */
 
-    const categorySelect =
-        document.getElementById("categoryFilter");
+       function setupCategoryFilter() {
 
-    if (categorySelect) {
+        // your new category-filter code here
 
-        categorySelect.addEventListener(
-            "change",
-            function () {
-
-                const category =
-                    this.value
-                        .trim()
-                        .toLowerCase();
-
-                if (!category) {
-                    renderBusinesses(allBusinesses);
-                    return;
-                }
-
-                const filtered =
-                    allBusinesses.filter(
-                        function (business) {
-
-                            return String(
-                                business.category || ""
-                            )
-                                .trim()
-                                .toLowerCase() === category;
-                        }
-                    );
-
-                renderBusinesses(filtered);
-            }
-        );
     }
 
+
+    /* =====================================================
+       POPULAR SEARCH
+    ===================================================== */
+
+    function setupPopularSearch() {
 
     /* ---------------------------------------------
        EXPLORE CATEGORY CARDS
