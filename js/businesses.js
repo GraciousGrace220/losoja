@@ -988,46 +988,42 @@ Handles:
                 }
 
 
-                /*
-                -----------------------------------------------------
-                EXACT DATABASE COLUMNS
-                -----------------------------------------------------
+             /*
+-----------------------------------------------------
+EXACT DATABASE COLUMNS
+-----------------------------------------------------
 
-                id
-                user_id
-                name
-                category
-                location
-                description
-                phone
-                email
-                created_at
-                -----------------------------------------------------
-                */
+id
+user_id
+name
+category
+location
+description
+phone
+created_at
+-----------------------------------------------------
+*/
 
-                const business = {
+             const business = {
 
-                    user_id:
-                        user.id,
+    user_id:
+        user.id,
 
-                    name:
-                        name,
+    name:
+        name,
 
-                    category:
-                        category,
+    category:
+        category,
 
-                    location:
-                        location,
+    location:
+        location,
 
-                    description:
-                        description || null,
+    description:
+        description || null,
 
-                    phone:
-                        phone || null,
-
-                    email:
-                        email || null
-                };
+    phone:
+        phone || null
+};
 
 
                 const submitButton =
@@ -1402,12 +1398,7 @@ function showError(elementId, message) {
                             "editBusinessPhone"
                         )?.value.trim() || null,
 
-                    email:
-                        document.getElementById(
-                            "editBusinessEmail"
-                        )?.value.trim() || null
-                };
-
+                   
 
                 if (!id) {
 
