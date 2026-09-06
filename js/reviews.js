@@ -52,7 +52,8 @@ const Reviews = {
 
     getUser() {
 
-        const session = this.getSession();
+        const session =
+            this.getSession();
 
         return session?.user || null;
     },
@@ -60,7 +61,8 @@ const Reviews = {
 
     getAccessToken() {
 
-        const session = this.getSession();
+        const session =
+            this.getSession();
 
         return (
             session?.access_token ||
@@ -149,6 +151,10 @@ const Reviews = {
 
         try {
 
+            const accessToken =
+                this.getAccessToken();
+
+
             const response =
                 await fetch(
                     LOSOJA_REVIEWS_URL +
@@ -159,7 +165,11 @@ const Reviews = {
                     "&order=created_at.desc",
                     {
                         method: "GET",
-                        headers: this.headers()
+
+                        headers:
+                            this.headers(
+                                accessToken
+                            )
                     }
                 );
 
@@ -302,78 +312,104 @@ const Reviews = {
         }
 
 
-        /*
-         * Check whether this user already
-         * reviewed this business.
-         */
+        /* =================================================
+           CHECK EXISTING REVIEW
+        ================================================= */
 
-        const existingResponse =
-            await fetch(
-                LOSOJA_REVIEWS_URL +
-                "/rest/v1/reviews" +
-                "?business_id=eq." +
-                encodeURIComponent(businessId) +
-                "&user_id=eq." +
-                encodeURIComponent(user.id) +
-                "&select=id",
-                {
-                    method: "GET",
+        try {
 
-                    headers:
-                        this.headers(
-                            accessToken
+            const existingResponse =
+                await fetch(
+                    LOSOJA_REVIEWS_URL +
+                    "/rest/v1/reviews" +
+                    "?business_id=eq." +
+                    encodeURIComponent(
+                        businessId
+                    ) +
+                    "&user_id=eq." +
+                    encodeURIComponent(
+                        user.id
+                    ) +
+                    "&select=id",
+                    {
+                        method: "GET",
+
+                        headers:
+                            this.headers(
+                                accessToken
+                            )
+                    }
+                );
+
+
+            if (!existingResponse.ok) {
+
+                return {
+
+                    success: false,
+
+                    message:
+                        await this.getError(
+                            existingResponse
                         )
-                }
+                };
+            }
+
+
+            const existing =
+                await existingResponse.json();
+
+
+            if (
+                Array.isArray(existing) &&
+                existing.length > 0
+            ) {
+
+                return {
+
+                    success: false,
+
+                    message:
+                        "You have already reviewed this business."
+                };
+            }
+
+        } catch (error) {
+
+            console.error(
+                "LosOja Reviews: Existing review check failed:",
+                error
             );
 
-
-        if (!existingResponse.ok) {
-
             return {
 
                 success: false,
 
                 message:
-                    await this.getError(
-                        existingResponse
-                    )
+                    "Could not check your existing reviews."
             };
         }
 
 
-        const existing =
-            await existingResponse.json();
-
-
-        if (
-            Array.isArray(existing) &&
-            existing.length > 0
-        ) {
-
-            return {
-
-                success: false,
-
-                message:
-                    "You have already reviewed this business."
-            };
-        }
-
-
-        /*
-         * Get display name.
-         */
+        /* =================================================
+           USER DISPLAY NAME
+        ================================================= */
 
         const userName =
             user.user_metadata?.name ||
             user.user_metadata?.full_name ||
+            user.user_metadata?.username ||
             user.email ||
             "LosOja User";
 
 
-        /*
-         * Insert review.
-         */
+        /* =================================================
+           REVIEW DATA
+
+           IMPORTANT:
+           Supabase column is "review",
+           NOT "text".
+        ================================================= */
 
         const review = {
 
@@ -386,75 +422,124 @@ const Reviews = {
             rating:
                 Number(rating),
 
-            text:
+            review:
                 String(text || "").trim()
         };
 
 
-        const response =
-            await fetch(
-                LOSOJA_REVIEWS_URL +
-                "/rest/v1/reviews",
-                {
-                    method: "POST",
+        /* =================================================
+           INSERT REVIEW
+        ================================================= */
 
-                    headers:
-                        this.headers(
-                            accessToken
-                        ),
+        try {
 
-                    body:
-                        JSON.stringify(
-                            review
-                        )
+            const response =
+                await fetch(
+                    LOSOJA_REVIEWS_URL +
+                    "/rest/v1/reviews",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            ...this.headers(
+                                accessToken
+                            ),
+
+                            "Prefer":
+                                "return=representation"
+                        },
+
+                        body:
+                            JSON.stringify(
+                                review
+                            )
+                    }
+                );
+
+
+            if (!response.ok) {
+
+                const errorMessage =
+                    await this.getError(
+                        response
+                    );
+
+                console.error(
+                    "LosOja Reviews: Supabase insert failed:",
+                    errorMessage
+                );
+
+                return {
+
+                    success: false,
+
+                    message:
+                        errorMessage
+                };
+            }
+
+
+            let savedReview =
+                review;
+
+
+            try {
+
+                const data =
+                    await response.json();
+
+
+                if (
+                    Array.isArray(data) &&
+                    data.length > 0
+                ) {
+
+                    savedReview =
+                        data[0];
+
+                } else if (data) {
+
+                    savedReview =
+                        data;
                 }
+
+            } catch (error) {
+
+                /*
+                 * Supabase may return an empty body.
+                 * The insert has already succeeded.
+                 */
+            }
+
+
+            return {
+
+                success: true,
+
+                review:
+                    savedReview,
+
+                userName:
+                    userName
+            };
+
+
+        } catch (error) {
+
+            console.error(
+                "LosOja Reviews: Insert error:",
+                error
             );
-
-
-        if (!response.ok) {
 
             return {
 
                 success: false,
 
                 message:
-                    await this.getError(
-                        response
-                    )
+                    error.message ||
+                    "Review could not be submitted."
             };
         }
-
-
-        let savedReview = null;
-
-
-        try {
-
-            const data =
-                await response.json();
-
-            savedReview =
-                Array.isArray(data)
-                    ? data[0]
-                    : data;
-
-        } catch (error) {
-
-            savedReview =
-                review;
-        }
-
-
-        return {
-
-            success: true,
-
-            review:
-                savedReview,
-
-            userName:
-                userName
-        };
     },
 
 
@@ -595,6 +680,13 @@ const Reviews = {
         }
 
 
+        /* =================================================
+           REVIEW LIST
+
+           IMPORTANT:
+           Database column is "review".
+        ================================================= */
+
         const listHTML =
             reviews.length
 
@@ -622,14 +714,12 @@ const Reviews = {
 
 
                             const text =
-                                review.text ||
-                                review.comment ||
+                                review.review ||
                                 "";
 
 
                             const date =
                                 review.created_at ||
-                                review.createdAt ||
                                 "";
 
 
@@ -704,9 +794,9 @@ const Reviews = {
         `;
 
 
-        /*
-         * STAR SELECTION
-         */
+        /* =================================================
+           STAR SELECTION
+        ================================================= */
 
         if (isLoggedIn) {
 
@@ -750,9 +840,9 @@ const Reviews = {
             );
 
 
-            /*
-             * SUBMIT REVIEW
-             */
+            /* =================================================
+               SUBMIT REVIEW
+            ================================================= */
 
             const form =
                 section.querySelector(
@@ -887,12 +977,23 @@ const Reviews = {
 
                         } finally {
 
-                            if (submitButton) {
+                            /*
+                             * The form may have been replaced
+                             * after a successful submission.
+                             */
 
-                                submitButton.disabled =
+                            const currentSubmitButton =
+                                section.querySelector(
+                                    '#reviewForm button[type="submit"]'
+                                );
+
+
+                            if (currentSubmitButton) {
+
+                                currentSubmitButton.disabled =
                                     false;
 
-                                submitButton.textContent =
+                                currentSubmitButton.textContent =
                                     "Submit Review";
                             }
                         }
@@ -957,7 +1058,8 @@ const Reviews = {
    GLOBAL ACCESS
 ========================================================= */
 
-window.Reviews = Reviews;
+window.Reviews =
+    Reviews;
 
 
 /* =========================================================
