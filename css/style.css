@@ -725,23 +725,27 @@ footer a:hover {
 
 
 
+/* ================================
+   MOBILE NAVIGATION BUTTONS
+================================ */
 
-/* Mobile navigation buttons */
 .mobile-nav-actions {
     display: none;
 }
 
-@media (max-width: 768px) {
-    .mobile-nav-actions {
-        display: flex;
-        gap: 10px;
-        margin-top: 15px;
-    }
+
+/* ================================
+   MOBILE AUTH LINKS
+================================ */
+
+.mobile-auth-links {
+    display: none;
 }
+
 
 /* ================================
    HEADER ACCOUNT / LOGIN STATE
-   ================================ */
+================================ */
 
 .header-actions {
     display: flex;
@@ -749,22 +753,42 @@ footer a:hover {
     gap: 10px;
 }
 
+
 /* Hidden elements must stay hidden */
+
 .hidden {
     display: none !important;
 }
 
+
 /* Logged-in state */
+
 .header-actions.logged-in #loginBtn,
 .header-actions.logged-in #signupBtn {
     display: none !important;
 }
 
+
+/* ================================
+   MOBILE
+================================ */
+
 @media (max-width: 700px) {
-    .header-actions {
+
+    .mobile-nav-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    .mobile-auth-links {
         display: flex;
         align-items: center;
         gap: 10px;
+        margin-top: 15px;
     }
-};
+
+    .header-actions {
+        display: none;
+    }
 }
