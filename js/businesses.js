@@ -179,18 +179,41 @@ Supabase businesses columns:
        CLOSE MODAL
     ===================================================== */
 
-    function closeModal(id) {
+   function openModal(id) {
 
-        const modal =
-            document.getElementById(id);
+    const modal =
+        document.getElementById(id);
 
-        if (!modal) {
-            return;
-        }
+    if (!modal) {
 
-        modal.classList.remove("open");
-        modal.classList.remove("active");
+        console.error(
+            "LosOja: Modal not found:",
+            id
+        );
+
+        return;
     }
+
+    // Remove any currently open modal
+    document
+        .querySelectorAll(".modal.active, .modal.open")
+        .forEach(function (otherModal) {
+
+            if (otherModal !== modal) {
+                otherModal.classList.remove("active");
+                otherModal.classList.remove("open");
+            }
+
+        });
+
+    // Your GitHub CSS uses "active"
+    modal.classList.add("active");
+
+    // Keep "open" for compatibility
+    modal.classList.add("open");
+
+    document.body.style.overflow = "hidden";
+}
 
 
     /* =====================================================
