@@ -1,3 +1,4 @@
+```javascript
 /**
  * LosOja - Main App
  * Handles UI utilities, modals, toasts, navigation
@@ -85,24 +86,17 @@ const App = {
         document
             .querySelectorAll('.modal.active')
             .forEach(modal => {
-
                 modal.classList.remove('active');
-
             });
-
 
         document
             .querySelectorAll('.modal.open')
             .forEach(modal => {
-
                 modal.classList.remove('open');
-
             });
-
 
         const modal =
             document.getElementById(id);
-
 
         if (!modal) {
 
@@ -115,23 +109,8 @@ const App = {
 
         }
 
-
-        /*
-         * Your current GitHub HTML uses
-         * the "active" class.
-         */
-
         modal.classList.add('active');
-
-
-        /*
-         * Some older LosOja code uses "open".
-         * Adding it here keeps both versions
-         * compatible.
-         */
-
         modal.classList.add('open');
-
 
         document.body.style.overflow =
             'hidden';
@@ -148,15 +127,12 @@ const App = {
         const modal =
             document.getElementById(id);
 
-
         if (!modal) {
             return;
         }
 
-
         modal.classList.remove('active');
         modal.classList.remove('open');
-
 
         document.body.style.overflow =
             '';
@@ -178,7 +154,6 @@ const App = {
                 modal.classList.remove('open');
 
             });
-
 
         document.body.style.overflow =
             '';
@@ -203,7 +178,6 @@ const App = {
                         const modal =
                             btn.closest('.modal');
 
-
                         if (modal) {
 
                             modal.classList.remove(
@@ -224,11 +198,6 @@ const App = {
 
             });
 
-
-        /*
-         * Close when clicking the dark
-         * area outside the modal box.
-         */
 
         document
             .querySelectorAll('.modal')
@@ -261,10 +230,6 @@ const App = {
             });
 
 
-        /*
-         * ESC key closes any open modal.
-         */
-
         document.addEventListener(
             'keydown',
             (e) => {
@@ -283,6 +248,13 @@ const App = {
 
     /* =====================================================
        MOBILE MENU
+       
+       IMPORTANT:
+       index.html uses:
+           mobileMenuBtn
+           mobileNav
+
+       So we use those exact IDs here.
     ===================================================== */
 
     bindMobileMenu() {
@@ -294,9 +266,8 @@ const App = {
 
         const nav =
             document.getElementById(
-                'navLinks'
+                'mobileNav'
             );
-
 
         if (!btn || !nav) {
             return;
@@ -305,10 +276,18 @@ const App = {
 
         btn.addEventListener(
             'click',
-            () => {
+            (e) => {
 
-                nav.classList.toggle(
-                    'open'
+                e.preventDefault();
+
+                nav.classList.toggle('open');
+
+                const isOpen =
+                    nav.classList.contains('open');
+
+                btn.setAttribute(
+                    'aria-expanded',
+                    isOpen ? 'true' : 'false'
                 );
 
             }
@@ -324,6 +303,11 @@ const App = {
 
                         nav.classList.remove(
                             'open'
+                        );
+
+                        btn.setAttribute(
+                            'aria-expanded',
+                            'false'
                         );
 
                     }
@@ -355,7 +339,6 @@ const App = {
                                 'href'
                             );
 
-
                         if (
                             targetId === '#' ||
                             targetId === '#dashboard'
@@ -363,17 +346,14 @@ const App = {
                             return;
                         }
 
-
                         const target =
                             document.querySelector(
                                 targetId
                             );
 
-
                         if (target) {
 
                             e.preventDefault();
-
 
                             if (
                                 typeof Dashboard !==
@@ -384,7 +364,6 @@ const App = {
                                 Dashboard.hide();
 
                             }
-
 
                             target.scrollIntoView({
                                 behavior: 'smooth',
@@ -415,30 +394,24 @@ const App = {
                 'toast'
             );
 
-
         if (!toast) {
             return;
         }
 
-
         toast.textContent =
             message;
-
 
         toast.classList.remove(
             'hidden'
         );
 
-
         toast.classList.add(
             'show'
         );
 
-
         clearTimeout(
             this._toastTimer
         );
-
 
         this._toastTimer =
             setTimeout(
@@ -486,16 +459,13 @@ const App = {
             return '';
         }
 
-
         const div =
             document.createElement(
                 'div'
             );
 
-
         div.textContent =
             str;
-
 
         return div.innerHTML;
 
@@ -534,19 +504,6 @@ const App = {
 
 /* =========================================================
    BACKWARD COMPATIBILITY
-   =========================================================
-
-   Your index.html uses:
-
-       openModal('loginModal')
-       closeModal('loginModal')
-
-   while the newer app.js uses:
-
-       App.openModal()
-       App.closeModal()
-
-   These aliases allow BOTH styles to work.
 ========================================================= */
 
 window.App =
@@ -589,3 +546,4 @@ document.addEventListener(
 
     }
 );
+```
