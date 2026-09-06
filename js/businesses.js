@@ -2203,18 +2203,21 @@ Handles:
        CATEGORY FILTER
     ===================================================== */
 
-    function setupCategoryFilter() {
+   function setupCategoryFilter() {
+    ...
+}
 
-        /*
-        -----------------------------------------------------
-        OPTIONAL CATEGORY SELECT
-        -----------------------------------------------------
-        */
+function setupPopularSearch() {
+    ...
+}
 
-        const categorySelect =
-            document.getElementById(
-                "categoryFilter"
-            );
+window.loadLosOjaBusinesses = loadBusinesses;
+window.getLosOjaBusinesses = getBusinesses;
+window.renderLosOjaBusinesses = renderBusinesses;
+
+function initializeBusinessesJS() {
+    ...
+}
 
 
         if (categorySelect) {
