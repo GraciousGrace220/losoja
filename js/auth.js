@@ -8,6 +8,7 @@ Handles:
 - Login
 - Logout
 - Supabase session
+- Automatic JWT refresh
 - User interface
 =========================================================
 */
@@ -15,6 +16,11 @@ Handles:
 (function () {
 
     "use strict";
+
+
+    /* =====================================================
+       SUPABASE CONFIGURATION
+    ===================================================== */
 
     const SUPABASE_URL =
         "https://ycxshwgeebskdozmornh.supabase.co";
@@ -59,6 +65,10 @@ Handles:
 
     function saveSession(session) {
 
+        if (!session) {
+            return;
+        }
+
         try {
 
             localStorage.setItem(
@@ -78,7 +88,9 @@ Handles:
 
     function clearSession() {
 
-        localStorage.removeItem(SESSION_KEY);
+        localStorage.removeItem(
+            SESSION_KEY
+        );
     }
 
 
@@ -88,7 +100,8 @@ Handles:
 
     function getCurrentUser() {
 
-        const session = getSession();
+        const session =
+            getSession();
 
         if (!session) {
             return null;
@@ -100,7 +113,8 @@ Handles:
 
     function getAccessToken() {
 
-        const session = getSession();
+        const session =
+            getSession();
 
         if (!session) {
             return null;
@@ -140,7 +154,8 @@ Handles:
 
         const result = {
 
-            "apikey": SUPABASE_KEY,
+            "apikey":
+                SUPABASE_KEY,
 
             "Content-Type":
                 "application/json",
@@ -149,11 +164,13 @@ Handles:
                 "application/json"
         };
 
+
         if (accessToken) {
 
             result["Authorization"] =
                 "Bearer " + accessToken;
         }
+
 
         return result;
     }
@@ -180,10 +197,268 @@ Handles:
 
 
     /* =====================================================
+       CHECK TOKEN EXPIRATION
+    ===================================================== */
+
+    function isTokenExpired(session) {
+
+        if (!session) {
+            return true;
+        }
+
+
+        /*
+        -----------------------------------------------------
+        Supabase normally provides expires_at as a Unix
+        timestamp in seconds.
+        -----------------------------------------------------
+        */
+
+        if (session.expires_at) {
+
+            const now =
+                Math.floor(
+                    Date.now() / 1000
+                );
+
+
+            /*
+            Refresh slightly before actual expiration.
+            This prevents a request from being sent with
+            a token that is about to expire.
+            */
+
+            return (
+                Number(session.expires_at) <=
+                now + 60
+            );
+        }
+
+
+        /*
+        -----------------------------------------------------
+        Older stored sessions may not have expires_at.
+        In that case we cannot determine expiration here.
+        -----------------------------------------------------
+        */
+
+        return false;
+    }
+
+
+    /* =====================================================
+       REFRESH SUPABASE SESSION
+    ===================================================== */
+
+    async function refreshSupabaseSession() {
+
+        const session =
+            getSession();
+
+
+        if (!session) {
+
+            return {
+                success: false,
+                message: "No active session."
+            };
+        }
+
+
+        const refreshToken =
+            session.refresh_token;
+
+
+        if (!refreshToken) {
+
+            console.warn(
+                "LosOja: No refresh token available."
+            );
+
+            clearSession();
+            updateUI();
+
+            return {
+                success: false,
+                message:
+                    "Your session has expired. Please log in again."
+            };
+        }
+
+
+        try {
+
+            console.log(
+                "LosOja: Refreshing Supabase session..."
+            );
+
+
+            const response =
+                await fetch(
+                    SUPABASE_URL +
+                    "/auth/v1/token?grant_type=refresh_token",
+                    {
+                        method: "POST",
+
+                        headers:
+                            headers(),
+
+                        body:
+                            JSON.stringify({
+                                refresh_token:
+                                    refreshToken
+                            })
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                console.error(
+                    "LosOja session refresh error:",
+                    data
+                );
+
+
+                /*
+                -------------------------------------------------
+                Refresh token is no longer valid.
+                User must log in again.
+                -------------------------------------------------
+                */
+
+                clearSession();
+
+                updateUI();
+
+
+                return {
+                    success: false,
+                    message:
+                        getErrorMessage(data)
+                };
+            }
+
+
+            if (
+                !data.access_token ||
+                !data.user
+            ) {
+
+                console.error(
+                    "LosOja: Refresh response did not contain a valid session.",
+                    data
+                );
+
+
+                return {
+                    success: false,
+                    message:
+                        "Could not refresh your session."
+                };
+            }
+
+
+            /*
+            -------------------------------------------------
+            Save the NEW Supabase session.
+            -------------------------------------------------
+            */
+
+            saveSession(data);
+
+            updateUI();
+
+
+            console.log(
+                "LosOja: Supabase session refreshed successfully."
+            );
+
+
+            return {
+                success: true,
+                user: data.user,
+                session: data
+            };
+
+
+        } catch (error) {
+
+            console.error(
+                "LosOja session refresh network error:",
+                error
+            );
+
+
+            return {
+                success: false,
+                message:
+                    "Could not refresh your session."
+            };
+        }
+    }
+
+
+    /* =====================================================
+       ENSURE VALID SESSION
+    ===================================================== */
+
+    async function ensureValidSession() {
+
+        const session =
+            getSession();
+
+
+        if (!session) {
+            return null;
+        }
+
+
+        /*
+        -----------------------------------------------------
+        If the token is still valid, use it.
+        -----------------------------------------------------
+        */
+
+        if (!isTokenExpired(session)) {
+
+            return session;
+        }
+
+
+        /*
+        -----------------------------------------------------
+        Token expired or is about to expire.
+        Refresh it.
+        -----------------------------------------------------
+        */
+
+        const result =
+            await refreshSupabaseSession();
+
+
+        if (!result.success) {
+
+            return null;
+        }
+
+
+        return result.session;
+    }
+
+
+    /* =====================================================
        LOGIN
     ===================================================== */
 
-    async function login(email, password) {
+    async function login(
+        email,
+        password
+    ) {
 
         email =
             String(email || "")
@@ -198,7 +473,8 @@ Handles:
 
             return {
                 success: false,
-                message: "Please enter your email and password."
+                message:
+                    "Please enter your email and password."
             };
         }
 
@@ -211,11 +487,15 @@ Handles:
                     "/auth/v1/token?grant_type=password",
                     {
                         method: "POST",
-                        headers: headers(),
-                        body: JSON.stringify({
-                            email: email,
-                            password: password
-                        })
+
+                        headers:
+                            headers(),
+
+                        body:
+                            JSON.stringify({
+                                email: email,
+                                password: password
+                            })
                     }
                 );
 
@@ -231,14 +511,19 @@ Handles:
                     data
                 );
 
+
                 return {
                     success: false,
-                    message: getErrorMessage(data)
+                    message:
+                        getErrorMessage(data)
                 };
             }
 
 
-            if (!data.access_token || !data.user) {
+            if (
+                !data.access_token ||
+                !data.user
+            ) {
 
                 return {
                     success: false,
@@ -266,6 +551,7 @@ Handles:
                 "LosOja login network error:",
                 error
             );
+
 
             return {
                 success: false,
@@ -302,7 +588,8 @@ Handles:
 
             return {
                 success: false,
-                message: "Please enter your full name."
+                message:
+                    "Please enter your full name."
             };
         }
 
@@ -311,7 +598,8 @@ Handles:
 
             return {
                 success: false,
-                message: "Please enter your email."
+                message:
+                    "Please enter your email."
             };
         }
 
@@ -334,19 +622,23 @@ Handles:
                     "/auth/v1/signup",
                     {
                         method: "POST",
-                        headers: headers(),
-                        body: JSON.stringify({
 
-                            email: email,
+                        headers:
+                            headers(),
 
-                            password: password,
+                        body:
+                            JSON.stringify({
 
-                            data: {
-                                full_name: name,
-                                name: name
-                            }
+                                email: email,
 
-                        })
+                                password: password,
+
+                                data: {
+                                    full_name: name,
+                                    name: name
+                                }
+
+                            })
                     }
                 );
 
@@ -362,9 +654,11 @@ Handles:
                     data
                 );
 
+
                 return {
                     success: false,
-                    message: getErrorMessage(data)
+                    message:
+                        getErrorMessage(data)
                 };
             }
 
@@ -383,6 +677,7 @@ Handles:
                 saveSession(data);
 
                 updateUI();
+
 
                 return {
                     success: true,
@@ -404,7 +699,8 @@ Handles:
 
                 needsConfirmation: true,
 
-                user: data.user || null,
+                user:
+                    data.user || null,
 
                 message:
                     "Your account was created. Please confirm your email, then log in."
@@ -417,6 +713,7 @@ Handles:
                 "LosOja signup network error:",
                 error
             );
+
 
             return {
                 success: false,
@@ -446,7 +743,9 @@ Handles:
                     "/auth/v1/logout",
                     {
                         method: "POST",
-                        headers: headers(token)
+
+                        headers:
+                            headers(token)
                     }
                 );
             }
@@ -464,6 +763,7 @@ Handles:
 
             updateUI();
 
+
             if (
                 typeof Dashboard !== "undefined" &&
                 typeof Dashboard.hide === "function"
@@ -471,6 +771,7 @@ Handles:
 
                 Dashboard.hide();
             }
+
 
             if (
                 window.App &&
@@ -534,39 +835,62 @@ Handles:
         if (user) {
 
             if (loginBtn) {
-                loginBtn.classList.add("hidden");
+                loginBtn.classList.add(
+                    "hidden"
+                );
             }
+
 
             if (signupBtn) {
-                signupBtn.classList.add("hidden");
+                signupBtn.classList.add(
+                    "hidden"
+                );
             }
+
 
             if (mobileLoginBtn) {
-                mobileLoginBtn.classList.add("hidden");
+                mobileLoginBtn.classList.add(
+                    "hidden"
+                );
             }
+
 
             if (mobileSignupBtn) {
-                mobileSignupBtn.classList.add("hidden");
+                mobileSignupBtn.classList.add(
+                    "hidden"
+                );
             }
+
 
             if (mobileAuthLinks) {
-                mobileAuthLinks.classList.add("hidden");
+                mobileAuthLinks.classList.add(
+                    "hidden"
+                );
             }
 
+
             if (dashboardNavLink) {
-                dashboardNavLink.classList.remove("hidden");
+                dashboardNavLink.classList.remove(
+                    "hidden"
+                );
             }
+
 
             if (userArea) {
 
-                userArea.classList.remove("hidden");
+                userArea.classList.remove(
+                    "hidden"
+                );
+
 
                 const name =
                     escapeHTML(
                         getUserName(user)
                     );
 
+
                 userArea.innerHTML = `
+
                     <span class="user-name">
                         Hi, ${name}
                     </span>
@@ -578,12 +902,15 @@ Handles:
                     >
                         Logout
                     </button>
+
                 `;
+
 
                 const logoutBtn =
                     document.getElementById(
                         "logoutBtn"
                     );
+
 
                 if (logoutBtn) {
 
@@ -594,35 +921,56 @@ Handles:
                 }
             }
 
+
         } else {
 
             if (loginBtn) {
-                loginBtn.classList.remove("hidden");
+                loginBtn.classList.remove(
+                    "hidden"
+                );
             }
+
 
             if (signupBtn) {
-                signupBtn.classList.remove("hidden");
+                signupBtn.classList.remove(
+                    "hidden"
+                );
             }
+
 
             if (mobileLoginBtn) {
-                mobileLoginBtn.classList.remove("hidden");
+                mobileLoginBtn.classList.remove(
+                    "hidden"
+                );
             }
+
 
             if (mobileSignupBtn) {
-                mobileSignupBtn.classList.remove("hidden");
+                mobileSignupBtn.classList.remove(
+                    "hidden"
+                );
             }
+
 
             if (mobileAuthLinks) {
-                mobileAuthLinks.classList.remove("hidden");
+                mobileAuthLinks.classList.remove(
+                    "hidden"
+                );
             }
 
+
             if (dashboardNavLink) {
-                dashboardNavLink.classList.add("hidden");
+                dashboardNavLink.classList.add(
+                    "hidden"
+                );
             }
+
 
             if (userArea) {
 
-                userArea.classList.add("hidden");
+                userArea.classList.add(
+                    "hidden"
+                );
 
                 userArea.innerHTML = "";
             }
@@ -630,10 +978,16 @@ Handles:
     }
 
 
+    /* =====================================================
+       ESCAPE HTML
+    ===================================================== */
+
     function escapeHTML(value) {
 
         const div =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
         div.textContent =
             String(value || "");
@@ -663,9 +1017,16 @@ Handles:
                     "loginModal"
                 );
 
+
             if (modal) {
-                modal.classList.add("active");
-                modal.classList.add("open");
+
+                modal.classList.add(
+                    "active"
+                );
+
+                modal.classList.add(
+                    "open"
+                );
             }
         }
     }
@@ -688,9 +1049,16 @@ Handles:
                     "signupModal"
                 );
 
+
             if (modal) {
-                modal.classList.add("active");
-                modal.classList.add("open");
+
+                modal.classList.add(
+                    "active"
+                );
+
+                modal.classList.add(
+                    "open"
+                );
             }
         }
     }
@@ -700,17 +1068,27 @@ Handles:
        FORM HELPERS
     ===================================================== */
 
-    function showError(id, message) {
+    function showError(
+        id,
+        message
+    ) {
 
         const element =
             document.getElementById(id);
 
-        if (!element) return;
+
+        if (!element) {
+            return;
+        }
+
 
         element.textContent =
             message || "";
 
-        element.classList.remove("hidden");
+
+        element.classList.remove(
+            "hidden"
+        );
     }
 
 
@@ -719,11 +1097,18 @@ Handles:
         const element =
             document.getElementById(id);
 
-        if (!element) return;
+
+        if (!element) {
+            return;
+        }
+
 
         element.textContent = "";
 
-        element.classList.add("hidden");
+
+        element.classList.add(
+            "hidden"
+        );
     }
 
 
@@ -747,12 +1132,18 @@ Handles:
             const button =
                 document.getElementById(id);
 
-            if (!button) return;
+
+            if (!button) {
+                return;
+            }
+
 
             button.addEventListener(
                 "click",
                 function () {
+
                     openLogin();
+
                 }
             );
         });
@@ -772,12 +1163,18 @@ Handles:
             const button =
                 document.getElementById(id);
 
-            if (!button) return;
+
+            if (!button) {
+                return;
+            }
+
 
             button.addEventListener(
                 "click",
                 function () {
+
                     openSignup();
+
                 }
             );
         });
@@ -794,6 +1191,7 @@ Handles:
                 "switchToSignup"
             );
 
+
         if (switchToSignup) {
 
             switchToSignup.addEventListener(
@@ -801,10 +1199,13 @@ Handles:
                 function () {
 
                     if (window.App) {
+
                         App.closeAllModals();
                     }
 
+
                     openSignup();
+
                 }
             );
         }
@@ -821,6 +1222,7 @@ Handles:
                 "switchToLogin"
             );
 
+
         if (switchToLogin) {
 
             switchToLogin.addEventListener(
@@ -828,10 +1230,13 @@ Handles:
                 function () {
 
                     if (window.App) {
+
                         App.closeAllModals();
                     }
 
+
                     openLogin();
+
                 }
             );
         }
@@ -848,6 +1253,7 @@ Handles:
                 "loginForm"
             );
 
+
         if (loginForm) {
 
             loginForm.addEventListener(
@@ -856,14 +1262,17 @@ Handles:
 
                     event.preventDefault();
 
+
                     clearError(
                         "loginError"
                     );
+
 
                     const email =
                         document.getElementById(
                             "loginEmail"
                         )?.value;
+
 
                     const password =
                         document.getElementById(
@@ -876,8 +1285,12 @@ Handles:
                             'button[type="submit"]'
                         );
 
+
                     if (submitButton) {
-                        submitButton.disabled = true;
+
+                        submitButton.disabled =
+                            true;
+
                         submitButton.textContent =
                             "Logging in...";
                     }
@@ -891,7 +1304,10 @@ Handles:
 
 
                     if (submitButton) {
-                        submitButton.disabled = false;
+
+                        submitButton.disabled =
+                            false;
+
                         submitButton.textContent =
                             "Login";
                     }
@@ -909,9 +1325,11 @@ Handles:
 
 
                     if (window.App) {
+
                         App.closeModal(
                             "loginModal"
                         );
+
 
                         App.showToast(
                             "Welcome back!"
@@ -934,6 +1352,7 @@ Handles:
                 "signupForm"
             );
 
+
         if (signupForm) {
 
             signupForm.addEventListener(
@@ -942,19 +1361,23 @@ Handles:
 
                     event.preventDefault();
 
+
                     clearError(
                         "signupError"
                     );
+
 
                     const name =
                         document.getElementById(
                             "signupName"
                         )?.value;
 
+
                     const email =
                         document.getElementById(
                             "signupEmail"
                         )?.value;
+
 
                     const password =
                         document.getElementById(
@@ -967,8 +1390,12 @@ Handles:
                             'button[type="submit"]'
                         );
 
+
                     if (submitButton) {
-                        submitButton.disabled = true;
+
+                        submitButton.disabled =
+                            true;
+
                         submitButton.textContent =
                             "Creating account...";
                     }
@@ -983,7 +1410,10 @@ Handles:
 
 
                     if (submitButton) {
-                        submitButton.disabled = false;
+
+                        submitButton.disabled =
+                            false;
+
                         submitButton.textContent =
                             "Create Account";
                     }
@@ -1019,6 +1449,7 @@ Handles:
                             "signupModal"
                         );
 
+
                         App.showToast(
                             "Account created successfully!"
                         );
@@ -1037,20 +1468,42 @@ Handles:
     window.getSupabaseSession =
         getSession;
 
+
     window.getCurrentUser =
         getCurrentUser;
+
 
     window.getSupabaseAccessToken =
         getAccessToken;
 
+
+    /*
+    ---------------------------------------------------------
+    New refresh functions.
+    businesses.js can use these when Supabase returns
+    HTTP 401 / JWT expired.
+    ---------------------------------------------------------
+    */
+
+    window.refreshSupabaseSession =
+        refreshSupabaseSession;
+
+
+    window.ensureValidSupabaseSession =
+        ensureValidSession;
+
+
     window.logout =
         logout;
+
 
     window.doLogin =
         login;
 
+
     window.doSignup =
         signup;
+
 
     window.updateAuthUI =
         updateUI;
@@ -1062,11 +1515,35 @@ Handles:
 
     document.addEventListener(
         "DOMContentLoaded",
-        function () {
+        async function () {
 
             bindEvents();
 
             updateUI();
+
+
+            /*
+            -------------------------------------------------
+            Automatically refresh an expired session when
+            the website opens.
+            -------------------------------------------------
+            */
+
+            const session =
+                getSession();
+
+
+            if (session) {
+
+                if (
+                    isTokenExpired(session)
+                ) {
+
+                    await refreshSupabaseSession();
+
+                }
+
+            }
 
         }
     );
