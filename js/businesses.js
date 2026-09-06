@@ -3,22 +3,13 @@
 LosOja - Businesses
 js/businesses.js
 
-Works with:
-- Current GitHub index.html
-- Supabase REST API
-- Existing auth.js session
-- public.businesses table
-
-Supabase businesses columns:
-- id
-- user_id
-- name
-- category
-- location
-- description
-- phone
-- email
-- created_at
+Handles:
+- Loading businesses
+- Searching
+- Filtering
+- Viewing business details
+- Adding businesses
+- Editing businesses
 =========================================================
 */
 
@@ -27,14 +18,10 @@ Supabase businesses columns:
     "use strict";
 
 
-    /* =====================================================
-       SUPABASE CONFIGURATION
-    ===================================================== */
-
-    const BUSINESSES_SUPABASE_URL =
+    const SUPABASE_URL =
         "https://ycxshwgeebskdozmornh.supabase.co";
 
-    const BUSINESSES_SUPABASE_KEY =
+    const SUPABASE_KEY =
         "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
 
 
@@ -44,83 +31,131 @@ Supabase businesses columns:
 
     function getSession() {
 
+        if (
+            typeof window.getSupabaseSession ===
+            "function"
+        ) {
+
+            return window.getSupabaseSession();
+        }
+
+
         try {
 
-            if (typeof window.getSupabaseSession === "function") {
-                return window.getSupabaseSession();
-            }
+            const raw =
+                localStorage.getItem(
+                    "losoja_supabase_session"
+                );
 
-            const saved =
-                localStorage.getItem("losoja_supabase_session");
+            return raw
+                ? JSON.parse(raw)
+                : null;
 
-            if (!saved) {
-                return null;
-            }
-
-            return JSON.parse(saved);
-
-        } catch (error) {
-
-            console.error(
-                "LosOja: Could not read session.",
-                error
-            );
+        } catch {
 
             return null;
         }
     }
 
 
-    function getAccessToken() {
+    function getUser() {
 
-        const session = getSession();
+        const session =
+            getSession();
 
-        if (!session) {
-            return null;
-        }
+        return session?.user || null;
+    }
+
+
+    function getToken() {
+
+        const session =
+            getSession();
 
         return (
-            session.access_token ||
-            session.accessToken ||
+            session?.access_token ||
+            session?.accessToken ||
             null
         );
     }
 
 
-    function getCurrentUser() {
+    /* =====================================================
+       HEADERS
+    ===================================================== */
 
-        const session = getSession();
+    function headers(requireAuth) {
 
-        if (!session) {
-            return null;
+        const result = {
+
+            "apikey": SUPABASE_KEY,
+
+            "Content-Type":
+                "application/json",
+
+            "Accept":
+                "application/json"
+        };
+
+
+        if (requireAuth) {
+
+            const token =
+                getToken();
+
+            if (token) {
+
+                result["Authorization"] =
+                    "Bearer " + token;
+            }
         }
 
-        return session.user || null;
+
+        return result;
     }
 
 
     /* =====================================================
-       SUPABASE HEADERS
+       ERROR
     ===================================================== */
 
-    function getHeaders(requireAuth) {
+    async function getResponseError(response) {
 
-        const token = getAccessToken();
+        let data = null;
 
-        const headers = {
-            "apikey": BUSINESSES_SUPABASE_KEY,
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-        };
-
-        if (requireAuth && token) {
-
-            headers["Authorization"] =
-                "Bearer " + token;
-
+        try {
+            data = await response.json();
+        } catch {
+            data = null;
         }
 
-        return headers;
+
+        console.error(
+            "LosOja Supabase error:",
+            response.status,
+            data
+        );
+
+
+        if (data) {
+
+            return (
+                data.message ||
+                data.msg ||
+                data.error_description ||
+                data.details ||
+                data.hint ||
+                data.error ||
+                "Supabase returned an error."
+            );
+        }
+
+
+        return (
+            "Supabase request failed with status " +
+            response.status +
+            "."
+        );
     }
 
 
@@ -130,154 +165,152 @@ Supabase businesses columns:
 
     function notify(message) {
 
-        if (typeof window.showNotification === "function") {
+        if (
+            window.App &&
+            typeof App.showToast ===
+            "function"
+        ) {
 
-            window.showNotification(message);
-            return;
+            App.showToast(message);
 
-        }
+        } else if (
+            typeof window.showNotification ===
+            "function"
+        ) {
 
-        const toast =
-            document.getElementById("toast");
+            window.showNotification(
+                message
+            );
 
-        if (!toast) {
+        } else {
+
             alert(message);
-            return;
         }
-
-        toast.textContent = message;
-        toast.classList.add("show");
-
-        setTimeout(function () {
-
-            toast.classList.remove("show");
-
-        }, 3000);
     }
 
 
     /* =====================================================
-       ESCAPE HTML
+       HTML ESCAPE
     ===================================================== */
 
     function escapeHTML(value) {
 
-        if (value === null || value === undefined) {
-            return "";
-        }
-
         const div =
             document.createElement("div");
 
-        div.textContent = String(value);
+        div.textContent =
+            String(value ?? "");
 
         return div.innerHTML;
     }
 
 
     /* =====================================================
-       CLOSE MODAL
-    ===================================================== */
-
-   function openModal(id) {
-
-    const modal =
-        document.getElementById(id);
-
-    if (!modal) {
-
-        console.error(
-            "LosOja: Modal not found:",
-            id
-        );
-
-        return;
-    }
-
-    // Remove any currently open modal
-    document
-        .querySelectorAll(".modal.active, .modal.open")
-        .forEach(function (otherModal) {
-
-            if (otherModal !== modal) {
-                otherModal.classList.remove("active");
-                otherModal.classList.remove("open");
-            }
-
-        });
-
-    // Your GitHub CSS uses "active"
-    modal.classList.add("active");
-
-    // Keep "open" for compatibility
-    modal.classList.add("open");
-
-    document.body.style.overflow = "hidden";
-}
-
-
-    /* =====================================================
-       OPEN MODAL
+       MODAL
     ===================================================== */
 
     function openModal(id) {
 
-        const modal =
-            document.getElementById(id);
+        if (
+            window.App &&
+            typeof App.openModal ===
+            "function"
+        ) {
 
-        if (!modal) {
+            App.openModal(id);
+
             return;
         }
 
+
+        const modal =
+            document.getElementById(id);
+
+        if (!modal) return;
+
+        modal.classList.add("active");
         modal.classList.add("open");
+
+        document.body.style.overflow =
+            "hidden";
+    }
+
+
+    function closeModal(id) {
+
+        if (
+            window.App &&
+            typeof App.closeModal ===
+            "function"
+        ) {
+
+            App.closeModal(id);
+
+            return;
+        }
+
+
+        const modal =
+            document.getElementById(id);
+
+        if (!modal) return;
+
+        modal.classList.remove("active");
+        modal.classList.remove("open");
+
+        document.body.style.overflow =
+            "";
     }
 
 
     /* =====================================================
-       LOAD BUSINESSES FROM SUPABASE
+       LOAD BUSINESSES
     ===================================================== */
 
     async function loadBusinesses() {
 
         const grid =
-            document.getElementById("businessGrid");
-
-        if (!grid) {
-            console.error(
-                "LosOja: #businessGrid was not found."
+            document.getElementById(
+                "businessGrid"
             );
-            return;
+
+        const noResults =
+            document.getElementById(
+                "noResults"
+            );
+
+
+        if (grid) {
+
+            grid.innerHTML = `
+                <div class="loading">
+                    Loading businesses...
+                </div>
+            `;
         }
 
-        grid.innerHTML =
-            '<p style="grid-column:1/-1;text-align:center;">Loading businesses...</p>';
 
         try {
 
-            const response = await fetch(
-                BUSINESSES_SUPABASE_URL +
-                "/rest/v1/businesses?select=*&order=created_at.desc",
-                {
-                    method: "GET",
-                    headers: getHeaders(false)
-                }
-            );
+            const response =
+                await fetch(
+                    SUPABASE_URL +
+                    "/rest/v1/businesses?select=*&order=created_at.desc",
+                    {
+                        method: "GET",
+                        headers: headers(false)
+                    }
+                );
 
 
             if (!response.ok) {
 
-                const errorText =
-                    await response.text();
+                const error =
+                    await getResponseError(
+                        response
+                    );
 
-                console.error(
-                    "LosOja: Business loading failed:",
-                    response.status,
-                    errorText
-                );
-
-                throw new Error(
-                    "Could not load businesses."
-                );
+                throw new Error(error);
             }
 
 
@@ -285,30 +318,54 @@ Supabase businesses columns:
                 await response.json();
 
 
-            renderBusinesses(businesses);
+            window.LosOjaBusinesses =
+                businesses;
+
+
+            renderBusinesses(
+                businesses
+            );
+
+
+            updateResultsText(
+                businesses.length
+            );
+
+
+            return businesses;
 
 
         } catch (error) {
 
             console.error(
-                "LosOja: Error loading businesses:",
+                "LosOja: Could not load businesses:",
                 error
             );
 
-            grid.innerHTML =
-                '<p style="grid-column:1/-1;text-align:center;color:#ef4444;">Businesses could not be loaded.</p>';
 
-            const resultsText =
-                document.getElementById(
-                    "businessResultsText"
-                );
+            if (grid) {
 
-            if (resultsText) {
-
-                resultsText.textContent =
-                    "Unable to load businesses";
-
+                grid.innerHTML = `
+                    <div class="no-results">
+                        <p>
+                            Businesses could not be loaded.
+                        </p>
+                        <p style="font-size:0.85rem;color:#64748b;">
+                            ${escapeHTML(error.message)}
+                        </p>
+                    </div>
+                `;
             }
+
+
+            if (noResults) {
+                noResults.classList.add(
+                    "hidden"
+                );
+            }
+
+
+            return [];
         }
     }
 
@@ -317,37 +374,35 @@ Supabase businesses columns:
        RENDER BUSINESSES
     ===================================================== */
 
-    function renderBusinesses(businesses) {
+    function renderBusinesses(
+        businesses
+    ) {
 
         const grid =
-            document.getElementById("businessGrid");
-
-        const resultsText =
             document.getElementById(
-                "businessResultsText"
+                "businessGrid"
             );
 
         const noResults =
-            document.getElementById("noResults");
+            document.getElementById(
+                "noResults"
+            );
 
 
-        if (!grid) {
-            return;
-        }
+        if (!grid) return;
 
 
-        if (!Array.isArray(businesses) ||
-            businesses.length === 0) {
+        if (
+            !businesses ||
+            businesses.length === 0
+        ) {
 
             grid.innerHTML = "";
 
             if (noResults) {
-                noResults.classList.remove("hidden");
-            }
-
-            if (resultsText) {
-                resultsText.textContent =
-                    "No businesses found";
+                noResults.classList.remove(
+                    "hidden"
+                );
             }
 
             return;
@@ -355,208 +410,251 @@ Supabase businesses columns:
 
 
         if (noResults) {
-            noResults.classList.add("hidden");
-        }
-
-
-        if (resultsText) {
-
-            resultsText.textContent =
-                "Showing " +
-                businesses.length +
-                " business" +
-                (businesses.length === 1 ? "" : "es");
-
+            noResults.classList.add(
+                "hidden"
+            );
         }
 
 
         grid.innerHTML =
-            businesses.map(function (business) {
-
-                return `
-                    <div class="business-card">
-
-                        <div class="business-content">
-
-                            <div class="business-category">
-                                ${escapeHTML(business.category || "Business")}
-                            </div>
-
-                            <h3>
-                                ${escapeHTML(business.name || "Unnamed Business")}
-                            </h3>
-
-                            <p class="business-location">
-                                📍 ${escapeHTML(business.location || "Nigeria")}
-                            </p>
-
-                            <p class="business-description">
-                                ${escapeHTML(
-                                    business.description ||
-                                    "No description available."
-                                )}
-                            </p>
-
-                            <button
-                                type="button"
-                                class="btn btn-primary"
-                                data-business-id="${escapeHTML(business.id)}"
-                            >
-                                View Details
-                            </button>
-
-                        </div>
-
-                    </div>
-                `;
-
-            }).join("");
+            businesses.map(
+                businessCard
+            ).join("");
+    }
 
 
-        /* Add detail-button events */
+    function businessCard(
+        business
+    ) {
 
-        grid.querySelectorAll(
-            "[data-business-id]"
-        ).forEach(function (button) {
-
-            button.addEventListener(
-                "click",
-                function () {
-
-                    const businessId =
-                        this.getAttribute(
-                            "data-business-id"
-                        );
-
-                    openBusiness(
-                        businessId,
-                        businesses
-                    );
-
-                }
+        const id =
+            escapeHTML(
+                business.id
             );
 
-        });
+        const name =
+            escapeHTML(
+                business.name
+            );
+
+        const category =
+            escapeHTML(
+                business.category
+            );
+
+        const location =
+            escapeHTML(
+                business.location
+            );
+
+        const description =
+            escapeHTML(
+                business.description ||
+                "No description provided."
+            );
+
+
+        return `
+            <article class="business-card">
+
+                <div class="business-card-content">
+
+                    <span class="business-category">
+                        ${category}
+                    </span>
+
+                    <h3>
+                        ${name}
+                    </h3>
+
+                    <p class="business-location">
+                        📍 ${location}
+                    </p>
+
+                    <p class="business-description">
+                        ${description}
+                    </p>
+
+                    <button
+                        type="button"
+                        class="btn btn-primary"
+                        onclick="openBusiness('${id}')"
+                    >
+                        View Details
+                    </button>
+
+                </div>
+
+            </article>
+        `;
     }
 
 
     /* =====================================================
-       OPEN BUSINESS DETAILS
+       BUSINESS DETAILS
     ===================================================== */
 
-    function openBusiness(id, businessList) {
-
-        const business =
-            businessList.find(function (item) {
-
-                return String(item.id) === String(id);
-
-            });
-
-
-        if (!business) {
-
-            console.error(
-                "LosOja: Business not found:",
-                id
-            );
-
-            return;
-        }
-
-
-        const modal =
-            document.getElementById(
-                "businessModal"
-            );
+    async function openBusiness(
+        id
+    ) {
 
         const details =
             document.getElementById(
                 "businessDetails"
             );
 
-
-        if (!modal || !details) {
-
-            console.error(
-                "LosOja: Business details modal not found."
-            );
-
-            return;
-        }
+        if (!details) return;
 
 
         details.innerHTML = `
-
-            <h2>
-                ${escapeHTML(
-                    business.name ||
-                    "Business"
-                )}
-            </h2>
-
-            <p>
-                <strong>Category:</strong>
-                ${escapeHTML(
-                    business.category ||
-                    "Not specified"
-                )}
-            </p>
-
-            <p>
-                <strong>Location:</strong>
-                ${escapeHTML(
-                    business.location ||
-                    "Not specified"
-                )}
-            </p>
-
-            <p>
-                <strong>Description:</strong>
-                ${escapeHTML(
-                    business.description ||
-                    "No description available."
-                )}
-            </p>
-
-            ${
-                business.phone
-                    ? `
-                        <p>
-                            <strong>Phone:</strong>
-                            <a href="tel:${escapeHTML(
-                                business.phone
-                            )}">
-                                ${escapeHTML(
-                                    business.phone
-                                )}
-                            </a>
-                        </p>
-                    `
-                    : ""
-            }
-
-            ${
-                business.email
-                    ? `
-                        <p>
-                            <strong>Email:</strong>
-                            <a href="mailto:${escapeHTML(
-                                business.email
-                            )}">
-                                ${escapeHTML(
-                                    business.email
-                                )}
-                            </a>
-                        </p>
-                    `
-                    : ""
-            }
-
+            <p>Loading business...</p>
         `;
 
 
-        openModal("businessModal");
+        openModal(
+            "businessModal"
+        );
+
+
+        try {
+
+            const response =
+                await fetch(
+                    SUPABASE_URL +
+                    "/rest/v1/businesses?id=eq." +
+                    encodeURIComponent(id) +
+                    "&select=*",
+                    {
+                        method: "GET",
+                        headers: headers(false)
+                    }
+                );
+
+
+            if (!response.ok) {
+
+                const error =
+                    await getResponseError(
+                        response
+                    );
+
+                throw new Error(error);
+            }
+
+
+            const rows =
+                await response.json();
+
+
+            if (
+                !rows ||
+                !rows.length
+            ) {
+
+                details.innerHTML = `
+                    <p>
+                        Business not found.
+                    </p>
+                `;
+
+                return;
+            }
+
+
+            const business =
+                rows[0];
+
+
+            details.innerHTML = `
+                <div class="business-detail-content">
+
+                    <span class="business-category">
+                        ${escapeHTML(
+                            business.category
+                        )}
+                    </span>
+
+                    <h2>
+                        ${escapeHTML(
+                            business.name
+                        )}
+                    </h2>
+
+                    <p>
+                        📍 ${escapeHTML(
+                            business.location
+                        )}
+                    </p>
+
+                    ${
+                        business.description
+                        ? `
+                            <p>
+                                ${escapeHTML(
+                                    business.description
+                                )}
+                            </p>
+                        `
+                        : ""
+                    }
+
+                    ${
+                        business.phone
+                        ? `
+                            <p>
+                                📞
+                                <a href="tel:${escapeHTML(
+                                    business.phone
+                                )}">
+                                    ${escapeHTML(
+                                        business.phone
+                                    )}
+                                </a>
+                            </p>
+                        `
+                        : ""
+                    }
+
+                    ${
+                        business.email
+                        ? `
+                            <p>
+                                ✉️
+                                <a href="mailto:${escapeHTML(
+                                    business.email
+                                )}">
+                                    ${escapeHTML(
+                                        business.email
+                                    )}
+                                </a>
+                            </p>
+                        `
+                        : ""
+                    }
+
+                </div>
+            `;
+
+
+        } catch (error) {
+
+            console.error(
+                "LosOja: Business details error:",
+                error
+            );
+
+
+            details.innerHTML = `
+                <p>
+                    Could not load business details.
+                </p>
+                <p style="font-size:0.85rem;color:#64748b;">
+                    ${escapeHTML(
+                        error.message
+                    )}
+                </p>
+            `;
+        }
     }
 
 
@@ -564,228 +662,120 @@ Supabase businesses columns:
        SEARCH
     ===================================================== */
 
-    window.searchBusinesses =
-        async function (searchTerm, location) {
+    function filterBusinesses() {
 
-            const grid =
-                document.getElementById(
-                    "businessGrid"
-                );
+        const searchInput =
+            document.getElementById(
+                "searchInput"
+            );
 
-            if (!grid) {
-                return;
-            }
-
-
-            grid.innerHTML =
-                '<p style="grid-column:1/-1;text-align:center;">Searching...</p>';
+        const locationInput =
+            document.getElementById(
+                "locationInput"
+            );
 
 
-            try {
-
-                let url =
-                    BUSINESSES_SUPABASE_URL +
-                    "/rest/v1/businesses?select=*";
-
-
-                const filters = [];
+        const search =
+            String(
+                searchInput?.value || ""
+            )
+            .trim()
+            .toLowerCase();
 
 
-                if (searchTerm) {
+        const location =
+            String(
+                locationInput?.value || ""
+            )
+            .trim()
+            .toLowerCase();
 
-                    const search =
-                        String(searchTerm)
-                            .trim()
-                            .replace(/,/g, "");
 
-                    if (search) {
+        const businesses =
+            window.LosOjaBusinesses ||
+            [];
 
-                        filters.push(
-                            "or=(" +
-                            "name.ilike.*" + encodeURIComponent(search) + "*," +
-                            "category.ilike.*" + encodeURIComponent(search) + "*," +
-                            "description.ilike.*" + encodeURIComponent(search) + "*" +
-                            ")"
+
+        const filtered =
+            businesses.filter(
+                function (business) {
+
+                    const name =
+                        String(
+                            business.name || ""
+                        ).toLowerCase();
+
+                    const category =
+                        String(
+                            business.category || ""
+                        ).toLowerCase();
+
+                    const businessLocation =
+                        String(
+                            business.location || ""
+                        ).toLowerCase();
+
+                    const description =
+                        String(
+                            business.description || ""
+                        ).toLowerCase();
+
+
+                    const matchesSearch =
+                        !search ||
+                        name.includes(search) ||
+                        category.includes(search) ||
+                        businessLocation.includes(search) ||
+                        description.includes(search);
+
+
+                    const matchesLocation =
+                        !location ||
+                        businessLocation.includes(
+                            location
                         );
 
-                    }
-                }
 
-
-                if (location) {
-
-                    const cleanLocation =
-                        String(location)
-                            .trim()
-                            .replace(/,/g, "");
-
-                    if (cleanLocation) {
-
-                        filters.push(
-                            "location.ilike.*" +
-                            encodeURIComponent(
-                                cleanLocation
-                            ) +
-                            "*"
-                        );
-
-                    }
-                }
-
-
-                if (filters.length > 0) {
-
-                    url +=
-                        "&" +
-                        filters.join("&");
-
-                }
-
-
-                url +=
-                    "&order=created_at.desc";
-
-
-                const response =
-                    await fetch(
-                        url,
-                        {
-                            method: "GET",
-                            headers: getHeaders(false)
-                        }
-                    );
-
-
-                if (!response.ok) {
-
-                    const errorText =
-                        await response.text();
-
-                    console.error(
-                        "LosOja search error:",
-                        response.status,
-                        errorText
-                    );
-
-                    throw new Error(
-                        "Search failed."
+                    return (
+                        matchesSearch &&
+                        matchesLocation
                     );
                 }
+            );
 
 
-                const businesses =
-                    await response.json();
+        renderBusinesses(
+            filtered
+        );
 
 
-                renderBusinesses(
-                    businesses
-                );
+        updateResultsText(
+            filtered.length
+        );
+    }
 
 
-            } catch (error) {
+    function updateResultsText(
+        count
+    ) {
 
-                console.error(
-                    "LosOja: Search error:",
-                    error
-                );
+        const element =
+            document.getElementById(
+                "businessResultsText"
+            );
 
-                grid.innerHTML =
-                    '<p style="grid-column:1/-1;text-align:center;color:#ef4444;">Search failed. Please try again.</p>';
+        if (!element) return;
 
-            }
-        };
+
+        element.textContent =
+            count === 1
+            ? "1 business found."
+            : `${count} businesses found.`;
+    }
 
 
     /* =====================================================
-       CATEGORY FILTER
-    ===================================================== */
-
-    window.filterBusinessesByCategory =
-        async function (category) {
-
-            if (!category) {
-                await loadBusinesses();
-                return;
-            }
-
-
-            const grid =
-                document.getElementById(
-                    "businessGrid"
-                );
-
-            if (!grid) {
-                return;
-            }
-
-
-            grid.innerHTML =
-                '<p style="grid-column:1/-1;text-align:center;">Loading...</p>';
-
-
-            try {
-
-                const url =
-                    BUSINESSES_SUPABASE_URL +
-                    "/rest/v1/businesses" +
-                    "?select=*" +
-                    "&category=eq." +
-                    encodeURIComponent(category) +
-                    "&order=created_at.desc";
-
-
-                const response =
-                    await fetch(
-                        url,
-                        {
-                            method: "GET",
-                            headers: getHeaders(false)
-                        }
-                    );
-
-
-                if (!response.ok) {
-
-                    const errorText =
-                        await response.text();
-
-                    console.error(
-                        "LosOja category error:",
-                        response.status,
-                        errorText
-                    );
-
-                    throw new Error(
-                        "Category filter failed."
-                    );
-                }
-
-
-                const businesses =
-                    await response.json();
-
-
-                renderBusinesses(
-                    businesses
-                );
-
-
-            } catch (error) {
-
-                console.error(
-                    "LosOja: Category filter error:",
-                    error
-                );
-
-                grid.innerHTML =
-                    '<p style="grid-column:1/-1;text-align:center;color:#ef4444;">Could not filter businesses.</p>';
-
-            }
-        };
-
-
-    /* =====================================================
-       ADD BUSINESS BUTTON
+       ADD BUSINESS
     ===================================================== */
 
     function setupAddBusinessButtons() {
@@ -796,43 +786,76 @@ Supabase businesses columns:
             );
 
 
-        buttons.forEach(function (button) {
+        buttons.forEach(
+            function (button) {
 
-            button.addEventListener(
-                "click",
-                function (event) {
+                button.addEventListener(
+                    "click",
+                    function (event) {
 
-                    event.preventDefault();
-
-                    const user =
-                        getCurrentUser();
-
-                    const token =
-                        getAccessToken();
+                        event.preventDefault();
 
 
-                    if (!user || !token) {
+                        const user =
+                            getUser();
 
-                        notify(
-                            "Please login first."
-                        );
+                        const token =
+                            getToken();
+
+
+                        /*
+                        -------------------------------------------------
+                        IMPORTANT:
+                        A localStorage-only user is NOT enough.
+                        We need a real Supabase Auth session.
+                        -------------------------------------------------
+                        */
+
+                        if (
+                            !user ||
+                            !user.id ||
+                            !token
+                        ) {
+
+                            notify(
+                                "Please log in with your LosOja account first."
+                            );
+
+                            openModal(
+                                "loginModal"
+                            );
+
+                            return;
+                        }
+
+
+                        clearAddBusinessForm();
 
                         openModal(
-                            "loginModal"
+                            "addBusinessModal"
                         );
-
-                        return;
                     }
+                );
+            }
+        );
+    }
 
 
-                    openModal(
-                        "addBusinessModal"
-                    );
+    function clearAddBusinessForm() {
 
-                }
+        const form =
+            document.getElementById(
+                "addBusinessForm"
             );
 
-        });
+        if (form) {
+            form.reset();
+        }
+
+
+        clearError(
+            "addBusinessError"
+        );
     }
 
 
@@ -850,7 +873,7 @@ Supabase businesses columns:
 
         if (!form) {
 
-            console.warn(
+            console.error(
                 "LosOja: #addBusinessForm was not found."
             );
 
@@ -864,7 +887,264 @@ Supabase businesses columns:
 
                 event.preventDefault();
 
-                await addBusiness();
+
+                clearError(
+                    "addBusinessError"
+                );
+
+
+                const user =
+                    getUser();
+
+                const token =
+                    getToken();
+
+
+                if (
+                    !user ||
+                    !user.id ||
+                    !token
+                ) {
+
+                    showError(
+                        "addBusinessError",
+                        "Your session has expired. Please log in again."
+                    );
+
+                    openModal(
+                        "loginModal"
+                    );
+
+                    return;
+                }
+
+
+                const name =
+                    document.getElementById(
+                        "businessName"
+                    )?.value.trim();
+
+
+                const category =
+                    document.getElementById(
+                        "businessCategory"
+                    )?.value.trim();
+
+
+                const location =
+                    document.getElementById(
+                        "businessLocation"
+                    )?.value.trim();
+
+
+                const description =
+                    document.getElementById(
+                        "businessDescription"
+                    )?.value.trim();
+
+
+                const phone =
+                    document.getElementById(
+                        "businessPhone"
+                    )?.value.trim();
+
+
+                const email =
+                    document.getElementById(
+                        "businessEmail"
+                    )?.value.trim();
+
+
+                if (!name) {
+
+                    showError(
+                        "addBusinessError",
+                        "Please enter your business name."
+                    );
+
+                    return;
+                }
+
+
+                if (!category) {
+
+                    showError(
+                        "addBusinessError",
+                        "Please select a category."
+                    );
+
+                    return;
+                }
+
+
+                if (!location) {
+
+                    showError(
+                        "addBusinessError",
+                        "Please enter your business location."
+                    );
+
+                    return;
+                }
+
+
+                /*
+                -----------------------------------------------------
+                EXACT DATABASE COLUMNS
+                -----------------------------------------------------
+
+                id
+                user_id
+                name
+                category
+                location
+                description
+                phone
+                email
+                created_at
+                -----------------------------------------------------
+                */
+
+                const business = {
+
+                    user_id:
+                        user.id,
+
+                    name:
+                        name,
+
+                    category:
+                        category,
+
+                    location:
+                        location,
+
+                    description:
+                        description || null,
+
+                    phone:
+                        phone || null,
+
+                    email:
+                        email || null
+                };
+
+
+                const submitButton =
+                    form.querySelector(
+                        'button[type="submit"]'
+                    );
+
+
+                if (submitButton) {
+
+                    submitButton.disabled =
+                        true;
+
+                    submitButton.textContent =
+                        "Saving...";
+                }
+
+
+                try {
+
+                    const response =
+                        await fetch(
+                            SUPABASE_URL +
+                            "/rest/v1/businesses",
+                            {
+                                method: "POST",
+
+                                headers: {
+                                    ...headers(true),
+
+                                    "Prefer":
+                                        "return=representation"
+                                },
+
+                                body:
+                                    JSON.stringify(
+                                        business
+                                    )
+                            }
+                        );
+
+
+                    if (!response.ok) {
+
+                        const error =
+                            await getResponseError(
+                                response
+                            );
+
+                        throw new Error(
+                            error
+                        );
+                    }
+
+
+                    const savedBusiness =
+                        await response.json();
+
+
+                    console.log(
+                        "LosOja: Business saved:",
+                        savedBusiness
+                    );
+
+
+                    closeModal(
+                        "addBusinessModal"
+                    );
+
+
+                    clearAddBusinessForm();
+
+
+                    notify(
+                        "Business added successfully!"
+                    );
+
+
+                    await loadBusinesses();
+
+
+                    if (
+                        window.Dashboard &&
+                        typeof Dashboard.load ===
+                        "function"
+                    ) {
+
+                        await Dashboard.load();
+                    }
+
+
+                } catch (error) {
+
+                    console.error(
+                        "LosOja: Add business failed:",
+                        error
+                    );
+
+
+                    showError(
+                        "addBusinessError",
+                        "Business could not be saved: " +
+                        error.message
+                    );
+
+
+                } finally {
+
+                    if (submitButton) {
+
+                        submitButton.disabled =
+                            false;
+
+                        submitButton.textContent =
+                            "Add Business";
+                    }
+                }
 
             }
         );
@@ -872,425 +1152,662 @@ Supabase businesses columns:
 
 
     /* =====================================================
-       ADD BUSINESS
+       EDIT BUSINESS
     ===================================================== */
 
-    async function addBusiness() {
-
-        const errorElement =
-            document.getElementById(
-                "addBusinessError"
-            );
-
-
-        function showError(message) {
-
-            if (errorElement) {
-
-                errorElement.textContent =
-                    message;
-
-                errorElement.classList.add(
-                    "show"
-                );
-
-            } else {
-
-                notify(message);
-
-            }
-        }
-
-
-        if (errorElement) {
-
-            errorElement.textContent = "";
-            errorElement.classList.remove(
-                "show"
-            );
-
-        }
-
+    async function openEditBusiness(
+        id
+    ) {
 
         const user =
-            getCurrentUser();
+            getUser();
 
         const token =
-            getAccessToken();
+            getToken();
 
 
-        if (!user || !token) {
+        if (
+            !user ||
+            !token
+        ) {
 
-            showError(
-                "Please login before adding a business."
+            notify(
+                "Please log in first."
             );
 
-            openModal("loginModal");
-
-            return;
-        }
-
-
-        const name =
-            (
-                document.getElementById(
-                    "businessName"
-                )?.value || ""
-            ).trim();
-
-
-        const category =
-            (
-                document.getElementById(
-                    "businessCategory"
-                )?.value || ""
-            ).trim();
-
-
-        const location =
-            (
-                document.getElementById(
-                    "businessLocation"
-                )?.value || ""
-            ).trim();
-
-
-        const description =
-            (
-                document.getElementById(
-                    "businessDescription"
-                )?.value || ""
-            ).trim();
-
-
-        const phone =
-            (
-                document.getElementById(
-                    "businessPhone"
-                )?.value || ""
-            ).trim();
-
-
-        const email =
-            (
-                document.getElementById(
-                    "businessEmail"
-                )?.value || ""
-            ).trim();
-
-
-        if (!name) {
-
-            showError(
-                "Business name is required."
+            openModal(
+                "loginModal"
             );
 
             return;
         }
-
-
-        if (!category) {
-
-            showError(
-                "Please select a category."
-            );
-
-            return;
-        }
-
-
-        if (!location) {
-
-            showError(
-                "Business location is required."
-            );
-
-            return;
-        }
-
-
-        /* =================================================
-           IMPORTANT
-
-           Your Supabase table uses:
-
-           user_id
-           name
-           category
-           location
-           description
-           phone
-           email
-
-           It does NOT use owner_id.
-        ================================================= */
-
-
-        const businessData = {
-
-            user_id: user.id,
-
-            name: name,
-
-            category: category,
-
-            location: location,
-
-            description:
-                description || null,
-
-            phone:
-                phone || null,
-
-            email:
-                email || null
-
-        };
 
 
         try {
 
             const response =
                 await fetch(
-                    BUSINESSES_SUPABASE_URL +
-                    "/rest/v1/businesses",
+                    SUPABASE_URL +
+                    "/rest/v1/businesses?id=eq." +
+                    encodeURIComponent(id) +
+                    "&select=*",
                     {
-                        method: "POST",
-
-                        headers: {
-                            ...getHeaders(true),
-
-                            "Prefer":
-                                "return=representation"
-                        },
-
-                        body:
-                            JSON.stringify(
-                                businessData
-                            )
+                        method: "GET",
+                        headers: headers(true)
                     }
                 );
-
-
-            const responseText =
-                await response.text();
 
 
             if (!response.ok) {
 
-                console.error(
-                    "LosOja: Supabase business save failed.",
-                    {
-                        status:
-                            response.status,
+                const error =
+                    await getResponseError(
+                        response
+                    );
 
-                        response:
-                            responseText,
-
-                        data:
-                            businessData
-                    }
-                );
+                throw new Error(error);
+            }
 
 
-                let errorMessage =
-                    "Business could not be saved.";
+            const rows =
+                await response.json();
 
 
-                try {
+            if (
+                !rows ||
+                !rows.length
+            ) {
 
-                    const errorJSON =
-                        JSON.parse(
-                            responseText
-                        );
-
-
-                    if (
-                        errorJSON.message
-                    ) {
-
-                        errorMessage =
-                            errorJSON.message;
-
-                    } else if (
-                        errorJSON.error_description
-                    ) {
-
-                        errorMessage =
-                            errorJSON.error_description;
-
-                    } else if (
-                        errorJSON.details
-                    ) {
-
-                        errorMessage =
-                            errorJSON.details;
-
-                    }
-
-                } catch (parseError) {
-
-                    if (
-                        responseText
-                    ) {
-
-                        errorMessage =
-                            responseText;
-
-                    }
-
-                }
-
-
-                showError(
-                    errorMessage
+                notify(
+                    "Business not found."
                 );
 
                 return;
             }
 
 
-            let savedBusiness =
-                null;
+            const business =
+                rows[0];
 
 
-            try {
+            if (
+                business.user_id !==
+                user.id
+            ) {
 
-                const parsed =
-                    JSON.parse(
-                        responseText
-                    );
-
-                if (
-                    Array.isArray(parsed) &&
-                    parsed.length > 0
-                ) {
-
-                    savedBusiness =
-                        parsed[0];
-
-                }
-
-            } catch (parseError) {
-
-                console.warn(
-                    "LosOja: Could not parse saved business response."
+                notify(
+                    "You can only edit your own business."
                 );
 
+                return;
             }
 
 
-            console.log(
-                "LosOja: Business saved successfully.",
-                savedBusiness ||
-                businessData
+            document.getElementById(
+                "editBusinessId"
+            ).value =
+                business.id || "";
+
+
+            document.getElementById(
+                "editBusinessName"
+            ).value =
+                business.name || "";
+
+
+            document.getElementById(
+                "editBusinessCategory"
+            ).value =
+                business.category || "";
+
+
+            document.getElementById(
+                "editBusinessLocation"
+            ).value =
+                business.location || "";
+
+
+            document.getElementById(
+                "editBusinessDescription"
+            ).value =
+                business.description || "";
+
+
+            document.getElementById(
+                "editBusinessPhone"
+            ).value =
+                business.phone || "";
+
+
+            document.getElementById(
+                "editBusinessEmail"
+            ).value =
+                business.email || "";
+
+
+            clearError(
+                "editBusinessError"
             );
 
 
-            closeModal(
-                "addBusinessModal"
+            openModal(
+                "editBusinessModal"
             );
 
 
-            const form =
-                document.getElementById(
-                    "addBusinessForm"
+        } catch (error) {
+
+            console.error(
+                "LosOja: Edit loading failed:",
+                error
+            );
+
+            notify(
+                error.message
+            );
+        }
+    }
+
+
+    function setupEditBusinessForm() {
+
+        const form =
+            document.getElementById(
+                "editBusinessForm"
+            );
+
+
+        if (!form) return;
+
+
+        form.addEventListener(
+            "submit",
+            async function (event) {
+
+                event.preventDefault();
+
+
+                clearError(
+                    "editBusinessError"
                 );
 
-            if (form) {
-                form.reset();
+
+                const user =
+                    getUser();
+
+                const token =
+                    getToken();
+
+
+                if (
+                    !user ||
+                    !token
+                ) {
+
+                    showError(
+                        "editBusinessError",
+                        "Please log in again."
+                    );
+
+                    return;
+                }
+
+
+                const id =
+                    document.getElementById(
+                        "editBusinessId"
+                    )?.value;
+
+
+                const business = {
+
+                    name:
+                        document.getElementById(
+                            "editBusinessName"
+                        )?.value.trim(),
+
+                    category:
+                        document.getElementById(
+                            "editBusinessCategory"
+                        )?.value.trim(),
+
+                    location:
+                        document.getElementById(
+                            "editBusinessLocation"
+                        )?.value.trim(),
+
+                    description:
+                        document.getElementById(
+                            "editBusinessDescription"
+                        )?.value.trim() || null,
+
+                    phone:
+                        document.getElementById(
+                            "editBusinessPhone"
+                        )?.value.trim() || null,
+
+                    email:
+                        document.getElementById(
+                            "editBusinessEmail"
+                        )?.value.trim() || null
+                };
+
+
+                if (!id) {
+
+                    showError(
+                        "editBusinessError",
+                        "Business ID is missing."
+                    );
+
+                    return;
+                }
+
+
+                const submitButton =
+                    form.querySelector(
+                        'button[type="submit"]'
+                    );
+
+
+                if (submitButton) {
+
+                    submitButton.disabled =
+                        true;
+
+                    submitButton.textContent =
+                        "Saving...";
+                }
+
+
+                try {
+
+                    const response =
+                        await fetch(
+                            SUPABASE_URL +
+                            "/rest/v1/businesses?id=eq." +
+                            encodeURIComponent(id),
+                            {
+                                method: "PATCH",
+
+                                headers: {
+                                    ...headers(true),
+
+                                    "Prefer":
+                                        "return=representation"
+                                },
+
+                                body:
+                                    JSON.stringify(
+                                        business
+                                    )
+                            }
+                        );
+
+
+                    if (!response.ok) {
+
+                        const error =
+                            await getResponseError(
+                                response
+                            );
+
+                        throw new Error(error);
+                    }
+
+
+                    closeModal(
+                        "editBusinessModal"
+                    );
+
+
+                    notify(
+                        "Business updated successfully!"
+                    );
+
+
+                    await loadBusinesses();
+
+
+                    if (
+                        window.Dashboard &&
+                        typeof Dashboard.load ===
+                        "function"
+                    ) {
+
+                        await Dashboard.load();
+                    }
+
+
+                } catch (error) {
+
+                    console.error(
+                        "LosOja: Update failed:",
+                        error
+                    );
+
+
+                    showError(
+                        "editBusinessError",
+                        "Business could not be updated: " +
+                        error.message
+                    );
+
+
+                } finally {
+
+                    if (submitButton) {
+
+                        submitButton.disabled =
+                            false;
+
+                        submitButton.textContent =
+                            "Save Changes";
+                    }
+                }
+            }
+        );
+    }
+
+
+    /* =====================================================
+       DELETE BUSINESS
+    ===================================================== */
+
+    async function deleteBusiness(
+        id
+    ) {
+
+        const user =
+            getUser();
+
+        const token =
+            getToken();
+
+
+        if (
+            !user ||
+            !token
+        ) {
+
+            notify(
+                "Please log in first."
+            );
+
+            return;
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    SUPABASE_URL +
+                    "/rest/v1/businesses?id=eq." +
+                    encodeURIComponent(id),
+                    {
+                        method: "DELETE",
+                        headers: headers(true)
+                    }
+                );
+
+
+            if (!response.ok) {
+
+                const error =
+                    await getResponseError(
+                        response
+                    );
+
+                throw new Error(error);
             }
 
 
             notify(
-                "Business added successfully!"
+                "Business deleted successfully."
             );
 
 
             await loadBusinesses();
 
+
+            if (
+                window.Dashboard &&
+                typeof Dashboard.load ===
+                "function"
+            ) {
+
+                await Dashboard.load();
+            }
+
+
         } catch (error) {
 
             console.error(
-                "LosOja: Business save error:",
+                "LosOja: Delete failed:",
                 error
             );
 
 
-            showError(
-                "Could not connect to the database. Please try again."
+            notify(
+                "Business could not be deleted: " +
+                error.message
             );
-
         }
-
     }
 
 
     /* =====================================================
-       EXPOSE FUNCTIONS
+       POPULAR SEARCHES
     ===================================================== */
 
-    window.openBusiness =
-        function (id) {
+    function setupPopularSearches() {
 
-            /*
-             * Reload the business list and
-             * find the requested business.
-             */
-
-            fetch(
-                BUSINESSES_SUPABASE_URL +
-                "/rest/v1/businesses?select=*",
-                {
-                    method: "GET",
-                    headers: getHeaders(false)
-                }
+        document
+            .querySelectorAll(
+                "[data-search]"
             )
-            .then(function (response) {
+            .forEach(
+                function (button) {
 
-                if (!response.ok) {
-                    throw new Error(
-                        "Could not load business."
+                    button.addEventListener(
+                        "click",
+                        function () {
+
+                            const search =
+                                button.getAttribute(
+                                    "data-search"
+                                );
+
+
+                            const input =
+                                document.getElementById(
+                                    "searchInput"
+                                );
+
+
+                            if (input) {
+
+                                input.value =
+                                    search;
+                            }
+
+
+                            filterBusinesses();
+
+
+                            const section =
+                                document.getElementById(
+                                    "businesses"
+                                );
+
+
+                            if (section) {
+
+                                section.scrollIntoView({
+                                    behavior:
+                                        "smooth"
+                                });
+                            }
+                        }
                     );
                 }
+            );
+    }
 
-                return response.json();
 
-            })
-            .then(function (businesses) {
+    /* =====================================================
+       CATEGORY BUTTONS
+    ===================================================== */
 
-                openBusiness(
-                    id,
-                    businesses
-                );
+    function setupCategoryButtons() {
 
-            })
-            .catch(function (error) {
+        document
+            .querySelectorAll(
+                ".category-card[data-category]"
+            )
+            .forEach(
+                function (button) {
 
-                console.error(
-                    "LosOja: Could not open business:",
-                    error
-                );
+                    button.addEventListener(
+                        "click",
+                        function () {
 
-                notify(
-                    "Could not load business details."
-                );
+                            const category =
+                                button.getAttribute(
+                                    "data-category"
+                                );
 
-            });
 
-        };
+                            const input =
+                                document.getElementById(
+                                    "searchInput"
+                                );
 
+
+                            if (input) {
+
+                                input.value =
+                                    category;
+                            }
+
+
+                            filterBusinesses();
+
+
+                            const section =
+                                document.getElementById(
+                                    "businesses"
+                                );
+
+
+                            if (section) {
+
+                                section.scrollIntoView({
+                                    behavior:
+                                        "smooth"
+                                });
+                            }
+                        }
+                    );
+                }
+            );
+    }
+
+
+    /* =====================================================
+       SEARCH FORM
+    ===================================================== */
+
+    function setupSearchForm() {
+
+        const form =
+            document.getElementById(
+                "searchForm"
+            );
+
+
+        if (!form) return;
+
+
+        form.addEventListener(
+            "submit",
+            function (event) {
+
+                event.preventDefault();
+
+                filterBusinesses();
+
+
+                const section =
+                    document.getElementById(
+                        "businesses"
+                    );
+
+
+                if (section) {
+
+                    section.scrollIntoView({
+                        behavior:
+                            "smooth"
+                    });
+                }
+            }
+        );
+    }
+
+
+    /* =====================================================
+       PUBLIC API
+    ===================================================== */
 
     window.loadBusinesses =
         loadBusinesses;
 
+    window.openBusiness =
+        openBusiness;
+
+    window.openEditBusiness =
+        openEditBusiness;
+
+    window.deleteBusiness =
+        deleteBusiness;
 
     window.addBusiness =
-        addBusiness;
+        function () {
+
+            const user =
+                getUser();
+
+            const token =
+                getToken();
+
+
+            if (
+                !user ||
+                !token
+            ) {
+
+                notify(
+                    "Please log in first."
+                );
+
+                openModal(
+                    "loginModal"
+                );
+
+                return;
+            }
+
+
+            openModal(
+                "addBusinessModal"
+            );
+        };
 
 
     /* =====================================================
-       INITIALIZATION
+       START
     ===================================================== */
 
     document.addEventListener(
@@ -1301,10 +1818,17 @@ Supabase businesses columns:
 
             setupAddBusinessForm();
 
+            setupEditBusinessForm();
+
+            setupPopularSearches();
+
+            setupCategoryButtons();
+
+            setupSearchForm();
+
             loadBusinesses();
 
         }
     );
-
 
 })();
