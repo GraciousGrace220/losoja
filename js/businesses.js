@@ -2217,11 +2217,174 @@ const buttons =
     }
 
 
-    /* =====================================================
-       CATEGORY FILTER
-    ===================================================== */
+  /* =====================================================
+   CATEGORY FILTER
+===================================================== */
 
-    function setupCategoryFilter() {
+function setupCategoryFilter() {
+
+    const categorySelect =
+        document.getElementById(
+            "categoryFilter"
+        );
+
+
+    /*
+    -----------------------------------------------------
+    EXISTING CATEGORY SELECT
+    -----------------------------------------------------
+    */
+
+    if (categorySelect) {
+
+        categorySelect.addEventListener(
+            "change",
+            function () {
+
+                const category =
+                    this.value
+                        .trim()
+                        .toLowerCase();
+
+
+                if (!category) {
+
+                    renderBusinesses(
+                        allBusinesses
+                    );
+
+                    return;
+                }
+
+
+                const filtered =
+                    allBusinesses.filter(
+                        function (business) {
+
+                            return (
+                                String(
+                                    business.category ||
+                                    ""
+                                )
+                                    .trim()
+                                    .toLowerCase() ===
+                                category
+                            );
+                        }
+                    );
+
+
+                renderBusinesses(
+                    filtered
+                );
+            }
+        );
+    }
+
+
+    /*
+    -----------------------------------------------------
+    LOSOJA EXPLORE CATEGORY CARDS
+    -----------------------------------------------------
+    */
+
+    const categoryCards =
+        document.querySelectorAll(
+            ".category-card[data-category]"
+        );
+
+
+    console.log(
+        "LosOja: Category buttons found:",
+        categoryCards.length
+    );
+
+
+    categoryCards.forEach(
+        function (button) {
+
+            if (
+                button.dataset.losojaCategoryBound ===
+                "true"
+            ) {
+                return;
+            }
+
+
+            button.dataset.losojaCategoryBound =
+                "true";
+
+
+            button.addEventListener(
+                "click",
+                function (event) {
+
+                    event.preventDefault();
+
+
+                    const category =
+                        this.dataset.category
+                            ?.trim()
+                            .toLowerCase();
+
+
+                    if (!category) {
+                        return;
+                    }
+
+
+                    console.log(
+                        "LosOja: Category selected:",
+                        category
+                    );
+
+
+                    const filtered =
+                        allBusinesses.filter(
+                            function (business) {
+
+                                return (
+                                    String(
+                                        business.category ||
+                                        ""
+                                    )
+                                        .trim()
+                                        .toLowerCase() ===
+                                    category
+                                );
+                            }
+                        );
+
+
+                    /*
+                    Scroll to businesses
+                    so the user can immediately
+                    see the results.
+                    */
+
+                    const businessesSection =
+                        document.getElementById(
+                            "businesses"
+                        );
+
+
+                    if (businessesSection) {
+
+                        businessesSection.scrollIntoView({
+                            behavior: "smooth",
+                            block: "start"
+                        });
+                    }
+
+
+                    renderBusinesses(
+                        filtered
+                    );
+                }
+            );
+        }
+    );
+}
 
         const categorySelect =
             document.getElementById(
