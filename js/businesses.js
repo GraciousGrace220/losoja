@@ -29,7 +29,6 @@ Handles:
     const LOSOJA_BUSINESSES_KEY =
         "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
 
-
     const BUSINESSES_CACHE_KEY =
         "losoja_businesses_cache";
 
@@ -99,9 +98,7 @@ Handles:
     }
 
 
-    function supabaseHeaders(
-        includeAuth = true
-    ) {
+    function supabaseHeaders(includeAuth = true) {
 
         const headers = {
             "apikey":
@@ -129,9 +126,7 @@ Handles:
        ERROR MESSAGE
     ===================================================== */
 
-    async function getResponseError(
-        response
-    ) {
+    async function getResponseError(response) {
 
         try {
 
@@ -142,6 +137,7 @@ Handles:
                 data.message ||
                 data.error_description ||
                 data.error ||
+                data.hint ||
                 "Request failed."
             );
 
@@ -207,9 +203,7 @@ Handles:
        ERROR HELPERS
     ===================================================== */
 
-    function clearError(
-        elementId
-    ) {
+    function clearError(elementId) {
 
         const element =
             document.getElementById(
@@ -261,9 +255,7 @@ Handles:
        MODAL HELPERS
     ===================================================== */
 
-    function openModalSafe(
-        id
-    ) {
+    function openModalSafe(id) {
 
         const modal =
             document.getElementById(id);
@@ -277,10 +269,6 @@ Handles:
 
             return;
         }
-
-        /*
-         * Use the site's normal modal function if available.
-         */
 
         if (
             typeof window.openModal ===
@@ -305,9 +293,7 @@ Handles:
     }
 
 
-    function closeModalSafe(
-        id
-    ) {
+    function closeModalSafe(id) {
 
         const modal =
             document.getElementById(id);
@@ -352,7 +338,9 @@ Handles:
             localStorage.setItem(
                 BUSINESSES_CACHE_KEY,
                 JSON.stringify(
-                    businesses
+                    Array.isArray(businesses)
+                        ? businesses
+                        : []
                 )
             );
 
@@ -390,6 +378,11 @@ Handles:
 
         } catch (error) {
 
+            console.warn(
+                "Could not read business cache:",
+                error
+            );
+
             return [];
         }
     }
@@ -407,7 +400,28 @@ Handles:
             );
 
 
-        if (container) {
+        /*
+         * Show cached businesses immediately.
+         * This prevents the page from appearing empty
+         * while Supabase is loading.
+         */
+
+        const cached =
+            getBusinessesCache();
+
+
+        if (
+            cached.length > 0
+        ) {
+
+            window.losojaBusinesses =
+                cached;
+
+            renderBusinesses(
+                cached
+            );
+
+        } else if (container) {
 
             container.innerHTML = `
                 <div class="loading">
@@ -453,6 +467,22 @@ Handles:
                 await response.json();
 
 
+            if (
+                !Array.isArray(
+                    businesses
+                )
+            ) {
+
+                throw new Error(
+                    "Invalid business data received from Supabase."
+                );
+            }
+
+
+            /*
+             * Supabase is the source of truth.
+             */
+
             window.losojaBusinesses =
                 businesses;
 
@@ -467,6 +497,12 @@ Handles:
             );
 
 
+            console.log(
+                "Businesses loaded:",
+                businesses.length
+            );
+
+
             return businesses;
 
 
@@ -478,9 +514,10 @@ Handles:
             );
 
 
-            const cached =
-                getBusinessesCache();
-
+            /*
+             * If Supabase fails but cached businesses
+             * exist, keep displaying them.
+             */
 
             if (
                 cached.length > 0
@@ -618,7 +655,7 @@ Handles:
                     <button
                         type="button"
                         class="btn btn-primary"
-                        onclick="openBusiness('${id}')"
+                        onclick="window.openBusiness('${id}')"
                     >
                         View Details
                     </button>
@@ -627,7 +664,7 @@ Handles:
                     <button
                         type="button"
                         class="btn btn-secondary"
-                        onclick="openEditBusiness('${id}')"
+                        onclick="window.openEditBusiness('${id}')"
                     >
                         Edit
                     </button>
@@ -636,7 +673,7 @@ Handles:
                     <button
                         type="button"
                         class="btn btn-danger"
-                        onclick="deleteBusiness('${id}')"
+                        onclick="window.deleteBusiness('${id}')"
                     >
                         Delete
                     </button>
@@ -663,6 +700,11 @@ Handles:
 
 
         if (!container) {
+
+            console.error(
+                "businessesGrid was not found in index.html"
+            );
+
             return;
         }
 
@@ -696,11 +738,9 @@ Handles:
             businesses
                 .map(
                     function (business) {
-
                         return businessCard(
                             business
                         );
-
                     }
                 )
                 .join("");
@@ -755,7 +795,7 @@ Handles:
 
 
             /*
-             * THIS MUST MATCH index.html
+             * These IDs MUST match index.html.
              */
 
             const modal =
@@ -767,7 +807,7 @@ Handles:
             if (!modal) {
 
                 console.error(
-                    "businessDetailsModal was not found."
+                    "businessDetailsModal was not found in index.html."
                 );
 
                 return;
@@ -783,7 +823,7 @@ Handles:
             if (!details) {
 
                 console.error(
-                    "businessDetails was not found."
+                    "businessDetails was not found in index.html."
                 );
 
                 return;
@@ -791,120 +831,117 @@ Handles:
 
 
             /*
-             * Build the details content.
+             * Build business details.
+             *
+             * Only columns that actually exist in
+             * Supabase are used:
+             *
+             * id
+             * user_id
+             * name
+             * category
+             * location
+             * description
+             * phone
+             * created_at
              */
 
             details.innerHTML = `
+                <div class="business-detail-content">
 
-                <h2>
-                    ${escapeHTML(
-                        business.name ||
-                        "Business"
-                    )}
-                </h2>
+                    <h2>
+                        ${escapeHTML(
+                            business.name ||
+                            "Business"
+                        )}
+                    </h2>
 
+                    <p>
+                        <strong>Category:</strong>
+                        ${escapeHTML(
+                            business.category ||
+                            "Other"
+                        )}
+                    </p>
 
-                <p>
-                    <strong>
-                        Category:
-                    </strong>
+                    <p>
+                        <strong>Location:</strong>
+                        ${escapeHTML(
+                            business.location ||
+                            "Nigeria"
+                        )}
+                    </p>
 
-                    ${escapeHTML(
-                        business.category ||
-                        "Other"
-                    )}
-                </p>
+                    ${
+                        business.description
+                            ? `
+                                <p>
+                                    <strong>Description:</strong>
+                                    ${escapeHTML(
+                                        business.description
+                                    )}
+                                </p>
+                            `
+                            : ""
+                    }
 
+                    ${
+                        business.phone
+                            ? `
+                                <p>
+                                    <strong>Phone:</strong>
+                                    ${escapeHTML(
+                                        business.phone
+                                    )}
+                                </p>
+                            `
+                            : ""
+                    }
 
-                <p>
-                    <strong>
-                        Location:
-                    </strong>
+                    <div class="business-detail-actions">
 
-                    ${escapeHTML(
-                        business.location ||
-                        "Nigeria"
-                    )}
-                </p>
+                        <button
+                            type="button"
+                            class="btn btn-primary"
+                            onclick="window.closeModal('businessDetailsModal'); if (typeof window.addReview === 'function') { window.addReview('${escapeHTML(String(business.id))}'); }"
+                        >
+                            Leave a Review
+                        </button>
 
-
-                ${
-                    business.description
-                        ? `
-                            <p>
-                                <strong>
-                                    Description:
-                                </strong>
-
-                                ${escapeHTML(
-                                    business.description
-                                )}
-                            </p>
-                        `
-                        : ""
-                }
-
-
-                ${
-                    business.phone
-                        ? `
-                            <p>
-                                <strong>
-                                    Phone:
-                                </strong>
-
-                                ${escapeHTML(
-                                    business.phone
-                                )}
-                            </p>
-                        `
-                        : ""
-                }
-
-
-                <div class="business-detail-actions">
-
-                    <button
-                        type="button"
-                        class="btn btn-primary"
-                        onclick="
-                            if (
-                                typeof window.addReview ===
-                                'function'
-                            ) {
-                                window.addReview(
-                                    '${escapeHTML(
-                                        String(
-                                            business.id
-                                        )
-                                    )}'
-                                );
-                            }
-                        "
-                    >
-                        Leave a Review
-                    </button>
+                    </div>
 
                 </div>
             `;
 
 
             /*
-             * Open the modal AFTER the content has
-             * been inserted.
+             * IMPORTANT:
+             * Put the content into the modal FIRST,
+             * then open the modal.
              */
 
-            modal.classList.add(
-                "active"
-            );
+            if (
+                typeof window.openModal ===
+                "function"
+            ) {
 
-            modal.classList.add(
-                "open"
-            );
+                window.openModal(
+                    "businessDetailsModal"
+                );
 
+            } else {
 
-            document.body.style.overflow =
-                "hidden";
+                modal.classList.add(
+                    "active"
+                );
+
+                modal.classList.add(
+                    "open"
+                );
+
+                document.body.style.overflow =
+                    "hidden";
+            }
 
 
             console.log(
@@ -962,6 +999,18 @@ Handles:
 
         buttons.forEach(
             function (button) {
+
+                if (
+                    button.dataset.businessModalBound ===
+                    "true"
+                ) {
+                    return;
+                }
+
+
+                button.dataset.businessModalBound =
+                    "true";
+
 
                 button.addEventListener(
                     "click",
@@ -1117,12 +1166,6 @@ Handles:
                 }
 
 
-                /*
-                 * IMPORTANT:
-                 * These are the actual columns in
-                 * your Supabase businesses table.
-                 */
-
                 const business = {
 
                     user_id:
@@ -1211,6 +1254,14 @@ Handles:
                         )
                             ? saved[0]
                             : saved;
+
+
+                    if (!savedBusiness) {
+
+                        throw new Error(
+                            "Supabase did not return the saved business."
+                        );
+                    }
 
 
                     const current =
@@ -2107,6 +2158,11 @@ Handles:
     ===================================================== */
 
     function initBusinesses() {
+
+        console.log(
+            "LosOja businesses.js initialized."
+        );
+
 
         setupAddBusinessButtons();
 
