@@ -2217,23 +2217,18 @@ const buttons =
     }
 
 
-  /* =====================================================
+ /* =====================================================
    CATEGORY FILTER
 ===================================================== */
 
 function setupCategoryFilter() {
 
+    /* ---------------------------------------------
+       OPTIONAL CATEGORY SELECT
+    --------------------------------------------- */
+
     const categorySelect =
-        document.getElementById(
-            "categoryFilter"
-        );
-
-
-    /*
-    -----------------------------------------------------
-    EXISTING CATEGORY SELECT
-    -----------------------------------------------------
-    */
+        document.getElementById("categoryFilter");
 
     if (categorySelect) {
 
@@ -2246,53 +2241,37 @@ function setupCategoryFilter() {
                         .trim()
                         .toLowerCase();
 
-
                 if (!category) {
-
-                    renderBusinesses(
-                        allBusinesses
-                    );
-
+                    renderBusinesses(allBusinesses);
                     return;
                 }
-
 
                 const filtered =
                     allBusinesses.filter(
                         function (business) {
 
-                            return (
-                                String(
-                                    business.category ||
-                                    ""
-                                )
-                                    .trim()
-                                    .toLowerCase() ===
-                                category
-                            );
+                            return String(
+                                business.category || ""
+                            )
+                                .trim()
+                                .toLowerCase() === category;
                         }
                     );
 
-
-                renderBusinesses(
-                    filtered
-                );
+                renderBusinesses(filtered);
             }
         );
     }
 
 
-    /*
-    -----------------------------------------------------
-    LOSOJA EXPLORE CATEGORY CARDS
-    -----------------------------------------------------
-    */
+    /* ---------------------------------------------
+       EXPLORE CATEGORY CARDS
+    --------------------------------------------- */
 
     const categoryCards =
         document.querySelectorAll(
             ".category-card[data-category]"
         );
-
 
     console.log(
         "LosOja: Category buttons found:",
@@ -2343,24 +2322,24 @@ function setupCategoryFilter() {
                         allBusinesses.filter(
                             function (business) {
 
-                                return (
-                                    String(
-                                        business.category ||
-                                        ""
-                                    )
-                                        .trim()
-                                        .toLowerCase() ===
-                                    category
-                                );
+                                return String(
+                                    business.category || ""
+                                )
+                                    .trim()
+                                    .toLowerCase() ===
+                                    category;
                             }
                         );
 
 
-                    /*
-                    Scroll to businesses
-                    so the user can immediately
-                    see the results.
-                    */
+                    console.log(
+                        "LosOja: Matching businesses:",
+                        filtered.length
+                    );
+
+
+                    renderBusinesses(filtered);
+
 
                     const businessesSection =
                         document.getElementById(
@@ -2374,77 +2353,16 @@ function setupCategoryFilter() {
                             behavior: "smooth",
                             block: "start"
                         });
+
                     }
 
-
-                    renderBusinesses(
-                        filtered
-                    );
                 }
             );
+
         }
     );
+
 }
-
-        const categorySelect =
-            document.getElementById(
-                "categoryFilter"
-            );
-
-
-        if (!categorySelect) {
-            return;
-        }
-
-
-        categorySelect.addEventListener(
-            "change",
-            function () {
-
-                const category =
-                    this.value
-                        .trim()
-                        .toLowerCase();
-
-
-                if (!category) {
-
-                    renderBusinesses(
-                        allBusinesses
-                    );
-
-                    return;
-                }
-
-
-                const filtered =
-                    allBusinesses.filter(
-                        function (business) {
-
-                            return (
-                                String(
-                                    business.category ||
-                                    ""
-                                )
-                                    .trim()
-                                    .toLowerCase() ===
-                                category
-                            );
-                        }
-                    );
-
-
-                renderBusinesses(
-                    filtered
-                );
-            }
-        );
-    }
-
-
-    /* =====================================================
-       POPULAR SEARCH
-    ===================================================== */
 
     function setupPopularSearch() {
 
