@@ -1,22 +1,20 @@
-/**
- * LosOja - Authentication
- * Supabase REST API Authentication
- *
- * Works with:
- * - GitHub index.html
- * - Supabase Auth
- * - Supabase businesses table
- * - businesses.js
- */
+/*
+=========================================================
+LosOja - Supabase Authentication
+js/auth.js
+
+Handles:
+- Sign up
+- Login
+- Logout
+- Supabase session
+- User interface
+=========================================================
+*/
 
 (function () {
 
     "use strict";
-
-
-    /* =====================================================
-       SUPABASE CONFIGURATION
-    ===================================================== */
 
     const SUPABASE_URL =
         "https://ycxshwgeebskdozmornh.supabase.co";
@@ -29,28 +27,30 @@
 
 
     /* =====================================================
-       SESSION
+       STORAGE
     ===================================================== */
 
     function getSession() {
 
         try {
 
-            const saved =
+            const raw =
                 localStorage.getItem(SESSION_KEY);
 
-            if (!saved) {
+            if (!raw) {
                 return null;
             }
 
-            return JSON.parse(saved);
+            return JSON.parse(raw);
 
         } catch (error) {
 
             console.error(
-                "LosOja: Could not read saved session.",
+                "LosOja: Could not read session:",
                 error
             );
+
+            localStorage.removeItem(SESSION_KEY);
 
             return null;
         }
@@ -59,29 +59,36 @@
 
     function saveSession(session) {
 
-        localStorage.setItem(
-            SESSION_KEY,
-            JSON.stringify(session)
-        );
+        try {
+
+            localStorage.setItem(
+                SESSION_KEY,
+                JSON.stringify(session)
+            );
+
+        } catch (error) {
+
+            console.error(
+                "LosOja: Could not save session:",
+                error
+            );
+        }
     }
 
 
     function clearSession() {
 
-        localStorage.removeItem(
-            SESSION_KEY
-        );
+        localStorage.removeItem(SESSION_KEY);
     }
 
 
     /* =====================================================
-       CURRENT USER
+       USER
     ===================================================== */
 
     function getCurrentUser() {
 
-        const session =
-            getSession();
+        const session = getSession();
 
         if (!session) {
             return null;
@@ -91,9 +98,21 @@
     }
 
 
-    /* =====================================================
-       USER DISPLAY NAME
-    ===================================================== */
+    function getAccessToken() {
+
+        const session = getSession();
+
+        if (!session) {
+            return null;
+        }
+
+        return (
+            session.access_token ||
+            session.accessToken ||
+            null
+        );
+    }
+
 
     function getUserName(user) {
 
@@ -114,59 +133,360 @@
 
 
     /* =====================================================
-       AUTH HEADERS
+       HEADERS
     ===================================================== */
 
-    function authHeaders(accessToken) {
+    function headers(accessToken) {
 
-        const headers = {
+        const result = {
 
-            "apikey":
-                SUPABASE_KEY,
+            "apikey": SUPABASE_KEY,
 
             "Content-Type":
                 "application/json",
 
             "Accept":
                 "application/json"
-
         };
-
 
         if (accessToken) {
 
-            headers["Authorization"] =
+            result["Authorization"] =
                 "Bearer " + accessToken;
-
         }
 
-
-        return headers;
+        return result;
     }
 
 
     /* =====================================================
-       SUPABASE SESSION FOR OTHER FILES
+       ERROR MESSAGE
     ===================================================== */
 
-    window.getSupabaseSession =
-        function () {
+    function getErrorMessage(data) {
 
-            return getSession();
+        if (!data) {
+            return "Something went wrong.";
+        }
 
-        };
-
-
-    window.getCurrentUser =
-        function () {
-
-            return getCurrentUser();
-
-        };
+        return (
+            data.msg ||
+            data.message ||
+            data.error_description ||
+            data.error ||
+            "Something went wrong."
+        );
+    }
 
 
     /* =====================================================
-       UI UPDATE
+       LOGIN
+    ===================================================== */
+
+    async function login(email, password) {
+
+        email =
+            String(email || "")
+                .trim()
+                .toLowerCase();
+
+        password =
+            String(password || "");
+
+
+        if (!email || !password) {
+
+            return {
+                success: false,
+                message: "Please enter your email and password."
+            };
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    SUPABASE_URL +
+                    "/auth/v1/token?grant_type=password",
+                    {
+                        method: "POST",
+                        headers: headers(),
+                        body: JSON.stringify({
+                            email: email,
+                            password: password
+                        })
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                console.error(
+                    "LosOja login error:",
+                    data
+                );
+
+                return {
+                    success: false,
+                    message: getErrorMessage(data)
+                };
+            }
+
+
+            if (!data.access_token || !data.user) {
+
+                return {
+                    success: false,
+                    message:
+                        "Login succeeded but no Supabase session was returned."
+                };
+            }
+
+
+            saveSession(data);
+
+            updateUI();
+
+
+            return {
+                success: true,
+                user: data.user,
+                session: data
+            };
+
+
+        } catch (error) {
+
+            console.error(
+                "LosOja login network error:",
+                error
+            );
+
+            return {
+                success: false,
+                message:
+                    "Could not connect to Supabase. Please check your internet connection."
+            };
+        }
+    }
+
+
+    /* =====================================================
+       SIGN UP
+    ===================================================== */
+
+    async function signup(
+        name,
+        email,
+        password
+    ) {
+
+        name =
+            String(name || "").trim();
+
+        email =
+            String(email || "")
+                .trim()
+                .toLowerCase();
+
+        password =
+            String(password || "");
+
+
+        if (!name) {
+
+            return {
+                success: false,
+                message: "Please enter your full name."
+            };
+        }
+
+
+        if (!email) {
+
+            return {
+                success: false,
+                message: "Please enter your email."
+            };
+        }
+
+
+        if (password.length < 6) {
+
+            return {
+                success: false,
+                message:
+                    "Password must be at least 6 characters."
+            };
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    SUPABASE_URL +
+                    "/auth/v1/signup",
+                    {
+                        method: "POST",
+                        headers: headers(),
+                        body: JSON.stringify({
+
+                            email: email,
+
+                            password: password,
+
+                            data: {
+                                full_name: name,
+                                name: name
+                            }
+
+                        })
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                console.error(
+                    "LosOja signup error:",
+                    data
+                );
+
+                return {
+                    success: false,
+                    message: getErrorMessage(data)
+                };
+            }
+
+
+            /*
+            -------------------------------------------------
+            Supabase may require email confirmation.
+            -------------------------------------------------
+            */
+
+            if (
+                data.access_token &&
+                data.user
+            ) {
+
+                saveSession(data);
+
+                updateUI();
+
+                return {
+                    success: true,
+                    user: data.user,
+                    session: data
+                };
+            }
+
+
+            /*
+            -------------------------------------------------
+            Account created but email confirmation required.
+            -------------------------------------------------
+            */
+
+            return {
+
+                success: true,
+
+                needsConfirmation: true,
+
+                user: data.user || null,
+
+                message:
+                    "Your account was created. Please confirm your email, then log in."
+            };
+
+
+        } catch (error) {
+
+            console.error(
+                "LosOja signup network error:",
+                error
+            );
+
+            return {
+                success: false,
+                message:
+                    "Could not connect to Supabase. Please check your internet connection."
+            };
+        }
+    }
+
+
+    /* =====================================================
+       LOGOUT
+    ===================================================== */
+
+    async function logout() {
+
+        const token =
+            getAccessToken();
+
+
+        try {
+
+            if (token) {
+
+                await fetch(
+                    SUPABASE_URL +
+                    "/auth/v1/logout",
+                    {
+                        method: "POST",
+                        headers: headers(token)
+                    }
+                );
+            }
+
+        } catch (error) {
+
+            console.warn(
+                "LosOja logout request failed:",
+                error
+            );
+
+        } finally {
+
+            clearSession();
+
+            updateUI();
+
+            if (
+                typeof Dashboard !== "undefined" &&
+                typeof Dashboard.hide === "function"
+            ) {
+
+                Dashboard.hide();
+            }
+
+            if (
+                window.App &&
+                typeof App.showToast === "function"
+            ) {
+
+                App.showToast(
+                    "You have been logged out."
+                );
+            }
+        }
+    }
+
+
+    /* =====================================================
+       UI
     ===================================================== */
 
     function updateUI() {
@@ -180,105 +500,75 @@
                 "loginBtn"
             );
 
-
         const signupBtn =
             document.getElementById(
                 "signupBtn"
             );
-
-
-        const logoutBtn =
-            document.getElementById(
-                "logoutBtn"
-            );
-
 
         const userArea =
             document.getElementById(
                 "userArea"
             );
 
-
-        const dashLink =
+        const dashboardNavLink =
             document.getElementById(
                 "dashboardNavLink"
             );
 
-
-        const mobileAuth =
+        const mobileAuthLinks =
             document.getElementById(
                 "mobileAuthLinks"
+            );
+
+        const mobileLoginBtn =
+            document.getElementById(
+                "mobileLoginBtn"
+            );
+
+        const mobileSignupBtn =
+            document.getElementById(
+                "mobileSignupBtn"
             );
 
 
         if (user) {
 
-            const name =
-                getUserName(user);
-
-
-            /* Hide Login / Signup */
-
             if (loginBtn) {
-                loginBtn.classList.add(
-                    "hidden"
-                );
+                loginBtn.classList.add("hidden");
             }
-
 
             if (signupBtn) {
-                signupBtn.classList.add(
-                    "hidden"
-                );
+                signupBtn.classList.add("hidden");
             }
 
-
-            if (mobileAuth) {
-                mobileAuth.classList.add(
-                    "hidden"
-                );
+            if (mobileLoginBtn) {
+                mobileLoginBtn.classList.add("hidden");
             }
 
-
-            /* Show dashboard */
-
-            if (dashLink) {
-                dashLink.classList.remove(
-                    "hidden"
-                );
+            if (mobileSignupBtn) {
+                mobileSignupBtn.classList.add("hidden");
             }
 
+            if (mobileAuthLinks) {
+                mobileAuthLinks.classList.add("hidden");
+            }
 
-            /* Show logged-in user */
+            if (dashboardNavLink) {
+                dashboardNavLink.classList.remove("hidden");
+            }
 
             if (userArea) {
 
-                userArea.classList.remove(
-                    "hidden"
-                );
+                userArea.classList.remove("hidden");
 
-
-                const initials =
-                    name
-                        .split(/\s+/)
-                        .filter(Boolean)
-                        .map(
-                            word =>
-                                word.charAt(0)
-                        )
-                        .join("")
-                        .slice(0, 2)
-                        .toUpperCase();
-
+                const name =
+                    escapeHTML(
+                        getUserName(user)
+                    );
 
                 userArea.innerHTML = `
-
-                    <div class="user-avatar">
-                        ${escapeHTML(initials)}
-                    </div>
-
                     <span class="user-name">
-                        Hi, ${escapeHTML(name)}
+                        Hi, ${name}
                     </span>
 
                     <button
@@ -288,972 +578,497 @@
                     >
                         Logout
                     </button>
-
                 `;
 
-
-                const newLogoutBtn =
+                const logoutBtn =
                     document.getElementById(
                         "logoutBtn"
                     );
 
+                if (logoutBtn) {
 
-                if (newLogoutBtn) {
-
-                    newLogoutBtn.addEventListener(
+                    logoutBtn.addEventListener(
                         "click",
                         logout
                     );
-
                 }
-
             }
 
         } else {
 
-            /* Show Login / Signup */
-
             if (loginBtn) {
-                loginBtn.classList.remove(
-                    "hidden"
-                );
+                loginBtn.classList.remove("hidden");
             }
-
 
             if (signupBtn) {
-                signupBtn.classList.remove(
-                    "hidden"
-                );
+                signupBtn.classList.remove("hidden");
             }
 
-
-            if (mobileAuth) {
-                mobileAuth.classList.remove(
-                    "hidden"
-                );
+            if (mobileLoginBtn) {
+                mobileLoginBtn.classList.remove("hidden");
             }
 
-
-            /* Hide dashboard */
-
-            if (dashLink) {
-                dashLink.classList.add(
-                    "hidden"
-                );
+            if (mobileSignupBtn) {
+                mobileSignupBtn.classList.remove("hidden");
             }
 
+            if (mobileAuthLinks) {
+                mobileAuthLinks.classList.remove("hidden");
+            }
 
-            /* Hide user area */
+            if (dashboardNavLink) {
+                dashboardNavLink.classList.add("hidden");
+            }
 
             if (userArea) {
 
-                userArea.classList.add(
-                    "hidden"
-                );
+                userArea.classList.add("hidden");
 
                 userArea.innerHTML = "";
-
             }
-
-
-            if (
-                typeof Dashboard !==
-                "undefined" &&
-                Dashboard.hide
-            ) {
-
-                Dashboard.hide();
-
-            }
-
         }
-
     }
 
-
-    /* =====================================================
-       HTML ESCAPE
-    ===================================================== */
 
     function escapeHTML(value) {
 
-        if (
-            value === null ||
-            value === undefined
-        ) {
-
-            return "";
-
-        }
-
-
         const div =
-            document.createElement(
-                "div"
-            );
-
+            document.createElement("div");
 
         div.textContent =
-            String(value);
-
+            String(value || "");
 
         return div.innerHTML;
-
     }
 
 
     /* =====================================================
-       OPEN LOGIN
+       MODALS
     ===================================================== */
 
     function openLogin() {
 
-        if (
-            typeof App !==
-            "undefined"
-        ) {
+        if (window.App) {
 
             App.closeAllModals();
+
             App.openModal(
                 "loginModal"
             );
 
+        } else {
+
+            const modal =
+                document.getElementById(
+                    "loginModal"
+                );
+
+            if (modal) {
+                modal.classList.add("active");
+                modal.classList.add("open");
+            }
         }
-
-        document
-            .getElementById(
-                "navLinks"
-            )
-            ?.classList.remove(
-                "open"
-            );
-
     }
 
 
-    /* =====================================================
-       OPEN SIGNUP
-    ===================================================== */
-
     function openSignup() {
 
-        if (
-            typeof App !==
-            "undefined"
-        ) {
+        if (window.App) {
 
             App.closeAllModals();
+
             App.openModal(
                 "signupModal"
             );
 
+        } else {
+
+            const modal =
+                document.getElementById(
+                    "signupModal"
+                );
+
+            if (modal) {
+                modal.classList.add("active");
+                modal.classList.add("open");
+            }
         }
-
-        document
-            .getElementById(
-                "navLinks"
-            )
-            ?.classList.remove(
-                "open"
-            );
-
     }
 
 
     /* =====================================================
-       LOGIN
+       FORM HELPERS
     ===================================================== */
 
-    async function login(
-        email,
-        password
-    ) {
+    function showError(id, message) {
 
-        const response =
-            await fetch(
-                SUPABASE_URL +
-                "/auth/v1/token?grant_type=password",
-                {
-                    method: "POST",
+        const element =
+            document.getElementById(id);
 
-                    headers:
-                        authHeaders(),
+        if (!element) return;
 
-                    body:
-                        JSON.stringify({
-                            email:
-                                email
-                                    .trim()
-                                    .toLowerCase(),
+        element.textContent =
+            message || "";
 
-                            password:
-                                password
-                        })
-                }
-            );
+        element.classList.remove("hidden");
+    }
 
 
-        const responseText =
-            await response.text();
+    function clearError(id) {
 
+        const element =
+            document.getElementById(id);
 
-        let data = null;
+        if (!element) return;
 
+        element.textContent = "";
 
-        try {
-
-            data =
-                JSON.parse(
-                    responseText
-                );
-
-        } catch {
-
-            data = null;
-
-        }
-
-
-        if (!response.ok) {
-
-            console.error(
-                "LosOja login error:",
-                response.status,
-                responseText
-            );
-
-
-            let message =
-                "Invalid email or password.";
-
-
-            if (data) {
-
-                message =
-                    data.error_description ||
-                    data.msg ||
-                    data.message ||
-                    message;
-
-            }
-
-
-            throw new Error(
-                message
-            );
-
-        }
-
-
-        saveSession(data);
-
-
-        updateUI();
-
-
-        return data;
-
+        element.classList.add("hidden");
     }
 
 
     /* =====================================================
-       SIGNUP
+       EVENT BINDING
     ===================================================== */
 
-    async function signup(
-        name,
-        email,
-        password
-    ) {
+    function bindEvents() {
 
-        const response =
-            await fetch(
-                SUPABASE_URL +
-                "/auth/v1/signup",
-                {
-                    method: "POST",
+        /*
+        -----------------------------------------------------
+        Login buttons
+        -----------------------------------------------------
+        */
 
-                    headers:
-                        authHeaders(),
+        [
+            "loginBtn",
+            "mobileLoginBtn"
+        ].forEach(function (id) {
 
-                    body:
-                        JSON.stringify({
+            const button =
+                document.getElementById(id);
 
-                            email:
-                                email
-                                    .trim()
-                                    .toLowerCase(),
+            if (!button) return;
 
-                            password:
-                                password,
-
-                            data: {
-
-                                full_name:
-                                    name.trim(),
-
-                                name:
-                                    name.trim()
-
-                            }
-
-                        })
+            button.addEventListener(
+                "click",
+                function () {
+                    openLogin();
                 }
             );
+        });
 
 
-        const responseText =
-            await response.text();
+        /*
+        -----------------------------------------------------
+        Signup buttons
+        -----------------------------------------------------
+        */
+
+        [
+            "signupBtn",
+            "mobileSignupBtn"
+        ].forEach(function (id) {
+
+            const button =
+                document.getElementById(id);
+
+            if (!button) return;
+
+            button.addEventListener(
+                "click",
+                function () {
+                    openSignup();
+                }
+            );
+        });
 
 
-        let data = null;
+        /*
+        -----------------------------------------------------
+        Switch Login -> Signup
+        -----------------------------------------------------
+        */
 
-
-        try {
-
-            data =
-                JSON.parse(
-                    responseText
-                );
-
-        } catch {
-
-            data = null;
-
-        }
-
-
-        if (!response.ok) {
-
-            console.error(
-                "LosOja signup error:",
-                response.status,
-                responseText
+        const switchToSignup =
+            document.getElementById(
+                "switchToSignup"
             );
 
+        if (switchToSignup) {
 
-            let message =
-                "Could not create your account.";
+            switchToSignup.addEventListener(
+                "click",
+                function () {
 
+                    if (window.App) {
+                        App.closeAllModals();
+                    }
 
-            if (data) {
-
-                message =
-                    data.error_description ||
-                    data.msg ||
-                    data.message ||
-                    message;
-
-            }
-
-
-            throw new Error(
-                message
+                    openSignup();
+                }
             );
-
         }
 
 
         /*
-         * Supabase may require email confirmation.
-         *
-         * If an access token exists, the user
-         * can be logged in immediately.
-         */
+        -----------------------------------------------------
+        Switch Signup -> Login
+        -----------------------------------------------------
+        */
 
-        if (
-            data &&
-            data.access_token
-        ) {
+        const switchToLogin =
+            document.getElementById(
+                "switchToLogin"
+            );
 
-            saveSession(data);
+        if (switchToLogin) {
 
-            updateUI();
+            switchToLogin.addEventListener(
+                "click",
+                function () {
 
-            return {
-                session: data,
-                requiresConfirmation: false
-            };
-
-        }
-
-
-        return {
-            session: null,
-            requiresConfirmation: true
-        };
-
-    }
-
-
-    /* =====================================================
-       LOGOUT
-    ===================================================== */
-
-    async function logout() {
-
-        const session =
-            getSession();
-
-
-        try {
-
-            if (
-                session &&
-                session.access_token
-            ) {
-
-                await fetch(
-                    SUPABASE_URL +
-                    "/auth/v1/logout",
-                    {
-                        method: "POST",
-
-                        headers:
-                            authHeaders(
-                                session.access_token
-                            )
+                    if (window.App) {
+                        App.closeAllModals();
                     }
-                );
 
-            }
+                    openLogin();
+                }
+            );
+        }
 
-        } catch (error) {
 
-            console.warn(
-                "LosOja: Logout request failed.",
-                error
+        /*
+        -----------------------------------------------------
+        LOGIN FORM
+        -----------------------------------------------------
+        */
+
+        const loginForm =
+            document.getElementById(
+                "loginForm"
             );
 
-        }
+        if (loginForm) {
 
+            loginForm.addEventListener(
+                "submit",
+                async function (event) {
 
-        clearSession();
+                    event.preventDefault();
 
-
-        updateUI();
-
-
-        if (
-            typeof App !==
-            "undefined" &&
-            App.closeAllModals
-        ) {
-
-            App.closeAllModals();
-
-        }
-
-
-        if (
-            typeof App !==
-            "undefined" &&
-            App.showToast
-        ) {
-
-            App.showToast(
-                "You have been logged out."
-            );
-
-        }
-
-    }
-
-
-    /* =====================================================
-       EXPOSE FUNCTIONS
-    ===================================================== */
-
-    window.doLogin =
-        async function () {
-
-            const emailInput =
-                document.getElementById(
-                    "loginEmail"
-                );
-
-
-            const passwordInput =
-                document.getElementById(
-                    "loginPassword"
-                );
-
-
-            const errorElement =
-                document.getElementById(
-                    "loginError"
-                );
-
-
-            const email =
-                emailInput?.value || "";
-
-
-            const password =
-                passwordInput?.value || "";
-
-
-            if (!email || !password) {
-
-                if (errorElement) {
-
-                    errorElement.textContent =
-                        "Please enter your email and password.";
-
-                    errorElement.classList.remove(
-                        "hidden"
+                    clearError(
+                        "loginError"
                     );
 
-                }
+                    const email =
+                        document.getElementById(
+                            "loginEmail"
+                        )?.value;
 
-                return;
+                    const password =
+                        document.getElementById(
+                            "loginPassword"
+                        )?.value;
 
-            }
 
+                    const submitButton =
+                        loginForm.querySelector(
+                            'button[type="submit"]'
+                        );
 
-            try {
+                    if (submitButton) {
+                        submitButton.disabled = true;
+                        submitButton.textContent =
+                            "Logging in...";
+                    }
 
-                if (errorElement) {
 
-                    errorElement.textContent =
-                        "";
+                    const result =
+                        await login(
+                            email,
+                            password
+                        );
 
-                    errorElement.classList.add(
-                        "hidden"
-                    );
 
-                }
+                    if (submitButton) {
+                        submitButton.disabled = false;
+                        submitButton.textContent =
+                            "Login";
+                    }
 
 
-                const session =
-                    await login(
-                        email,
-                        password
-                    );
+                    if (!result.success) {
 
+                        showError(
+                            "loginError",
+                            result.message
+                        );
 
-                if (
-                    typeof App !==
-                    "undefined"
-                ) {
+                        return;
+                    }
 
-                    App.closeModal(
-                        "loginModal"
-                    );
 
-
-                    App.showToast(
-                        "Welcome back, " +
-                        getUserName(
-                            session.user
-                        ) +
-                        "!"
-                    );
-
-                }
-
-
-                const form =
-                    document.getElementById(
-                        "loginForm"
-                    );
-
-
-                if (form) {
-                    form.reset();
-                }
-
-
-            } catch (error) {
-
-                console.error(
-                    "LosOja: Login failed:",
-                    error
-                );
-
-
-                if (errorElement) {
-
-                    errorElement.textContent =
-                        error.message ||
-                        "Login failed.";
-
-                    errorElement.classList.remove(
-                        "hidden"
-                    );
-
-                }
-
-            }
-
-        };
-
-
-    window.doSignup =
-        async function () {
-
-            const nameInput =
-                document.getElementById(
-                    "signupName"
-                );
-
-
-            const emailInput =
-                document.getElementById(
-                    "signupEmail"
-                );
-
-
-            const passwordInput =
-                document.getElementById(
-                    "signupPassword"
-                );
-
-
-            const errorElement =
-                document.getElementById(
-                    "signupError"
-                );
-
-
-            const name =
-                nameInput?.value || "";
-
-
-            const email =
-                emailInput?.value || "";
-
-
-            const password =
-                passwordInput?.value || "";
-
-
-            if (!name.trim()) {
-
-                if (errorElement) {
-
-                    errorElement.textContent =
-                        "Please enter your name.";
-
-                    errorElement.classList.remove(
-                        "hidden"
-                    );
-
-                }
-
-                return;
-
-            }
-
-
-            if (!email.trim()) {
-
-                if (errorElement) {
-
-                    errorElement.textContent =
-                        "Please enter your email.";
-
-                    errorElement.classList.remove(
-                        "hidden"
-                    );
-
-                }
-
-                return;
-
-            }
-
-
-            if (password.length < 6) {
-
-                if (errorElement) {
-
-                    errorElement.textContent =
-                        "Password must be at least 6 characters.";
-
-                    errorElement.classList.remove(
-                        "hidden"
-                    );
-
-                }
-
-                return;
-
-            }
-
-
-            try {
-
-                if (errorElement) {
-
-                    errorElement.textContent =
-                        "";
-
-                    errorElement.classList.add(
-                        "hidden"
-                    );
-
-                }
-
-
-                const result =
-                    await signup(
-                        name,
-                        email,
-                        password
-                    );
-
-
-                if (
-                    result.requiresConfirmation
-                ) {
-
-                    if (typeof App !== "undefined") {
-
+                    if (window.App) {
                         App.closeModal(
-                            "signupModal"
+                            "loginModal"
                         );
 
                         App.showToast(
-                            "Account created. Please check your email to confirm your account, then log in."
+                            "Welcome back!"
                         );
-
                     }
 
-                } else {
+                }
+            );
+        }
+
+
+        /*
+        -----------------------------------------------------
+        SIGNUP FORM
+        -----------------------------------------------------
+        */
+
+        const signupForm =
+            document.getElementById(
+                "signupForm"
+            );
+
+        if (signupForm) {
+
+            signupForm.addEventListener(
+                "submit",
+                async function (event) {
+
+                    event.preventDefault();
+
+                    clearError(
+                        "signupError"
+                    );
+
+                    const name =
+                        document.getElementById(
+                            "signupName"
+                        )?.value;
+
+                    const email =
+                        document.getElementById(
+                            "signupEmail"
+                        )?.value;
+
+                    const password =
+                        document.getElementById(
+                            "signupPassword"
+                        )?.value;
+
+
+                    const submitButton =
+                        signupForm.querySelector(
+                            'button[type="submit"]'
+                        );
+
+                    if (submitButton) {
+                        submitButton.disabled = true;
+                        submitButton.textContent =
+                            "Creating account...";
+                    }
+
+
+                    const result =
+                        await signup(
+                            name,
+                            email,
+                            password
+                        );
+
+
+                    if (submitButton) {
+                        submitButton.disabled = false;
+                        submitButton.textContent =
+                            "Create Account";
+                    }
+
+
+                    if (!result.success) {
+
+                        showError(
+                            "signupError",
+                            result.message
+                        );
+
+                        return;
+                    }
+
 
                     if (
-                        typeof App !==
-                        "undefined"
+                        result.needsConfirmation
                     ) {
+
+                        showError(
+                            "signupError",
+                            result.message
+                        );
+
+                        return;
+                    }
+
+
+                    if (window.App) {
 
                         App.closeModal(
                             "signupModal"
                         );
 
-
                         App.showToast(
-                            "Account created! Welcome, " +
-                            getUserName(
-                                result.session.user
-                            ) +
-                            "!"
+                            "Account created successfully!"
                         );
-
                     }
 
                 }
+            );
+        }
+    }
 
 
-                const form =
-                    document.getElementById(
-                        "signupForm"
-                    );
+    /* =====================================================
+       PUBLIC API
+    ===================================================== */
 
+    window.getSupabaseSession =
+        getSession;
 
-                if (form) {
-                    form.reset();
-                }
+    window.getCurrentUser =
+        getCurrentUser;
 
-
-            } catch (error) {
-
-                console.error(
-                    "LosOja: Signup failed:",
-                    error
-                );
-
-
-                if (errorElement) {
-
-                    errorElement.textContent =
-                        error.message ||
-                        "Could not create account.";
-
-                    errorElement.classList.remove(
-                        "hidden"
-                    );
-
-                }
-
-            }
-
-        };
-
+    window.getSupabaseAccessToken =
+        getAccessToken;
 
     window.logout =
         logout;
 
+    window.doLogin =
+        login;
+
+    window.doSignup =
+        signup;
+
+    window.updateAuthUI =
+        updateUI;
+
 
     /* =====================================================
-       INITIALIZATION
+       START
     ===================================================== */
 
     document.addEventListener(
         "DOMContentLoaded",
         function () {
 
-            /*
-             * Login/signup buttons
-             */
-
-            document
-                .getElementById(
-                    "loginBtn"
-                )
-                ?.addEventListener(
-                    "click",
-                    function (event) {
-
-                        event.preventDefault();
-
-                        openLogin();
-
-                    }
-                );
-
-
-            document
-                .getElementById(
-                    "signupBtn"
-                )
-                ?.addEventListener(
-                    "click",
-                    function (event) {
-
-                        event.preventDefault();
-
-                        openSignup();
-
-                    }
-                );
-
-
-            document
-                .getElementById(
-                    "mobileLoginBtn"
-                )
-                ?.addEventListener(
-                    "click",
-                    function (event) {
-
-                        event.preventDefault();
-
-                        openLogin();
-
-                    }
-                );
-
-
-            document
-                .getElementById(
-                    "mobileSignupBtn"
-                )
-                ?.addEventListener(
-                    "click",
-                    function (event) {
-
-                        event.preventDefault();
-
-                        openSignup();
-
-                    }
-                );
-
-
-            /*
-             * Login form
-             */
-
-            document
-                .getElementById(
-                    "loginForm"
-                )
-                ?.addEventListener(
-                    "submit",
-                    function (event) {
-
-                        event.preventDefault();
-
-                        window.doLogin();
-
-                    }
-                );
-
-
-            /*
-             * Signup form
-             */
-
-            document
-                .getElementById(
-                    "signupForm"
-                )
-                ?.addEventListener(
-                    "submit",
-                    function (event) {
-
-                        event.preventDefault();
-
-                        window.doSignup();
-
-                    }
-                );
-
-
-            /*
-             * Switch Login / Signup
-             */
-
-            document
-                .getElementById(
-                    "switchToSignup"
-                )
-                ?.addEventListener(
-                    "click",
-                    function () {
-
-                        App.closeModal(
-                            "loginModal"
-                        );
-
-                        App.openModal(
-                            "signupModal"
-                        );
-
-                    }
-                );
-
-
-            document
-                .getElementById(
-                    "switchToLogin"
-                )
-                ?.addEventListener(
-                    "click",
-                    function () {
-
-                        App.closeModal(
-                            "signupModal"
-                        );
-
-                        App.openModal(
-                            "loginModal"
-                        );
-
-                    }
-                );
-
-
-            /*
-             * Update header immediately.
-             */
+            bindEvents();
 
             updateUI();
 
         }
-
     );
-
 
 })();
