@@ -2199,48 +2199,106 @@ Handles:
     }
 
 
-    /* =====================================================
-       CATEGORY FILTER
-    ===================================================== */
+   /* =====================================================
+   CATEGORY FILTER
+===================================================== */
 
-   function setupCategoryFilter() {
-    ...
-}
+function setupCategoryFilter() {
 
-function setupPopularSearch() {
-    ...
-}
+    const categorySelect =
+        document.getElementById(
+            "categoryFilter"
+        );
 
-window.loadLosOjaBusinesses = loadBusinesses;
-window.getLosOjaBusinesses = getBusinesses;
-window.renderLosOjaBusinesses = renderBusinesses;
+    if (categorySelect) {
 
-function initializeBusinessesJS() {
-    ...
-}
+        categorySelect.addEventListener(
+            "change",
+            function () {
+
+                const category =
+                    this.value
+                        .trim()
+                        .toLowerCase();
+
+                if (!category) {
+
+                    renderBusinesses(
+                        allBusinesses
+                    );
+
+                    return;
+                }
+
+                const filtered =
+                    allBusinesses.filter(
+                        function (business) {
+
+                            return (
+                                String(
+                                    business.category ||
+                                    ""
+                                )
+                                    .trim()
+                                    .toLowerCase() ===
+                                category
+                            );
+                        }
+                    );
+
+                renderBusinesses(
+                    filtered
+                );
+            }
+        );
+    }
 
 
-        if (categorySelect) {
+    const categoryCards =
+        document.querySelectorAll(
+            ".category-card[data-category]"
+        );
 
-            categorySelect.addEventListener(
-                "change",
-                function () {
+    console.log(
+        "LosOja: Category buttons found:",
+        categoryCards.length
+    );
+
+
+    categoryCards.forEach(
+        function (button) {
+
+            if (
+                button.dataset.losojaCategoryBound ===
+                "true"
+            ) {
+                return;
+            }
+
+            button.dataset.losojaCategoryBound =
+                "true";
+
+            button.addEventListener(
+                "click",
+                function (event) {
+
+                    event.preventDefault();
 
                     const category =
-                        this.value
-                            .trim()
-                            .toLowerCase();
-
+                        this.dataset.category
+                            ? this.dataset.category
+                                .trim()
+                                .toLowerCase()
+                            : "";
 
                     if (!category) {
-
-                        renderBusinesses(
-                            allBusinesses
-                        );
-
                         return;
                     }
 
+                    console.log(
+                        "LosOja: Category selected:",
+                        category
+                    );
 
                     const filtered =
                         allBusinesses.filter(
@@ -2258,248 +2316,139 @@ function initializeBusinessesJS() {
                             }
                         );
 
-
                     renderBusinesses(
                         filtered
                     );
+
+                    const businessesSection =
+                        document.getElementById(
+                            "businesses"
+                        );
+
+                    if (businessesSection) {
+
+                        businessesSection.scrollIntoView({
+                            behavior: "smooth",
+                            block: "start"
+                        });
+                    }
                 }
             );
         }
+    );
+}
 
 
-        /*
-        -----------------------------------------------------
-        EXPLORE CATEGORY CARDS
-        -----------------------------------------------------
-        */
+/* =====================================================
+   POPULAR SEARCH
+===================================================== */
 
-        const categoryCards =
-            document.querySelectorAll(
-                ".category-card[data-category]"
-            );
+function setupPopularSearch() {
 
+    document.addEventListener(
+        "click",
+        function (event) {
 
-        console.log(
-            "LosOja: Category buttons found:",
-            categoryCards.length
-        );
+            const button =
+                event.target.closest(
+                    "[data-search]"
+                );
 
+            if (!button) {
+                return;
+            }
 
-        categoryCards.forEach(
-            function (button) {
+            const searchValue =
+                button.getAttribute(
+                    "data-search"
+                );
 
-                if (
-                    button.dataset.losojaCategoryBound ===
-                    "true"
-                ) {
+            const searchInput =
+                document.getElementById(
+                    "searchInput"
+                );
 
-                    return;
-                }
+            if (!searchInput) {
+                return;
+            }
 
+            searchInput.value =
+                searchValue || "";
 
-                button.dataset.losojaCategoryBound =
-                    "true";
-
-
-                button.addEventListener(
-                    "click",
-                    function (event) {
-
-                        event.preventDefault();
-
-
-                        const category =
-                            this.dataset.category
-                                ? this.dataset.category
-                                    .trim()
-                                    .toLowerCase()
-                                : "";
-
-
-                        if (!category) {
-                            return;
-                        }
-
-
-                        console.log(
-                            "LosOja: Category selected:",
-                            category
-                        );
-
-
-                        const filtered =
-                            allBusinesses.filter(
-                                function (business) {
-
-                                    return (
-                                        String(
-                                            business.category ||
-                                            ""
-                                        )
-                                            .trim()
-                                            .toLowerCase() ===
-                                        category
-                                    );
-                                }
-                            );
-
-
-                        console.log(
-                            "LosOja: Matching businesses:",
-                            filtered.length
-                        );
-
-
-                        renderBusinesses(
-                            filtered
-                        );
-
-
-                        const businessesSection =
-                            document.getElementById(
-                                "businesses"
-                            );
-
-
-                        if (businessesSection) {
-
-                            businessesSection.scrollIntoView({
-                                behavior: "smooth",
-                                block: "start"
-                            });
-                        }
+            searchInput.dispatchEvent(
+                new Event(
+                    "input",
+                    {
+                        bubbles: true
                     }
-                );
-            }
-        );
-    }
+                )
+            );
+        }
+    );
+}
 
 
-    /* =====================================================
-       POPULAR SEARCH
-    ===================================================== */
+/* =====================================================
+   PUBLIC API
+===================================================== */
 
-    function setupPopularSearch() {
+window.loadLosOjaBusinesses =
+    loadBusinesses;
 
-        document.addEventListener(
-            "click",
-            function (event) {
+window.getLosOjaBusinesses =
+    getBusinesses;
 
-                const button =
-                    event.target.closest(
-                        "[data-search]"
-                    );
+window.renderLosOjaBusinesses =
+    renderBusinesses;
 
 
-                if (!button) {
-                    return;
-                }
+/* =====================================================
+   INITIALIZATION
+===================================================== */
+
+function initializeBusinessesJS() {
+
+    console.log(
+        "LosOja: Initializing business handlers..."
+    );
+
+    setupAddBusinessButtons();
+
+    setupAddBusinessForm();
+
+    setupEditBusinessForm();
+
+    setupSearch();
+
+    setupCategoryFilter();
+
+    setupPopularSearch();
+
+    loadBusinesses();
+}
 
 
-                const searchValue =
-                    button.getAttribute(
-                        "data-search"
-                    );
+/* =====================================================
+   DOM READY
+===================================================== */
 
+if (
+    document.readyState ===
+    "loading"
+) {
 
-                const searchInput =
-                    document.getElementById(
-                        "searchInput"
-                    );
+    document.addEventListener(
+        "DOMContentLoaded",
+        initializeBusinessesJS,
+        {
+            once: true
+        }
+    );
 
+} else {
 
-                if (!searchInput) {
-                    return;
-                }
-
-
-                searchInput.value =
-                    searchValue || "";
-
-
-                searchInput.dispatchEvent(
-                    new Event(
-                        "input",
-                        {
-                            bubbles: true
-                        }
-                    )
-                );
-            }
-        );
-    }
-
-
-    /* =====================================================
-       PUBLIC API
-    ===================================================== */
-
-    window.loadLosOjaBusinesses =
-        loadBusinesses;
-
-
-    window.getLosOjaBusinesses =
-        getBusinesses;
-
-
-    window.renderLosOjaBusinesses =
-        renderBusinesses;
-
-
-    /* =====================================================
-       INITIALIZATION
-    ===================================================== */
-
-    function initializeBusinessesJS() {
-
-        console.log(
-            "LosOja: Initializing business handlers..."
-        );
-
-
-        setupAddBusinessButtons();
-
-
-        setupAddBusinessForm();
-
-
-        setupEditBusinessForm();
-
-
-        setupSearch();
-
-
-        setupCategoryFilter();
-
-
-        setupPopularSearch();
-
-
-        loadBusinesses();
-    }
-
-
-    /* =====================================================
-       DOM READY
-    ===================================================== */
-
-    if (
-        document.readyState ===
-        "loading"
-    ) {
-
-        document.addEventListener(
-            "DOMContentLoaded",
-            initializeBusinessesJS,
-            {
-                once: true
-            }
-        );
-
-    } else {
-
-        initializeBusinessesJS();
-    }
+    initializeBusinessesJS();
+}
 
 
 })();
