@@ -959,9 +959,9 @@ Handles:
         */
 
         const buttons =
-            document.querySelectorAll(
-                '.add-business-btn, [data-open-add-business], #addBusinessBtn, #addBusinessNavBtn'
-            );
+    document.querySelectorAll(
+        '.add-business-btn, [data-open-add-business], #addBusinessBtn, #addBusinessNavBtn'
+    );
 
 
         console.log(
