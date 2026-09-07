@@ -2,6 +2,7 @@
  * =========================================================
  * LosOja - Main App
  * Professional UI / Navigation / Modals / Back Button
+ * Mobility Request Interface
  * =========================================================
  */
 
@@ -24,6 +25,11 @@
             this.bindSmoothScroll();
             this.bindLogo();
             this.createBackButton();
+
+            /*
+             * Mobility
+             */
+            this.bindMobilityButtons();
 
             console.log("LosOja: App initialized.");
 
@@ -609,6 +615,635 @@
             } catch (error) {
 
                 return "";
+
+            }
+
+        },
+
+
+        /* =================================================
+           MOBILITY
+        ================================================= */
+
+        bindMobilityButtons() {
+
+            const buttons =
+                document.querySelectorAll(".mobility-btn");
+
+            if (!buttons.length) {
+                return;
+            }
+
+            buttons.forEach(function (button) {
+
+                button.addEventListener(
+                    "click",
+                    function (event) {
+
+                        event.preventDefault();
+
+                        const type =
+                            button.getAttribute(
+                                "data-mobility"
+                            );
+
+                        App.openMobilityRequest(type);
+
+                    }
+                );
+
+            });
+
+        },
+
+
+        /* =================================================
+           MOBILITY REQUEST MODAL
+        ================================================= */
+
+        createMobilityModal() {
+
+            /*
+             * Do not create the modal more than once.
+             */
+            if (
+                document.getElementById(
+                    "mobilityRequestModal"
+                )
+            ) {
+                return;
+            }
+
+
+            const modal =
+                document.createElement("div");
+
+            modal.id =
+                "mobilityRequestModal";
+
+            modal.className =
+                "modal";
+
+
+            modal.innerHTML = `
+                <div
+                    class="modal-content"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-labelledby="mobilityRequestTitle"
+                >
+
+                    <button
+                        type="button"
+                        class="modal-close"
+                        aria-label="Close"
+                    >
+                        ×
+                    </button>
+
+                    <div class="modal-header">
+
+                        <h2 id="mobilityRequestTitle">
+                            Request a Ride
+                        </h2>
+
+                        <p id="mobilityRequestSubtitle">
+                            Tell us where you want to go.
+                        </p>
+
+                    </div>
+
+
+                    <form
+                        id="mobilityRequestForm"
+                        novalidate
+                    >
+
+                        <input
+                            type="hidden"
+                            id="mobilityType"
+                            name="mobilityType"
+                        >
+
+
+                        <div class="form-group">
+
+                            <label for="mobilityPickup">
+                                Pickup Location
+                            </label>
+
+                            <input
+                                type="text"
+                                id="mobilityPickup"
+                                name="pickup"
+                                placeholder="Where should we pick you up?"
+                                autocomplete="street-address"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="mobilityDestination">
+                                Destination
+                            </label>
+
+                            <input
+                                type="text"
+                                id="mobilityDestination"
+                                name="destination"
+                                placeholder="Where are you going?"
+                                autocomplete="street-address"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="mobilityPhone">
+                                Phone Number
+                            </label>
+
+                            <input
+                                type="tel"
+                                id="mobilityPhone"
+                                name="phone"
+                                placeholder="Your phone number"
+                                autocomplete="tel"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="mobilityNote">
+                                Additional Note
+                                <span>(optional)</span>
+                            </label>
+
+                            <textarea
+                                id="mobilityNote"
+                                name="note"
+                                rows="3"
+                                placeholder="Anything the driver should know?"
+                            ></textarea>
+
+                        </div>
+
+
+                        <div
+                            id="mobilityRequestError"
+                            class="form-error hidden"
+                            role="alert"
+                        ></div>
+
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary"
+                        >
+                            Continue Request
+                        </button>
+
+                    </form>
+
+                </div>
+            `;
+
+
+            document.body.appendChild(modal);
+
+
+            /*
+             * Close button.
+             */
+            const closeButton =
+                modal.querySelector(".modal-close");
+
+            if (closeButton) {
+
+                closeButton.addEventListener(
+                    "click",
+                    function () {
+
+                        App.closeModal(
+                            "mobilityRequestModal"
+                        );
+
+                    }
+                );
+
+            }
+
+
+            /*
+             * Close when clicking outside modal content.
+             */
+            modal.addEventListener(
+                "click",
+                function (event) {
+
+                    if (event.target === modal) {
+
+                        App.closeModal(
+                            "mobilityRequestModal"
+                        );
+
+                    }
+
+                }
+            );
+
+
+            /*
+             * Form submission.
+             */
+            const form =
+                document.getElementById(
+                    "mobilityRequestForm"
+                );
+
+            if (form) {
+
+                form.addEventListener(
+                    "submit",
+                    function (event) {
+
+                        event.preventDefault();
+
+                        App.handleMobilityRequest();
+
+                    }
+                );
+
+            }
+
+        },
+
+
+        /* =================================================
+           OPEN MOBILITY REQUEST
+        ================================================= */
+
+        openMobilityRequest(type) {
+
+            const validTypes = [
+                "trycircle",
+                "bike",
+                "cab"
+            ];
+
+            /*
+             * Rent a Truck is intentionally not activated
+             * yet. We will build it separately.
+             */
+            if (
+                !validTypes.includes(type)
+            ) {
+
+                if (type === "truck") {
+
+                    this.showToast(
+                        "Rent a Truck is coming soon."
+                    );
+
+                }
+
+                return;
+
+            }
+
+
+            this.createMobilityModal();
+
+
+            const title =
+                document.getElementById(
+                    "mobilityRequestTitle"
+                );
+
+            const subtitle =
+                document.getElementById(
+                    "mobilityRequestSubtitle"
+                );
+
+            const typeInput =
+                document.getElementById(
+                    "mobilityType"
+                );
+
+
+            const config = {
+
+                trycircle: {
+                    title: "TryCircle",
+                    subtitle:
+                        "Request a TryCircle ride."
+                },
+
+                bike: {
+                    title: "Request a Bike",
+                    subtitle:
+                        "Request a bike ride from your pickup location."
+                },
+
+                cab: {
+                    title: "Request a Cab",
+                    subtitle:
+                        "Request a cab from your pickup location."
+                }
+
+            };
+
+
+            const selected =
+                config[type] || config.trycircle;
+
+
+            if (title) {
+                title.textContent =
+                    selected.title;
+            }
+
+            if (subtitle) {
+                subtitle.textContent =
+                    selected.subtitle;
+            }
+
+            if (typeInput) {
+                typeInput.value =
+                    type;
+            }
+
+
+            /*
+             * Clear previous form state.
+             */
+            const form =
+                document.getElementById(
+                    "mobilityRequestForm"
+                );
+
+            if (form) {
+
+                form.reset();
+
+                /*
+                 * reset() clears the hidden field,
+                 * so restore it.
+                 */
+                if (typeInput) {
+                    typeInput.value =
+                        type;
+                }
+
+            }
+
+
+            const error =
+                document.getElementById(
+                    "mobilityRequestError"
+                );
+
+            if (error) {
+
+                error.textContent = "";
+
+                error.classList.add("hidden");
+
+            }
+
+
+            this.openModal(
+                "mobilityRequestModal"
+            );
+
+        },
+
+
+        /* =================================================
+           HANDLE MOBILITY REQUEST
+        ================================================= */
+
+        handleMobilityRequest() {
+
+            const type =
+                document.getElementById(
+                    "mobilityType"
+                )?.value || "";
+
+
+            const pickup =
+                document.getElementById(
+                    "mobilityPickup"
+                )?.value.trim() || "";
+
+
+            const destination =
+                document.getElementById(
+                    "mobilityDestination"
+                )?.value.trim() || "";
+
+
+            const phone =
+                document.getElementById(
+                    "mobilityPhone"
+                )?.value.trim() || "";
+
+
+            const note =
+                document.getElementById(
+                    "mobilityNote"
+                )?.value.trim() || "";
+
+
+            const error =
+                document.getElementById(
+                    "mobilityRequestError"
+                );
+
+
+            /*
+             * Validation.
+             */
+            if (!type) {
+
+                this.showMobilityError(
+                    "Please select a mobility service.",
+                    error
+                );
+
+                return;
+
+            }
+
+
+            if (!pickup) {
+
+                this.showMobilityError(
+                    "Please enter your pickup location.",
+                    error
+                );
+
+                return;
+
+            }
+
+
+            if (!destination) {
+
+                this.showMobilityError(
+                    "Please enter your destination.",
+                    error
+                );
+
+                return;
+
+            }
+
+
+            if (!phone) {
+
+                this.showMobilityError(
+                    "Please enter your phone number.",
+                    error
+                );
+
+                return;
+
+            }
+
+
+            /*
+             * At this stage we deliberately do not send
+             * anything to Supabase.
+             *
+             * We will connect this to the proper
+             * mobility_requests table after confirming
+             * the database structure.
+             */
+            const request = {
+
+                id: this.generateId(),
+
+                type: type,
+
+                pickup: pickup,
+
+                destination: destination,
+
+                phone: phone,
+
+                note: note,
+
+                created_at:
+                    new Date().toISOString()
+
+            };
+
+
+            /*
+             * Keep the request in browser memory/storage
+             * temporarily so the interface can be tested
+             * without creating an incorrect database record.
+             */
+            try {
+
+                const existing =
+                    JSON.parse(
+                        localStorage.getItem(
+                            "losoja_mobility_test_requests"
+                        )
+                    ) || [];
+
+
+                existing.push(request);
+
+
+                localStorage.setItem(
+                    "losoja_mobility_test_requests",
+                    JSON.stringify(existing)
+                );
+
+            } catch (storageError) {
+
+                console.warn(
+                    "LosOja: Could not save temporary mobility request.",
+                    storageError
+                );
+
+            }
+
+
+            this.closeModal(
+                "mobilityRequestModal"
+            );
+
+
+            this.showToast(
+                "Your " +
+                this.getMobilityName(type) +
+                " request has been received.",
+                4000
+            );
+
+
+            console.log(
+                "LosOja Mobility Request:",
+                request
+            );
+
+        },
+
+
+        /* =================================================
+           MOBILITY ERROR
+        ================================================= */
+
+        showMobilityError(message, element) {
+
+            if (!element) {
+                return;
+            }
+
+            element.textContent =
+                message;
+
+            element.classList.remove(
+                "hidden"
+            );
+
+        },
+
+
+        /* =================================================
+           MOBILITY NAME
+        ================================================= */
+
+        getMobilityName(type) {
+
+            switch (type) {
+
+                case "trycircle":
+                    return "TryCircle";
+
+                case "bike":
+                    return "Bike";
+
+                case "cab":
+                    return "Cab";
+
+                case "truck":
+                    return "Truck";
+
+                default:
+                    return "Mobility";
 
             }
 
