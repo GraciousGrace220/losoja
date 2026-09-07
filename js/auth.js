@@ -448,8 +448,9 @@ async function refreshSupabaseSession() {
 }
 
 
-        const refreshToken =
-            session.refresh_token;
+           /* =====================================================
+       ENSURE VALID SESSION
+    ===================================================== */
 
 
         if (!refreshToken) {
