@@ -207,13 +207,6 @@ Handles:
         }
 
 
-        /*
-        -----------------------------------------------------
-        Supabase normally provides expires_at as a Unix
-        timestamp in seconds.
-        -----------------------------------------------------
-        */
-
         if (session.expires_at) {
 
             const now =
@@ -222,25 +215,12 @@ Handles:
                 );
 
 
-            /*
-            Refresh slightly before actual expiration.
-            This prevents a request from being sent with
-            a token that is about to expire.
-            */
-
             return (
                 Number(session.expires_at) <=
                 now + 60
             );
         }
 
-
-        /*
-        -----------------------------------------------------
-        Older stored sessions may not have expires_at.
-        In that case we cannot determine expiration here.
-        -----------------------------------------------------
-        */
 
         return false;
     }
@@ -250,108 +230,47 @@ Handles:
        REFRESH SUPABASE SESSION
     ===================================================== */
 
-   let refreshPromise = null;
+    let refreshPromise = null;
 
 
-async function refreshSupabaseSession() {
+    async function refreshSupabaseSession() {
 
-    /*
-    ---------------------------------------------------------
-    Prevent multiple simultaneous refresh requests.
+        /*
+        -----------------------------------------------------
+        Prevent multiple simultaneous refresh requests.
+        -----------------------------------------------------
+        */
 
-    If Properties, Ride Providers, and Ride Requests all
-    notice an expired token at the same time, they will share
-    the same refresh operation instead of sending several
-    refresh requests.
-    ---------------------------------------------------------
-    */
+        if (refreshPromise) {
 
-    if (refreshPromise) {
-
-        return refreshPromise;
-
-    }
-
-
-    refreshPromise = (async function () {
-
-        const session =
-            getSession();
-
-
-        if (!session) {
-
-            return {
-                success: false,
-                message: "No active session."
-            };
-
+            return refreshPromise;
         }
 
 
-        const refreshToken =
-            session.refresh_token;
+        refreshPromise = (async function () {
+
+            const session =
+                getSession();
 
 
-        if (!refreshToken) {
+            if (!session) {
 
-            console.warn(
-                "LosOja: No refresh token available."
-            );
-
-
-            clearSession();
-
-            updateUI();
+                return {
+                    success: false,
+                    message:
+                        "No active session."
+                };
+            }
 
 
-            return {
-                success: false,
-                message:
-                    "Your session has expired. Please log in again."
-            };
-
-        }
+            const refreshToken =
+                session.refresh_token;
 
 
-        try {
+            if (!refreshToken) {
 
-            console.log(
-                "LosOja: Refreshing Supabase session..."
-            );
-
-
-            const response =
-                await fetch(
-
-                    SUPABASE_URL +
-                    "/auth/v1/token?grant_type=refresh_token",
-
-                    {
-                        method: "POST",
-
-                        headers:
-                            headers(),
-
-                        body:
-                            JSON.stringify({
-                                refresh_token:
-                                    refreshToken
-                            })
-                    }
-
-                );
-
-
-            const data =
-                await response.json();
-
-
-            if (!response.ok) {
-
-                console.error(
-                    "LosOja session refresh error:",
-                    data
+                console.warn(
+                    "LosOja: No refresh token available."
                 );
 
 
@@ -363,179 +282,111 @@ async function refreshSupabaseSession() {
                 return {
                     success: false,
                     message:
-                        getErrorMessage(data)
+                        "Your session has expired. Please log in again."
                 };
-
             }
 
 
-            if (
-                !data.access_token ||
-                !data.user
-            ) {
+            try {
 
-                console.error(
-                    "LosOja: Refresh response did not contain a valid session.",
-                    data
+                console.log(
+                    "LosOja: Refreshing Supabase session..."
                 );
 
 
-                return {
-                    success: false,
-                    message:
-                        "Could not refresh your session."
-                };
+                const response =
+                    await fetch(
 
-            }
+                        SUPABASE_URL +
+                        "/auth/v1/token?grant_type=refresh_token",
 
+                        {
+                            method: "POST",
 
-            /*
-            -------------------------------------------------
-            Save the complete NEW session.
+                            headers:
+                                headers(),
 
-            Supabase can return a new refresh_token, so we
-            must replace the old stored session completely.
-            -------------------------------------------------
-            */
-
-            saveSession(data);
-
-
-            updateUI();
+                            body:
+                                JSON.stringify({
+                                    refresh_token:
+                                        refreshToken
+                                })
+                        }
+                    );
 
 
-            console.log(
-                "LosOja: Supabase session refreshed successfully."
-            );
+                const data =
+                    await response.json();
 
 
-            return {
-                success: true,
-                user: data.user,
-                session: data
-            };
+                if (!response.ok) {
+
+                    console.error(
+                        "LosOja session refresh error:",
+                        data
+                    );
 
 
-        } catch (error) {
+                    clearSession();
 
-            console.error(
-                "LosOja session refresh network error:",
-                error
-            );
+                    updateUI();
 
 
-            return {
-                success: false,
-                message:
-                    "Could not refresh your session."
-            };
-
-        }
-
-    })();
+                    return {
+                        success: false,
+                        message:
+                            getErrorMessage(data)
+                    };
+                }
 
 
-    try {
+                if (
+                    !data.access_token ||
+                    !data.user
+                ) {
 
-        return await refreshPromise;
-
-    } finally {
-
-        refreshPromise = null;
-
-    }
-
-}
+                    console.error(
+                        "LosOja: Refresh response did not contain a valid session.",
+                        data
+                    );
 
 
-           /* =====================================================
-       ENSURE VALID SESSION
-    ===================================================== */
-
-
-        if (!refreshToken) {
-
-            console.warn(
-                "LosOja: No refresh token available."
-            );
-
-            clearSession();
-            updateUI();
-
-            return {
-                success: false,
-                message:
-                    "Your session has expired. Please log in again."
-            };
-        }
-
-
-        try {
-
-            console.log(
-                "LosOja: Refreshing Supabase session..."
-            );
-
-
-            const response =
-                await fetch(
-                    SUPABASE_URL +
-                    "/auth/v1/token?grant_type=refresh_token",
-                    {
-                        method: "POST",
-
-                        headers:
-                            headers(),
-
-                        body:
-                            JSON.stringify({
-                                refresh_token:
-                                    refreshToken
-                            })
-                    }
-                );
-
-
-            const data =
-                await response.json();
-
-
-            if (!response.ok) {
-
-                console.error(
-                    "LosOja session refresh error:",
-                    data
-                );
+                    return {
+                        success: false,
+                        message:
+                            "Could not refresh your session."
+                    };
+                }
 
 
                 /*
                 -------------------------------------------------
-                Refresh token is no longer valid.
-                User must log in again.
+                Save the complete NEW session.
                 -------------------------------------------------
                 */
 
-                clearSession();
+                saveSession(data);
 
                 updateUI();
 
 
+                console.log(
+                    "LosOja: Supabase session refreshed successfully."
+                );
+
+
                 return {
-                    success: false,
-                    message:
-                        getErrorMessage(data)
+                    success: true,
+                    user: data.user,
+                    session: data
                 };
-            }
 
 
-            if (
-                !data.access_token ||
-                !data.user
-            ) {
+            } catch (error) {
 
                 console.error(
-                    "LosOja: Refresh response did not contain a valid session.",
-                    data
+                    "LosOja session refresh network error:",
+                    error
                 );
 
 
@@ -546,43 +397,16 @@ async function refreshSupabaseSession() {
                 };
             }
 
-
-            /*
-            -------------------------------------------------
-            Save the NEW Supabase session.
-            -------------------------------------------------
-            */
-
-            saveSession(data);
-
-            updateUI();
+        })();
 
 
-            console.log(
-                "LosOja: Supabase session refreshed successfully."
-            );
+        try {
 
+            return await refreshPromise;
 
-            return {
-                success: true,
-                user: data.user,
-                session: data
-            };
+        } finally {
 
-
-        } catch (error) {
-
-            console.error(
-                "LosOja session refresh network error:",
-                error
-            );
-
-
-            return {
-                success: false,
-                message:
-                    "Could not refresh your session."
-            };
+            refreshPromise = null;
         }
     }
 
@@ -1289,7 +1113,6 @@ async function refreshSupabaseSession() {
 
         element.textContent = "";
 
-
         element.classList.add(
             "hidden"
         );
@@ -1327,7 +1150,6 @@ async function refreshSupabaseSession() {
                 function () {
 
                     openLogin();
-
                 }
             );
         });
@@ -1358,7 +1180,6 @@ async function refreshSupabaseSession() {
                 function () {
 
                     openSignup();
-
                 }
             );
         });
@@ -1389,7 +1210,6 @@ async function refreshSupabaseSession() {
 
 
                     openSignup();
-
                 }
             );
         }
@@ -1420,7 +1240,6 @@ async function refreshSupabaseSession() {
 
 
                     openLogin();
-
                 }
             );
         }
@@ -1519,7 +1338,6 @@ async function refreshSupabaseSession() {
                             "Welcome back!"
                         );
                     }
-
                 }
             );
         }
@@ -1638,7 +1456,6 @@ async function refreshSupabaseSession() {
                             "Account created successfully!"
                         );
                     }
-
                 }
             );
         }
@@ -1660,14 +1477,6 @@ async function refreshSupabaseSession() {
     window.getSupabaseAccessToken =
         getAccessToken;
 
-
-    /*
-    ---------------------------------------------------------
-    New refresh functions.
-    businesses.js can use these when Supabase returns
-    HTTP 401 / JWT expired.
-    ---------------------------------------------------------
-    */
 
     window.refreshSupabaseSession =
         refreshSupabaseSession;
@@ -1724,11 +1533,8 @@ async function refreshSupabaseSession() {
                 ) {
 
                     await refreshSupabaseSession();
-
                 }
-
             }
-
         }
     );
 
