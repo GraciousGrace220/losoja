@@ -178,10 +178,157 @@ Handles:
        SUPABASE REQUEST
     ===================================================== */
 
-    async function supabaseRequest(
-        endpoint,
-        options = {}
+  async function supabaseRequest(
+    endpoint,
+    options = {},
+    allowRetry = true
+) {
+
+    /*
+    ---------------------------------------------------------
+    Make sure we have a current Supabase session before
+    sending authenticated requests.
+    ---------------------------------------------------------
+    */
+
+    if (
+        typeof window.ensureValidSupabaseSession ===
+        "function"
     ) {
+
+        const validSession =
+            await window.ensureValidSupabaseSession();
+
+
+        if (!validSession) {
+
+            throw new Error(
+                "Your session has expired. Please log in again."
+            );
+
+        }
+
+    }
+
+
+    const response =
+        await fetch(
+
+            LOSOJA_FEATURES_URL +
+            endpoint,
+
+            {
+                ...options,
+
+                headers: {
+
+                    ...supabaseHeaders(
+                        options.body !== undefined
+                    ),
+
+                    ...(options.headers || {})
+
+                }
+
+            }
+
+        );
+
+
+    const text =
+        await response.text();
+
+
+    let data = null;
+
+
+    if (text) {
+
+        try {
+
+            data =
+                JSON.parse(text);
+
+        } catch {
+
+            data =
+                text;
+
+        }
+
+    }
+
+
+    /*
+    ---------------------------------------------------------
+    If Supabase rejects the token, refresh the session once
+    and retry the exact request with the NEW token.
+    ---------------------------------------------------------
+    */
+
+    if (
+        response.status === 401 &&
+        allowRetry &&
+        typeof window.refreshSupabaseSession ===
+            "function"
+    ) {
+
+        console.warn(
+            "LosOja: Supabase returned 401. Refreshing session and retrying request..."
+        );
+
+
+        const refreshResult =
+            await window.refreshSupabaseSession();
+
+
+        if (
+            refreshResult &&
+            refreshResult.success
+        ) {
+
+            return supabaseRequest(
+                endpoint,
+                options,
+                false
+            );
+
+        }
+
+    }
+
+
+    if (!response.ok) {
+
+        let message =
+            "Supabase request failed.";
+
+
+        if (
+            data &&
+            typeof data === "object"
+        ) {
+
+            message =
+                data.message ||
+                data.error_description ||
+                data.hint ||
+                data.details ||
+                message;
+
+        }
+
+
+        throw new Error(
+            message
+        );
+
+    }
+
+
+    return data;
+
+}
 
         const response =
             await fetch(
@@ -3051,19 +3198,37 @@ Handles:
        INITIALIZATION
     ===================================================== */
 
-    function init() {
+ async function init() {
 
-        bindFeatureButtons();
+    bindFeatureButtons();
 
-        loadProperties();
+    ensureRideRequestsSection();
 
-        loadRideProviders();
 
-        ensureRideRequestsSection();
+    /*
+    ---------------------------------------------------------
+    Wait for auth.js to finish checking/refreshing the
+    Supabase session before loading feature data.
+    ---------------------------------------------------------
+    */
 
-        loadRideRequests();
+    if (
+        typeof window.ensureValidSupabaseSession ===
+        "function"
+    ) {
+
+        await window.ensureValidSupabaseSession();
 
     }
+
+
+    loadProperties();
+
+    loadRideProviders();
+
+    loadRideRequests();
+
+}
 
 
     /* =====================================================
