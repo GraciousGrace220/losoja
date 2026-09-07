@@ -1,37 +1,52 @@
-/**
- * =========================================================
- * LosOja - Main App
- * Professional UI / Navigation / Modals / Back Button
- * Mobility Request Interface
- * =========================================================
- */
+/* =========================================================
+   LosOja - Main Application JavaScript
+   js/app.js
+
+   Handles:
+   - Main UI
+   - Modals
+   - Mobile navigation
+   - Smooth scrolling
+   - Category buttons
+   - Mobility buttons
+   - Mobility request form
+   - Back-to-top button
+   - Toast notifications
+========================================================= */
 
 (function () {
 
     "use strict";
 
 
+    /* =====================================================
+       APP OBJECT
+    ===================================================== */
+
     const App = {
 
+
         /* =================================================
-           INITIALIZE
+           INITIALIZATION
         ================================================= */
 
         init() {
 
             this.setCurrentYear();
+
             this.bindModalClosers();
+
             this.bindMobileMenu();
+
             this.bindSmoothScroll();
+
             this.bindLogo();
+
             this.createBackButton();
 
-            /*
-             * Mobility
-             */
-            this.bindMobilityButtons();
+            this.bindCategoryButtons();
 
-            console.log("LosOja: App initialized.");
+            this.bindMobilityButtons();
 
         },
 
@@ -42,14 +57,22 @@
 
         setCurrentYear() {
 
-            const year =
+            const yearElements =
+                document.querySelectorAll("[data-current-year]");
+
+            const currentYear =
+                new Date().getFullYear();
+
+            yearElements.forEach(element => {
+                element.textContent = currentYear;
+            });
+
+            const footerYear =
                 document.getElementById("currentYear");
 
-            if (year) {
-                year.textContent =
-                    new Date().getFullYear();
+            if (footerYear) {
+                footerYear.textContent = currentYear;
             }
-
         },
 
 
@@ -66,16 +89,16 @@
                 return;
             }
 
-            logo.addEventListener("click", function (event) {
+            logo.addEventListener("click", event => {
+
+                const href =
+                    logo.getAttribute("href");
+
+                if (!href || href !== "#home") {
+                    return;
+                }
 
                 event.preventDefault();
-
-                if (
-                    typeof window.Dashboard !== "undefined" &&
-                    typeof window.Dashboard.hide === "function"
-                ) {
-                    window.Dashboard.hide();
-                }
 
                 const home =
                     document.getElementById("home");
@@ -87,13 +110,6 @@
                         block: "start"
                     });
 
-                } else {
-
-                    window.scrollTo({
-                        top: 0,
-                        behavior: "smooth"
-                    });
-
                 }
 
             });
@@ -102,67 +118,52 @@
 
 
         /* =================================================
-           MODALS
+           MODAL HELPERS
         ================================================= */
 
-        openModal(id) {
-
-            if (!id) {
-                return;
-            }
-
-            this.closeAllModals();
+        openModal(modalId) {
 
             const modal =
-                document.getElementById(id);
+                document.getElementById(modalId);
 
             if (!modal) {
-
-                console.error(
-                    "LosOja: Modal not found:",
-                    id
-                );
-
                 return;
             }
 
             modal.classList.add("active");
-            modal.classList.add("open");
 
-            document.body.style.overflow = "hidden";
+            document.body.classList.add("modal-open");
 
         },
 
 
-        closeModal(id) {
-
-            const modal =
-                document.getElementById(id);
+        closeModal(modal) {
 
             if (!modal) {
                 return;
             }
 
             modal.classList.remove("active");
-            modal.classList.remove("open");
 
-            document.body.style.overflow = "";
+            if (
+                !document.querySelector(".modal.active")
+            ) {
+                document.body.classList.remove("modal-open");
+            }
 
         },
 
 
         closeAllModals() {
 
-            document
-                .querySelectorAll(".modal")
-                .forEach(function (modal) {
+            const modals =
+                document.querySelectorAll(".modal");
 
-                    modal.classList.remove("active");
-                    modal.classList.remove("open");
+            modals.forEach(modal => {
+                modal.classList.remove("active");
+            });
 
-                });
-
-            document.body.style.overflow = "";
+            document.body.classList.remove("modal-open");
 
         },
 
@@ -173,67 +174,36 @@
 
         bindModalClosers() {
 
-            document
-                .querySelectorAll(".modal-close")
-                .forEach(function (button) {
+            document.addEventListener("click", event => {
 
-                    button.addEventListener(
-                        "click",
-                        function () {
+                const closeButton =
+                    event.target.closest(".modal-close");
 
-                            const modal =
-                                button.closest(".modal");
+                if (closeButton) {
 
-                            if (modal) {
+                    const modal =
+                        closeButton.closest(".modal");
 
-                                modal.classList.remove("active");
-                                modal.classList.remove("open");
+                    this.closeModal(modal);
 
-                            }
-
-                            document.body.style.overflow = "";
-
-                        }
-                    );
-
-                });
+                    return;
+                }
 
 
-            document
-                .querySelectorAll(".modal")
-                .forEach(function (modal) {
+                /*
+                 * Close when clicking the dark backdrop.
+                 */
 
-                    modal.addEventListener(
-                        "click",
-                        function (event) {
+                if (
+                    event.target.classList &&
+                    event.target.classList.contains("modal")
+                ) {
 
-                            if (event.target === modal) {
-
-                                modal.classList.remove("active");
-                                modal.classList.remove("open");
-
-                                document.body.style.overflow = "";
-
-                            }
-
-                        }
-                    );
-
-                });
-
-
-            document.addEventListener(
-                "keydown",
-                function (event) {
-
-                    if (event.key === "Escape") {
-
-                        App.closeAllModals();
-
-                    }
+                    this.closeModal(event.target);
 
                 }
-            );
+
+            });
 
         },
 
@@ -244,413 +214,49 @@
 
         bindMobileMenu() {
 
-            const button =
+            const menuButton =
                 document.getElementById("mobileMenuBtn");
 
-            const nav =
+            const mobileNav =
                 document.getElementById("mobileNav");
 
-            if (!button || !nav) {
+            if (!menuButton || !mobileNav) {
                 return;
             }
 
-            button.setAttribute(
-                "aria-expanded",
-                "false"
-            );
+
+            menuButton.addEventListener("click", () => {
+
+                const isOpen =
+                    mobileNav.classList.toggle("active");
+
+                menuButton.setAttribute(
+                    "aria-expanded",
+                    isOpen ? "true" : "false"
+                );
+
+            });
 
 
-            button.addEventListener(
-                "click",
-                function (event) {
+            /*
+             * Close mobile menu after clicking a link.
+             */
 
-                    event.preventDefault();
+            const links =
+                mobileNav.querySelectorAll("a");
 
-                    const isOpen =
-                        nav.classList.toggle("open");
+            links.forEach(link => {
 
-                    button.setAttribute(
+                link.addEventListener("click", () => {
+
+                    mobileNav.classList.remove("active");
+
+                    menuButton.setAttribute(
                         "aria-expanded",
-                        isOpen ? "true" : "false"
-                    );
-
-                }
-            );
-
-
-            nav.querySelectorAll("a")
-                .forEach(function (link) {
-
-                    link.addEventListener(
-                        "click",
-                        function () {
-
-                            nav.classList.remove("open");
-
-                            button.setAttribute(
-                                "aria-expanded",
-                                "false"
-                            );
-
-                        }
+                        "false"
                     );
 
                 });
-
-        },
-
-
-        /* =================================================
-           SMOOTH NAVIGATION
-        ================================================= */
-
-        bindSmoothScroll() {
-
-            document
-                .querySelectorAll('a[href^="#"]')
-                .forEach(function (anchor) {
-
-                    anchor.addEventListener(
-                        "click",
-                        function (event) {
-
-                            const targetId =
-                                anchor.getAttribute("href");
-
-                            if (
-                                !targetId ||
-                                targetId === "#"
-                            ) {
-                                return;
-                            }
-
-                            /*
-                             * Dashboard is handled by dashboard.js.
-                             */
-                            if (targetId === "#dashboard") {
-                                return;
-                            }
-
-                            const target =
-                                document.querySelector(targetId);
-
-                            if (!target) {
-                                return;
-                            }
-
-                            event.preventDefault();
-
-                            if (
-                                typeof window.Dashboard !== "undefined" &&
-                                typeof window.Dashboard.hide === "function"
-                            ) {
-                                window.Dashboard.hide();
-                            }
-
-                            target.scrollIntoView({
-                                behavior: "smooth",
-                                block: "start"
-                            });
-
-                        }
-                    );
-
-                });
-
-        },
-
-
-        /* =================================================
-           PROFESSIONAL BACK BUTTON
-        ================================================= */
-
-        createBackButton() {
-
-            /*
-             * Do not create duplicates.
-             */
-            if (
-                document.getElementById("losojaBackButton")
-            ) {
-                return;
-            }
-
-
-            const button =
-                document.createElement("button");
-
-            button.type = "button";
-            button.id = "losojaBackButton";
-            button.className = "losoja-back-btn";
-            button.innerHTML =
-                '<span aria-hidden="true">←</span> Back';
-            button.setAttribute(
-                "aria-label",
-                "Go back"
-            );
-
-
-            /*
-             * Put the button at the top of the page.
-             */
-            const header =
-                document.querySelector(".site-header");
-
-            if (header && header.parentNode) {
-
-                header.parentNode.insertBefore(
-                    button,
-                    header.nextSibling
-                );
-
-            } else {
-
-                document.body.prepend(button);
-
-            }
-
-
-            button.addEventListener(
-                "click",
-                function () {
-
-                    /*
-                     * Close an open modal first.
-                     */
-                    const openModal =
-                        document.querySelector(
-                            ".modal.active, .modal.open"
-                        );
-
-                    if (openModal) {
-
-                        App.closeModal(openModal.id);
-
-                        return;
-
-                    }
-
-
-                    /*
-                     * If dashboard is visible,
-                     * return to the main site.
-                     */
-                    const dashboard =
-                        document.getElementById("dashboard");
-
-                    if (
-                        dashboard &&
-                        !dashboard.classList.contains("hidden")
-                    ) {
-
-                        if (
-                            typeof window.Dashboard !== "undefined" &&
-                            typeof window.Dashboard.hide === "function"
-                        ) {
-
-                            window.Dashboard.hide();
-
-                        }
-
-                        const home =
-                            document.getElementById("home");
-
-                        if (home) {
-
-                            home.scrollIntoView({
-                                behavior: "smooth",
-                                block: "start"
-                            });
-
-                        }
-
-                        return;
-
-                    }
-
-
-                    /*
-                     * Normal browser history.
-                     */
-                    if (window.history.length > 1) {
-
-                        window.history.back();
-
-                    } else {
-
-                        const home =
-                            document.getElementById("home");
-
-                        if (home) {
-
-                            home.scrollIntoView({
-                                behavior: "smooth",
-                                block: "start"
-                            });
-
-                        } else {
-
-                            window.scrollTo({
-                                top: 0,
-                                behavior: "smooth"
-                            });
-
-                        }
-
-                    }
-
-                }
-            );
-
-        },
-
-
-        /* =================================================
-           TOAST
-        ================================================= */
-
-        showToast(message, duration) {
-
-            const toast =
-                document.getElementById("toast");
-
-            if (!toast) {
-                return;
-            }
-
-            if (
-                typeof duration !== "number"
-            ) {
-                duration = 3000;
-            }
-
-            toast.textContent =
-                message || "";
-
-            toast.classList.remove("hidden");
-            toast.classList.add("show");
-
-
-            clearTimeout(this._toastTimer);
-
-
-            this._toastTimer =
-                setTimeout(
-                    function () {
-
-                        toast.classList.add("hidden");
-                        toast.classList.remove("show");
-
-                    },
-                    duration
-                );
-
-        },
-
-
-        /* =================================================
-           GENERATE ID
-        ================================================= */
-
-        generateId() {
-
-            return (
-                "id_" +
-                Date.now().toString(36) +
-                "_" +
-                Math.random()
-                    .toString(36)
-                    .substring(2, 9)
-            );
-
-        },
-
-
-        /* =================================================
-           ESCAPE HTML
-        ================================================= */
-
-        escapeHtml(value) {
-
-            if (
-                value === null ||
-                value === undefined
-            ) {
-                return "";
-            }
-
-            const div =
-                document.createElement("div");
-
-            div.textContent =
-                String(value);
-
-            return div.innerHTML;
-
-        },
-
-
-        /* =================================================
-           FORMAT DATE
-        ================================================= */
-
-        formatDate(iso) {
-
-            if (!iso) {
-                return "";
-            }
-
-            try {
-
-                return new Date(iso)
-                    .toLocaleDateString(
-                        "en-NG",
-                        {
-                            year: "numeric",
-                            month: "short",
-                            day: "numeric"
-                        }
-                    );
-
-            } catch (error) {
-
-                return "";
-
-            }
-
-        },
-
-
-        /* =================================================
-           MOBILITY
-        ================================================= */
-
-        bindMobilityButtons() {
-
-            const buttons =
-                document.querySelectorAll(".mobility-btn");
-
-            if (!buttons.length) {
-                return;
-            }
-
-            buttons.forEach(function (button) {
-
-                button.addEventListener(
-                    "click",
-                    function (event) {
-
-                        event.preventDefault();
-
-                        const type =
-                            button.getAttribute(
-                                "data-mobility"
-                            );
-
-                        App.openMobilityRequest(type);
-
-                    }
-                );
 
             });
 
@@ -658,40 +264,226 @@
 
 
         /* =================================================
-           MOBILITY REQUEST MODAL
+           SMOOTH SCROLL
         ================================================= */
 
-        createMobilityModal() {
+        bindSmoothScroll() {
 
-            /*
-             * Do not create the modal more than once.
-             */
-            if (
-                document.getElementById(
-                    "mobilityRequestModal"
-                )
-            ) {
+            document.addEventListener("click", event => {
+
+                const link =
+                    event.target.closest('a[href^="#"]');
+
+                if (!link) {
+                    return;
+                }
+
+
+                const href =
+                    link.getAttribute("href");
+
+                if (
+                    !href ||
+                    href === "#" ||
+                    href === "#loginModal" ||
+                    href === "#signupModal"
+                ) {
+                    return;
+                }
+
+
+                const target =
+                    document.querySelector(href);
+
+                if (!target) {
+                    return;
+                }
+
+
+                event.preventDefault();
+
+                target.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start"
+                });
+
+            });
+
+        },
+
+
+        /* =================================================
+           CATEGORY BUTTONS
+        ================================================= */
+
+        bindCategoryButtons() {
+
+            const categoryButtons =
+                document.querySelectorAll(".category-card");
+
+            if (!categoryButtons.length) {
                 return;
             }
 
 
-            const modal =
+            categoryButtons.forEach(button => {
+
+                button.addEventListener("click", () => {
+
+                    const category =
+                        button.getAttribute("data-category");
+
+                    if (!category) {
+                        return;
+                    }
+
+
+                    /*
+                     * Put the selected category into
+                     * the existing search box.
+                     */
+
+                    const searchInput =
+                        document.getElementById("searchInput");
+
+                    if (searchInput) {
+                        searchInput.value = category;
+                    }
+
+
+                    /*
+                     * Clear location so category search
+                     * is not accidentally restricted.
+                     */
+
+                    const locationInput =
+                        document.getElementById("locationInput");
+
+                    if (locationInput) {
+                        locationInput.value = "";
+                    }
+
+
+                    /*
+                     * Use the existing search form.
+                     * This allows businesses.js to handle
+                     * the actual business filtering.
+                     */
+
+                    const searchForm =
+                        document.getElementById("searchForm");
+
+                    if (searchForm) {
+
+                        if (
+                            typeof searchForm.requestSubmit ===
+                            "function"
+                        ) {
+
+                            searchForm.requestSubmit();
+
+                        } else {
+
+                            searchForm.dispatchEvent(
+                                new Event("submit", {
+                                    bubbles: true,
+                                    cancelable: true
+                                })
+                            );
+
+                        }
+
+                    }
+
+
+                    /*
+                     * Scroll to businesses after
+                     * selecting a category.
+                     */
+
+                    const businessesSection =
+                        document.getElementById("businesses");
+
+                    if (businessesSection) {
+
+                        setTimeout(() => {
+
+                            businessesSection.scrollIntoView({
+                                behavior: "smooth",
+                                block: "start"
+                            });
+
+                        }, 100);
+
+                    }
+
+                });
+
+            });
+
+        },
+
+
+        /* =================================================
+           MOBILITY BUTTONS
+        ================================================= */
+
+        bindMobilityButtons() {
+
+            const mobilityButtons =
+                document.querySelectorAll(".mobility-btn");
+
+            if (!mobilityButtons.length) {
+                return;
+            }
+
+
+            mobilityButtons.forEach(button => {
+
+                button.addEventListener("click", () => {
+
+                    const type =
+                        button.getAttribute("data-mobility");
+
+                    if (!type) {
+                        return;
+                    }
+
+                    this.openMobilityRequest(type);
+
+                });
+
+            });
+
+        },
+
+
+        /* =================================================
+           CREATE MOBILITY MODAL
+        ================================================= */
+
+        createMobilityModal() {
+
+            let modal =
+                document.getElementById(
+                    "mobilityRequestModal"
+                );
+
+            if (modal) {
+                return modal;
+            }
+
+
+            modal =
                 document.createElement("div");
 
-            modal.id =
-                "mobilityRequestModal";
+            modal.className = "modal";
 
-            modal.className =
-                "modal";
+            modal.id = "mobilityRequestModal";
 
 
             modal.innerHTML = `
-                <div
-                    class="modal-content"
-                    role="dialog"
-                    aria-modal="true"
-                    aria-labelledby="mobilityRequestTitle"
-                >
+                <div class="modal-content large">
 
                     <button
                         type="button"
@@ -701,43 +493,32 @@
                         ×
                     </button>
 
-                    <div class="modal-header">
+                    <h2 id="mobilityRequestTitle">
+                        Request Mobility
+                    </h2>
 
-                        <h2 id="mobilityRequestTitle">
-                            Request a Ride
-                        </h2>
+                    <p
+                        id="mobilityRequestDescription"
+                        style="margin-bottom:1.5rem;color:#6b7280;"
+                    ></p>
 
-                        <p id="mobilityRequestSubtitle">
-                            Tell us where you want to go.
-                        </p>
-
-                    </div>
-
-
-                    <form
-                        id="mobilityRequestForm"
-                        novalidate
-                    >
+                    <form id="mobilityRequestForm">
 
                         <input
                             type="hidden"
                             id="mobilityType"
-                            name="mobilityType"
                         >
-
 
                         <div class="form-group">
 
                             <label for="mobilityPickup">
-                                Pickup Location
+                                Pickup Location *
                             </label>
 
                             <input
                                 type="text"
                                 id="mobilityPickup"
-                                name="pickup"
                                 placeholder="Where should we pick you up?"
-                                autocomplete="street-address"
                                 required
                             >
 
@@ -747,15 +528,13 @@
                         <div class="form-group">
 
                             <label for="mobilityDestination">
-                                Destination
+                                Destination *
                             </label>
 
                             <input
                                 type="text"
                                 id="mobilityDestination"
-                                name="destination"
                                 placeholder="Where are you going?"
-                                autocomplete="street-address"
                                 required
                             >
 
@@ -765,15 +544,13 @@
                         <div class="form-group">
 
                             <label for="mobilityPhone">
-                                Phone Number
+                                Phone Number *
                             </label>
 
                             <input
                                 type="tel"
                                 id="mobilityPhone"
-                                name="phone"
                                 placeholder="Your phone number"
-                                autocomplete="tel"
                                 required
                             >
 
@@ -784,31 +561,28 @@
 
                             <label for="mobilityNote">
                                 Additional Note
-                                <span>(optional)</span>
                             </label>
 
                             <textarea
                                 id="mobilityNote"
-                                name="note"
                                 rows="3"
-                                placeholder="Anything the driver should know?"
+                                placeholder="Any additional information..."
                             ></textarea>
 
                         </div>
 
 
-                        <div
+                        <p
                             id="mobilityRequestError"
                             class="form-error hidden"
-                            role="alert"
-                        ></div>
+                        ></p>
 
 
                         <button
                             type="submit"
-                            class="btn btn-primary"
+                            class="btn btn-primary form-submit"
                         >
-                            Continue Request
+                            Submit Request
                         </button>
 
                     </form>
@@ -823,6 +597,7 @@
             /*
              * Close button.
              */
+
             const closeButton =
                 modal.querySelector(".modal-close");
 
@@ -830,12 +605,8 @@
 
                 closeButton.addEventListener(
                     "click",
-                    function () {
-
-                        App.closeModal(
-                            "mobilityRequestModal"
-                        );
-
+                    () => {
+                        this.closeModal(modal);
                     }
                 );
 
@@ -843,46 +614,44 @@
 
 
             /*
-             * Close when clicking outside modal content.
+             * Close when clicking backdrop.
              */
-            modal.addEventListener(
-                "click",
-                function (event) {
 
-                    if (event.target === modal) {
+            modal.addEventListener("click", event => {
 
-                        App.closeModal(
-                            "mobilityRequestModal"
-                        );
-
-                    }
-
+                if (event.target === modal) {
+                    this.closeModal(modal);
                 }
-            );
+
+            });
 
 
             /*
-             * Form submission.
+             * Mobility form.
              */
+
             const form =
-                document.getElementById(
-                    "mobilityRequestForm"
+                modal.querySelector(
+                    "#mobilityRequestForm"
                 );
 
             if (form) {
 
                 form.addEventListener(
                     "submit",
-                    function (event) {
+                    event => {
 
                         event.preventDefault();
 
-                        App.handleMobilityRequest();
+                        this.handleMobilityRequest();
 
                     }
                 );
 
             }
+
+
+            return modal;
 
         },
 
@@ -893,122 +662,97 @@
 
         openMobilityRequest(type) {
 
-            const validTypes = [
-                "trycircle",
-                "bike",
-                "cab"
-            ];
-
             /*
-             * Rent a Truck is intentionally not activated
-             * yet. We will build it separately.
+             * Truck is not connected to a request
+             * system yet. Keep the button working
+             * without pretending a booking exists.
              */
-            if (
-                !validTypes.includes(type)
-            ) {
 
-                if (type === "truck") {
+            if (type === "truck") {
 
-                    this.showToast(
-                        "Rent a Truck is coming soon."
-                    );
-
-                }
+                this.showToast(
+                    "Rent a Truck is coming soon.",
+                    "info"
+                );
 
                 return;
 
             }
 
 
-            this.createMobilityModal();
+            const modal =
+                this.createMobilityModal();
+
+            if (!modal) {
+                return;
+            }
 
 
             const title =
-                document.getElementById(
-                    "mobilityRequestTitle"
+                modal.querySelector(
+                    "#mobilityRequestTitle"
                 );
 
-            const subtitle =
-                document.getElementById(
-                    "mobilityRequestSubtitle"
+            const description =
+                modal.querySelector(
+                    "#mobilityRequestDescription"
                 );
 
             const typeInput =
-                document.getElementById(
-                    "mobilityType"
+                modal.querySelector(
+                    "#mobilityType"
                 );
 
 
-            const config = {
-
-                trycircle: {
-                    title: "TryCircle",
-                    subtitle:
-                        "Request a TryCircle ride."
-                },
-
-                bike: {
-                    title: "Request a Bike",
-                    subtitle:
-                        "Request a bike ride from your pickup location."
-                },
-
-                cab: {
-                    title: "Request a Cab",
-                    subtitle:
-                        "Request a cab from your pickup location."
-                }
-
-            };
-
-
-            const selected =
-                config[type] || config.trycircle;
+            const name =
+                this.getMobilityName(type);
 
 
             if (title) {
                 title.textContent =
-                    selected.title;
-            }
-
-            if (subtitle) {
-                subtitle.textContent =
-                    selected.subtitle;
-            }
-
-            if (typeInput) {
-                typeInput.value =
-                    type;
+                    `${name} Request`;
             }
 
 
-            /*
-             * Clear previous form state.
-             */
-            const form =
-                document.getElementById(
-                    "mobilityRequestForm"
-                );
+            if (description) {
 
-            if (form) {
+                if (type === "trycircle") {
 
-                form.reset();
+                    description.textContent =
+                        "Request a TryCircle ride by entering your pickup and destination.";
 
-                /*
-                 * reset() clears the hidden field,
-                 * so restore it.
-                 */
-                if (typeInput) {
-                    typeInput.value =
-                        type;
+                } else if (type === "bike") {
+
+                    description.textContent =
+                        "Request a bike ride by entering your pickup and destination.";
+
+                } else if (type === "cab") {
+
+                    description.textContent =
+                        "Request a cab by entering your pickup and destination.";
+
+                } else {
+
+                    description.textContent =
+                        "Enter your trip details below.";
+
                 }
 
             }
 
 
+            if (typeInput) {
+                typeInput.value = type;
+            }
+
+
+            /*
+             * Clear old error.
+             */
+
             const error =
-                document.getElementById(
-                    "mobilityRequestError"
+                modal.querySelector(
+                    "#mobilityRequestError"
                 );
 
             if (error) {
@@ -1024,6 +768,24 @@
                 "mobilityRequestModal"
             );
 
+
+            /*
+             * Focus pickup field.
+             */
+
+            setTimeout(() => {
+
+                const pickup =
+                    modal.querySelector(
+                        "#mobilityPickup"
+                    );
+
+                if (pickup) {
+                    pickup.focus();
+                }
+
+            }, 100);
+
         },
 
 
@@ -1032,6 +794,16 @@
         ================================================= */
 
         handleMobilityRequest() {
+
+            const modal =
+                document.getElementById(
+                    "mobilityRequestModal"
+                );
+
+            if (!modal) {
+                return;
+            }
+
 
             const type =
                 document.getElementById(
@@ -1072,47 +844,16 @@
             /*
              * Validation.
              */
-            if (!type) {
+
+            if (
+                !type ||
+                !pickup ||
+                !destination ||
+                !phone
+            ) {
 
                 this.showMobilityError(
-                    "Please select a mobility service.",
-                    error
-                );
-
-                return;
-
-            }
-
-
-            if (!pickup) {
-
-                this.showMobilityError(
-                    "Please enter your pickup location.",
-                    error
-                );
-
-                return;
-
-            }
-
-
-            if (!destination) {
-
-                this.showMobilityError(
-                    "Please enter your destination.",
-                    error
-                );
-
-                return;
-
-            }
-
-
-            if (!phone) {
-
-                this.showMobilityError(
-                    "Please enter your phone number.",
-                    error
+                    "Please fill in all required fields."
                 );
 
                 return;
@@ -1121,82 +862,95 @@
 
 
             /*
-             * At this stage we deliberately do not send
-             * anything to Supabase.
+             * Store the request locally for now.
              *
-             * We will connect this to the proper
-             * mobility_requests table after confirming
-             * the database structure.
+             * This does NOT claim to be a real booking.
+             * It allows the interface to work until
+             * a mobility database table is connected.
              */
-            const request = {
 
-                id: this.generateId(),
-
-                type: type,
-
-                pickup: pickup,
-
-                destination: destination,
-
-                phone: phone,
-
-                note: note,
-
-                created_at:
-                    new Date().toISOString()
-
-            };
-
-
-            /*
-             * Keep the request in browser memory/storage
-             * temporarily so the interface can be tested
-             * without creating an incorrect database record.
-             */
             try {
+
+                const storageKey =
+                    "losoja_mobility_test_requests";
 
                 const existing =
                     JSON.parse(
-                        localStorage.getItem(
-                            "losoja_mobility_test_requests"
-                        )
+                        localStorage.getItem(storageKey)
                     ) || [];
 
 
-                existing.push(request);
+                existing.push({
+
+                    id:
+                        this.generateId(),
+
+                    type:
+                        type,
+
+                    pickup:
+                        pickup,
+
+                    destination:
+                        destination,
+
+                    phone:
+                        phone,
+
+                    note:
+                        note,
+
+                    created_at:
+                        new Date().toISOString()
+
+                });
 
 
                 localStorage.setItem(
-                    "losoja_mobility_test_requests",
+                    storageKey,
                     JSON.stringify(existing)
                 );
 
+
             } catch (storageError) {
 
-                console.warn(
-                    "LosOja: Could not save temporary mobility request.",
+                console.error(
+                    "LosOja mobility storage error:",
                     storageError
                 );
 
             }
 
 
-            this.closeModal(
-                "mobilityRequestModal"
-            );
+            /*
+             * Success.
+             */
+
+            const form =
+                document.getElementById(
+                    "mobilityRequestForm"
+                );
+
+            if (form) {
+                form.reset();
+            }
+
+
+            if (error) {
+
+                error.textContent = "";
+
+                error.classList.add("hidden");
+
+            }
+
+
+            this.closeModal(modal);
 
 
             this.showToast(
-                "Your " +
-                this.getMobilityName(type) +
-                " request has been received.",
-                4000
-            );
-
-
-            console.log(
-                "LosOja Mobility Request:",
-                request
+                `${this.getMobilityName(type)} request submitted successfully.`,
+                "success"
             );
 
         },
@@ -1206,18 +960,20 @@
            MOBILITY ERROR
         ================================================= */
 
-        showMobilityError(message, element) {
+        showMobilityError(message) {
 
-            if (!element) {
+            const error =
+                document.getElementById(
+                    "mobilityRequestError"
+                );
+
+            if (!error) {
                 return;
             }
 
-            element.textContent =
-                message;
+            error.textContent = message;
 
-            element.classList.remove(
-                "hidden"
-            );
+            error.classList.remove("hidden");
 
         },
 
@@ -1228,54 +984,307 @@
 
         getMobilityName(type) {
 
-            switch (type) {
+            const names = {
 
-                case "trycircle":
-                    return "TryCircle";
+                trycircle:
+                    "TryCircle",
 
-                case "bike":
-                    return "Bike";
+                bike:
+                    "Bike",
 
-                case "cab":
-                    return "Cab";
+                cab:
+                    "Cab",
 
-                case "truck":
-                    return "Truck";
+                truck:
+                    "Rent a Truck"
 
-                default:
-                    return "Mobility";
+            };
+
+
+            return (
+                names[type] ||
+                "Mobility"
+            );
+
+        },
+
+
+        /* =================================================
+           BACK-TO-TOP BUTTON
+        ================================================= */
+
+        createBackButton() {
+
+            /*
+             * Do not create duplicates.
+             */
+
+            if (
+                document.getElementById(
+                    "losojaBackButton"
+                )
+            ) {
+                return;
+            }
+
+
+            const button =
+                document.createElement("button");
+
+            button.type = "button";
+
+            button.id =
+                "losojaBackButton";
+
+            button.className =
+                "back-to-top";
+
+            button.setAttribute(
+                "aria-label",
+                "Back to top"
+            );
+
+            button.innerHTML =
+                "↑";
+
+
+            /*
+             * Basic inline positioning.
+             * Existing CSS can override this.
+             */
+
+            button.style.position = "fixed";
+
+            button.style.right = "20px";
+
+            button.style.bottom = "20px";
+
+            button.style.zIndex = "999";
+
+
+            document.body.appendChild(button);
+
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    window.scrollTo({
+
+                        top: 0,
+
+                        behavior: "smooth"
+
+                    });
+
+                }
+            );
+
+
+            const updateVisibility =
+                () => {
+
+                    if (window.scrollY > 400) {
+
+                        button.classList.add("show");
+
+                        button.style.display =
+                            "flex";
+
+                    } else {
+
+                        button.classList.remove("show");
+
+                        button.style.display =
+                            "none";
+
+                    }
+
+                };
+
+
+            window.addEventListener(
+                "scroll",
+                updateVisibility,
+                { passive: true }
+            );
+
+
+            updateVisibility();
+
+        },
+
+
+        /* =================================================
+           TOAST NOTIFICATION
+        ================================================= */
+
+        showToast(message, type = "info") {
+
+            /*
+             * Use existing LosOja notification system
+             * when available.
+             */
+
+            if (
+                typeof window.showNotification ===
+                "function"
+            ) {
+
+                window.showNotification(
+                    message,
+                    type
+                );
+
+                return;
 
             }
 
+
+            /*
+             * Remove an existing app toast.
+             */
+
+            const oldToast =
+                document.getElementById(
+                    "losojaAppToast"
+                );
+
+            if (oldToast) {
+                oldToast.remove();
+            }
+
+
+            const toast =
+                document.createElement("div");
+
+            toast.id =
+                "losojaAppToast";
+
+            toast.textContent =
+                message;
+
+
+            toast.style.position =
+                "fixed";
+
+            toast.style.left =
+                "50%";
+
+            toast.style.bottom =
+                "30px";
+
+            toast.style.transform =
+                "translateX(-50%)";
+
+            toast.style.zIndex =
+                "10000";
+
+            toast.style.padding =
+                "14px 20px";
+
+            toast.style.borderRadius =
+                "8px";
+
+            toast.style.background =
+                type === "success"
+                    ? "#087a3e"
+                    : "#374151";
+
+            toast.style.color =
+                "#ffffff";
+
+            toast.style.fontWeight =
+                "600";
+
+            toast.style.boxShadow =
+                "0 8px 25px rgba(0,0,0,0.15)";
+
+
+            document.body.appendChild(toast);
+
+
+            setTimeout(() => {
+
+                if (toast) {
+                    toast.remove();
+                }
+
+            }, 3500);
+
+        },
+
+
+        /* =================================================
+           GENERATE ID
+        ================================================= */
+
+        generateId() {
+
+            return (
+                Date.now().toString(36) +
+                Math.random()
+                    .toString(36)
+                    .substring(2, 10)
+            );
+
+        },
+
+
+        /* =================================================
+           ESCAPE HTML
+        ================================================= */
+
+        escapeHtml(value) {
+
+            if (
+                value === null ||
+                value === undefined
+            ) {
+                return "";
+            }
+
+
+            return String(value)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+
+        },
+
+
+        /* =================================================
+           FORMAT DATE
+        ================================================= */
+
+        formatDate(dateValue) {
+
+            if (!dateValue) {
+                return "";
+            }
+
+
+            const date =
+                new Date(dateValue);
+
+
+            if (Number.isNaN(date.getTime())) {
+                return "";
+            }
+
+
+            return date.toLocaleDateString(
+                "en-NG",
+                {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric"
+                }
+            );
+
         }
-
-    };
-
-
-    /* =====================================================
-       GLOBAL COMPATIBILITY
-    ===================================================== */
-
-    window.App = App;
-
-
-    window.openModal = function (id) {
-
-        App.openModal(id);
-
-    };
-
-
-    window.closeModal = function (id) {
-
-        App.closeModal(id);
-
-    };
-
-
-    window.showNotification = function (message) {
-
-        App.showToast(message);
 
     };
 
@@ -1284,26 +1293,21 @@
        START APPLICATION
     ===================================================== */
 
-    if (
-        document.readyState === "loading"
-    ) {
+    document.addEventListener(
+        "DOMContentLoaded",
+        () => {
 
-        document.addEventListener(
-            "DOMContentLoaded",
-            function () {
+            App.init();
 
-                App.init();
+        }
+    );
 
-            },
-            {
-                once: true
-            }
-        );
 
-    } else {
+    /* =====================================================
+       GLOBAL APP ACCESS
+    ===================================================== */
 
-        App.init();
+    window.App = App;
 
-    }
 
 })();
