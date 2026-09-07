@@ -250,7 +250,30 @@ Handles:
        REFRESH SUPABASE SESSION
     ===================================================== */
 
-    async function refreshSupabaseSession() {
+   let refreshPromise = null;
+
+
+async function refreshSupabaseSession() {
+
+    /*
+    ---------------------------------------------------------
+    Prevent multiple simultaneous refresh requests.
+
+    If Properties, Ride Providers, and Ride Requests all
+    notice an expired token at the same time, they will share
+    the same refresh operation instead of sending several
+    refresh requests.
+    ---------------------------------------------------------
+    */
+
+    if (refreshPromise) {
+
+        return refreshPromise;
+
+    }
+
+
+    refreshPromise = (async function () {
 
         const session =
             getSession();
@@ -262,7 +285,167 @@ Handles:
                 success: false,
                 message: "No active session."
             };
+
         }
+
+
+        const refreshToken =
+            session.refresh_token;
+
+
+        if (!refreshToken) {
+
+            console.warn(
+                "LosOja: No refresh token available."
+            );
+
+
+            clearSession();
+
+            updateUI();
+
+
+            return {
+                success: false,
+                message:
+                    "Your session has expired. Please log in again."
+            };
+
+        }
+
+
+        try {
+
+            console.log(
+                "LosOja: Refreshing Supabase session..."
+            );
+
+
+            const response =
+                await fetch(
+
+                    SUPABASE_URL +
+                    "/auth/v1/token?grant_type=refresh_token",
+
+                    {
+                        method: "POST",
+
+                        headers:
+                            headers(),
+
+                        body:
+                            JSON.stringify({
+                                refresh_token:
+                                    refreshToken
+                            })
+                    }
+
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                console.error(
+                    "LosOja session refresh error:",
+                    data
+                );
+
+
+                clearSession();
+
+                updateUI();
+
+
+                return {
+                    success: false,
+                    message:
+                        getErrorMessage(data)
+                };
+
+            }
+
+
+            if (
+                !data.access_token ||
+                !data.user
+            ) {
+
+                console.error(
+                    "LosOja: Refresh response did not contain a valid session.",
+                    data
+                );
+
+
+                return {
+                    success: false,
+                    message:
+                        "Could not refresh your session."
+                };
+
+            }
+
+
+            /*
+            -------------------------------------------------
+            Save the complete NEW session.
+
+            Supabase can return a new refresh_token, so we
+            must replace the old stored session completely.
+            -------------------------------------------------
+            */
+
+            saveSession(data);
+
+
+            updateUI();
+
+
+            console.log(
+                "LosOja: Supabase session refreshed successfully."
+            );
+
+
+            return {
+                success: true,
+                user: data.user,
+                session: data
+            };
+
+
+        } catch (error) {
+
+            console.error(
+                "LosOja session refresh network error:",
+                error
+            );
+
+
+            return {
+                success: false,
+                message:
+                    "Could not refresh your session."
+            };
+
+        }
+
+    })();
+
+
+    try {
+
+        return await refreshPromise;
+
+    } finally {
+
+        refreshPromise = null;
+
+    }
+
+}
 
 
         const refreshToken =
