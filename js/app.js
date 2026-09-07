@@ -25,7 +25,6 @@
 
     const App = {
 
-
         /* =================================================
            INITIALIZATION
         ================================================= */
@@ -73,6 +72,7 @@
             if (footerYear) {
                 footerYear.textContent = currentYear;
             }
+
         },
 
 
@@ -145,9 +145,7 @@
 
             modal.classList.remove("active");
 
-            if (
-                !document.querySelector(".modal.active")
-            ) {
+            if (!document.querySelector(".modal.active")) {
                 document.body.classList.remove("modal-open");
             }
 
@@ -292,8 +290,19 @@
                 }
 
 
-                const target =
-                    document.querySelector(href);
+                let target = null;
+
+                try {
+
+                    target =
+                        document.querySelector(href);
+
+                } catch (error) {
+
+                    return;
+
+                }
+
 
                 if (!target) {
                     return;
@@ -314,12 +323,29 @@
 
         /* =================================================
            CATEGORY BUTTONS
+           
+           IMPORTANT:
+           These buttons directly call the existing
+           businesses.js category filter.
+
+           This fixes:
+           Food
+           Fashion
+           Technology
+           Beauty
+           Health
+           Education
+           Services
+           Shopping
+           Other
         ================================================= */
 
         bindCategoryButtons() {
 
             const categoryButtons =
-                document.querySelectorAll(".category-card");
+                document.querySelectorAll(
+                    ".category-card[data-category]"
+                );
 
             if (!categoryButtons.length) {
                 return;
@@ -328,10 +354,31 @@
 
             categoryButtons.forEach(button => {
 
-                button.addEventListener("click", () => {
+                /*
+                 * Prevent duplicate event binding.
+                 */
+
+                if (
+                    button.dataset.losojaCategoryReady === "true"
+                ) {
+                    return;
+                }
+
+                button.dataset.losojaCategoryReady = "true";
+
+
+                button.addEventListener("click", event => {
+
+                    event.preventDefault();
+
 
                     const category =
-                        button.getAttribute("data-category");
+                        (
+                            button.getAttribute(
+                                "data-category"
+                            ) || ""
+                        ).trim();
+
 
                     if (!category) {
                         return;
@@ -339,12 +386,67 @@
 
 
                     /*
-                     * Put the selected category into
-                     * the existing search box.
+                     * Highlight the selected category.
+                     */
+
+                    categoryButtons.forEach(card => {
+                        card.classList.remove("active");
+                    });
+
+                    button.classList.add("active");
+
+
+                    /*
+                     * Use the existing business filtering
+                     * system directly.
+                     */
+
+                    if (
+                        window.LosOjaBusinesses &&
+                        typeof
+                            window.LosOjaBusinesses.filterByCategory
+                            === "function"
+                    ) {
+
+                        window.LosOjaBusinesses.filterByCategory(
+                            category
+                        );
+
+                    } else if (
+                        typeof window.filterBusinesses ===
+                        "function"
+                    ) {
+
+                        window.filterBusinesses(category);
+
+                    } else {
+
+                        /*
+                         * Businesses.js has not loaded yet.
+                         */
+
+                        console.error(
+                            "LosOja: Business filtering system is not available."
+                        );
+
+                        this.showToast(
+                            "Businesses are still loading. Please try again.",
+                            "info"
+                        );
+
+                        return;
+
+                    }
+
+
+                    /*
+                     * Update the search box for visual feedback.
                      */
 
                     const searchInput =
-                        document.getElementById("searchInput");
+                        document.getElementById(
+                            "searchInput"
+                        );
 
                     if (searchInput) {
                         searchInput.value = category;
@@ -352,12 +454,14 @@
 
 
                     /*
-                     * Clear location so category search
-                     * is not accidentally restricted.
+                     * Clear location because category filtering
+                     * should not accidentally restrict results.
                      */
 
                     const locationInput =
-                        document.getElementById("locationInput");
+                        document.getElementById(
+                            "locationInput"
+                        );
 
                     if (locationInput) {
                         locationInput.value = "";
@@ -365,44 +469,13 @@
 
 
                     /*
-                     * Use the existing search form.
-                     * This allows businesses.js to handle
-                     * the actual business filtering.
-                     */
-
-                    const searchForm =
-                        document.getElementById("searchForm");
-
-                    if (searchForm) {
-
-                        if (
-                            typeof searchForm.requestSubmit ===
-                            "function"
-                        ) {
-
-                            searchForm.requestSubmit();
-
-                        } else {
-
-                            searchForm.dispatchEvent(
-                                new Event("submit", {
-                                    bubbles: true,
-                                    cancelable: true
-                                })
-                            );
-
-                        }
-
-                    }
-
-
-                    /*
-                     * Scroll to businesses after
-                     * selecting a category.
+                     * Scroll to the business results.
                      */
 
                     const businessesSection =
-                        document.getElementById("businesses");
+                        document.getElementById(
+                            "businesses"
+                        );
 
                     if (businessesSection) {
 
@@ -413,7 +486,7 @@
                                 block: "start"
                             });
 
-                        }, 100);
+                        }, 50);
 
                     }
 
@@ -431,7 +504,9 @@
         bindMobilityButtons() {
 
             const mobilityButtons =
-                document.querySelectorAll(".mobility-btn");
+                document.querySelectorAll(
+                    ".mobility-btn"
+                );
 
             if (!mobilityButtons.length) {
                 return;
@@ -440,14 +515,29 @@
 
             mobilityButtons.forEach(button => {
 
+                if (
+                    button.dataset.losojaMobilityReady ===
+                    "true"
+                ) {
+                    return;
+                }
+
+                button.dataset.losojaMobilityReady =
+                    "true";
+
+
                 button.addEventListener("click", () => {
 
                     const type =
-                        button.getAttribute("data-mobility");
+                        button.getAttribute(
+                            "data-mobility"
+                        );
+
 
                     if (!type) {
                         return;
                     }
+
 
                     this.openMobilityRequest(type);
 
@@ -469,6 +559,7 @@
                     "mobilityRequestModal"
                 );
 
+
             if (modal) {
                 return modal;
             }
@@ -479,7 +570,8 @@
 
             modal.className = "modal";
 
-            modal.id = "mobilityRequestModal";
+            modal.id =
+                "mobilityRequestModal";
 
 
             modal.innerHTML = `
@@ -599,7 +691,10 @@
              */
 
             const closeButton =
-                modal.querySelector(".modal-close");
+                modal.querySelector(
+                    ".modal-close"
+                );
+
 
             if (closeButton) {
 
@@ -617,13 +712,16 @@
              * Close when clicking backdrop.
              */
 
-            modal.addEventListener("click", event => {
+            modal.addEventListener(
+                "click",
+                event => {
 
-                if (event.target === modal) {
-                    this.closeModal(modal);
+                    if (event.target === modal) {
+                        this.closeModal(modal);
+                    }
+
                 }
-
-            });
+            );
 
 
             /*
@@ -634,6 +732,7 @@
                 modal.querySelector(
                     "#mobilityRequestForm"
                 );
+
 
             if (form) {
 
@@ -662,26 +761,27 @@
 
         openMobilityRequest(type) {
 
-            /*
-             * Truck is not connected to a request
-             * system yet. Keep the button working
-             * without pretending a booking exists.
-             */
+            const validTypes = [
+                "trycircle",
+                "bike",
+                "cab",
+                "truck"
+            ];
 
-            if (type === "truck") {
 
-                this.showToast(
-                    "Rent a Truck is coming soon.",
-                    "info"
-                );
-
+            if (!validTypes.includes(type)) {
                 return;
-
             }
 
 
+            /*
+             * Truck will use the same request system.
+             * We no longer show "coming soon".
+             */
+
             const modal =
                 this.createMobilityModal();
+
 
             if (!modal) {
                 return;
@@ -693,10 +793,12 @@
                     "#mobilityRequestTitle"
                 );
 
+
             const description =
                 modal.querySelector(
                     "#mobilityRequestDescription"
                 );
+
 
             const typeInput =
                 modal.querySelector(
@@ -709,40 +811,83 @@
 
 
             if (title) {
+
                 title.textContent =
                     `${name} Request`;
+
             }
 
 
             if (description) {
 
-                if (type === "trycircle") {
+                const descriptions = {
 
-                    description.textContent =
-                        "Request a TryCircle ride by entering your pickup and destination.";
+                    trycircle:
+                        "Request a TryCircle ride by entering your pickup and destination.",
 
-                } else if (type === "bike") {
+                    bike:
+                        "Request a bike ride by entering your pickup and destination.",
 
-                    description.textContent =
-                        "Request a bike ride by entering your pickup and destination.";
+                    cab:
+                        "Request a cab by entering your pickup and destination.",
 
-                } else if (type === "cab") {
+                    truck:
+                        "Request a truck for moving, deliveries, or transporting goods."
 
-                    description.textContent =
-                        "Request a cab by entering your pickup and destination.";
+                };
 
-                } else {
 
-                    description.textContent =
-                        "Enter your trip details below.";
-
-                }
+                description.textContent =
+                    descriptions[type] ||
+                    "Enter your trip details below.";
 
             }
 
 
             if (typeInput) {
                 typeInput.value = type;
+            }
+
+
+            /*
+             * Clear old form values.
+             */
+
+            const pickup =
+                modal.querySelector(
+                    "#mobilityPickup"
+                );
+
+            const destination =
+                modal.querySelector(
+                    "#mobilityDestination"
+                );
+
+            const phone =
+                modal.querySelector(
+                    "#mobilityPhone"
+                );
+
+            const note =
+                modal.querySelector(
+                    "#mobilityNote"
+                );
+
+
+            if (pickup) {
+                pickup.value = "";
+            }
+
+            if (destination) {
+                destination.value = "";
+            }
+
+            if (phone) {
+                phone.value = "";
+            }
+
+            if (note) {
+                note.value = "";
             }
 
 
@@ -754,6 +899,7 @@
                 modal.querySelector(
                     "#mobilityRequestError"
                 );
+
 
             if (error) {
 
@@ -775,11 +921,6 @@
 
             setTimeout(() => {
 
-                const pickup =
-                    modal.querySelector(
-                        "#mobilityPickup"
-                    );
-
                 if (pickup) {
                     pickup.focus();
                 }
@@ -799,6 +940,7 @@
                 document.getElementById(
                     "mobilityRequestModal"
                 );
+
 
             if (!modal) {
                 return;
@@ -835,12 +977,6 @@
                 )?.value.trim() || "";
 
 
-            const error =
-                document.getElementById(
-                    "mobilityRequestError"
-                );
-
-
             /*
              * Validation.
              */
@@ -862,11 +998,10 @@
 
 
             /*
-             * Store the request locally for now.
+             * Save request locally for now.
              *
-             * This does NOT claim to be a real booking.
-             * It allows the interface to work until
-             * a mobility database table is connected.
+             * This keeps the interface working while
+             * we build the real ride-request database.
              */
 
             try {
@@ -874,10 +1009,24 @@
                 const storageKey =
                     "losoja_mobility_test_requests";
 
-                const existing =
-                    JSON.parse(
-                        localStorage.getItem(storageKey)
-                    ) || [];
+
+                let existing = [];
+
+
+                try {
+
+                    existing =
+                        JSON.parse(
+                            localStorage.getItem(
+                                storageKey
+                            )
+                        ) || [];
+
+                } catch (parseError) {
+
+                    existing = [];
+
+                }
 
 
                 existing.push({
@@ -899,6 +1048,9 @@
 
                     note:
                         note,
+
+                    status:
+                        "pending",
 
                     created_at:
                         new Date().toISOString()
@@ -923,7 +1075,7 @@
 
 
             /*
-             * Success.
+             * Reset form.
              */
 
             const form =
@@ -931,9 +1083,20 @@
                     "mobilityRequestForm"
                 );
 
+
             if (form) {
                 form.reset();
             }
+
+
+            /*
+             * Clear error.
+             */
+
+            const error =
+                document.getElementById(
+                    "mobilityRequestError"
+                );
 
 
             if (error) {
@@ -945,8 +1108,16 @@
             }
 
 
+            /*
+             * Close modal.
+             */
+
             this.closeModal(modal);
 
+
+            /*
+             * Show confirmation.
+             */
 
             this.showToast(
                 `${this.getMobilityName(type)} request submitted successfully.`,
@@ -967,13 +1138,19 @@
                     "mobilityRequestError"
                 );
 
+
             if (!error) {
                 return;
             }
 
-            error.textContent = message;
 
-            error.classList.remove("hidden");
+            error.textContent =
+                message;
+
+
+            error.classList.remove(
+                "hidden"
+            );
 
         },
 
@@ -1029,20 +1206,28 @@
 
 
             const button =
-                document.createElement("button");
+                document.createElement(
+                    "button"
+                );
 
-            button.type = "button";
+
+            button.type =
+                "button";
+
 
             button.id =
                 "losojaBackButton";
 
+
             button.className =
                 "back-to-top";
+
 
             button.setAttribute(
                 "aria-label",
                 "Back to top"
             );
+
 
             button.innerHTML =
                 "↑";
@@ -1050,19 +1235,27 @@
 
             /*
              * Basic inline positioning.
-             * Existing CSS can override this.
              */
 
-            button.style.position = "fixed";
-
-            button.style.right = "20px";
-
-            button.style.bottom = "20px";
-
-            button.style.zIndex = "999";
+            button.style.position =
+                "fixed";
 
 
-            document.body.appendChild(button);
+            button.style.right =
+                "20px";
+
+
+            button.style.bottom =
+                "20px";
+
+
+            button.style.zIndex =
+                "999";
+
+
+            document.body.appendChild(
+                button
+            );
 
 
             button.addEventListener(
@@ -1086,14 +1279,18 @@
 
                     if (window.scrollY > 400) {
 
-                        button.classList.add("show");
+                        button.classList.add(
+                            "show"
+                        );
 
                         button.style.display =
                             "flex";
 
                     } else {
 
-                        button.classList.remove("show");
+                        button.classList.remove(
+                            "show"
+                        );
 
                         button.style.display =
                             "none";
@@ -1106,7 +1303,9 @@
             window.addEventListener(
                 "scroll",
                 updateVisibility,
-                { passive: true }
+                {
+                    passive: true
+                }
             );
 
 
@@ -1119,7 +1318,10 @@
            TOAST NOTIFICATION
         ================================================= */
 
-        showToast(message, type = "info") {
+        showToast(
+            message,
+            type = "info"
+        ) {
 
             /*
              * Use existing LosOja notification system
@@ -1142,7 +1344,7 @@
 
 
             /*
-             * Remove an existing app toast.
+             * Remove existing app toast.
              */
 
             const oldToast =
@@ -1150,16 +1352,21 @@
                     "losojaAppToast"
                 );
 
+
             if (oldToast) {
                 oldToast.remove();
             }
 
 
             const toast =
-                document.createElement("div");
+                document.createElement(
+                    "div"
+                );
+
 
             toast.id =
                 "losojaAppToast";
+
 
             toast.textContent =
                 message;
@@ -1168,40 +1375,52 @@
             toast.style.position =
                 "fixed";
 
+
             toast.style.left =
                 "50%";
+
 
             toast.style.bottom =
                 "30px";
 
+
             toast.style.transform =
                 "translateX(-50%)";
+
 
             toast.style.zIndex =
                 "10000";
 
+
             toast.style.padding =
                 "14px 20px";
 
+
             toast.style.borderRadius =
                 "8px";
+
 
             toast.style.background =
                 type === "success"
                     ? "#087a3e"
                     : "#374151";
 
+
             toast.style.color =
                 "#ffffff";
 
+
             toast.style.fontWeight =
                 "600";
+
 
             toast.style.boxShadow =
                 "0 8px 25px rgba(0,0,0,0.15)";
 
 
-            document.body.appendChild(toast);
+            document.body.appendChild(
+                toast
+            );
 
 
             setTimeout(() => {
@@ -1246,11 +1465,26 @@
 
 
             return String(value)
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
+                .replace(
+                    /&/g,
+                    "&amp;"
+                )
+                .replace(
+                    /</g,
+                    "&lt;"
+                )
+                .replace(
+                    />/g,
+                    "&gt;"
+                )
+                .replace(
+                    /"/g,
+                    "&quot;"
+                )
+                .replace(
+                    /'/g,
+                    "&#039;"
+                );
 
         },
 
@@ -1270,7 +1504,11 @@
                 new Date(dateValue);
 
 
-            if (Number.isNaN(date.getTime())) {
+            if (
+                Number.isNaN(
+                    date.getTime()
+                )
+            ) {
                 return "";
             }
 
@@ -1307,7 +1545,8 @@
        GLOBAL APP ACCESS
     ===================================================== */
 
-    window.App = App;
+    window.App =
+        App;
 
 
 })();
