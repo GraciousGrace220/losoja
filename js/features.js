@@ -7,6 +7,7 @@ Handles:
 - Property listings
 - Ride providers
 - Ride requests
+- My Ride Requests
 - Feedback
 - Supabase integration
 - Feature modals
@@ -37,10 +38,16 @@ Handles:
     ===================================================== */
 
     let properties = [];
+
     let rideProviders = [];
 
+    let rideRequests = [];
+
     let propertyLoading = false;
+
     let rideProviderLoading = false;
+
+    let rideRequestLoading = false;
 
 
     /* =====================================================
@@ -52,7 +59,9 @@ Handles:
         try {
 
             const raw =
-                localStorage.getItem(SESSION_KEY);
+                localStorage.getItem(
+                    SESSION_KEY
+                );
 
             if (!raw) {
                 return null;
@@ -74,7 +83,8 @@ Handles:
 
     function getAccessToken() {
 
-        const session = getSession();
+        const session =
+            getSession();
 
         if (!session) {
             return null;
@@ -91,18 +101,23 @@ Handles:
 
     function getCurrentUserId() {
 
-        const session = getSession();
+        const session =
+            getSession();
 
         if (!session) {
             return null;
         }
 
+
         if (
             session.user &&
             session.user.id
         ) {
+
             return session.user.id;
+
         }
+
 
         return (
             session.user_id ||
@@ -114,7 +129,9 @@ Handles:
 
 
     function isLoggedIn() {
+
         return !!getCurrentUserId();
+
     }
 
 
@@ -128,6 +145,7 @@ Handles:
 
         const token =
             getAccessToken();
+
 
         const headers = {
 
@@ -143,12 +161,14 @@ Handles:
 
         };
 
+
         if (includeContentType) {
 
             headers["Content-Type"] =
                 "application/json";
 
         }
+
 
         return headers;
     }
@@ -179,6 +199,7 @@ Handles:
                         ...(options.headers || {})
 
                     }
+
                 }
             );
 
@@ -199,9 +220,11 @@ Handles:
 
             } catch {
 
-                data = text;
+                data =
+                    text;
 
             }
+
         }
 
 
@@ -226,7 +249,9 @@ Handles:
             }
 
 
-            throw new Error(message);
+            throw new Error(
+                message
+            );
 
         }
 
@@ -268,50 +293,67 @@ Handles:
         if (!toast) {
 
             toast =
-                document.createElement("div");
+                document.createElement(
+                    "div"
+                );
+
 
             toast.id =
                 "losojaFeatureToast";
 
+
             toast.style.position =
                 "fixed";
+
 
             toast.style.left =
                 "50%";
 
+
             toast.style.bottom =
                 "25px";
+
 
             toast.style.transform =
                 "translateX(-50%)";
 
+
             toast.style.zIndex =
                 "99999";
+
 
             toast.style.padding =
                 "13px 18px";
 
+
             toast.style.borderRadius =
                 "8px";
+
 
             toast.style.background =
                 "#111827";
 
+
             toast.style.color =
                 "#ffffff";
+
 
             toast.style.fontSize =
                 "14px";
 
+
             toast.style.maxWidth =
                 "90%";
+
 
             toast.style.textAlign =
                 "center";
 
+
             document.body.appendChild(
                 toast
             );
+
         }
 
 
@@ -384,6 +426,7 @@ Handles:
                 );
 
             }
+
         }
 
 
@@ -408,11 +451,26 @@ Handles:
 
 
         return String(value)
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
+            .replace(
+                /&/g,
+                "&amp;"
+            )
+            .replace(
+                /</g,
+                "&lt;"
+            )
+            .replace(
+                />/g,
+                "&gt;"
+            )
+            .replace(
+                /"/g,
+                "&quot;"
+            )
+            .replace(
+                /'/g,
+                "&#039;"
+            );
     }
 
 
@@ -443,6 +501,35 @@ Handles:
     }
 
 
+    function formatDateTime(value) {
+
+        if (!value) {
+            return "";
+        }
+
+
+        try {
+
+            return new Date(value)
+                .toLocaleString(
+                    undefined,
+                    {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                        hour: "numeric",
+                        minute: "2-digit"
+                    }
+                );
+
+        } catch {
+
+            return "";
+
+        }
+    }
+
+
     /* =====================================================
        MODAL HELPERS
     ===================================================== */
@@ -454,7 +541,9 @@ Handles:
     ) {
 
         const existing =
-            document.getElementById(id);
+            document.getElementById(
+                id
+            );
 
 
         if (existing) {
@@ -463,7 +552,9 @@ Handles:
 
 
         const overlay =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
 
         overlay.id =
@@ -517,6 +608,7 @@ Handles:
 
                 }
             );
+
         }
 
 
@@ -543,11 +635,15 @@ Handles:
     function closeModal(id) {
 
         const modal =
-            document.getElementById(id);
+            document.getElementById(
+                id
+            );
 
 
         if (modal) {
+
             modal.remove();
+
         }
     }
 
@@ -605,7 +701,8 @@ Handles:
 
         } finally {
 
-            propertyLoading = false;
+            propertyLoading =
+                false;
 
         }
     }
@@ -632,7 +729,8 @@ Handles:
 
         if (!properties.length) {
 
-            grid.innerHTML = "";
+            grid.innerHTML =
+                "";
 
 
             if (empty) {
@@ -659,7 +757,9 @@ Handles:
 
         grid.innerHTML =
             properties
-                .map(propertyCardHTML)
+                .map(
+                    propertyCardHTML
+                )
                 .join("");
     }
 
@@ -817,6 +917,7 @@ Handles:
         const modal =
             createModal(
                 "propertyFeatureModal",
+
                 "List a Property",
 
                 `
@@ -1178,7 +1279,8 @@ Handles:
         }
 
 
-        rideProviderLoading = true;
+        rideProviderLoading =
+            true;
 
 
         try {
@@ -1248,7 +1350,8 @@ Handles:
 
         if (!rideProviders.length) {
 
-            grid.innerHTML = "";
+            grid.innerHTML =
+                "";
 
 
             if (empty) {
@@ -1275,7 +1378,9 @@ Handles:
 
         grid.innerHTML =
             rideProviders
-                .map(rideProviderCardHTML)
+                .map(
+                    rideProviderCardHTML
+                )
                 .join("");
     }
 
@@ -1284,7 +1389,8 @@ Handles:
         provider
     ) {
 
-        let icon = "🚗";
+        let icon =
+            "🚗";
 
 
         if (
@@ -1292,28 +1398,32 @@ Handles:
             "Bike"
         ) {
 
-            icon = "🏍️";
+            icon =
+                "🏍️";
 
         } else if (
             provider.ride_type ===
             "Cab"
         ) {
 
-            icon = "🚕";
+            icon =
+                "🚕";
 
         } else if (
             provider.ride_type ===
             "Truck"
         ) {
 
-            icon = "🚚";
+            icon =
+                "🚚";
 
         } else if (
             provider.ride_type ===
             "TryCircle"
         ) {
 
-            icon = "🛺";
+            icon =
+                "🛺";
 
         }
 
@@ -1333,15 +1443,19 @@ Handles:
                 </h3>
 
                 <span class="ride-provider-type">
+
                     ${escapeHtml(
                         provider.ride_type
                     )}
+
                 </span>
 
                 <p>
+
                     📍 ${escapeHtml(
                         provider.operating_location
                     )}
+
                 </p>
 
                 ${
@@ -1349,9 +1463,11 @@ Handles:
                         ? `
 
                             <p>
+
                                 🚘 ${escapeHtml(
                                     provider.vehicle_info
                                 )}
+
                             </p>
 
                         `
@@ -1363,9 +1479,11 @@ Handles:
                         ? `
 
                             <p>
+
                                 ${escapeHtml(
                                     provider.description
                                 )}
+
                             </p>
 
                         `
@@ -1407,6 +1525,7 @@ Handles:
         const modal =
             createModal(
                 "rideProviderFeatureModal",
+
                 "Register as a Ride Provider",
 
                 `
@@ -1701,7 +1820,7 @@ Handles:
 
 
     /* =====================================================
-       RIDE REQUESTS
+       RIDE REQUEST HELPERS
     ===================================================== */
 
     function getMobilityName(type) {
@@ -1730,6 +1849,471 @@ Handles:
     }
 
 
+    function getRideStatusClass(
+        status
+    ) {
+
+        const value =
+            String(
+                status ||
+                "pending"
+            ).toLowerCase();
+
+
+        if (
+            value === "completed"
+        ) {
+
+            return "completed";
+
+        }
+
+
+        if (
+            value === "cancelled" ||
+            value === "canceled"
+        ) {
+
+            return "cancelled";
+
+        }
+
+
+        if (
+            value === "accepted" ||
+            value === "confirmed"
+        ) {
+
+            return "accepted";
+
+        }
+
+
+        return "pending";
+    }
+
+
+    function getRideStatusLabel(
+        status
+    ) {
+
+        const value =
+            String(
+                status ||
+                "pending"
+            ).toLowerCase();
+
+
+        if (
+            value === "completed"
+        ) {
+
+            return "Completed";
+
+        }
+
+
+        if (
+            value === "cancelled" ||
+            value === "canceled"
+        ) {
+
+            return "Cancelled";
+
+        }
+
+
+        if (
+            value === "accepted"
+        ) {
+
+            return "Accepted";
+
+        }
+
+
+        if (
+            value === "confirmed"
+        ) {
+
+            return "Confirmed";
+
+        }
+
+
+        return "Pending";
+    }
+
+
+    /* =====================================================
+       LOAD MY RIDE REQUESTS
+    ===================================================== */
+
+    async function loadRideRequests() {
+
+        const userId =
+            getCurrentUserId();
+
+
+        if (!userId) {
+
+            rideRequests = [];
+
+            renderRideRequests();
+
+            return;
+
+        }
+
+
+        if (rideRequestLoading) {
+            return;
+        }
+
+
+        rideRequestLoading =
+            true;
+
+
+        try {
+
+            const data =
+                await supabaseRequest(
+
+                    "/rest/v1/ride_requests" +
+
+                    "?select=*" +
+
+                    "&user_id=eq." +
+                    encodeURIComponent(
+                        userId
+                    ) +
+
+                    "&order=created_at.desc"
+
+                );
+
+
+            rideRequests =
+                Array.isArray(data)
+                    ? data
+                    : [];
+
+
+            renderRideRequests();
+
+        } catch (error) {
+
+            console.error(
+                "LosOja ride request loading error:",
+                error
+            );
+
+
+            rideRequests = [];
+
+
+            renderRideRequests();
+
+
+            showMessage(
+                "Unable to load your ride requests.",
+                "error"
+            );
+
+        } finally {
+
+            rideRequestLoading =
+                false;
+
+        }
+    }
+
+
+    /* =====================================================
+       RIDE REQUEST SECTION
+    ===================================================== */
+
+    function ensureRideRequestsSection() {
+
+        let section =
+            document.getElementById(
+                "myRideRequests"
+            );
+
+
+        if (section) {
+            return section;
+        }
+
+
+        const mobilitySection =
+            document.getElementById(
+                "mobility"
+            );
+
+
+        if (!mobilitySection) {
+            return null;
+        }
+
+
+        section =
+            document.createElement(
+                "section"
+            );
+
+
+        section.id =
+            "myRideRequests";
+
+
+        section.className =
+            "feature-section";
+
+
+        section.innerHTML = `
+
+            <div class="container">
+
+                <div class="section-header">
+
+                    <h2>
+                        My Ride Requests
+                    </h2>
+
+                    <p>
+                        View the transportation requests
+                        you have submitted.
+                    </p>
+
+                </div>
+
+
+                <div
+                    id="myRideRequestsGrid"
+                    class="feature-grid"
+                ></div>
+
+
+                <div
+                    id="myRideRequestsEmpty"
+                    class="no-results hidden"
+                >
+                    You have not submitted any ride
+                    requests yet.
+                </div>
+
+            </div>
+
+        `;
+
+
+        mobilitySection.parentNode.insertBefore(
+            section,
+            mobilitySection.nextSibling
+        );
+
+
+        return section;
+    }
+
+
+    function renderRideRequests() {
+
+        const section =
+            ensureRideRequestsSection();
+
+
+        if (!section) {
+            return;
+        }
+
+
+        const grid =
+            document.getElementById(
+                "myRideRequestsGrid"
+            );
+
+
+        const empty =
+            document.getElementById(
+                "myRideRequestsEmpty"
+            );
+
+
+        if (!grid) {
+            return;
+        }
+
+
+        if (!rideRequests.length) {
+
+            grid.innerHTML =
+                "";
+
+
+            if (empty) {
+
+                empty.classList.remove(
+                    "hidden"
+                );
+
+            }
+
+
+            return;
+        }
+
+
+        if (empty) {
+
+            empty.classList.add(
+                "hidden"
+            );
+
+        }
+
+
+        grid.innerHTML =
+            rideRequests
+                .map(
+                    rideRequestCardHTML
+                )
+                .join("");
+    }
+
+
+    function rideRequestCardHTML(
+        request
+    ) {
+
+        const type =
+            getMobilityName(
+                request.ride_type
+            );
+
+
+        const status =
+            getRideStatusLabel(
+                request.status
+            );
+
+
+        const statusClass =
+            getRideStatusClass(
+                request.status
+            );
+
+
+        return `
+
+            <article
+                class="feature-card ride-request-card"
+            >
+
+                <div class="feature-icon">
+                    ${
+                        request.ride_type ===
+                        "cab"
+                            ? "🚕"
+                            : request.ride_type ===
+                              "bike"
+                                ? "🏍️"
+                                : request.ride_type ===
+                                  "truck"
+                                    ? "🚚"
+                                    : request.ride_type ===
+                                      "trycircle"
+                                        ? "🛺"
+                                        : "🚗"
+                    }
+                </div>
+
+
+                <h3>
+                    ${escapeHtml(type)}
+                </h3>
+
+
+                <p>
+                    <strong>Status:</strong>
+
+                    <span
+                        class="ride-request-status ride-status-${escapeHtml(
+                            statusClass
+                        )}"
+                    >
+                        ${escapeHtml(status)}
+                    </span>
+                </p>
+
+
+                <p>
+                    📍
+                    <strong>Pickup:</strong>
+                    ${escapeHtml(
+                        request.pickup
+                    )}
+                </p>
+
+
+                <p>
+                    🎯
+                    <strong>Destination:</strong>
+                    ${escapeHtml(
+                        request.destination
+                    )}
+                </p>
+
+
+                <p>
+                    📞
+                    <strong>Phone:</strong>
+                    ${escapeHtml(
+                        request.phone
+                    )}
+                </p>
+
+
+                ${
+                    request.note
+                        ? `
+
+                            <p>
+                                📝
+                                <strong>Note:</strong>
+                                ${escapeHtml(
+                                    request.note
+                                )}
+                            </p>
+
+                        `
+                        : ""
+                }
+
+
+                <p class="feature-meta">
+
+                    Submitted
+                    ${escapeHtml(
+                        formatDateTime(
+                            request.created_at
+                        )
+                    )}
+
+                </p>
+
+            </article>
+
+        `;
+    }
+
+
+    /* =====================================================
+       OPEN RIDE REQUEST MODAL
+    ===================================================== */
+
     function openRideRequestModal(
         type
     ) {
@@ -1740,11 +2324,14 @@ Handles:
 
 
         const rideName =
-            getMobilityName(type);
+            getMobilityName(
+                type
+            );
 
 
         const modal =
             createModal(
+
                 "rideRequestFeatureModal",
 
                 "Request " +
@@ -1757,6 +2344,7 @@ Handles:
                     your transportation request.
                 </p>
 
+
                 <form
                     id="rideRequestFeatureForm"
                     class="feature-form"
@@ -1765,13 +2353,17 @@ Handles:
                     <input
                         type="hidden"
                         id="featureRideType"
-                        value="${escapeHtml(type)}"
+                        value="${escapeHtml(
+                            type
+                        )}"
                     >
 
 
                     <div class="form-group">
 
-                        <label for="featureRidePickup">
+                        <label
+                            for="featureRidePickup"
+                        >
                             Pickup Location
                         </label>
 
@@ -1787,7 +2379,9 @@ Handles:
 
                     <div class="form-group">
 
-                        <label for="featureRideDestination">
+                        <label
+                            for="featureRideDestination"
+                        >
                             Destination
                         </label>
 
@@ -1803,7 +2397,9 @@ Handles:
 
                     <div class="form-group">
 
-                        <label for="featureRidePhone">
+                        <label
+                            for="featureRidePhone"
+                        >
                             Phone
                         </label>
 
@@ -1819,7 +2415,9 @@ Handles:
 
                     <div class="form-group">
 
-                        <label for="featureRideNote">
+                        <label
+                            for="featureRideNote"
+                        >
                             Note
                         </label>
 
@@ -1860,6 +2458,10 @@ Handles:
         }
     }
 
+
+    /* =====================================================
+       SUBMIT RIDE REQUEST
+    ===================================================== */
 
     async function handleRideRequestSubmit(
         event
@@ -1935,23 +2537,47 @@ Handles:
 
         try {
 
-            await supabaseRequest(
-                "/rest/v1/ride_requests",
+            const savedRequest =
+                await supabaseRequest(
 
-                {
-                    method: "POST",
+                    "/rest/v1/ride_requests",
 
-                    headers: {
-                        "Prefer":
-                            "return=representation"
-                    },
+                    {
+                        method:
+                            "POST",
 
-                    body:
-                        JSON.stringify(
-                            payload
-                        )
-                }
-            );
+                        headers: {
+
+                            "Prefer":
+                                "return=representation"
+
+                        },
+
+                        body:
+                            JSON.stringify(
+                                payload
+                            )
+
+                    }
+
+                );
+
+
+            if (
+                Array.isArray(
+                    savedRequest
+                ) &&
+                savedRequest.length
+            ) {
+
+                rideRequests.unshift(
+                    savedRequest[0]
+                );
+
+            }
+
+
+            renderRideRequests();
 
 
             showMessage(
@@ -1962,6 +2588,9 @@ Handles:
             closeModal(
                 "rideRequestFeatureModal"
             );
+
+
+            await loadRideRequests();
 
         } catch (error) {
 
@@ -2001,6 +2630,7 @@ Handles:
 
         const modal =
             createModal(
+
                 "feedbackFeatureModal",
 
                 "Send Feedback",
@@ -2011,6 +2641,7 @@ Handles:
                     Tell us what you think about LosOja
                     or report a problem.
                 </p>
+
 
                 <form
                     id="feedbackFeatureForm"
@@ -2186,21 +2817,27 @@ Handles:
         try {
 
             await supabaseRequest(
+
                 "/rest/v1/feedback",
 
                 {
-                    method: "POST",
+                    method:
+                        "POST",
 
                     headers: {
+
                         "Prefer":
                             "return=representation"
+
                     },
 
                     body:
                         JSON.stringify(
                             payload
                         )
+
                 }
+
             );
 
 
@@ -2244,102 +2881,120 @@ Handles:
 
     function bindFeatureButtons() {
 
-        /* PROPERTY */
+        /* ---------------------------------------------
+           PROPERTY BUTTONS
+        --------------------------------------------- */
 
         document
             .querySelectorAll(
                 ".add-property-btn"
             )
-            .forEach(function (button) {
+            .forEach(
+                function (button) {
 
-                if (
+                    if (
+                        button.dataset
+                            .losojaFeatureBound
+                    ) {
+
+                        return;
+
+                    }
+
+
                     button.dataset
-                        .losojaFeatureBound
-                ) {
-                    return;
+                        .losojaFeatureBound =
+                        "true";
+
+
+                    button.addEventListener(
+                        "click",
+                        openPropertyModal
+                    );
+
                 }
+            );
 
 
-                button.dataset
-                    .losojaFeatureBound =
-                    "true";
-
-
-                button.addEventListener(
-                    "click",
-                    openPropertyModal
-                );
-
-            });
-
-
-        /* RIDE PROVIDER */
+        /* ---------------------------------------------
+           RIDE PROVIDER BUTTONS
+        --------------------------------------------- */
 
         document
             .querySelectorAll(
                 ".add-ride-provider-btn"
             )
-            .forEach(function (button) {
+            .forEach(
+                function (button) {
 
-                if (
+                    if (
+                        button.dataset
+                            .losojaFeatureBound
+                    ) {
+
+                        return;
+
+                    }
+
+
                     button.dataset
-                        .losojaFeatureBound
-                ) {
-                    return;
+                        .losojaFeatureBound =
+                        "true";
+
+
+                    button.addEventListener(
+                        "click",
+                        openRideProviderModal
+                    );
+
                 }
+            );
 
 
-                button.dataset
-                    .losojaFeatureBound =
-                    "true";
-
-
-                button.addEventListener(
-                    "click",
-                    openRideProviderModal
-                );
-
-            });
-
-
-        /* FEEDBACK */
+        /* ---------------------------------------------
+           FEEDBACK BUTTONS
+        --------------------------------------------- */
 
         document
             .querySelectorAll(
                 ".feedback-btn"
             )
-            .forEach(function (button) {
+            .forEach(
+                function (button) {
 
-                if (
+                    if (
+                        button.dataset
+                            .losojaFeatureBound
+                    ) {
+
+                        return;
+
+                    }
+
+
                     button.dataset
-                        .losojaFeatureBound
-                ) {
-                    return;
+                        .losojaFeatureBound =
+                        "true";
+
+
+                    button.addEventListener(
+                        "click",
+                        openFeedbackModal
+                    );
+
                 }
+            );
 
 
-                button.dataset
-                    .losojaFeatureBound =
-                    "true";
-
-
-                button.addEventListener(
-                    "click",
-                    openFeedbackModal
-                );
-
-            });
-
-
-        /* =================================================
+        /* ---------------------------------------------
            MOBILITY BUTTONS
 
-           IMPORTANT:
-           This runs in capture phase so it prevents
-           the old app.js localStorage ride handler.
-        ================================================= */
+           Capture phase prevents the old app.js
+           localStorage ride handler from running.
+        --------------------------------------------- */
 
         document.addEventListener(
+
             "click",
 
             function (event) {
@@ -2367,11 +3022,14 @@ Handles:
                         "truck"
                     ].includes(type)
                 ) {
+
                     return;
+
                 }
 
 
                 event.preventDefault();
+
 
                 event.stopImmediatePropagation();
 
@@ -2383,7 +3041,9 @@ Handles:
             },
 
             true
+
         );
+
     }
 
 
@@ -2398,6 +3058,10 @@ Handles:
         loadProperties();
 
         loadRideProviders();
+
+        ensureRideRequestsSection();
+
+        loadRideRequests();
 
     }
 
@@ -2422,6 +3086,10 @@ Handles:
 
         openRideProviderModal,
 
+        loadRideRequests,
+
+        renderRideRequests,
+
         openRideRequestModal,
 
         openFeedbackModal,
@@ -2437,6 +3105,13 @@ Handles:
             function () {
 
                 return rideProviders.slice();
+
+            },
+
+        getRideRequests:
+            function () {
+
+                return rideRequests.slice();
 
             }
 
