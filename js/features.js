@@ -326,85 +326,31 @@ Handles:
     }
 
 
-    return data;
+      if (!response.ok) {
 
-}
+        let message =
+            "Supabase request failed.";
 
-        const response =
-            await fetch(
-                LOSOJA_FEATURES_URL +
-                endpoint,
-                {
-                    ...options,
+        if (
+            data &&
+            typeof data === "object"
+        ) {
 
-                    headers: {
-
-                        ...supabaseHeaders(
-                            options.body !== undefined
-                        ),
-
-                        ...(options.headers || {})
-
-                    }
-
-                }
-            );
-
-
-        const text =
-            await response.text();
-
-
-        let data = null;
-
-
-        if (text) {
-
-            try {
-
-                data =
-                    JSON.parse(text);
-
-            } catch {
-
-                data =
-                    text;
-
-            }
-
+            message =
+                data.message ||
+                data.error_description ||
+                data.hint ||
+                data.details ||
+                message;
         }
 
-
-        if (!response.ok) {
-
-            let message =
-                "Supabase request failed.";
-
-
-            if (
-                data &&
-                typeof data === "object"
-            ) {
-
-                message =
-                    data.message ||
-                    data.error_description ||
-                    data.hint ||
-                    data.details ||
-                    message;
-
-            }
-
-
-            throw new Error(
-                message
-            );
-
-        }
-
-
-        return data;
+        throw new Error(
+            message
+        );
     }
+
+    return data;
+}
 
 
     /* =====================================================
