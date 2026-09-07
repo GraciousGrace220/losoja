@@ -108,7 +108,6 @@ Handles:
             return null;
         }
 
-
         if (
             session.user &&
             session.user.id
@@ -117,7 +116,6 @@ Handles:
             return session.user.id;
 
         }
-
 
         return (
             session.user_id ||
@@ -146,7 +144,6 @@ Handles:
         const token =
             getAccessToken();
 
-
         const headers = {
 
             "apikey":
@@ -161,14 +158,12 @@ Handles:
 
         };
 
-
         if (includeContentType) {
 
             headers["Content-Type"] =
                 "application/json";
 
         }
-
 
         return headers;
     }
@@ -178,179 +173,160 @@ Handles:
        SUPABASE REQUEST
     ===================================================== */
 
-  async function supabaseRequest(
-    endpoint,
-    options = {},
-    allowRetry = true
-) {
-
-    /*
-    ---------------------------------------------------------
-    Make sure we have a current Supabase session before
-    sending authenticated requests.
-    ---------------------------------------------------------
-    */
-
-    if (
-        typeof window.ensureValidSupabaseSession ===
-        "function"
+    async function supabaseRequest(
+        endpoint,
+        options = {},
+        allowRetry = true
     ) {
 
-        const validSession =
-            await window.ensureValidSupabaseSession();
+        /*
+        -----------------------------------------------------
+        Make sure we have a current Supabase session before
+        sending authenticated requests.
+        -----------------------------------------------------
+        */
 
+        if (
+            typeof window.ensureValidSupabaseSession ===
+            "function"
+        ) {
 
-        if (!validSession) {
+            const validSession =
+                await window.ensureValidSupabaseSession();
 
-            throw new Error(
-                "Your session has expired. Please log in again."
-            );
+            if (!validSession) {
 
+                throw new Error(
+                    "Your session has expired. Please log in again."
+                );
+
+            }
         }
 
-    }
 
+        const response =
+            await fetch(
 
-    const response =
-        await fetch(
+                LOSOJA_FEATURES_URL +
+                endpoint,
 
-            LOSOJA_FEATURES_URL +
-            endpoint,
+                {
+                    ...options,
 
-            {
-                ...options,
+                    headers: {
 
-                headers: {
+                        ...supabaseHeaders(
+                            options.body !== undefined
+                        ),
 
-                    ...supabaseHeaders(
-                        options.body !== undefined
-                    ),
+                        ...(options.headers || {})
 
-                    ...(options.headers || {})
+                    }
 
                 }
 
+            );
+
+
+        const text =
+            await response.text();
+
+
+        let data = null;
+
+
+        if (text) {
+
+            try {
+
+                data =
+                    JSON.parse(text);
+
+            } catch {
+
+                data =
+                    text;
+
             }
-
-        );
-
-
-    const text =
-        await response.text();
-
-
-    let data = null;
-
-
-    if (text) {
-
-        try {
-
-            data =
-                JSON.parse(text);
-
-        } catch {
-
-            data =
-                text;
 
         }
 
-    }
 
-
-    /*
-    ---------------------------------------------------------
-    If Supabase rejects the token, refresh the session once
-    and retry the exact request with the NEW token.
-    ---------------------------------------------------------
-    */
-
-    if (
-        response.status === 401 &&
-        allowRetry &&
-        typeof window.refreshSupabaseSession ===
-            "function"
-    ) {
-
-        console.warn(
-            "LosOja: Supabase returned 401. Refreshing session and retrying request..."
-        );
-
-
-        const refreshResult =
-            await window.refreshSupabaseSession();
-
+        /*
+        -----------------------------------------------------
+        If Supabase rejects the token, refresh the session
+        once and retry the exact request with the NEW token.
+        -----------------------------------------------------
+        */
 
         if (
-            refreshResult &&
-            refreshResult.success
+            response.status === 401 &&
+            allowRetry &&
+            typeof window.refreshSupabaseSession ===
+                "function"
         ) {
 
-            return supabaseRequest(
-                endpoint,
-                options,
-                false
+            console.warn(
+                "LosOja: Supabase returned 401. Refreshing session and retrying request..."
+            );
+
+
+            const refreshResult =
+                await window.refreshSupabaseSession();
+
+
+            if (
+                refreshResult &&
+                refreshResult.success
+            ) {
+
+                return supabaseRequest(
+                    endpoint,
+                    options,
+                    false
+                );
+
+            }
+
+        }
+
+
+        /*
+        -----------------------------------------------------
+        Handle all other Supabase errors.
+        -----------------------------------------------------
+        */
+
+        if (!response.ok) {
+
+            let message =
+                "Supabase request failed.";
+
+
+            if (
+                data &&
+                typeof data === "object"
+            ) {
+
+                message =
+                    data.message ||
+                    data.error_description ||
+                    data.hint ||
+                    data.details ||
+                    message;
+
+            }
+
+
+            throw new Error(
+                message
             );
 
         }
 
+
+        return data;
     }
-
-
-    if (!response.ok) {
-
-        let message =
-            "Supabase request failed.";
-
-
-        if (
-            data &&
-            typeof data === "object"
-        ) {
-
-            message =
-                data.message ||
-                data.error_description ||
-                data.hint ||
-                data.details ||
-                message;
-
-        }
-
-
-        throw new Error(
-            message
-        );
-
-    }
-
-
-      if (!response.ok) {
-
-        let message =
-            "Supabase request failed.";
-
-        if (
-            data &&
-            typeof data === "object"
-        ) {
-
-            message =
-                data.message ||
-                data.error_description ||
-                data.hint ||
-                data.details ||
-                message;
-        }
-
-        throw new Error(
-            message
-        );
-    }
-
-    return data;
-}
 
 
     /* =====================================================
@@ -517,6 +493,13 @@ Handles:
                 loginModal.classList.remove(
                     "hidden"
                 );
+
+                loginModal.classList.add(
+                    "active"
+                );
+
+                loginModal.style.display =
+                    "flex";
 
             }
 
@@ -2299,6 +2282,45 @@ Handles:
             );
 
 
+        let icon =
+            "🚗";
+
+
+        if (
+            request.ride_type ===
+            "cab"
+        ) {
+
+            icon =
+                "🚕";
+
+        } else if (
+            request.ride_type ===
+            "bike"
+        ) {
+
+            icon =
+                "🏍️";
+
+        } else if (
+            request.ride_type ===
+            "truck"
+        ) {
+
+            icon =
+                "🚚";
+
+        } else if (
+            request.ride_type ===
+            "trycircle"
+        ) {
+
+            icon =
+                "🛺";
+
+        }
+
+
         return `
 
             <article
@@ -2306,21 +2328,7 @@ Handles:
             >
 
                 <div class="feature-icon">
-                    ${
-                        request.ride_type ===
-                        "cab"
-                            ? "🚕"
-                            : request.ride_type ===
-                              "bike"
-                                ? "🏍️"
-                                : request.ride_type ===
-                                  "truck"
-                                    ? "🚚"
-                                    : request.ride_type ===
-                                      "trycircle"
-                                        ? "🛺"
-                                        : "🚗"
-                    }
+                    ${icon}
                 </div>
 
 
@@ -2330,6 +2338,7 @@ Handles:
 
 
                 <p>
+
                     <strong>Status:</strong>
 
                     <span
@@ -2339,33 +2348,40 @@ Handles:
                     >
                         ${escapeHtml(status)}
                     </span>
+
                 </p>
 
 
                 <p>
+
                     📍
                     <strong>Pickup:</strong>
                     ${escapeHtml(
                         request.pickup
                     )}
+
                 </p>
 
 
                 <p>
+
                     🎯
                     <strong>Destination:</strong>
                     ${escapeHtml(
                         request.destination
                     )}
+
                 </p>
 
 
                 <p>
+
                     📞
                     <strong>Phone:</strong>
                     ${escapeHtml(
                         request.phone
                     )}
+
                 </p>
 
 
@@ -2374,11 +2390,13 @@ Handles:
                         ? `
 
                             <p>
+
                                 📝
                                 <strong>Note:</strong>
                                 ${escapeHtml(
                                     request.note
                                 )}
+
                             </p>
 
                         `
@@ -3144,37 +3162,43 @@ Handles:
        INITIALIZATION
     ===================================================== */
 
- async function init() {
+    async function init() {
 
-    bindFeatureButtons();
+        bindFeatureButtons();
 
-    ensureRideRequestsSection();
+        ensureRideRequestsSection();
 
 
-    /*
-    ---------------------------------------------------------
-    Wait for auth.js to finish checking/refreshing the
-    Supabase session before loading feature data.
-    ---------------------------------------------------------
-    */
+        /*
+        -----------------------------------------------------
+        Wait for auth.js to finish checking/refreshing the
+        Supabase session before loading feature data.
+        -----------------------------------------------------
+        */
 
-    if (
-        typeof window.ensureValidSupabaseSession ===
-        "function"
-    ) {
+        if (
+            typeof window.ensureValidSupabaseSession ===
+            "function"
+        ) {
 
-        await window.ensureValidSupabaseSession();
+            await window.ensureValidSupabaseSession();
+
+        }
+
+
+        /*
+        -----------------------------------------------------
+        Load feature data.
+        -----------------------------------------------------
+        */
+
+        await Promise.all([
+            loadProperties(),
+            loadRideProviders(),
+            loadRideRequests()
+        ]);
 
     }
-
-
-    loadProperties();
-
-    loadRideProviders();
-
-    loadRideRequests();
-
-}
 
 
     /* =====================================================
