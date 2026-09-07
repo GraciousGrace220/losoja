@@ -1,13 +1,6 @@
 /**
  * LosOja - Reviews System
  * Supabase version
- *
- * Works with:
- * - businesses.id = UUID
- * - reviews.business_id = UUID
- * - reviews.user_id = UUID
- * - reviews.rating = integer
- * - reviews.review = text
  */
 
 (function () {
@@ -28,7 +21,6 @@
 
     const Reviews = {
 
-
         /* =====================================================
            SESSION
         ===================================================== */
@@ -43,7 +35,6 @@
                 ) {
 
                     return window.getSupabaseSession();
-
                 }
 
 
@@ -60,11 +51,10 @@
 
                 return JSON.parse(raw);
 
-
             } catch (error) {
 
                 console.error(
-                    "LosOja Reviews: Could not read session:",
+                    "LosOja Reviews: Session error:",
                     error
                 );
 
@@ -126,7 +116,7 @@
 
 
         /* =====================================================
-           ERROR HANDLING
+           ERROR
         ===================================================== */
 
         async getError(response) {
@@ -169,30 +159,34 @@
 
 
         /* =====================================================
-           GET REVIEWS FOR BUSINESS
+           GET REVIEWS
         ===================================================== */
 
-        async getForBusiness(businessId) {
+        async getForBusiness(
+            businessId
+        ) {
 
             if (!businessId) {
                 return [];
             }
 
 
+            const accessToken =
+                this.getAccessToken();
+
+
+            const url =
+                LOSOJA_REVIEWS_URL +
+                "/rest/v1/reviews" +
+                "?business_id=eq." +
+                encodeURIComponent(
+                    businessId
+                ) +
+                "&select=*" +
+                "&order=created_at.desc";
+
+
             try {
-
-                const accessToken =
-                    this.getAccessToken();
-
-
-                const url =
-                    LOSOJA_REVIEWS_URL +
-                    "/rest/v1/reviews" +
-                    "?business_id=eq." +
-                    encodeURIComponent(businessId) +
-                    "&select=*" +
-                    "&order=created_at.desc";
-
 
                 const response =
                     await fetch(
@@ -210,10 +204,18 @@
 
                 if (!response.ok) {
 
-                    throw new Error(
+                    const message =
                         await this.getError(
                             response
-                        )
+                        );
+
+                    console.error(
+                        "LosOja Reviews: GET failed:",
+                        message
+                    );
+
+                    throw new Error(
+                        message
                     );
                 }
 
@@ -222,7 +224,9 @@
                     await response.json();
 
 
-                return Array.isArray(reviews)
+                return Array.isArray(
+                    reviews
+                )
                     ? reviews
                     : [];
 
@@ -236,55 +240,6 @@
 
                 return [];
             }
-        },
-
-
-        /* =====================================================
-           REVIEW STATISTICS
-        ===================================================== */
-
-        async getStats(businessId) {
-
-            const reviews =
-                await this.getForBusiness(
-                    businessId
-                );
-
-
-            if (!reviews.length) {
-
-                return {
-                    avg: 0,
-                    count: 0
-                };
-            }
-
-
-            const total =
-                reviews.reduce(
-                    function (sum, review) {
-
-                        return (
-                            sum +
-                            Number(
-                                review.rating || 0
-                            )
-                        );
-
-                    },
-                    0
-                );
-
-
-            return {
-
-                avg:
-                    total /
-                    reviews.length,
-
-                count:
-                    reviews.length
-            };
         },
 
 
@@ -305,9 +260,7 @@
             if (!user || !user.id) {
 
                 return {
-
                     success: false,
-
                     message:
                         "Please log in to leave a review."
                 };
@@ -317,9 +270,7 @@
             if (!businessId) {
 
                 return {
-
                     success: false,
-
                     message:
                         "Business information is missing."
                 };
@@ -339,9 +290,7 @@
             ) {
 
                 return {
-
                     success: false,
-
                     message:
                         "Please select a rating from 1 to 5."
                 };
@@ -355,9 +304,7 @@
             if (!accessToken) {
 
                 return {
-
                     success: false,
-
                     message:
                         "Your login session has expired. Please log in again."
                 };
@@ -401,9 +348,7 @@
                 if (!existingResponse.ok) {
 
                     return {
-
                         success: false,
-
                         message:
                             await this.getError(
                                 existingResponse
@@ -422,14 +367,11 @@
                 ) {
 
                     return {
-
                         success: false,
-
                         message:
                             "You have already reviewed this business."
                     };
                 }
-
 
             } catch (error) {
 
@@ -438,11 +380,8 @@
                     error
                 );
 
-
                 return {
-
                     success: false,
-
                     message:
                         "Could not check your existing reviews."
                 };
@@ -465,7 +404,7 @@
                REVIEW DATA
             ================================================= */
 
-            const review = {
+            const reviewData = {
 
                 business_id:
                     businessId,
@@ -508,7 +447,7 @@
 
                             body:
                                 JSON.stringify(
-                                    review
+                                    reviewData
                                 )
                         }
                     );
@@ -516,7 +455,7 @@
 
                 if (!response.ok) {
 
-                    const errorMessage =
+                    const message =
                         await this.getError(
                             response
                         );
@@ -524,22 +463,21 @@
 
                     console.error(
                         "LosOja Reviews: Insert failed:",
-                        errorMessage
+                        message
                     );
 
 
                     return {
-
                         success: false,
-
-                        message:
-                            errorMessage
+                        message: message
                     };
                 }
 
 
                 let savedReview =
-                    review;
+                    {
+                        ...reviewData
+                    };
 
 
                 try {
@@ -562,12 +500,10 @@
                             data;
                     }
 
-
                 } catch (error) {
 
                     /*
-                     * Empty response is acceptable
-                     * because the insert already succeeded.
+                     * Insert already succeeded.
                      */
                 }
 
@@ -605,7 +541,7 @@
 
 
         /* =====================================================
-           CREATE REVIEWS SECTION
+           REVIEWS SECTION
         ===================================================== */
 
         getOrCreateSection() {
@@ -629,8 +565,8 @@
 
             if (!details) {
 
-                console.warn(
-                    "LosOja Reviews: businessDetails was not found."
+                console.error(
+                    "LosOja Reviews: businessDetails not found."
                 );
 
                 return null;
@@ -661,7 +597,7 @@
 
 
         /* =====================================================
-           RENDER REVIEWS
+           RENDER
         ===================================================== */
 
         async renderForBusiness(
@@ -719,38 +655,48 @@
                         id="reviewForm"
                     >
 
+                        <h4 class="review-form-title">
+                            Leave a Review
+                        </h4>
+
                         <div
                             class="star-rating"
                             id="starRating"
+                            role="radiogroup"
                             aria-label="Choose a rating"
                         >
 
                             <button
                                 type="button"
+                                class="review-star"
                                 data-value="1"
                                 aria-label="1 star"
                             >★</button>
 
                             <button
                                 type="button"
+                                class="review-star"
                                 data-value="2"
                                 aria-label="2 stars"
                             >★</button>
 
                             <button
                                 type="button"
+                                class="review-star"
                                 data-value="3"
                                 aria-label="3 stars"
                             >★</button>
 
                             <button
                                 type="button"
+                                class="review-star"
                                 data-value="4"
                                 aria-label="4 stars"
                             >★</button>
 
                             <button
                                 type="button"
+                                class="review-star"
                                 data-value="5"
                                 aria-label="5 stars"
                             >★</button>
@@ -780,6 +726,7 @@
                         </button>
 
                     </form>
+
                 `;
 
             } else {
@@ -803,7 +750,7 @@
 
                     ? reviews
                         .map(
-                            function (review) {
+                            (review) => {
 
                                 const name =
                                     review.user_name ||
@@ -825,8 +772,10 @@
 
 
                                 const text =
-                                    review.review ||
-                                    "";
+                                    String(
+                                        review.review ||
+                                        ""
+                                    );
 
 
                                 const date =
@@ -844,16 +793,15 @@
                                             class="review-header"
                                         >
 
-                                            <span
+                                            <strong
                                                 class="reviewer"
                                             >
                                                 ${this.escapeHTML(name)}
-                                            </span>
+                                            </strong>
 
 
                                             <span
                                                 class="review-stars"
-                                                aria-label="${rating} out of 5 stars"
                                             >
                                                 ${"★".repeat(rating)}
                                                 ${"☆".repeat(5 - rating)}
@@ -865,9 +813,7 @@
                                         ${
                                             text
                                                 ? `
-                                                    <p
-                                                        class="review-text"
-                                                    >
+                                                    <p class="review-text">
                                                         ${this.escapeHTML(text)}
                                                     </p>
                                                 `
@@ -878,9 +824,7 @@
                                         ${
                                             date
                                                 ? `
-                                                    <div
-                                                        class="review-date"
-                                                    >
+                                                    <div class="review-date">
                                                         ${this.formatDate(date)}
                                                     </div>
                                                 `
@@ -890,7 +834,7 @@
                                     </article>
 
                                 `;
-                            }.bind(this)
+                            }
                         )
                         .join("")
 
@@ -921,9 +865,7 @@
                 ${formHTML}
 
 
-                <div
-                    class="review-list"
-                >
+                <div class="review-list">
                     ${listHTML}
                 </div>
 
@@ -931,7 +873,7 @@
 
 
             /* =================================================
-               STAR SELECTION
+               STAR RATING
             ================================================= */
 
             if (isLoggedIn) {
@@ -941,34 +883,95 @@
 
 
                 const stars =
-                    section.querySelectorAll(
-                        "#starRating button"
+                    Array.from(
+                        section.querySelectorAll(
+                            ".review-star"
+                        )
                     );
 
 
-                stars.forEach(
-                    function (button) {
+                function updateStars(
+                    rating
+                ) {
 
-                        button.addEventListener(
+                    selectedRating =
+                        Number(rating);
+
+
+                    stars.forEach(
+                        function (star) {
+
+                            const value =
+                                Number(
+                                    star.dataset.value
+                                );
+
+
+                            star.classList.toggle(
+                                "active",
+                                value <=
+                                selectedRating
+                            );
+
+                        }
+                    );
+                }
+
+
+                stars.forEach(
+                    function (star) {
+
+                        star.addEventListener(
                             "click",
+                            function (event) {
+
+                                event.preventDefault();
+
+                                updateStars(
+                                    star.dataset.value
+                                );
+                            }
+                        );
+
+
+                        star.addEventListener(
+                            "mouseenter",
                             function () {
 
-                                selectedRating =
+                                const hoverRating =
                                     Number(
-                                        button.dataset.value
+                                        star.dataset.value
                                     );
 
 
                                 stars.forEach(
-                                    function (star) {
+                                    function (item) {
 
-                                        star.classList.toggle(
-                                            "active",
+                                        item.classList.toggle(
+                                            "hover",
                                             Number(
-                                                star.dataset.value
+                                                item.dataset.value
                                             ) <=
-                                            selectedRating
+                                            hoverRating
                                         );
+
+                                    }
+                                );
+                            }
+                        );
+
+
+                        star.addEventListener(
+                            "mouseleave",
+                            function () {
+
+                                stars.forEach(
+                                    function (item) {
+
+                                        item.classList.remove(
+                                            "hover"
+                                        );
+
                                     }
                                 );
                             }
@@ -978,7 +981,7 @@
 
 
                 /* =================================================
-                   FORM SUBMIT
+                   SUBMIT
                 ================================================= */
 
                 const form =
@@ -1013,12 +1016,15 @@
                             }
 
 
-                            if (!selectedRating) {
+                            if (
+                                selectedRating < 1 ||
+                                selectedRating > 5
+                            ) {
 
                                 if (errorElement) {
 
                                     errorElement.textContent =
-                                        "Please select a rating.";
+                                        "Please select a rating from 1 to 5.";
 
                                     errorElement.classList.remove(
                                         "hidden"
@@ -1078,17 +1084,79 @@
                                         "Review submitted successfully!",
                                         "success"
                                     );
-
-                                } else {
-
-                                    console.log(
-                                        "Review submitted successfully!"
-                                    );
                                 }
 
 
-                                await Reviews.renderForBusiness(
-                                    businessId
+                                /*
+                                 * IMPORTANT:
+                                 * Display the saved review immediately
+                                 * instead of depending only on another
+                                 * database read.
+                                 */
+
+                                const saved =
+                                    result.review || {};
+
+
+                                const immediateReview = {
+
+                                    ...saved,
+
+                                    user_name:
+                                        result.userName,
+
+                                    rating:
+                                        Number(
+                                            saved.rating ||
+                                            selectedRating
+                                        ),
+
+                                    review:
+                                        saved.review ??
+                                        text,
+
+                                    created_at:
+                                        saved.created_at ||
+                                        new Date().toISOString()
+                                };
+
+
+                                /*
+                                 * Re-render with the newly
+                                 * submitted review first.
+                                 */
+
+                                const currentReviews =
+                                    await Reviews.getForBusiness(
+                                        businessId
+                                    );
+
+
+                                const withoutDuplicate =
+                                    currentReviews.filter(
+                                        function (item) {
+
+                                            return (
+                                                String(
+                                                    item.id || ""
+                                                ) !==
+                                                String(
+                                                    immediateReview.id || ""
+                                                )
+                                            );
+                                        }
+                                    );
+
+
+                                withoutDuplicate.unshift(
+                                    immediateReview
+                                );
+
+
+                                Reviews.renderReviewList(
+                                    section,
+                                    businessId,
+                                    withoutDuplicate
                                 );
 
 
@@ -1110,7 +1178,6 @@
                                         "hidden"
                                     );
                                 }
-
 
                             } finally {
 
@@ -1137,6 +1204,140 @@
 
 
         /* =====================================================
+           RENDER REVIEW LIST AFTER SUBMIT
+        ===================================================== */
+
+        renderReviewList(
+            section,
+            businessId,
+            reviews
+        ) {
+
+            const list =
+                section.querySelector(
+                    ".review-list"
+                );
+
+
+            const count =
+                section.querySelector(
+                    ".reviews-count"
+                );
+
+
+            if (count) {
+
+                count.textContent =
+                    reviews.length;
+            }
+
+
+            if (!list) {
+                return;
+            }
+
+
+            if (!reviews.length) {
+
+                list.innerHTML = `
+
+                    <p class="reviews-empty">
+                        No reviews yet. Be the first to review this business!
+                    </p>
+
+                `;
+
+                return;
+            }
+
+
+            list.innerHTML =
+                reviews
+                    .map(
+                        (review) => {
+
+                            const name =
+                                review.user_name ||
+                                review.username ||
+                                review.userName ||
+                                "LosOja User";
+
+
+                            const rating =
+                                Math.max(
+                                    1,
+                                    Math.min(
+                                        5,
+                                        Number(
+                                            review.rating || 0
+                                        )
+                                    )
+                                );
+
+
+                            const text =
+                                String(
+                                    review.review ||
+                                    ""
+                                );
+
+
+                            const date =
+                                review.created_at ||
+                                "";
+
+
+                            return `
+
+                                <article
+                                    class="review-item"
+                                >
+
+                                    <div class="review-header">
+
+                                        <strong class="reviewer">
+                                            ${this.escapeHTML(name)}
+                                        </strong>
+
+                                        <span class="review-stars">
+                                            ${"★".repeat(rating)}
+                                            ${"☆".repeat(5 - rating)}
+                                        </span>
+
+                                    </div>
+
+
+                                    ${
+                                        text
+                                            ? `
+                                                <p class="review-text">
+                                                    ${this.escapeHTML(text)}
+                                                </p>
+                                            `
+                                            : ""
+                                    }
+
+
+                                    ${
+                                        date
+                                            ? `
+                                                <div class="review-date">
+                                                    ${this.formatDate(date)}
+                                                </div>
+                                            `
+                                            : ""
+                                    }
+
+                                </article>
+
+                            `;
+                        }
+                    )
+                    .join("");
+        },
+
+
+        /* =====================================================
            ESCAPE HTML
         ===================================================== */
 
@@ -1159,7 +1360,7 @@
 
 
         /* =====================================================
-           FORMAT DATE
+           DATE
         ===================================================== */
 
         formatDate(value) {
@@ -1169,36 +1370,28 @@
             }
 
 
-            try {
-
-                const date =
-                    new Date(value);
+            const date =
+                new Date(value);
 
 
-                if (
-                    Number.isNaN(
-                        date.getTime()
-                    )
-                ) {
-
-                    return "";
-                }
-
-
-                return date.toLocaleDateString(
-                    undefined,
-                    {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric"
-                    }
-                );
-
-
-            } catch (error) {
+            if (
+                Number.isNaN(
+                    date.getTime()
+                )
+            ) {
 
                 return "";
             }
+
+
+            return date.toLocaleDateString(
+                undefined,
+                {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric"
+                }
+            );
         }
     };
 
