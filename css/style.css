@@ -1441,3 +1441,134 @@ select:focus-visible {
         font-size: 30px;
     }
 }
+/* =========================================================
+   LOSOJA MOBILITY
+   TryCircle Bike & Cab + Rent a Truck
+========================================================= */
+
+.mobility-section {
+    background: var(--white);
+}
+
+.mobility-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+}
+
+.mobility-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 30px 24px;
+    text-align: center;
+    box-shadow: var(--shadow);
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.mobility-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+    border-color: var(--green);
+}
+
+.mobility-icon {
+    width: 70px;
+    height: 70px;
+    margin: 0 auto 18px;
+    border-radius: 50%;
+    background: var(--green-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+}
+
+.mobility-card h3 {
+    font-size: 22px;
+    margin-bottom: 8px;
+}
+
+.mobility-card p {
+    color: var(--gray);
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.mobility-card .btn {
+    min-width: 150px;
+}
+
+
+/* =========================================================
+   MOBILITY REQUEST MODAL
+========================================================= */
+
+.mobility-request {
+    margin-top: 20px;
+}
+
+.mobility-request-title {
+    margin-bottom: 18px;
+}
+
+.mobility-request-note {
+    color: var(--gray);
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+
+/* =========================================================
+   BUSINESS IMAGE - UPLOAD/PREVIEW
+========================================================= */
+
+.image-preview {
+    width: 100%;
+    min-height: 180px;
+    margin-top: 10px;
+    border: 2px dashed var(--border);
+    border-radius: 10px;
+    background: var(--gray-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    color: var(--gray);
+    text-align: center;
+    padding: 15px;
+}
+
+.image-preview img {
+    width: 100%;
+    max-height: 250px;
+    object-fit: cover;
+    border-radius: 8px;
+    display: block;
+}
+
+
+/* =========================================================
+   MOBILITY RESPONSIVE
+========================================================= */
+
+@media (max-width: 900px) {
+
+    .mobility-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 700px) {
+
+    .mobility-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .mobility-card {
+        padding: 25px 20px;
+    }
+}
