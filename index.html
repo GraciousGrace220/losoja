@@ -1,1458 +1,811 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
 
-```
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-<title>LosOja - Find Businesses in Nigeria</title>
+    <title>LosOja - Find Businesses in Nigeria</title>
 
-<meta
-    name="description"
-    content="LosOja helps you discover businesses, services and places across Nigeria."
->
+    <meta
+        name="description"
+        content="LosOja helps you discover businesses, services and places across Nigeria."
+    >
 
-<link
-    rel="stylesheet"
-    href="css/style.css"
->
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
 
-<link
-    rel="preconnect"
-    href="https://fonts.googleapis.com"
->
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
 
-<link
-    rel="preconnect"
-    href="https://fonts.googleapis.com"
-    crossorigin
->
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
 
-<link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-    rel="stylesheet"
->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
 
-<!-- =====================================================
-     MOBILE AUTH BUTTONS
-     Prevent desktop and mobile Login/Sign Up controls
-     from appearing at the same time.
-====================================================== -->
-
-<style>
-    .mobile-auth-links {
-        display: none;
-    }
-
-    @media (max-width: 700px) {
-
+    <style>
         .mobile-auth-links {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-top: 15px;
+            display: none;
         }
 
-    }
-</style>
-```
-
+        @media (max-width: 700px) {
+            .mobile-auth-links {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                margin-top: 15px;
+            }
+        }
+    </style>
 </head>
+
 
 <body>
 
-<!-- =====================================================
-     HEADER
-===================================================== -->
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
 
-<header class="site-header">
+    <header class="site-header">
 
-```
-<div class="container header-inner">
+        <div class="container header-inner">
 
-    <a
-        href="#home"
-        class="logo"
-    >
-        LosOja
-    </a>
-
-
-    <nav
-        class="main-nav"
-        id="mainNav"
-    >
-
-        <a href="#home">
-            Home
-        </a>
-
-        <a href="#categories">
-            Categories
-        </a>
-
-        <a href="#businesses">
-            Businesses
-        </a>
-
-        <a href="#how-it-works">
-            How It Works
-        </a>
-
-        <a href="#about">
-            About
-        </a>
-
-        <a
-            href="#dashboard"
-            id="dashboardNavLink"
-            class="hidden"
-        >
-            My Dashboard
-        </a>
-
-    </nav>
-
-
-    <div
-        class="header-actions"
-        id="headerActions"
-    >
-
-        <button
-            type="button"
-            class="btn btn-outline"
-            id="loginBtn"
-        >
-            Login
-        </button>
-
-
-        <button
-            type="button"
-            class="btn btn-primary"
-            id="signupBtn"
-        >
-            Sign Up
-        </button>
-
-
-        <div
-            id="userArea"
-            class="user-area hidden"
-        ></div>
-
-    </div>
-
-
-    <button
-        type="button"
-        class="mobile-menu-btn"
-        id="mobileMenuBtn"
-        aria-label="Open menu"
-    >
-        ☰
-    </button>
-
-</div>
-
-
-<!-- MOBILE NAV -->
-
-<div
-    class="mobile-nav"
-    id="mobileNav"
->
-
-    <a href="#home">
-        Home
-    </a>
-
-    <a href="#categories">
-        Categories
-    </a>
-
-    <a href="#businesses">
-        Businesses
-    </a>
-
-    <a href="#how-it-works">
-        How It Works
-    </a>
-
-    <a href="#about">
-        About
-    </a>
-
-    <a
-        href="#dashboard"
-        id="mobileDashboardLink"
-        class="hidden"
-    >
-        My Dashboard
-    </a>
-
-
-    <div
-        id="mobileAuthLinks"
-        class="mobile-auth-links"
-    >
-
-        <button
-            type="button"
-            class="btn btn-outline"
-            id="mobileLoginBtn"
-        >
-            Login
-        </button>
-
-        <button
-            type="button"
-            class="btn btn-primary"
-            id="mobileSignupBtn"
-        >
-            Sign Up
-        </button>
-
-    </div>
-
-</div>
-```
-
-</header>
-
-<!-- =====================================================
-     HERO
-===================================================== -->
-
-<section
-    class="hero"
-    id="home"
->
-
-```
-<div class="container hero-content">
-
-    <div class="hero-text">
-
-        <p class="hero-kicker">
-            DISCOVER NIGERIA
-        </p>
-
-        <h1>
-            Find Businesses.
-            <br>
-            Discover Services.
-            <br>
-            Explore Nigeria.
-        </h1>
-
-        <p>
-            Discover trusted businesses and services
-            around you with LosOja.
-        </p>
-
-    </div>
-
-
-    <!-- SEARCH -->
-
-    <form
-        id="searchForm"
-        class="search-form"
-    >
-
-        <div class="search-field">
-
-            <label for="searchInput">
-                What are you looking for?
-            </label>
-
-            <input
-                type="search"
-                id="searchInput"
-                placeholder="e.g. restaurant, fashion, salon..."
+            <a
+                href="#home"
+                class="logo"
             >
-
-        </div>
-
-
-        <div class="search-field">
-
-            <label for="locationInput">
-                Location
-            </label>
-
-            <input
-                type="text"
-                id="locationInput"
-                placeholder="e.g. Lagos, Abuja..."
-            >
-
-        </div>
-
-
-        <button
-            type="submit"
-            class="btn btn-primary search-btn"
-        >
-            Search
-        </button>
-
-    </form>
-
-</div>
-```
-
-</section>
-
-<!-- =====================================================
-     CATEGORIES
-===================================================== -->
-
-<section
-    class="section"
-    id="categories"
->
-
-```
-<div class="container">
-
-    <div class="section-title">
-
-        <h2>
-            Explore Categories
-        </h2>
-
-        <p>
-            Find businesses by category.
-        </p>
-
-    </div>
-
-
-    <div class="category-grid">
-
-        <button
-            type="button"
-            class="category-card"
-            data-category="Food"
-        >
-            <span class="category-icon">
-                🍴
-            </span>
-
-            <span>
-                Food
-            </span>
-        </button>
-
-
-        <button
-            type="button"
-            class="category-card"
-            data-category="Fashion"
-        >
-            <span class="category-icon">
-                👗
-            </span>
-
-            <span>
-                Fashion
-            </span>
-        </button>
-
-
-        <button
-            type="button"
-            class="category-card"
-            data-category="Technology"
-        >
-            <span class="category-icon">
-                💻
-            </span>
-
-            <span>
-                Technology
-            </span>
-        </button>
-
-
-        <button
-            type="button"
-            class="category-card"
-            data-category="Beauty"
-        >
-            <span class="category-icon">
-                💄
-            </span>
-
-            <span>
-                Beauty
-            </span>
-        </button>
-
-
-        <button
-            type="button"
-            class="category-card"
-            data-category="Health"
-        >
-            <span class="category-icon">
-                🏥
-            </span>
-
-            <span>
-                Health
-            </span>
-        </button>
-
-
-        <button
-            type="button"
-            class="category-card"
-            data-category="Education"
-        >
-            <span class="category-icon">
-                🎓
-            </span>
-
-            <span>
-                Education
-            </span>
-        </button>
-
-
-        <button
-            type="button"
-            class="category-card"
-            data-category="Services"
-        >
-            <span class="category-icon">
-                🛠️
-            </span>
-
-            <span>
-                Services
-            </span>
-        </button>
-
-
-        <button
-            type="button"
-            class="category-card"
-            data-category="Shopping"
-        >
-            <span class="category-icon">
-                🛍️
-            </span>
-
-            <span>
-                Shopping
-            </span>
-        </button>
-
-
-        <button
-            type="button"
-            class="category-card"
-            data-category="Other"
-        >
-            <span class="category-icon">
-                📍
-            </span>
-
-            <span>
-                Other
-            </span>
-        </button>
-
-    </div>
-
-</div>
-```
-
-</section>
-
-<!-- =====================================================
-     BUSINESSES
-===================================================== -->
-
-<section
-    class="section businesses-section"
-    id="businesses"
->
-
-```
-<div class="container">
-
-    <div class="section-title">
-
-        <h2>
-            Discover Businesses
-        </h2>
-
-        <p>
-            Explore businesses listed on LosOja.
-        </p>
-
-    </div>
-
-
-    <div class="business-toolbar">
-
-        <button
-            type="button"
-            class="btn btn-outline popular-search"
-            data-search="popular"
-        >
-            Popular Businesses
-        </button>
-
-    </div>
-
-
-    <div
-        class="business-grid"
-        id="businessesGrid"
-    >
-        <!-- Businesses loaded by businesses.js -->
-    </div>
-
-
-    <div
-        id="noResults"
-        class="no-results hidden"
-    >
-
-        <p>
-            No businesses found.
-        </p>
-
-    </div>
-
-</div>
-```
-
-</section>
-
-<!-- =====================================================
-     HOW IT WORKS
-===================================================== -->
-
-<section
-    class="section"
-    id="how-it-works"
->
-
-```
-<div class="container">
-
-    <div class="section-title">
-
-        <h2>
-            How LosOja Works
-        </h2>
-
-        <p>
-            Finding a business is simple.
-        </p>
-
-    </div>
-
-
-    <div class="steps-grid">
-
-        <div class="step-card">
-
-            <div class="step-number">
-                1
-            </div>
-
-            <h3>
-                Search
-            </h3>
-
-            <p>
-                Search for the business or service
-                you need.
-            </p>
-
-        </div>
-
-
-        <div class="step-card">
-
-            <div class="step-number">
-                2
-            </div>
-
-            <h3>
-                Discover
-            </h3>
-
-            <p>
-                Browse businesses and learn more
-                about what they offer.
-            </p>
-
-        </div>
-
-
-        <div class="step-card">
-
-            <div class="step-number">
-                3
-            </div>
-
-            <h3>
-                Connect
-            </h3>
-
-            <p>
-                View business details and connect
-                with businesses directly.
-            </p>
-
-        </div>
-
-    </div>
-
-</div>
-```
-
-</section>
-
-<!-- =====================================================
-     ABOUT
-===================================================== -->
-
-<section
-    class="section"
-    id="about"
->
-
-```
-<div class="container">
-
-    <div class="section-title">
-
-        <h2>
-            About LosOja
-        </h2>
-
-        <p>
-            Your place to discover businesses
-            and services across Nigeria.
-        </p>
-
-    </div>
-
-
-    <div class="about-content">
-
-        <p>
-            LosOja makes it easier for people to
-            discover local businesses and services
-            while giving businesses a place to reach
-            new customers.
-        </p>
-
-    </div>
-
-</div>
-```
-
-</section>
-
-<!-- =====================================================
-     ADD BUSINESS CTA
-===================================================== -->
-
-<section class="section">
-
-```
-<div class="container">
-
-    <div class="cta-box">
-
-        <h2>
-            Own a Business?
-        </h2>
-
-        <p>
-            Add your business to LosOja and help
-            customers discover you.
-        </p>
-
-
-        <button
-            type="button"
-            class="btn btn-primary add-business-btn"
-        >
-            + Add Your Business
-        </button>
-
-    </div>
-
-</div>
-```
-
-</section>
-
-<!-- =====================================================
-     LOGIN MODAL
-===================================================== -->
-
-<div
-    class="modal"
-    id="loginModal"
->
-
-```
-<div class="modal-content">
-
-    <button
-        type="button"
-        class="modal-close"
-        aria-label="Close"
-    >
-        ×
-    </button>
-
-
-    <h2>
-        Login to LosOja
-    </h2>
-
-
-    <form id="loginForm">
-
-        <div class="form-group">
-
-            <label for="loginEmail">
-                Email
-            </label>
-
-            <input
-                type="email"
-                id="loginEmail"
-                required
-                autocomplete="email"
-            >
-
-        </div>
-
-
-        <div class="form-group">
-
-            <label for="loginPassword">
-                Password
-            </label>
-
-            <input
-                type="password"
-                id="loginPassword"
-                required
-                autocomplete="current-password"
-                placeholder="demo123"
-            >
-
-        </div>
-
-
-        <p
-            id="loginError"
-            class="form-error hidden"
-        ></p>
-
-
-        <button
-            type="submit"
-            class="btn btn-primary form-submit"
-        >
-            Login
-        </button>
-
-    </form>
-
-
-    <p class="modal-switch">
-
-        Don't have an account?
-
-        <button
-            type="button"
-            id="switchToSignup"
-        >
-            Sign Up
-        </button>
-
-    </p>
-
-</div>
-```
-
-</div>
-
-<!-- =====================================================
-     SIGN UP MODAL
-===================================================== -->
-
-<div
-    class="modal"
-    id="signupModal"
->
-
-```
-<div class="modal-content">
-
-    <button
-        type="button"
-        class="modal-close"
-        aria-label="Close"
-    >
-        ×
-    </button>
-
-
-    <h2>
-        Create a LosOja Account
-    </h2>
-
-
-    <form id="signupForm">
-
-        <div class="form-group">
-
-            <label for="signupName">
-                Full Name
-            </label>
-
-            <input
-                type="text"
-                id="signupName"
-                required
-                autocomplete="name"
-            >
-
-        </div>
-
-
-        <div class="form-group">
-
-            <label for="signupEmail">
-                Email
-            </label>
-
-            <input
-                type="email"
-                id="signupEmail"
-                required
-                autocomplete="email"
-            >
-
-        </div>
-
-
-        <div class="form-group">
-
-            <label for="signupPassword">
-                Password
-            </label>
-
-            <input
-                type="password"
-                id="signupPassword"
-                required
-                autocomplete="new-password"
-                minlength="6"
-            >
-
-        </div>
-
-
-        <p
-            id="signupError"
-            class="form-error hidden"
-        ></p>
-
-
-        <button
-            type="submit"
-            class="btn btn-primary form-submit"
-        >
-            Create Account
-        </button>
-
-    </form>
-
-
-    <p class="modal-switch">
-
-        Already have an account?
-
-        <button
-            type="button"
-            id="switchToLogin"
-        >
-            Login
-        </button>
-
-    </p>
-
-</div>
-```
-
-</div>
-
-<!-- =====================================================
-     ADD BUSINESS MODAL
-===================================================== -->
-
-<div
-    class="modal"
-    id="addBusinessModal"
->
-
-```
-<div class="modal-content large">
-
-    <button
-        type="button"
-        class="modal-close"
-        aria-label="Close"
-    >
-        ×
-    </button>
-
-
-    <h2>
-        Add Your Business
-    </h2>
-
-
-    <form id="addBusinessForm">
-
-        <div class="form-group">
-
-            <label for="businessName">
-                Business Name *
-            </label>
-
-            <input
-                type="text"
-                id="businessName"
-                required
-            >
-
-        </div>
-
-
-        <div class="form-group">
-
-            <label for="businessCategory">
-                Category *
-            </label>
-
-            <select
-                id="businessCategory"
-                required
-            >
-
-                <option value="">
-                    Select a category
-                </option>
-
-                <option value="Food">
-                    Food
-                </option>
-
-                <option value="Fashion">
-                    Fashion
-                </option>
-
-                <option value="Technology">
-                    Technology
-                </option>
-
-                <option value="Beauty">
-                    Beauty
-                </option>
-
-                <option value="Health">
-                    Health
-                </option>
-
-                <option value="Education">
-                    Education
-                </option>
-
-                <option value="Services">
-                    Services
-                </option>
-
-                <option value="Shopping">
-                    Shopping
-                </option>
-
-                <option value="Other">
-                    Other
-                </option>
-
-            </select>
-
-        </div>
-
-
-        <div class="form-group">
-
-            <label for="businessLocation">
-                Location *
-            </label>
-
-            <input
-                type="text"
-                id="businessLocation"
-                placeholder="e.g. Lagos, Nigeria"
-                required
-            >
-
-        </div>
-
-
-        <div class="form-group">
-
-            <label for="businessDescription">
-                Description
-            </label>
-
-            <textarea
-                id="businessDescription"
-                placeholder="Tell customers about your business..."
-                rows="3"
-            ></textarea>
-
-        </div>
-
-
-        <div class="form-group">
-
-            <label for="businessImage">
-                Business Image (optional)
-            </label>
-
-            <input
-                type="file"
-                id="businessImage"
-                accept="image/*"
-            >
-
-            <div
-                id="imagePreview"
-                class="image-preview hidden"
-            ></div>
-
-        </div>
-
-
-        <div class="form-group">
-
-            <label for="businessPhone">
-                Phone
-            </label>
-
-            <input
-                type="tel"
-                id="businessPhone"
-                placeholder="Business phone number"
-            >
-
-        </div>
-
-
-        <p
-            id="addBusinessError"
-            class="form-error hidden"
-        ></p>
-
-
-        <button
-            type="submit"
-            class="btn btn-primary form-submit"
-        >
-            Add Business
-        </button>
-
-    </form>
-
-</div>
-```
-
-</div>
-
-<!-- =====================================================
-     BUSINESS DETAILS MODAL
-===================================================== -->
-
-<div
-    class="modal"
-    id="businessDetailsModal"
->
-
-```
-<div class="modal-content large">
-
-    <button
-        type="button"
-        class="modal-close"
-        aria-label="Close"
-    >
-        ×
-    </button>
-
-
-    <div
-        class="business-details"
-        id="businessDetails"
-    ></div>
-
-</div>
-```
-
-</div>
-
-<!-- =====================================================
-     EDIT BUSINESS MODAL
-===================================================== -->
-
-<div
-    class="modal"
-    id="editBusinessModal"
->
-
-```
-<div class="modal-content large">
-
-    <button
-        type="button"
-        class="modal-close"
-        aria-label="Close"
-    >
-        ×
-    </button>
-
-
-    <h2>
-        Edit Business
-    </h2>
-
-
-    <form id="editBusinessForm">
-
-        <input
-            type="hidden"
-            id="editBusinessId"
-        >
-
-
-        <div class="form-group">
-
-            <label for="editBusinessName">
-                Business Name *
-            </label>
-
-            <input
-                type="text"
-                id="editBusinessName"
-                required
-            >
-
-        </div>
-
-
-        <div class="form-group">
-
-            <label for="editBusinessCategory">
-                Category *
-            </label>
-
-            <select
-                id="editBusinessCategory"
-                required
-            >
-
-                <option value="">
-                    Select a category
-                </option>
-
-                <option value="Food">
-                    Food
-                </option>
-
-                <option value="Fashion">
-                    Fashion
-                </option>
-
-                <option value="Technology">
-                    Technology
-                </option>
-
-                <option value="Beauty">
-                    Beauty
-                </option>
-
-                <option value="Health">
-                    Health
-                </option>
-
-                <option value="Education">
-                    Education
-                </option>
-
-                <option value="Services">
-                    Services
-                </option>
-
-                <option value="Shopping">
-                    Shopping
-                </option>
-
-                <option value="Other">
-                    Other
-                </option>
-
-            </select>
-
-        </div>
-
-
-        <div class="form-group">
-
-            <label for="editBusinessLocation">
-                Location *
-            </label>
-
-            <input
-                type="text"
-                id="editBusinessLocation"
-                required
-            >
-
-        </div>
-
-
-        <div class="form-group">
-
-            <label for="editBusinessDescription">
-                Description
-            </label>
-
-            <textarea
-                id="editBusinessDescription"
-                rows="3"
-            ></textarea>
-
-        </div>
-
-
-        <div class="form-group">
-
-            <label for="editBusinessImage">
-                Change Image (optional)
-            </label>
-
-            <input
-                type="file"
-                id="editBusinessImage"
-                accept="image/*"
-            >
-
-            <div
-                id="editImagePreview"
-                class="image-preview hidden"
-            ></div>
-
-        </div>
-
-
-        <div class="form-group">
-
-            <label for="editBusinessPhone">
-                Phone
-            </label>
-
-            <input
-                type="tel"
-                id="editBusinessPhone"
-            >
-
-        </div>
-
-
-        <p
-            id="editBusinessError"
-            class="form-error hidden"
-        ></p>
-
-
-        <button
-            type="submit"
-            class="btn btn-primary form-submit"
-        >
-            Save Changes
-        </button>
-
-    </form>
-
-</div>
-```
-
-</div>
-
-<!-- =====================================================
-     DASHBOARD
-===================================================== -->
-
-<section
-    class="section hidden"
-    id="dashboard"
->
-
-```
-<div class="container">
-
-    <div class="section-title">
-
-        <h2>
-            My Dashboard
-        </h2>
-
-        <p>
-            Manage the businesses you have listed
-            on LosOja.
-        </p>
-
-    </div>
-
-
-    <div class="dashboard-actions">
-
-        <button
-            type="button"
-            class="btn btn-primary add-business-btn"
-        >
-            + Add New Business
-        </button>
-
-    </div>
-
-
-    <div
-        id="dashboardBusinesses"
-        class="dashboard-list"
-    >
-        <!-- Filled by dashboard.js -->
-    </div>
-
-
-    <div
-        id="dashboardEmpty"
-        class="no-results hidden"
-    >
-
-        <p>
-            You haven't added any businesses yet.
-        </p>
-
-
-        <button
-            type="button"
-            class="btn btn-primary add-business-btn"
-            style="margin-top:1rem"
-        >
-            Add Your First Business
-        </button>
-
-    </div>
-
-</div>
-```
-
-</section>
-
-<!-- =====================================================
-     FOOTER
-===================================================== -->
-
-<footer>
-
-```
-<div class="container">
-
-    <div class="footer-grid">
-
-        <div>
-
-            <h3>
                 LosOja
-            </h3>
-
-            <p>
-                Find businesses.
-                Discover services.
-                Explore Nigeria.
-            </p>
-
-        </div>
+            </a>
 
 
-        <div>
+            <nav
+                class="main-nav"
+                id="mainNav"
+            >
 
-            <h3>
-                Quick Links
-            </h3>
-
-            <p>
                 <a href="#home">
                     Home
                 </a>
-            </p>
 
-            <p>
                 <a href="#categories">
                     Categories
                 </a>
-            </p>
 
-            <p>
                 <a href="#businesses">
                     Businesses
                 </a>
-            </p>
+
+                <a href="#how-it-works">
+                    How It Works
+                </a>
+
+                <a href="#about">
+                    About
+                </a>
+
+                <a
+                    href="#dashboard"
+                    id="dashboardNavLink"
+                    class="hidden"
+                >
+                    My Dashboard
+                </a>
+
+            </nav>
+
+
+            <div
+                class="header-actions"
+                id="headerActions"
+            >
+
+                <button
+                    type="button"
+                    class="btn btn-outline"
+                    id="loginBtn"
+                >
+                    Login
+                </button>
+
+
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    id="signupBtn"
+                >
+                    Sign Up
+                </button>
+
+
+                <div
+                    id="userArea"
+                    class="user-area hidden"
+                ></div>
+
+            </div>
+
+
+            <button
+                type="button"
+                class="mobile-menu-btn"
+                id="mobileMenuBtn"
+                aria-label="Open menu"
+                aria-expanded="false"
+            >
+                ☰
+            </button>
 
         </div>
 
 
-        <div>
+        <!-- MOBILE NAVIGATION -->
 
-            <h3>
-                For Businesses
-            </h3>
+        <div
+            class="mobile-nav"
+            id="mobileNav"
+        >
 
-            <p>
+            <a href="#home">
+                Home
+            </a>
+
+            <a href="#categories">
+                Categories
+            </a>
+
+            <a href="#businesses">
+                Businesses
+            </a>
+
+            <a href="#how-it-works">
+                How It Works
+            </a>
+
+            <a href="#about">
+                About
+            </a>
+
+            <a
+                href="#dashboard"
+                id="mobileDashboardLink"
+                class="hidden"
+            >
+                My Dashboard
+            </a>
+
+
+            <div
+                id="mobileAuthLinks"
+                class="mobile-auth-links"
+            >
 
                 <button
                     type="button"
-                    class="btn btn-light add-business-btn"
+                    class="btn btn-outline"
+                    id="mobileLoginBtn"
                 >
-                    Add Your Business
+                    Login
+                </button>
+
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    id="mobileSignupBtn"
+                >
+                    Sign Up
+                </button>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+    ====================================================== -->
+
+    <main id="mainContent">
+
+
+        <!-- =================================================
+             HERO
+        ================================================== -->
+
+        <section
+            class="hero"
+            id="home"
+        >
+
+            <div class="container hero-content">
+
+                <div class="hero-text">
+
+                    <p class="hero-kicker">
+                        DISCOVER NIGERIA
+                    </p>
+
+                    <h1>
+                        Find Businesses.
+                        <br>
+                        Discover Services.
+                        <br>
+                        Explore Nigeria.
+                    </h1>
+
+                    <p>
+                        Discover trusted businesses and services
+                        around you with LosOja.
+                    </p>
+
+                </div>
+
+
+                <!-- SEARCH -->
+
+                <form
+                    id="searchForm"
+                    class="search-form"
+                >
+
+                    <div class="search-field">
+
+                        <label for="searchInput">
+                            What are you looking for?
+                        </label>
+
+                        <input
+                            type="search"
+                            id="searchInput"
+                            placeholder="e.g. restaurant, fashion, salon..."
+                        >
+
+                    </div>
+
+
+                    <div class="search-field">
+
+                        <label for="locationInput">
+                            Location
+                        </label>
+
+                        <input
+                            type="text"
+                            id="locationInput"
+                            placeholder="e.g. Lagos, Abuja..."
+                        >
+
+                    </div>
+
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary search-btn"
+                    >
+                        Search
+                    </button>
+
+                </form>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             CATEGORIES
+        ================================================== -->
+
+        <section
+            class="section"
+            id="categories"
+        >
+
+            <div class="container">
+
+                <div class="section-title">
+
+                    <h2>
+                        Explore Categories
+                    </h2>
+
+                    <p>
+                        Find businesses by category.
+                    </p>
+
+                </div>
+
+
+                <div class="category-grid">
+
+                    <button
+                        type="button"
+                        class="category-card"
+                        data-category="Food"
+                    >
+                        <span class="category-icon">🍴</span>
+                        <span>Food</span>
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="category-card"
+                        data-category="Fashion"
+                    >
+                        <span class="category-icon">👗</span>
+                        <span>Fashion</span>
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="category-card"
+                        data-category="Technology"
+                    >
+                        <span class="category-icon">💻</span>
+                        <span>Technology</span>
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="category-card"
+                        data-category="Beauty"
+                    >
+                        <span class="category-icon">💄</span>
+                        <span>Beauty</span>
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="category-card"
+                        data-category="Health"
+                    >
+                        <span class="category-icon">🏥</span>
+                        <span>Health</span>
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="category-card"
+                        data-category="Education"
+                    >
+                        <span class="category-icon">🎓</span>
+                        <span>Education</span>
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="category-card"
+                        data-category="Services"
+                    >
+                        <span class="category-icon">🛠️</span>
+                        <span>Services</span>
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="category-card"
+                        data-category="Shopping"
+                    >
+                        <span class="category-icon">🛍️</span>
+                        <span>Shopping</span>
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="category-card"
+                        data-category="Other"
+                    >
+                        <span class="category-icon">📍</span>
+                        <span>Other</span>
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             BUSINESSES
+        ================================================== -->
+
+        <section
+            class="section businesses-section"
+            id="businesses"
+        >
+
+            <div class="container">
+
+                <div class="section-title">
+
+                    <h2>
+                        Discover Businesses
+                    </h2>
+
+                    <p>
+                        Explore businesses listed on LosOja.
+                    </p>
+
+                </div>
+
+
+                <div class="business-toolbar">
+
+                    <button
+                        type="button"
+                        class="btn btn-outline popular-search"
+                        data-search="popular"
+                    >
+                        Popular Businesses
+                    </button>
+
+                </div>
+
+
+                <div
+                    class="business-grid"
+                    id="businessesGrid"
+                >
+                    <!-- Businesses loaded by businesses.js -->
+                </div>
+
+
+                <div
+                    id="noResults"
+                    class="no-results hidden"
+                >
+                    <p>
+                        No businesses found.
+                    </p>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             HOW IT WORKS
+        ================================================== -->
+
+        <section
+            class="section"
+            id="how-it-works"
+        >
+
+            <div class="container">
+
+                <div class="section-title">
+
+                    <h2>
+                        How LosOja Works
+                    </h2>
+
+                    <p>
+                        Finding a business is simple.
+                    </p>
+
+                </div>
+
+
+                <div class="steps-grid">
+
+                    <div class="step-card">
+
+                        <div class="step-number">
+                            1
+                        </div>
+
+                        <h3>
+                            Search
+                        </h3>
+
+                        <p>
+                            Search for the business or service
+                            you need.
+                        </p>
+
+                    </div>
+
+
+                    <div class="step-card">
+
+                        <div class="step-number">
+                            2
+                        </div>
+
+                        <h3>
+                            Discover
+                        </h3>
+
+                        <p>
+                            Browse businesses and learn more
+                            about what they offer.
+                        </p>
+
+                    </div>
+
+
+                    <div class="step-card">
+
+                        <div class="step-number">
+                            3
+                        </div>
+
+                        <h3>
+                            Connect
+                        </h3>
+
+                        <p>
+                            View business details and connect
+                            with businesses directly.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             ABOUT
+        ================================================== -->
+
+        <section
+            class="section"
+            id="about"
+        >
+
+            <div class="container">
+
+                <div class="section-title">
+
+                    <h2>
+                        About LosOja
+                    </h2>
+
+                    <p>
+                        Your place to discover businesses
+                        and services across Nigeria.
+                    </p>
+
+                </div>
+
+
+                <div class="about-content">
+
+                    <p>
+                        LosOja makes it easier for people to
+                        discover local businesses and services
+                        while giving businesses a place to reach
+                        new customers.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             ADD BUSINESS CTA
+        ================================================== -->
+
+        <section class="section">
+
+            <div class="container">
+
+                <div class="cta-box">
+
+                    <h2>
+                        Own a Business?
+                    </h2>
+
+                    <p>
+                        Add your business to LosOja and help
+                        customers discover you.
+                    </p>
+
+
+                    <button
+                        type="button"
+                        class="btn btn-primary add-business-btn"
+                    >
+                        + Add Your Business
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             DASHBOARD
+        ================================================== -->
+
+        <section
+            class="section hidden"
+            id="dashboard"
+        >
+
+            <div class="container">
+
+                <div class="section-title">
+
+                    <h2>
+                        My Dashboard
+                    </h2>
+
+                    <p>
+                        Manage the businesses you have listed
+                        on LosOja.
+                    </p>
+
+                </div>
+
+
+                <div class="dashboard-actions">
+
+                    <button
+                        type="button"
+                        class="btn btn-primary add-business-btn"
+                    >
+                        + Add New Business
+                    </button>
+
+                </div>
+
+
+                <div
+                    id="dashboardBusinesses"
+                    class="dashboard-list"
+                >
+                    <!-- Filled by dashboard.js -->
+                </div>
+
+
+                <div
+                    id="dashboardEmpty"
+                    class="no-results hidden"
+                >
+
+                    <p>
+                        You haven't added any businesses yet.
+                    </p>
+
+
+                    <button
+                        type="button"
+                        class="btn btn-primary add-business-btn"
+                        style="margin-top:1rem"
+                    >
+                        Add Your First Business
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =====================================================
+         LOGIN MODAL
+    ====================================================== -->
+
+    <div
+        class="modal"
+        id="loginModal"
+    >
+
+        <div class="modal-content">
+
+            <button
+                type="button"
+                class="modal-close"
+                aria-label="Close"
+            >
+                ×
+            </button>
+
+
+            <h2>
+                Login to LosOja
+            </h2>
+
+
+            <form id="loginForm">
+
+                <div class="form-group">
+
+                    <label for="loginEmail">
+                        Email
+                    </label>
+
+                    <input
+                        type="email"
+                        id="loginEmail"
+                        required
+                        autocomplete="email"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="loginPassword">
+                        Password
+                    </label>
+
+                    <input
+                        type="password"
+                        id="loginPassword"
+                        required
+                        autocomplete="current-password"
+                        placeholder="demo123"
+                    >
+
+                </div>
+
+
+                <p
+                    id="loginError"
+                    class="form-error hidden"
+                ></p>
+
+
+                <button
+                    type="submit"
+                    class="btn btn-primary form-submit"
+                >
+                    Login
+                </button>
+
+            </form>
+
+
+            <p class="modal-switch">
+
+                Don't have an account?
+
+                <button
+                    type="button"
+                    id="switchToSignup"
+                >
+                    Sign Up
                 </button>
 
             </p>
@@ -1462,42 +815,624 @@
     </div>
 
 
-    <div class="footer-bottom">
+    <!-- =====================================================
+         SIGN UP MODAL
+    ====================================================== -->
 
-        ©
-        <span id="currentYear"></span>
-        LosOja.
-        All rights reserved.
+    <div
+        class="modal"
+        id="signupModal"
+    >
+
+        <div class="modal-content">
+
+            <button
+                type="button"
+                class="modal-close"
+                aria-label="Close"
+            >
+                ×
+            </button>
+
+
+            <h2>
+                Create a LosOja Account
+            </h2>
+
+
+            <form id="signupForm">
+
+                <div class="form-group">
+
+                    <label for="signupName">
+                        Full Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="signupName"
+                        required
+                        autocomplete="name"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="signupEmail">
+                        Email
+                    </label>
+
+                    <input
+                        type="email"
+                        id="signupEmail"
+                        required
+                        autocomplete="email"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="signupPassword">
+                        Password
+                    </label>
+
+                    <input
+                        type="password"
+                        id="signupPassword"
+                        required
+                        autocomplete="new-password"
+                        minlength="6"
+                    >
+
+                </div>
+
+
+                <p
+                    id="signupError"
+                    class="form-error hidden"
+                ></p>
+
+
+                <button
+                    type="submit"
+                    class="btn btn-primary form-submit"
+                >
+                    Create Account
+                </button>
+
+            </form>
+
+
+            <p class="modal-switch">
+
+                Already have an account?
+
+                <button
+                    type="button"
+                    id="switchToLogin"
+                >
+                    Login
+                </button>
+
+            </p>
+
+        </div>
 
     </div>
 
-</div>
-```
 
-</footer>
+    <!-- =====================================================
+         ADD BUSINESS MODAL
+    ====================================================== -->
 
-<!-- =====================================================
-     TOAST
-===================================================== -->
+    <div
+        class="modal"
+        id="addBusinessModal"
+    >
 
-<div
-    id="toast"
-    class="toast hidden"
-></div>
+        <div class="modal-content large">
 
-<!-- =====================================================
-     JAVASCRIPT
-===================================================== -->
+            <button
+                type="button"
+                class="modal-close"
+                aria-label="Close"
+            >
+                ×
+            </button>
 
-<script src="js/app.js"></script>
 
-<script src="js/auth.js"></script>
+            <h2>
+                Add Your Business
+            </h2>
 
-<script src="js/businesses.js"></script>
 
-<script src="js/reviews.js"></script>
+            <form id="addBusinessForm">
 
-<script src="js/dashboard.js"></script>
+                <div class="form-group">
+
+                    <label for="businessName">
+                        Business Name *
+                    </label>
+
+                    <input
+                        type="text"
+                        id="businessName"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="businessCategory">
+                        Category *
+                    </label>
+
+                    <select
+                        id="businessCategory"
+                        required
+                    >
+
+                        <option value="">
+                            Select a category
+                        </option>
+
+                        <option value="Food">
+                            Food
+                        </option>
+
+                        <option value="Fashion">
+                            Fashion
+                        </option>
+
+                        <option value="Technology">
+                            Technology
+                        </option>
+
+                        <option value="Beauty">
+                            Beauty
+                        </option>
+
+                        <option value="Health">
+                            Health
+                        </option>
+
+                        <option value="Education">
+                            Education
+                        </option>
+
+                        <option value="Services">
+                            Services
+                        </option>
+
+                        <option value="Shopping">
+                            Shopping
+                        </option>
+
+                        <option value="Other">
+                            Other
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="businessLocation">
+                        Location *
+                    </label>
+
+                    <input
+                        type="text"
+                        id="businessLocation"
+                        placeholder="e.g. Lagos, Nigeria"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="businessDescription">
+                        Description
+                    </label>
+
+                    <textarea
+                        id="businessDescription"
+                        placeholder="Tell customers about your business..."
+                        rows="3"
+                    ></textarea>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="businessImage">
+                        Business Image (optional)
+                    </label>
+
+                    <input
+                        type="file"
+                        id="businessImage"
+                        accept="image/*"
+                    >
+
+                    <div
+                        id="imagePreview"
+                        class="image-preview hidden"
+                    ></div>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="businessPhone">
+                        Phone
+                    </label>
+
+                    <input
+                        type="tel"
+                        id="businessPhone"
+                        placeholder="Business phone number"
+                    >
+
+                </div>
+
+
+                <p
+                    id="addBusinessError"
+                    class="form-error hidden"
+                ></p>
+
+
+                <button
+                    type="submit"
+                    class="btn btn-primary form-submit"
+                >
+                    Add Business
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         BUSINESS DETAILS MODAL
+    ====================================================== -->
+
+    <div
+        class="modal"
+        id="businessDetailsModal"
+    >
+
+        <div class="modal-content large">
+
+            <button
+                type="button"
+                class="modal-close"
+                aria-label="Close"
+            >
+                ×
+            </button>
+
+
+            <div
+                class="business-details"
+                id="businessDetails"
+            ></div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         EDIT BUSINESS MODAL
+    ====================================================== -->
+
+    <div
+        class="modal"
+        id="editBusinessModal"
+    >
+
+        <div class="modal-content large">
+
+            <button
+                type="button"
+                class="modal-close"
+                aria-label="Close"
+            >
+                ×
+            </button>
+
+
+            <h2>
+                Edit Business
+            </h2>
+
+
+            <form id="editBusinessForm">
+
+                <input
+                    type="hidden"
+                    id="editBusinessId"
+                >
+
+
+                <div class="form-group">
+
+                    <label for="editBusinessName">
+                        Business Name *
+                    </label>
+
+                    <input
+                        type="text"
+                        id="editBusinessName"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="editBusinessCategory">
+                        Category *
+                    </label>
+
+                    <select
+                        id="editBusinessCategory"
+                        required
+                    >
+
+                        <option value="">
+                            Select a category
+                        </option>
+
+                        <option value="Food">
+                            Food
+                        </option>
+
+                        <option value="Fashion">
+                            Fashion
+                        </option>
+
+                        <option value="Technology">
+                            Technology
+                        </option>
+
+                        <option value="Beauty">
+                            Beauty
+                        </option>
+
+                        <option value="Health">
+                            Health
+                        </option>
+
+                        <option value="Education">
+                            Education
+                        </option>
+
+                        <option value="Services">
+                            Services
+                        </option>
+
+                        <option value="Shopping">
+                            Shopping
+                        </option>
+
+                        <option value="Other">
+                            Other
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="editBusinessLocation">
+                        Location *
+                    </label>
+
+                    <input
+                        type="text"
+                        id="editBusinessLocation"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="editBusinessDescription">
+                        Description
+                    </label>
+
+                    <textarea
+                        id="editBusinessDescription"
+                        rows="3"
+                    ></textarea>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="editBusinessImage">
+                        Change Image (optional)
+                    </label>
+
+                    <input
+                        type="file"
+                        id="editBusinessImage"
+                        accept="image/*"
+                    >
+
+                    <div
+                        id="editImagePreview"
+                        class="image-preview hidden"
+                    ></div>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="editBusinessPhone">
+                        Phone
+                    </label>
+
+                    <input
+                        type="tel"
+                        id="editBusinessPhone"
+                    >
+
+                </div>
+
+
+                <p
+                    id="editBusinessError"
+                    class="form-error hidden"
+                ></p>
+
+
+                <button
+                    type="submit"
+                    class="btn btn-primary form-submit"
+                >
+                    Save Changes
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <footer>
+
+        <div class="container">
+
+            <div class="footer-grid">
+
+                <div>
+
+                    <h3>
+                        LosOja
+                    </h3>
+
+                    <p>
+                        Find businesses.
+                        Discover services.
+                        Explore Nigeria.
+                    </p>
+
+                </div>
+
+
+                <div>
+
+                    <h3>
+                        Quick Links
+                    </h3>
+
+                    <p>
+                        <a href="#home">
+                            Home
+                        </a>
+                    </p>
+
+                    <p>
+                        <a href="#categories">
+                            Categories
+                        </a>
+                    </p>
+
+                    <p>
+                        <a href="#businesses">
+                            Businesses
+                        </a>
+                    </p>
+
+                </div>
+
+
+                <div>
+
+                    <h3>
+                        For Businesses
+                    </h3>
+
+                    <p>
+
+                        <button
+                            type="button"
+                            class="btn btn-light add-business-btn"
+                        >
+                            Add Your Business
+                        </button>
+
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="footer-bottom">
+
+                ©
+                <span id="currentYear"></span>
+                LosOja.
+                All rights reserved.
+
+            </div>
+
+        </div>
+
+    </footer>
+
+
+    <!-- =====================================================
+         TOAST
+    ====================================================== -->
+
+    <div
+        id="toast"
+        class="toast hidden"
+    ></div>
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ====================================================== -->
+
+    <script src="js/app.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/businesses.js"></script>
+    <script src="js/reviews.js"></script>
+    <script src="js/dashboard.js"></script>
 
 </body>
 </html>
