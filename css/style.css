@@ -128,7 +128,7 @@ button {
 
 .header-actions.logged-in #loginBtn,
 .header-actions.logged-in #signupBtn {
-    display: none !important;
+    display: none;
 }
 
 .user-area {
@@ -156,18 +156,8 @@ button {
    MOBILE NAVIGATION
 ================================ */
 
-/*
-   IMPORTANT:
-
-   The mobile navigation MUST be hidden
-   on desktop.
-
-   It becomes visible only when JavaScript
-   adds the "open" class.
-*/
-
 .mobile-nav {
-    display: none !important;
+    display: none;
     background: var(--white);
     border-top: 1px solid var(--border);
     border-bottom: 1px solid var(--border);
@@ -175,7 +165,7 @@ button {
 }
 
 .mobile-nav.open {
-    display: flex !important;
+    display: flex;
     flex-direction: column;
     gap: 14px;
 }
@@ -810,33 +800,14 @@ footer a:hover {
         display: block;
     }
 
-    /*
-       Mobile navigation is STILL hidden
-       until the menu button is pressed.
-    */
-
     .mobile-nav {
-        display: none !important;
-        background: var(--white);
-        border-top: 1px solid var(--border);
-        border-bottom: 1px solid var(--border);
-        padding: 15px 20px;
+        display: none;
     }
 
     .mobile-nav.open {
-        display: flex !important;
+        display: flex;
         flex-direction: column;
         gap: 14px;
-    }
-
-    .mobile-nav > a {
-        color: var(--gray-dark);
-        font-weight: 600;
-        padding: 5px 0;
-    }
-
-    .mobile-nav > a:hover {
-        color: var(--green);
     }
 
     .mobile-auth-links {
