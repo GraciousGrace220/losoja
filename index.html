@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>LosOja - Discover Nigerian Businesses & Services</title>
+    <title>LosOja - Find What You Need Across Nigeria</title>
 
     <meta
         name="description"
-        content="LosOja helps you discover Nigerian businesses, properties, transportation, services and more."
+        content="LosOja helps you find trusted Nigerian businesses, services, products, properties, transportation and more."
     >
 
     <link rel="stylesheet" href="css/style.css">
@@ -32,13 +32,11 @@
         <nav class="desktop-nav">
 
             <a href="#home">Home</a>
-            <a href="#categories">Categories</a>
+            <a href="#categories">Explore</a>
             <a href="#businesses">Businesses</a>
             <a href="#property">Property</a>
             <a href="#mobility">Mobility</a>
-            <a href="#rideProviders">Ride Providers</a>
             <a href="#how-it-works">How It Works</a>
-            <a href="#about">About</a>
 
             <button
                 type="button"
@@ -70,13 +68,11 @@
     <div class="mobile-nav" id="mobileNav">
 
         <a href="#home">Home</a>
-        <a href="#categories">Categories</a>
+        <a href="#categories">Explore</a>
         <a href="#businesses">Businesses</a>
         <a href="#property">Property</a>
         <a href="#mobility">Mobility</a>
-        <a href="#rideProviders">Ride Providers</a>
         <a href="#how-it-works">How It Works</a>
-        <a href="#about">About</a>
 
         <button
             type="button"
@@ -95,36 +91,45 @@
 
 
 <!-- =========================================================
-     HERO
+     NEW LOSOJA HERO
 ========================================================= -->
 
 <section class="hero" id="home">
 
     <div class="container hero-content">
 
+        <div class="hero-badge">
+            🇳🇬 Discover what you need, near you
+        </div>
+
+
         <h1>
-            Discover Businesses, Services & Opportunities
-            Across Nigeria
+            What do you need today?
         </h1>
 
+
         <p>
-            Find trusted businesses, properties, transportation,
-            services and more — all in one place.
+            Find businesses, services, products, properties
+            and more across Nigeria.
         </p>
 
+
+        <!-- =================================================
+             MAIN SEARCH
+        ================================================= -->
 
         <form id="searchForm" class="search-form">
 
             <div class="search-field">
 
                 <label for="searchInput">
-                    What are you looking for?
+                    Search
                 </label>
 
                 <input
                     type="text"
                     id="searchInput"
-                    placeholder="Business, service, product..."
+                    placeholder="🔎 Search anything..."
                     autocomplete="off"
                 >
 
@@ -134,13 +139,13 @@
             <div class="search-field">
 
                 <label for="locationInput">
-                    Location
+                    Where?
                 </label>
 
                 <input
                     type="text"
                     id="locationInput"
-                    placeholder="City or area"
+                    placeholder="📍 City, area or near me"
                     autocomplete="off"
                 >
 
@@ -151,10 +156,317 @@
                 type="submit"
                 class="btn btn-primary search-btn"
             >
-                🔍 Search
+                Search
             </button>
 
         </form>
+
+
+        <!-- =================================================
+             SEARCH EXAMPLES
+        ================================================= -->
+
+        <div class="hero-examples">
+
+            <span>Try:</span>
+
+            <a href="#businesses">
+                Phone repair near me
+            </a>
+
+            <a href="#property">
+                2-bedroom apartment
+            </a>
+
+            <a href="#businesses">
+                Cheap furniture
+            </a>
+
+            <a href="#businesses">
+                Generator repair
+            </a>
+
+            <a href="#mobility">
+                Car for rent
+            </a>
+
+            <a href="#businesses">
+                Laundry near me
+            </a>
+
+        </div>
+
+
+        <!-- =================================================
+             SEARCH TRUST / VALUE SIGNALS
+        ================================================= -->
+
+        <div class="hero-trust-row">
+
+            <div class="hero-trust-item">
+                📍
+                <span>
+                    Search near you
+                </span>
+            </div>
+
+            <div class="hero-trust-item">
+                🛡️
+                <span>
+                    Discover trusted listings
+                </span>
+            </div>
+
+            <div class="hero-trust-item">
+                ⭐
+                <span>
+                    Check customer reviews
+                </span>
+            </div>
+
+            <div class="hero-trust-item">
+                💬
+                <span>
+                    Connect directly
+                </span>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     QUICK DISCOVERY
+========================================================= -->
+
+<section class="section quick-discovery-section">
+
+    <div class="container">
+
+        <div class="section-title">
+
+            <h2>
+                What are you looking for?
+            </h2>
+
+            <p>
+                Start with something popular or search for anything you need.
+            </p>
+
+        </div>
+
+
+        <div class="quick-discovery-grid">
+
+            <a
+                href="#businesses"
+                class="quick-discovery-card"
+            >
+                <span class="quick-discovery-icon">
+                    🔧
+                </span>
+
+                <strong>
+                    Services
+                </strong>
+
+                <span>
+                    Find people who can help
+                </span>
+            </a>
+
+
+            <a
+                href="#businesses"
+                class="quick-discovery-card"
+            >
+                <span class="quick-discovery-icon">
+                    🛍️
+                </span>
+
+                <strong>
+                    Buy & Sell
+                </strong>
+
+                <span>
+                    Discover products nearby
+                </span>
+            </a>
+
+
+            <a
+                href="#property"
+                class="quick-discovery-card"
+            >
+                <span class="quick-discovery-icon">
+                    🏠
+                </span>
+
+                <strong>
+                    Property
+                </strong>
+
+                <span>
+                    Houses, apartments and land
+                </span>
+            </a>
+
+
+            <a
+                href="#mobility"
+                class="quick-discovery-card"
+            >
+                <span class="quick-discovery-icon">
+                    🚗
+                </span>
+
+                <strong>
+                    Mobility
+                </strong>
+
+                <span>
+                    Rides and transportation
+                </span>
+            </a>
+
+
+            <a
+                href="#businesses"
+                class="quick-discovery-card"
+            >
+                <span class="quick-discovery-icon">
+                    💼
+                </span>
+
+                <strong>
+                    Professionals
+                </strong>
+
+                <span>
+                    Find skilled people and businesses
+                </span>
+            </a>
+
+
+            <a
+                href="#categories"
+                class="quick-discovery-card"
+            >
+                <span class="quick-discovery-icon">
+                    🔎
+                </span>
+
+                <strong>
+                    Explore Everything
+                </strong>
+
+                <span>
+                    Browse LosOja categories
+                </span>
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     NEAR ME / SMART SEARCH PROMO
+========================================================= -->
+
+<section class="section nearby-section">
+
+    <div class="container">
+
+        <div class="nearby-content">
+
+            <div class="nearby-text">
+
+                <span class="nearby-label">
+                    📍 LOSOJA NEARBY
+                </span>
+
+                <h2>
+                    Find what you need close to you.
+                </h2>
+
+                <p>
+                    Discover businesses, services, properties and
+                    transportation around your area.
+                </p>
+
+
+                <div class="nearby-distance-options">
+
+                    <span>Near me:</span>
+
+                    <button type="button">
+                        500m
+                    </button>
+
+                    <button type="button">
+                        1km
+                    </button>
+
+                    <button type="button">
+                        2km
+                    </button>
+
+                    <button type="button">
+                        5km
+                    </button>
+
+                    <button type="button">
+                        10km
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="nearby-highlights">
+
+                <div class="nearby-highlight">
+                    <strong>
+                        🟢 Open Now
+                    </strong>
+
+                    <span>
+                        Find businesses currently open.
+                    </span>
+                </div>
+
+
+                <div class="nearby-highlight">
+                    <strong>
+                        📅 Available Today
+                    </strong>
+
+                    <span>
+                        Find services ready to help.
+                    </span>
+                </div>
+
+
+                <div class="nearby-highlight">
+                    <strong>
+                        ⚡ Fast Response
+                    </strong>
+
+                    <span>
+                        Find businesses that respond quickly.
+                    </span>
+                </div>
+
+            </div>
+
+        </div>
 
     </div>
 
@@ -165,16 +477,21 @@
      CATEGORIES
 ========================================================= -->
 
-<section class="section categories-section" id="categories">
+<section
+    class="section categories-section"
+    id="categories"
+>
 
     <div class="container">
 
         <div class="section-title">
 
-            <h2>Explore Categories</h2>
+            <h2>
+                Explore LosOja
+            </h2>
 
             <p>
-                Discover businesses and services across Nigeria.
+                Find what you need across popular Nigerian categories.
             </p>
 
         </div>
@@ -352,16 +669,25 @@
      BUSINESSES
 ========================================================= -->
 
-<section class="section businesses-section" id="businesses">
+<section
+    class="section businesses-section"
+    id="businesses"
+>
 
     <div class="container">
 
         <div class="section-title">
 
-            <h2>Featured Businesses</h2>
+            <span class="section-kicker">
+                DISCOVER LOCAL
+            </span>
+
+            <h2>
+                Businesses near you
+            </h2>
 
             <p>
-                Discover businesses listed on LosOja.
+                Discover businesses and services listed on LosOja.
             </p>
 
         </div>
@@ -400,7 +726,13 @@
 
         <div class="section-title">
 
-            <h2>Property & Real Estate</h2>
+            <span class="section-kicker">
+                FIND A PLACE
+            </span>
+
+            <h2>
+                Property & Real Estate
+            </h2>
 
             <p>
                 Find houses, apartments, land and commercial property.
@@ -454,7 +786,13 @@
 
         <div class="section-title">
 
-            <h2>LosOja Mobility</h2>
+            <span class="section-kicker">
+                GET AROUND
+            </span>
+
+            <h2>
+                LosOja Mobility
+            </h2>
 
             <p>
                 Get connected with transportation services
@@ -597,7 +935,13 @@
 
         <div class="section-title">
 
-            <h2>Ride Providers</h2>
+            <span class="section-kicker">
+                TRANSPORT PROVIDERS
+            </span>
+
+            <h2>
+                Ride Providers
+            </h2>
 
             <p>
                 Discover transportation providers
@@ -652,10 +996,16 @@
 
         <div class="section-title">
 
-            <h2>How LosOja Works</h2>
+            <span class="section-kicker">
+                SIMPLE
+            </span>
+
+            <h2>
+                Tell LosOja what you need.
+            </h2>
 
             <p>
-                Everything you need in a few simple steps.
+                Find it, compare your options and connect.
             </p>
 
         </div>
@@ -674,8 +1024,8 @@
                 </h3>
 
                 <p>
-                    Search for businesses, services,
-                    properties and more.
+                    Tell LosOja what you are looking for,
+                    from a business to a service or property.
                 </p>
 
             </div>
@@ -692,8 +1042,8 @@
                 </h3>
 
                 <p>
-                    Explore listings and find what
-                    matches your needs.
+                    Explore relevant options around your
+                    chosen location.
                 </p>
 
             </div>
@@ -710,8 +1060,8 @@
                 </h3>
 
                 <p>
-                    Contact businesses and service
-                    providers directly.
+                    Call, message or connect with the
+                    business or service provider.
                 </p>
 
             </div>
@@ -728,8 +1078,8 @@
                 </h3>
 
                 <p>
-                    Leave reviews and feedback to
-                    help other users.
+                    Leave your experience and help
+                    other people make better choices.
                 </p>
 
             </div>
@@ -754,11 +1104,17 @@
 
         <div class="section-title">
 
-            <h2>About LosOja</h2>
+            <span class="section-kicker">
+                ABOUT LOSOJA
+            </span>
+
+            <h2>
+                A better way to find what you need.
+            </h2>
 
             <p>
-                Building a better way for people and businesses
-                to connect across Nigeria.
+                Connecting people with businesses,
+                services, properties and opportunities across Nigeria.
             </p>
 
         </div>
@@ -773,11 +1129,10 @@
             </p>
 
             <p>
-                Whether you are looking for a business,
-                listing your property, offering a service,
-                or connecting with a transportation provider,
-                LosOja brings useful opportunities together
-                in one place.
+                Instead of making people browse endless directories,
+                LosOja is being built around a simpler idea:
+                tell us what you need and help you find useful
+                options around you.
             </p>
 
         </div>
@@ -800,7 +1155,13 @@
 
         <div class="section-title">
 
-            <h2>Help Us Improve LosOja</h2>
+            <span class="section-kicker">
+                HELP LOSOJA GROW
+            </span>
+
+            <h2>
+                Help Us Improve LosOja
+            </h2>
 
             <p>
                 Have an idea, suggestion or problem?
@@ -836,8 +1197,12 @@
 
         <div class="cta-content">
 
+            <span class="section-kicker">
+                FOR BUSINESS OWNERS
+            </span>
+
             <h2>
-                Own a Business?
+                Want more customers to find you?
             </h2>
 
             <p>
@@ -1573,8 +1938,9 @@
             </h3>
 
             <p>
-                Discover Nigerian businesses,
-                services and opportunities.
+                Find what you need.
+                Discover local businesses,
+                services and opportunities across Nigeria.
             </p>
 
         </div>
@@ -1583,7 +1949,7 @@
         <div class="footer-links">
 
             <h4>
-                Quick Links
+                Explore
             </h4>
 
             <a href="#home">
@@ -1604,10 +1970,6 @@
 
             <a href="#mobility">
                 Mobility
-            </a>
-
-            <a href="#feedback">
-                Feedback
             </a>
 
         </div>
