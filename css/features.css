@@ -1,0 +1,306 @@
+/* =========================================================
+   LOSOJA - STAGE 1 FEATURES
+   Property / Transportation / Feedback
+========================================================= */
+
+.feature-section {
+    background: var(--gray-light);
+}
+
+.feature-section-header {
+    max-width: 760px;
+    margin: 0 auto 35px;
+    text-align: center;
+}
+
+.feature-section-header h2 {
+    margin-bottom: 10px;
+}
+
+.feature-section-header p {
+    color: var(--gray);
+    font-size: 15px;
+}
+
+
+/* =========================================================
+   PROPERTY
+========================================================= */
+
+.property-section {
+    background: var(--white);
+}
+
+.property-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+}
+
+.property-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.property-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+    border-color: var(--green);
+}
+
+.property-card-top {
+    padding: 22px 22px 12px;
+}
+
+.property-type-badge {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 20px;
+    background: var(--green-light);
+    color: var(--green-dark);
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.property-card h3 {
+    margin-bottom: 8px;
+    font-size: 20px;
+}
+
+.property-location {
+    color: var(--gray);
+    font-size: 14px;
+    margin-bottom: 12px;
+}
+
+.property-price {
+    color: var(--green-dark);
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.property-description {
+    color: var(--gray-dark);
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 18px;
+}
+
+.property-card-actions {
+    display: flex;
+    gap: 10px;
+    padding: 0 22px 22px;
+}
+
+.property-card-actions .btn {
+    flex: 1;
+}
+
+.property-empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 45px 20px;
+    color: var(--gray);
+}
+
+
+/* =========================================================
+   FEATURE ACTION CARDS
+========================================================= */
+
+.feature-action-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+}
+
+.feature-action-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 30px 24px;
+    text-align: center;
+    box-shadow: var(--shadow);
+}
+
+.feature-action-icon {
+    width: 70px;
+    height: 70px;
+    margin: 0 auto 18px;
+    border-radius: 50%;
+    background: var(--green-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 34px;
+}
+
+.feature-action-card h3 {
+    font-size: 20px;
+    margin-bottom: 8px;
+}
+
+.feature-action-card p {
+    color: var(--gray);
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+
+/* =========================================================
+   MODAL FORMS
+========================================================= */
+
+.feature-form {
+    width: 100%;
+}
+
+.feature-form .form-group {
+    margin-bottom: 17px;
+}
+
+.feature-form label {
+    display: block;
+    margin-bottom: 7px;
+    font-weight: 600;
+    color: var(--gray-dark);
+}
+
+.feature-form input,
+.feature-form select,
+.feature-form textarea {
+    width: 100%;
+    padding: 12px 13px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--white);
+    color: var(--black);
+    font: inherit;
+    box-sizing: border-box;
+}
+
+.feature-form input:focus,
+.feature-form select:focus,
+.feature-form textarea:focus {
+    outline: none;
+    border-color: var(--green);
+    box-shadow: 0 0 0 3px rgba(8, 122, 62, 0.08);
+}
+
+.feature-form textarea {
+    min-height: 110px;
+    resize: vertical;
+}
+
+.feature-form-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.feature-form-actions .btn {
+    flex: 1;
+}
+
+.feature-error {
+    display: none;
+    margin-bottom: 15px;
+    padding: 11px 13px;
+    border-radius: 8px;
+    background: #fff1f1;
+    color: var(--red);
+    font-size: 14px;
+}
+
+.feature-error.show {
+    display: block;
+}
+
+
+/* =========================================================
+   RIDE PROVIDERS
+========================================================= */
+
+.ride-provider-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+}
+
+.ride-provider-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px;
+    box-shadow: var(--shadow);
+}
+
+.ride-provider-card h3 {
+    margin-bottom: 8px;
+}
+
+.ride-provider-card p {
+    color: var(--gray);
+    font-size: 14px;
+    margin-bottom: 7px;
+}
+
+.ride-provider-type {
+    display: inline-block;
+    padding: 5px 9px;
+    border-radius: 20px;
+    background: var(--green-light);
+    color: var(--green-dark);
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.feature-loading {
+    text-align: center;
+    padding: 30px;
+    color: var(--gray);
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 900px) {
+
+    .property-grid,
+    .ride-provider-grid,
+    .feature-action-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 700px) {
+
+    .property-grid,
+    .ride-provider-grid,
+    .feature-action-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .property-card-actions,
+    .feature-form-actions {
+        flex-direction: column;
+    }
+}
