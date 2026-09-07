@@ -1,27 +1,40 @@
-```css
-/* ================================
+/* =========================================================
    LOSOJA - MAIN WEBSITE STYLES
-   ================================ */
+   Clean professional design
+========================================================= */
+
+
+/* =========================================================
+   VARIABLES
+========================================================= */
 
 :root {
     --green: #087a3e;
     --green-dark: #055c2e;
-    --green-light: #eaf7ef;
+    --green-light: #eef8f2;
+
     --white: #ffffff;
-    --black: #111111;
-    --gray-dark: #444444;
-    --gray: #777777;
-    --gray-light: #f5f5f5;
-    --border: #dddddd;
+    --black: #111827;
+
+    --gray-dark: #374151;
+    --gray: #6b7280;
+    --gray-light: #f7f9f8;
+
+    --border: #e5e7eb;
+
     --yellow: #f5b800;
-    --shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-    --radius: 10px;
+    --red: #c62828;
+
+    --shadow: 0 6px 20px rgba(0, 0, 0, 0.07);
+    --shadow-hover: 0 10px 28px rgba(0, 0, 0, 0.11);
+
+    --radius: 12px;
 }
 
 
-/* ================================
+/* =========================================================
    RESET
-================================ */
+========================================================= */
 
 * {
     margin: 0;
@@ -38,6 +51,7 @@ body {
     background: var(--gray-light);
     color: var(--black);
     line-height: 1.6;
+    min-height: 100vh;
 }
 
 a {
@@ -57,9 +71,9 @@ button {
 }
 
 
-/* ================================
+/* =========================================================
    CONTAINER
-================================ */
+========================================================= */
 
 .container {
     width: 90%;
@@ -68,13 +82,15 @@ button {
 }
 
 
-/* ================================
+/* =========================================================
    HEADER
-================================ */
+========================================================= */
 
 .site-header {
-    background: var(--white);
+    background: rgba(255, 255, 255, 0.98);
     border-bottom: 1px solid var(--border);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+
     position: sticky;
     top: 0;
     z-index: 1000;
@@ -82,22 +98,28 @@ button {
 
 .header-inner {
     min-height: 70px;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
+
     gap: 20px;
 }
 
 .logo {
     font-size: 28px;
     font-weight: 800;
+
     color: var(--green);
+
+    letter-spacing: -0.5px;
+    white-space: nowrap;
 }
 
 
-/* ================================
+/* =========================================================
    DESKTOP NAVIGATION
-================================ */
+========================================================= */
 
 .main-nav {
     display: flex;
@@ -107,18 +129,22 @@ button {
 
 .main-nav a {
     color: var(--gray-dark);
+
     font-weight: 600;
-    transition: 0.2s;
+
+    transition:
+        color 0.2s ease;
 }
 
-.main-nav a:hover {
+.main-nav a:hover,
+.main-nav a.active {
     color: var(--green);
 }
 
 
-/* ================================
+/* =========================================================
    HEADER ACTIONS
-================================ */
+========================================================= */
 
 .header-actions {
     display: flex;
@@ -138,39 +164,35 @@ button {
 }
 
 
-/* ================================
+/* =========================================================
    MOBILE MENU BUTTON
-================================ */
+========================================================= */
 
 .mobile-menu-btn {
     display: none;
+
     border: none;
     background: transparent;
+
     font-size: 28px;
     color: var(--black);
+
     padding: 5px;
 }
 
 
-/* ================================
+/* =========================================================
    MOBILE NAVIGATION
-================================ */
-
-/*
-   IMPORTANT:
-
-   The mobile navigation MUST be hidden
-   on desktop.
-
-   It becomes visible only when JavaScript
-   adds the "open" class.
-*/
+========================================================= */
 
 .mobile-nav {
     display: none !important;
+
     background: var(--white);
+
     border-top: 1px solid var(--border);
     border-bottom: 1px solid var(--border);
+
     padding: 15px 20px;
 }
 
@@ -182,7 +204,9 @@ button {
 
 .mobile-nav > a {
     color: var(--gray-dark);
+
     font-weight: 600;
+
     padding: 5px 0;
 }
 
@@ -191,41 +215,59 @@ button {
 }
 
 
-/* ================================
-   MOBILE AUTH LINKS
-================================ */
+/* =========================================================
+   MOBILE AUTH
+========================================================= */
 
 .mobile-auth-links {
     display: none;
 }
 
 
-/* ================================
+/* =========================================================
    BUTTONS
-================================ */
+========================================================= */
 
 .btn {
     border: none;
-    border-radius: 7px;
+    border-radius: 8px;
+
     padding: 11px 18px;
+
     font-size: 15px;
     font-weight: 700;
+
     display: inline-block;
-    transition: 0.2s;
+
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
 .btn-primary {
     background: var(--green);
     color: var(--white);
+
+    box-shadow:
+        0 3px 8px rgba(8, 122, 62, 0.18);
 }
 
 .btn-primary:hover {
     background: var(--green-dark);
+
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 5px 12px rgba(8, 122, 62, 0.22);
 }
 
 .btn-outline {
     background: var(--white);
     color: var(--green);
+
     border: 1px solid var(--green);
 }
 
@@ -239,23 +281,36 @@ button {
 }
 
 .btn-danger {
-    background: #c62828;
-    color: white;
+    background: var(--red);
+    color: var(--white);
+}
+
+.btn-danger:hover {
+    background: #a91f1f;
 }
 
 
-/* ================================
+/* =========================================================
    HERO
-================================ */
+========================================================= */
 
 .hero {
-    background: linear-gradient(
-        135deg,
-        var(--green),
-        var(--green-dark)
-    );
+    background:
+        radial-gradient(
+            circle at top right,
+            rgba(255, 255, 255, 0.12),
+            transparent 35%
+        ),
+        linear-gradient(
+            135deg,
+            var(--green) 0%,
+            var(--green-dark) 100%
+        );
+
     color: var(--white);
+
     padding: 80px 20px;
+
     text-align: center;
 }
 
@@ -267,29 +322,39 @@ button {
 .hero h1 {
     font-size: 48px;
     line-height: 1.15;
+
     margin-bottom: 18px;
 }
 
 .hero p {
     max-width: 700px;
+
     margin: 0 auto 30px;
+
     font-size: 19px;
+
     opacity: 0.95;
 }
 
 
-/* ================================
+/* =========================================================
    SEARCH
-================================ */
+========================================================= */
 
 .search-form {
     max-width: 900px;
+
     margin: 0 auto;
+
     background: var(--white);
+
     padding: 10px;
+
     border-radius: 10px;
+
     display: flex;
     gap: 10px;
+
     box-shadow: var(--shadow);
 }
 
@@ -300,19 +365,28 @@ button {
 
 .search-field label {
     display: block;
+
     color: var(--gray-dark);
+
     font-size: 12px;
     font-weight: 700;
+
     margin: 3px 12px;
 }
 
 .search-field input {
     width: 100%;
+
     border: none;
     outline: none;
+
     padding: 10px 12px;
+
     font-size: 16px;
+
     color: var(--black);
+
+    background: transparent;
 }
 
 .search-btn {
@@ -320,21 +394,27 @@ button {
 }
 
 
-/* ================================
+/* =========================================================
    SECTIONS
-================================ */
+========================================================= */
 
 .section {
     padding: 70px 0;
 }
 
+.section:nth-of-type(even) {
+    background: var(--white);
+}
+
 .section-title {
     text-align: center;
+
     margin-bottom: 40px;
 }
 
 .section-title h2 {
     font-size: 32px;
+
     margin-bottom: 10px;
 }
 
@@ -343,146 +423,237 @@ button {
 }
 
 
-/* ================================
+/* =========================================================
    CATEGORIES
-================================ */
+========================================================= */
 
 .category-grid {
     display: grid;
+
     grid-template-columns: repeat(3, 1fr);
+
     gap: 18px;
 }
 
 .category-card {
     background: var(--white);
+
     padding: 25px 15px;
+
     text-align: center;
+
     border-radius: var(--radius);
+
     box-shadow: var(--shadow);
-    border: 1px solid transparent;
-    transition: 0.2s;
+
+    border: 1px solid var(--border);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+
     cursor: pointer;
 }
 
 .category-card:hover {
     border-color: var(--green);
+
     transform: translateY(-3px);
+
+    box-shadow: var(--shadow-hover);
 }
 
 .category-icon {
     display: block;
+
     font-size: 35px;
+
     margin-bottom: 10px;
 }
 
 
-/* ================================
+/* =========================================================
    BUSINESS GRID
-================================ */
+========================================================= */
 
 .business-grid {
     display: grid;
+
     grid-template-columns: repeat(3, 1fr);
+
     gap: 22px;
 }
 
+
+/* =========================================================
+   BUSINESS CARD
+========================================================= */
+
 .business-card {
     background: var(--white);
+
     border-radius: var(--radius);
+
     overflow: hidden;
+
     box-shadow: var(--shadow);
+
     border: 1px solid var(--border);
-    transition: 0.2s;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
 .business-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.12);
+
+    box-shadow: var(--shadow-hover);
 }
+
+
+/* =========================================================
+   BUSINESS IMAGE
+========================================================= */
 
 .business-image {
     height: 190px;
+
     background: var(--green-light);
+
     display: flex;
     align-items: center;
     justify-content: center;
+
     font-size: 55px;
+
     color: var(--green);
+
+    overflow: hidden;
 }
 
-.business-content {
+.business-image img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    display: block;
+}
+
+
+/* =========================================================
+   BUSINESS CONTENT
+========================================================= */
+
+/*
+   Supports both naming systems currently used
+   by LosOja JavaScript.
+*/
+
+.business-content,
+.business-card-content {
     padding: 20px;
 }
 
-.business-content h3 {
+.business-content h3,
+.business-card-content h3 {
     font-size: 21px;
+
     margin-bottom: 7px;
 }
 
-.business-category {
+.business-category,
+.business-card-category {
     color: var(--green);
+
     font-weight: 700;
+
     font-size: 14px;
 }
 
 .business-location {
     color: var(--gray);
+
     margin: 8px 0;
+
     font-size: 14px;
 }
 
 .business-description {
     color: var(--gray-dark);
+
     font-size: 14px;
+
     margin-bottom: 15px;
 }
 
-.business-actions {
+.business-actions,
+.business-card-actions {
     display: flex;
+
     gap: 10px;
+
     flex-wrap: wrap;
 }
 
 
-/* ================================
+/* =========================================================
    RATING
-================================ */
+========================================================= */
 
 .rating {
     color: var(--yellow);
+
     font-weight: 700;
+
     margin: 7px 0;
 }
 
 
-/* ================================
+/* =========================================================
    HOW IT WORKS
-================================ */
+========================================================= */
 
 .steps-grid {
     display: grid;
+
     grid-template-columns: repeat(3, 1fr);
+
     gap: 25px;
 }
 
 .step-card {
     text-align: center;
+
     padding: 30px 20px;
+
     background: var(--white);
+
     border-radius: var(--radius);
+
     box-shadow: var(--shadow);
+
+    border: 1px solid var(--border);
 }
 
 .step-number {
     width: 55px;
     height: 55px;
+
     margin: 0 auto 15px;
+
     border-radius: 50%;
+
     background: var(--green);
-    color: white;
+
+    color: var(--white);
+
     display: flex;
     align-items: center;
     justify-content: center;
+
     font-size: 22px;
     font-weight: 800;
 }
@@ -496,58 +667,76 @@ button {
 }
 
 
-/* ================================
-   BUSINESS CTA
-================================ */
+/* =========================================================
+   CTA
+========================================================= */
 
 .cta-box {
-    background: var(--green);
-    color: white;
+    background:
+        linear-gradient(
+            135deg,
+            var(--green),
+            var(--green-dark)
+        );
+
+    color: var(--white);
+
     padding: 65px 20px;
+
     text-align: center;
+
     border-radius: var(--radius);
 }
 
 .cta-box h2 {
     font-size: 34px;
+
     margin-bottom: 12px;
 }
 
 .cta-box p {
     max-width: 650px;
+
     margin: 0 auto 25px;
 }
 
 
-/* ================================
+/* =========================================================
    ABOUT
-================================ */
+========================================================= */
 
 .about-content {
     max-width: 850px;
+
     margin: 0 auto;
+
     text-align: center;
 }
 
 .about-content p {
     color: var(--gray-dark);
+
     margin-bottom: 15px;
 }
 
 
-/* ================================
+/* =========================================================
    FOOTER
-================================ */
+========================================================= */
 
 footer {
-    background: #111;
-    color: white;
+    background: #111827;
+
+    color: var(--white);
+
     padding: 45px 0 25px;
 }
 
 .footer-grid {
     display: grid;
+
     grid-template-columns: repeat(3, 1fr);
+
     gap: 30px;
 }
 
@@ -557,34 +746,44 @@ footer h3 {
 
 footer p,
 footer a {
-    color: #cccccc;
+    color: #d1d5db;
 }
 
 footer a:hover {
-    color: white;
+    color: var(--white);
 }
 
 .footer-bottom {
     text-align: center;
-    border-top: 1px solid #333;
+
+    border-top: 1px solid #374151;
+
     margin-top: 30px;
+
     padding-top: 20px;
-    color: #aaa;
+
+    color: #9ca3af;
 }
 
 
-/* ================================
+/* =========================================================
    MODALS
-================================ */
+========================================================= */
 
 .modal {
     display: none;
+
     position: fixed;
+
     inset: 0;
-    background: rgba(0, 0, 0, 0.6);
+
+    background: rgba(15, 23, 42, 0.65);
+
     z-index: 2000;
+
     align-items: center;
     justify-content: center;
+
     padding: 20px;
 }
 
@@ -595,13 +794,22 @@ footer a:hover {
 
 .modal-content {
     width: 100%;
+
     max-width: 500px;
     max-height: 90vh;
+
     overflow-y: auto;
-    background: white;
-    border-radius: 12px;
+
+    background: var(--white);
+
+    border-radius: 14px;
+
     padding: 30px;
+
     position: relative;
+
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.18);
 }
 
 .modal-content.large {
@@ -610,12 +818,21 @@ footer a:hover {
 
 .modal-close {
     position: absolute;
+
     top: 12px;
     right: 17px;
+
     border: none;
+
     background: transparent;
+
     font-size: 28px;
+
     color: var(--gray);
+}
+
+.modal-close:hover {
+    color: var(--black);
 }
 
 .modal-content h2 {
@@ -623,9 +840,9 @@ footer a:hover {
 }
 
 
-/* ================================
+/* =========================================================
    FORMS
-================================ */
+========================================================= */
 
 .form-group {
     margin-bottom: 17px;
@@ -633,75 +850,98 @@ footer a:hover {
 
 .form-group label {
     display: block;
+
     margin-bottom: 6px;
+
     font-weight: 700;
+
+    color: var(--gray-dark);
 }
 
 .form-group input,
 .form-group textarea,
 .form-group select {
     width: 100%;
+
     border: 1px solid var(--border);
-    border-radius: 7px;
+
+    border-radius: 8px;
+
     padding: 12px;
+
     outline: none;
+
     font-size: 15px;
+
+    background: var(--white);
+
+    color: var(--black);
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
 .form-group input:focus,
 .form-group textarea:focus,
 .form-group select:focus {
     border-color: var(--green);
+
+    box-shadow:
+        0 0 0 3px rgba(8, 122, 62, 0.10);
 }
 
 .form-group textarea {
     min-height: 110px;
+
     resize: vertical;
 }
 
 .form-submit {
     width: 100%;
+
     border: none;
 }
 
 .form-error {
-    color: #c62828;
+    color: var(--red);
+
     margin-bottom: 15px;
+
     font-size: 14px;
 }
 
 
-/* ================================
-   NOTIFICATION / TOAST
-================================ */
+/* =========================================================
+   NOTIFICATION
+========================================================= */
 
-.notification {
+.notification,
+.toast {
     position: fixed;
+
     right: 20px;
     bottom: 20px;
-    background: #222;
-    color: white;
+
+    background: #1f2937;
+
+    color: var(--white);
+
     padding: 14px 20px;
-    border-radius: 7px;
+
+    border-radius: 8px;
+
     box-shadow: var(--shadow);
+
     z-index: 5000;
+}
+
+.notification {
     display: none;
 }
 
 .notification.show {
     display: block;
-}
-
-.toast {
-    position: fixed;
-    right: 20px;
-    bottom: 20px;
-    background: #222;
-    color: white;
-    padding: 14px 20px;
-    border-radius: 7px;
-    box-shadow: var(--shadow);
-    z-index: 5000;
 }
 
 .toast.hidden {
@@ -713,12 +953,13 @@ footer a:hover {
 }
 
 
-/* ================================
+/* =========================================================
    POPULAR SEARCHES
-================================ */
+========================================================= */
 
 .popular-searches {
     margin-top: 18px;
+
     font-size: 14px;
 }
 
@@ -728,44 +969,139 @@ footer a:hover {
 
 .popular-searches button {
     border: none;
+
     background: transparent;
-    color: white;
+
+    color: var(--white);
+
     text-decoration: underline;
+
     margin-left: 8px;
 }
 
 
-/* ================================
+/* =========================================================
    EMPTY / NO RESULTS
-================================ */
+========================================================= */
 
 .empty-state,
 .no-results {
-    background: white;
+    background: var(--white);
+
     border-radius: var(--radius);
+
     padding: 40px 20px;
+
     text-align: center;
+
     color: var(--gray);
+
+    border: 1px solid var(--border);
 }
 
 .empty-state h3 {
     color: var(--black);
+
     margin-bottom: 8px;
 }
 
 
-/* ================================
+/* =========================================================
+   BACK BUTTON
+========================================================= */
+
+.losoja-back-btn {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    border: 1px solid var(--border);
+
+    background: var(--white);
+
+    color: var(--gray-dark);
+
+    padding: 10px 16px;
+
+    border-radius: 8px;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 2px 6px rgba(0, 0, 0, 0.04);
+
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.losoja-back-btn:hover {
+    background: var(--green-light);
+
+    border-color: var(--green);
+
+    color: var(--green);
+
+    transform: translateX(-2px);
+
+    box-shadow:
+        0 4px 10px rgba(0, 0, 0, 0.07);
+}
+
+.losoja-back-btn:active {
+    transform: translateX(-1px);
+}
+
+
+/* =========================================================
+   DASHBOARD
+========================================================= */
+
+#dashboard {
+    min-height: 60vh;
+}
+
+#dashboard .container {
+    position: relative;
+}
+
+
+/* =========================================================
    HIDDEN
-================================ */
+========================================================= */
 
 .hidden {
     display: none !important;
 }
 
 
-/* ================================
-   RESPONSIVE - TABLET
-================================ */
+/* =========================================================
+   FOCUS ACCESSIBILITY
+========================================================= */
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+    outline: 3px solid rgba(8, 122, 62, 0.25);
+
+    outline-offset: 2px;
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
 
 @media (max-width: 900px) {
 
@@ -783,6 +1119,7 @@ footer a:hover {
 
     .footer-grid {
         grid-template-columns: 1fr;
+
         text-align: center;
     }
 
@@ -792,9 +1129,9 @@ footer a:hover {
 }
 
 
-/* ================================
-   RESPONSIVE - MOBILE
-================================ */
+/* =========================================================
+   MOBILE
+========================================================= */
 
 @media (max-width: 700px) {
 
@@ -810,28 +1147,30 @@ footer a:hover {
         display: block;
     }
 
-    /*
-       Mobile navigation is STILL hidden
-       until the menu button is pressed.
-    */
-
     .mobile-nav {
         display: none !important;
+
         background: var(--white);
+
         border-top: 1px solid var(--border);
         border-bottom: 1px solid var(--border);
+
         padding: 15px 20px;
     }
 
     .mobile-nav.open {
         display: flex !important;
+
         flex-direction: column;
+
         gap: 14px;
     }
 
     .mobile-nav > a {
         color: var(--gray-dark);
+
         font-weight: 600;
+
         padding: 5px 0;
     }
 
@@ -841,8 +1180,11 @@ footer a:hover {
 
     .mobile-auth-links {
         display: flex;
+
         align-items: center;
+
         gap: 10px;
+
         margin-top: 8px;
     }
 
@@ -877,12 +1219,18 @@ footer a:hover {
     .section-title h2 {
         font-size: 28px;
     }
+
+    .losoja-back-btn {
+        padding: 9px 14px;
+
+        font-size: 13px;
+    }
 }
 
 
-/* ================================
+/* =========================================================
    SMALL PHONES
-================================ */
+========================================================= */
 
 @media (max-width: 450px) {
 
@@ -904,241 +1252,15 @@ footer a:hover {
 
     .mobile-auth-links {
         flex-direction: column;
+
         align-items: stretch;
     }
 
     .mobile-auth-links .btn {
         width: 100%;
     }
-}
-```
-/* =========================================================
-   LOSOJA PROFESSIONAL POLISH
-========================================================= */
 
-:root {
-    --green: #087a3e;
-    --green-dark: #055c2e;
-    --green-light: #eef8f2;
-
-    --white: #ffffff;
-    --black: #111827;
-
-    --gray-dark: #374151;
-    --gray: #6b7280;
-    --gray-light: #f7f9f8;
-
-    --border: #e5e7eb;
-    --yellow: #f5b800;
-
-    --shadow: 0 6px 20px rgba(0, 0, 0, 0.07);
-    --shadow-hover: 0 10px 28px rgba(0, 0, 0, 0.11);
-
-    --radius: 12px;
-}
-
-
-/* ================================
-   PAGE
-================================ */
-
-body {
-    background: #f7f9f8;
-    color: var(--black);
-}
-
-
-/* ================================
-   HEADER
-================================ */
-
-.site-header {
-    background: rgba(255, 255, 255, 0.97);
-    border-bottom: 1px solid var(--border);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
-}
-
-.logo {
-    color: var(--green);
-    letter-spacing: -0.5px;
-}
-
-.main-nav a {
-    color: #374151;
-}
-
-.main-nav a:hover,
-.main-nav a.active {
-    color: var(--green);
-}
-
-
-/* ================================
-   BUTTON POLISH
-================================ */
-
-.btn {
-    border-radius: 8px;
-    transition:
-        background-color 0.2s ease,
-        color 0.2s ease,
-        border-color 0.2s ease,
-        transform 0.2s ease,
-        box-shadow 0.2s ease;
-}
-
-.btn-primary {
-    background: var(--green);
-    color: #ffffff;
-    box-shadow: 0 3px 8px rgba(8, 122, 62, 0.18);
-}
-
-.btn-primary:hover {
-    background: var(--green-dark);
-    transform: translateY(-1px);
-    box-shadow: 0 5px 12px rgba(8, 122, 62, 0.22);
-}
-
-.btn-outline {
-    background: #ffffff;
-    color: var(--green);
-    border: 1px solid var(--green);
-}
-
-.btn-outline:hover {
-    background: var(--green-light);
-}
-
-
-/* ================================
-   HERO
-================================ */
-
-.hero {
-    background:
-        radial-gradient(
-            circle at top right,
-            rgba(255, 255, 255, 0.12),
-            transparent 35%
-        ),
-        linear-gradient(
-            135deg,
-            #087a3e 0%,
-            #055c2e 100%
-        );
-}
-
-
-/* ================================
-   SECTIONS
-================================ */
-
-.section:nth-of-type(even) {
-    background: #ffffff;
-}
-
-
-/* ================================
-   CARDS
-================================ */
-
-.category-card,
-.step-card,
-.business-card,
-.empty-state,
-.no-results {
-    border: 1px solid var(--border);
-}
-
-.category-card:hover,
-.business-card:hover {
-    box-shadow: var(--shadow-hover);
-}
-
-
-/* ================================
-   BUSINESS CARDS
-================================ */
-
-.business-image {
-    background: var(--green-light);
-}
-
-.business-category {
-    color: var(--green);
-}
-
-
-/* ================================
-   CTA
-================================ */
-
-.cta-box {
-    background:
-        linear-gradient(
-            135deg,
-            var(--green),
-            var(--green-dark)
-        );
-}
-
-
-/* ================================
-   BACK BUTTON
-================================ */
-
-.losoja-back-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-
-    border: 1px solid var(--border);
-    background: #ffffff;
-    color: var(--gray-dark);
-
-    padding: 10px 16px;
-    border-radius: 8px;
-
-    font-size: 14px;
-    font-weight: 700;
-
-    cursor: pointer;
-
-    transition:
-        background-color 0.2s ease,
-        border-color 0.2s ease,
-        color 0.2s ease,
-        transform 0.2s ease;
-}
-
-.losoja-back-btn:hover {
-    background: var(--green-light);
-    border-color: var(--green);
-    color: var(--green);
-    transform: translateX(-2px);
-}
-
-.losoja-back-btn:active {
-    transform: translateX(-1px);
-}
-
-
-/* ================================
-   MOBILE
-================================ */
-
-@media (max-width: 700px) {
-
-    .hero {
-        background:
-            linear-gradient(
-                135deg,
-                #087a3e,
-                #055c2e
-            );
-    }
-
-    .section {
-        background: #f7f9f8;
+    .hero h1 {
+        font-size: 30px;
     }
 }
