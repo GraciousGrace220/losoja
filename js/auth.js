@@ -1191,10 +1191,11 @@ Handles:
         -----------------------------------------------------
         */
 
-        const switchToSignup =
-            document.getElementById(
-                "switchToSignup"
-            );
+      const switchToSignup =
+    document.getElementById(
+        "showSignupBtn"
+    );
+    
 
 
         if (switchToSignup) {
@@ -1221,11 +1222,10 @@ Handles:
         -----------------------------------------------------
         */
 
-        const switchToLogin =
-            document.getElementById(
-                "switchToLogin"
-            );
-
+       const switchToLogin =
+    document.getElementById(
+        "showLoginBtn"
+    );
 
         if (switchToLogin) {
 
