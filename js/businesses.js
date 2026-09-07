@@ -16,11 +16,6 @@ Handles:
 - Business image preview
 - Add Business buttons
 - Modal handling
-
-IMPORTANT:
-- Uses the existing Supabase project
-- Uses the existing business-images bucket
-- Does NOT create a second Supabase client
 =========================================================
 */
 
@@ -134,7 +129,6 @@ IMPORTANT:
             session.user &&
             session.user.id
         ) {
-
             return session.user.id;
         }
 
@@ -308,6 +302,8 @@ IMPORTANT:
 
         modal.classList.remove("active");
 
+        modal.classList.add("hidden");
+
         modal.setAttribute(
             "aria-hidden",
             "true"
@@ -339,155 +335,94 @@ IMPORTANT:
        ADD BUSINESS BUTTONS
     ===================================================== */
 
-   function setupAddBusinessButtons() {
+    function setupAddBusinessButtons() {
 
-    const buttons =
-        document.querySelectorAll(
-            ".add-business-btn, #addBusinessBtn, #footerAddBusinessBtn"
-        );
+        const buttons =
+            document.querySelectorAll(
+                ".add-business-btn, #addBusinessBtn, #footerAddBusinessBtn"
+            );
 
-    buttons.forEach(function (button) {
+        if (!buttons.length) {
 
-        if (
-            button.dataset
-                .losojaAddBusinessReady ===
-            "true"
-        ) {
+            console.warn(
+                "LosOja: No Add Business buttons found."
+            );
+
             return;
         }
 
-        button.dataset
-            .losojaAddBusinessReady =
-            "true";
+        buttons.forEach(
+            function (button) {
 
-        button.addEventListener(
-            "click",
-            function (event) {
-
-                event.preventDefault();
-
-                if (!isLoggedIn()) {
-
-                    showNotification(
-                        "Please log in before adding a business.",
-                        "error"
-                    );
-
-                    if (
-                        typeof window.openLoginModal ===
-                        "function"
-                    ) {
-
-                        window.openLoginModal();
-
-                    } else {
-
-                        openModal(
-                            "loginModal"
-                        );
-                    }
+                if (
+                    button.dataset
+                        .losojaAddBusinessReady ===
+                    "true"
+                ) {
 
                     return;
                 }
 
-                resetAddBusinessForm();
-
-                openModal(
-                    "addBusinessModal"
-                );
-
-                const nameInput =
-                    document.getElementById(
-                        "businessName"
-                    );
-
-                if (nameInput) {
-
-                    setTimeout(
-                        function () {
-
-                            nameInput.focus();
-
-                        },
-                        100
-                    );
-                }
-            }
-        );
-    });
-}
-
-        buttons.forEach(function (button) {
-
-            if (
                 button.dataset
-                    .losojaAddBusinessReady ===
-                "true"
-            ) {
+                    .losojaAddBusinessReady =
+                    "true";
 
-                return;
-            }
+                button.addEventListener(
+                    "click",
+                    function (event) {
 
-            button.dataset
-                .losojaAddBusinessReady =
-                "true";
+                        event.preventDefault();
 
-            button.addEventListener(
-                "click",
-                function (event) {
+                        if (!isLoggedIn()) {
 
-                    event.preventDefault();
-
-                    if (!isLoggedIn()) {
-
-                        showNotification(
-                            "Please log in before adding a business.",
-                            "error"
-                        );
-
-                        if (
-                            typeof window.openLoginModal ===
-                            "function"
-                        ) {
-
-                            window.openLoginModal();
-
-                        } else {
-
-                            openModal(
-                                "loginModal"
+                            showNotification(
+                                "Please log in before adding a business.",
+                                "error"
                             );
+
+                            if (
+                                typeof window.openLoginModal ===
+                                "function"
+                            ) {
+
+                                window.openLoginModal();
+
+                            } else {
+
+                                openModal(
+                                    "loginModal"
+                                );
+                            }
+
+                            return;
                         }
 
-                        return;
-                    }
+                        resetAddBusinessForm();
 
-                    resetAddBusinessForm();
-
-                    openModal(
-                        "addBusinessModal"
-                    );
-
-                    const nameInput =
-                        document.getElementById(
-                            "businessName"
+                        openModal(
+                            "addBusinessModal"
                         );
 
-                    if (nameInput) {
+                        const nameInput =
+                            document.getElementById(
+                                "businessName"
+                            );
 
-                        setTimeout(
-                            function () {
+                        if (nameInput) {
 
-                                nameInput.focus();
+                            setTimeout(
+                                function () {
 
-                            },
-                            100
-                        );
+                                    nameInput.focus();
+
+                                },
+                                100
+                            );
+                        }
                     }
-                }
-            );
-
-        });
+                );
+            }
+        );
     }
 
 
@@ -730,13 +665,9 @@ IMPORTANT:
         const extensionMap = {
 
             "image/jpeg": "jpg",
-
             "image/jpg": "jpg",
-
             "image/png": "png",
-
             "image/webp": "webp",
-
             "image/gif": "gif"
         };
 
@@ -1101,7 +1032,7 @@ IMPORTANT:
         if (!grid) {
 
             console.warn(
-                "LosOja: Business grid not found. Expected #businessGrid or #businessesGrid."
+                "LosOja: Business grid not found."
             );
 
             return;
@@ -1145,36 +1076,37 @@ IMPORTANT:
                 ".view-business-btn"
             );
 
-        buttons.forEach(function (button) {
+        buttons.forEach(
+            function (button) {
 
-            if (
-                button.dataset
-                    .losojaViewBusinessReady ===
-                "true"
-            ) {
+                if (
+                    button.dataset
+                        .losojaViewBusinessReady ===
+                    "true"
+                ) {
 
-                return;
-            }
-
-            button.dataset
-                .losojaViewBusinessReady =
-                "true";
-
-            button.addEventListener(
-                "click",
-                function () {
-
-                    const businessId =
-                        button.dataset
-                            .businessId;
-
-                    openBusiness(
-                        businessId
-                    );
+                    return;
                 }
-            );
 
-        });
+                button.dataset
+                    .losojaViewBusinessReady =
+                    "true";
+
+                button.addEventListener(
+                    "click",
+                    function () {
+
+                        const businessId =
+                            button.dataset
+                                .businessId;
+
+                        openBusiness(
+                            businessId
+                        );
+                    }
+                );
+            }
+        );
     }
 
 
@@ -1375,8 +1307,7 @@ IMPORTANT:
                     data-business-id="${escapeAttribute(
                         business.id
                     )}"
-                >
-                </div>
+                ></div>
 
             </div>
         `;
@@ -1900,37 +1831,31 @@ IMPORTANT:
             );
 
         if (idInput) {
-
             idInput.value =
                 business.id || "";
         }
 
         if (nameInput) {
-
             nameInput.value =
                 business.name || "";
         }
 
         if (categoryInput) {
-
             categoryInput.value =
                 business.category || "";
         }
 
         if (locationInput) {
-
             locationInput.value =
                 business.location || "";
         }
 
         if (descriptionInput) {
-
             descriptionInput.value =
                 business.description || "";
         }
 
         if (phoneInput) {
-
             phoneInput.value =
                 business.phone || "";
         }
@@ -2636,84 +2561,74 @@ IMPORTANT:
             return;
         }
 
-        buttons.forEach(function (button) {
+        buttons.forEach(
+            function (button) {
 
-            if (
+                if (
+                    button.dataset
+                        .losojaCategoryReady ===
+                    "true"
+                ) {
+
+                    return;
+                }
+
                 button.dataset
-                    .losojaCategoryReady ===
-                "true"
-            ) {
+                    .losojaCategoryReady =
+                    "true";
 
-                return;
-            }
+                button.addEventListener(
+                    "click",
+                    function (event) {
 
-            button.dataset
-                .losojaCategoryReady =
-                "true";
+                        event.preventDefault();
 
-            button.addEventListener(
-                "click",
-                function (event) {
-
-                    event.preventDefault();
-
-                    const category =
-                        button
-                            .getAttribute(
+                        const category =
+                            button.getAttribute(
                                 "data-category"
                             );
 
-                    if (!category) {
-                        return;
-                    }
+                        if (!category) {
+                            return;
+                        }
 
-                    /*
-                     * Make sure businesses have loaded.
-                     */
-                    if (!businessesLoaded) {
+                        if (!businessesLoaded) {
 
-                        showNotification(
-                            "Businesses are still loading. Please try again in a moment.",
-                            "error"
+                            showNotification(
+                                "Businesses are still loading. Please try again in a moment.",
+                                "error"
+                            );
+
+                            return;
+                        }
+
+                        filterByCategory(
+                            category
                         );
 
-                        return;
+                        const businessesSection =
+                            document.getElementById(
+                                "businesses"
+                            );
+
+                        if (businessesSection) {
+
+                            setTimeout(
+                                function () {
+
+                                    businessesSection.scrollIntoView({
+                                        behavior: "smooth",
+                                        block: "start"
+                                    });
+
+                                },
+                                50
+                            );
+                        }
                     }
-
-                    /*
-                     * Filter businesses directly.
-                     */
-                    filterByCategory(
-                        category
-                    );
-
-                    /*
-                     * Move to the businesses section.
-                     */
-                    const businessesSection =
-                        document.getElementById(
-                            "businesses"
-                        );
-
-                    if (businessesSection) {
-
-                        setTimeout(
-                            function () {
-
-                                businessesSection.scrollIntoView({
-                                    behavior: "smooth",
-                                    block: "start"
-                                });
-
-                            },
-                            50
-                        );
-                    }
-
-                }
-            );
-
-        });
+                );
+            }
+        );
     }
 
 
@@ -2764,7 +2679,6 @@ IMPORTANT:
                 addBusiness
             );
         }
-
 
         const editForm =
             document.getElementById(
@@ -2835,7 +2749,6 @@ IMPORTANT:
                 );
             }
         );
-
 
         const genericCloseButtons =
             document.querySelectorAll(
@@ -3038,31 +2951,19 @@ IMPORTANT:
                     text
                 );
 
-            if (
-                data.message
-            ) {
-
+            if (data.message) {
                 return data.message;
             }
 
-            if (
-                data.error_description
-            ) {
-
+            if (data.error_description) {
                 return data.error_description;
             }
 
-            if (
-                data.error
-            ) {
-
+            if (data.error) {
                 return data.error;
             }
 
-            if (
-                data.hint
-            ) {
-
+            if (data.hint) {
                 return data.hint;
             }
 
@@ -3090,9 +2991,6 @@ IMPORTANT:
 
         setupEscapeKey();
 
-        /*
-         * THIS WAS THE MISSING CONNECTION.
-         */
         setupCategoryButtons();
 
         previewBusinessImage(
