@@ -912,3 +912,233 @@ footer a:hover {
     }
 }
 ```
+/* =========================================================
+   LOSOJA PROFESSIONAL POLISH
+========================================================= */
+
+:root {
+    --green: #087a3e;
+    --green-dark: #055c2e;
+    --green-light: #eef8f2;
+
+    --white: #ffffff;
+    --black: #111827;
+
+    --gray-dark: #374151;
+    --gray: #6b7280;
+    --gray-light: #f7f9f8;
+
+    --border: #e5e7eb;
+    --yellow: #f5b800;
+
+    --shadow: 0 6px 20px rgba(0, 0, 0, 0.07);
+    --shadow-hover: 0 10px 28px rgba(0, 0, 0, 0.11);
+
+    --radius: 12px;
+}
+
+
+/* ================================
+   PAGE
+================================ */
+
+body {
+    background: #f7f9f8;
+    color: var(--black);
+}
+
+
+/* ================================
+   HEADER
+================================ */
+
+.site-header {
+    background: rgba(255, 255, 255, 0.97);
+    border-bottom: 1px solid var(--border);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+}
+
+.logo {
+    color: var(--green);
+    letter-spacing: -0.5px;
+}
+
+.main-nav a {
+    color: #374151;
+}
+
+.main-nav a:hover,
+.main-nav a.active {
+    color: var(--green);
+}
+
+
+/* ================================
+   BUTTON POLISH
+================================ */
+
+.btn {
+    border-radius: 8px;
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.btn-primary {
+    background: var(--green);
+    color: #ffffff;
+    box-shadow: 0 3px 8px rgba(8, 122, 62, 0.18);
+}
+
+.btn-primary:hover {
+    background: var(--green-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 5px 12px rgba(8, 122, 62, 0.22);
+}
+
+.btn-outline {
+    background: #ffffff;
+    color: var(--green);
+    border: 1px solid var(--green);
+}
+
+.btn-outline:hover {
+    background: var(--green-light);
+}
+
+
+/* ================================
+   HERO
+================================ */
+
+.hero {
+    background:
+        radial-gradient(
+            circle at top right,
+            rgba(255, 255, 255, 0.12),
+            transparent 35%
+        ),
+        linear-gradient(
+            135deg,
+            #087a3e 0%,
+            #055c2e 100%
+        );
+}
+
+
+/* ================================
+   SECTIONS
+================================ */
+
+.section:nth-of-type(even) {
+    background: #ffffff;
+}
+
+
+/* ================================
+   CARDS
+================================ */
+
+.category-card,
+.step-card,
+.business-card,
+.empty-state,
+.no-results {
+    border: 1px solid var(--border);
+}
+
+.category-card:hover,
+.business-card:hover {
+    box-shadow: var(--shadow-hover);
+}
+
+
+/* ================================
+   BUSINESS CARDS
+================================ */
+
+.business-image {
+    background: var(--green-light);
+}
+
+.business-category {
+    color: var(--green);
+}
+
+
+/* ================================
+   CTA
+================================ */
+
+.cta-box {
+    background:
+        linear-gradient(
+            135deg,
+            var(--green),
+            var(--green-dark)
+        );
+}
+
+
+/* ================================
+   BACK BUTTON
+================================ */
+
+.losoja-back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    border: 1px solid var(--border);
+    background: #ffffff;
+    color: var(--gray-dark);
+
+    padding: 10px 16px;
+    border-radius: 8px;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.losoja-back-btn:hover {
+    background: var(--green-light);
+    border-color: var(--green);
+    color: var(--green);
+    transform: translateX(-2px);
+}
+
+.losoja-back-btn:active {
+    transform: translateX(-1px);
+}
+
+
+/* ================================
+   MOBILE
+================================ */
+
+@media (max-width: 700px) {
+
+    .hero {
+        background:
+            linear-gradient(
+                135deg,
+                #087a3e,
+                #055c2e
+            );
+    }
+
+    .section {
+        background: #f7f9f8;
+    }
+}
