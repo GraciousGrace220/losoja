@@ -1290,36 +1290,67 @@
 
         <form id="loginForm">
 
-            <div class="form-group">
+          <div class="form-group">
 
-                <label for="loginEmail">
-                    Email
-                </label>
+    <label for="businessImage">
+        Business Photos
+    </label>
 
-                <input
-                    type="email"
-                    id="loginEmail"
-                    required
-                    autocomplete="email"
-                >
+    <p class="form-help">
+        Add up to 5 photos. The first photo will be your main business photo.
+    </p>
 
-            </div>
+    <input
+        type="file"
+        id="businessImage"
+        accept="image/jpeg,image/png,image/webp,image/gif"
+        multiple
+    >
+
+    <div
+        id="imagePreview"
+        class="image-preview business-gallery-preview"
+    >
+        <span>
+            No photos selected.
+        </span>
+    </div>
+
+</div>
 
 
-            <div class="form-group">
+          <div class="form-group">
 
-                <label for="loginPassword">
-                    Password
-                </label>
+    <label for="editBusinessImage">
+        Business Photos
+    </label>
 
-                <input
-                    type="password"
-                    id="loginPassword"
-                    required
-                    autocomplete="current-password"
-                >
+    <p class="form-help">
+        Add up to 5 additional photos.
+    </p>
 
-            </div>
+    <input
+        type="file"
+        id="editBusinessImage"
+        accept="image/jpeg,image/png,image/webp,image/gif"
+        multiple
+    >
+
+    <div
+        id="editImagePreview"
+        class="image-preview business-gallery-preview"
+    >
+        <span>
+            No new photos selected.
+        </span>
+    </div>
+
+    <div
+        id="editBusinessGallery"
+        class="business-gallery-edit"
+    ></div>
+
+</div>
 
 
             <button
