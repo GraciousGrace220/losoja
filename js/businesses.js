@@ -81,7 +81,8 @@ Handles:
 
     function getAccessToken() {
 
-        const session = getSession();
+        const session =
+            getSession();
 
         return session &&
             session.access_token
@@ -92,7 +93,8 @@ Handles:
 
     function getCurrentUserId() {
 
-        const session = getSession();
+        const session =
+            getSession();
 
         return session &&
             session.user &&
@@ -116,7 +118,6 @@ Handles:
             ) {
 
                 await window.ensureValidSupabaseSession();
-
             }
 
         } catch (error) {
@@ -135,7 +136,9 @@ Handles:
        HEADERS
     ===================================================== */
 
-    function getHeaders(includeContentType = false) {
+    function getHeaders(
+        includeContentType = false
+    ) {
 
         const token =
             getAccessToken();
@@ -143,6 +146,7 @@ Handles:
         const headers = {
             "apikey":
                 LOSOJA_BUSINESSES_KEY,
+
             "Authorization":
                 "Bearer " +
                 (
@@ -214,7 +218,9 @@ Handles:
         if (!modal) return;
 
         modal.classList.add("active");
-        modal.style.display = "flex";
+
+        modal.style.display =
+            "flex";
 
         document.body.classList.add(
             "modal-open"
@@ -230,7 +236,9 @@ Handles:
         if (!modal) return;
 
         modal.classList.remove("active");
-        modal.style.display = "none";
+
+        modal.style.display =
+            "none";
 
         const anyOpenModal =
             document.querySelector(
@@ -271,11 +279,26 @@ Handles:
         }
 
         return String(value)
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
+            .replace(
+                /&/g,
+                "&amp;"
+            )
+            .replace(
+                /</g,
+                "&lt;"
+            )
+            .replace(
+                />/g,
+                "&gt;"
+            )
+            .replace(
+                /"/g,
+                "&quot;"
+            )
+            .replace(
+                /'/g,
+                "&#039;"
+            );
     }
 
 
@@ -289,7 +312,9 @@ Handles:
     ) {
 
         const element =
-            document.getElementById(elementId);
+            document.getElementById(
+                elementId
+            );
 
         if (!element) return;
 
@@ -355,7 +380,9 @@ Handles:
     function getSelectedFiles(inputId) {
 
         const input =
-            document.getElementById(inputId);
+            document.getElementById(
+                inputId
+            );
 
         if (!input || !input.files) {
 
@@ -416,10 +443,14 @@ Handles:
     ) {
 
         const input =
-            document.getElementById(inputId);
+            document.getElementById(
+                inputId
+            );
 
         const preview =
-            document.getElementById(previewId);
+            document.getElementById(
+                previewId
+            );
 
         if (!input || !preview) return;
 
@@ -430,7 +461,8 @@ Handles:
             );
 
 
-        preview.innerHTML = "";
+        preview.innerHTML =
+            "";
 
 
         if (!files.length) {
@@ -596,14 +628,18 @@ Handles:
                 `${LOSOJA_BUSINESSES_URL}/storage/v1/object/${STORAGE_BUCKET}/${filePath}`,
                 {
                     method: "POST",
+
                     headers: {
                         ...getHeaders(),
+
                         "Content-Type":
                             file.type ||
                             "application/octet-stream",
+
                         "x-upsert":
                             "false"
                     },
+
                     body: file
                 }
             );
@@ -671,6 +707,7 @@ Handles:
                 url,
                 {
                     method: "GET",
+
                     headers:
                         getHeaders()
                 }
@@ -750,11 +787,14 @@ Handles:
                 `${LOSOJA_BUSINESSES_URL}/rest/v1/${BUSINESS_IMAGES_TABLE}`,
                 {
                     method: "POST",
+
                     headers: {
                         ...getHeaders(true),
+
                         "Prefer":
                             "return=minimal"
                     },
+
                     body:
                         JSON.stringify(
                             rows
@@ -822,6 +862,7 @@ Handles:
                     `${LOSOJA_BUSINESSES_URL}/rest/v1/businesses?select=*&order=created_at.desc`,
                     {
                         method: "GET",
+
                         headers:
                             getHeaders()
                     }
@@ -1040,7 +1081,8 @@ Handles:
             !businesses.length
         ) {
 
-            grid.innerHTML = "";
+            grid.innerHTML =
+                "";
 
             if (noResults) {
 
@@ -1480,8 +1522,7 @@ Handles:
                                             <button
                                                 type="button"
                                                 class="losoja-gallery-thumbnail ${
-                                                    index ===
-                                                    0
+                                                    index === 0
                                                         ? "active"
                                                         : ""
                                                 }"
@@ -1588,11 +1629,10 @@ Handles:
             )
         ) {
 
-            return number
-                .replace(
-                    /[^0-9]/g,
-                    ""
-                );
+            return number.replace(
+                /[^0-9]/g,
+                ""
+            );
         }
 
 
@@ -1629,72 +1669,67 @@ Handles:
     /* =====================================================
        ADD BUSINESS MODAL
     ===================================================== */
-function openAddBusiness() {
 
-    const userId =
-        getCurrentUserId();
+    function openAddBusiness() {
 
-
-    if (!userId) {
-
-        if (
-            typeof window.openLoginModal ===
-            "function"
-        ) {
-
-            window.openLoginModal();
-
-        } else {
-
-            openModal(
-                "loginModal"
-            );
-        }
-
-        return;
-    }
+        const userId =
+            getCurrentUserId();
 
 
-    resetAddBusinessForm();
+        if (!userId) {
 
-    const modal =
-        document.getElementById(
-            "addBusinessModal"
-        );
+            if (
+                typeof window.openLoginModal ===
+                "function"
+            ) {
 
-    if (!modal) {
+                window.openLoginModal();
 
-        console.error(
-            "LosOja: addBusinessModal was not found."
-        );
+            } else {
 
-        return;
-    }
+                openModal(
+                    "loginModal"
+                );
+            }
 
-
-    modal.classList.add("active");
-
-    modal.style.display =
-        "flex";
-
-    modal.style.visibility =
-        "visible";
-
-    modal.style.opacity =
-        "1";
-
-    document.body.classList.add(
-        "modal-open"
-    );
-}
             return;
         }
 
 
         resetAddBusinessForm();
 
-        openModal(
-            "addBusinessModal"
+
+        const modal =
+            document.getElementById(
+                "addBusinessModal"
+            );
+
+
+        if (!modal) {
+
+            console.error(
+                "LosOja: addBusinessModal was not found."
+            );
+
+            return;
+        }
+
+
+        modal.classList.add(
+            "active"
+        );
+
+        modal.style.display =
+            "flex";
+
+        modal.style.visibility =
+            "visible";
+
+        modal.style.opacity =
+            "1";
+
+        document.body.classList.add(
+            "modal-open"
         );
     }
 
@@ -1907,7 +1942,8 @@ function openAddBusiness() {
 
         try {
 
-            let uploadedUrls = [];
+            let uploadedUrls =
+                [];
 
 
             /* =============================================
@@ -1940,15 +1976,22 @@ function openAddBusiness() {
             ============================================= */
 
             const businessPayload = {
+
                 name,
+
                 category,
+
                 location,
+
                 phone:
                     phone || null,
+
                 description:
                     description || null,
+
                 user_id:
                     userId,
+
                 image_url:
                     mainImage
             };
@@ -1959,11 +2002,14 @@ function openAddBusiness() {
                     `${LOSOJA_BUSINESSES_URL}/rest/v1/businesses`,
                     {
                         method: "POST",
+
                         headers: {
                             ...getHeaders(true),
+
                             "Prefer":
                                 "return=representation"
                         },
+
                         body:
                             JSON.stringify(
                                 businessPayload
@@ -2279,6 +2325,7 @@ function openAddBusiness() {
 
                     images.push({
                         ...image,
+
                         is_main:
                             false
                     });
@@ -2627,11 +2674,16 @@ function openAddBusiness() {
             ============================================= */
 
             const businessPayload = {
+
                 name,
+
                 category,
+
                 location,
+
                 phone:
                     phone || null,
+
                 description:
                     description || null
             };
@@ -2641,6 +2693,7 @@ function openAddBusiness() {
              * If an old business has no main image,
              * the first new image becomes its main image.
              */
+
             let filesToUpload =
                 files.slice();
 
@@ -2672,11 +2725,14 @@ function openAddBusiness() {
                     )}`,
                     {
                         method: "PATCH",
+
                         headers: {
                             ...getHeaders(true),
+
                             "Prefer":
                                 "return=representation"
                         },
+
                         body:
                             JSON.stringify(
                                 businessPayload
@@ -2887,6 +2943,7 @@ function openAddBusiness() {
                     )}`,
                     {
                         method: "DELETE",
+
                         headers:
                             getHeaders()
                     }
@@ -2923,7 +2980,6 @@ function openAddBusiness() {
              * business_images.business_id foreign key
              * uses ON DELETE CASCADE.
              */
-
 
             closeAllBusinessModals();
 
@@ -3122,26 +3178,31 @@ function openAddBusiness() {
     function setupBusinessEvents() {
 
         /* -----------------------------------------------
-   ADD BUSINESS BUTTONS
------------------------------------------------- */
+           ADD BUSINESS BUTTONS
+        ------------------------------------------------ */
 
-document.addEventListener(
-    "click",
-    function (event) {
+        document.addEventListener(
+            "click",
+            function (event) {
 
-        const button =
-            event.target.closest(
-                "#addBusinessBtn, .add-business-btn"
-            );
+                const button =
+                    event.target.closest(
+                        "#addBusinessBtn, .add-business-btn"
+                    );
 
-        if (!button) return;
 
-        event.preventDefault();
-        event.stopPropagation();
+                if (!button) return;
 
-        openAddBusiness();
-    }
-);
+
+                event.preventDefault();
+
+                event.stopPropagation();
+
+
+                openAddBusiness();
+            }
+        );
+
 
         /* -----------------------------------------------
            ADD BUSINESS FORM
@@ -3214,18 +3275,21 @@ document.addEventListener(
                         !validation.valid
                     ) {
 
-                        this.value = "";
+                        this.value =
+                            "";
 
                         setError(
                             "addBusinessError",
                             validation.message
                         );
 
+
                         previewBusinessImages(
                             "businessImage",
                             "imagePreview",
                             "No photos selected."
                         );
+
 
                         return;
                     }
@@ -3280,18 +3344,21 @@ document.addEventListener(
                         !validation.valid
                     ) {
 
-                        this.value = "";
+                        this.value =
+                            "";
 
                         setError(
                             "editBusinessError",
                             validation.message
                         );
 
+
                         previewBusinessImages(
                             "editBusinessImage",
                             "editImagePreview",
                             "No new photos selected."
                         );
+
 
                         return;
                     }
@@ -3370,11 +3437,13 @@ document.addEventListener(
                                     `This business already has ${currentCount} photo(s). You can add only ${available} more.`
                                 );
 
+
                                 previewBusinessImages(
                                     "editBusinessImage",
                                     "editImagePreview",
                                     "No new photos selected."
                                 );
+
 
                                 return;
                             }
@@ -3514,6 +3583,7 @@ document.addEventListener(
                         searchInput
                             ? searchInput.value
                             : "",
+
                         locationInput
                             ? locationInput.value
                             : ""
