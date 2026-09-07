@@ -1629,29 +1629,64 @@ Handles:
     /* =====================================================
        ADD BUSINESS MODAL
     ===================================================== */
+function openAddBusiness() {
 
-    function openAddBusiness() {
-
-        const userId =
-            getCurrentUserId();
+    const userId =
+        getCurrentUserId();
 
 
-        if (!userId) {
+    if (!userId) {
 
-            if (
-                typeof window.openLoginModal ===
-                "function"
-            ) {
+        if (
+            typeof window.openLoginModal ===
+            "function"
+        ) {
 
-                window.openLoginModal();
+            window.openLoginModal();
 
-            } else {
+        } else {
 
-                openModal(
-                    "loginModal"
-                );
-            }
+            openModal(
+                "loginModal"
+            );
+        }
 
+        return;
+    }
+
+
+    resetAddBusinessForm();
+
+    const modal =
+        document.getElementById(
+            "addBusinessModal"
+        );
+
+    if (!modal) {
+
+        console.error(
+            "LosOja: addBusinessModal was not found."
+        );
+
+        return;
+    }
+
+
+    modal.classList.add("active");
+
+    modal.style.display =
+        "flex";
+
+    modal.style.visibility =
+        "visible";
+
+    modal.style.opacity =
+        "1";
+
+    document.body.classList.add(
+        "modal-open"
+    );
+}
             return;
         }
 
@@ -3087,28 +3122,26 @@ Handles:
     function setupBusinessEvents() {
 
         /* -----------------------------------------------
-           ADD BUSINESS BUTTONS
-        ------------------------------------------------ */
+   ADD BUSINESS BUTTONS
+------------------------------------------------ */
 
-        document
-            .querySelectorAll(
+document.addEventListener(
+    "click",
+    function (event) {
+
+        const button =
+            event.target.closest(
                 "#addBusinessBtn, .add-business-btn"
-            )
-            .forEach(
-                button => {
-
-                    button.addEventListener(
-                        "click",
-                        function (event) {
-
-                            event.preventDefault();
-
-                            openAddBusiness();
-                        }
-                    );
-                }
             );
 
+        if (!button) return;
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        openAddBusiness();
+    }
+);
 
         /* -----------------------------------------------
            ADD BUSINESS FORM
