@@ -813,146 +813,229 @@ Handles:
                 .join("");
     }
 
+/* =====================================================
+   VIEW BUSINESS DETAILS
+===================================================== */
 
-    /* =====================================================
-       VIEW BUSINESS DETAILS
-    ===================================================== */
+window.openBusiness =
+    async function (businessId) {
 
-    window.openBusiness =
-        function (businessId) {
+        const business =
+            allBusinesses.find(
+                function (item) {
 
-            const business =
-                allBusinesses.find(
-                    function (item) {
-
-                        return (
-                            String(item.id) ===
-                            String(businessId)
-                        );
-                    }
-                );
-
-
-            if (!business) {
-
-                console.error(
-                    "LosOja: Business not found:",
-                    businessId
-                );
-
-                return;
-            }
+                    return (
+                        String(item.id) ===
+                        String(businessId)
+                    );
+                }
+            );
 
 
-            const modal =
-                document.getElementById(
-                    "businessDetailsModal"
-                );
+        if (!business) {
+
+            console.error(
+                "LosOja: Business not found:",
+                businessId
+            );
+
+            return;
+        }
 
 
-            const details =
-                document.getElementById(
-                    "businessDetails"
-                );
+        const modal =
+            document.getElementById(
+                "businessDetailsModal"
+            );
 
 
-            if (!modal || !details) {
-
-                console.error(
-                    "LosOja: Business details modal not found."
-                );
-
-                return;
-            }
+        const details =
+            document.getElementById(
+                "businessDetails"
+            );
 
 
-            const name =
-                escapeHTML(
-                    business.name ||
-                    "Unnamed Business"
-                );
+        if (!modal || !details) {
+
+            console.error(
+                "LosOja: Business details modal not found."
+            );
+
+            return;
+        }
 
 
-            const category =
-                escapeHTML(
-                    business.category ||
-                    "Business"
-                );
+        const name =
+            escapeHTML(
+                business.name ||
+                "Unnamed Business"
+            );
 
 
-            const location =
-                escapeHTML(
-                    business.location ||
-                    "Nigeria"
-                );
+        const category =
+            escapeHTML(
+                business.category ||
+                "Business"
+            );
 
 
-            const description =
-                escapeHTML(
-                    business.description ||
-                    "No description provided."
-                );
+        const location =
+            escapeHTML(
+                business.location ||
+                "Nigeria"
+            );
 
 
-            const phone =
-                escapeHTML(
-                    business.phone ||
-                    ""
-                );
+        const description =
+            escapeHTML(
+                business.description ||
+                "No description provided."
+            );
 
 
-            details.innerHTML = `
-                <div class="business-details-content">
+        const phone =
+            escapeHTML(
+                business.phone ||
+                ""
+            );
 
-                    <span class="business-card-category">
-                        ${category}
-                    </span>
 
-                    <h2>
-                        ${name}
-                    </h2>
+        /* =================================================
+           BUSINESS DETAILS
+        ================================================= */
+
+        details.innerHTML = `
+
+            <div class="business-details-content">
+
+                <span class="business-card-category">
+                    ${category}
+                </span>
+
+
+                <h2>
+                    ${name}
+                </h2>
+
+
+                <p>
+                    <strong>Location:</strong>
+                    ${location}
+                </p>
+
+
+                ${
+                    phone
+                        ? `
+                            <p>
+                                <strong>Phone:</strong>
+                                ${phone}
+                            </p>
+                        `
+                        : ""
+                }
+
+
+                <div class="business-details-description">
+
+                    <h3>
+                        About this business
+                    </h3>
 
                     <p>
-                        <strong>Location:</strong>
-                        ${location}
+                        ${description}
                     </p>
 
-                    ${
-                        phone
-                            ? `
-                                <p>
-                                    <strong>Phone:</strong>
-                                    ${phone}
-                                </p>
-                            `
-                            : ""
-                    }
+                </div>
 
-                    <div class="business-details-description">
 
-                        <h3>
-                            About this business
-                        </h3>
+                <!-- REVIEWS ARE INSERTED HERE -->
 
-                        <p>
-                            ${description}
-                        </p>
+                <section
+                    id="reviewsSection"
+                    class="reviews-section"
+                >
 
+                    <div class="reviews-loading">
+                        Loading reviews...
                     </div>
 
-                </div>
-            `;
+                </section>
+
+            </div>
+        `;
 
 
-            modal.classList.add(
-                "active"
+        /* =================================================
+           OPEN MODAL
+        ================================================= */
+
+        modal.classList.add(
+            "active"
+        );
+
+        modal.classList.add(
+            "open"
+        );
+
+
+        /* =================================================
+           LOAD REVIEWS
+        ================================================= */
+
+        if (
+            window.Reviews &&
+            typeof window.Reviews.renderForBusiness ===
+            "function"
+        ) {
+
+            try {
+
+                await window.Reviews.renderForBusiness(
+                    business.id
+                );
+
+            } catch (error) {
+
+                console.error(
+                    "LosOja: Could not render reviews:",
+                    error
+                );
+
+
+                const reviewsSection =
+                    document.getElementById(
+                        "reviewsSection"
+                    );
+
+
+                if (reviewsSection) {
+
+                    reviewsSection.innerHTML = `
+
+                        <div class="reviews-error">
+
+                            <h3>
+                                Reviews
+                            </h3>
+
+                            <p>
+                                Reviews could not be loaded right now.
+                            </p>
+
+                        </div>
+
+                    `;
+                }
+            }
+
+        } else {
+
+            console.warn(
+                "LosOja: Reviews system is not available."
             );
-
-            modal.classList.add(
-                "open"
-            );
-        };
-
+        }
+    };
 
     /* =====================================================
        CLEAR ADD BUSINESS FORM
