@@ -337,93 +337,81 @@ Handles:
 
     function setupAddBusinessButtons() {
 
-        const buttons =
-            document.querySelectorAll(
-                ".add-business-btn, #addBusinessBtn, #footerAddBusinessBtn"
-            );
+    const buttons =
+        document.querySelectorAll(
+            ".add-business-btn, #addBusinessBtn, #footerAddBusinessBtn"
+        );
 
-        if (!buttons.length) {
+    buttons.forEach(function (button) {
 
-            console.warn(
-                "LosOja: No Add Business buttons found."
-            );
-
+        if (
+            button.dataset
+                .losojaAddBusinessReady ===
+            "true"
+        ) {
             return;
         }
 
-        buttons.forEach(
-            function (button) {
+        button.dataset
+            .losojaAddBusinessReady =
+            "true";
 
-                if (
-                    button.dataset
-                        .losojaAddBusinessReady ===
-                    "true"
-                ) {
+        button.addEventListener(
+            "click",
+            function (event) {
+
+                event.preventDefault();
+
+                if (!isLoggedIn()) {
+
+                    showNotification(
+                        "Please log in before adding a business.",
+                        "error"
+                    );
+
+                    if (
+                        typeof window.openLoginModal ===
+                        "function"
+                    ) {
+
+                        window.openLoginModal();
+
+                    } else {
+
+                        openModal(
+                            "loginModal"
+                        );
+                    }
 
                     return;
                 }
 
-                button.dataset
-                    .losojaAddBusinessReady =
-                    "true";
+                resetAddBusinessForm();
 
-                button.addEventListener(
-                    "click",
-                    function (event) {
-
-                        event.preventDefault();
-
-                        if (!isLoggedIn()) {
-
-                            showNotification(
-                                "Please log in before adding a business.",
-                                "error"
-                            );
-
-                            if (
-                                typeof window.openLoginModal ===
-                                "function"
-                            ) {
-
-                                window.openLoginModal();
-
-                            } else {
-
-                                openModal(
-                                    "loginModal"
-                                );
-                            }
-
-                            return;
-                        }
-
-                        resetAddBusinessForm();
-
-                        openModal(
-                            "addBusinessModal"
-                        );
-
-                        const nameInput =
-                            document.getElementById(
-                                "businessName"
-                            );
-
-                        if (nameInput) {
-
-                            setTimeout(
-                                function () {
-
-                                    nameInput.focus();
-
-                                },
-                                100
-                            );
-                        }
-                    }
+                openModal(
+                    "addBusinessModal"
                 );
+
+                const nameInput =
+                    document.getElementById(
+                        "businessName"
+                    );
+
+                if (nameInput) {
+
+                    setTimeout(
+                        function () {
+
+                            nameInput.focus();
+
+                        },
+                        100
+                    );
+                }
             }
         );
-    }
+    });
+}
 
 
     /* =====================================================
