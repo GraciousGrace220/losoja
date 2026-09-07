@@ -339,12 +339,83 @@ IMPORTANT:
        ADD BUSINESS BUTTONS
     ===================================================== */
 
-    function setupAddBusinessButtons() {
+   function setupAddBusinessButtons() {
 
-        const buttons =
-            document.querySelectorAll(
-                ".add-business-btn"
-            );
+    const buttons =
+        document.querySelectorAll(
+            ".add-business-btn, #addBusinessBtn, #footerAddBusinessBtn"
+        );
+
+    buttons.forEach(function (button) {
+
+        if (
+            button.dataset
+                .losojaAddBusinessReady ===
+            "true"
+        ) {
+            return;
+        }
+
+        button.dataset
+            .losojaAddBusinessReady =
+            "true";
+
+        button.addEventListener(
+            "click",
+            function (event) {
+
+                event.preventDefault();
+
+                if (!isLoggedIn()) {
+
+                    showNotification(
+                        "Please log in before adding a business.",
+                        "error"
+                    );
+
+                    if (
+                        typeof window.openLoginModal ===
+                        "function"
+                    ) {
+
+                        window.openLoginModal();
+
+                    } else {
+
+                        openModal(
+                            "loginModal"
+                        );
+                    }
+
+                    return;
+                }
+
+                resetAddBusinessForm();
+
+                openModal(
+                    "addBusinessModal"
+                );
+
+                const nameInput =
+                    document.getElementById(
+                        "businessName"
+                    );
+
+                if (nameInput) {
+
+                    setTimeout(
+                        function () {
+
+                            nameInput.focus();
+
+                        },
+                        100
+                    );
+                }
+            }
+        );
+    });
+}
 
         buttons.forEach(function (button) {
 
