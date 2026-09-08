@@ -136,33 +136,41 @@ Handles:
        HEADERS
     ===================================================== */
 
-    function getHeaders(
-        includeContentType = false
-    ) {
+   function getHeaders(
+    includeContentType = false
+) {
 
-        const token =
-            getAccessToken();
+    const token =
+        getAccessToken();
 
-        const headers = {
-            "apikey":
-                LOSOJA_BUSINESSES_KEY,
+    const headers = {
+        "apikey":
+            LOSOJA_BUSINESSES_KEY
+    };
 
-            "Authorization":
-                "Bearer " +
-                (
-                    token ||
-                    LOSOJA_BUSINESSES_KEY
-                )
-        };
+    /*
+    ---------------------------------------------------------
+    Only send Authorization when we actually have a
+    Supabase user access token.
 
-        if (includeContentType) {
+    The sb_publishable_ key is an API key, NOT a JWT.
+    ---------------------------------------------------------
+    */
 
-            headers["Content-Type"] =
-                "application/json";
-        }
+    if (token) {
 
-        return headers;
+        headers["Authorization"] =
+            "Bearer " + token;
     }
+
+    if (includeContentType) {
+
+        headers["Content-Type"] =
+            "application/json";
+    }
+
+    return headers;
+}
 
 
     /* =====================================================
