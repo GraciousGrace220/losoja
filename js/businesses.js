@@ -840,7 +840,7 @@ Handles:
        LOAD BUSINESSES
     ===================================================== */
 
-    async function loadBusinesses() {
+    async function loadBusinesses() {    await ensureSession();
 
         const grid =
             document.getElementById(
