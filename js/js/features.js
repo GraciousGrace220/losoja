@@ -1,1858 +1,958 @@
-/*
-=========================================================
+# /*
+
 LosOja - Extended Features
 js/features.js
 
 Handles:
-- Property listings
-- Ride providers
-- Ride requests
-- Feedback
-- Supabase integration
-- Feature modals
-=========================================================
-*/
+
+* Property listings
+* Property image uploads
+* Ride providers
+* Ride requests
+* Feedback
+* Supabase integration
+* Feature modals
+  =========================================================
+  */
 
 (function () {
 
-    "use strict";
+```
+"use strict";
 
 
-    /* =====================================================
-       SUPABASE CONFIGURATION
-    ===================================================== */
+/* =====================================================
+   SUPABASE CONFIGURATION
+===================================================== */
 
-    const LOSOJA_FEATURES_URL =
-        "https://ycxshwgeebskdozmornh.supabase.co";
+const LOSOJA_FEATURES_URL =
+    "https://ycxshwgeebskdozmornh.supabase.co";
 
-    const LOSOJA_FEATURES_KEY =
-        "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
+const LOSOJA_FEATURES_KEY =
+    "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
 
-    const SESSION_KEY =
-        "losoja_supabase_session";
-
-
-    /* =====================================================
-       STATE
-    ===================================================== */
-
-    let properties = [];
-    let rideProviders = [];
-
-    let propertyLoading = false;
-    let rideProviderLoading = false;
+const SESSION_KEY =
+    "losoja_supabase_session";
 
 
-    /* =====================================================
-       SESSION HELPERS
-    ===================================================== */
+/* =====================================================
+   STATE
+===================================================== */
 
-    function getSession() {
+let properties = [];
+let rideProviders = [];
 
-        try {
-
-            const raw =
-                localStorage.getItem(SESSION_KEY);
-
-            if (!raw) {
-                return null;
-            }
-
-            return JSON.parse(raw);
-
-        } catch (error) {
-
-            console.error(
-                "LosOja session error:",
-                error
-            );
-
-            return null;
-        }
-    }
+let propertyLoading = false;
+let rideProviderLoading = false;
 
 
-    function getAccessToken() {
+/* =====================================================
+   SESSION HELPERS
+===================================================== */
 
-        const session = getSession();
+function getSession() {
 
-        if (!session) {
+    try {
+
+        const raw =
+            localStorage.getItem(SESSION_KEY);
+
+        if (!raw) {
             return null;
         }
 
-        return (
-            session.access_token ||
-            session.accessToken ||
-            session.token ||
-            null
+        return JSON.parse(raw);
+
+    } catch (error) {
+
+        console.error(
+            "LosOja session error:",
+            error
         );
+
+        return null;
+    }
+}
+
+
+function getAccessToken() {
+
+    const session = getSession();
+
+    if (!session) {
+        return null;
     }
 
+    return (
+        session.access_token ||
+        session.accessToken ||
+        session.token ||
+        null
+    );
+}
 
-    function getCurrentUserId() {
 
-        const session = getSession();
+function getCurrentUserId() {
 
-        if (!session) {
-            return null;
-        }
+    const session = getSession();
 
-        if (session.user && session.user.id) {
-            return session.user.id;
-        }
-
-        return (
-            session.user_id ||
-            session.userId ||
-            session.id ||
-            null
-        );
+    if (!session) {
+        return null;
     }
 
-
-    function isLoggedIn() {
-        return !!getCurrentUserId();
+    if (session.user && session.user.id) {
+        return session.user.id;
     }
 
+    return (
+        session.user_id ||
+        session.userId ||
+        session.id ||
+        null
+    );
+}
 
-    /* =====================================================
-       SUPABASE HEADERS
-    ===================================================== */
 
-    function supabaseHeaders(includeContentType = false) {
+function isLoggedIn() {
+    return !!getCurrentUserId();
+}
 
-        const token = getAccessToken();
 
-        const headers = {
-            "apikey": LOSOJA_FEATURES_KEY,
-            "Authorization":
-                "Bearer " +
-                (token || LOSOJA_FEATURES_KEY)
-        };
+/* =====================================================
+   SUPABASE HEADERS
+===================================================== */
 
-        if (includeContentType) {
+function supabaseHeaders(includeContentType = false) {
 
-            headers["Content-Type"] =
-                "application/json";
+    const token = getAccessToken();
 
-        }
+    const headers = {
+        "apikey": LOSOJA_FEATURES_KEY,
+        "Authorization":
+            "Bearer " +
+            (token || LOSOJA_FEATURES_KEY)
+    };
 
-        return headers;
+    if (includeContentType) {
+
+        headers["Content-Type"] =
+            "application/json";
+
     }
 
+    return headers;
+}
 
-    /* =====================================================
-       API REQUEST HELPER
-    ===================================================== */
 
-    async function supabaseRequest(
+/* =====================================================
+   API REQUEST HELPER
+===================================================== */
+
+async function supabaseRequest(
+    endpoint,
+    options = {}
+) {
+
+    const response = await fetch(
+        LOSOJA_FEATURES_URL +
         endpoint,
-        options = {}
-    ) {
-
-        const response = await fetch(
-            LOSOJA_FEATURES_URL +
-            endpoint,
-            {
-                ...options,
-                headers: {
-                    ...supabaseHeaders(
-                        options.body !== undefined
-                    ),
-                    ...(options.headers || {})
-                }
-            }
-        );
-
-
-        const text =
-            await response.text();
-
-
-        let data = null;
-
-        if (text) {
-
-            try {
-
-                data = JSON.parse(text);
-
-            } catch {
-
-                data = text;
-
+        {
+            ...options,
+            headers: {
+                ...supabaseHeaders(
+                    options.body !== undefined
+                ),
+                ...(options.headers || {})
             }
         }
+    );
 
 
-        if (!response.ok) {
+    const text =
+        await response.text();
 
-            let message =
-                "Supabase request failed.";
 
-            if (
-                data &&
-                typeof data === "object"
-            ) {
+    let data = null;
 
-                message =
-                    data.message ||
-                    data.error_description ||
-                    data.hint ||
-                    data.details ||
-                    message;
-            }
-
-
-            throw new Error(message);
-        }
-
-
-        return data;
-    }
-
-
-    /* =====================================================
-       MESSAGE / TOAST
-    ===================================================== */
-
-    function showMessage(
-        message,
-        type = "success"
-    ) {
-
-        if (
-            window.LosOjaApp &&
-            typeof window.LosOjaApp.showToast === "function"
-        ) {
-
-            window.LosOjaApp.showToast(
-                message,
-                type
-            );
-
-            return;
-        }
-
-
-        let toast =
-            document.getElementById(
-                "losojaFeatureToast"
-            );
-
-
-        if (!toast) {
-
-            toast =
-                document.createElement("div");
-
-            toast.id =
-                "losojaFeatureToast";
-
-            toast.style.position =
-                "fixed";
-
-            toast.style.left =
-                "50%";
-
-            toast.style.bottom =
-                "25px";
-
-            toast.style.transform =
-                "translateX(-50%)";
-
-            toast.style.zIndex =
-                "99999";
-
-            toast.style.padding =
-                "13px 18px";
-
-            toast.style.borderRadius =
-                "8px";
-
-            toast.style.background =
-                "#111827";
-
-            toast.style.color =
-                "#ffffff";
-
-            toast.style.fontSize =
-                "14px";
-
-            toast.style.maxWidth =
-                "90%";
-
-            toast.style.textAlign =
-                "center";
-
-            document.body.appendChild(toast);
-        }
-
-
-        toast.textContent =
-            message;
-
-        toast.style.background =
-            type === "error"
-                ? "#c62828"
-                : "#087a3e";
-
-
-        clearTimeout(
-            toast._timer
-        );
-
-
-        toast._timer =
-            setTimeout(
-                function () {
-
-                    toast.remove();
-
-                },
-                3500
-            );
-    }
-
-
-    /* =====================================================
-       LOGIN REQUIREMENT
-    ===================================================== */
-
-    function requireLogin() {
-
-        if (isLoggedIn()) {
-            return true;
-        }
-
-
-        showMessage(
-            "Please log in to continue.",
-            "error"
-        );
-
-
-        const loginButton =
-            document.querySelector(
-                "#loginBtn, #mobileLoginBtn, .login-btn"
-            );
-
-
-        if (loginButton) {
-
-            loginButton.click();
-
-        } else {
-
-            const loginModal =
-                document.getElementById(
-                    "loginModal"
-                );
-
-            if (loginModal) {
-
-                loginModal.classList.remove(
-                    "hidden"
-                );
-
-            }
-        }
-
-
-        return false;
-    }
-
-
-    /* =====================================================
-       HTML HELPERS
-    ===================================================== */
-
-    function escapeHtml(value) {
-
-        if (
-            value === null ||
-            value === undefined
-        ) {
-
-            return "";
-        }
-
-
-        return String(value)
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
-    }
-
-
-    function formatDate(value) {
-
-        if (!value) {
-            return "";
-        }
-
+    if (text) {
 
         try {
 
-            return new Date(value)
-                .toLocaleDateString(
-                    undefined,
-                    {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric"
-                    }
-                );
+            data = JSON.parse(text);
 
         } catch {
 
-            return "";
+            data = text;
+
         }
     }
 
 
-    /* =====================================================
-       MODAL HELPERS
-    ===================================================== */
+    if (!response.ok) {
 
-    function createModal(
-        id,
-        title,
-        content
-    ) {
+        let message =
+            "Supabase request failed.";
 
-        const existing =
-            document.getElementById(id);
+        if (
+            data &&
+            typeof data === "object"
+        ) {
 
-        if (existing) {
-            existing.remove();
+            message =
+                data.message ||
+                data.error_description ||
+                data.hint ||
+                data.details ||
+                message;
         }
 
 
-        const overlay =
+        throw new Error(message);
+    }
+
+
+    return data;
+}
+
+
+/* =====================================================
+   MESSAGE / TOAST
+===================================================== */
+
+function showMessage(
+    message,
+    type = "success"
+) {
+
+    if (
+        window.LosOjaApp &&
+        typeof window.LosOjaApp.showToast === "function"
+    ) {
+
+        window.LosOjaApp.showToast(
+            message,
+            type
+        );
+
+        return;
+    }
+
+
+    let toast =
+        document.getElementById(
+            "losojaFeatureToast"
+        );
+
+
+    if (!toast) {
+
+        toast =
             document.createElement("div");
 
-        overlay.id = id;
+        toast.id =
+            "losojaFeatureToast";
 
-        overlay.className =
-            "modal-overlay";
+        toast.style.position =
+            "fixed";
+
+        toast.style.left =
+            "50%";
+
+        toast.style.bottom =
+            "25px";
+
+        toast.style.transform =
+            "translateX(-50%)";
+
+        toast.style.zIndex =
+            "99999";
+
+        toast.style.padding =
+            "13px 18px";
+
+        toast.style.borderRadius =
+            "8px";
+
+        toast.style.background =
+            "#111827";
+
+        toast.style.color =
+            "#ffffff";
+
+        toast.style.fontSize =
+            "14px";
+
+        toast.style.maxWidth =
+            "90%";
+
+        toast.style.textAlign =
+            "center";
+
+        document.body.appendChild(toast);
+    }
 
 
-        overlay.innerHTML = `
+    toast.textContent =
+        message;
 
-            <div class="modal-content feature-modal-content">
-
-                <button
-                    type="button"
-                    class="modal-close"
-                    data-feature-close="${escapeHtml(id)}"
-                    aria-label="Close"
-                >
-                    ×
-                </button>
-
-                <h2>${escapeHtml(title)}</h2>
-
-                ${content}
-
-            </div>
-
-        `;
+    toast.style.background =
+        type === "error"
+            ? "#c62828"
+            : "#087a3e";
 
 
-        document.body.appendChild(
-            overlay
+    clearTimeout(
+        toast._timer
+    );
+
+
+    toast._timer =
+        setTimeout(
+            function () {
+
+                toast.remove();
+
+            },
+            3500
+        );
+}
+
+
+/* =====================================================
+   LOGIN REQUIREMENT
+===================================================== */
+
+function requireLogin() {
+
+    if (isLoggedIn()) {
+        return true;
+    }
+
+
+    showMessage(
+        "Please log in to continue.",
+        "error"
+    );
+
+
+    const loginButton =
+        document.querySelector(
+            "#loginBtn, #mobileLoginBtn, .login-btn"
         );
 
 
-        const closeButton =
-            overlay.querySelector(
-                "[data-feature-close]"
-            );
+    if (loginButton) {
 
+        loginButton.click();
 
-        if (closeButton) {
+    } else {
 
-            closeButton.addEventListener(
-                "click",
-                function () {
-
-                    closeModal(id);
-
-                }
-            );
-        }
-
-
-        overlay.addEventListener(
-            "click",
-            function (event) {
-
-                if (
-                    event.target === overlay
-                ) {
-
-                    closeModal(id);
-
-                }
-
-            }
-        );
-
-
-        return overlay;
-    }
-
-
-    function closeModal(id) {
-
-        const modal =
-            document.getElementById(id);
-
-        if (modal) {
-            modal.remove();
-        }
-    }
-
-
-    /* =====================================================
-       PROPERTY LISTINGS
-    ===================================================== */
-
-    async function loadProperties() {
-
-        if (propertyLoading) {
-            return;
-        }
-
-
-        propertyLoading = true;
-
-
-        try {
-
-            const data =
-                await supabaseRequest(
-                    "/rest/v1/property_listings" +
-                    "?select=*" +
-                    "&order=created_at.desc"
-                );
-
-
-            properties =
-                Array.isArray(data)
-                    ? data
-                    : [];
-
-
-            renderProperties();
-
-        } catch (error) {
-
-            console.error(
-                "LosOja property loading error:",
-                error
-            );
-
-
-            properties = [];
-
-            renderProperties();
-
-
-            showMessage(
-                "Unable to load property listings.",
-                "error"
-            );
-
-        } finally {
-
-            propertyLoading = false;
-
-        }
-    }
-
-
-    function renderProperties() {
-
-        const grid =
+        const loginModal =
             document.getElementById(
-                "propertyGrid"
+                "loginModal"
             );
 
+        if (loginModal) {
 
-        const empty =
-            document.getElementById(
-                "propertyEmpty"
-            );
-
-
-        if (!grid) {
-            return;
-        }
-
-
-        if (!properties.length) {
-
-            grid.innerHTML = "";
-
-            if (empty) {
-                empty.classList.remove(
-                    "hidden"
-                );
-            }
-
-            return;
-        }
-
-
-        if (empty) {
-            empty.classList.add(
+            loginModal.classList.remove(
                 "hidden"
             );
+
         }
-
-
-        grid.innerHTML =
-            properties.map(
-                propertyCardHTML
-            ).join("");
     }
 
 
-    function propertyCardHTML(property) {
+    return false;
+}
 
-        const image =
-            property.image_url
-                ? `
-                    <div class="property-card-image">
-                        <img
-                            src="${escapeHtml(property.image_url)}"
-                            alt="${escapeHtml(property.title)}"
-                            loading="lazy"
-                        >
-                    </div>
-                `
-                : `
-                    <div class="property-card-image">
-                        🏠
-                    </div>
-                `;
 
+/* =====================================================
+   HTML HELPERS
+===================================================== */
 
-        return `
+function escapeHtml(value) {
 
-            <article class="property-card">
-
-                ${image}
-
-                <div class="property-card-body">
-
-                    <span class="property-type">
-                        ${escapeHtml(
-                            property.property_type
-                        )}
-                    </span>
-
-                    <h3>
-                        ${escapeHtml(
-                            property.title
-                        )}
-                    </h3>
-
-                    <p class="property-location">
-                        📍 ${escapeHtml(
-                            property.location
-                        )}
-                    </p>
-
-                    ${
-                        property.listing_type
-                            ? `
-                                <p class="feature-meta">
-                                    ${escapeHtml(
-                                        property.listing_type
-                                    )}
-                                </p>
-                            `
-                            : ""
-                    }
-
-                    ${
-                        property.price
-                            ? `
-                                <p class="property-price">
-                                    ${escapeHtml(
-                                        property.price
-                                    )}
-                                </p>
-                            `
-                            : ""
-                    }
-
-                    ${
-                        property.description
-                            ? `
-                                <p class="property-description">
-                                    ${escapeHtml(
-                                        property.description
-                                    )}
-                                </p>
-                            `
-                            : ""
-                    }
-
-                    ${
-                        property.phone
-                            ? `
-                                <p class="feature-meta">
-                                    📞 ${escapeHtml(
-                                        property.phone
-                                    )}
-                                </p>
-                            `
-                            : ""
-                    }
-
-                    <p class="feature-meta">
-                        Listed ${escapeHtml(
-                            formatDate(
-                                property.created_at
-                            )
-                        )}
-                    </p>
-
-                </div>
-
-            </article>
-
-        `;
-    }
-
-
-    function openPropertyModal() {
-
-        if (!requireLogin()) {
-            return;
-        }
-
-
-        const modal =
-            createModal(
-                "propertyFeatureModal",
-                "List a Property",
-                `
-
-                <p>
-                    Add a house, apartment, land or
-                    commercial property to LosOja.
-                </p>
-
-                <form
-                    id="propertyFeatureForm"
-                    class="feature-form"
-                >
-
-                    <div class="form-group">
-
-                        <label for="propertyTitle">
-                            Property Title
-                        </label>
-
-                        <input
-                            type="text"
-                            id="propertyTitle"
-                            required
-                            placeholder="e.g. 3 Bedroom Apartment"
-                        >
-
-                    </div>
-
-
-                    <div class="form-row">
-
-                        <div class="form-group">
-
-                            <label for="propertyType">
-                                Property Type
-                            </label>
-
-                            <select
-                                id="propertyType"
-                                required
-                            >
-
-                                <option value="">
-                                    Select type
-                                </option>
-
-                                <option value="House">
-                                    House
-                                </option>
-
-                                <option value="Apartment">
-                                    Apartment
-                                </option>
-
-                                <option value="Land">
-                                    Land
-                                </option>
-
-                                <option value="Office">
-                                    Office
-                                </option>
-
-                                <option value="Shop">
-                                    Shop
-                                </option>
-
-                                <option value="Commercial">
-                                    Commercial Property
-                                </option>
-
-                                <option value="Other">
-                                    Other
-                                </option>
-
-                            </select>
-
-                        </div>
-
-
-                        <div class="form-group">
-
-                            <label for="propertyListingType">
-                                Listing Type
-                            </label>
-
-                            <select
-                                id="propertyListingType"
-                                required
-                            >
-
-                                <option value="">
-                                    Select listing type
-                                </option>
-
-                                <option value="For Sale">
-                                    For Sale
-                                </option>
-
-                                <option value="For Rent">
-                                    For Rent
-                                </option>
-
-                                <option value="For Lease">
-                                    For Lease
-                                </option>
-
-                                <option value="Short Stay">
-                                    Short Stay
-                                </option>
-
-                            </select>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="form-group">
-
-                        <label for="propertyLocation">
-                            Location
-                        </label>
-
-                        <input
-                            type="text"
-                            id="propertyLocation"
-                            required
-                            placeholder="City, area or address"
-                        >
-
-                    </div>
-
-
-                    <div class="form-group">
-
-                        <label for="propertyPrice">
-                            Price
-                        </label>
-
-                        <input
-                            type="text"
-                            id="propertyPrice"
-                            placeholder="e.g. ₦2,500,000"
-                        >
-
-                    </div>
-
-
-                    <div class="form-group">
-
-                        <label for="propertyPhone">
-                            Contact Phone
-                        </label>
-
-                        <input
-                            type="tel"
-                            id="propertyPhone"
-                            placeholder="Phone number"
-                        >
-
-                    </div>
-
-
-                    <div class="form-group">
-
-                        <label for="propertyDescription">
-                            Description
-                        </label>
-
-                        <textarea
-                            id="propertyDescription"
-                            placeholder="Describe the property"
-                        ></textarea>
-
-                    </div>
-
-
-                    <button
-                        type="submit"
-                        class="btn btn-primary btn-block"
-                    >
-                        Publish Property
-                    </button>
-
-                </form>
-
-                `
-            );
-
-
-        const form =
-            modal.querySelector(
-                "#propertyFeatureForm"
-            );
-
-
-        form.addEventListener(
-            "submit",
-            handlePropertySubmit
-        );
-    }
-
-
-    async function handlePropertySubmit(
-        event
+    if (
+        value === null ||
+        value === undefined
     ) {
 
-        event.preventDefault();
+        return "";
+    }
 
 
-        const userId =
-            getCurrentUserId();
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
 
 
-        if (!userId) {
+function formatDate(value) {
 
-            showMessage(
-                "Please log in first.",
-                "error"
-            );
-
-            return;
-        }
+    if (!value) {
+        return "";
+    }
 
 
-        const submitButton =
-            event.target.querySelector(
-                'button[type="submit"]'
-            );
+    try {
 
-
-        submitButton.disabled =
-            true;
-
-        submitButton.textContent =
-            "Publishing...";
-
-
-        const payload = {
-
-            user_id: userId,
-
-            title:
-                document.getElementById(
-                    "propertyTitle"
-                ).value.trim(),
-
-            property_type:
-                document.getElementById(
-                    "propertyType"
-                ).value,
-
-            listing_type:
-                document.getElementById(
-                    "propertyListingType"
-                ).value,
-
-            location:
-                document.getElementById(
-                    "propertyLocation"
-                ).value.trim(),
-
-            price:
-                document.getElementById(
-                    "propertyPrice"
-                ).value.trim() || null,
-
-            description:
-                document.getElementById(
-                    "propertyDescription"
-                ).value.trim() || null,
-
-            phone:
-                document.getElementById(
-                    "propertyPhone"
-                ).value.trim() || null,
-
-            image_url: null
-
-        };
-
-
-        try {
-
-            await supabaseRequest(
-                "/rest/v1/property_listings",
+        return new Date(value)
+            .toLocaleDateString(
+                undefined,
                 {
-                    method: "POST",
-                    headers: {
-                        "Prefer":
-                            "return=representation"
-                    },
-                    body:
-                        JSON.stringify(payload)
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric"
                 }
             );
 
+    } catch {
 
-            showMessage(
-                "Property listed successfully!"
-            );
-
-
-            closeModal(
-                "propertyFeatureModal"
-            );
+        return "";
+    }
+}
 
 
-            await loadProperties();
+/* =====================================================
+   MODAL HELPERS
+===================================================== */
 
-        } catch (error) {
+function createModal(
+    id,
+    title,
+    content
+) {
 
-            console.error(
-                "LosOja property save error:",
-                error
-            );
+    const existing =
+        document.getElementById(id);
 
-
-            showMessage(
-                "Could not save property: " +
-                error.message,
-                "error"
-            );
-
-
-            submitButton.disabled =
-                false;
-
-            submitButton.textContent =
-                "Publish Property";
-        }
+    if (existing) {
+        existing.remove();
     }
 
 
-    /* =====================================================
-       RIDE PROVIDERS
-    ===================================================== */
+    const overlay =
+        document.createElement("div");
 
-    async function loadRideProviders() {
+    overlay.id = id;
 
-        if (rideProviderLoading) {
-            return;
+    overlay.className =
+        "modal-overlay";
+
+
+    overlay.innerHTML = `
+
+        <div class="modal-content feature-modal-content">
+
+            <button
+                type="button"
+                class="modal-close"
+                data-feature-close="${escapeHtml(id)}"
+                aria-label="Close"
+            >
+                ×
+            </button>
+
+            <h2>${escapeHtml(title)}</h2>
+
+            ${content}
+
+        </div>
+
+    `;
+
+
+    document.body.appendChild(
+        overlay
+    );
+
+
+    const closeButton =
+        overlay.querySelector(
+            "[data-feature-close]"
+        );
+
+
+    if (closeButton) {
+
+        closeButton.addEventListener(
+            "click",
+            function () {
+
+                closeModal(id);
+
+            }
+        );
+    }
+
+
+    overlay.addEventListener(
+        "click",
+        function (event) {
+
+            if (
+                event.target === overlay
+            ) {
+
+                closeModal(id);
+
+            }
+
         }
+    );
 
 
-        rideProviderLoading = true;
+    return overlay;
+}
+
+
+function closeModal(id) {
+
+    const modal =
+        document.getElementById(id);
+
+    if (modal) {
+        modal.remove();
+    }
+}
+
+
+/* =====================================================
+   PROPERTY IMAGE UPLOAD
+===================================================== */
+
+function validatePropertyImages(files) {
+
+    const allowedTypes = [
+        "image/jpeg",
+        "image/png",
+        "image/webp",
+        "image/gif"
+    ];
+
+    const maxFiles = 5;
+    const maxSize = 5 * 1024 * 1024;
+
+
+    if (!files || files.length === 0) {
+        return [];
+    }
+
+
+    if (files.length > maxFiles) {
+
+        throw new Error(
+            "You can upload a maximum of 5 property pictures."
+        );
+    }
+
+
+    const selectedFiles =
+        Array.from(files);
+
+
+    selectedFiles.forEach(
+        function (file) {
+
+            if (
+                !allowedTypes.includes(
+                    file.type
+                )
+            ) {
+
+                throw new Error(
+                    "Only JPG, PNG, WEBP, and GIF images are allowed."
+                );
+            }
+
+
+            if (file.size > maxSize) {
+
+                throw new Error(
+                    "Each property picture must be 5MB or smaller."
+                );
+            }
+
+        }
+    );
+
+
+    return selectedFiles;
+}
+
+
+async function uploadPropertyImage(
+    file,
+    userId
+) {
+
+    const extension =
+        file.name
+            .split(".")
+            .pop()
+            .toLowerCase() || "jpg";
+
+
+    const uniqueName =
+        `${Date.now()}-${Math.random()
+            .toString(36)
+            .slice(2, 10)}.${extension}`;
+
+
+    const filePath =
+        `${userId}/${uniqueName}`;
+
+
+    const encodedPath =
+        filePath
+            .split("/")
+            .map(
+                encodeURIComponent
+            )
+            .join("/");
+
+
+    const accessToken =
+        getAccessToken();
+
+
+    if (!accessToken) {
+
+        throw new Error(
+            "Your session has expired. Please log in again."
+        );
+    }
+
+
+    const response =
+        await fetch(
+            `${LOSOJA_FEATURES_URL}/storage/v1/object/property-images/${encodedPath}`,
+            {
+                method: "POST",
+
+                headers: {
+                    "apikey":
+                        LOSOJA_FEATURES_KEY,
+
+                    "Authorization":
+                        `Bearer ${accessToken}`,
+
+                    "Content-Type":
+                        file.type,
+
+                    "x-upsert":
+                        "false"
+                },
+
+                body: file
+            }
+        );
+
+
+    if (!response.ok) {
+
+        let message =
+            "Property image upload failed.";
 
 
         try {
 
-            const data =
-                await supabaseRequest(
-                    "/rest/v1/ride_providers" +
-                    "?select=*" +
-                    "&order=created_at.desc"
-                );
+            const errorData =
+                await response.json();
 
 
-            rideProviders =
-                Array.isArray(data)
-                    ? data
-                    : [];
+            message =
+                errorData.message ||
+                errorData.error ||
+                errorData.error_description ||
+                message;
 
-
-            renderRideProviders();
-
-        } catch (error) {
-
-            console.error(
-                "LosOja ride provider loading error:",
-                error
-            );
-
-
-            rideProviders = [];
-
-            renderRideProviders();
-
-
-            showMessage(
-                "Unable to load ride providers.",
-                "error"
-            );
-
-        } finally {
-
-            rideProviderLoading =
-                false;
-
+        } catch {
+            // Keep default message
         }
+
+
+        throw new Error(
+            message
+        );
     }
 
 
-    function renderRideProviders() {
+    return (
+        `${LOSOJA_FEATURES_URL}` +
+        `/storage/v1/object/public/property-images/` +
+        `${encodedPath}`
+    );
+}
 
-        const grid =
-            document.getElementById(
-                "rideProviderGrid"
+
+/* =====================================================
+   PROPERTY LISTINGS
+===================================================== */
+
+async function loadProperties() {
+
+    if (propertyLoading) {
+        return;
+    }
+
+
+    propertyLoading = true;
+
+
+    try {
+
+        const data =
+            await supabaseRequest(
+                "/rest/v1/property_listings" +
+                "?select=*" +
+                "&order=created_at.desc"
             );
 
 
-        const empty =
-            document.getElementById(
-                "rideProviderEmpty"
-            );
+        properties =
+            Array.isArray(data)
+                ? data
+                : [];
 
 
-        if (!grid) {
-            return;
-        }
+        renderProperties();
+
+    } catch (error) {
+
+        console.error(
+            "LosOja property loading error:",
+            error
+        );
 
 
-        if (!rideProviders.length) {
+        properties = [];
 
-            grid.innerHTML = "";
+        renderProperties();
 
-            if (empty) {
-                empty.classList.remove(
-                    "hidden"
-                );
-            }
 
-            return;
-        }
+        showMessage(
+            "Unable to load property listings.",
+            "error"
+        );
 
+    } finally {
+
+        propertyLoading = false;
+
+    }
+}
+
+
+function renderProperties() {
+
+    const grid =
+        document.getElementById(
+            "propertyGrid"
+        );
+
+
+    const empty =
+        document.getElementById(
+            "propertyEmpty"
+        );
+
+
+    if (!grid) {
+        return;
+    }
+
+
+    if (!properties.length) {
+
+        grid.innerHTML = "";
 
         if (empty) {
-            empty.classList.add(
+            empty.classList.remove(
                 "hidden"
             );
         }
 
-
-        grid.innerHTML =
-            rideProviders.map(
-                rideProviderCardHTML
-            ).join("");
+        return;
     }
 
 
-    function rideProviderCardHTML(provider) {
+    if (empty) {
+        empty.classList.add(
+            "hidden"
+        );
+    }
 
-        return `
 
-            <article class="ride-provider-card">
+    grid.innerHTML =
+        properties.map(
+            propertyCardHTML
+        ).join("");
+}
 
-                <div class="feature-icon">
-                    ${
-                        provider.ride_type === "Bike"
-                            ? "🏍️"
-                            : provider.ride_type === "Cab"
-                                ? "🚕"
-                                : provider.ride_type === "Truck"
-                                    ? "🚚"
-                                    : "🚗"
-                    }
+
+function propertyCardHTML(property) {
+
+    const image =
+        property.image_url
+            ? `
+                <div class="property-card-image">
+                    <img
+                        src="${escapeHtml(property.image_url)}"
+                        alt="${escapeHtml(property.title)}"
+                        loading="lazy"
+                    >
                 </div>
+            `
+            : `
+                <div class="property-card-image">
+                    🏠
+                </div>
+            `;
 
-                <h3>
-                    ${escapeHtml(
-                        provider.provider_name
-                    )}
-                </h3>
 
-                <span class="ride-provider-type">
+    return `
+
+        <article class="property-card">
+
+            ${image}
+
+            <div class="property-card-body">
+
+                <span class="property-type">
                     ${escapeHtml(
-                        provider.ride_type
+                        property.property_type
                     )}
                 </span>
 
-                <p>
+                <h3>
+                    ${escapeHtml(
+                        property.title
+                    )}
+                </h3>
+
+                <p class="property-location">
                     📍 ${escapeHtml(
-                        provider.operating_location
+                        property.location
                     )}
                 </p>
 
                 ${
-                    provider.vehicle_info
+                    property.listing_type
                         ? `
-                            <p>
-                                🚘 ${escapeHtml(
-                                    provider.vehicle_info
-                                )}
-                            </p>
-                        `
-                        : ""
-                }
-
-                ${
-                    provider.description
-                        ? `
-                            <p>
+                            <p class="feature-meta">
                                 ${escapeHtml(
-                                    provider.description
+                                    property.listing_type
                                 )}
                             </p>
                         `
                         : ""
                 }
 
-                <p class="ride-provider-phone">
-                    📞 ${escapeHtml(
-                        provider.phone
-                    )}
-                </p>
+                ${
+                    property.price
+                        ? `
+                            <p class="property-price">
+                                ${escapeHtml(
+                                    property.price
+                                )}
+                            </p>
+                        `
+                        : ""
+                }
+
+                ${
+                    property.description
+                        ? `
+                            <p class="property-description">
+                                ${escapeHtml(
+                                    property.description
+                                )}
+                            </p>
+                        `
+                        : ""
+                }
+
+                ${
+                    property.phone
+                        ? `
+                            <p class="feature-meta">
+                                📞 ${escapeHtml(
+                                    property.phone
+                                )}
+                            </p>
+                        `
+                        : ""
+                }
 
                 <p class="feature-meta">
-                    Registered ${escapeHtml(
+                    Listed ${escapeHtml(
                         formatDate(
-                            provider.created_at
+                            property.created_at
                         )
                     )}
                 </p>
 
-            </article>
+            </div>
 
-        `;
+        </article>
+
+    `;
+}
+
+
+function openPropertyModal() {
+
+    if (!requireLogin()) {
+        return;
     }
 
 
-    function openRideProviderModal() {
-
-        if (!requireLogin()) {
-            return;
-        }
-
-
-        const modal =
-            createModal(
-                "rideProviderFeatureModal",
-                "Register as a Ride Provider",
-                `
-
-                <p>
-                    Offer transportation services
-                    through LosOja.
-                </p>
-
-                <form
-                    id="rideProviderFeatureForm"
-                    class="feature-form"
-                >
-
-                    <div class="form-group">
-
-                        <label for="providerName">
-                            Provider Name
-                        </label>
-
-                        <input
-                            type="text"
-                            id="providerName"
-                            required
-                            placeholder="Your name or business name"
-                        >
-
-                    </div>
-
-
-                    <div class="form-group">
-
-                        <label for="providerRideType">
-                            Ride Type
-                        </label>
-
-                        <select
-                            id="providerRideType"
-                            required
-                        >
-
-                            <option value="">
-                                Select ride type
-                            </option>
-
-                            <option value="TryCircle">
-                                TryCircle
-                            </option>
-
-                            <option value="Bike">
-                                Bike
-                            </option>
-
-                            <option value="Cab">
-                                Cab
-                            </option>
-
-                            <option value="Truck">
-                                Truck
-                            </option>
-
-                        </select>
-
-                    </div>
-
-
-                    <div class="form-group">
-
-                        <label for="providerPhone">
-                            Phone
-                        </label>
-
-                        <input
-                            type="tel"
-                            id="providerPhone"
-                            required
-                            placeholder="Phone number"
-                        >
-
-                    </div>
-
-
-                    <div class="form-group">
-
-                        <label for="providerVehicle">
-                            Vehicle Information
-                        </label>
-
-                        <input
-                            type="text"
-                            id="providerVehicle"
-                            placeholder="e.g. Toyota Corolla, Blue"
-                        >
-
-                    </div>
-
-
-                    <div class="form-group">
-
-                        <label for="providerLocation">
-                            Operating Location
-                        </label>
-
-                        <input
-                            type="text"
-                            id="providerLocation"
-                            required
-                            placeholder="City or area"
-                        >
-
-                    </div>
-
-
-                    <div class="form-group">
-
-                        <label for="providerDescription">
-                            Description
-                        </label>
-
-                        <textarea
-                            id="providerDescription"
-                            placeholder="Describe your transportation service"
-                        ></textarea>
-
-                    </div>
-
-
-                    <button
-                        type="submit"
-                        class="btn btn-primary btn-block"
-                    >
-                        Register Provider
-                    </button>
-
-                </form>
-
-                `
-            );
-
-
-        const form =
-            modal.querySelector(
-                "#rideProviderFeatureForm"
-            );
-
-
-        form.addEventListener(
-            "submit",
-            handleRideProviderSubmit
-        );
-    }
-
-
-    async function handleRideProviderSubmit(
-        event
-    ) {
-
-        event.preventDefault();
-
-
-        const userId =
-            getCurrentUserId();
-
-
-        if (!userId) {
-
-            showMessage(
-                "Please log in first.",
-                "error"
-            );
-
-            return;
-        }
-
-
-        const submitButton =
-            event.target.querySelector(
-                'button[type="submit"]'
-            );
-
-
-        submitButton.disabled =
-            true;
-
-        submitButton.textContent =
-            "Saving...";
-
-
-        const payload = {
-
-            user_id: userId,
-
-            provider_name:
-                document.getElementById(
-                    "providerName"
-                ).value.trim(),
-
-            ride_type:
-                document.getElementById(
-                    "providerRideType"
-                ).value,
-
-            phone:
-                document.getElementById(
-                    "providerPhone"
-                ).value.trim(),
-
-            vehicle_info:
-                document.getElementById(
-                    "providerVehicle"
-                ).value.trim() || null,
-
-            operating_location:
-                document.getElementById(
-                    "providerLocation"
-                ).value.trim(),
-
-            description:
-                document.getElementById(
-                    "providerDescription"
-                ).value.trim() || null,
-
-            vehicle_image_url: null
-
-        };
-
-
-        try {
-
-            await supabaseRequest(
-                "/rest/v1/ride_providers",
-                {
-                    method: "POST",
-                    headers: {
-                        "Prefer":
-                            "return=representation"
-                    },
-                    body:
-                        JSON.stringify(payload)
-                }
-            );
-
-
-            showMessage(
-                "Ride provider registered successfully!"
-            );
-
-
-            closeModal(
-                "rideProviderFeatureModal"
-            );
-
-
-            await loadRideProviders();
-
-        } catch (error) {
-
-            console.error(
-                "LosOja ride provider save error:",
-                error
-            );
-
-
-            showMessage(
-                "Could not register provider: " +
-                error.message,
-                "error"
-            );
-
-
-            submitButton.disabled =
-                false;
-
-            submitButton.textContent =
-                "Register Provider";
-        }
-    }
-
-
-    /* =====================================================
-       RIDE REQUESTS
-    ===================================================== */
-
-    function getMobilityName(type) {
-
-        const names = {
-
-            trycircle: "TryCircle",
-
-            bike: "Bike",
-
-            cab: "Cab",
-
-            truck: "Rent a Truck"
-
-        };
-
-
-        return (
-            names[type] ||
-            "Transportation"
-        );
-    }
-
-
-    function openRideRequestModal(
-        type
-    ) {
-
-        if (!requireLogin()) {
-            return;
-        }
-
-
-        const rideName =
-            getMobilityName(type);
-
-
-        const modal =
-            createModal(
-                "rideRequestFeatureModal",
-                "Request " + rideName,
-                `
-
-                <p>
-                    Enter your trip details and submit
-                    your transportation request.
-                </p>
-
-                <form
-                    id="rideRequestFeatureForm"
-                    class="feature-form"
-                >
+    const modal =
+        createModal(
+            "propertyFeatureModal",
+            "List a Property",
+            `
+
+            <p>
+                Add a house, apartment, land or
+                commercial property to LosOja.
+            </p>
+
+            <form
+                id="propertyFeatureForm"
+                class="feature-form"
+            >
+
+                <div class="form-group">
+
+                    <label for="propertyTitle">
+                        Property Title
+                    </label>
 
                     <input
-                        type="hidden"
-                        id="featureRideType"
-                        value="${escapeHtml(type)}"
+                        type="text"
+                        id="propertyTitle"
+                        required
+                        placeholder="e.g. 3 Bedroom Apartment"
                     >
 
+                </div>
+
+
+                <div class="form-row">
 
                     <div class="form-group">
 
-                        <label for="featureRidePickup">
-                            Pickup Location
-                        </label>
-
-                        <input
-                            type="text"
-                            id="featureRidePickup"
-                            required
-                            placeholder="Where should you be picked up?"
-                        >
-
-                    </div>
-
-
-                    <div class="form-group">
-
-                        <label for="featureRideDestination">
-                            Destination
-                        </label>
-
-                        <input
-                            type="text"
-                            id="featureRideDestination"
-                            required
-                            placeholder="Where are you going?"
-                        >
-
-                    </div>
-
-
-                    <div class="form-group">
-
-                        <label for="featureRidePhone">
-                            Phone
-                        </label>
-
-                        <input
-                            type="tel"
-                            id="featureRidePhone"
-                            required
-                            placeholder="Phone number"
-                        >
-
-                    </div>
-
-
-                    <div class="form-group">
-
-                        <label for="featureRideNote">
-                            Note
-                        </label>
-
-                        <textarea
-                            id="featureRideNote"
-                            placeholder="Optional information for the driver"
-                        ></textarea>
-
-                    </div>
-
-
-                    <button
-                        type="submit"
-                        class="btn btn-primary btn-block"
-                    >
-                        Submit Ride Request
-                    </button>
-
-                </form>
-
-                `
-            );
-
-
-        const form =
-            modal.querySelector(
-                "#rideRequestFeatureForm"
-            );
-
-
-        form.addEventListener(
-            "submit",
-            handleRideRequestSubmit
-        );
-    }
-
-
-    async function handleRideRequestSubmit(
-        event
-    ) {
-
-        event.preventDefault();
-
-
-        const userId =
-            getCurrentUserId();
-
-
-        if (!userId) {
-
-            showMessage(
-                "Please log in first.",
-                "error"
-            );
-
-            return;
-        }
-
-
-        const submitButton =
-            event.target.querySelector(
-                'button[type="submit"]'
-            );
-
-
-        submitButton.disabled =
-            true;
-
-        submitButton.textContent =
-            "Submitting...";
-
-
-        const payload = {
-
-            user_id: userId,
-
-            ride_type:
-                document.getElementById(
-                    "featureRideType"
-                ).value,
-
-            pickup:
-                document.getElementById(
-                    "featureRidePickup"
-                ).value.trim(),
-
-            destination:
-                document.getElementById(
-                    "featureRideDestination"
-                ).value.trim(),
-
-            phone:
-                document.getElementById(
-                    "featureRidePhone"
-                ).value.trim(),
-
-            note:
-                document.getElementById(
-                    "featureRideNote"
-                ).value.trim() || null,
-
-            status: "pending"
-
-        };
-
-
-        try {
-
-            await supabaseRequest(
-                "/rest/v1/ride_requests",
-                {
-                    method: "POST",
-                    headers: {
-                        "Prefer":
-                            "return=representation"
-                    },
-                    body:
-                        JSON.stringify(payload)
-                }
-            );
-
-
-            showMessage(
-                "Ride request submitted successfully!"
-            );
-
-
-            closeModal(
-                "rideRequestFeatureModal"
-            );
-
-        } catch (error) {
-
-            console.error(
-                "LosOja ride request error:",
-                error
-            );
-
-
-            showMessage(
-                "Could not submit ride request: " +
-                error.message,
-                "error"
-            );
-
-
-            submitButton.disabled =
-                false;
-
-            submitButton.textContent =
-                "Submit Ride Request";
-        }
-    }
-
-
-    /* =====================================================
-       FEEDBACK
-    ===================================================== */
-
-    function openFeedbackModal() {
-
-        if (!requireLogin()) {
-            return;
-        }
-
-
-        const modal =
-            createModal(
-                "feedbackFeatureModal",
-                "Send Feedback",
-                `
-
-                <p>
-                    Tell us what you think about LosOja
-                    or report a problem.
-                </p>
-
-                <form
-                    id="feedbackFeatureForm"
-                    class="feature-form"
-                >
-
-                    <div class="form-group">
-
-                        <label for="feedbackType">
-                            Feedback Type
+                        <label for="propertyType">
+                            Property Type
                         </label>
 
                         <select
-                            id="feedbackType"
+                            id="propertyType"
                             required
                         >
 
@@ -1860,24 +960,28 @@ Handles:
                                 Select type
                             </option>
 
-                            <option value="Suggestion">
-                                Suggestion
+                            <option value="House">
+                                House
                             </option>
 
-                            <option value="Problem">
-                                Report a Problem
+                            <option value="Apartment">
+                                Apartment
                             </option>
 
-                            <option value="Business">
-                                Business Issue
+                            <option value="Land">
+                                Land
                             </option>
 
-                            <option value="Property">
-                                Property Issue
+                            <option value="Office">
+                                Office
                             </option>
 
-                            <option value="Transportation">
-                                Transportation Issue
+                            <option value="Shop">
+                                Shop
+                            </option>
+
+                            <option value="Commercial">
+                                Commercial Property
                             </option>
 
                             <option value="Other">
@@ -1891,395 +995,1664 @@ Handles:
 
                     <div class="form-group">
 
-                        <label for="feedbackSubject">
-                            Subject
+                        <label for="propertyListingType">
+                            Listing Type
                         </label>
 
-                        <input
-                            type="text"
-                            id="feedbackSubject"
-                            placeholder="Short subject"
+                        <select
+                            id="propertyListingType"
+                            required
                         >
 
+                            <option value="">
+                                Select listing type
+                            </option>
+
+                            <option value="For Sale">
+                                For Sale
+                            </option>
+
+                            <option value="For Rent">
+                                For Rent
+                            </option>
+
+                            <option value="For Lease">
+                                For Lease
+                            </option>
+
+                            <option value="Short Stay">
+                                Short Stay
+                            </option>
+
+                        </select>
+
                     </div>
 
-
-                    <div class="form-group">
-
-                        <label for="feedbackMessage">
-                            Message
-                        </label>
-
-                        <textarea
-                            id="feedbackMessage"
-                            required
-                            placeholder="Tell us what happened or share your idea"
-                        ></textarea>
-
-                    </div>
+                </div>
 
 
-                    <button
-                        type="submit"
-                        class="btn btn-primary btn-block"
+                <div class="form-group">
+
+                    <label for="propertyLocation">
+                        Location
+                    </label>
+
+                    <input
+                        type="text"
+                        id="propertyLocation"
+                        required
+                        placeholder="City, area or address"
                     >
-                        Send Feedback
-                    </button>
 
-                </form>
-
-                `
-            );
+                </div>
 
 
-        const form =
-            modal.querySelector(
-                "#feedbackFeatureForm"
-            );
+                <div class="form-group">
+
+                    <label for="propertyPrice">
+                        Price
+                    </label>
+
+                    <input
+                        type="text"
+                        id="propertyPrice"
+                        placeholder="e.g. ₦2,500,000"
+                    >
+
+                </div>
 
 
-        form.addEventListener(
-            "submit",
-            handleFeedbackSubmit
+                <div class="form-group">
+
+                    <label for="propertyPhone">
+                        Contact Phone
+                    </label>
+
+                    <input
+                        type="tel"
+                        id="propertyPhone"
+                        placeholder="Phone number"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="propertyImages">
+                        Property Pictures
+                    </label>
+
+                    <input
+                        type="file"
+                        id="propertyImages"
+                        accept="image/jpeg,image/png,image/webp,image/gif"
+                        multiple
+                    >
+
+                    <small>
+                        You can select up to 5 pictures.
+                    </small>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="propertyDescription">
+                        Description
+                    </label>
+
+                    <textarea
+                        id="propertyDescription"
+                        placeholder="Describe the property"
+                    ></textarea>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="btn btn-primary btn-block"
+                >
+                    Publish Property
+                </button>
+
+            </form>
+
+            `
         );
+
+
+    const form =
+        modal.querySelector(
+            "#propertyFeatureForm"
+        );
+
+
+    form.addEventListener(
+        "submit",
+        handlePropertySubmit
+    );
+}
+
+
+async function handlePropertySubmit(
+    event
+) {
+
+    event.preventDefault();
+
+
+    const userId =
+        getCurrentUserId();
+
+
+    if (!userId) {
+
+        showMessage(
+            "Please log in first.",
+            "error"
+        );
+
+        return;
     }
 
 
-    async function handleFeedbackSubmit(
-        event
-    ) {
-
-        event.preventDefault();
-
-
-        const userId =
-            getCurrentUserId();
+    const submitButton =
+        event.target.querySelector(
+            'button[type="submit"]'
+        );
 
 
-        if (!userId) {
+    submitButton.disabled =
+        true;
 
-            showMessage(
-                "Please log in first.",
-                "error"
+    submitButton.textContent =
+        "Publishing...";
+
+
+    const imageInput =
+        document.getElementById(
+            "propertyImages"
+        );
+
+
+    let propertyImages = [];
+
+
+    try {
+
+        propertyImages =
+            validatePropertyImages(
+                imageInput
+                    ? imageInput.files
+                    : []
             );
 
-            return;
-        }
+    } catch (error) {
 
-
-        const submitButton =
-            event.target.querySelector(
-                'button[type="submit"]'
-            );
+        showMessage(
+            error.message,
+            "error"
+        );
 
 
         submitButton.disabled =
-            true;
+            false;
 
         submitButton.textContent =
-            "Sending...";
+            "Publish Property";
 
-
-        const payload = {
-
-            user_id: userId,
-
-            feedback_type:
-                document.getElementById(
-                    "feedbackType"
-                ).value,
-
-            subject:
-                document.getElementById(
-                    "feedbackSubject"
-                ).value.trim() || null,
-
-            message:
-                document.getElementById(
-                    "feedbackMessage"
-                ).value.trim(),
-
-            status: "new"
-
-        };
-
-
-        try {
-
-            await supabaseRequest(
-                "/rest/v1/feedback",
-                {
-                    method: "POST",
-                    headers: {
-                        "Prefer":
-                            "return=representation"
-                    },
-                    body:
-                        JSON.stringify(payload)
-                }
-            );
-
-
-            showMessage(
-                "Thank you! Your feedback has been submitted."
-            );
-
-
-            closeModal(
-                "feedbackFeatureModal"
-            );
-
-        } catch (error) {
-
-            console.error(
-                "LosOja feedback error:",
-                error
-            );
-
-
-            showMessage(
-                "Could not send feedback: " +
-                error.message,
-                "error"
-            );
-
-
-            submitButton.disabled =
-                false;
-
-            submitButton.textContent =
-                "Send Feedback";
-        }
+        return;
     }
 
 
-    /* =====================================================
-       BUTTON BINDING
-    ===================================================== */
-
-    function bindFeatureButtons() {
-
-        /* ---------------------------------------------
-           PROPERTY BUTTONS
-        --------------------------------------------- */
-
-        document
-            .querySelectorAll(
-                ".add-property-btn"
-            )
-            .forEach(function (button) {
-
-                if (
-                    button.dataset
-                        .losojaFeatureBound
-                ) {
-                    return;
-                }
+    let uploadedImageUrls = [];
 
 
-                button.dataset
-                    .losojaFeatureBound =
-                    "true";
+    /* ---------------------------------------------
+       UPLOAD PROPERTY PICTURES
+    --------------------------------------------- */
 
+    try {
 
-                button.addEventListener(
-                    "click",
-                    openPropertyModal
+        for (
+            const file
+            of propertyImages
+        ) {
+
+            const imageUrl =
+                await uploadPropertyImage(
+                    file,
+                    userId
                 );
 
-            });
 
+            uploadedImageUrls.push(
+                imageUrl
+            );
 
-        /* ---------------------------------------------
-           RIDE PROVIDER BUTTONS
-        --------------------------------------------- */
+        }
 
-        document
-            .querySelectorAll(
-                ".add-ride-provider-btn"
-            )
-            .forEach(function (button) {
+    } catch (error) {
 
-                if (
-                    button.dataset
-                        .losojaFeatureBound
-                ) {
-                    return;
-                }
-
-
-                button.dataset
-                    .losojaFeatureBound =
-                    "true";
-
-
-                button.addEventListener(
-                    "click",
-                    openRideProviderModal
-                );
-
-            });
-
-
-        /* ---------------------------------------------
-           FEEDBACK BUTTONS
-        --------------------------------------------- */
-
-        document
-            .querySelectorAll(
-                ".feedback-btn"
-            )
-            .forEach(function (button) {
-
-                if (
-                    button.dataset
-                        .losojaFeatureBound
-                ) {
-                    return;
-                }
-
-
-                button.dataset
-                    .losojaFeatureBound =
-                    "true";
-
-
-                button.addEventListener(
-                    "click",
-                    openFeedbackModal
-                );
-
-            });
-
-
-        /* ---------------------------------------------
-           OLD MOBILITY BUTTON OVERRIDE
-           
-           app.js currently has a localStorage
-           mobility handler.
-
-           Capture phase lets this feature system
-           handle the buttons first and prevent the
-           old localStorage handler from running.
-        --------------------------------------------- */
-
-        document.addEventListener(
-            "click",
-            function (event) {
-
-                const button =
-                    event.target.closest(
-                        ".mobility-btn"
-                    );
-
-
-                if (!button) {
-                    return;
-                }
-
-
-                const type =
-                    button.dataset.mobility;
-
-
-                if (
-                    ![
-                        "trycircle",
-                        "bike",
-                        "cab",
-                        "truck"
-                    ].includes(type)
-                ) {
-                    return;
-                }
-
-
-                event.preventDefault();
-
-                event.stopImmediatePropagation();
-
-
-                openRideRequestModal(type);
-
-            },
-            true
+        console.error(
+            "LosOja property image upload error:",
+            error
         );
 
+
+        showMessage(
+            "Could not upload property pictures: " +
+            error.message,
+            "error"
+        );
+
+
+        submitButton.disabled =
+            false;
+
+        submitButton.textContent =
+            "Publish Property";
+
+        return;
     }
 
 
-    /* =====================================================
-       INITIALIZATION
-    ===================================================== */
+    const payload = {
 
-    function init() {
+        user_id: userId,
 
-        bindFeatureButtons();
+        title:
+            document.getElementById(
+                "propertyTitle"
+            ).value.trim(),
 
-        loadProperties();
+        property_type:
+            document.getElementById(
+                "propertyType"
+            ).value,
 
-        loadRideProviders();
+        listing_type:
+            document.getElementById(
+                "propertyListingType"
+            ).value,
 
-    }
+        location:
+            document.getElementById(
+                "propertyLocation"
+            ).value.trim(),
 
+        price:
+            document.getElementById(
+                "propertyPrice"
+            ).value.trim() || null,
 
-    /* =====================================================
-       PUBLIC API
-    ===================================================== */
+        description:
+            document.getElementById(
+                "propertyDescription"
+            ).value.trim() || null,
 
-    window.LosOjaFeatures = {
+        phone:
+            document.getElementById(
+                "propertyPhone"
+            ).value.trim() || null,
 
-        init,
-
-        loadProperties,
-
-        renderProperties,
-
-        openPropertyModal,
-
-        loadRideProviders,
-
-        renderRideProviders,
-
-        openRideProviderModal,
-
-        openRideRequestModal,
-
-        openFeedbackModal,
-
-        getProperties: function () {
-
-            return properties.slice();
-
-        },
-
-        getRideProviders: function () {
-
-            return rideProviders.slice();
-
-        }
+        image_url:
+            uploadedImageUrls.length
+                ? uploadedImageUrls[0]
+                : null
 
     };
 
 
-    /* =====================================================
-       START
-    ===================================================== */
+    try {
 
-    if (
-        document.readyState ===
-        "loading"
-    ) {
+        const createdProperty =
+            await supabaseRequest(
+                "/rest/v1/property_listings",
+                {
+                    method: "POST",
 
-        document.addEventListener(
-            "DOMContentLoaded",
-            init
+                    headers: {
+                        "Prefer":
+                            "return=representation"
+                    },
+
+                    body:
+                        JSON.stringify(
+                            payload
+                        )
+                }
+            );
+
+
+        /* -----------------------------------------
+           SAVE ADDITIONAL PROPERTY PICTURES
+        ----------------------------------------- */
+
+        const propertyRecord =
+            Array.isArray(
+                createdProperty
+            )
+                ? createdProperty[0]
+                : createdProperty;
+
+
+        if (
+            propertyRecord &&
+            propertyRecord.id &&
+            uploadedImageUrls.length > 1
+        ) {
+
+            const galleryRows =
+                uploadedImageUrls
+                    .slice(1)
+                    .map(
+                        function (
+                            imageUrl,
+                            index
+                        ) {
+
+                            return {
+
+                                property_id:
+                                    propertyRecord.id,
+
+                                user_id:
+                                    userId,
+
+                                image_url:
+                                    imageUrl,
+
+                                sort_order:
+                                    index + 1
+
+                            };
+
+                        }
+                    );
+
+
+            try {
+
+                await supabaseRequest(
+                    "/rest/v1/property_images",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Prefer":
+                                "return=minimal"
+                        },
+
+                        body:
+                            JSON.stringify(
+                                galleryRows
+                            )
+                    }
+                );
+
+            } catch (galleryError) {
+
+                console.error(
+                    "LosOja property gallery save error:",
+                    galleryError
+                );
+
+
+                showMessage(
+                    "Property saved, but some additional pictures could not be saved.",
+                    "error"
+                );
+
+            }
+
+        }
+
+
+        showMessage(
+            "Property listed successfully!"
         );
 
-    } else {
 
-        init();
+        closeModal(
+            "propertyFeatureModal"
+        );
+
+
+        await loadProperties();
+
+    } catch (error) {
+
+        console.error(
+            "LosOja property save error:",
+            error
+        );
+
+
+        showMessage(
+            "Could not save property: " +
+            error.message,
+            "error"
+        );
+
+
+        submitButton.disabled =
+            false;
+
+        submitButton.textContent =
+            "Publish Property";
+    }
+}
+
+
+/* =====================================================
+   RIDE PROVIDERS
+===================================================== */
+
+async function loadRideProviders() {
+
+    if (rideProviderLoading) {
+        return;
+    }
+
+
+    rideProviderLoading = true;
+
+
+    try {
+
+        const data =
+            await supabaseRequest(
+                "/rest/v1/ride_providers" +
+                "?select=*" +
+                "&order=created_at.desc"
+            );
+
+
+        rideProviders =
+            Array.isArray(data)
+                ? data
+                : [];
+
+
+        renderRideProviders();
+
+    } catch (error) {
+
+        console.error(
+            "LosOja ride provider loading error:",
+            error
+        );
+
+
+        rideProviders = [];
+
+        renderRideProviders();
+
+
+        showMessage(
+            "Unable to load ride providers.",
+            "error"
+        );
+
+    } finally {
+
+        rideProviderLoading =
+            false;
 
     }
+}
+
+
+function renderRideProviders() {
+
+    const grid =
+        document.getElementById(
+            "rideProviderGrid"
+        );
+
+
+    const empty =
+        document.getElementById(
+            "rideProviderEmpty"
+        );
+
+
+    if (!grid) {
+        return;
+    }
+
+
+    if (!rideProviders.length) {
+
+        grid.innerHTML = "";
+
+        if (empty) {
+            empty.classList.remove(
+                "hidden"
+            );
+        }
+
+        return;
+    }
+
+
+    if (empty) {
+        empty.classList.add(
+            "hidden"
+        );
+    }
+
+
+    grid.innerHTML =
+        rideProviders.map(
+            rideProviderCardHTML
+        ).join("");
+}
+
+
+function rideProviderCardHTML(provider) {
+
+    return `
+
+        <article class="ride-provider-card">
+
+            <div class="feature-icon">
+                ${
+                    provider.ride_type === "Bike"
+                        ? "🏍️"
+                        : provider.ride_type === "Cab"
+                            ? "🚕"
+                            : provider.ride_type === "Truck"
+                                ? "🚚"
+                                : "🚗"
+                }
+            </div>
+
+            <h3>
+                ${escapeHtml(
+                    provider.provider_name
+                )}
+            </h3>
+
+            <span class="ride-provider-type">
+                ${escapeHtml(
+                    provider.ride_type
+                )}
+            </span>
+
+            <p>
+                📍 ${escapeHtml(
+                    provider.operating_location
+                )}
+            </p>
+
+            ${
+                provider.vehicle_info
+                    ? `
+                        <p>
+                            🚘 ${escapeHtml(
+                                provider.vehicle_info
+                            )}
+                        </p>
+                    `
+                    : ""
+            }
+
+            ${
+                provider.description
+                    ? `
+                        <p>
+                            ${escapeHtml(
+                                provider.description
+                            )}
+                        </p>
+                    `
+                    : ""
+            }
+
+            <p class="ride-provider-phone">
+                📞 ${escapeHtml(
+                    provider.phone
+                )}
+            </p>
+
+            <p class="feature-meta">
+                Registered ${escapeHtml(
+                    formatDate(
+                        provider.created_at
+                    )
+                )}
+            </p>
+
+        </article>
+
+    `;
+}
+
+
+function openRideProviderModal() {
+
+    if (!requireLogin()) {
+        return;
+    }
+
+
+    const modal =
+        createModal(
+            "rideProviderFeatureModal",
+            "Register as a Ride Provider",
+            `
+
+            <p>
+                Offer transportation services
+                through LosOja.
+            </p>
+
+            <form
+                id="rideProviderFeatureForm"
+                class="feature-form"
+            >
+
+                <div class="form-group">
+
+                    <label for="providerName">
+                        Provider Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="providerName"
+                        required
+                        placeholder="Your name or business name"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="providerRideType">
+                        Ride Type
+                    </label>
+
+                    <select
+                        id="providerRideType"
+                        required
+                    >
+
+                        <option value="">
+                            Select ride type
+                        </option>
+
+                        <option value="TryCircle">
+                            TryCircle
+                        </option>
+
+                        <option value="Bike">
+                            Bike
+                        </option>
+
+                        <option value="Cab">
+                            Cab
+                        </option>
+
+                        <option value="Truck">
+                            Truck
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="providerPhone">
+                        Phone
+                    </label>
+
+                    <input
+                        type="tel"
+                        id="providerPhone"
+                        required
+                        placeholder="Phone number"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="providerVehicle">
+                        Vehicle Information
+                    </label>
+
+                    <input
+                        type="text"
+                        id="providerVehicle"
+                        placeholder="e.g. Toyota Corolla, Blue"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="providerLocation">
+                        Operating Location
+                    </label>
+
+                    <input
+                        type="text"
+                        id="providerLocation"
+                        required
+                        placeholder="City or area"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="providerDescription">
+                        Description
+                    </label>
+
+                    <textarea
+                        id="providerDescription"
+                        placeholder="Describe your transportation service"
+                    ></textarea>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="btn btn-primary btn-block"
+                >
+                    Register Provider
+                </button>
+
+            </form>
+
+            `
+        );
+
+
+    const form =
+        modal.querySelector(
+            "#rideProviderFeatureForm"
+        );
+
+
+    form.addEventListener(
+        "submit",
+        handleRideProviderSubmit
+    );
+}
+
+
+async function handleRideProviderSubmit(
+    event
+) {
+
+    event.preventDefault();
+
+
+    const userId =
+        getCurrentUserId();
+
+
+    if (!userId) {
+
+        showMessage(
+            "Please log in first.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    const submitButton =
+        event.target.querySelector(
+            'button[type="submit"]'
+        );
+
+
+    submitButton.disabled =
+        true;
+
+    submitButton.textContent =
+        "Saving...";
+
+
+    const payload = {
+
+        user_id: userId,
+
+        provider_name:
+            document.getElementById(
+                "providerName"
+            ).value.trim(),
+
+        ride_type:
+            document.getElementById(
+                "providerRideType"
+            ).value,
+
+        phone:
+            document.getElementById(
+                "providerPhone"
+            ).value.trim(),
+
+        vehicle_info:
+            document.getElementById(
+                "providerVehicle"
+            ).value.trim() || null,
+
+        operating_location:
+            document.getElementById(
+                "providerLocation"
+            ).value.trim(),
+
+        description:
+            document.getElementById(
+                "providerDescription"
+            ).value.trim() || null,
+
+        vehicle_image_url: null
+
+    };
+
+
+    try {
+
+        await supabaseRequest(
+            "/rest/v1/ride_providers",
+            {
+                method: "POST",
+                headers: {
+                    "Prefer":
+                        "return=representation"
+                },
+                body:
+                    JSON.stringify(payload)
+            }
+        );
+
+
+        showMessage(
+            "Ride provider registered successfully!"
+        );
+
+
+        closeModal(
+            "rideProviderFeatureModal"
+        );
+
+
+        await loadRideProviders();
+
+    } catch (error) {
+
+        console.error(
+            "LosOja ride provider save error:",
+            error
+        );
+
+
+        showMessage(
+            "Could not register provider: " +
+            error.message,
+            "error"
+        );
+
+
+        submitButton.disabled =
+            false;
+
+        submitButton.textContent =
+            "Register Provider";
+    }
+}
+
+
+/* =====================================================
+   RIDE REQUESTS
+===================================================== */
+
+function getMobilityName(type) {
+
+    const names = {
+
+        trycircle: "TryCircle",
+
+        bike: "Bike",
+
+        cab: "Cab",
+
+        truck: "Rent a Truck"
+
+    };
+
+
+    return (
+        names[type] ||
+        "Transportation"
+    );
+}
+
+
+function openRideRequestModal(
+    type
+) {
+
+    if (!requireLogin()) {
+        return;
+    }
+
+
+    const rideName =
+        getMobilityName(type);
+
+
+    const modal =
+        createModal(
+            "rideRequestFeatureModal",
+            "Request " + rideName,
+            `
+
+            <p>
+                Enter your trip details and submit
+                your transportation request.
+            </p>
+
+            <form
+                id="rideRequestFeatureForm"
+                class="feature-form"
+            >
+
+                <input
+                    type="hidden"
+                    id="featureRideType"
+                    value="${escapeHtml(type)}"
+                >
+
+
+                <div class="form-group">
+
+                    <label for="featureRidePickup">
+                        Pickup Location
+                    </label>
+
+                    <input
+                        type="text"
+                        id="featureRidePickup"
+                        required
+                        placeholder="Where should you be picked up?"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="featureRideDestination">
+                        Destination
+                    </label>
+
+                    <input
+                        type="text"
+                        id="featureRideDestination"
+                        required
+                        placeholder="Where are you going?"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="featureRidePhone">
+                        Phone
+                    </label>
+
+                    <input
+                        type="tel"
+                        id="featureRidePhone"
+                        required
+                        placeholder="Phone number"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="featureRideNote">
+                        Note
+                    </label>
+
+                    <textarea
+                        id="featureRideNote"
+                        placeholder="Optional information for the driver"
+                    ></textarea>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="btn btn-primary btn-block"
+                >
+                    Submit Ride Request
+                </button>
+
+            </form>
+
+            `
+        );
+
+
+    const form =
+        modal.querySelector(
+            "#rideRequestFeatureForm"
+        );
+
+
+    form.addEventListener(
+        "submit",
+        handleRideRequestSubmit
+    );
+}
+
+
+async function handleRideRequestSubmit(
+    event
+) {
+
+    event.preventDefault();
+
+
+    const userId =
+        getCurrentUserId();
+
+
+    if (!userId) {
+
+        showMessage(
+            "Please log in first.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    const submitButton =
+        event.target.querySelector(
+            'button[type="submit"]'
+        );
+
+
+    submitButton.disabled =
+        true;
+
+    submitButton.textContent =
+        "Submitting...";
+
+
+    const payload = {
+
+        user_id: userId,
+
+        ride_type:
+            document.getElementById(
+                "featureRideType"
+            ).value,
+
+        pickup:
+            document.getElementById(
+                "featureRidePickup"
+            ).value.trim(),
+
+        destination:
+            document.getElementById(
+                "featureRideDestination"
+            ).value.trim(),
+
+        phone:
+            document.getElementById(
+                "featureRidePhone"
+            ).value.trim(),
+
+        note:
+            document.getElementById(
+                "featureRideNote"
+            ).value.trim() || null,
+
+        status: "pending"
+
+    };
+
+
+    try {
+
+        await supabaseRequest(
+            "/rest/v1/ride_requests",
+            {
+                method: "POST",
+                headers: {
+                    "Prefer":
+                        "return=representation"
+                },
+                body:
+                    JSON.stringify(payload)
+            }
+        );
+
+
+        showMessage(
+            "Ride request submitted successfully!"
+        );
+
+
+        closeModal(
+            "rideRequestFeatureModal"
+        );
+
+    } catch (error) {
+
+        console.error(
+            "LosOja ride request error:",
+            error
+        );
+
+
+        showMessage(
+            "Could not submit ride request: " +
+            error.message,
+            "error"
+        );
+
+
+        submitButton.disabled =
+            false;
+
+        submitButton.textContent =
+            "Submit Ride Request";
+    }
+}
+
+
+/* =====================================================
+   FEEDBACK
+===================================================== */
+
+function openFeedbackModal() {
+
+    if (!requireLogin()) {
+        return;
+    }
+
+
+    const modal =
+        createModal(
+            "feedbackFeatureModal",
+            "Send Feedback",
+            `
+
+            <p>
+                Tell us what you think about LosOja
+                or report a problem.
+            </p>
+
+            <form
+                id="feedbackFeatureForm"
+                class="feature-form"
+            >
+
+                <div class="form-group">
+
+                    <label for="feedbackType">
+                        Feedback Type
+                    </label>
+
+                    <select
+                        id="feedbackType"
+                        required
+                    >
+
+                        <option value="">
+                            Select type
+                        </option>
+
+                        <option value="Suggestion">
+                            Suggestion
+                        </option>
+
+                        <option value="Problem">
+                            Report a Problem
+                        </option>
+
+                        <option value="Business">
+                            Business Issue
+                        </option>
+
+                        <option value="Property">
+                            Property Issue
+                        </option>
+
+                        <option value="Transportation">
+                            Transportation Issue
+                        </option>
+
+                        <option value="Other">
+                            Other
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="feedbackSubject">
+                        Subject
+                    </label>
+
+                    <input
+                        type="text"
+                        id="feedbackSubject"
+                        placeholder="Short subject"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="feedbackMessage">
+                        Message
+                    </label>
+
+                    <textarea
+                        id="feedbackMessage"
+                        required
+                        placeholder="Tell us what happened or share your idea"
+                    ></textarea>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="btn btn-primary btn-block"
+                >
+                    Send Feedback
+                </button>
+
+            </form>
+
+            `
+        );
+
+
+    const form =
+        modal.querySelector(
+            "#feedbackFeatureForm"
+        );
+
+
+    form.addEventListener(
+        "submit",
+        handleFeedbackSubmit
+    );
+}
+
+
+async function handleFeedbackSubmit(
+    event
+) {
+
+    event.preventDefault();
+
+
+    const userId =
+        getCurrentUserId();
+
+
+    if (!userId) {
+
+        showMessage(
+            "Please log in first.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    const submitButton =
+        event.target.querySelector(
+            'button[type="submit"]'
+        );
+
+
+    submitButton.disabled =
+        true;
+
+    submitButton.textContent =
+        "Sending...";
+
+
+    const payload = {
+
+        user_id: userId,
+
+        feedback_type:
+            document.getElementById(
+                "feedbackType"
+            ).value,
+
+        subject:
+            document.getElementById(
+                "feedbackSubject"
+            ).value.trim() || null,
+
+        message:
+            document.getElementById(
+                "feedbackMessage"
+            ).value.trim(),
+
+        status: "new"
+
+    };
+
+
+    try {
+
+        await supabaseRequest(
+            "/rest/v1/feedback",
+            {
+                method: "POST",
+                headers: {
+                    "Prefer":
+                        "return=representation"
+                },
+                body:
+                    JSON.stringify(payload)
+            }
+        );
+
+
+        showMessage(
+            "Thank you! Your feedback has been submitted."
+        );
+
+
+        closeModal(
+            "feedbackFeatureModal"
+        );
+
+    } catch (error) {
+
+        console.error(
+            "LosOja feedback error:",
+            error
+        );
+
+
+        showMessage(
+            "Could not send feedback: " +
+            error.message,
+            "error"
+        );
+
+
+        submitButton.disabled =
+            false;
+
+        submitButton.textContent =
+            "Send Feedback";
+    }
+}
+
+
+/* =====================================================
+   BUTTON BINDING
+===================================================== */
+
+function bindFeatureButtons() {
+
+    /* ---------------------------------------------
+       PROPERTY BUTTONS
+    --------------------------------------------- */
+
+    document
+        .querySelectorAll(
+            ".add-property-btn"
+        )
+        .forEach(function (button) {
+
+            if (
+                button.dataset
+                    .losojaFeatureBound
+            ) {
+                return;
+            }
+
+
+            button.dataset
+                .losojaFeatureBound =
+                "true";
+
+
+            button.addEventListener(
+                "click",
+                openPropertyModal
+            );
+
+        });
+
+
+    /* ---------------------------------------------
+       RIDE PROVIDER BUTTONS
+    --------------------------------------------- */
+
+    document
+        .querySelectorAll(
+            ".add-ride-provider-btn"
+        )
+        .forEach(function (button) {
+
+            if (
+                button.dataset
+                    .losojaFeatureBound
+            ) {
+                return;
+            }
+
+
+            button.dataset
+                .losojaFeatureBound =
+                "true";
+
+
+            button.addEventListener(
+                "click",
+                openRideProviderModal
+            );
+
+        });
+
+
+    /* ---------------------------------------------
+       FEEDBACK BUTTONS
+    --------------------------------------------- */
+
+    document
+        .querySelectorAll(
+            ".feedback-btn"
+        )
+        .forEach(function (button) {
+
+            if (
+                button.dataset
+                    .losojaFeatureBound
+            ) {
+                return;
+            }
+
+
+            button.dataset
+                .losojaFeatureBound =
+                "true";
+
+
+            button.addEventListener(
+                "click",
+                openFeedbackModal
+            );
+
+        });
+
+
+    /* ---------------------------------------------
+       OLD MOBILITY BUTTON OVERRIDE
+       
+       app.js currently has a localStorage
+       mobility handler.
+
+       Capture phase lets this feature system
+       handle the buttons first and prevent the
+       old localStorage handler from running.
+    --------------------------------------------- */
+
+    document.addEventListener(
+        "click",
+        function (event) {
+
+            const button =
+                event.target.closest(
+                    ".mobility-btn"
+                );
+
+
+            if (!button) {
+                return;
+            }
+
+
+            const type =
+                button.dataset.mobility;
+
+
+            if (
+                ![
+                    "trycircle",
+                    "bike",
+                    "cab",
+                    "truck"
+                ].includes(type)
+            ) {
+                return;
+            }
+
+
+            event.preventDefault();
+
+            event.stopImmediatePropagation();
+
+
+            openRideRequestModal(type);
+
+        },
+        true
+    );
+
+}
+
+
+/* =====================================================
+   INITIALIZATION
+===================================================== */
+
+function init() {
+
+    bindFeatureButtons();
+
+    loadProperties();
+
+    loadRideProviders();
+
+}
+
+
+/* =====================================================
+   PUBLIC API
+===================================================== */
+
+window.LosOjaFeatures = {
+
+    init,
+
+    loadProperties,
+
+    renderProperties,
+
+    openPropertyModal,
+
+    loadRideProviders,
+
+    renderRideProviders,
+
+    openRideProviderModal,
+
+    openRideRequestModal,
+
+    openFeedbackModal,
+
+    getProperties: function () {
+
+        return properties.slice();
+
+    },
+
+    getRideProviders: function () {
+
+        return rideProviders.slice();
+
+    }
+
+};
+
+
+/* =====================================================
+   START
+===================================================== */
+
+if (
+    document.readyState ===
+    "loading"
+) {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        init
+    );
+
+} else {
+
+    init();
+
+}
+```
 
 })();
