@@ -1403,7 +1403,13 @@
     window.Reviews =
         Reviews;
 
+window.renderBusinessReviews = function (businessId) {
+    return Reviews.renderForBusiness(businessId);
+};
 
+window.renderReviews = function (businessId) {
+    return Reviews.renderForBusiness(businessId);
+};
     /* =========================================================
        INITIALIZE
     ========================================================= */
