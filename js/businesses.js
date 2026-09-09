@@ -1,4 +1,3 @@
-```javascript
 /*
 =========================================================
 LosOja - Business Management
@@ -138,7 +137,31 @@ Handles:
                 "function"
             ) {
 
-                await window.ensureValidSupabaseSession();
+                const refreshedSession =
+                    await window.ensureValidSupabaseSession();
+
+                if (
+                    refreshedSession &&
+                    typeof refreshedSession === "object"
+                ) {
+
+                    try {
+
+                        localStorage.setItem(
+                            "losoja_supabase_session",
+                            JSON.stringify(
+                                refreshedSession
+                            )
+                        );
+
+                    } catch (storageError) {
+
+                        console.warn(
+                            "LosOja: Could not update stored session:",
+                            storageError
+                        );
+                    }
+                }
             }
 
         } catch (error) {
@@ -1224,15 +1247,6 @@ Handles:
                 String(business.user_id)
             );
 
-
-        /*
-         * IMPORTANT:
-         * There must be exactly ONE element with
-         * id="businessDetails".
-         *
-         * reviews.js searches for this ID.
-         */
-
         container.innerHTML = `
 
             <div
@@ -1379,11 +1393,6 @@ Handles:
             </div>
         `;
 
-
-        /* =================================================
-           OWNER BUTTONS
-        ================================================= */
-
         if (isOwner) {
 
             const editButton =
@@ -1427,28 +1436,13 @@ Handles:
             }
         }
 
-
-        /* =================================================
-           OPEN DETAILS MODAL
-        ================================================= */
-
         openModal(
             "businessDetailsModal"
         );
 
-
-        /* =================================================
-           LOAD GALLERY
-        ================================================= */
-
         loadBusinessGalleryIntoDetails(
             business
         );
-
-
-        /* =================================================
-           LOAD REVIEWS
-        ================================================= */
 
         if (
             window.Reviews &&
@@ -3084,8 +3078,6 @@ Handles:
 
     function setupBusinessEvents() {
 
-        /* ADD BUSINESS BUTTONS */
-
         document.addEventListener(
             "click",
             function (event) {
@@ -3107,8 +3099,6 @@ Handles:
         );
 
 
-        /* ADD BUSINESS FORM */
-
         const addForm =
             document.getElementById(
                 "addBusinessForm"
@@ -3123,8 +3113,6 @@ Handles:
         }
 
 
-        /* EDIT BUSINESS FORM */
-
         const editForm =
             document.getElementById(
                 "editBusinessForm"
@@ -3138,8 +3126,6 @@ Handles:
             );
         }
 
-
-        /* ADD PHOTO PREVIEW */
 
         const addImageInput =
             document.getElementById(
@@ -3196,8 +3182,6 @@ Handles:
             );
         }
 
-
-        /* EDIT PHOTO PREVIEW */
 
         const editImageInput =
             document.getElementById(
@@ -3328,8 +3312,6 @@ Handles:
         }
 
 
-        /* CLOSE BUTTONS */
-
         document
             .querySelectorAll(
                 "[data-close-modal]"
@@ -3349,8 +3331,6 @@ Handles:
                 }
             );
 
-
-        /* MODAL BACKDROP */
 
         document
             .querySelectorAll(
@@ -3378,8 +3358,6 @@ Handles:
             );
 
 
-        /* CATEGORY CARDS */
-
         document
             .querySelectorAll(
                 ".category-card[data-category]"
@@ -3399,8 +3377,6 @@ Handles:
                 }
             );
 
-
-        /* SEARCH FORM */
 
         const searchForm =
             document.getElementById(
@@ -3540,4 +3516,3 @@ Handles:
     }
 
 })();
-```
