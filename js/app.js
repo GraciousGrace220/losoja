@@ -143,14 +143,26 @@
         },
 
 
-       closeModal(modal) {
-    if (!modal) return;
+     closeModal(modal) {
+    if (!modal) {
+        return;
+    }
+
+    // Allow callers to pass either an element or an ID
+    if (typeof modal === "string") {
+        modal = document.getElementById(modal);
+    }
+
+    if (!modal || !modal.classList) {
+        console.warn("LosOja: Invalid modal passed to closeModal:", modal);
+        return;
+    }
 
     modal.classList.remove("active");
     modal.classList.add("hidden");
     modal.style.display = "none";
 
-    if (!document.querySelector(".modal.active")) {
+    if (!document.querySelector(".modal.active, .modal-overlay.active")) {
         document.body.classList.remove("modal-open");
     }
 },
