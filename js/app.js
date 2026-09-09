@@ -2,7 +2,813 @@
    LosOja - Main Application JavaScript
    js/app.js
 
+   Handles:/* =========================================================
+   LosOja - Main Application JavaScript
+   js/app.js
+
    Handles:
+   - Main UI
+   - Modals
+   - Mobile navigation
+   - Smooth scrolling
+   - Search helpers
+   - Category buttons
+   - Business buttons
+   - Notifications
+========================================================= */
+
+(function () {
+
+    "use strict";
+
+
+    const App = {
+
+        /* =================================================
+           INITIALIZATION
+        ================================================= */
+
+        init() {
+
+            this.setCurrentYear();
+            this.bindModalClosers();
+            this.bindMobileMenu();
+            this.bindSmoothScroll();
+            this.bindLogo();
+            this.bindSearch();
+            this.bindPopularSearches();
+            this.bindCategoryButtons();
+            this.bindBusinessButtons();
+            this.bindAddBusinessButtons();
+
+        },
+
+
+        /* =================================================
+           CURRENT YEAR
+        ================================================= */
+
+        setCurrentYear() {
+
+            const currentYear =
+                new Date().getFullYear();
+
+            document
+                .querySelectorAll("[data-current-year]")
+                .forEach(element => {
+                    element.textContent = currentYear;
+                });
+
+            const footerYear =
+                document.getElementById("currentYear");
+
+            if (footerYear) {
+                footerYear.textContent = currentYear;
+            }
+
+        },
+
+
+        /* =================================================
+           MODALS
+        ================================================= */
+
+        openModal(modalId) {
+
+            const modal =
+                typeof modalId === "string"
+                    ? document.getElementById(modalId)
+                    : modalId;
+
+            if (!modal) {
+                console.error(
+                    "LosOja: Modal not found:",
+                    modalId
+                );
+                return;
+            }
+
+            modal.classList.remove("hidden");
+            modal.classList.add("active");
+            modal.style.display = "flex";
+
+            document.body.classList.add("modal-open");
+
+        },
+
+
+        closeModal(modalId) {
+
+            const modal =
+                typeof modalId === "string"
+                    ? document.getElementById(modalId)
+                    : modalId;
+
+            if (!modal) {
+                return;
+            }
+
+            modal.classList.remove("active");
+            modal.classList.add("hidden");
+            modal.style.display = "none";
+
+            const anotherOpenModal =
+                document.querySelector(
+                    ".modal-overlay.active, .modal.active"
+                );
+
+            if (!anotherOpenModal) {
+                document.body.classList.remove(
+                    "modal-open"
+                );
+            }
+
+        },
+
+
+        closeAllModals() {
+
+            document
+                .querySelectorAll(
+                    ".modal-overlay, .modal"
+                )
+                .forEach(modal => {
+
+                    modal.classList.remove("active");
+                    modal.classList.add("hidden");
+                    modal.style.display = "none";
+
+                });
+
+            document.body.classList.remove(
+                "modal-open"
+            );
+
+        },
+
+
+        bindModalClosers() {
+
+            document.addEventListener(
+                "click",
+                event => {
+
+                    const closeButton =
+                        event.target.closest(
+                            ".modal-close"
+                        );
+
+                    if (closeButton) {
+
+                        const modal =
+                            closeButton.closest(
+                                ".modal-overlay, .modal"
+                            );
+
+                        this.closeModal(modal);
+
+                        return;
+                    }
+
+
+                    const modal =
+                        event.target.closest(
+                            ".modal-overlay, .modal"
+                        );
+
+                    if (
+                        modal &&
+                        event.target === modal
+                    ) {
+
+                        this.closeModal(modal);
+
+                    }
+
+                }
+            );
+
+
+            document.addEventListener(
+                "keydown",
+                event => {
+
+                    if (event.key === "Escape") {
+                        this.closeAllModals();
+                    }
+
+                }
+            );
+
+        },
+
+
+        /* =================================================
+           MOBILE MENU
+        ================================================= */
+
+        bindMobileMenu() {
+
+            const menuButton =
+                document.getElementById(
+                    "mobileMenuBtn"
+                );
+
+            const mobileNav =
+                document.getElementById(
+                    "mobileNav"
+                );
+
+            if (!menuButton || !mobileNav) {
+                return;
+            }
+
+            menuButton.addEventListener(
+                "click",
+                () => {
+
+                    const isOpen =
+                        mobileNav.classList.toggle(
+                            "active"
+                        );
+
+                    menuButton.setAttribute(
+                        "aria-expanded",
+                        isOpen ? "true" : "false"
+                    );
+
+                }
+            );
+
+
+            mobileNav
+                .querySelectorAll("a, button")
+                .forEach(element => {
+
+                    element.addEventListener(
+                        "click",
+                        () => {
+
+                            mobileNav.classList.remove(
+                                "active"
+                            );
+
+                            menuButton.setAttribute(
+                                "aria-expanded",
+                                "false"
+                            );
+
+                        }
+                    );
+
+                });
+
+        },
+
+
+        /* =================================================
+           SMOOTH SCROLL
+        ================================================= */
+
+        bindSmoothScroll() {
+
+            document.addEventListener(
+                "click",
+                event => {
+
+                    const link =
+                        event.target.closest(
+                            'a[href^="#"]'
+                        );
+
+                    if (!link) {
+                        return;
+                    }
+
+                    const href =
+                        link.getAttribute("href");
+
+                    if (!href || href === "#") {
+                        return;
+                    }
+
+                    let target;
+
+                    try {
+
+                        target =
+                            document.querySelector(
+                                href
+                            );
+
+                    } catch (error) {
+                        return;
+                    }
+
+                    if (!target) {
+                        return;
+                    }
+
+                    event.preventDefault();
+
+                    target.scrollIntoView({
+                        behavior: "smooth",
+                        block: "start"
+                    });
+
+                }
+            );
+
+        },
+
+
+        /* =================================================
+           LOGO
+        ================================================= */
+
+        bindLogo() {
+
+            const logo =
+                document.querySelector(".logo");
+
+            if (!logo) {
+                return;
+            }
+
+            logo.addEventListener(
+                "click",
+                event => {
+
+                    const href =
+                        logo.getAttribute("href");
+
+                    if (href !== "#home") {
+                        return;
+                    }
+
+                    const home =
+                        document.getElementById("home");
+
+                    if (!home) {
+                        return;
+                    }
+
+                    event.preventDefault();
+
+                    home.scrollIntoView({
+                        behavior: "smooth",
+                        block: "start"
+                    });
+
+                }
+            );
+
+        },
+
+
+        /* =================================================
+           SEARCH
+        ================================================= */
+
+        bindSearch() {
+
+            const searchForm =
+                document.getElementById(
+                    "searchForm"
+                );
+
+            if (!searchForm) {
+                return;
+            }
+
+            searchForm.addEventListener(
+                "submit",
+                event => {
+
+                    event.preventDefault();
+
+                    const searchInput =
+                        document.getElementById(
+                            "searchInput"
+                        );
+
+                    const locationInput =
+                        document.getElementById(
+                            "locationInput"
+                        );
+
+                    const search =
+                        searchInput
+                            ? searchInput.value.trim()
+                            : "";
+
+                    const location =
+                        locationInput
+                            ? locationInput.value.trim()
+                            : "";
+
+
+                    if (
+                        typeof window.searchBusinesses ===
+                        "function"
+                    ) {
+
+                        window.searchBusinesses(
+                            search,
+                            location
+                        );
+
+                    } else {
+
+                        this.showToast(
+                            "Search is still loading. Please try again.",
+                            "info"
+                        );
+
+                    }
+
+                }
+            );
+
+        },
+
+
+        /* =================================================
+           POPULAR SEARCHES
+        ================================================= */
+
+        bindPopularSearches() {
+
+            document
+                .querySelectorAll("[data-search]")
+                .forEach(button => {
+
+                    button.addEventListener(
+                        "click",
+                        event => {
+
+                            event.preventDefault();
+
+                            const term =
+                                button.getAttribute(
+                                    "data-search"
+                                );
+
+                            if (!term) {
+                                return;
+                            }
+
+                            const searchInput =
+                                document.getElementById(
+                                    "searchInput"
+                                );
+
+                            if (searchInput) {
+                                searchInput.value =
+                                    term;
+                            }
+
+                            if (
+                                typeof window.searchBusinesses ===
+                                "function"
+                            ) {
+
+                                window.searchBusinesses(
+                                    term,
+                                    ""
+                                );
+
+                            }
+
+                        }
+                    );
+
+                });
+
+        },
+
+
+        /* =================================================
+           CATEGORY BUTTONS
+        ================================================= */
+
+        bindCategoryButtons() {
+
+            document
+                .querySelectorAll(
+                    ".category-card[data-category]"
+                )
+                .forEach(button => {
+
+                    button.addEventListener(
+                        "click",
+                        event => {
+
+                            event.preventDefault();
+
+                            const category =
+                                (
+                                    button.getAttribute(
+                                        "data-category"
+                                    ) || ""
+                                ).trim();
+
+                            if (!category) {
+                                return;
+                            }
+
+
+                            document
+                                .querySelectorAll(
+                                    ".category-card[data-category]"
+                                )
+                                .forEach(card => {
+                                    card.classList.remove(
+                                        "active"
+                                    );
+                                });
+
+                            button.classList.add(
+                                "active"
+                            );
+
+
+                            if (
+                                window.LosOjaBusinesses &&
+                                typeof window
+                                    .LosOjaBusinesses
+                                    .filterByCategory ===
+                                    "function"
+                            ) {
+
+                                window
+                                    .LosOjaBusinesses
+                                    .filterByCategory(
+                                        category
+                                    );
+
+                            } else if (
+                                typeof window
+                                    .filterBusinessesByCategory ===
+                                "function"
+                            ) {
+
+                                window
+                                    .filterBusinessesByCategory(
+                                        category
+                                    );
+
+                            } else if (
+                                typeof window
+                                    .filterBusinesses ===
+                                "function"
+                            ) {
+
+                                window
+                                    .filterBusinesses(
+                                        category
+                                    );
+
+                            } else {
+
+                                this.showToast(
+                                    "Businesses are still loading. Please try again.",
+                                    "info"
+                                );
+
+                                return;
+                            }
+
+
+                            const searchInput =
+                                document.getElementById(
+                                    "searchInput"
+                                );
+
+                            if (searchInput) {
+                                searchInput.value =
+                                    category;
+                            }
+
+
+                            const locationInput =
+                                document.getElementById(
+                                    "locationInput"
+                                );
+
+                            if (locationInput) {
+                                locationInput.value =
+                                    "";
+                            }
+
+
+                            const businesses =
+                                document.getElementById(
+                                    "businesses"
+                                );
+
+                            if (businesses) {
+
+                                setTimeout(
+                                    () => {
+
+                                        businesses.scrollIntoView({
+                                            behavior:
+                                                "smooth",
+                                            block:
+                                                "start"
+                                        });
+
+                                    },
+                                    50
+                                );
+
+                            }
+
+                        }
+                    );
+
+                });
+
+        },
+
+
+        /* =================================================
+           ADD BUSINESS
+        ================================================= */
+
+        bindAddBusinessButtons() {
+
+            document
+                .querySelectorAll(
+                    "#addBusinessBtn, .add-business-btn"
+                )
+                .forEach(button => {
+
+                    button.addEventListener(
+                        "click",
+                        event => {
+
+                            event.preventDefault();
+
+                            this.openModal(
+                                "addBusinessModal"
+                            );
+
+                        }
+                    );
+
+                });
+
+        },
+
+
+        /* =================================================
+           BUSINESS VIEW
+        ================================================= */
+
+        bindBusinessButtons() {
+
+            document.addEventListener(
+                "click",
+                event => {
+
+                    const button =
+                        event.target.closest(
+                            "[data-business-id]"
+                        );
+
+                    if (!button) {
+                        return;
+                    }
+
+                    const businessId =
+                        button.getAttribute(
+                            "data-business-id"
+                        );
+
+                    if (
+                        businessId &&
+                        typeof window.openBusiness ===
+                        "function"
+                    ) {
+
+                        window.openBusiness(
+                            businessId
+                        );
+
+                    }
+
+                }
+            );
+
+        },
+
+
+        /* =================================================
+           TOAST / NOTIFICATION
+        ================================================= */
+
+        showToast(message, type = "info") {
+
+            let notification =
+                document.getElementById(
+                    "notification"
+                );
+
+            if (!notification) {
+
+                notification =
+                    document.createElement(
+                        "div"
+                    );
+
+                notification.id =
+                    "notification";
+
+                notification.className =
+                    "notification";
+
+                document.body.appendChild(
+                    notification
+                );
+
+            }
+
+            notification.textContent =
+                String(message || "");
+
+            notification.dataset.type =
+                type;
+
+            notification.classList.add(
+                "show"
+            );
+
+            clearTimeout(
+                notification._losojaTimer
+            );
+
+            notification._losojaTimer =
+                setTimeout(
+                    () => {
+
+                        notification.classList.remove(
+                            "show"
+                        );
+
+                    },
+                    3000
+                );
+
+        }
+
+    };
+
+
+    /* =====================================================
+       PUBLIC API
+    ===================================================== */
+
+    window.App = App;
+
+    window.openModal =
+        function (modalId) {
+            App.openModal(modalId);
+        };
+
+    window.closeModal =
+        function (modalId) {
+            App.closeModal(modalId);
+        };
+
+    window.showNotification =
+        function (message, type) {
+            App.showToast(message, type);
+        };
+
+
+    /* =====================================================
+       START
+    ===================================================== */
+
+    if (
+        document.readyState ===
+        "loading"
+    ) {
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            () => App.init()
+        );
+
+    } else {
+
+        App.init();
+
+    }
+
+})();
    - Main UI
    - Modals
    - Mobile navigation
