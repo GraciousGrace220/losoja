@@ -129,14 +129,17 @@
                     : modalId;
 
             if (!modal) {
+
                 console.error(
                     "LosOja: Modal not found:",
                     modalId
                 );
+
                 return;
             }
 
             modal.classList.remove("hidden");
+
             modal.classList.add("active");
 
             modal.style.display = "flex";
@@ -147,10 +150,6 @@
 
 
         closeModal(modal) {
-
-            /*
-             * Allow either an element or an ID.
-             */
 
             if (typeof modal === "string") {
 
@@ -167,19 +166,14 @@
                 );
 
                 return;
-
             }
 
             modal.classList.remove("active");
+
             modal.classList.add("hidden");
 
             modal.style.display = "none";
 
-
-            /*
-             * Only remove modal-open when no modal
-             * is currently active.
-             */
 
             const activeModal =
                 document.querySelector(
@@ -207,6 +201,7 @@
             modals.forEach(modal => {
 
                 modal.classList.remove("active");
+
                 modal.classList.add("hidden");
 
                 modal.style.display = "none";
@@ -295,7 +290,6 @@
                 return;
             }
 
-
             menuButton.addEventListener(
                 "click",
                 () => {
@@ -315,11 +309,6 @@
                 }
             );
 
-
-            /*
-             * Close mobile menu after clicking
-             * a navigation link.
-             */
 
             const links =
                 mobileNav.querySelectorAll("a");
@@ -366,10 +355,8 @@
                         return;
                     }
 
-
                     const href =
                         link.getAttribute("href");
-
 
                     if (
                         !href ||
@@ -377,7 +364,6 @@
                     ) {
                         return;
                     }
-
 
                     let target = null;
 
@@ -394,14 +380,11 @@
 
                     }
 
-
                     if (!target) {
                         return;
                     }
 
-
                     event.preventDefault();
-
 
                     target.scrollIntoView({
                         behavior: "smooth",
@@ -429,7 +412,6 @@
                 return;
             }
 
-
             categoryButtons.forEach(button => {
 
                 if (
@@ -444,13 +426,11 @@
                     .losojaCategoryReady =
                     "true";
 
-
                 button.addEventListener(
                     "click",
                     event => {
 
                         event.preventDefault();
-
 
                         const category =
                             (
@@ -459,11 +439,9 @@
                                 ) || ""
                             ).trim();
 
-
                         if (!category) {
                             return;
                         }
-
 
                         categoryButtons.forEach(
                             card => {
@@ -474,7 +452,6 @@
 
                             }
                         );
-
 
                         button.classList.add(
                             "active"
@@ -528,8 +505,10 @@
                             );
 
                         if (searchInput) {
+
                             searchInput.value =
                                 category;
+
                         }
 
 
@@ -539,8 +518,10 @@
                             );
 
                         if (locationInput) {
+
                             locationInput.value =
                                 "";
+
                         }
 
 
@@ -591,7 +572,6 @@
                 return;
             }
 
-
             mobilityButtons.forEach(button => {
 
                 if (
@@ -606,7 +586,6 @@
                     .losojaMobilityReady =
                     "true";
 
-
                 button.addEventListener(
                     "click",
                     () => {
@@ -616,11 +595,9 @@
                                 "data-mobility"
                             );
 
-
                         if (!type) {
                             return;
                         }
-
 
                         this.openMobilityRequest(
                             type
@@ -644,7 +621,6 @@
                 document.getElementById(
                     "mobilityRequestModal"
                 );
-
 
             if (modal) {
                 return modal;
@@ -705,7 +681,6 @@
 
                         </div>
 
-
                         <div class="form-group">
 
                             <label for="mobilityDestination">
@@ -720,7 +695,6 @@
                             >
 
                         </div>
-
 
                         <div class="form-group">
 
@@ -737,7 +711,6 @@
 
                         </div>
 
-
                         <div class="form-group">
 
                             <label for="mobilityNote">
@@ -752,12 +725,10 @@
 
                         </div>
 
-
                         <p
                             id="mobilityRequestError"
                             class="form-error hidden"
                         ></p>
-
 
                         <button
                             type="submit"
@@ -799,4 +770,96 @@
             }
 
 
-            modal
+            const form =
+                modal.querySelector(
+                    "#mobilityRequestForm"
+                );
+
+
+            if (form) {
+
+                form.addEventListener(
+                    "submit",
+                    event => {
+
+                        event.preventDefault();
+
+                        this.handleMobilityRequest();
+
+                    }
+                );
+
+            }
+
+
+            return modal;
+
+        },
+
+
+        /* =================================================
+           OPEN MOBILITY REQUEST
+        ================================================= */
+
+        openMobilityRequest(type) {
+
+            const modal =
+                this.createMobilityModal();
+
+            const title =
+                document.getElementById(
+                    "mobilityRequestTitle"
+                );
+
+            const description =
+                document.getElementById(
+                    "mobilityRequestDescription"
+                );
+
+            const mobilityType =
+                document.getElementById(
+                    "mobilityType"
+                );
+
+            const pickup =
+                document.getElementById(
+                    "mobilityPickup"
+                );
+
+            const destination =
+                document.getElementById(
+                    "mobilityDestination"
+                );
+
+            const phone =
+                document.getElementById(
+                    "mobilityPhone"
+                );
+
+            const note =
+                document.getElementById(
+                    "mobilityNote"
+                );
+
+            const error =
+                document.getElementById(
+                    "mobilityRequestError"
+                );
+
+
+            const labels = {
+
+                trycircle: {
+                    title: "Request TryCircle Ride",
+                    description:
+                        "Request a TryCircle ride for convenient local transportation."
+                },
+
+                bike: {
+                    title: "Request Bike Ride",
+                    description:
+                        "Find or request bike transportation around your area."
+                },
+
+                cab: {
+                    title: "Request Cab",
