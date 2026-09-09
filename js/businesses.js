@@ -1388,7 +1388,7 @@ Handles:
                 </div>
 
 
-                <div class="business-details-content">
+              <div class="business-details" id="businessDetails">
 
                     <span class="business-category">
                         ${escapeHTML(
