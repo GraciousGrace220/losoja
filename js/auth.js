@@ -9,7 +9,7 @@ Handles:
 - Logout
 - Supabase session
 - Automatic JWT refresh
-- User interface
+- Authentication UI
 =========================================================
 */
 
@@ -33,7 +33,7 @@ Handles:
 
 
     /* =====================================================
-       STORAGE
+       SESSION STORAGE
     ===================================================== */
 
     function getSession() {
@@ -41,7 +41,9 @@ Handles:
         try {
 
             const raw =
-                localStorage.getItem(SESSION_KEY);
+                localStorage.getItem(
+                    SESSION_KEY
+                );
 
             if (!raw) {
                 return null;
@@ -62,6 +64,7 @@ Handles:
 
             return null;
         }
+
     }
 
 
@@ -84,7 +87,9 @@ Handles:
                 "LosOja: Could not save session:",
                 error
             );
+
         }
+
     }
 
 
@@ -98,7 +103,7 @@ Handles:
 
 
     /* =====================================================
-       USER
+       USER HELPERS
     ===================================================== */
 
     function getCurrentUser() {
@@ -111,6 +116,7 @@ Handles:
         }
 
         return session.user || null;
+
     }
 
 
@@ -128,6 +134,7 @@ Handles:
             session.accessToken ||
             null
         );
+
     }
 
 
@@ -146,6 +153,7 @@ Handles:
             user.email?.split("@")[0] ||
             "User"
         );
+
     }
 
 
@@ -153,7 +161,7 @@ Handles:
        HEADERS
     ===================================================== */
 
-    function headers(accessToken) {
+    function getHeaders(accessToken) {
 
         const result = {
 
@@ -165,12 +173,13 @@ Handles:
 
             "Accept":
                 "application/json"
+
         };
 
 
         if (accessToken) {
 
-            result["Authorization"] =
+            result.Authorization =
                 "Bearer " + accessToken;
 
         }
@@ -198,251 +207,6 @@ Handles:
             data.error ||
             "Something went wrong."
         );
-
-    }
-
-
-    /* =====================================================
-       TOKEN EXPIRATION
-    ===================================================== */
-
-    function isTokenExpired(session) {
-
-        if (!session) {
-            return true;
-        }
-
-
-        if (session.expires_at) {
-
-            const now =
-                Math.floor(
-                    Date.now() / 1000
-                );
-
-            return (
-                Number(session.expires_at) <=
-                now + 60
-            );
-
-        }
-
-
-        /*
-         * Some Supabase responses provide expires_in
-         * instead of expires_at.
-         */
-
-        if (session.expires_in && session.created_at) {
-
-            const expiresAt =
-                Number(session.created_at) +
-                Number(session.expires_in);
-
-            const now =
-                Math.floor(
-                    Date.now() / 1000
-                );
-
-            return expiresAt <= now + 60;
-        }
-
-
-        return false;
-
-    }
-
-
-    /* =====================================================
-       REFRESH SESSION
-    ===================================================== */
-
-    let refreshPromise = null;
-
-
-    async function refreshSupabaseSession() {
-
-        if (refreshPromise) {
-            return refreshPromise;
-        }
-
-
-        refreshPromise =
-            (async function () {
-
-                const session =
-                    getSession();
-
-
-                if (!session) {
-
-                    return {
-                        success: false,
-                        message:
-                            "No active session."
-                    };
-
-                }
-
-
-                const refreshToken =
-                    session.refresh_token;
-
-
-                if (!refreshToken) {
-
-                    clearSession();
-
-                    updateUI();
-
-                    return {
-                        success: false,
-                        message:
-                            "Your session has expired. Please log in again."
-                    };
-
-                }
-
-
-                try {
-
-                    const response =
-                        await fetch(
-
-                            SUPABASE_URL +
-                            "/auth/v1/token?grant_type=refresh_token",
-
-                            {
-                                method:
-                                    "POST",
-
-                                headers:
-                                    headers(),
-
-                                body:
-                                    JSON.stringify({
-                                        refresh_token:
-                                            refreshToken
-                                    })
-                            }
-                        );
-
-
-                    const data =
-                        await response.json();
-
-
-                    if (!response.ok) {
-
-                        console.error(
-                            "LosOja session refresh error:",
-                            data
-                        );
-
-                        clearSession();
-
-                        updateUI();
-
-                        return {
-                            success: false,
-                            message:
-                                getErrorMessage(
-                                    data
-                                )
-                        };
-
-                    }
-
-
-                    if (
-                        !data.access_token ||
-                        !data.user
-                    ) {
-
-                        return {
-                            success: false,
-                            message:
-                                "Could not refresh your session."
-                        };
-
-                    }
-
-
-                    saveSession(data);
-
-                    updateUI();
-
-
-                    return {
-                        success: true,
-                        user:
-                            data.user,
-                        session:
-                            data
-                    };
-
-
-                } catch (error) {
-
-                    console.error(
-                        "LosOja session refresh network error:",
-                        error
-                    );
-
-                    return {
-                        success: false,
-                        message:
-                            "Could not refresh your session."
-                    };
-
-                }
-
-            })();
-
-
-        try {
-
-            return await refreshPromise;
-
-        } finally {
-
-            refreshPromise = null;
-
-        }
-
-    }
-
-
-    /* =====================================================
-       ENSURE VALID SESSION
-    ===================================================== */
-
-    async function ensureValidSession() {
-
-        const session =
-            getSession();
-
-
-        if (!session) {
-            return null;
-        }
-
-
-        if (!isTokenExpired(session)) {
-            return session;
-        }
-
-
-        const result =
-            await refreshSupabaseSession();
-
-
-        if (!result.success) {
-            return null;
-        }
-
-
-        return result.session;
 
     }
 
@@ -480,24 +244,16 @@ Handles:
 
             const response =
                 await fetch(
-
                     SUPABASE_URL +
                     "/auth/v1/token?grant_type=password",
-
                     {
-                        method:
-                            "POST",
-
+                        method: "POST",
                         headers:
-                            headers(),
-
+                            getHeaders(),
                         body:
                             JSON.stringify({
-                                email:
-                                    email,
-
-                                password:
-                                    password
+                                email: email,
+                                password: password
                             })
                     }
                 );
@@ -517,9 +273,7 @@ Handles:
                 return {
                     success: false,
                     message:
-                        getErrorMessage(
-                            data
-                        )
+                        getErrorMessage(data)
                 };
 
             }
@@ -533,7 +287,7 @@ Handles:
                 return {
                     success: false,
                     message:
-                        "Login succeeded but no Supabase session was returned."
+                        "Login succeeded but no session was returned."
                 };
 
             }
@@ -541,15 +295,13 @@ Handles:
 
             saveSession(data);
 
-            updateUI();
+            updateAuthUI();
 
 
             return {
                 success: true,
-                user:
-                    data.user,
-                session:
-                    data
+                user: data.user,
+                session: data
             };
 
 
@@ -630,17 +382,12 @@ Handles:
 
             const response =
                 await fetch(
-
                     SUPABASE_URL +
                     "/auth/v1/signup",
-
                     {
-                        method:
-                            "POST",
-
+                        method: "POST",
                         headers:
-                            headers(),
-
+                            getHeaders(),
                         body:
                             JSON.stringify({
 
@@ -677,16 +424,15 @@ Handles:
                 return {
                     success: false,
                     message:
-                        getErrorMessage(
-                            data
-                        )
+                        getErrorMessage(data)
                 };
 
             }
 
 
             /*
-             * Email confirmation may be required.
+             * If email confirmation is disabled,
+             * Supabase may return a session.
              */
 
             if (
@@ -696,26 +442,27 @@ Handles:
 
                 saveSession(data);
 
-                updateUI();
+                updateAuthUI();
 
                 return {
                     success: true,
-                    user:
-                        data.user,
-                    session:
-                        data
+                    user: data.user,
+                    session: data
                 };
 
             }
 
 
+            /*
+             * If email confirmation is enabled,
+             * the user must confirm their email.
+             */
+
             return {
 
-                success:
-                    true,
+                success: true,
 
-                needsConfirmation:
-                    true,
+                needsConfirmation: true,
 
                 user:
                     data.user || null,
@@ -759,18 +506,13 @@ Handles:
             if (token) {
 
                 await fetch(
-
                     SUPABASE_URL +
                     "/auth/v1/logout",
-
                     {
-                        method:
-                            "POST",
-
+                        method: "POST",
                         headers:
-                            headers(token)
+                            getHeaders(token)
                     }
-
                 );
 
             }
@@ -786,25 +528,22 @@ Handles:
 
             clearSession();
 
-            updateUI();
-
+            updateAuthUI();
 
             if (
-                typeof Dashboard !==
-                    "undefined" &&
-                typeof Dashboard.hide ===
-                    "function"
+                window.App &&
+                typeof window.App.closeAllModals ===
+                "function"
             ) {
 
-                Dashboard.hide();
+                window.App.closeAllModals();
 
             }
-
 
             if (
                 window.App &&
                 typeof window.App.showToast ===
-                    "function"
+                "function"
             ) {
 
                 window.App.showToast(
@@ -820,10 +559,10 @@ Handles:
 
 
     /* =====================================================
-       UPDATE AUTH UI
+       AUTH UI
     ===================================================== */
 
-    function updateUI() {
+    function updateAuthUI() {
 
         const user =
             getCurrentUser();
@@ -859,13 +598,13 @@ Handles:
                 "dashboardNavLink"
             );
 
+        const mobileDashboardNavLink =
+            document.getElementById(
+                "mobileDashboardNavLink"
+            );
+
 
         if (user) {
-
-            /*
-             * Logged in:
-             * hide Login and Sign Up.
-             */
 
             if (loginBtn) {
                 loginBtn.classList.add(
@@ -891,24 +630,24 @@ Handles:
                 );
             }
 
-
             if (dashboardNavLink) {
                 dashboardNavLink.classList.remove(
                     "hidden"
                 );
             }
 
+            if (mobileDashboardNavLink) {
+                mobileDashboardNavLink.classList.remove(
+                    "hidden"
+                );
+            }
 
-            /*
-             * Show user area if it exists.
-             */
 
             if (userArea) {
 
                 userArea.classList.remove(
                     "hidden"
                 );
-
 
                 userArea.innerHTML = `
 
@@ -934,11 +673,12 @@ Handles:
                         "logoutBtn"
                     );
 
-
                 if (logoutBtn) {
 
-                    logoutBtn.onclick =
-                        logout;
+                    logoutBtn.addEventListener(
+                        "click",
+                        logout
+                    );
 
                 }
 
@@ -946,11 +686,6 @@ Handles:
 
 
         } else {
-
-            /*
-             * Logged out:
-             * show Login and Sign Up.
-             */
 
             if (loginBtn) {
                 loginBtn.classList.remove(
@@ -976,13 +711,17 @@ Handles:
                 );
             }
 
-
             if (dashboardNavLink) {
                 dashboardNavLink.classList.add(
                     "hidden"
                 );
             }
 
+            if (mobileDashboardNavLink) {
+                mobileDashboardNavLink.classList.add(
+                    "hidden"
+                );
+            }
 
             if (userArea) {
 
@@ -995,6 +734,99 @@ Handles:
             }
 
         }
+
+    }
+
+
+    /* =====================================================
+       OPEN LOGIN
+    ===================================================== */
+
+    function openLogin() {
+
+        if (
+            window.App &&
+            typeof window.App.openModal ===
+            "function"
+        ) {
+
+            window.App.openModal(
+                "loginModal"
+            );
+
+        }
+
+    }
+
+
+    /* =====================================================
+       OPEN SIGN UP
+    ===================================================== */
+
+    function openSignup() {
+
+        if (
+            window.App &&
+            typeof window.App.openModal ===
+            "function"
+        ) {
+
+            window.App.openModal(
+                "signupModal"
+            );
+
+        }
+
+    }
+
+
+    /* =====================================================
+       FORM ERRORS
+    ===================================================== */
+
+    function showError(
+        elementId,
+        message
+    ) {
+
+        const element =
+            document.getElementById(
+                elementId
+            );
+
+        if (!element) {
+            return;
+        }
+
+        element.textContent =
+            String(message || "");
+
+        element.classList.remove(
+            "hidden"
+        );
+
+    }
+
+
+    function clearError(
+        elementId
+    ) {
+
+        const element =
+            document.getElementById(
+                elementId
+            );
+
+        if (!element) {
+            return;
+        }
+
+        element.textContent =
+            "";
+
+        element.classList.add(
+            "hidden"
+        );
 
     }
 
@@ -1019,78 +851,320 @@ Handles:
 
 
     /* =====================================================
-       OPEN LOGIN
+       BIND EVENTS
     ===================================================== */
 
-    function openLogin() {
+    function bindEvents() {
 
-        const signupModal =
+        const loginButtons =
+            document.querySelectorAll(
+                "#loginBtn, #mobileLoginBtn"
+            );
+
+        loginButtons.forEach(button => {
+
+            button.addEventListener(
+                "click",
+                event => {
+
+                    event.preventDefault();
+
+                    openLogin();
+
+                }
+            );
+
+        });
+
+
+        const signupButtons =
+            document.querySelectorAll(
+                "#signupBtn, #mobileSignupBtn"
+            );
+
+        signupButtons.forEach(button => {
+
+            button.addEventListener(
+                "click",
+                event => {
+
+                    event.preventDefault();
+
+                    openSignup();
+
+                }
+            );
+
+        });
+
+
+        const showSignupBtn =
             document.getElementById(
-                "signupModal"
+                "showSignupBtn"
             );
 
-        if (signupModal) {
+        if (showSignupBtn) {
 
-            signupModal.classList.remove(
-                "active"
+            showSignupBtn.addEventListener(
+                "click",
+                event => {
+
+                    event.preventDefault();
+
+                    if (window.App) {
+                        window.App.closeModal(
+                            "loginModal"
+                        );
+                    }
+
+                    openSignup();
+
+                }
             );
-
-            signupModal.classList.add(
-                "hidden"
-            );
-
-            signupModal.style.display =
-                "none";
 
         }
 
 
-        const modal =
+        const showLoginBtn =
             document.getElementById(
-                "loginModal"
+                "showLoginBtn"
             );
 
+        if (showLoginBtn) {
 
-        if (!modal) {
+            showLoginBtn.addEventListener(
+                "click",
+                event => {
 
-            console.error(
-                "LosOja: loginModal not found."
+                    event.preventDefault();
+
+                    if (window.App) {
+                        window.App.closeModal(
+                            "signupModal"
+                        );
+                    }
+
+                    openLogin();
+
+                }
             );
-
-            return;
 
         }
 
 
-        modal.classList.remove(
-            "hidden"
-        );
+        /* =================================================
+           LOGIN FORM
+        ================================================= */
 
-        modal.classList.add(
-            "active"
-        );
-
-        modal.style.display =
-            "flex";
-
-        document.body.classList.add(
-            "modal-open"
-        );
-
-
-        const emailInput =
+        const loginForm =
             document.getElementById(
-                "loginEmail"
+                "loginForm"
             );
 
+        if (loginForm) {
 
-        if (emailInput) {
+            loginForm.addEventListener(
+                "submit",
+                async event => {
 
-            setTimeout(
-                () => {
-                    emailInput.focus();
-                },
-                50
+                    event.preventDefault();
+
+                    clearError(
+                        "loginError"
+                    );
+
+
+                    const email =
+                        document.getElementById(
+                            "loginEmail"
+                        )?.value;
+
+                    const password =
+                        document.getElementById(
+                            "loginPassword"
+                        )?.value;
+
+
+                    const submitButton =
+                        loginForm.querySelector(
+                            'button[type="submit"]'
+                        );
+
+                    if (submitButton) {
+                        submitButton.disabled =
+                            true;
+                    }
+
+
+                    const result =
+                        await login(
+                            email,
+                            password
+                        );
+
+
+                    if (submitButton) {
+                        submitButton.disabled =
+                            false;
+                    }
+
+
+                    if (!result.success) {
+
+                        showError(
+                            "loginError",
+                            result.message
+                        );
+
+                        return;
+                    }
+
+
+                    loginForm.reset();
+
+                    if (window.App) {
+                        window.App.closeModal(
+                            "loginModal"
+                        );
+                    }
+
+
+                    if (
+                        window.App &&
+                        typeof window.App.showToast ===
+                        "function"
+                    ) {
+
+                        window.App.showToast(
+                            "Welcome back!",
+                            "success"
+                        );
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        /* =================================================
+           SIGNUP FORM
+        ================================================= */
+
+        const signupForm =
+            document.getElementById(
+                "signupForm"
+            );
+
+        if (signupForm) {
+
+            signupForm.addEventListener(
+                "submit",
+                async event => {
+
+                    event.preventDefault();
+
+                    clearError(
+                        "signupError"
+                    );
+
+
+                    const name =
+                        document.getElementById(
+                            "signupName"
+                        )?.value;
+
+                    const email =
+                        document.getElementById(
+                            "signupEmail"
+                        )?.value;
+
+                    const password =
+                        document.getElementById(
+                            "signupPassword"
+                        )?.value;
+
+
+                    const submitButton =
+                        signupForm.querySelector(
+                            'button[type="submit"]'
+                        );
+
+                    if (submitButton) {
+                        submitButton.disabled =
+                            true;
+                    }
+
+
+                    const result =
+                        await signup(
+                            name,
+                            email,
+                            password
+                        );
+
+
+                    if (submitButton) {
+                        submitButton.disabled =
+                            false;
+                    }
+
+
+                    if (!result.success) {
+
+                        showError(
+                            "signupError",
+                            result.message
+                        );
+
+                        return;
+                    }
+
+
+                    signupForm.reset();
+
+
+                    if (window.App) {
+                        window.App.closeModal(
+                            "signupModal"
+                        );
+                    }
+
+
+                    if (result.needsConfirmation) {
+
+                        if (
+                            window.App &&
+                            typeof window.App.showToast ===
+                            "function"
+                        ) {
+
+                            window.App.showToast(
+                                result.message,
+                                "info"
+                            );
+
+                        }
+
+                    } else {
+
+                        if (
+                            window.App &&
+                            typeof window.App.showToast ===
+                            "function"
+                        ) {
+
+                            window.App.showToast(
+                                "Account created successfully!",
+                                "success"
+                            );
+
+                        }
+
+                    }
+
+                }
             );
 
         }
@@ -1099,98 +1173,64 @@ Handles:
 
 
     /* =====================================================
-       OPEN SIGNUP
+       PUBLIC API
     ===================================================== */
 
-    function openSignup() {
+    window.getSupabaseSession =
+        getSession;
 
-        const loginModal =
-            document.getElementById(
-                "loginModal"
-            );
+    window.getCurrentUser =
+        getCurrentUser;
 
-        if (loginModal) {
+    window.getSupabaseAccessToken =
+        getAccessToken;
 
-            loginModal.classList.remove(
-                "active"
-            );
+    window.logout =
+        logout;
 
-            loginModal.classList.add(
-                "hidden"
-            );
+    window.doLogin =
+        login;
 
-            loginModal.style.display =
-                "none";
+    window.doSignup =
+        signup;
 
-        }
+    window.updateAuthUI =
+        updateAuthUI;
 
+    window.openLogin =
+        openLogin;
 
-        const modal =
-            document.getElementById(
-                "signupModal"
-            );
-
-
-        if (!modal) {
-
-            console.error(
-                "LosOja: signupModal not found."
-            );
-
-            return;
-
-        }
+    window.openSignup =
+        openSignup;
 
 
-        modal.classList.remove(
-            "hidden"
-        );
+    /* =====================================================
+       START AUTH
+    ===================================================== */
 
-        modal.classList.add(
-            "active"
-        );
+    function initAuth() {
 
-        modal.style.display =
-            "flex";
+        bindEvents();
 
-        document.body.classList.add(
-            "modal-open"
-        );
-
-
-        const nameInput =
-            document.getElementById(
-                "signupName"
-            );
-
-
-        if (nameInput) {
-
-            setTimeout(
-                () => {
-                    nameInput.focus();
-                },
-                50
-            );
-
-        }
+        updateAuthUI();
 
     }
 
 
-    /* =====================================================
-       FORM ERROR
-    ===================================================== */
-
-    function showError(
-        id,
-        message
+    if (
+        document.readyState ===
+        "loading"
     ) {
 
-        const element =
-            document.getElementById(id);
+        document.addEventListener(
+            "DOMContentLoaded",
+            initAuth
+        );
 
+    } else {
 
-        /*
-         * If the HTML does not contain a dedicated
-         * error element, use the main Los
+        initAuth();
+
+    }
+
+})();
