@@ -122,62 +122,100 @@
         ================================================= */
 
         openModal(modalId) {
-    const modal = document.getElementById(modalId);
 
-    if (!modal) {
-        console.error("LosOja: Modal not found:", modalId);
-        return;
-    }
+            const modal =
+                typeof modalId === "string"
+                    ? document.getElementById(modalId)
+                    : modalId;
 
-    modal.classList.remove("hidden");
-    modal.classList.add("active");
-    modal.style.display = "flex";
+            if (!modal) {
+                console.error(
+                    "LosOja: Modal not found:",
+                    modalId
+                );
+                return;
+            }
 
-    document.body.classList.add("modal-open");
-},
-
+            modal.classList.remove("hidden");
             modal.classList.add("active");
+
+            modal.style.display = "flex";
 
             document.body.classList.add("modal-open");
 
         },
 
 
-     closeModal(modal) {
-    if (!modal) {
-        return;
-    }
+        closeModal(modal) {
 
-    // Allow callers to pass either an element or an ID
-    if (typeof modal === "string") {
-        modal = document.getElementById(modal);
-    }
+            /*
+             * Allow either an element or an ID.
+             */
 
-    if (!modal || !modal.classList) {
-        console.warn("LosOja: Invalid modal passed to closeModal:", modal);
-        return;
-    }
+            if (typeof modal === "string") {
 
-    modal.classList.remove("active");
-    modal.classList.add("hidden");
-    modal.style.display = "none";
+                modal =
+                    document.getElementById(modal);
 
-    if (!document.querySelector(".modal.active, .modal-overlay.active")) {
-        document.body.classList.remove("modal-open");
-    }
-},
+            }
+
+            if (!modal || !modal.classList) {
+
+                console.warn(
+                    "LosOja: Invalid modal passed to closeModal:",
+                    modal
+                );
+
+                return;
+
+            }
+
+            modal.classList.remove("active");
+            modal.classList.add("hidden");
+
+            modal.style.display = "none";
+
+
+            /*
+             * Only remove modal-open when no modal
+             * is currently active.
+             */
+
+            const activeModal =
+                document.querySelector(
+                    ".modal-overlay.active, .modal.active"
+                );
+
+            if (!activeModal) {
+
+                document.body.classList.remove(
+                    "modal-open"
+                );
+
+            }
+
+        },
 
 
         closeAllModals() {
 
             const modals =
-                document.querySelectorAll(".modal");
+                document.querySelectorAll(
+                    ".modal-overlay, .modal"
+                );
 
             modals.forEach(modal => {
+
                 modal.classList.remove("active");
+                modal.classList.add("hidden");
+
+                modal.style.display = "none";
+
             });
 
-            document.body.classList.remove("modal-open");
+            document.body.classList.remove(
+                "modal-open"
+            );
 
         },
 
@@ -188,36 +226,51 @@
 
         bindModalClosers() {
 
-            document.addEventListener("click", event => {
+            document.addEventListener(
+                "click",
+                event => {
 
-                const closeButton =
-                    event.target.closest(".modal-close");
+                    const closeButton =
+                        event.target.closest(
+                            ".modal-close"
+                        );
 
-                if (closeButton) {
+                    if (closeButton) {
 
-                    const modal =
-                        closeButton.closest(".modal");
+                        const modal =
+                            closeButton.closest(
+                                ".modal-overlay, .modal"
+                            );
 
-                    this.closeModal(modal);
+                        this.closeModal(modal);
 
-                    return;
+                        return;
+
+                    }
+
+
+                    /*
+                     * Close when clicking the dark backdrop.
+                     */
+
+                    const clickedModal =
+                        event.target.closest(
+                            ".modal-overlay, .modal"
+                        );
+
+                    if (
+                        clickedModal &&
+                        event.target === clickedModal
+                    ) {
+
+                        this.closeModal(
+                            clickedModal
+                        );
+
+                    }
+
                 }
-
-
-                /*
-                 * Close when clicking the dark backdrop.
-                 */
-
-                if (
-                    event.target.classList &&
-                    event.target.classList.contains("modal")
-                ) {
-
-                    this.closeModal(event.target);
-
-                }
-
-            });
+            );
 
         },
 
@@ -229,31 +282,43 @@
         bindMobileMenu() {
 
             const menuButton =
-                document.getElementById("mobileMenuBtn");
+                document.getElementById(
+                    "mobileMenuBtn"
+                );
 
             const mobileNav =
-                document.getElementById("mobileNav");
+                document.getElementById(
+                    "mobileNav"
+                );
 
             if (!menuButton || !mobileNav) {
                 return;
             }
 
 
-            menuButton.addEventListener("click", () => {
+            menuButton.addEventListener(
+                "click",
+                () => {
 
-                const isOpen =
-                    mobileNav.classList.toggle("active");
+                    const isOpen =
+                        mobileNav.classList.toggle(
+                            "active"
+                        );
 
-                menuButton.setAttribute(
-                    "aria-expanded",
-                    isOpen ? "true" : "false"
-                );
+                    menuButton.setAttribute(
+                        "aria-expanded",
+                        isOpen
+                            ? "true"
+                            : "false"
+                    );
 
-            });
+                }
+            );
 
 
             /*
-             * Close mobile menu after clicking a link.
+             * Close mobile menu after clicking
+             * a navigation link.
              */
 
             const links =
@@ -261,16 +326,21 @@
 
             links.forEach(link => {
 
-                link.addEventListener("click", () => {
+                link.addEventListener(
+                    "click",
+                    () => {
 
-                    mobileNav.classList.remove("active");
+                        mobileNav.classList.remove(
+                            "active"
+                        );
 
-                    menuButton.setAttribute(
-                        "aria-expanded",
-                        "false"
-                    );
+                        menuButton.setAttribute(
+                            "aria-expanded",
+                            "false"
+                        );
 
-                });
+                    }
+                );
 
             });
 
@@ -283,77 +353,69 @@
 
         bindSmoothScroll() {
 
-            document.addEventListener("click", event => {
+            document.addEventListener(
+                "click",
+                event => {
 
-                const link =
-                    event.target.closest('a[href^="#"]');
+                    const link =
+                        event.target.closest(
+                            'a[href^="#"]'
+                        );
 
-                if (!link) {
-                    return;
+                    if (!link) {
+                        return;
+                    }
+
+
+                    const href =
+                        link.getAttribute("href");
+
+
+                    if (
+                        !href ||
+                        href === "#"
+                    ) {
+                        return;
+                    }
+
+
+                    let target = null;
+
+                    try {
+
+                        target =
+                            document.querySelector(
+                                href
+                            );
+
+                    } catch (error) {
+
+                        return;
+
+                    }
+
+
+                    if (!target) {
+                        return;
+                    }
+
+
+                    event.preventDefault();
+
+
+                    target.scrollIntoView({
+                        behavior: "smooth",
+                        block: "start"
+                    });
+
                 }
-
-
-                const href =
-                    link.getAttribute("href");
-
-                if (
-                    !href ||
-                    href === "#" ||
-                    href === "#loginModal" ||
-                    href === "#signupModal"
-                ) {
-                    return;
-                }
-
-
-                let target = null;
-
-                try {
-
-                    target =
-                        document.querySelector(href);
-
-                } catch (error) {
-
-                    return;
-
-                }
-
-
-                if (!target) {
-                    return;
-                }
-
-
-                event.preventDefault();
-
-                target.scrollIntoView({
-                    behavior: "smooth",
-                    block: "start"
-                });
-
-            });
+            );
 
         },
 
 
         /* =================================================
            CATEGORY BUTTONS
-           
-           IMPORTANT:
-           These buttons directly call the existing
-           businesses.js category filter.
-
-           This fixes:
-           Food
-           Fashion
-           Technology
-           Beauty
-           Health
-           Education
-           Services
-           Shopping
-           Other
         ================================================= */
 
         bindCategoryButtons() {
@@ -370,143 +432,144 @@
 
             categoryButtons.forEach(button => {
 
-                /*
-                 * Prevent duplicate event binding.
-                 */
-
                 if (
-                    button.dataset.losojaCategoryReady === "true"
+                    button.dataset
+                        .losojaCategoryReady ===
+                    "true"
                 ) {
                     return;
                 }
 
-                button.dataset.losojaCategoryReady = "true";
+                button.dataset
+                    .losojaCategoryReady =
+                    "true";
 
 
-                button.addEventListener("click", event => {
+                button.addEventListener(
+                    "click",
+                    event => {
 
-                    event.preventDefault();
-
-
-                    const category =
-                        (
-                            button.getAttribute(
-                                "data-category"
-                            ) || ""
-                        ).trim();
+                        event.preventDefault();
 
 
-                    if (!category) {
-                        return;
+                        const category =
+                            (
+                                button.getAttribute(
+                                    "data-category"
+                                ) || ""
+                            ).trim();
+
+
+                        if (!category) {
+                            return;
+                        }
+
+
+                        categoryButtons.forEach(
+                            card => {
+
+                                card.classList.remove(
+                                    "active"
+                                );
+
+                            }
+                        );
+
+
+                        button.classList.add(
+                            "active"
+                        );
+
+
+                        if (
+                            window.LosOjaBusinesses &&
+                            typeof
+                                window
+                                    .LosOjaBusinesses
+                                    .filterByCategory ===
+                                "function"
+                        ) {
+
+                            window
+                                .LosOjaBusinesses
+                                .filterByCategory(
+                                    category
+                                );
+
+                        } else if (
+                            typeof
+                                window.filterBusinesses ===
+                            "function"
+                        ) {
+
+                            window.filterBusinesses(
+                                category
+                            );
+
+                        } else {
+
+                            console.error(
+                                "LosOja: Business filtering system is not available."
+                            );
+
+                            this.showToast(
+                                "Businesses are still loading. Please try again.",
+                                "info"
+                            );
+
+                            return;
+
+                        }
+
+
+                        const searchInput =
+                            document.getElementById(
+                                "searchInput"
+                            );
+
+                        if (searchInput) {
+                            searchInput.value =
+                                category;
+                        }
+
+
+                        const locationInput =
+                            document.getElementById(
+                                "locationInput"
+                            );
+
+                        if (locationInput) {
+                            locationInput.value =
+                                "";
+                        }
+
+
+                        const businessesSection =
+                            document.getElementById(
+                                "businesses"
+                            );
+
+                        if (businessesSection) {
+
+                            setTimeout(
+                                () => {
+
+                                    businessesSection
+                                        .scrollIntoView({
+                                            behavior:
+                                                "smooth",
+                                            block:
+                                                "start"
+                                        });
+
+                                },
+                                50
+                            );
+
+                        }
+
                     }
-
-
-                    /*
-                     * Highlight the selected category.
-                     */
-
-                    categoryButtons.forEach(card => {
-                        card.classList.remove("active");
-                    });
-
-                    button.classList.add("active");
-
-
-                    /*
-                     * Use the existing business filtering
-                     * system directly.
-                     */
-
-                    if (
-                        window.LosOjaBusinesses &&
-                        typeof
-                            window.LosOjaBusinesses.filterByCategory
-                            === "function"
-                    ) {
-
-                        window.LosOjaBusinesses.filterByCategory(
-                            category
-                        );
-
-                    } else if (
-                        typeof window.filterBusinesses ===
-                        "function"
-                    ) {
-
-                        window.filterBusinesses(category);
-
-                    } else {
-
-                        /*
-                         * Businesses.js has not loaded yet.
-                         */
-
-                        console.error(
-                            "LosOja: Business filtering system is not available."
-                        );
-
-                        this.showToast(
-                            "Businesses are still loading. Please try again.",
-                            "info"
-                        );
-
-                        return;
-
-                    }
-
-
-                    /*
-                     * Update the search box for visual feedback.
-                     */
-
-                    const searchInput =
-                        document.getElementById(
-                            "searchInput"
-                        );
-
-                    if (searchInput) {
-                        searchInput.value = category;
-                    }
-
-
-                    /*
-                     * Clear location because category filtering
-                     * should not accidentally restrict results.
-                     */
-
-                    const locationInput =
-                        document.getElementById(
-                            "locationInput"
-                        );
-
-                    if (locationInput) {
-                        locationInput.value = "";
-                    }
-
-
-                    /*
-                     * Scroll to the business results.
-                     */
-
-                    const businessesSection =
-                        document.getElementById(
-                            "businesses"
-                        );
-
-                    if (businessesSection) {
-
-                        setTimeout(() => {
-
-                            businessesSection.scrollIntoView({
-                                behavior: "smooth",
-                                block: "start"
-                            });
-
-                        }, 50);
-
-                    }
-
-                });
+                );
 
             });
 
@@ -532,32 +595,39 @@
             mobilityButtons.forEach(button => {
 
                 if (
-                    button.dataset.losojaMobilityReady ===
+                    button.dataset
+                        .losojaMobilityReady ===
                     "true"
                 ) {
                     return;
                 }
 
-                button.dataset.losojaMobilityReady =
+                button.dataset
+                    .losojaMobilityReady =
                     "true";
 
 
-                button.addEventListener("click", () => {
+                button.addEventListener(
+                    "click",
+                    () => {
 
-                    const type =
-                        button.getAttribute(
-                            "data-mobility"
+                        const type =
+                            button.getAttribute(
+                                "data-mobility"
+                            );
+
+
+                        if (!type) {
+                            return;
+                        }
+
+
+                        this.openMobilityRequest(
+                            type
                         );
 
-
-                    if (!type) {
-                        return;
                     }
-
-
-                    this.openMobilityRequest(type);
-
-                });
+                );
 
             });
 
@@ -582,9 +652,12 @@
 
 
             modal =
-                document.createElement("div");
+                document.createElement(
+                    "div"
+                );
 
-            modal.className = "modal";
+            modal.className =
+                "modal-overlay hidden";
 
             modal.id =
                 "mobilityRequestModal";
@@ -699,12 +772,10 @@
             `;
 
 
-            document.body.appendChild(modal);
+            document.body.appendChild(
+                modal
+            );
 
-
-            /*
-             * Close button.
-             */
 
             const closeButton =
                 modal.querySelector(
@@ -717,852 +788,15 @@
                 closeButton.addEventListener(
                     "click",
                     () => {
-                        this.closeModal(modal);
-                    }
-                );
 
-            }
-
-
-            /*
-             * Close when clicking backdrop.
-             */
-
-            modal.addEventListener(
-                "click",
-                event => {
-
-                    if (event.target === modal) {
-                        this.closeModal(modal);
-                    }
-
-                }
-            );
-
-
-            /*
-             * Mobility form.
-             */
-
-            const form =
-                modal.querySelector(
-                    "#mobilityRequestForm"
-                );
-
-
-            if (form) {
-
-                form.addEventListener(
-                    "submit",
-                    event => {
-
-                        event.preventDefault();
-
-                        this.handleMobilityRequest();
-
-                    }
-                );
-
-            }
-
-
-            return modal;
-
-        },
-
-
-        /* =================================================
-           OPEN MOBILITY REQUEST
-        ================================================= */
-
-        openMobilityRequest(type) {
-
-            const validTypes = [
-                "trycircle",
-                "bike",
-                "cab",
-                "truck"
-            ];
-
-
-            if (!validTypes.includes(type)) {
-                return;
-            }
-
-
-            /*
-             * Truck will use the same request system.
-             * We no longer show "coming soon".
-             */
-
-            const modal =
-                this.createMobilityModal();
-
-
-            if (!modal) {
-                return;
-            }
-
-
-            const title =
-                modal.querySelector(
-                    "#mobilityRequestTitle"
-                );
-
-
-            const description =
-                modal.querySelector(
-                    "#mobilityRequestDescription"
-                );
-
-
-            const typeInput =
-                modal.querySelector(
-                    "#mobilityType"
-                );
-
-
-            const name =
-                this.getMobilityName(type);
-
-
-            if (title) {
-
-                title.textContent =
-                    `${name} Request`;
-
-            }
-
-
-            if (description) {
-
-                const descriptions = {
-
-                    trycircle:
-                        "Request a TryCircle ride by entering your pickup and destination.",
-
-                    bike:
-                        "Request a bike ride by entering your pickup and destination.",
-
-                    cab:
-                        "Request a cab by entering your pickup and destination.",
-
-                    truck:
-                        "Request a truck for moving, deliveries, or transporting goods."
-
-                };
-
-
-                description.textContent =
-                    descriptions[type] ||
-                    "Enter your trip details below.";
-
-            }
-
-
-            if (typeInput) {
-                typeInput.value = type;
-            }
-
-
-            /*
-             * Clear old form values.
-             */
-
-            const pickup =
-                modal.querySelector(
-                    "#mobilityPickup"
-                );
-
-            const destination =
-                modal.querySelector(
-                    "#mobilityDestination"
-                );
-
-            const phone =
-                modal.querySelector(
-                    "#mobilityPhone"
-                );
-
-            const note =
-                modal.querySelector(
-                    "#mobilityNote"
-                );
-
-
-            if (pickup) {
-                pickup.value = "";
-            }
-
-            if (destination) {
-                destination.value = "";
-            }
-
-            if (phone) {
-                phone.value = "";
-            }
-
-            if (note) {
-                note.value = "";
-            }
-
-
-            /*
-             * Clear old error.
-             */
-
-            const error =
-                modal.querySelector(
-                    "#mobilityRequestError"
-                );
-
-
-            if (error) {
-
-                error.textContent = "";
-
-                error.classList.add("hidden");
-
-            }
-
-
-            this.openModal(
-                "mobilityRequestModal"
-            );
-
-
-            /*
-             * Focus pickup field.
-             */
-
-            setTimeout(() => {
-
-                if (pickup) {
-                    pickup.focus();
-                }
-
-            }, 100);
-
-        },
-
-
-        /* =================================================
-           HANDLE MOBILITY REQUEST
-        ================================================= */
-
-        handleMobilityRequest() {
-
-            const modal =
-                document.getElementById(
-                    "mobilityRequestModal"
-                );
-
-
-            if (!modal) {
-                return;
-            }
-
-
-            const type =
-                document.getElementById(
-                    "mobilityType"
-                )?.value || "";
-
-
-            const pickup =
-                document.getElementById(
-                    "mobilityPickup"
-                )?.value.trim() || "";
-
-
-            const destination =
-                document.getElementById(
-                    "mobilityDestination"
-                )?.value.trim() || "";
-
-
-            const phone =
-                document.getElementById(
-                    "mobilityPhone"
-                )?.value.trim() || "";
-
-
-            const note =
-                document.getElementById(
-                    "mobilityNote"
-                )?.value.trim() || "";
-
-
-            /*
-             * Validation.
-             */
-
-            if (
-                !type ||
-                !pickup ||
-                !destination ||
-                !phone
-            ) {
-
-                this.showMobilityError(
-                    "Please fill in all required fields."
-                );
-
-                return;
-
-            }
-
-
-            /*
-             * Save request locally for now.
-             *
-             * This keeps the interface working while
-             * we build the real ride-request database.
-             */
-
-            try {
-
-                const storageKey =
-                    "losoja_mobility_test_requests";
-
-
-                let existing = [];
-
-
-                try {
-
-                    existing =
-                        JSON.parse(
-                            localStorage.getItem(
-                                storageKey
-                            )
-                        ) || [];
-
-                } catch (parseError) {
-
-                    existing = [];
-
-                }
-
-
-                existing.push({
-
-                    id:
-                        this.generateId(),
-
-                    type:
-                        type,
-
-                    pickup:
-                        pickup,
-
-                    destination:
-                        destination,
-
-                    phone:
-                        phone,
-
-                    note:
-                        note,
-
-                    status:
-                        "pending",
-
-                    created_at:
-                        new Date().toISOString()
-
-                });
-
-
-                localStorage.setItem(
-                    storageKey,
-                    JSON.stringify(existing)
-                );
-
-
-            } catch (storageError) {
-
-                console.error(
-                    "LosOja mobility storage error:",
-                    storageError
-                );
-
-            }
-
-
-            /*
-             * Reset form.
-             */
-
-            const form =
-                document.getElementById(
-                    "mobilityRequestForm"
-                );
-
-
-            if (form) {
-                form.reset();
-            }
-
-
-            /*
-             * Clear error.
-             */
-
-            const error =
-                document.getElementById(
-                    "mobilityRequestError"
-                );
-
-
-            if (error) {
-
-                error.textContent = "";
-
-                error.classList.add("hidden");
-
-            }
-
-
-            /*
-             * Close modal.
-             */
-
-            this.closeModal(modal);
-
-
-            /*
-             * Show confirmation.
-             */
-
-            this.showToast(
-                `${this.getMobilityName(type)} request submitted successfully.`,
-                "success"
-            );
-
-        },
-
-
-        /* =================================================
-           MOBILITY ERROR
-        ================================================= */
-
-        showMobilityError(message) {
-
-            const error =
-                document.getElementById(
-                    "mobilityRequestError"
-                );
-
-
-            if (!error) {
-                return;
-            }
-
-
-            error.textContent =
-                message;
-
-
-            error.classList.remove(
-                "hidden"
-            );
-
-        },
-
-
-        /* =================================================
-           MOBILITY NAME
-        ================================================= */
-
-        getMobilityName(type) {
-
-            const names = {
-
-                trycircle:
-                    "TryCircle",
-
-                bike:
-                    "Bike",
-
-                cab:
-                    "Cab",
-
-                truck:
-                    "Rent a Truck"
-
-            };
-
-
-            return (
-                names[type] ||
-                "Mobility"
-            );
-
-        },
-
-
-        /* =================================================
-           BACK-TO-TOP BUTTON
-        ================================================= */
-
-        createBackButton() {
-
-            /*
-             * Do not create duplicates.
-             */
-
-            if (
-                document.getElementById(
-                    "losojaBackButton"
-                )
-            ) {
-                return;
-            }
-
-
-            const button =
-                document.createElement(
-                    "button"
-                );
-
-
-            button.type =
-                "button";
-
-
-            button.id =
-                "losojaBackButton";
-
-
-            button.className =
-                "back-to-top";
-
-
-            button.setAttribute(
-                "aria-label",
-                "Back to top"
-            );
-
-
-            button.innerHTML =
-                "↑";
-
-
-            /*
-             * Basic inline positioning.
-             */
-
-            button.style.position =
-                "fixed";
-
-
-            button.style.right =
-                "20px";
-
-
-            button.style.bottom =
-                "20px";
-
-
-            button.style.zIndex =
-                "999";
-
-
-            document.body.appendChild(
-                button
-            );
-
-
-            button.addEventListener(
-                "click",
-                () => {
-
-                    window.scrollTo({
-
-                        top: 0,
-
-                        behavior: "smooth"
-
-                    });
-
-                }
-            );
-
-
-            const updateVisibility =
-                () => {
-
-                    if (window.scrollY > 400) {
-
-                        button.classList.add(
-                            "show"
+                        this.closeModal(
+                            modal
                         );
 
-                        button.style.display =
-                            "flex";
-
-                    } else {
-
-                        button.classList.remove(
-                            "show"
-                        );
-
-                        button.style.display =
-                            "none";
-
                     }
-
-                };
-
-
-            window.addEventListener(
-                "scroll",
-                updateVisibility,
-                {
-                    passive: true
-                }
-            );
-
-
-            updateVisibility();
-
-        },
-
-
-        /* =================================================
-           TOAST NOTIFICATION
-        ================================================= */
-
-        showToast(
-            message,
-            type = "info"
-        ) {
-
-            /*
-             * Use existing LosOja notification system
-             * when available.
-             */
-
-            if (
-                typeof window.showNotification ===
-                "function"
-            ) {
-
-                window.showNotification(
-                    message,
-                    type
                 );
 
-                return;
-
             }
 
 
-            /*
-             * Remove existing app toast.
-             */
-
-            const oldToast =
-                document.getElementById(
-                    "losojaAppToast"
-                );
-
-
-            if (oldToast) {
-                oldToast.remove();
-            }
-
-
-            const toast =
-                document.createElement(
-                    "div"
-                );
-
-
-            toast.id =
-                "losojaAppToast";
-
-
-            toast.textContent =
-                message;
-
-
-            toast.style.position =
-                "fixed";
-
-
-            toast.style.left =
-                "50%";
-
-
-            toast.style.bottom =
-                "30px";
-
-
-            toast.style.transform =
-                "translateX(-50%)";
-
-
-            toast.style.zIndex =
-                "10000";
-
-
-            toast.style.padding =
-                "14px 20px";
-
-
-            toast.style.borderRadius =
-                "8px";
-
-
-            toast.style.background =
-                type === "success"
-                    ? "#087a3e"
-                    : "#374151";
-
-
-            toast.style.color =
-                "#ffffff";
-
-
-            toast.style.fontWeight =
-                "600";
-
-
-            toast.style.boxShadow =
-                "0 8px 25px rgba(0,0,0,0.15)";
-
-
-            document.body.appendChild(
-                toast
-            );
-
-
-            setTimeout(() => {
-
-                if (toast) {
-                    toast.remove();
-                }
-
-            }, 3500);
-
-        },
-
-
-        /* =================================================
-           GENERATE ID
-        ================================================= */
-
-        generateId() {
-
-            return (
-                Date.now().toString(36) +
-                Math.random()
-                    .toString(36)
-                    .substring(2, 10)
-            );
-
-        },
-
-
-        /* =================================================
-           ESCAPE HTML
-        ================================================= */
-
-        escapeHtml(value) {
-
-            if (
-                value === null ||
-                value === undefined
-            ) {
-                return "";
-            }
-
-
-            return String(value)
-                .replace(
-                    /&/g,
-                    "&amp;"
-                )
-                .replace(
-                    /</g,
-                    "&lt;"
-                )
-                .replace(
-                    />/g,
-                    "&gt;"
-                )
-                .replace(
-                    /"/g,
-                    "&quot;"
-                )
-                .replace(
-                    /'/g,
-                    "&#039;"
-                );
-
-        },
-
-
-        /* =================================================
-           FORMAT DATE
-        ================================================= */
-
-        formatDate(dateValue) {
-
-            if (!dateValue) {
-                return "";
-            }
-
-
-            const date =
-                new Date(dateValue);
-
-
-            if (
-                Number.isNaN(
-                    date.getTime()
-                )
-            ) {
-                return "";
-            }
-
-
-            return date.toLocaleDateString(
-                "en-NG",
-                {
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric"
-                }
-            );
-
-        }
-
-    };
-
-
-    /* =====================================================
-       START APPLICATION
-    ===================================================== */
-
-    document.addEventListener(
-        "DOMContentLoaded",
-        () => {
-
-            App.init();
-
-        }
-    );
-
-
-    /* =====================================================
-       GLOBAL APP ACCESS
-    ===================================================== */
-
-    window.App =
-        App;
-
-
-})();
+            modal
