@@ -1,3 +1,4 @@
+```javascript
 /*
 =========================================================
 LosOja - Business Management
@@ -63,9 +64,37 @@ Handles:
 
         try {
 
-            return JSON.parse(
-                localStorage.getItem("losoja_supabase_session")
-            );
+            /*
+             * Prefer the central LosOja/Supabase
+             * session helper when available.
+             */
+
+            if (
+                typeof window.getSupabaseSession ===
+                "function"
+            ) {
+
+                const session =
+                    window.getSupabaseSession();
+
+                if (session) {
+                    return session;
+                }
+            }
+
+
+            const raw =
+                localStorage.getItem(
+                    "losoja_supabase_session"
+                );
+
+
+            if (!raw) {
+                return null;
+            }
+
+
+            return JSON.parse(raw);
 
         } catch (error) {
 
@@ -84,10 +113,11 @@ Handles:
         const session =
             getSession();
 
-        return session &&
-            session.access_token
-            ? session.access_token
-            : null;
+        return (
+            session?.access_token ||
+            session?.accessToken ||
+            null
+        );
     }
 
 
@@ -96,11 +126,10 @@ Handles:
         const session =
             getSession();
 
-        return session &&
-            session.user &&
-            session.user.id
-            ? session.user.id
-            : null;
+        return (
+            session?.user?.id ||
+            null
+        );
     }
 
 
@@ -136,41 +165,41 @@ Handles:
        HEADERS
     ===================================================== */
 
-   function getHeaders(
-    includeContentType = false
-) {
+    function getHeaders(
+        includeContentType = false
+    ) {
 
-    const token =
-        getAccessToken();
+        const token =
+            getAccessToken();
 
-    const headers = {
-        "apikey":
-            LOSOJA_BUSINESSES_KEY
-    };
+        const headers = {
 
-    /*
-    ---------------------------------------------------------
-    Only send Authorization when we actually have a
-    Supabase user access token.
+            "apikey":
+                LOSOJA_BUSINESSES_KEY
+        };
 
-    The sb_publishable_ key is an API key, NOT a JWT.
-    ---------------------------------------------------------
-    */
 
-    if (token) {
+        /*
+         * Only send Authorization when we have
+         * an actual Supabase access token.
+         */
 
-        headers["Authorization"] =
-            "Bearer " + token;
+        if (token) {
+
+            headers["Authorization"] =
+                "Bearer " + token;
+        }
+
+
+        if (includeContentType) {
+
+            headers["Content-Type"] =
+                "application/json";
+        }
+
+
+        return headers;
     }
-
-    if (includeContentType) {
-
-        headers["Content-Type"] =
-            "application/json";
-    }
-
-    return headers;
-}
 
 
     /* =====================================================
@@ -218,72 +247,91 @@ Handles:
        MODAL HELPERS
     ===================================================== */
 
-  function openModal(id) {
+    function openModal(id) {
 
-    const modal =
-        document.getElementById(id);
-
-    if (!modal) {
-        console.error(
-            "LosOja: Modal not found:",
-            id
-        );
-        return;
-    }
-
-    // IMPORTANT:
-    // Remove hidden so the modal can actually appear.
-    modal.classList.remove("hidden");
-
-    modal.classList.add("active");
-
-    modal.style.display =
-        "flex";
-
-    modal.style.visibility =
-        "visible";
-
-    modal.style.opacity =
-        "1";
-
-    document.body.classList.add(
-        "modal-open"
-    );
-}
+        const modal =
+            document.getElementById(id);
 
 
-function closeModal(id) {
+        if (!modal) {
 
-    const modal =
-        document.getElementById(id);
+            console.error(
+                "LosOja: Modal not found:",
+                id
+            );
 
-    if (!modal) return;
+            return;
+        }
 
-    modal.classList.remove("active");
 
-    modal.classList.add("hidden");
+        /*
+         * IMPORTANT:
+         * LosOja modals start with the "hidden" class.
+         * We MUST remove it before displaying the modal.
+         */
 
-    modal.style.display =
-        "none";
+        modal.classList.remove("hidden");
 
-    modal.style.visibility =
-        "hidden";
+        modal.classList.add("active");
 
-    modal.style.opacity =
-        "0";
 
-    const anyOpenModal =
-        document.querySelector(
-            ".modal-overlay.active"
-        );
+        modal.style.display =
+            "flex";
 
-    if (!anyOpenModal) {
+        modal.style.visibility =
+            "visible";
 
-        document.body.classList.remove(
+        modal.style.opacity =
+            "1";
+
+
+        document.body.classList.add(
             "modal-open"
         );
     }
-}
+
+
+    function closeModal(id) {
+
+        const modal =
+            document.getElementById(id);
+
+
+        if (!modal) {
+            return;
+        }
+
+
+        modal.classList.remove(
+            "active"
+        );
+
+        modal.classList.add(
+            "hidden"
+        );
+
+
+        modal.style.display =
+            "none";
+
+        modal.style.visibility =
+            "";
+
+        modal.style.opacity =
+            "";
+
+
+        if (
+            !document.querySelector(
+                ".modal-overlay.active"
+            )
+        ) {
+
+            document.body.classList.remove(
+                "modal-open"
+            );
+        }
+    }
 
 
     function closeAllBusinessModals() {
@@ -292,7 +340,9 @@ function closeModal(id) {
             "addBusinessModal",
             "businessDetailsModal",
             "editBusinessModal"
-        ].forEach(closeModal);
+        ].forEach(
+            closeModal
+        );
     }
 
 
@@ -309,6 +359,7 @@ function closeModal(id) {
 
             return "";
         }
+
 
         return String(value)
             .replace(
@@ -348,10 +399,15 @@ function closeModal(id) {
                 elementId
             );
 
-        if (!element) return;
+
+        if (!element) {
+            return;
+        }
+
 
         element.textContent =
             message || "";
+
 
         element.style.display =
             message
@@ -416,10 +472,15 @@ function closeModal(id) {
                 inputId
             );
 
-        if (!input || !input.files) {
+
+        if (
+            !input ||
+            !input.files
+        ) {
 
             return [];
         }
+
 
         return Array.from(
             input.files
@@ -445,13 +506,17 @@ function closeModal(id) {
         }
 
 
-        for (const file of files) {
+        for (
+            const file of files
+        ) {
 
             const result =
-                validateImageFile(file);
+                validateImageFile(
+                    file
+                );
+
 
             if (!result.valid) {
-
                 return result;
             }
         }
@@ -479,12 +544,19 @@ function closeModal(id) {
                 inputId
             );
 
+
         const preview =
             document.getElementById(
                 previewId
             );
 
-        if (!input || !preview) return;
+
+        if (
+            !input ||
+            !preview
+        ) {
+            return;
+        }
 
 
         const files =
@@ -504,9 +576,11 @@ function closeModal(id) {
                     emptyText
                 )}</span>`;
 
+
             preview.classList.add(
                 "hidden"
             );
+
 
             return;
         }
@@ -522,6 +596,7 @@ function closeModal(id) {
                 "div"
             );
 
+
         wrapper.className =
             "business-upload-preview-grid";
 
@@ -534,6 +609,7 @@ function closeModal(id) {
                         "div"
                     );
 
+
                 item.className =
                     "business-upload-preview-item";
 
@@ -542,6 +618,7 @@ function closeModal(id) {
                     document.createElement(
                         "img"
                     );
+
 
                 image.alt =
                     `Business photo ${index + 1}`;
@@ -552,8 +629,10 @@ function closeModal(id) {
                         "span"
                     );
 
+
                 badge.className =
                     "business-upload-preview-badge";
+
 
                 badge.textContent =
                     index === 0
@@ -623,6 +702,7 @@ function closeModal(id) {
         const userId =
             getCurrentUserId();
 
+
         if (!userId) {
 
             throw new Error(
@@ -638,11 +718,11 @@ function closeModal(id) {
                     .pop() ||
                 "jpg"
             )
-            .toLowerCase()
-            .replace(
-                /[^a-z0-9]/g,
-                ""
-            );
+                .toLowerCase()
+                .replace(
+                    /[^a-z0-9]/g,
+                    ""
+                );
 
 
         const uniqueName =
@@ -662,6 +742,7 @@ function closeModal(id) {
                     method: "POST",
 
                     headers: {
+
                         ...getHeaders(),
 
                         "Content-Type":
@@ -682,10 +763,12 @@ function closeModal(id) {
             let errorText =
                 "Image upload failed.";
 
+
             try {
 
                 const errorData =
                     await response.json();
+
 
                 errorText =
                     errorData.message ||
@@ -719,7 +802,6 @@ function closeModal(id) {
     ) {
 
         if (!businessId) {
-
             return [];
         }
 
@@ -734,46 +816,70 @@ function closeModal(id) {
             `&order=sort_order.asc,created_at.asc`;
 
 
-        const response =
-            await fetch(
-                url,
-                {
-                    method: "GET",
+        try {
 
-                    headers:
-                        getHeaders()
-                }
-            );
+            const response =
+                await fetch(
+                    url,
+                    {
+                        method: "GET",
+
+                        headers:
+                            getHeaders()
+                    }
+                );
 
 
-        if (!response.ok) {
+            if (!response.ok) {
 
-            let message =
-                "Could not load business photos.";
+                let message =
+                    "Could not load business photos.";
 
-            try {
 
-                const error =
-                    await response.json();
+                try {
 
-                message =
-                    error.message ||
-                    error.error ||
-                    message;
+                    const error =
+                        await response.json();
 
-            } catch (_) {}
 
+                    message =
+                        error.message ||
+                        error.error ||
+                        message;
+
+                } catch (_) {}
+
+
+                console.error(
+                    "Business gallery error:",
+                    message
+                );
+
+
+                return [];
+            }
+
+
+            const data =
+                await response.json();
+
+
+            return Array.isArray(
+                data
+            )
+                ? data
+                : [];
+
+        } catch (error) {
 
             console.error(
-                "Business gallery error:",
-                message
+                "Business gallery request error:",
+                error
             );
+
 
             return [];
         }
-
-
-        return await response.json();
     }
 
 
@@ -798,6 +904,7 @@ function closeModal(id) {
         const rows =
             imageUrls.map(
                 (url, index) => ({
+
                     business_id:
                         businessId,
 
@@ -821,6 +928,7 @@ function closeModal(id) {
                     method: "POST",
 
                     headers: {
+
                         ...getHeaders(true),
 
                         "Prefer":
@@ -840,10 +948,12 @@ function closeModal(id) {
             let message =
                 "Additional photos could not be saved.";
 
+
             try {
 
                 const error =
                     await response.json();
+
 
                 message =
                     error.message ||
@@ -864,12 +974,16 @@ function closeModal(id) {
        LOAD BUSINESSES
     ===================================================== */
 
-    async function loadBusinesses() {    await ensureSession();
+    async function loadBusinesses() {
+
+        await ensureSession();
+
 
         const grid =
             document.getElementById(
                 "businessGrid"
             );
+
 
         const noResults =
             document.getElementById(
@@ -877,7 +991,9 @@ function closeModal(id) {
             );
 
 
-        if (!grid) return;
+        if (!grid) {
+            return;
+        }
 
 
         grid.innerHTML = `
@@ -906,6 +1022,7 @@ function closeModal(id) {
                 const text =
                     await response.text();
 
+
                 throw new Error(
                     text ||
                     "Could not load businesses."
@@ -918,11 +1035,15 @@ function closeModal(id) {
 
 
             window.losojaBusinesses =
-                businesses;
+                Array.isArray(
+                    businesses
+                )
+                    ? businesses
+                    : [];
 
 
             renderBusinesses(
-                businesses
+                window.losojaBusinesses
             );
 
 
@@ -966,7 +1087,7 @@ function closeModal(id) {
         ) {
 
             return `
-                <div class="business-image ${extraClass}">
+                <div class="business-image ${escapeHTML(extraClass)}">
                     <img
                         src="${escapeHTML(
                             business.image_url
@@ -983,7 +1104,7 @@ function closeModal(id) {
 
 
         return `
-            <div class="business-image ${extraClass}">
+            <div class="business-image ${escapeHTML(extraClass)}">
                 <span aria-hidden="true">
                     🏪
                 </span>
@@ -1099,13 +1220,16 @@ function closeModal(id) {
                 "businessGrid"
             );
 
+
         const noResults =
             document.getElementById(
                 "noResults"
             );
 
 
-        if (!grid) return;
+        if (!grid) {
+            return;
+        }
 
 
         if (
@@ -1116,11 +1240,13 @@ function closeModal(id) {
             grid.innerHTML =
                 "";
 
+
             if (noResults) {
 
                 noResults.style.display =
                     "block";
             }
+
 
             return;
         }
@@ -1135,7 +1261,9 @@ function closeModal(id) {
 
         grid.innerHTML =
             businesses
-                .map(businessCard)
+                .map(
+                    businessCard
+                )
                 .join("");
 
 
@@ -1143,19 +1271,22 @@ function closeModal(id) {
             .querySelectorAll(
                 ".business-view-btn"
             )
-            .forEach(button => {
+            .forEach(
+                button => {
 
-                button.addEventListener(
-                    "click",
-                    function () {
+                    button.addEventListener(
+                        "click",
+                        function () {
 
-                        const id =
-                            this.dataset.businessId;
+                            const id =
+                                this.dataset.businessId;
 
-                        openBusiness(id);
-                    }
-                );
-            });
+
+                            openBusiness(id);
+                        }
+                    );
+                }
+            );
     }
 
 
@@ -1187,6 +1318,7 @@ function closeModal(id) {
                 "error"
             );
 
+
             return;
         }
 
@@ -1203,6 +1335,7 @@ function closeModal(id) {
                 "businessDetailsContent was not found."
             );
 
+
             return;
         }
 
@@ -1212,29 +1345,48 @@ function closeModal(id) {
 
 
         const isOwner =
-            currentUserId &&
-            business.user_id &&
-            String(currentUserId) ===
-            String(business.user_id);
+            Boolean(
+                currentUserId &&
+                business.user_id &&
+                String(currentUserId) ===
+                String(business.user_id)
+            );
 
+
+        /*
+         * IMPORTANT:
+         *
+         * reviews.js searches for an element with
+         * id="businessDetails".
+         *
+         * Therefore the generated business details
+         * wrapper now has that exact ID.
+         */
 
         container.innerHTML = `
 
-            <div class="business-details">
+            <div
+                id="businessDetails"
+                class="business-details"
+            >
 
                 ${businessImageHTML(
                     business,
                     "business-details-main-image"
                 )}
 
+
                 <div
                     id="businessDetailsGallery"
                     class="business-details-gallery"
                 >
+
                     <div class="loading-message">
                         Loading photos...
                     </div>
+
                 </div>
+
 
                 <div class="business-details-content">
 
@@ -1245,12 +1397,14 @@ function closeModal(id) {
                         )}
                     </span>
 
+
                     <h2>
                         ${escapeHTML(
                             business.name ||
                             "Unnamed Business"
                         )}
                     </h2>
+
 
                     <p>
                         <strong>Location:</strong>
@@ -1259,6 +1413,7 @@ function closeModal(id) {
                             "Not provided"
                         )}
                     </p>
+
 
                     ${
                         business.phone
@@ -1273,20 +1428,27 @@ function closeModal(id) {
                             : ""
                     }
 
+
                     ${
                         business.description
                             ? `
                                 <div class="business-details-description">
-                                    <h3>About this business</h3>
+
+                                    <h3>
+                                        About this business
+                                    </h3>
+
                                     <p>
                                         ${escapeHTML(
                                             business.description
                                         )}
                                     </p>
+
                                 </div>
                             `
                             : ""
                     }
+
 
                     <div class="business-details-actions">
 
@@ -1305,6 +1467,7 @@ function closeModal(id) {
                                 : ""
                         }
 
+
                         ${
                             business.phone
                                 ? `
@@ -1322,6 +1485,7 @@ function closeModal(id) {
                                 : ""
                         }
 
+
                         ${
                             isOwner
                                 ? `
@@ -1332,6 +1496,7 @@ function closeModal(id) {
                                     >
                                         Edit Business
                                     </button>
+
 
                                     <button
                                         type="button"
@@ -1346,13 +1511,19 @@ function closeModal(id) {
 
                     </div>
 
+
+                    /*
+                     * This container remains available for
+                     * compatibility with existing CSS/HTML.
+                     *
+                     * reviews.js creates its own reviewsSection
+                     * inside #businessDetails.
+                     */
+
                     <div
                         id="businessReviewsContainer"
                         class="business-reviews-section"
                     >
-                        <div class="loading-message">
-                            Loading reviews...
-                        </div>
                     </div>
 
                 </div>
@@ -1361,12 +1532,17 @@ function closeModal(id) {
         `;
 
 
+        /* =================================================
+           OWNER BUTTONS
+        ================================================= */
+
         if (isOwner) {
 
             const editButton =
                 document.getElementById(
                     "businessEditBtn"
                 );
+
 
             const deleteButton =
                 document.getElementById(
@@ -1383,6 +1559,7 @@ function closeModal(id) {
                         closeModal(
                             "businessDetailsModal"
                         );
+
 
                         openEditBusiness(
                             business
@@ -1407,17 +1584,51 @@ function closeModal(id) {
         }
 
 
+        /* =================================================
+           OPEN DETAILS MODAL
+        ================================================= */
+
         openModal(
             "businessDetailsModal"
         );
 
+
+        /* =================================================
+           LOAD GALLERY
+        ================================================= */
 
         loadBusinessGalleryIntoDetails(
             business
         );
 
 
+        /* =================================================
+           LOAD REVIEWS
+        ================================================= */
+
+        /*
+         * Your current reviews.js exposes:
+         *
+         * window.Reviews
+         *
+         * and its function is:
+         *
+         * Reviews.renderForBusiness(businessId)
+         *
+         * It also expects #businessDetails to exist.
+         */
+
         if (
+            window.Reviews &&
+            typeof window.Reviews.renderForBusiness ===
+            "function"
+        ) {
+
+            window.Reviews.renderForBusiness(
+                business.id
+            );
+
+        } else if (
             typeof window.renderBusinessReviews ===
             "function"
         ) {
@@ -1435,6 +1646,12 @@ function closeModal(id) {
             window.renderReviews(
                 business.id,
                 "businessReviewsContainer"
+            );
+
+        } else {
+
+            console.warn(
+                "LosOja: Reviews system is not available yet."
             );
         }
     }
@@ -1454,7 +1671,9 @@ function closeModal(id) {
             );
 
 
-        if (!container) return;
+        if (!container) {
+            return;
+        }
 
 
         const gallery =
@@ -1471,6 +1690,7 @@ function closeModal(id) {
         ) {
 
             images.push({
+
                 image_url:
                     business.image_url,
 
@@ -1503,6 +1723,7 @@ function closeModal(id) {
             container.innerHTML =
                 "";
 
+
             return;
         }
 
@@ -1526,6 +1747,7 @@ function closeModal(id) {
                 <div
                     class="losoja-gallery-main"
                 >
+
                     <img
                         src="${escapeHTML(
                             images[0].image_url
@@ -1536,7 +1758,9 @@ function closeModal(id) {
                         )}"
                         id="${galleryId}-main"
                     >
+
                 </div>
+
 
                 ${
                     images.length > 1
@@ -1551,6 +1775,7 @@ function closeModal(id) {
                                             image,
                                             index
                                         ) => `
+
                                             <button
                                                 type="button"
                                                 class="losoja-gallery-thumbnail ${
@@ -1565,6 +1790,7 @@ function closeModal(id) {
                                                     index + 1
                                                 }"
                                             >
+
                                                 <img
                                                     src="${escapeHTML(
                                                         image.image_url
@@ -1574,7 +1800,9 @@ function closeModal(id) {
                                                     }"
                                                     loading="lazy"
                                                 >
+
                                             </button>
+
                                         `
                                     )
                                     .join("")}
@@ -1605,9 +1833,9 @@ function closeModal(id) {
                         "click",
                         function () {
 
-                            if (
-                                !mainImage
-                            ) return;
+                            if (!mainImage) {
+                                return;
+                            }
 
 
                             mainImage.src =
@@ -1644,7 +1872,9 @@ function closeModal(id) {
         phone
     ) {
 
-        if (!phone) return "";
+        if (!phone) {
+            return "";
+        }
 
 
         let number =
@@ -1724,6 +1954,7 @@ function closeModal(id) {
                 );
             }
 
+
             return;
         }
 
@@ -1743,25 +1974,18 @@ function closeModal(id) {
                 "LosOja: addBusinessModal was not found."
             );
 
+
             return;
         }
 
 
-        modal.classList.add(
-            "active"
-        );
+        /*
+         * Use the same modal helper as View/Edit.
+         * This fixes the hidden class problem here too.
+         */
 
-        modal.style.display =
-            "flex";
-
-        modal.style.visibility =
-            "visible";
-
-        modal.style.opacity =
-            "1";
-
-        document.body.classList.add(
-            "modal-open"
+        openModal(
+            "addBusinessModal"
         );
     }
 
@@ -1775,7 +1999,6 @@ function closeModal(id) {
 
 
         if (form) {
-
             form.reset();
         }
 
@@ -1797,6 +2020,7 @@ function closeModal(id) {
             preview.innerHTML =
                 "<span>No photos selected.</span>";
 
+
             preview.classList.add(
                 "hidden"
             );
@@ -1813,7 +2037,6 @@ function closeModal(id) {
     ) {
 
         if (event) {
-
             event.preventDefault();
         }
 
@@ -1837,6 +2060,7 @@ function closeModal(id) {
                 "addBusinessError",
                 "Please log in before adding a business."
             );
+
 
             return;
         }
@@ -1909,6 +2133,7 @@ function closeModal(id) {
                 "Please enter a business name."
             );
 
+
             return;
         }
 
@@ -1920,6 +2145,7 @@ function closeModal(id) {
                 "Please select a business category."
             );
 
+
             return;
         }
 
@@ -1930,6 +2156,7 @@ function closeModal(id) {
                 "addBusinessError",
                 "Please enter the business location."
             );
+
 
             return;
         }
@@ -1949,6 +2176,7 @@ function closeModal(id) {
                 imageValidation.message
             );
 
+
             return;
         }
 
@@ -1964,8 +2192,10 @@ function closeModal(id) {
             submitButton.disabled =
                 true;
 
+
             submitButton.dataset.originalText =
                 submitButton.textContent;
+
 
             submitButton.textContent =
                 "Saving...";
@@ -1990,6 +2220,7 @@ function closeModal(id) {
                     await uploadBusinessImage(
                         file
                     );
+
 
                 uploadedUrls.push(
                     url
@@ -2036,6 +2267,7 @@ function closeModal(id) {
                         method: "POST",
 
                         headers: {
+
                             ...getHeaders(true),
 
                             "Prefer":
@@ -2055,10 +2287,12 @@ function closeModal(id) {
                 let message =
                     "Business could not be saved.";
 
+
                 try {
 
                     const error =
                         await response.json();
+
 
                     message =
                         error.message ||
@@ -2115,6 +2349,7 @@ function closeModal(id) {
                         "Additional business photos error:",
                         galleryError
                     );
+
 
                     galleryWarning =
                         true;
@@ -2184,6 +2419,7 @@ function closeModal(id) {
                 submitButton.disabled =
                     false;
 
+
                 submitButton.textContent =
                     submitButton.dataset.originalText ||
                     "Save Business";
@@ -2200,7 +2436,9 @@ function closeModal(id) {
         business
     ) {
 
-        if (!business) return;
+        if (!business) {
+            return;
+        }
 
 
         const currentUserId =
@@ -2218,43 +2456,92 @@ function closeModal(id) {
                 "error"
             );
 
+
             return;
         }
 
 
-        document.getElementById(
-            "editBusinessId"
-        ).value =
+        const editId =
+            document.getElementById(
+                "editBusinessId"
+            );
+
+
+        const editName =
+            document.getElementById(
+                "editBusinessName"
+            );
+
+
+        const editCategory =
+            document.getElementById(
+                "editBusinessCategory"
+            );
+
+
+        const editLocation =
+            document.getElementById(
+                "editBusinessLocation"
+            );
+
+
+        const editPhone =
+            document.getElementById(
+                "editBusinessPhone"
+            );
+
+
+        const editDescription =
+            document.getElementById(
+                "editBusinessDescription"
+            );
+
+
+        if (
+            !editId ||
+            !editName ||
+            !editCategory ||
+            !editLocation ||
+            !editPhone ||
+            !editDescription
+        ) {
+
+            console.error(
+                "LosOja: One or more edit business fields are missing."
+            );
+
+
+            showBusinessNotification(
+                "The edit business form could not be opened.",
+                "error"
+            );
+
+
+            return;
+        }
+
+
+        editId.value =
             business.id || "";
 
 
-        document.getElementById(
-            "editBusinessName"
-        ).value =
+        editName.value =
             business.name || "";
 
 
-        document.getElementById(
-            "editBusinessCategory"
-        ).value =
+        editCategory.value =
             business.category || "";
 
 
-        document.getElementById(
-            "editBusinessLocation"
-        ).value =
+        editLocation.value =
             business.location || "";
 
 
-        document.getElementById(
-            "editBusinessPhone"
-        ).value =
+        editPhone.value =
             business.phone || "";
 
 
-        document.getElementById(
-            "editBusinessDescription"
-        ).value =
+        editDescription.value =
             business.description || "";
 
 
@@ -2274,6 +2561,7 @@ function closeModal(id) {
 
             preview.innerHTML =
                 "<span>No new photos selected.</span>";
+
 
             preview.classList.add(
                 "hidden"
@@ -2319,7 +2607,9 @@ function closeModal(id) {
             );
 
 
-        if (!container) return;
+        if (!container) {
+            return;
+        }
 
 
         const gallery =
@@ -2334,6 +2624,7 @@ function closeModal(id) {
         if (business.image_url) {
 
             images.push({
+
                 image_url:
                     business.image_url,
 
@@ -2356,6 +2647,7 @@ function closeModal(id) {
                 ) {
 
                     images.push({
+
                         ...image,
 
                         is_main:
@@ -2375,6 +2667,7 @@ function closeModal(id) {
                     </p>
                 `;
 
+
             return;
         }
 
@@ -2386,6 +2679,7 @@ function closeModal(id) {
                 <p class="form-help">
                     Existing photos:
                 </p>
+
 
                 <div
                     class="business-edit-gallery-grid"
@@ -2411,6 +2705,7 @@ function closeModal(id) {
                                         }"
                                         loading="lazy"
                                     >
+
 
                                     <span>
                                         ${
@@ -2444,7 +2739,6 @@ function closeModal(id) {
     ) {
 
         if (event) {
-
             event.preventDefault();
         }
 
@@ -2469,6 +2763,7 @@ function closeModal(id) {
                 "Please log in before editing your business."
             );
 
+
             return;
         }
 
@@ -2488,6 +2783,7 @@ function closeModal(id) {
                 "editBusinessError",
                 "Business ID is missing."
             );
+
 
             return;
         }
@@ -2560,6 +2856,7 @@ function closeModal(id) {
                 "Please enter a business name."
             );
 
+
             return;
         }
 
@@ -2571,6 +2868,7 @@ function closeModal(id) {
                 "Please select a business category."
             );
 
+
             return;
         }
 
@@ -2581,6 +2879,7 @@ function closeModal(id) {
                 "editBusinessError",
                 "Please enter the business location."
             );
+
 
             return;
         }
@@ -2600,6 +2899,7 @@ function closeModal(id) {
                 imageValidation.message
             );
 
+
             return;
         }
 
@@ -2615,8 +2915,10 @@ function closeModal(id) {
             submitButton.disabled =
                 true;
 
+
             submitButton.dataset.originalText =
                 submitButton.textContent;
+
 
             submitButton.textContent =
                 "Saving...";
@@ -2721,14 +3023,14 @@ function closeModal(id) {
             };
 
 
-            /*
-             * If an old business has no main image,
-             * the first new image becomes its main image.
-             */
-
             let filesToUpload =
                 files.slice();
 
+
+            /*
+             * If an old business has no main image,
+             * the first new image becomes the main image.
+             */
 
             if (
                 !existingBusiness.image_url &&
@@ -2759,6 +3061,7 @@ function closeModal(id) {
                         method: "PATCH",
 
                         headers: {
+
                             ...getHeaders(true),
 
                             "Prefer":
@@ -2778,10 +3081,12 @@ function closeModal(id) {
                 let message =
                     "Business could not be updated.";
 
+
                 try {
 
                     const error =
                         await response.json();
+
 
                     message =
                         error.message ||
@@ -2813,6 +3118,7 @@ function closeModal(id) {
                     await uploadBusinessImage(
                         file
                     );
+
 
                 uploadedAdditionalUrls.push(
                     url
@@ -2866,6 +3172,7 @@ function closeModal(id) {
                         galleryError
                     );
 
+
                     galleryWarning =
                         true;
                 }
@@ -2910,13 +3217,13 @@ function closeModal(id) {
                 "Business could not be updated. Please try again."
             );
 
-
         } finally {
 
             if (submitButton) {
 
                 submitButton.disabled =
                     false;
+
 
                 submitButton.textContent =
                     submitButton.dataset.originalText ||
@@ -2934,7 +3241,9 @@ function closeModal(id) {
         businessId
     ) {
 
-        if (!businessId) return;
+        if (!businessId) {
+            return;
+        }
 
 
         const confirmed =
@@ -2943,7 +3252,9 @@ function closeModal(id) {
             );
 
 
-        if (!confirmed) return;
+        if (!confirmed) {
+            return;
+        }
 
 
         await ensureSession();
@@ -2959,6 +3270,7 @@ function closeModal(id) {
                 "Please log in first.",
                 "error"
             );
+
 
             return;
         }
@@ -2987,10 +3299,12 @@ function closeModal(id) {
                 let message =
                     "Business could not be deleted.";
 
+
                 try {
 
                     const error =
                         await response.json();
+
 
                     message =
                         error.message ||
@@ -3005,13 +3319,6 @@ function closeModal(id) {
                 );
             }
 
-
-            /*
-             * business_images rows are automatically
-             * removed by the database because the
-             * business_images.business_id foreign key
-             * uses ON DELETE CASCADE.
-             */
 
             closeAllBusinessModals();
 
@@ -3060,16 +3367,16 @@ function closeModal(id) {
             String(
                 searchTerm || ""
             )
-            .trim()
-            .toLowerCase();
+                .trim()
+                .toLowerCase();
 
 
         const location =
             String(
                 locationTerm || ""
             )
-            .trim()
-            .toLowerCase();
+                .trim()
+                .toLowerCase();
 
 
         const filtered =
@@ -3084,9 +3391,9 @@ function closeModal(id) {
                             business.description,
                             business.phone
                         ]
-                        .filter(Boolean)
-                        .join(" ")
-                        .toLowerCase();
+                            .filter(Boolean)
+                            .join(" ")
+                            .toLowerCase();
 
 
                     const locationText =
@@ -3094,7 +3401,7 @@ function closeModal(id) {
                             business.location ||
                             ""
                         )
-                        .toLowerCase();
+                            .toLowerCase();
 
 
                     const matchesSearch =
@@ -3158,6 +3465,7 @@ function closeModal(id) {
                 businesses
             );
 
+
             return;
         }
 
@@ -3166,8 +3474,8 @@ function closeModal(id) {
             String(
                 category
             )
-            .trim()
-            .toLowerCase();
+                .trim()
+                .toLowerCase();
 
 
         const filtered =
@@ -3177,8 +3485,8 @@ function closeModal(id) {
                         business.category ||
                         ""
                     )
-                    .trim()
-                    .toLowerCase() ===
+                        .trim()
+                        .toLowerCase() ===
                     normalizedCategory
             );
 
@@ -3223,7 +3531,9 @@ function closeModal(id) {
                     );
 
 
-                if (!button) return;
+                if (!button) {
+                    return;
+                }
 
 
                 event.preventDefault();
@@ -3303,12 +3613,11 @@ function closeModal(id) {
                         );
 
 
-                    if (
-                        !validation.valid
-                    ) {
+                    if (!validation.valid) {
 
                         this.value =
                             "";
+
 
                         setError(
                             "addBusinessError",
@@ -3372,12 +3681,11 @@ function closeModal(id) {
                         );
 
 
-                    if (
-                        !validation.valid
-                    ) {
+                    if (!validation.valid) {
 
                         this.value =
                             "";
+
 
                         setError(
                             "editBusinessError",
@@ -3464,6 +3772,7 @@ function closeModal(id) {
                                 this.value =
                                     "";
 
+
                                 setError(
                                     "editBusinessError",
                                     `This business already has ${currentCount} photo(s). You can add only ${available} more.`
@@ -3543,12 +3852,9 @@ function closeModal(id) {
                                 modal
                             ) {
 
-                                modal.classList.remove(
-                                    "active"
+                                closeModal(
+                                    modal.id
                                 );
-
-                                modal.style.display =
-                                    "none";
                             }
                         }
                     );
@@ -3692,27 +3998,33 @@ function closeModal(id) {
 
 
     /*
-     * Keep these global names available because other
-     * LosOja files may already use them.
+     * Keep these global names available because
+     * other LosOja files may already use them.
      */
 
     window.loadBusinesses =
         loadBusinesses;
 
+
     window.openBusiness =
         openBusiness;
+
 
     window.openAddBusiness =
         openAddBusiness;
 
+
     window.openEditBusiness =
         openEditBusiness;
+
 
     window.deleteBusiness =
         deleteBusiness;
 
+
     window.searchBusinesses =
         searchBusinesses;
+
 
     window.filterBusinessesByCategory =
         filterBusinessesByCategory;
@@ -3738,3 +4050,4 @@ function closeModal(id) {
     }
 
 })();
+```
