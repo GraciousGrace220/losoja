@@ -1008,68 +1008,59 @@ Handles:
        MODALS
     ===================================================== */
 
-    function openLogin() {
+  function openLogin() {
+    const modal = document.getElementById("loginModal");
 
-        if (window.App) {
-
-            App.closeAllModals();
-
-            App.openModal(
-                "loginModal"
-            );
-
-        } else {
-
-            const modal =
-                document.getElementById(
-                    "loginModal"
-                );
-
-
-            if (modal) {
-
-                modal.classList.add(
-                    "active"
-                );
-
-                modal.classList.add(
-                    "open"
-                );
-            }
-        }
+    if (!modal) {
+        console.error("LosOja: loginModal not found.");
+        return;
     }
+
+    // Make sure the modal is actually visible
+    modal.classList.remove("hidden");
+    modal.classList.add("active");
+    modal.style.display = "flex";
+
+    document.body.classList.add("modal-open");
+
+    const emailInput = document.getElementById("loginEmail");
+
+    if (emailInput) {
+        setTimeout(() => emailInput.focus(), 50);
+    }
+}
 
 
     function openSignup() {
+    const modal = document.getElementById("signupModal");
 
-        if (window.App) {
-
-            App.closeAllModals();
-
-            App.openModal(
-                "signupModal"
-            );
-
-        } else {
-
-            const modal =
-                document.getElementById(
-                    "signupModal"
-                );
-
-
-            if (modal) {
-
-                modal.classList.add(
-                    "active"
-                );
-
-                modal.classList.add(
-                    "open"
-                );
-            }
-        }
+    if (!modal) {
+        console.error("LosOja: signupModal not found.");
+        return;
     }
+
+    // Close login first
+    const loginModal = document.getElementById("loginModal");
+
+    if (loginModal) {
+        loginModal.classList.remove("active");
+        loginModal.classList.add("hidden");
+        loginModal.style.display = "none";
+    }
+
+    // Show signup
+    modal.classList.remove("hidden");
+    modal.classList.add("active");
+    modal.style.display = "flex";
+
+    document.body.classList.add("modal-open");
+
+    const nameInput = document.getElementById("signupName");
+
+    if (nameInput) {
+        setTimeout(() => nameInput.focus(), 50);
+    }
+}
 
 
     /* =====================================================
