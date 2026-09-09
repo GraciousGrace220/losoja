@@ -218,48 +218,72 @@ Handles:
        MODAL HELPERS
     ===================================================== */
 
-    function openModal(id) {
+  function openModal(id) {
 
-        const modal =
-            document.getElementById(id);
+    const modal =
+        document.getElementById(id);
 
-        if (!modal) return;
+    if (!modal) {
+        console.error(
+            "LosOja: Modal not found:",
+            id
+        );
+        return;
+    }
 
-        modal.classList.add("active");
+    // IMPORTANT:
+    // Remove hidden so the modal can actually appear.
+    modal.classList.remove("hidden");
 
-        modal.style.display =
-            "flex";
+    modal.classList.add("active");
 
-        document.body.classList.add(
+    modal.style.display =
+        "flex";
+
+    modal.style.visibility =
+        "visible";
+
+    modal.style.opacity =
+        "1";
+
+    document.body.classList.add(
+        "modal-open"
+    );
+}
+
+
+function closeModal(id) {
+
+    const modal =
+        document.getElementById(id);
+
+    if (!modal) return;
+
+    modal.classList.remove("active");
+
+    modal.classList.add("hidden");
+
+    modal.style.display =
+        "none";
+
+    modal.style.visibility =
+        "hidden";
+
+    modal.style.opacity =
+        "0";
+
+    const anyOpenModal =
+        document.querySelector(
+            ".modal-overlay.active"
+        );
+
+    if (!anyOpenModal) {
+
+        document.body.classList.remove(
             "modal-open"
         );
     }
-
-
-    function closeModal(id) {
-
-        const modal =
-            document.getElementById(id);
-
-        if (!modal) return;
-
-        modal.classList.remove("active");
-
-        modal.style.display =
-            "none";
-
-        const anyOpenModal =
-            document.querySelector(
-                ".modal-overlay.active"
-            );
-
-        if (!anyOpenModal) {
-
-            document.body.classList.remove(
-                "modal-open"
-            );
-        }
-    }
+}
 
 
     function closeAllBusinessModals() {
