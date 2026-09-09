@@ -122,13 +122,19 @@
         ================================================= */
 
         openModal(modalId) {
+    const modal = document.getElementById(modalId);
 
-            const modal =
-                document.getElementById(modalId);
+    if (!modal) {
+        console.error("LosOja: Modal not found:", modalId);
+        return;
+    }
 
-            if (!modal) {
-                return;
-            }
+    modal.classList.remove("hidden");
+    modal.classList.add("active");
+    modal.style.display = "flex";
+
+    document.body.classList.add("modal-open");
+},
 
             modal.classList.add("active");
 
@@ -137,19 +143,17 @@
         },
 
 
-        closeModal(modal) {
+       closeModal(modal) {
+    if (!modal) return;
 
-            if (!modal) {
-                return;
-            }
+    modal.classList.remove("active");
+    modal.classList.add("hidden");
+    modal.style.display = "none";
 
-            modal.classList.remove("active");
-
-            if (!document.querySelector(".modal.active")) {
-                document.body.classList.remove("modal-open");
-            }
-
-        },
+    if (!document.querySelector(".modal.active")) {
+        document.body.classList.remove("modal-open");
+    }
+},
 
 
         closeAllModals() {
