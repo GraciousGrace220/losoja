@@ -1170,7 +1170,205 @@ Handles:
         }
 
     }
+    /* =====================================================
+       SESSION REFRESH
+    ===================================================== */
 
+    let refreshPromise = null;
+
+
+    async function refreshSupabaseSession() {
+
+        const session =
+            getSession();
+
+        if (!session) {
+            return null;
+        }
+
+        const refreshToken =
+            session.refresh_token ||
+            session.refreshToken ||
+            null;
+
+        if (!refreshToken) {
+            console.warn(
+                "LosOja: No refresh token available."
+            );
+
+            return session;
+        }
+
+
+        /*
+         * Prevent multiple parts of the website
+         * from refreshing the session at the same time.
+         */
+
+        if (refreshPromise) {
+            return refreshPromise;
+        }
+
+
+        refreshPromise =
+            (async function () {
+
+                try {
+
+                    const response =
+                        await fetch(
+                            SUPABASE_URL +
+                            "/auth/v1/token?grant_type=refresh_token",
+                            {
+                                method: "POST",
+
+                                headers:
+                                    getHeaders(),
+
+                                body:
+                                    JSON.stringify({
+                                        refresh_token:
+                                            refreshToken
+                                    })
+                            }
+                        );
+
+
+                    let data = null;
+
+                    try {
+                        data =
+                            await response.json();
+                    } catch (_) {
+                        data = null;
+                    }
+
+
+                    if (!response.ok) {
+
+                        console.warn(
+                            "LosOja: Session refresh failed:",
+                            data
+                        );
+
+                        /*
+                         * Do not immediately destroy the session
+                         * because a temporary network problem should
+                         * not log the user out.
+                         */
+
+                        return null;
+                    }
+
+
+                    if (
+                        !data ||
+                        !data.access_token ||
+                        !data.user
+                    ) {
+
+                        console.warn(
+                            "LosOja: Refresh response did not contain a valid session."
+                        );
+
+                        return null;
+                    }
+
+
+                    saveSession(data);
+
+                    updateAuthUI();
+
+
+                    console.log(
+                        "LosOja: Supabase session refreshed successfully."
+                    );
+
+
+                    return data;
+
+
+                } catch (error) {
+
+                    console.warn(
+                        "LosOja: Session refresh network error:",
+                        error
+                    );
+
+                    return null;
+
+
+                } finally {
+
+                    refreshPromise =
+                        null;
+
+                }
+
+            })();
+
+
+        return refreshPromise;
+    }
+
+
+    async function ensureValidSupabaseSession() {
+
+        const session =
+            getSession();
+
+        if (!session) {
+            return null;
+        }
+
+
+        /*
+         * Supabase normally provides expires_at
+         * as a Unix timestamp in seconds.
+         */
+
+        const expiresAt =
+            Number(
+                session.expires_at || 0
+            );
+
+
+        /*
+         * Refresh when the token has expired
+         * or will expire within the next 60 seconds.
+         */
+
+        if (
+            expiresAt &&
+            expiresAt >
+            Math.floor(Date.now() / 1000) + 60
+        ) {
+
+            return session;
+
+        }
+
+
+        const refreshedSession =
+            await refreshSupabaseSession();
+
+
+        if (refreshedSession) {
+            return refreshedSession;
+        }
+
+
+        /*
+         * If refreshing failed, return the existing
+         * session rather than immediately deleting it.
+         *
+         * The requesting operation can then report
+         * the actual Supabase error.
+         */
+
+        return getSession();
+
+    }
 
     /* =====================================================
        PUBLIC API
@@ -1202,7 +1400,11 @@ Handles:
 
     window.openSignup =
         openSignup;
+    window.refreshSupabaseSession =
+        refreshSupabaseSession;
 
+    window.ensureValidSupabaseSession =
+        ensureValidSupabaseSession;
 
     /* =====================================================
        START AUTH
