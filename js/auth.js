@@ -1401,10 +1401,10 @@ Handles:
     window.openSignup =
         openSignup;
     window.refreshSupabaseSession =
-        refreshSupabaseSession;
+    refreshSupabaseSession;
 
-    window.ensureValidSupabaseSession =
-        ensureValidSupabaseSession;
+window.ensureValidSupabaseSession =
+    ensureValidSupabaseSession;
 
     /* =====================================================
        START AUTH
