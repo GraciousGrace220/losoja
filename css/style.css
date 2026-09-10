@@ -781,10 +781,10 @@ footer a:hover {
 
     z-index: 2000;
 
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
 
-    padding: 20px;
+    padding: 8vh 20px 20px;
 }
 
 .modal.active,
