@@ -1,4 +1,4 @@
-# /*
+ /*
 
 LosOja - Extended Features
 js/features.js
