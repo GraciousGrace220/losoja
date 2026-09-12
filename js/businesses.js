@@ -202,21 +202,29 @@ Handles:
        HEADERS
     ===================================================== */
 
-    function getHeaders(
-        includeContentType = false
-    ) {
+  function getHeaders(includeContentType = false) {
 
-        const headers = {
+    const token = getAccessToken();
 
-            "apikey":
-                SUPABASE_KEY,
+    const headers = {
+        "apikey": LOSOJA_BUSINESSES_KEY,
+        "Accept": "application/json"
+    };
 
-            "Accept":
-                "application/json"
+    // Only send Authorization when there is
+    // a real Supabase user access token.
+    if (token) {
+        headers["Authorization"] =
+            "Bearer " + token;
+    }
 
-        };
+    if (includeContentType) {
+        headers["Content-Type"] =
+            "application/json";
+    }
 
-
+    return headers;
+}
         const token =
             getAccessToken();
 
