@@ -482,34 +482,47 @@ button {
 
     grid-template-columns: repeat(3, 1fr);
 
-    gap: 22px;
+    gap: 24px;
+
+    align-items: stretch;
 }
 
 
 /* =========================================================
    BUSINESS CARD
+   Professional LosOja business cards
 ========================================================= */
 
 .business-card {
     background: var(--white);
 
-    border-radius: var(--radius);
+    border-radius: 16px;
 
     overflow: hidden;
 
-    box-shadow: var(--shadow);
-
     border: 1px solid var(--border);
 
+    box-shadow:
+        0 5px 18px rgba(0, 0, 0, 0.06);
+
     transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease;
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        border-color 0.25s ease;
+
+    display: flex;
+    flex-direction: column;
+
+    min-height: 100%;
 }
 
 .business-card:hover {
-    transform: translateY(-4px);
+    transform: translateY(-5px);
 
-    box-shadow: var(--shadow-hover);
+    border-color: rgba(8, 122, 62, 0.35);
+
+    box-shadow:
+        0 12px 30px rgba(0, 0, 0, 0.11);
 }
 
 
@@ -518,19 +531,43 @@ button {
 ========================================================= */
 
 .business-image {
-    height: 190px;
+    height: 200px;
 
-    background: var(--green-light);
+    background:
+        linear-gradient(
+            135deg,
+            var(--green-light),
+            #f7fbf8
+        );
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    font-size: 55px;
+    font-size: 58px;
 
     color: var(--green);
 
     overflow: hidden;
+
+    position: relative;
+}
+
+.business-image::after {
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    background:
+        linear-gradient(
+            to bottom,
+            transparent 65%,
+            rgba(0, 0, 0, 0.08)
+        );
+
+    pointer-events: none;
 }
 
 .business-image img {
@@ -540,6 +577,13 @@ button {
     object-fit: cover;
 
     display: block;
+
+    transition:
+        transform 0.35s ease;
+}
+
+.business-card:hover .business-image img {
+    transform: scale(1.04);
 }
 
 
@@ -547,36 +591,58 @@ button {
    BUSINESS CONTENT
 ========================================================= */
 
-/*
-   Supports both naming systems currently used
-   by LosOja JavaScript.
-*/
-
 .business-content,
 .business-card-content {
-    padding: 20px;
+    padding: 22px;
+
+    display: flex;
+    flex-direction: column;
+
+    flex: 1;
+}
+
+.business-category,
+.business-card-category {
+    display: inline-flex;
+
+    align-items: center;
+
+    width: fit-content;
+
+    margin-bottom: 8px;
+
+    padding: 5px 10px;
+
+    border-radius: 20px;
+
+    background: var(--green-light);
+
+    color: var(--green);
+
+    font-size: 12px;
+
+    font-weight: 800;
+
+    text-transform: uppercase;
+
+    letter-spacing: 0.4px;
 }
 
 .business-content h3,
 .business-card-content h3 {
     font-size: 21px;
 
-    margin-bottom: 7px;
-}
+    line-height: 1.3;
 
-.business-category,
-.business-card-category {
-    color: var(--green);
+    color: var(--black);
 
-    font-weight: 700;
-
-    font-size: 14px;
+    margin-bottom: 8px;
 }
 
 .business-location {
     color: var(--gray);
 
-    margin: 8px 0;
+    margin: 4px 0 12px;
 
     font-size: 14px;
 }
@@ -586,8 +652,31 @@ button {
 
     font-size: 14px;
 
+    line-height: 1.6;
+
+    margin-bottom: 15px;
+
+    display: -webkit-box;
+
+    -webkit-line-clamp: 3;
+
+    -webkit-box-orient: vertical;
+
+    overflow: hidden;
+}
+
+.business-phone {
+    color: var(--gray-dark);
+
+    font-size: 14px;
+
     margin-bottom: 15px;
 }
+
+
+/* =========================================================
+   BUSINESS ACTIONS
+========================================================= */
 
 .business-actions,
 .business-card-actions {
@@ -596,6 +685,46 @@ button {
     gap: 10px;
 
     flex-wrap: wrap;
+
+    margin-top: auto;
+}
+
+.business-card .btn {
+    width: 100%;
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   BUSINESS LOADING / ERROR
+========================================================= */
+
+.loading-message,
+.error-message {
+    grid-column: 1 / -1;
+
+    background: var(--white);
+
+    border: 1px solid var(--border);
+
+    border-radius: var(--radius);
+
+    padding: 35px 20px;
+
+    text-align: center;
+
+    color: var(--gray);
+}
+
+.error-message h3 {
+    color: var(--red);
+
+    margin-bottom: 8px;
+}
+
+.no-results {
+    grid-column: 1 / -1;
 }
 
 
@@ -1200,6 +1329,20 @@ select:focus-visible {
         grid-template-columns: 1fr;
     }
 
+    .business-image {
+        height: 185px;
+    }
+
+    .business-content,
+    .business-card-content {
+        padding: 18px;
+    }
+
+    .business-content h3,
+    .business-card-content h3 {
+        font-size: 19px;
+    }
+
     .hero {
         padding: 55px 15px;
     }
@@ -1264,43 +1407,65 @@ select:focus-visible {
         font-size: 30px;
     }
 }
+
+
 /* =========================================================
    LOSOJA WHATSAPP COMPLAINTS
 ========================================================= */
 
 .whatsapp-complaint-btn {
     display: inline-flex;
+
     align-items: center;
     justify-content: center;
+
     gap: 8px;
+
     margin-top: 10px;
+
     padding: 10px 16px;
+
     border-radius: 8px;
+
     background: #25d366;
+
     color: #ffffff !important;
+
     font-weight: 700;
+
     text-decoration: none;
-    transition: transform 0.2s ease, opacity 0.2s ease;
+
+    transition:
+        transform 0.2s ease,
+        opacity 0.2s ease;
 }
 
 .whatsapp-complaint-btn:hover {
     opacity: 0.9;
+
     transform: translateY(-2px);
 }
+
+
 /* =========================================================
    REVIEWS
 ========================================================= */
 
 .reviews-section {
     margin-top: 30px;
+
     padding-top: 25px;
+
     border-top: 1px solid #e5e5e5;
 }
 
 .reviews-heading {
     display: flex;
+
     align-items: center;
+
     gap: 10px;
+
     margin-bottom: 20px;
 }
 
@@ -1310,22 +1475,33 @@ select:focus-visible {
 
 .reviews-count {
     display: inline-flex;
+
     align-items: center;
     justify-content: center;
+
     min-width: 28px;
     height: 28px;
+
     padding: 0 8px;
+
     border-radius: 20px;
+
     background: #eaf7ef;
+
     color: #087a3e;
+
     font-weight: 700;
 }
 
 .review-form {
     padding: 18px;
+
     margin-bottom: 25px;
+
     border: 1px solid #e5e5e5;
+
     border-radius: 10px;
+
     background: #fafafa;
 }
 
@@ -1335,22 +1511,36 @@ select:focus-visible {
 
 .star-rating {
     display: flex;
+
     align-items: center;
+
     gap: 4px;
+
     margin-bottom: 14px;
 }
 
 .review-star {
     appearance: none;
+
     border: 0;
+
     background: transparent;
+
     padding: 4px;
+
     margin: 0;
+
     font-size: 32px;
+
     line-height: 1;
+
     cursor: pointer;
+
     color: #bdbdbd;
-    transition: transform 0.15s ease, color 0.15s ease;
+
+    transition:
+        transform 0.15s ease,
+        color 0.15s ease;
 }
 
 .review-star:hover,
@@ -1365,39 +1555,57 @@ select:focus-visible {
 
 .review-star:focus {
     outline: 2px solid #087a3e;
+
     outline-offset: 2px;
+
     border-radius: 4px;
 }
 
 .review-form textarea {
     width: 100%;
+
     box-sizing: border-box;
+
     margin-bottom: 12px;
+
     padding: 12px;
+
     border: 1px solid #ddd;
+
     border-radius: 8px;
+
     resize: vertical;
+
     font: inherit;
 }
 
 .review-list {
     display: flex;
+
     flex-direction: column;
+
     gap: 14px;
 }
 
 .review-item {
     padding: 16px;
+
     border: 1px solid #e5e5e5;
+
     border-radius: 10px;
+
     background: #fff;
 }
 
 .review-header {
     display: flex;
+
     align-items: center;
+
     justify-content: space-between;
+
     gap: 12px;
+
     margin-bottom: 8px;
 }
 
@@ -1407,19 +1615,25 @@ select:focus-visible {
 
 .review-stars {
     white-space: nowrap;
+
     font-size: 18px;
+
     letter-spacing: 2px;
+
     color: #f5b301;
 }
 
 .review-text {
     margin: 8px 0;
+
     line-height: 1.6;
 }
 
 .review-date {
     margin-top: 8px;
+
     font-size: 13px;
+
     color: #777;
 }
 
@@ -1427,6 +1641,7 @@ select:focus-visible {
 .review-login-message,
 .reviews-loading {
     padding: 15px 0;
+
     color: #777;
 }
 
@@ -1434,6 +1649,7 @@ select:focus-visible {
 
     .review-header {
         align-items: flex-start;
+
         flex-direction: column;
     }
 
@@ -1441,6 +1657,8 @@ select:focus-visible {
         font-size: 30px;
     }
 }
+
+
 /* =========================================================
    LOSOJA MOBILITY
    TryCircle Bike & Cab + Rent a Truck
@@ -1452,17 +1670,25 @@ select:focus-visible {
 
 .mobility-grid {
     display: grid;
+
     grid-template-columns: repeat(3, 1fr);
+
     gap: 22px;
 }
 
 .mobility-card {
     background: var(--white);
+
     border: 1px solid var(--border);
+
     border-radius: var(--radius);
+
     padding: 30px 24px;
+
     text-align: center;
+
     box-shadow: var(--shadow);
+
     transition:
         transform 0.2s ease,
         box-shadow 0.2s ease,
@@ -1471,30 +1697,41 @@ select:focus-visible {
 
 .mobility-card:hover {
     transform: translateY(-4px);
+
     box-shadow: var(--shadow-hover);
+
     border-color: var(--green);
 }
 
 .mobility-icon {
     width: 70px;
     height: 70px;
+
     margin: 0 auto 18px;
+
     border-radius: 50%;
+
     background: var(--green-light);
+
     display: flex;
+
     align-items: center;
     justify-content: center;
+
     font-size: 36px;
 }
 
 .mobility-card h3 {
     font-size: 22px;
+
     margin-bottom: 8px;
 }
 
 .mobility-card p {
     color: var(--gray);
+
     font-size: 14px;
+
     margin-bottom: 20px;
 }
 
@@ -1517,7 +1754,9 @@ select:focus-visible {
 
 .mobility-request-note {
     color: var(--gray);
+
     font-size: 14px;
+
     margin-bottom: 20px;
 }
 
@@ -1528,25 +1767,40 @@ select:focus-visible {
 
 .image-preview {
     width: 100%;
+
     min-height: 180px;
+
     margin-top: 10px;
+
     border: 2px dashed var(--border);
+
     border-radius: 10px;
+
     background: var(--gray-light);
+
     display: flex;
+
     align-items: center;
     justify-content: center;
+
     overflow: hidden;
+
     color: var(--gray);
+
     text-align: center;
+
     padding: 15px;
 }
 
 .image-preview img {
     width: 100%;
+
     max-height: 250px;
+
     object-fit: cover;
+
     border-radius: 8px;
+
     display: block;
 }
 
