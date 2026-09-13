@@ -4,18 +4,19 @@
 LosOja - Businesses Loader
 js/businesses.js
 
-Handles:
-- Loading businesses from Supabase
-- Displaying business cards
-- Supporting both businessGrid and businessesGrid
-- Search/filter compatibility
+Launch-safe version:
+- Loads businesses from Supabase
+- Uses only core confirmed fields
+- Works with businessesGrid or businessGrid
 - Safe HTML output
+- Search/filter compatible
 =========================================================
 */
 
 (function () {
 
     "use strict";
+
 
     /* =====================================================
        SUPABASE
@@ -38,6 +39,7 @@ Handles:
             document.getElementById("businessesGrid") ||
             document.getElementById("businessGrid")
         );
+
     }
 
 
@@ -53,6 +55,7 @@ Handles:
             .replace(/>/g, "&gt;")
             .replace(/"/g, "&quot;")
             .replace(/'/g, "&#039;");
+
     }
 
 
@@ -75,6 +78,7 @@ Handles:
         if (value.includes("shopping")) return "🛍️";
 
         return "🏪";
+
     }
 
 
@@ -82,20 +86,23 @@ Handles:
        LOAD BUSINESSES
     ===================================================== */
 
-    function loadBusinesses() {
+    async function loadBusinesses() {
 
         const grid = getBusinessGrid();
+
 
         if (!grid) {
 
             console.error(
-                "LosOja: Business grid not found. " +
-                "Expected #businessesGrid or #businessGrid."
+                "LosOja: Business grid not found."
             );
 
             return;
+
         }
 
+
+        /* Show loading */
 
         grid.innerHTML = `
             <div class="loading-message">
@@ -104,39 +111,70 @@ Handles:
         `;
 
 
-        const endpoint =
-            SUPABASE_URL +
-            "/rest/v1/businesses" +
-            "?select=id,name,category,location,description,phone,image_url,created_at" +
-            "&order=created_at.desc";
+        try {
+
+            /*
+            -------------------------------------------------
+            IMPORTANT:
+            Only request the core columns here.
+
+            This prevents one missing optional column
+            from breaking the entire Businesses section.
+            -------------------------------------------------
+            */
+
+            const endpoint =
+                SUPABASE_URL +
+                "/rest/v1/businesses" +
+                "?select=id,name,category,location";
 
 
-        fetch(endpoint, {
+            console.log(
+                "LosOja: Loading businesses from Supabase..."
+            );
 
-            method: "GET",
 
-            headers: {
-                "apikey": SUPABASE_KEY,
-                "Accept": "application/json"
-            }
+            const response =
+                await fetch(
+                    endpoint,
+                    {
+                        method: "GET",
 
-        })
+                        headers: {
+                            "apikey": SUPABASE_KEY,
+                            "Accept": "application/json"
+                        }
+                    }
+                );
 
-        .then(function (response) {
+
+            console.log(
+                "LosOja: Supabase response:",
+                response.status
+            );
+
 
             if (!response.ok) {
 
+                const errorText =
+                    await response.text();
+
+                console.error(
+                    "LosOja Supabase error:",
+                    errorText
+                );
+
                 throw new Error(
-                    "Supabase returned HTTP " +
+                    "Supabase HTTP " +
                     response.status
                 );
+
             }
 
-            return response.json();
 
-        })
+            const businesses =
+                await response.json();
 
-        .then(function (businesses) {
 
             console.log(
                 "LosOja businesses loaded:",
@@ -147,16 +185,24 @@ Handles:
             if (!Array.isArray(businesses)) {
 
                 throw new Error(
-                    "Supabase did not return a business list."
+                    "Invalid businesses response."
                 );
+
             }
 
+
+            /*
+            -------------------------------------------------
+            NO BUSINESSES
+            -------------------------------------------------
+            */
 
             if (businesses.length === 0) {
 
                 grid.innerHTML = `
                     <div class="no-results">
                         <h3>No businesses found</h3>
+
                         <p>
                             Be the first to add a business
                             to LosOja.
@@ -164,85 +210,69 @@ Handles:
                     </div>
                 `;
 
+                window.losojaBusinesses = [];
+
                 return;
+
             }
 
 
+            /*
+            -------------------------------------------------
+            BUILD BUSINESS CARDS
+            -------------------------------------------------
+            */
+
             grid.innerHTML =
                 businesses.map(function (business) {
+
+
+                    const id =
+                        business.id || "";
+
 
                     const name =
                         business.name ||
                         "Unnamed Business";
 
+
                     const category =
                         business.category ||
                         "Business";
+
 
                     const location =
                         business.location ||
                         "Nigeria";
 
-                    const description =
-                        business.description ||
-                        "Discover this business on LosOja.";
 
                     const icon =
                         getCategoryIcon(category);
 
 
-                    let imageHTML = `
-                        <div class="business-image">
-                            <span aria-hidden="true">
-                                ${icon}
-                            </span>
-                        </div>
-                    `;
-
-
-                    if (business.image_url) {
-
-                        imageHTML = `
-                            <div class="business-image">
-
-                                <img
-                                    src="${escapeHTML(
-                                        business.image_url
-                                    )}"
-                                    alt="${escapeHTML(name)}"
-                                    loading="lazy"
-                                    onerror="
-                                        this.style.display='none';
-                                        this.parentElement
-                                            .querySelector('span')
-                                            .style.display='block';
-                                    "
-                                >
-
-                                <span
-                                    aria-hidden="true"
-                                    style="display:none;"
-                                >
-                                    ${icon}
-                                </span>
-
-                            </div>
-                        `;
-                    }
-
-
                     return `
                         <article
                             class="business-card"
-                            data-business-id="${escapeHTML(
-                                business.id
-                            )}"
+                            data-business-id="${escapeHTML(id)}"
                             data-name="${escapeHTML(name)}"
                             data-category="${escapeHTML(category)}"
                             data-location="${escapeHTML(location)}"
                         >
 
-                            ${imageHTML}
+                            <div class="business-image">
+
+                                <span
+                                    aria-hidden="true"
+                                    style="
+                                        font-size:42px;
+                                        display:block;
+                                        text-align:center;
+                                    "
+                                >
+                                    ${icon}
+                                </span>
+
+                            </div>
 
 
                             <div class="business-card-content">
@@ -263,38 +293,12 @@ Handles:
                                 </p>
 
 
-                                <p class="business-description">
-                                    ${escapeHTML(description)}
-                                </p>
-
-
-                                ${
-                                    business.phone
-                                    ? `
-                                        <p class="business-phone">
-                                            📞
-                                            ${escapeHTML(
-                                                business.phone
-                                            )}
-                                        </p>
-                                      `
-                                    : ""
-                                }
-
-
                                 <div class="business-card-actions">
 
                                     <button
                                         type="button"
                                         class="btn btn-primary"
-                                        onclick="
-                                            window.viewBusiness &&
-                                            window.viewBusiness(
-                                                '${escapeHTML(
-                                                    business.id
-                                                )}'
-                                            );
-                                        "
+                                        data-business-id="${escapeHTML(id)}"
                                     >
                                         View Business
                                     </button>
@@ -311,7 +315,7 @@ Handles:
 
             /*
             -------------------------------------------------
-            Make businesses available globally
+            STORE BUSINESSES GLOBALLY
             -------------------------------------------------
             */
 
@@ -321,7 +325,60 @@ Handles:
 
             /*
             -------------------------------------------------
-            Notify other LosOja scripts
+            VIEW BUSINESS BUTTONS
+            -------------------------------------------------
+            */
+
+            grid
+                .querySelectorAll(
+                    "[data-business-id]"
+                )
+                .forEach(function (button) {
+
+                    /*
+                    Only attach to actual buttons.
+                    */
+
+                    if (
+                        button.tagName !== "BUTTON"
+                    ) {
+                        return;
+                    }
+
+
+                    button.addEventListener(
+                        "click",
+                        function () {
+
+                            const id =
+                                this.dataset.businessId;
+
+
+                            if (
+                                typeof window.viewBusiness ===
+                                "function"
+                            ) {
+
+                                window.viewBusiness(id);
+
+                            } else {
+
+                                console.log(
+                                    "LosOja: View Business clicked:",
+                                    id
+                                );
+
+                            }
+
+                        }
+                    );
+
+                });
+
+
+            /*
+            -------------------------------------------------
+            NOTIFY OTHER SCRIPTS
             -------------------------------------------------
             */
 
@@ -334,9 +391,13 @@ Handles:
                 )
             );
 
-        })
 
-        .catch(function (error) {
+            console.log(
+                "LosOja: Businesses displayed successfully."
+            );
+
+
+        } catch (error) {
 
             console.error(
                 "LosOja businesses error:",
@@ -359,7 +420,7 @@ Handles:
                     <button
                         type="button"
                         class="btn btn-primary"
-                        onclick="loadBusinesses()"
+                        id="losojaRetryBusinesses"
                         style="margin-top:15px;"
                     >
                         Try Again
@@ -367,23 +428,45 @@ Handles:
 
                 </div>
             `;
-        });
+
+
+            const retryButton =
+                document.getElementById(
+                    "losojaRetryBusinesses"
+                );
+
+
+            if (retryButton) {
+
+                retryButton.addEventListener(
+                    "click",
+                    loadBusinesses
+                );
+
+            }
+
+        }
+
     }
 
 
     /* =====================================================
-       SEARCH / FILTER
+       SEARCH
     ===================================================== */
 
     function filterBusinesses(searchText) {
 
-        const grid = getBusinessGrid();
+        const grid =
+            getBusinessGrid();
+
 
         if (!grid) return;
 
 
         const cards =
-            grid.querySelectorAll(".business-card");
+            grid.querySelectorAll(
+                ".business-card"
+            );
 
 
         const search =
@@ -398,48 +481,67 @@ Handles:
         cards.forEach(function (card) {
 
             const name =
-                card.dataset.name || "";
+                String(
+                    card.dataset.name || ""
+                ).toLowerCase();
+
 
             const category =
-                card.dataset.category || "";
+                String(
+                    card.dataset.category || ""
+                ).toLowerCase();
+
 
             const location =
-                card.dataset.location || "";
+                String(
+                    card.dataset.location || ""
+                ).toLowerCase();
 
 
             const matches =
                 !search ||
-                name.toLowerCase().includes(search) ||
-                category.toLowerCase().includes(search) ||
-                location.toLowerCase().includes(search);
+                name.includes(search) ||
+                category.includes(search) ||
+                location.includes(search);
 
 
             card.style.display =
-                matches ? "" : "flex";
+                matches ? "" : "none";
 
 
             if (matches) {
                 visibleCount++;
             }
+
         });
 
 
         let noResults =
-            grid.querySelector(".search-no-results");
+            grid.querySelector(
+                ".search-no-results"
+            );
 
 
-        if (visibleCount === 0 && cards.length > 0) {
+        if (
+            visibleCount === 0 &&
+            cards.length > 0
+        ) {
 
             if (!noResults) {
 
                 noResults =
-                    document.createElement("div");
+                    document.createElement(
+                        "div"
+                    );
 
                 noResults.className =
                     "no-results search-no-results";
 
                 noResults.innerHTML = `
-                    <h3>No matching businesses</h3>
+                    <h3>
+                        No matching businesses
+                    </h3>
+
                     <p>
                         Try another business name,
                         category, or location.
@@ -447,14 +549,20 @@ Handles:
                 `;
 
                 grid.appendChild(noResults);
+
             }
 
-            noResults.style.display = "block";
+
+            noResults.style.display =
+                "block";
 
         } else if (noResults) {
 
-            noResults.style.display = "none";
+            noResults.style.display =
+                "none";
+
         }
+
     }
 
 
@@ -464,13 +572,17 @@ Handles:
 
     function filterByCategory(category) {
 
-        const grid = getBusinessGrid();
+        const grid =
+            getBusinessGrid();
+
 
         if (!grid) return;
 
 
         const cards =
-            grid.querySelectorAll(".business-card");
+            grid.querySelectorAll(
+                ".business-card"
+            );
 
 
         const selected =
@@ -487,24 +599,22 @@ Handles:
                 ).toLowerCase();
 
 
-            if (
+            const matches =
                 !selected ||
                 selected === "all" ||
-                cardCategory === selected
-            ) {
+                cardCategory === selected;
 
-                card.style.display = "flex";
 
-            } else {
+            card.style.display =
+                matches ? "" : "none";
 
-                card.style.display = "none";
-            }
         });
+
     }
 
 
     /* =====================================================
-       PUBLIC FUNCTIONS
+       GLOBAL FUNCTIONS
     ===================================================== */
 
     window.loadBusinesses =
@@ -521,14 +631,22 @@ Handles:
        START
     ===================================================== */
 
-    document.addEventListener(
-        "DOMContentLoaded",
-        function () {
+    if (
+        document.readyState ===
+        "loading"
+    ) {
 
-            loadBusinesses();
+        document.addEventListener(
+            "DOMContentLoaded",
+            loadBusinesses
+        );
 
-        }
-    );
+    } else {
+
+        loadBusinesses();
+
+    }
+
 
 })();
 ```
