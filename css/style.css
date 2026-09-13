@@ -1826,3 +1826,152 @@ select:focus-visible {
         padding: 25px 20px;
     }
 }
+
+
+/* =========================================================
+   LOSOJA - FINAL COMPATIBILITY & POLISH
+   Added without changing the existing core design
+========================================================= */
+
+/* Support both common business grid class names used by LosOja JS/pages. */
+#businessGrid,
+#businessesGrid,
+.businessGrid,
+.businessesGrid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+    align-items: stretch;
+}
+
+/* Keep cards usable when JS creates different internal wrappers. */
+#businessGrid .business-card,
+#businessesGrid .business-card,
+.businessGrid .business-card,
+.businessesGrid .business-card {
+    min-width: 0;
+}
+
+/* Business image fallback / broken-image protection. */
+.business-image img[src=""],
+.business-image img:not([src]) {
+    display: none;
+}
+
+/* Better form controls on touch devices. */
+input,
+textarea,
+select,
+button {
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Prevent long business names, locations, and phone numbers from
+   breaking cards or modal layouts. */
+.business-content h3,
+.business-card-content h3,
+.business-location,
+.business-phone {
+    overflow-wrap: anywhere;
+}
+
+/* Modal forms remain comfortable on smaller screens. */
+.modal-content {
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Make action buttons consistent when several appear together. */
+.business-actions .btn,
+.business-card-actions .btn {
+    flex: 1 1 140px;
+}
+
+/* Utility classes commonly used by the LosOja feature scripts. */
+.text-center {
+    text-align: center;
+}
+
+.mt-10 {
+    margin-top: 10px;
+}
+
+.mt-20 {
+    margin-top: 20px;
+}
+
+.mb-10 {
+    margin-bottom: 10px;
+}
+
+.mb-20 {
+    margin-bottom: 20px;
+}
+
+/* =========================================================
+   FINAL RESPONSIVE OVERRIDES
+========================================================= */
+
+@media (max-width: 900px) {
+    #businessGrid,
+    #businessesGrid,
+    .businessGrid,
+    .businessesGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 700px) {
+    #businessGrid,
+    #businessesGrid,
+    .businessGrid,
+    .businessesGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .modal {
+        padding: 20px 12px;
+        align-items: flex-start;
+    }
+
+    .modal-content {
+        max-height: calc(100vh - 40px);
+        border-radius: 12px;
+        padding: 24px 18px;
+    }
+
+    .notification,
+    .toast {
+        left: 12px;
+        right: 12px;
+        bottom: 12px;
+        text-align: center;
+    }
+
+    .business-actions .btn,
+    .business-card-actions .btn {
+        flex: 1 1 100%;
+    }
+}
+
+@media (max-width: 450px) {
+    .hero {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .search-form {
+        padding: 8px;
+    }
+
+    .search-field input {
+        font-size: 16px; /* prevents iOS zoom */
+    }
+
+    .cta-box {
+        padding: 45px 18px;
+    }
+
+    .cta-box h2 {
+        font-size: 28px;
+    }
+}
