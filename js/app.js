@@ -912,20 +912,216 @@ bindAddBusinessButtons() {
                BUSINESS DATA
             ------------------------------------- */
 
-            const businessData = {
+         /* ---------------------------------------------
+   BUSINESS IMAGE UPLOAD
+--------------------------------------------- */
 
-                name: name,
+const imageInput =
+    document.getElementById("businessImage");
 
-                category: category,
+const imageFile =
+    imageInput &&
+    imageInput.files &&
+    imageInput.files.length > 0
+        ? imageInput.files[0]
+        : null;
 
-                location: location,
+let imageUrl = "";
 
-                phone: phone,
+if (imageFile) {
 
-                description: description
+    const allowedTypes = [
+        "image/jpeg",
+        "image/png",
+        "image/webp",
+        "image/gif"
+    ];
 
-            };
+    if (!allowedTypes.includes(imageFile.type)) {
 
+        this.showToast(
+            "Please upload a JPG, PNG, WEBP or GIF image.",
+            "error"
+        );
+
+        if (submitButton) {
+            submitButton.disabled = false;
+            submitButton.textContent =
+                originalText || "Save Business";
+        }
+
+        return;
+    }
+
+    /* Maximum image size: 5MB */
+    const maxFileSize =
+        5 * 1024 * 1024;
+
+    if (imageFile.size > maxFileSize) {
+
+        this.showToast(
+            "Image must be 5MB or smaller.",
+            "error"
+        );
+
+        if (submitButton) {
+            submitButton.disabled = false;
+            submitButton.textContent =
+                originalText || "Save Business";
+        }
+
+        return;
+    }
+
+    /* Create a unique file name */
+    const fileExtension =
+        imageFile.name
+            .split(".")
+            .pop()
+            .toLowerCase();
+
+    const uniqueFileName =
+        "business_" +
+        Date.now() +
+        "_" +
+        Math.random()
+            .toString(36)
+            .substring(2, 10) +
+        "." +
+        fileExtension;
+
+    const uploadPath =
+        "businesses/" +
+        uniqueFileName;
+
+    try {
+
+        const uploadResponse =
+            await fetch(
+                SUPABASE_URL +
+                "/storage/v1/object/business-images/" +
+                uploadPath,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "apikey":
+                            SUPABASE_KEY,
+
+                        "Authorization":
+                            "Bearer " +
+                            SUPABASE_KEY,
+
+                        "Content-Type":
+                            imageFile.type,
+
+                        "x-upsert":
+                            "false"
+                    },
+
+                    body: imageFile
+                }
+            );
+
+        const uploadText =
+            await uploadResponse.text();
+
+        let uploadResult = null;
+
+        try {
+
+            uploadResult =
+                uploadText
+                    ? JSON.parse(uploadText)
+                    : null;
+
+        } catch (jsonError) {
+
+            uploadResult =
+                uploadText;
+        }
+
+        if (!uploadResponse.ok) {
+
+            console.error(
+                "LosOja image upload error:",
+                uploadResult
+            );
+
+            const uploadErrorMessage =
+                uploadResult &&
+                typeof uploadResult === "object" &&
+                (
+                    uploadResult.message ||
+                    uploadResult.error ||
+                    uploadResult.error_description
+                )
+                    ? (
+                        uploadResult.message ||
+                        uploadResult.error ||
+                        uploadResult.error_description
+                    )
+                    : "Unable to upload the business image.";
+
+            throw new Error(
+                uploadErrorMessage
+            );
+        }
+
+        /* Build the public image URL */
+        imageUrl =
+            SUPABASE_URL +
+            "/storage/v1/object/public/business-images/" +
+            uploadPath;
+
+        console.log(
+            "LosOja business image uploaded:",
+            imageUrl
+        );
+
+    } catch (imageError) {
+
+        console.error(
+            "LosOja image upload error:",
+            imageError
+        );
+
+        this.showToast(
+            "Could not upload the business image: " +
+            imageError.message,
+            "error"
+        );
+
+        if (submitButton) {
+            submitButton.disabled = false;
+            submitButton.textContent =
+                originalText || "Save Business";
+        }
+
+        return;
+    }
+}
+
+
+/* ---------------------------------------------
+   BUSINESS DATA
+--------------------------------------------- */
+
+const businessData = {
+
+    name: name,
+
+    category: category,
+
+    location: location,
+
+    phone: phone,
+
+    description: description,
+
+    image_url: imageUrl
+
+};
 
             try {
 
