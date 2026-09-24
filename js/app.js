@@ -485,6 +485,135 @@ this.bindLocationButton();
         ================================================= */
 
         bindPopularSearches() {
+        /* =================================================
+           LOCATION BUTTON
+        ================================================= */
+
+        bindLocationButton() {
+
+            const locationBtn =
+                document.getElementById(
+                    "locationBtn"
+                );
+
+            if (!locationBtn) {
+                return;
+            }
+
+            locationBtn.addEventListener(
+                "click",
+                event => {
+
+                    event.preventDefault();
+
+                    if (!navigator.geolocation) {
+
+                        this.showToast(
+                            "Location is not supported by this browser.",
+                            "error"
+                        );
+
+                        return;
+                    }
+
+                    this.showToast(
+                        "Getting your location...",
+                        "info"
+                    );
+
+                    navigator.geolocation.getCurrentPosition(
+
+                        position => {
+
+                            const latitude =
+                                position.coords.latitude;
+
+                            const longitude =
+                                position.coords.longitude;
+
+                            console.log(
+                                "LosOja location:",
+                                latitude,
+                                longitude
+                            );
+
+                            /*
+                             * Save the coordinates so the
+                             * app can use them later for
+                             * nearby-business searches.
+                             */
+
+                            localStorage.setItem(
+                                "losoja_user_location",
+                                JSON.stringify({
+                                    latitude,
+                                    longitude
+                                })
+                            );
+
+                            this.showToast(
+                                "Your location was found successfully.",
+                                "success"
+                            );
+
+                        },
+
+                        error => {
+
+                            console.error(
+                                "LosOja location error:",
+                                error
+                            );
+
+                            let message =
+                                "Unable to get your location.";
+
+                            if (
+                                error.code ===
+                                error.PERMISSION_DENIED
+                            ) {
+
+                                message =
+                                    "Location permission was denied.";
+
+                            } else if (
+                                error.code ===
+                                error.POSITION_UNAVAILABLE
+                            ) {
+
+                                message =
+                                    "Your location is currently unavailable.";
+
+                            } else if (
+                                error.code ===
+                                error.TIMEOUT
+                            ) {
+
+                                message =
+                                    "Location request timed out. Please try again.";
+
+                            }
+
+                            this.showToast(
+                                message,
+                                "error"
+                            );
+
+                        },
+
+                        {
+                            enableHighAccuracy: true,
+                            timeout: 10000,
+                            maximumAge: 300000
+                        }
+
+                    );
+
+                }
+            );
+
+        },
+
 
             document
                 .querySelectorAll("[data-search]")
