@@ -905,7 +905,7 @@ bindAddBusinessButtons() {
              */
 
             const SUPABASE_KEY =
-                "PASTE_YOUR_EXISTING_ANON_KEY_HERE";
+                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InljeHNod2dlZWJza2Rvem1vcm5oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzMDY0NjUsImV4cCI6MjEwMzg4MjQ2NX0.tMl7wILdVDhu0RWFaG_84ngJEryLt2c5cB8MEKW3kfU";
 
 
             /* -------------------------------------
