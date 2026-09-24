@@ -515,45 +515,63 @@ const url =
             );
 
 
-        const image =
-            business.image_url ||
-            business.image ||
-            business.photo_url ||
-            "";
+       const image =
+    String(
+        business.image_url ||
+        business.image ||
+        business.photo_url ||
+        ""
+    ).trim();
 
+let imageHTML = "";
 
-        let imageHTML = "";
+if (image) {
 
+    imageHTML = `
+        <div
+            class="business-card-image"
+            style="
+                width:100%;
+                height:220px;
+                overflow:hidden;
+                background:#f3f4f6;
+                border-radius:12px 12px 0 0;
+            "
+        >
+            <img
+                src="${escapeHTML(image)}"
+                alt="${name}"
+                loading="lazy"
+                style="
+                    width:100%;
+                    height:100%;
+                    display:block;
+                    object-fit:cover;
+                "
+            >
+        </div>
+    `;
 
-        if (image) {
+} else {
 
-            imageHTML = `
-                <img
-                    class="business-card-image"
-                    src="${escapeHTML(image)}"
-                    alt="${name}"
-                    loading="lazy"
-                    onerror="this.style.display='none'"
-                >
-            `;
-
-        } else {
-
-            imageHTML = `
-                <div
-                    class="business-card-image"
-                    style="
-                        display:flex;
-                        align-items:center;
-                        justify-content:center;
-                        font-size:42px;
-                    "
-                >
-                    🏪
-                </div>
-            `;
-        }
-
+    imageHTML = `
+        <div
+            class="business-card-image"
+            style="
+                width:100%;
+                height:220px;
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                background:#f3f4f6;
+                border-radius:12px 12px 0 0;
+                font-size:42px;
+            "
+        >
+            🏪
+        </div>
+    `;
+}
 
         let ratingHTML = "";
 
