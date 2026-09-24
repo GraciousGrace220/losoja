@@ -614,8 +614,14 @@ this.createBackButton();
                 }
             );
 
-        },
+               },
 
+
+        /* =================================================
+           POPULAR SEARCHES
+        ================================================= */
+
+        bindPopularSearches() {
 
             document
                 .querySelectorAll("[data-search]")
