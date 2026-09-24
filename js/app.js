@@ -1335,7 +1335,10 @@ const businessData = {
     longitude: longitude
 
 };
-
+console.log(
+    "LosOja business data before save:",
+    businessData
+);
             try {
 
                 /* ---------------------------------
