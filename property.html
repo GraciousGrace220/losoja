@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="theme-color"
+        content="#087a3e"
+    >
+
+    <title>Property | LosOja</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f5faf7;
+            color: #111827;
+        }
+
+        .header {
+            background: #087a3e;
+            color: white;
+            padding: 18px 20px;
+        }
+
+        .header-inner {
+            max-width: 1100px;
+            margin: auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-size: 25px;
+            font-weight: 800;
+        }
+
+        .back-btn {
+            border: none;
+            background: white;
+            color: #087a3e;
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .hero {
+            background: linear-gradient(
+                135deg,
+                #087a3e,
+                #055c2e
+            );
+            color: white;
+            padding: 55px 20px;
+            text-align: center;
+        }
+
+        .hero-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .hero h1 {
+            font-size: 34px;
+            margin-bottom: 10px;
+        }
+
+        .hero p {
+            max-width: 600px;
+            margin: auto;
+            line-height: 1.6;
+            opacity: 0.95;
+        }
+
+        .content {
+            max-width: 1100px;
+            margin: 30px auto;
+            padding: 0 20px 50px;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 22px;
+        }
+
+        .section-title h2 {
+            font-size: 25px;
+            margin-bottom: 8px;
+        }
+
+        .section-title p {
+            color: #6b7280;
+        }
+
+        .property-grid {
+            display: grid;
+            grid-template-columns: repeat(
+                auto-fit,
+                minmax(220px, 1fr)
+            );
+            gap: 18px;
+        }
+
+        .property-card {
+            background: white;
+            border: 1px solid #dce9e1;
+            border-radius: 16px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .property-card .icon {
+            font-size: 42px;
+            margin-bottom: 12px;
+        }
+
+        .property-card h3 {
+            color: #087a3e;
+            margin-bottom: 8px;
+        }
+
+        .property-card p {
+            color: #6b7280;
+            line-height: 1.5;
+            margin-bottom: 18px;
+        }
+
+        .property-btn {
+            border: none;
+            background: #087a3e;
+            color: white;
+            padding: 11px 18px;
+            border-radius: 9px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .notice {
+            margin-top: 28px;
+            background: #eef8f2;
+            border-left: 4px solid #087a3e;
+            padding: 16px;
+            border-radius: 10px;
+            line-height: 1.5;
+        }
+
+        .home-btn {
+            display: block;
+            width: fit-content;
+            margin: 30px auto 0;
+            background: #087a3e;
+            color: white;
+            text-decoration: none;
+            padding: 13px 22px;
+            border-radius: 10px;
+            font-weight: 700;
+        }
+
+        @media (max-width: 600px) {
+            .hero h1 {
+                font-size: 28px;
+            }
+
+            .hero {
+                padding: 42px 18px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="header">
+        <div class="header-inner">
+            <div class="logo">LosOja</div>
+
+            <button
+                class="back-btn"
+                onclick="history.back()"
+            >
+                ← Back
+            </button>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="hero-icon">🏠</div>
+
+        <h1>Property</h1>
+
+        <p>
+            Discover property opportunities across Nigeria.
+            Explore homes, land, rentals and commercial spaces.
+        </p>
+    </section>
+
+    <main class="content">
+
+        <div class="section-title">
+            <h2>Explore Property</h2>
+            <p>Choose what you are looking for.</p>
+        </div>
+
+        <div class="property-grid">
+
+            <div class="property-card">
+                <div class="icon">🏡</div>
+
+                <h3>Homes</h3>
+
+                <p>
+                    Find houses and homes available
+                    across Nigeria.
+                </p>
+
+                <button
+                    class="property-btn"
+                    onclick="comingSoon('Homes')"
+                >
+                    Explore Homes
+                </button>
+            </div>
+
+
+            <div class="property-card">
+                <div class="icon">🌳</div>
+
+                <h3>Land</h3>
+
+                <p>
+                    Discover land and plots available
+                    in different locations.
+                </p>
+
+                <button
+                    class="property-btn"
+                    onclick="comingSoon('Land')"
+                >
+                    Explore Land
+                </button>
+            </div>
+
+
+            <div class="property-card">
+                <div class="icon">🔑</div>
+
+                <h3>Rentals</h3>
+
+                <p>
+                    Find rental properties and spaces
+                    that match your needs.
+                </p>
+
+                <button
+                    class="property-btn"
+                    onclick="comingSoon('Rentals')"
+                >
+                    Explore Rentals
+                </button>
+            </div>
+
+
+            <div class="property-card">
+                <div class="icon">🏢</div>
+
+                <h3>Commercial</h3>
+
+                <p>
+                    Explore shops, offices and other
+                    commercial property.
+                </p>
+
+                <button
+                    class="property-btn"
+                    onclick="comingSoon('Commercial Property')"
+                >
+                    Explore Commercial
+                </button>
+            </div>
+
+        </div>
+
+        <div class="notice">
+            🚧 <strong>Property listings are being prepared.</strong>
+            <br>
+            LosOja property search will be expanded with real
+            listings and property details.
+        </div>
+
+        <a
+            href="index.html"
+            class="home-btn"
+        >
+            ← Back to LosOja
+        </a>
+
+    </main>
+
+    <script>
+        function comingSoon(type) {
+            alert(
+                type +
+                " listings are coming soon to LosOja."
+            );
+        }
+    </script>
+
+</body>
+</html>
