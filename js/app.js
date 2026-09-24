@@ -481,16 +481,14 @@ this.createBackButton();
 
         },
 
-        /* =================================================
+                /* =================================================
            LOCATION BUTTON
         ================================================= */
 
         bindLocationButton() {
 
             const locationBtn =
-                document.getElementById(
-                    "locationBtn"
-                );
+                document.getElementById("locationBtn");
 
             if (!locationBtn) {
                 return;
@@ -533,17 +531,11 @@ this.createBackButton();
                                 longitude
                             );
 
-                            /*
-                             * Save the coordinates so the
-                             * app can use them later for
-                             * nearby-business searches.
-                             */
-
                             localStorage.setItem(
                                 "losoja_user_location",
                                 JSON.stringify({
-                                    latitude,
-                                    longitude
+                                    latitude: latitude,
+                                    longitude: longitude
                                 })
                             );
 
@@ -608,12 +600,57 @@ this.createBackButton();
                 }
             );
 
-               },
+        },
 
 
         /* =================================================
            POPULAR SEARCHES
         ================================================= */
+
+        bindPopularSearches() {
+
+            document
+                .querySelectorAll("[data-search]")
+                .forEach(button => {
+
+                    button.addEventListener(
+                        "click",
+                        event => {
+
+                            event.preventDefault();
+
+                            const term =
+                                button.getAttribute("data-search");
+
+                            if (!term) {
+                                return;
+                            }
+
+                            const searchInput =
+                                document.getElementById("searchInput");
+
+                            if (searchInput) {
+                                searchInput.value = term;
+                            }
+
+                            if (
+                                typeof window.searchBusinesses ===
+                                "function"
+                            ) {
+
+                                window.searchBusinesses(
+                                    term,
+                                    ""
+                                );
+
+                            }
+
+                        }
+                    );
+
+                });
+
+        },
 
         bindPopularSearches() {
 
