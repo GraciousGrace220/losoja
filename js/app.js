@@ -1274,7 +1274,48 @@ if (imageFile) {
 /* ---------------------------------------------
    BUSINESS DATA
 --------------------------------------------- */
+            /* ---------------------------------------------
+               GET SAVED USER LOCATION
+            --------------------------------------------- */
 
+            let latitude = null;
+            let longitude = null;
+
+            try {
+
+                const savedLocation =
+                    localStorage.getItem(
+                        "losoja_user_location"
+                    );
+
+                if (savedLocation) {
+
+                    const parsedLocation =
+                        JSON.parse(savedLocation);
+
+                    if (
+                        typeof parsedLocation.latitude === "number" &&
+                        typeof parsedLocation.longitude === "number"
+                    ) {
+
+                        latitude =
+                            parsedLocation.latitude;
+
+                        longitude =
+                            parsedLocation.longitude;
+
+                    }
+
+                }
+
+            } catch (locationError) {
+
+                console.warn(
+                    "LosOja: Could not read saved location.",
+                    locationError
+                );
+
+            }
 const businessData = {
 
     name: name,
@@ -1287,7 +1328,11 @@ const businessData = {
 
     description: description,
 
-    image_url: imageUrl
+    image_url: imageUrl,
+
+    latitude: latitude,
+
+    longitude: longitude
 
 };
 
