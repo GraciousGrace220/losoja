@@ -1594,10 +1594,10 @@ const businessData = {
             const labels = {
 
                 trycircle: {
-                    title: "Request TryCircle Ride",
-                    description:
-                        "Request a TryCircle ride for convenient local transportation."
-                },
+    title: "Request Tricycle (Keke)",
+    description:
+        "Request a tricycle (keke) for convenient local transportation."
+},
 
                 bike: {
                     title: "Request Bike Ride",
