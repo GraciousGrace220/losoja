@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="theme-color"
+        content="#087a3e"
+    >
+
+    <title>Trade by Barter - LosOja</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f5faf7;
+            color: #111827;
+        }
+
+        .page {
+            min-height: 100vh;
+        }
+
+        .header {
+            background: #087a3e;
+            color: white;
+            padding: 18px 20px;
+        }
+
+        .header-inner {
+            max-width: 900px;
+            margin: auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+        }
+
+        .back-button {
+            border: 1px solid rgba(255,255,255,.5);
+            background: transparent;
+            color: white;
+            padding: 9px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .main {
+            max-width: 900px;
+            margin: auto;
+            padding: 30px 20px 100px;
+        }
+
+        .hero {
+            background: white;
+            border-radius: 20px;
+            padding: 30px 22px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0,0,0,.06);
+            margin-bottom: 24px;
+        }
+
+        .icon {
+            font-size: 52px;
+            margin-bottom: 12px;
+        }
+
+        h1 {
+            color: #087a3e;
+            margin-bottom: 10px;
+        }
+
+        .hero p {
+            color: #6b7280;
+            line-height: 1.6;
+        }
+
+        .login-card {
+            background: #eef8f2;
+            border: 1px solid #cde8d7;
+            border-radius: 18px;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .login-card h2 {
+            margin-bottom: 10px;
+            color: #055c2e;
+        }
+
+        .login-card p {
+            color: #4b5563;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .button {
+            display: inline-block;
+            border: 0;
+            background: #087a3e;
+            color: white;
+            padding: 13px 22px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .button:hover {
+            background: #055c2e;
+        }
+
+        .secondary {
+            background: white;
+            color: #087a3e;
+            border: 1px solid #087a3e;
+            margin-left: 8px;
+        }
+
+        @media (max-width: 600px) {
+            .main {
+                padding: 20px 15px 90px;
+            }
+
+            .hero {
+                padding: 25px 18px;
+            }
+
+            .secondary {
+                margin-left: 0;
+                margin-top: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="page">
+
+    <header class="header">
+
+        <div class="header-inner">
+
+            <div class="logo">
+                LosOja
+            </div>
+
+            <button
+                class="back-button"
+                type="button"
+                onclick="window.location.href='index.html'"
+            >
+                ← Back
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <main class="main">
+
+        <section class="hero">
+
+            <div class="icon">
+                🔄
+            </div>
+
+            <h1>
+                Trade by Barter
+            </h1>
+
+            <p>
+                Exchange items and discover people
+                interested in trading across LosOja.
+            </p>
+
+        </section>
+
+
+        <section class="login-card">
+
+            <h2>
+                Trade by Barter
+            </h2>
+
+            <p>
+                Sign in to access barter listings
+                and participate in the LosOja community.
+            </p>
+
+            <button
+                class="button"
+                type="button"
+                onclick="showMessage()"
+            >
+                Continue
+            </button>
+
+            <button
+                class="button secondary"
+                type="button"
+                onclick="window.location.href='index.html'"
+            >
+                Back to LosOja
+            </button>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<script>
+    function showMessage() {
+        alert(
+            "Barter listings are being prepared. Please use your LosOja account when the feature is available."
+        );
+    }
+</script>
+
+</body>
+
+</html>
