@@ -1,0 +1,10 @@
+{
+  "name": "LosOja - Find What You Need Across Nigeria",
+  "short_name": "LosOja",
+  "description": "Find businesses, services, products, property and transportation across Nigeria.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#087a3e",
+  "orientation": "portrait-primary"
+}
