@@ -738,34 +738,382 @@
         },
 
 
-        /* =================================================
-           ADD BUSINESS
-        ================================================= */
+      /* =================================================
+   ADD BUSINESS
+================================================= */
 
-        bindAddBusinessButtons() {
+bindAddBusinessButtons() {
 
-            document
-                .querySelectorAll(
-                    "#addBusinessBtn, .add-business-btn"
-                )
-                .forEach(button => {
+    /* ---------------------------------------------
+       OPEN ADD BUSINESS MODAL
+    --------------------------------------------- */
 
-                    button.addEventListener(
-                        "click",
-                        event => {
+    document
+        .querySelectorAll(
+            "#addBusinessBtn, .add-business-btn"
+        )
+        .forEach(button => {
 
-                            event.preventDefault();
+            button.addEventListener(
+                "click",
+                event => {
 
-                            this.openModal(
-                                "addBusinessModal"
-                            );
+                    event.preventDefault();
 
+                    this.openModal(
+                        "addBusinessModal"
+                    );
+
+                }
+            );
+
+        });
+
+
+    /* ---------------------------------------------
+       HANDLE ADD BUSINESS FORM
+    --------------------------------------------- */
+
+    const form =
+        document.getElementById(
+            "addBusinessForm"
+        );
+
+    if (!form) {
+
+        console.warn(
+            "LosOja: addBusinessForm not found."
+        );
+
+        return;
+    }
+
+
+    /* Prevent duplicate listeners */
+
+    if (
+        form.dataset
+            .losojaSubmitReady === "true"
+    ) {
+        return;
+    }
+
+    form.dataset
+        .losojaSubmitReady = "true";
+
+
+    form.addEventListener(
+        "submit",
+        async event => {
+
+            event.preventDefault();
+
+
+            /* -------------------------------------
+               GET FORM FIELDS
+            ------------------------------------- */
+
+            const name =
+                document
+                    .getElementById("businessName")
+                    ?.value
+                    .trim() || "";
+
+            const category =
+                document
+                    .getElementById("businessCategory")
+                    ?.value
+                    .trim() || "";
+
+            const location =
+                document
+                    .getElementById("businessLocation")
+                    ?.value
+                    .trim() || "";
+
+            const phone =
+                document
+                    .getElementById("businessPhone")
+                    ?.value
+                    .trim() || "";
+
+            const description =
+                document
+                    .getElementById("businessDescription")
+                    ?.value
+                    .trim() || "";
+
+
+            /* -------------------------------------
+               VALIDATION
+            ------------------------------------- */
+
+            if (
+                !name ||
+                !category ||
+                !location
+            ) {
+
+                this.showToast(
+                    "Please complete the required business fields.",
+                    "error"
+                );
+
+                return;
+            }
+
+
+            /* -------------------------------------
+               FIND SUBMIT BUTTON
+            ------------------------------------- */
+
+            const submitButton =
+                form.querySelector(
+                    'button[type="submit"], input[type="submit"]'
+                );
+
+
+            const originalText =
+                submitButton
+                    ? submitButton.textContent
+                    : "";
+
+
+            if (submitButton) {
+
+                submitButton.disabled =
+                    true;
+
+                submitButton.textContent =
+                    "Saving...";
+            }
+
+
+            /* -------------------------------------
+               SUPABASE SETTINGS
+            ------------------------------------- */
+
+            const SUPABASE_URL =
+                "https://ycxshwgeebskdozmornh.supabase.co";
+
+
+            /*
+             * IMPORTANT:
+             * Use the SAME anon key that is
+             * already working in your current
+             * businesses.js.
+             */
+
+            const SUPABASE_KEY =
+                "PASTE_YOUR_EXISTING_ANON_KEY_HERE";
+
+
+            /* -------------------------------------
+               BUSINESS DATA
+            ------------------------------------- */
+
+            const businessData = {
+
+                name: name,
+
+                category: category,
+
+                location: location,
+
+                phone: phone,
+
+                description: description
+
+            };
+
+
+            try {
+
+                /* ---------------------------------
+                   SEND BUSINESS TO SUPABASE
+                --------------------------------- */
+
+                const response =
+                    await fetch(
+                        SUPABASE_URL +
+                        "/rest/v1/businesses",
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "apikey":
+                                    SUPABASE_KEY,
+
+                                "Authorization":
+                                    "Bearer " +
+                                    SUPABASE_KEY,
+
+                                "Content-Type":
+                                    "application/json",
+
+                                "Prefer":
+                                    "return=representation"
+                            },
+
+                            body:
+                                JSON.stringify(
+                                    businessData
+                                )
                         }
                     );
 
-                });
 
-        },
+                /* ---------------------------------
+                   READ RESPONSE
+                --------------------------------- */
+
+                const responseText =
+                    await response.text();
+
+
+                let result = null;
+
+                try {
+
+                    result =
+                        responseText
+                            ? JSON.parse(
+                                responseText
+                            )
+                            : null;
+
+                } catch (jsonError) {
+
+                    result =
+                        responseText;
+
+                }
+
+
+                /* ---------------------------------
+                   HANDLE SUPABASE ERROR
+                --------------------------------- */
+
+                if (!response.ok) {
+
+                    console.error(
+                        "LosOja Supabase insert error:",
+                        result
+                    );
+
+                    const errorMessage =
+                        result &&
+                        typeof result === "object" &&
+                        (
+                            result.message ||
+                            result.error_description ||
+                            result.hint
+                        )
+                            ? (
+                                result.message ||
+                                result.error_description ||
+                                result.hint
+                            )
+                            : "Unable to save the business.";
+
+                    throw new Error(
+                        errorMessage
+                    );
+                }
+
+
+                /* ---------------------------------
+                   SUCCESS
+                --------------------------------- */
+
+                console.log(
+                    "LosOja business saved:",
+                    result
+                );
+
+
+                /* Clear the form */
+
+                form.reset();
+
+
+                /* Close modal */
+
+                this.closeModal(
+                    "addBusinessModal"
+                );
+
+
+                /* Show success message */
+
+                this.showToast(
+                    "Business added successfully!",
+                    "success"
+                );
+
+
+                /* ---------------------------------
+                   REFRESH BUSINESS LIST
+                --------------------------------- */
+
+                if (
+                    typeof window.loadBusinesses ===
+                    "function"
+                ) {
+
+                    await window.loadBusinesses();
+
+                } else if (
+                    window.LosOjaBusinesses &&
+                    typeof window
+                        .LosOjaBusinesses
+                        .load ===
+                    "function"
+                ) {
+
+                    await window
+                        .LosOjaBusinesses
+                        .load();
+
+                }
+
+
+            } catch (error) {
+
+                console.error(
+                    "LosOja add business error:",
+                    error
+                );
+
+
+                this.showToast(
+                    "Could not save the business: " +
+                    error.message,
+                    "error"
+                );
+
+
+            } finally {
+
+                /* Restore button */
+
+                if (submitButton) {
+
+                    submitButton.disabled =
+                        false;
+
+                    submitButton.textContent =
+                        originalText ||
+                        "Add Business";
+
+                }
+
+            }
+
+        }
+    );
+
+},
 
 
         /* =================================================
