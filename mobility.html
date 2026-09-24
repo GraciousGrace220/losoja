@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="theme-color"
+        content="#087a3e"
+    >
+
+    <meta
+        name="description"
+        content="LosOja Mobility - Find transportation options across Nigeria."
+    >
+
+    <title>Mobility - LosOja</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f5faf7;
+            color: #111827;
+        }
+
+        .page {
+            min-height: 100vh;
+        }
+
+        .header {
+            background: #087a3e;
+            color: white;
+            padding: 18px 20px;
+        }
+
+        .header-inner {
+            max-width: 900px;
+            margin: auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+        }
+
+        .back-button {
+            border: 1px solid rgba(255,255,255,.6);
+            background: transparent;
+            color: white;
+            padding: 9px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .main {
+            max-width: 900px;
+            margin: auto;
+            padding: 30px 20px 100px;
+        }
+
+        .hero {
+            background: white;
+            border-radius: 20px;
+            padding: 30px 22px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0,0,0,.06);
+            margin-bottom: 24px;
+        }
+
+        .hero-icon {
+            font-size: 52px;
+            margin-bottom: 12px;
+        }
+
+        h1 {
+            color: #087a3e;
+            margin-bottom: 10px;
+        }
+
+        .hero p {
+            color: #6b7280;
+            line-height: 1.6;
+        }
+
+        .ride-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+        }
+
+        .ride-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 18px;
+            padding: 25px 20px;
+            text-align: center;
+            box-shadow: 0 6px 20px rgba(0,0,0,.05);
+        }
+
+        .ride-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .ride-card h2 {
+            color: #087a3e;
+            margin-bottom: 8px;
+        }
+
+        .ride-card p {
+            color: #6b7280;
+            line-height: 1.5;
+            margin-bottom: 18px;
+        }
+
+        .ride-button {
+            width: 100%;
+            border: 0;
+            background: #087a3e;
+            color: white;
+            padding: 13px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .ride-button:hover {
+            background: #055c2e;
+        }
+
+        .notice {
+            margin-top: 24px;
+            background: #eef8f2;
+            border: 1px solid #cde8d7;
+            border-radius: 16px;
+            padding: 18px;
+            text-align: center;
+            color: #055c2e;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 600px) {
+
+            .main {
+                padding: 20px 15px 80px;
+            }
+
+            .ride-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero {
+                padding: 25px 18px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="page">
+
+
+    <header class="header">
+
+        <div class="header-inner">
+
+            <div class="logo">
+                LosOja
+            </div>
+
+            <button
+                class="back-button"
+                type="button"
+                onclick="window.location.href='index.html'"
+            >
+                ← Back
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <main class="main">
+
+
+        <section class="hero">
+
+            <div class="hero-icon">
+                🚕
+            </div>
+
+            <h1>
+                Mobility
+            </h1>
+
+            <p>
+                Choose a transportation option
+                for your journey.
+            </p>
+
+        </section>
+
+
+        <section class="ride-grid">
+
+
+            <!-- CAB -->
+
+            <div class="ride-card">
+
+                <div class="ride-icon">
+                    🚕
+                </div>
+
+                <h2>
+                    Cab
+                </h2>
+
+                <p>
+                    Request a cab for convenient
+                    transportation.
+                </p>
+
+                <button
+                    class="ride-button"
+                    type="button"
+                    onclick="showMessage('Cab')"
+                >
+                    Request Cab
+                </button>
+
+            </div>
+
+
+            <!-- TRICYCLE -->
+
+            <div class="ride-card">
+
+                <div class="ride-icon">
+                    🛺
+                </div>
+
+                <h2>
+                    Tricycle (Keke)
+                </h2>
+
+                <p>
+                    Request a tricycle for
+                    convenient local transportation.
+                </p>
+
+                <button
+                    class="ride-button"
+                    type="button"
+                    onclick="showMessage('Tricycle')"
+                >
+                    Request Tricycle
+                </button>
+
+            </div>
+
+
+        </section>
+
+
+        <div class="notice">
+
+            🚧 Mobility ride requests are being
+            prepared for LosOja.
+
+        </div>
+
+
+    </main>
+
+</div>
+
+
+<script>
+
+    function showMessage(type) {
+
+        alert(
+            type +
+            " requests are coming soon on LosOja."
+        );
+
+    }
+
+</script>
+
+</body>
+
+</html>
