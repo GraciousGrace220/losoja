@@ -44,7 +44,7 @@
             this.bindLogo();
 
             this.bindSearch();
-
+this.bindLocationButton();
             this.bindPopularSearches();
 
             this.bindCategoryButtons();
