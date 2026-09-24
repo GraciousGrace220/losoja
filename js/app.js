@@ -33,29 +33,31 @@
 
         init() {
 
-            this.setCurrentYear();
+           this.setCurrentYear();
 
-            this.bindModalClosers();
+this.bindModalClosers();
 
-            this.bindMobileMenu();
+this.bindMobileMenu();
 
-            this.bindSmoothScroll();
+this.bindSmoothScroll();
 
-            this.bindLogo();
+this.bindLogo();
 
-            this.bindSearch();
+this.bindSearch();
+
 this.bindLocationButton();
-            this.bindPopularSearches();
 
-            this.bindCategoryButtons();
+this.bindPopularSearches();
 
-            this.bindBusinessButtons();
+this.bindCategoryButtons();
 
-            this.bindAddBusinessButtons();
+this.bindBusinessButtons();
 
-            this.bindMobilityButtons();
+this.bindAddBusinessButtons();
 
-            this.createBackButton();
+this.bindMobilityButtons();
+
+this.createBackButton();
 
         },
 
