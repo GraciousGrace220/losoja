@@ -1024,92 +1024,67 @@ bindAddBusinessButtons() {
 
     if (!form) {
 
-        console.warn(
-            "LosOja: addBusinessForm not found."
-        );
+    console.warn(
+        "LosOja: addBusinessForm not found."
+    );
 
-        return;
-    }
-
-   
-
-            button.addEventListener(
-                "click",
-                event => {
-
-                    event.preventDefault();
-
-                    this.openModal(
-                        "addBusinessModal"
-                    );
-
-                }
-            );
-
-        });
-
-        console.warn(
-            "LosOja: addBusinessForm not found."
-        );
-
-        return;
-    }
+    return;
+}
 
 
-    /* Prevent duplicate listeners */
+/* Prevent duplicate listeners */
 
-    if (
-        form.dataset
-            .losojaSubmitReady === "true"
-    ) {
-        return;
-    }
-
+if (
     form.dataset
-        .losojaSubmitReady = "true";
+        .losojaSubmitReady === "true"
+) {
+    return;
+}
+
+form.dataset
+    .losojaSubmitReady = "true";
 
 
-    form.addEventListener(
-        "submit",
-        async event => {
+form.addEventListener(
+    "submit",
+    async event => {
 
-            event.preventDefault();
+        event.preventDefault();
 
 
-            /* -------------------------------------
-               GET FORM FIELDS
-            ------------------------------------- */
+        /* -------------------------------------
+           GET FORM FIELDS
+        ------------------------------------- */
 
-            const name =
-                document
-                    .getElementById("businessName")
-                    ?.value
-                    .trim() || "";
+        const name =
+            document
+                .getElementById("businessName")
+                ?.value
+                .trim() || "";
 
-            const category =
-                document
-                    .getElementById("businessCategory")
-                    ?.value
-                    .trim() || "";
+        const category =
+            document
+                .getElementById("businessCategory")
+                ?.value
+                .trim() || "";
 
-            const location =
-                document
-                    .getElementById("businessLocation")
-                    ?.value
-                    .trim() || "";
+        const location =
+            document
+                .getElementById("businessLocation")
+                ?.value
+                .trim() || "";
 
-            const phone =
-                document
-                    .getElementById("businessPhone")
-                    ?.value
-                    .trim() || "";
+        const phone =
+            document
+                .getElementById("businessPhone")
+                ?.value
+                .trim() || "";
 
-            const description =
-                document
-                    .getElementById("businessDescription")
-                    ?.value
-                    .trim() || "";
-
+        const description =
+            document
+                .getElementById("businessDescription")
+                ?.value
+                .trim() || "";
 
             /* -------------------------------------
                VALIDATION
