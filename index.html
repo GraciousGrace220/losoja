@@ -1304,87 +1304,28 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
 
-
-    /* Open login modal */
-    const openLoginTimer =
+    /*
+     * Open the login modal.
+     * auth.js already handles the actual login.
+     */
+    const timer =
         setInterval(function () {
 
             if (
                 window.App &&
-                typeof window.App.openModal === "function"
+                typeof window.App.openModal ===
+                "function"
             ) {
 
                 window.App.openModal(
                     "loginModal"
                 );
 
-                clearInterval(
-                    openLoginTimer
-                );
+                clearInterval(timer);
+
             }
 
         }, 300);
-
-
-    /*
-     * Wait for the user to actually submit
-     * the login form.
-     */
-    const loginForm =
-        document.getElementById(
-            "loginForm"
-        );
-
-    if (loginForm) {
-
-        loginForm.addEventListener(
-            "submit",
-            function () {
-
-                const checkLogin =
-                    setInterval(function () {
-
-                        if (
-                            typeof window.getCurrentUser !==
-                            "function"
-                        ) {
-                            return;
-                        }
-
-                        const user =
-                            window.getCurrentUser();
-
-                        if (user) {
-
-                            clearInterval(
-                                checkLogin
-                            );
-
-                            sessionStorage.removeItem(
-                                "losoja_return_to_barter"
-                            );
-
-                            window.location.href =
-                                "barter.html";
-                        }
-
-                    }, 500);
-
-
-                /*
-                 * Stop checking after 30 seconds
-                 * if login was unsuccessful.
-                 */
-                setTimeout(function () {
-                    clearInterval(
-                        checkLogin
-                    );
-                }, 30000);
-
-            }
-        );
-
-    }
 
 });
 </script>
