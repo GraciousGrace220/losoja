@@ -727,55 +727,6 @@ bindLocationButton() {
 
         },
 
-        bindPopularSearches() {
-
-            document
-                .querySelectorAll("[data-search]")
-                .forEach(button => {
-
-                    button.addEventListener(
-                        "click",
-                        event => {
-
-                            event.preventDefault();
-
-                            const term =
-                                button.getAttribute(
-                                    "data-search"
-                                );
-
-                            if (!term) {
-                                return;
-                            }
-
-                            const searchInput =
-                                document.getElementById(
-                                    "searchInput"
-                                );
-
-                            if (searchInput) {
-                                searchInput.value =
-                                    term;
-                            }
-
-                            if (
-                                typeof window.searchBusinesses ===
-                                "function"
-                            ) {
-
-                                window.searchBusinesses(
-                                    term,
-                                    ""
-                                );
-
-                            }
-
-                        }
-                    );
-
-                });
-
-        },
 
 
         /* =================================================
