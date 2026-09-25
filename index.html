@@ -1304,7 +1304,8 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
 
-    /* Open the login window */
+
+    /* Open login modal */
     const openLoginTimer =
         setInterval(function () {
 
@@ -1312,46 +1313,80 @@ document.addEventListener("DOMContentLoaded", function () {
                 window.App &&
                 typeof window.App.openModal === "function"
             ) {
-                window.App.openModal("loginModal");
-                clearInterval(openLoginTimer);
+
+                window.App.openModal(
+                    "loginModal"
+                );
+
+                clearInterval(
+                    openLoginTimer
+                );
             }
 
         }, 300);
 
-    /* Watch for successful login */
-    const loginTimer =
-        setInterval(function () {
 
-            if (
-                typeof window.getCurrentUser === "function"
-            ) {
+    /*
+     * Wait for the user to actually submit
+     * the login form.
+     */
+    const loginForm =
+        document.getElementById(
+            "loginForm"
+        );
 
-                const user =
-                    window.getCurrentUser();
+    if (loginForm) {
 
-                if (user) {
+        loginForm.addEventListener(
+            "submit",
+            function () {
 
-                    clearInterval(loginTimer);
-                    clearInterval(openLoginTimer);
+                const checkLogin =
+                    setInterval(function () {
 
-                    sessionStorage.removeItem(
-                        "losoja_return_to_barter"
+                        if (
+                            typeof window.getCurrentUser !==
+                            "function"
+                        ) {
+                            return;
+                        }
+
+                        const user =
+                            window.getCurrentUser();
+
+                        if (user) {
+
+                            clearInterval(
+                                checkLogin
+                            );
+
+                            sessionStorage.removeItem(
+                                "losoja_return_to_barter"
+                            );
+
+                            window.location.href =
+                                "barter.html";
+                        }
+
+                    }, 500);
+
+
+                /*
+                 * Stop checking after 30 seconds
+                 * if login was unsuccessful.
+                 */
+                setTimeout(function () {
+                    clearInterval(
+                        checkLogin
                     );
+                }, 30000);
 
-                    window.location.href =
-                        "barter.html";
-                }
             }
+        );
 
-        }, 500);
-
-    /* Safety stop */
-    setTimeout(function () {
-        clearInterval(openLoginTimer);
-        clearInterval(loginTimer);
-    }, 120000);
+    }
 
 });
-</script> 
+</script>
 </body>
 </html>
