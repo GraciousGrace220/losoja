@@ -593,257 +593,238 @@ return {
 
 function updateAuthUI() {
 
-    const user =
-        getCurrentUser();
+```
+const user =
+    getCurrentUser();
 
-    const loginBtn =
-        document.getElementById(
-            "loginBtn"
+const loginBtn =
+    document.getElementById(
+        "loginBtn"
+    );
+
+const signupBtn =
+    document.getElementById(
+        "signupBtn"
+    );
+
+const mobileLoginBtn =
+    document.getElementById(
+        "mobileLoginBtn"
+    );
+
+const mobileSignupBtn =
+    document.getElementById(
+        "mobileSignupBtn"
+    );
+
+const userArea =
+    document.getElementById(
+        "userArea"
+    );
+
+const dashboardNavLink =
+    document.getElementById(
+        "dashboardNavLink"
+    );
+
+const mobileDashboardNavLink =
+    document.getElementById(
+        "mobileDashboardNavLink"
+    );
+
+
+/* ================================================
+   CURRENT LOSOJA ACCOUNT BUTTONS
+================================================= */
+
+const accountButtons =
+    document.querySelectorAll(
+        'button[aria-label="Account"], .bottom-nav .nav-item:last-child'
+    );
+
+
+/* ================================================
+   LOGGED IN
+================================================= */
+
+if (user) {
+
+    if (loginBtn) {
+        loginBtn.classList.add(
+            "hidden"
+        );
+    }
+
+    if (signupBtn) {
+        signupBtn.classList.add(
+            "hidden"
+        );
+    }
+
+    if (mobileLoginBtn) {
+        mobileLoginBtn.classList.add(
+            "hidden"
+        );
+    }
+
+    if (mobileSignupBtn) {
+        mobileSignupBtn.classList.add(
+            "hidden"
+        );
+    }
+
+
+    if (dashboardNavLink) {
+        dashboardNavLink.classList.remove(
+            "hidden"
+        );
+    }
+
+    if (mobileDashboardNavLink) {
+        mobileDashboardNavLink.classList.remove(
+            "hidden"
+        );
+    }
+
+
+    /* USER AREA */
+
+    if (userArea) {
+
+        userArea.classList.remove(
+            "hidden"
         );
 
-    const signupBtn =
-        document.getElementById(
-            "signupBtn"
-        );
+        userArea.innerHTML = `
 
-    const mobileLoginBtn =
-        document.getElementById(
-            "mobileLoginBtn"
-        );
+            <span class="user-name">
+                Hi, ${escapeHTML(
+                    getUserName(user)
+                )}
+            </span>
 
-    const mobileSignupBtn =
-        document.getElementById(
-            "mobileSignupBtn"
-        );
+            <button
+                type="button"
+                class="btn btn-outline"
+                id="logoutBtn"
+            >
+                Logout
+            </button>
 
-    const userArea =
-        document.getElementById(
-            "userArea"
-        );
+        `;
 
-    const dashboardNavLink =
-        document.getElementById(
-            "dashboardNavLink"
-        );
-
-    const mobileDashboardNavLink =
-        document.getElementById(
-            "mobileDashboardNavLink"
-        );
-
-    /* ================================================
-       ACCOUNT BUTTONS
-    ================================================= */
-
-    const accountButtons =
-        document.querySelectorAll(
-            "#accountBtn, .account-btn, .account-button, .nav-account, [data-action='account']"
-        );
-
-
-    if (user) {
-
-        /* --------------------------------------------
-           HIDE LOGIN / SIGNUP
-        -------------------------------------------- */
-
-        if (loginBtn) {
-            loginBtn.classList.add(
-                "hidden"
-            );
-        }
-
-        if (signupBtn) {
-            signupBtn.classList.add(
-                "hidden"
-            );
-        }
-
-        if (mobileLoginBtn) {
-            mobileLoginBtn.classList.add(
-                "hidden"
-            );
-        }
-
-        if (mobileSignupBtn) {
-            mobileSignupBtn.classList.add(
-                "hidden"
-            );
-        }
-
-
-        /* --------------------------------------------
-           SHOW DASHBOARD
-        -------------------------------------------- */
-
-        if (dashboardNavLink) {
-            dashboardNavLink.classList.remove(
-                "hidden"
-            );
-        }
-
-        if (mobileDashboardNavLink) {
-            mobileDashboardNavLink.classList.remove(
-                "hidden"
-            );
-        }
-
-
-        /* --------------------------------------------
-           USER AREA
-        -------------------------------------------- */
-
-        if (userArea) {
-
-            userArea.classList.remove(
-                "hidden"
+        const logoutBtn =
+            document.getElementById(
+                "logoutBtn"
             );
 
-            userArea.innerHTML = `
+        if (logoutBtn) {
 
-                <span class="user-name">
-                    Hi, ${escapeHTML(
-                        getUserName(user)
-                    )}
-                </span>
-
-                <button
-                    type="button"
-                    class="btn btn-outline"
-                    id="logoutBtn"
-                >
-                    Logout
-                </button>
-
-            `;
-
-            const logoutBtn =
-                document.getElementById(
-                    "logoutBtn"
-                );
-
-            if (logoutBtn) {
-
-                logoutBtn.addEventListener(
-                    "click",
-                    logout
-                );
-
-            }
-
-        }
-
-
-        /* --------------------------------------------
-           LOGGED-IN ACCOUNT BUTTON
-        -------------------------------------------- */
-
-        accountButtons.forEach(
-            function (button) {
-
-                button.textContent =
-                    "Logout";
-
-                button.onclick =
-                    function (event) {
-
-                        event.preventDefault();
-
-                        logout();
-
-                    };
-
-            }
-        );
-
-
-    } else {
-
-        /* --------------------------------------------
-           SHOW LOGIN / SIGNUP
-        -------------------------------------------- */
-
-        if (loginBtn) {
-            loginBtn.classList.remove(
-                "hidden"
-            );
-        }
-
-        if (signupBtn) {
-            signupBtn.classList.remove(
-                "hidden"
-            );
-        }
-
-        if (mobileLoginBtn) {
-            mobileLoginBtn.classList.remove(
-                "hidden"
-            );
-        }
-
-        if (mobileSignupBtn) {
-            mobileSignupBtn.classList.remove(
-                "hidden"
-            );
-        }
-
-
-        /* --------------------------------------------
-           HIDE DASHBOARD
-        -------------------------------------------- */
-
-        if (dashboardNavLink) {
-            dashboardNavLink.classList.add(
-                "hidden"
-            );
-        }
-
-        if (mobileDashboardNavLink) {
-            mobileDashboardNavLink.classList.add(
-                "hidden"
-            );
-        }
-
-
-        /* --------------------------------------------
-           HIDE USER AREA
-        -------------------------------------------- */
-
-        if (userArea) {
-
-            userArea.classList.add(
-                "hidden"
+            logoutBtn.addEventListener(
+                "click",
+                logout
             );
 
-            userArea.innerHTML =
-                "";
-
         }
-
-
-        /* --------------------------------------------
-           LOGGED-OUT ACCOUNT BUTTON
-        -------------------------------------------- */
-
-        accountButtons.forEach(
-            function (button) {
-
-                button.textContent =
-                    "Account";
-
-                button.onclick =
-                    function (event) {
-
-                        event.preventDefault();
-
-                        openLogin();
-
-                    };
-
-            }
-        );
 
     }
+
+
+    /* ACCOUNT BUTTONS */
+
+    accountButtons.forEach(
+        function (button) {
+
+            button.onclick =
+                function (event) {
+
+                    event.preventDefault();
+
+                    logout();
+
+                };
+
+        }
+    );
+
+
+} else {
+
+    /* ============================================
+       LOGGED OUT
+    ============================================ */
+
+    if (loginBtn) {
+        loginBtn.classList.remove(
+            "hidden"
+        );
+    }
+
+    if (signupBtn) {
+        signupBtn.classList.remove(
+            "hidden"
+        );
+    }
+
+    if (mobileLoginBtn) {
+        mobileLoginBtn.classList.remove(
+            "hidden"
+        );
+    }
+
+    if (mobileSignupBtn) {
+        mobileSignupBtn.classList.remove(
+            "hidden"
+        );
+    }
+
+
+    if (dashboardNavLink) {
+        dashboardNavLink.classList.add(
+            "hidden"
+        );
+    }
+
+    if (mobileDashboardNavLink) {
+        mobileDashboardNavLink.classList.add(
+            "hidden"
+        );
+    }
+
+
+    /* USER AREA */
+
+    if (userArea) {
+
+        userArea.classList.add(
+            "hidden"
+        );
+
+        userArea.innerHTML =
+            "";
+
+    }
+
+
+    /* ACCOUNT BUTTONS */
+
+    accountButtons.forEach(
+        function (button) {
+
+            button.onclick =
+                function (event) {
+
+                    event.preventDefault();
+
+                    openLogin();
+
+                };
+
+        }
+    );
+
+}
+```
 
 }
 
