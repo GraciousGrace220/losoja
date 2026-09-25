@@ -194,21 +194,53 @@ Handles:
        ERROR MESSAGE
     ===================================================== */
 
-    function getErrorMessage(data) {
+   function getErrorMessage(data) {
 
-        if (!data) {
-            return "Something went wrong.";
-        }
+    if (!data) {
+        return "Something went wrong.";
+    }
 
-        return (
+    const rawMessage =
+        String(
             data.msg ||
             data.message ||
             data.error_description ||
             data.error ||
-            "Something went wrong."
+            ""
         );
 
+    const message =
+        rawMessage.toLowerCase();
+
+    if (
+        message.includes("already registered") ||
+        message.includes("already exists") ||
+        message.includes("user already")
+    ) {
+        return "This email is already registered. Please log in instead.";
     }
+
+    if (
+        message.includes("invalid login credentials") ||
+        message.includes("invalid credentials")
+    ) {
+        return "Email or password is incorrect.";
+    }
+
+    if (
+        message.includes("password") &&
+        (
+            message.includes("weak") ||
+            message.includes("short") ||
+            message.includes("characters")
+        )
+    ) {
+        return "Your password is too weak. Please choose a stronger password.";
+    }
+
+    return rawMessage ||
+        "Something went wrong.";
+}
 
 
     /* =====================================================
