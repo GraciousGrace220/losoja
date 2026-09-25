@@ -2613,6 +2613,11 @@ button {
 }
 
 .nav-add-button {
+    position: relative;
+    z-index: 9999;
+    pointer-events: auto;
+    cursor: pointer;
+
     width: 48px;
     height: 48px;
 
@@ -2630,6 +2635,7 @@ button {
 
     box-shadow:
         0 5px 15px rgba(8, 122, 62, 0.25);
+}
 }
 
 .nav-add-button:hover {
