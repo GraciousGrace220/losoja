@@ -530,7 +530,9 @@ this.createBackButton();
                                 latitude,
                                 longitude
                             );
-
+console.log(
+    "LosOja: checking nearby businesses..."
+);
                             localStorage.setItem(
                                 "losoja_user_location",
                                 JSON.stringify({
