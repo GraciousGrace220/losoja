@@ -986,39 +986,50 @@ bindLocationButton() {
 ================================================= */
 
 bindAddBusinessButtons() {
-    ...
-},
-const plusButton =
-    document.getElementById(
-        "navAddBusinessBtn"
-    );
 
-if (plusButton) {
+    /* ---------------------------------------------
+       OPEN ADD BUSINESS MODAL
+    --------------------------------------------- */
 
-    plusButton.addEventListener(
-        "click",
-        event => {
+    document
+        .querySelectorAll(
+            "#addBusinessBtn, .add-business-btn, .nav-add-button"
+        )
+        .forEach(button => {
 
-            event.preventDefault();
+            button.addEventListener(
+                "click",
+                event => {
 
-            const addBusinessButton =
-                document.getElementById(
-                    "addBusinessBtn"
-                );
+                    event.preventDefault();
 
-            if (addBusinessButton) {
-                addBusinessButton.click();
-            } else {
-                console.warn(
-                    "LosOja: Add Business button not found."
-                );
-            }
+                    this.openModal(
+                        "addBusinessModal"
+                    );
 
-        }
-    );
+                }
+            );
 
-}
+        });
 
+
+    /* ---------------------------------------------
+       HANDLE ADD BUSINESS FORM
+    --------------------------------------------- */
+
+    const form =
+        document.getElementById(
+            "addBusinessForm"
+        );
+
+    if (!form) {
+
+        console.warn(
+            "LosOja: addBusinessForm not found."
+        );
+
+        return;
+    }
 
     /* ---------------------------------------------
        OPEN ADD BUSINESS MODAL
