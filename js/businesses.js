@@ -999,17 +999,12 @@ if (image) {
        PUBLIC FUNCTIONS
     ===================================================== */
 
-    window.loadBusinesses =
-        loadBusinesses;
-
-    window.searchBusinesses =
-        searchBusinesses;
-
-    window.filterBusinessesByCategory =
-        filterByCategory;
-
-    window.filterByCategory =
-        filterByCategory;
+   window.loadBusinesses = loadBusinesses;
+window.searchBusinesses = searchBusinesses;
+window.filterBusinessesByCategory = filterByCategory;
+window.filterByCategory = filterByCategory;
+window.openBusiness = openBusiness;
+window.renderBusinesses = renderBusinesses;
     /* =====================================================
        FIND NEARBY BUSINESSES
     ===================================================== */
