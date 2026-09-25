@@ -939,13 +939,13 @@ function clearError() {
 
 function goToLogin() {
 
-    /*
-     * The main LosOja login lives inside index.html.
-     */
+    sessionStorage.setItem(
+        "losoja_return_to_barter",
+        "true"
+    );
 
     window.location.href =
-        "index.html#login";
-
+        "index.html";
 }
 
 
