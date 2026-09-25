@@ -328,31 +328,6 @@ Handles:
            saveSession(data);
 
 updateAuthUI();
-
-
-/* Return to Trade by Barter after login */
-
-if (
-    sessionStorage.getItem(
-        "losoja_return_to_barter"
-    ) === "true"
-) {
-
-    sessionStorage.removeItem(
-        "losoja_return_to_barter"
-    );
-
-    window.location.href =
-        "barter.html";
-
-    return {
-        success: true,
-        user: data.user,
-        session: data
-    };
-}
-
-
 return {
     success: true,
     user: data.user,
