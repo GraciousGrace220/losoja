@@ -1130,43 +1130,6 @@
 
 </div>
 
-<script>
-document.addEventListener("DOMContentLoaded", function () {
 
-    const params =
-        new URLSearchParams(
-            window.location.search
-        );
-
-    if (
-        params.get("openLogin") !== "1"
-    ) {
-        return;
-    }
-
-    setTimeout(function () {
-
-        const loginModal =
-            document.getElementById(
-                "loginModal"
-            );
-
-        if (loginModal) {
-
-            loginModal.classList.remove(
-                "hidden"
-            );
-
-            loginModal.setAttribute(
-                "aria-hidden",
-                "false"
-            );
-
-        }
-
-    }, 800);
-
-});
-</script>    
 </body>
 </html>
