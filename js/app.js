@@ -543,7 +543,43 @@ this.createBackButton();
                                 "Your location was found successfully.",
                                 "success"
                             );
+this.showToast(
+    "Your location was found successfully.",
+    "success"
+);
 
+if (
+    typeof window.findNearbyBusinesses ===
+    "function"
+) {
+
+    const nearbyBusinesses =
+        window.findNearbyBusinesses(10);
+
+    console.log(
+        "LosOja nearby businesses:",
+        nearbyBusinesses
+    );
+
+    if (
+        nearbyBusinesses.length > 0
+    ) {
+
+        console.log(
+            "LosOja: Nearby businesses found:",
+            nearbyBusinesses.length
+        );
+
+    } else {
+
+        this.showToast(
+            "No businesses found within 10 km yet.",
+            "info"
+        );
+
+    }
+
+}
                         },
 
                         error => {
