@@ -938,7 +938,12 @@ function clearError() {
 ===================================================== */
 
 function goToLogin() {
-    window.location.href = "index.html?openLogin=1";
+    sessionStorage.setItem(
+        "losoja_return_to_barter",
+        "true"
+    );
+
+    window.location.href = "index.html";
 }
 
 /* =====================================================
