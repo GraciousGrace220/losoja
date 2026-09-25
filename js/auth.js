@@ -593,14 +593,13 @@ return {
 
 function updateAuthUI() {
 
-```
-const user =
-    getCurrentUser();
+    const user =
+        getCurrentUser();
 
-const loginBtn =
-    document.getElementById(
-        "loginBtn"
-    );
+    const loginBtn =
+        document.getElementById(
+            "loginBtn"
+        );
 
 const signupBtn =
     document.getElementById(
