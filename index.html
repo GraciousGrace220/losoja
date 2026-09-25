@@ -1129,45 +1129,7 @@
     </div>
 
 </div>
-<script>
-document.addEventListener("DOMContentLoaded", function () {
 
-    const returnToBarter =
-        sessionStorage.getItem(
-            "losoja_return_to_barter"
-        );
-
-    if (!returnToBarter) {
-        return;
-    }
-
-    sessionStorage.removeItem(
-        "losoja_return_to_barter"
-    );
-
-    setTimeout(function () {
-
-        if (
-            window.App &&
-            typeof window.App.openModal === "function"
-        ) {
-
-            window.App.openModal(
-                "loginModal"
-            );
-
-        } else if (
-            typeof window.openLogin === "function"
-        ) {
-
-            window.openLogin();
-
-        }
-
-    }, 500);
-
-});
-</script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
