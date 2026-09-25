@@ -1075,7 +1075,60 @@
 <script src="js/businesses.js?v=4"></script>
 
 <script src="js/app.js?v=4"></script>
+<!-- =====================================================
+     LOSOJA BUSINESS DETAILS MODAL
+===================================================== -->
 
+<div
+    id="businessDetailsModal"
+    class="modal-overlay hidden"
+    aria-hidden="true"
+>
+
+    <div class="modal-content large">
+
+        <button
+            type="button"
+            class="modal-close"
+            aria-label="Close"
+            onclick="closeModal('businessDetailsModal')"
+        >
+            ×
+        </button>
+
+        <div id="businessDetailsContent">
+
+            <div class="business-details-image-wrap">
+                <img
+                    id="businessDetailsImage"
+                    src=""
+                    alt="Business"
+                    class="business-details-image"
+                >
+            </div>
+
+            <h2 id="businessDetailsName">
+                Business Name
+            </h2>
+
+            <p id="businessDetailsCategory"></p>
+
+            <p id="businessDetailsLocation"></p>
+
+            <p id="businessDetailsPhone"></p>
+
+            <p id="businessDetailsDescription"></p>
+
+            <div
+                id="businessDetailsRating"
+                class="business-details-rating"
+            ></div>
+
+        </div>
+
+    </div>
+
+</div>
 </body>
 
 </html>
