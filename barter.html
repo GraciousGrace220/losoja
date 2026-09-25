@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -14,24 +15,48 @@
         content="#087a3e"
     >
 
+    <meta
+        name="description"
+        content="Trade items with other people across LosOja."
+    >
+
     <title>Trade by Barter - LosOja</title>
 
+
     <style>
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
 
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            background: #f5faf7;
-            color: #111827;
-        }
 
-        .page {
+        body {
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            background:
+                linear-gradient(
+                    to bottom,
+                    #087a3e 0,
+                    #087a3e 90px,
+                    #ffffff 90px,
+                    #ffffff 100%
+                );
+
+            color: #111827;
             min-height: 100vh;
         }
+
+
+        button,
+        input {
+            font: inherit;
+        }
+
 
         .header {
             background: #087a3e;
@@ -39,205 +64,1698 @@
             padding: 18px 20px;
         }
 
+
         .header-inner {
-            max-width: 900px;
+            max-width: 1000px;
             margin: auto;
+
             display: flex;
             align-items: center;
             justify-content: space-between;
+
             gap: 15px;
         }
 
+
         .logo {
-            font-size: 24px;
+            font-size: 25px;
             font-weight: 800;
         }
 
+
         .back-button {
-            border: 1px solid rgba(255,255,255,.5);
+            border:
+                1px solid
+                rgba(255,255,255,.6);
+
             background: transparent;
             color: white;
-            padding: 9px 14px;
+
+            padding:
+                9px 14px;
+
             border-radius: 10px;
+
             cursor: pointer;
-            font-size: 14px;
         }
 
+
         .main {
-            max-width: 900px;
+            max-width: 1000px;
             margin: auto;
-            padding: 30px 20px 100px;
+
+            padding:
+                28px 20px 80px;
         }
+
 
         .hero {
             background: white;
+
             border-radius: 20px;
-            padding: 30px 22px;
+
+            padding:
+                28px 22px;
+
             text-align: center;
-            box-shadow: 0 8px 25px rgba(0,0,0,.06);
-            margin-bottom: 24px;
+
+            box-shadow:
+                0 8px 25px
+                rgba(0,0,0,.07);
+
+            margin-bottom: 22px;
         }
 
+
         .icon {
-            font-size: 52px;
-            margin-bottom: 12px;
+            font-size: 48px;
+            margin-bottom: 10px;
         }
+
 
         h1 {
             color: #087a3e;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
+
 
         .hero p {
             color: #6b7280;
             line-height: 1.6;
         }
 
-        .login-card {
+
+        .user-card {
             background: #eef8f2;
-            border: 1px solid #cde8d7;
+
+            border:
+                1px solid
+                #cde8d7;
+
             border-radius: 18px;
-            padding: 25px;
-            text-align: center;
-        }
 
-        .login-card h2 {
-            margin-bottom: 10px;
-            color: #055c2e;
-        }
+            padding: 20px;
 
-        .login-card p {
-            color: #4b5563;
-            line-height: 1.6;
             margin-bottom: 20px;
         }
 
+
+        .user-card h2 {
+            color: #055c2e;
+            margin-bottom: 7px;
+        }
+
+
+        .user-card p {
+            color: #4b5563;
+        }
+
+
+        .toolbar {
+            background: white;
+
+            border-radius: 18px;
+
+            padding: 18px;
+
+            box-shadow:
+                0 5px 18px
+                rgba(0,0,0,.06);
+
+            margin-bottom: 20px;
+        }
+
+
+        .search-row {
+            display: flex;
+            gap: 10px;
+        }
+
+
+        .search-input {
+            flex: 1;
+
+            border:
+                1px solid
+                #d1d5db;
+
+            border-radius: 10px;
+
+            padding:
+                12px 14px;
+
+            outline: none;
+        }
+
+
+        .search-input:focus {
+            border-color: #087a3e;
+        }
+
+
         .button {
-            display: inline-block;
             border: 0;
+
             background: #087a3e;
             color: white;
-            padding: 13px 22px;
+
+            padding:
+                12px 18px;
+
             border-radius: 10px;
+
             font-weight: 700;
+
             cursor: pointer;
-            text-decoration: none;
         }
+
 
         .button:hover {
             background: #055c2e;
         }
 
-        .secondary {
+
+        .button.secondary {
             background: white;
             color: #087a3e;
-            border: 1px solid #087a3e;
-            margin-left: 8px;
+
+            border:
+                1px solid
+                #087a3e;
         }
+
+
+        .listings-title {
+            margin:
+                8px 0 14px;
+
+            color: #087a3e;
+        }
+
+
+        .listings {
+            display: grid;
+
+            grid-template-columns:
+                repeat(
+                    auto-fit,
+                    minmax(260px, 1fr)
+                );
+
+            gap: 16px;
+        }
+
+
+        .listing {
+            background: white;
+
+            border:
+                1px solid
+                #e5e7eb;
+
+            border-radius: 16px;
+
+            padding: 18px;
+
+            box-shadow:
+                0 5px 18px
+                rgba(0,0,0,.05);
+        }
+
+
+        .listing h3 {
+            color: #087a3e;
+            margin-bottom: 12px;
+        }
+
+
+        .listing-row {
+            margin-bottom: 8px;
+
+            line-height: 1.5;
+        }
+
+
+        .listing-label {
+            font-weight: 700;
+            color: #374151;
+        }
+
+
+        .status {
+            display: inline-block;
+
+            background: #e8f5ed;
+            color: #087a3e;
+
+            padding:
+                5px 9px;
+
+            border-radius: 20px;
+
+            font-size: 12px;
+
+            font-weight: 700;
+        }
+
+
+        .empty {
+            background: white;
+
+            border-radius: 16px;
+
+            padding: 30px 20px;
+
+            text-align: center;
+
+            color: #6b7280;
+        }
+
+
+        .error {
+            background: #fff1f2;
+
+            border:
+                1px solid
+                #fecdd3;
+
+            color: #9f1239;
+
+            border-radius: 12px;
+
+            padding: 13px;
+
+            margin-bottom: 15px;
+
+            display: none;
+        }
+
+
+        .modal {
+            position: fixed;
+
+            inset: 0;
+
+            background:
+                rgba(0,0,0,.55);
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            padding: 20px;
+
+            z-index: 1000;
+        }
+
+
+        .modal.hidden {
+            display: none;
+        }
+
+
+        .modal-box {
+            background: white;
+
+            width: 100%;
+            max-width: 520px;
+
+            max-height: 90vh;
+
+            overflow-y: auto;
+
+            border-radius: 18px;
+
+            padding: 22px;
+
+            position: relative;
+        }
+
+
+        .modal-close {
+            position: absolute;
+
+            right: 15px;
+            top: 12px;
+
+            border: 0;
+
+            background: transparent;
+
+            font-size: 28px;
+
+            cursor: pointer;
+
+            color: #6b7280;
+        }
+
+
+        .modal-box h2 {
+            color: #087a3e;
+            margin-bottom: 18px;
+        }
+
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+
+        .form-group label {
+            display: block;
+
+            font-weight: 700;
+
+            margin-bottom: 6px;
+        }
+
+
+        .form-group input {
+            width: 100%;
+
+            border:
+                1px solid
+                #d1d5db;
+
+            border-radius: 10px;
+
+            padding:
+                12px 13px;
+
+            outline: none;
+        }
+
+
+        .form-group input:focus {
+            border-color: #087a3e;
+        }
+
+
+        .form-actions {
+            display: flex;
+
+            gap: 10px;
+
+            margin-top: 20px;
+        }
+
+
+        .login-screen {
+            background: white;
+
+            border-radius: 18px;
+
+            padding: 30px 22px;
+
+            text-align: center;
+
+            box-shadow:
+                0 8px 25px
+                rgba(0,0,0,.07);
+        }
+
+
+        .login-screen h2 {
+            color: #087a3e;
+            margin-bottom: 10px;
+        }
+
+
+        .login-screen p {
+            color: #6b7280;
+
+            line-height: 1.6;
+
+            margin-bottom: 20px;
+        }
+
+
+        .loading {
+            text-align: center;
+
+            padding: 30px;
+
+            color: #6b7280;
+        }
+
 
         @media (max-width: 600px) {
+
             .main {
-                padding: 20px 15px 90px;
+                padding:
+                    20px 15px 70px;
             }
 
-            .hero {
-                padding: 25px 18px;
+
+            .search-row {
+                flex-direction: column;
             }
 
-            .secondary {
-                margin-left: 0;
-                margin-top: 10px;
+
+            .form-actions {
+                flex-direction: column;
             }
+
+
+            .button {
+                width: 100%;
+            }
+
         }
+
     </style>
+
 </head>
+
 
 <body>
 
-<div class="page">
 
-    <header class="header">
+<header class="header">
 
-        <div class="header-inner">
+    <div class="header-inner">
 
-            <div class="logo">
-                LosOja
-            </div>
-
-            <button
-                class="back-button"
-                type="button"
-                onclick="window.location.href='index.html'"
-            >
-                ← Back
-            </button>
-
+        <div class="logo">
+            LosOja
         </div>
 
-    </header>
+
+        <button
+            type="button"
+            class="back-button"
+            onclick="window.location.href='index.html'"
+        >
+            ← Back
+        </button>
+
+    </div>
+
+</header>
 
 
-    <main class="main">
 
-        <section class="hero">
-
-            <div class="icon">
-                🔄
-            </div>
-
-            <h1>
-                Trade by Barter
-            </h1>
-
-            <p>
-                Exchange items and discover people
-                interested in trading across LosOja.
-            </p>
-
-        </section>
+<main class="main">
 
 
-        <section class="login-card">
+    <section class="hero">
 
-            <h2>
-                Trade by Barter
+        <div class="icon">
+            🔄
+        </div>
+
+        <h1>
+            Trade by Barter
+        </h1>
+
+        <p>
+            Exchange items and discover people
+            interested in trading across LosOja.
+        </p>
+
+    </section>
+
+
+
+    <!-- LOGIN SCREEN -->
+
+    <section
+        id="loginScreen"
+        class="login-screen"
+    >
+
+        <h2>
+            Sign in to Trade
+        </h2>
+
+        <p>
+            You need a LosOja account to view
+            and create barter listings.
+        </p>
+
+        <button
+            type="button"
+            class="button"
+            onclick="goToLogin()"
+        >
+            Log In
+        </button>
+
+
+        <button
+            type="button"
+            class="button secondary"
+            onclick="window.location.href='index.html'"
+        >
+            Back to LosOja
+        </button>
+
+    </section>
+
+
+
+    <!-- LOGGED IN AREA -->
+
+    <section
+        id="barterArea"
+        style="display:none;"
+    >
+
+
+        <div class="user-card">
+
+            <h2 id="welcomeUser">
+                Welcome
             </h2>
 
             <p>
-                Sign in to access barter listings
-                and participate in the LosOja community.
+                You are signed in and can now
+                browse and create barter listings.
             </p>
 
-            <button
-                class="button"
-                type="button"
-                onclick="showMessage()"
-            >
-                Continue
-            </button>
+        </div>
 
-            <button
-                class="button secondary"
-                type="button"
-                onclick="window.location.href='index.html'"
-            >
-                Back to LosOja
-            </button>
 
-        </section>
 
-    </main>
+        <div
+            id="errorMessage"
+            class="error"
+        ></div>
+
+
+
+        <div class="toolbar">
+
+            <div class="search-row">
+
+                <input
+                    type="search"
+                    id="searchInput"
+                    class="search-input"
+                    placeholder="Search item or wanted item..."
+                    autocomplete="off"
+                >
+
+
+                <button
+                    type="button"
+                    class="button"
+                    onclick="openAddListing()"
+                >
+                    + Add Listing
+                </button>
+
+            </div>
+
+        </div>
+
+
+
+        <h2 class="listings-title">
+            Available Barter Listings
+        </h2>
+
+
+        <div
+            id="listings"
+            class="listings"
+        >
+
+            <div class="loading">
+                Loading barter listings...
+            </div>
+
+        </div>
+
+
+    </section>
+
+</main>
+
+
+
+<!-- ADD LISTING MODAL -->
+
+<div
+    id="addListingModal"
+    class="modal hidden"
+>
+
+    <div class="modal-box">
+
+        <button
+            type="button"
+            class="modal-close"
+            onclick="closeAddListing()"
+            aria-label="Close"
+        >
+            ×
+        </button>
+
+
+        <h2>
+            Add Barter Listing
+        </h2>
+
+
+        <form id="barterForm">
+
+
+            <div class="form-group">
+
+                <label for="title">
+                    Item You're Offering
+                </label>
+
+                <input
+                    type="text"
+                    id="title"
+                    maxlength="100"
+                    placeholder="Example: Used phone"
+                    required
+                >
+
+            </div>
+
+
+
+            <div class="form-group">
+
+                <label for="wantedItem">
+                    What Do You Want in Exchange?
+                </label>
+
+                <input
+                    type="text"
+                    id="wantedItem"
+                    maxlength="100"
+                    placeholder="Example: Laptop"
+                    required
+                >
+
+            </div>
+
+
+
+            <div class="form-group">
+
+                <label for="location">
+                    Location
+                </label>
+
+                <input
+                    type="text"
+                    id="location"
+                    maxlength="100"
+                    placeholder="Example: Ibadan"
+                    required
+                >
+
+            </div>
+
+
+
+            <div class="form-group">
+
+                <label for="phone">
+                    Phone Number
+                </label>
+
+                <input
+                    type="tel"
+                    id="phone"
+                    maxlength="30"
+                    placeholder="Your contact number"
+                    required
+                >
+
+            </div>
+
+
+
+            <div class="form-actions">
+
+                <button
+                    type="submit"
+                    class="button"
+                    id="submitListingButton"
+                >
+                    Publish Listing
+                </button>
+
+
+                <button
+                    type="button"
+                    class="button secondary"
+                    onclick="closeAddListing()"
+                >
+                    Cancel
+                </button>
+
+            </div>
+
+
+        </form>
+
+    </div>
 
 </div>
 
 
+
 <script>
-    function showMessage() {
-        alert(
-            "Barter listings are being prepared. Please use your LosOja account when the feature is available."
-        );
+
+
+"use strict";
+
+
+
+/* =====================================================
+   SUPABASE CONFIG
+===================================================== */
+
+const SUPABASE_URL =
+    "https://ycxshwgeebskdozmornh.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
+
+
+
+/* =====================================================
+   HELPERS
+===================================================== */
+
+function escapeHTML(value) {
+
+    const div =
+        document.createElement("div");
+
+    div.textContent =
+        String(value || "");
+
+    return div.innerHTML;
+
+}
+
+
+
+function getHeaders(token) {
+
+    const headers = {
+
+        "apikey":
+            SUPABASE_KEY,
+
+        "Content-Type":
+            "application/json",
+
+        "Accept":
+            "application/json"
+
+    };
+
+
+    if (token) {
+
+        headers.Authorization =
+            "Bearer " + token;
+
     }
+
+
+    return headers;
+
+}
+
+
+
+function showError(message) {
+
+    const element =
+        document.getElementById(
+            "errorMessage"
+        );
+
+    if (!element) {
+        return;
+    }
+
+
+    element.textContent =
+        message || "Something went wrong.";
+
+    element.style.display =
+        "block";
+
+}
+
+
+
+function clearError() {
+
+    const element =
+        document.getElementById(
+            "errorMessage"
+        );
+
+    if (!element) {
+        return;
+    }
+
+
+    element.textContent = "";
+
+    element.style.display =
+        "none";
+
+}
+
+
+
+/* =====================================================
+   LOGIN
+===================================================== */
+
+function goToLogin() {
+
+    /*
+     * The main LosOja login lives inside index.html.
+     */
+
+    window.location.href =
+        "index.html#login";
+
+}
+
+
+
+/* =====================================================
+   CHECK SESSION
+===================================================== */
+
+async function checkLogin() {
+
+    clearError();
+
+
+    let user = null;
+
+
+    try {
+
+        if (
+            typeof window.ensureValidSupabaseSession ===
+            "function"
+        ) {
+
+            await window.ensureValidSupabaseSession();
+
+        }
+
+
+        if (
+            typeof window.getCurrentUser ===
+            "function"
+        ) {
+
+            user =
+                window.getCurrentUser();
+
+        }
+
+    } catch (error) {
+
+        console.warn(
+            "LosOja barter session check failed:",
+            error
+        );
+
+    }
+
+
+
+    const loginScreen =
+        document.getElementById(
+            "loginScreen"
+        );
+
+    const barterArea =
+        document.getElementById(
+            "barterArea"
+        );
+
+
+    if (!user) {
+
+        if (loginScreen) {
+            loginScreen.style.display =
+                "block";
+        }
+
+        if (barterArea) {
+            barterArea.style.display =
+                "none";
+        }
+
+        return null;
+
+    }
+
+
+
+    if (loginScreen) {
+        loginScreen.style.display =
+            "none";
+    }
+
+
+    if (barterArea) {
+        barterArea.style.display =
+            "block";
+    }
+
+
+
+    const name =
+        user.user_metadata?.full_name ||
+        user.user_metadata?.name ||
+        user.email?.split("@")[0] ||
+        "User";
+
+
+    const welcome =
+        document.getElementById(
+            "welcomeUser"
+        );
+
+
+    if (welcome) {
+
+        welcome.textContent =
+            "Welcome, " + name;
+
+    }
+
+
+    return user;
+
+}
+
+
+
+/* =====================================================
+   LOAD LISTINGS
+===================================================== */
+
+async function loadListings() {
+
+    clearError();
+
+
+    const listingsElement =
+        document.getElementById(
+            "listings"
+        );
+
+
+    if (!listingsElement) {
+        return;
+    }
+
+
+    listingsElement.innerHTML = `
+        <div class="loading">
+            Loading barter listings...
+        </div>
+    `;
+
+
+
+    let token = null;
+
+
+    if (
+        typeof window.ensureValidSupabaseSession ===
+        "function"
+    ) {
+
+        await window.ensureValidSupabaseSession();
+
+    }
+
+
+    if (
+        typeof window.getSupabaseAccessToken ===
+        "function"
+    ) {
+
+        token =
+            window.getSupabaseAccessToken();
+
+    }
+
+
+    if (!token) {
+
+        listingsElement.innerHTML = `
+            <div class="empty">
+                Please log in to view barter listings.
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+
+    try {
+
+        const response =
+            await fetch(
+                SUPABASE_URL +
+                "/rest/v1/barter_listings" +
+                "?select=id,user_id,title,location,wanted_item,phone,status,created_at" +
+                "&order=created_at.desc",
+                {
+                    method: "GET",
+                    headers:
+                        getHeaders(token)
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            console.error(
+                "LosOja barter load error:",
+                data
+            );
+
+            showError(
+                data?.message ||
+                data?.details ||
+                "Could not load barter listings."
+            );
+
+            listingsElement.innerHTML = "";
+
+            return;
+
+        }
+
+
+        renderListings(
+            Array.isArray(data)
+                ? data
+                : []
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "LosOja barter network error:",
+            error
+        );
+
+        showError(
+            "Could not connect to LosOja. Please check your internet connection."
+        );
+
+        listingsElement.innerHTML = "";
+
+    }
+
+}
+
+
+
+/* =====================================================
+   RENDER LISTINGS
+===================================================== */
+
+let allListings = [];
+
+
+
+function renderListings(listings) {
+
+    allListings =
+        Array.isArray(listings)
+            ? listings
+            : [];
+
+
+    displayListings(
+        allListings
+    );
+
+}
+
+
+
+function displayListings(listings) {
+
+    const container =
+        document.getElementById(
+            "listings"
+        );
+
+
+    if (!container) {
+        return;
+    }
+
+
+    if (!listings.length) {
+
+        container.innerHTML = `
+            <div class="empty">
+                No barter listings found yet.
+                <br><br>
+                Be the first person to add one!
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+
+    container.innerHTML =
+        listings.map(
+            listing => {
+
+                const status =
+                    listing.status ||
+                    "available";
+
+
+                return `
+
+                    <article class="listing">
+
+                        <h3>
+                            ${escapeHTML(
+                                listing.title
+                            )}
+                        </h3>
+
+
+                        <div class="listing-row">
+
+                            <span class="listing-label">
+                                Wants:
+                            </span>
+
+                            ${escapeHTML(
+                                listing.wanted_item
+                            )}
+
+                        </div>
+
+
+                        <div class="listing-row">
+
+                            <span class="listing-label">
+                                Location:
+                            </span>
+
+                            ${escapeHTML(
+                                listing.location
+                            )}
+
+                        </div>
+
+
+                        <div class="listing-row">
+
+                            <span class="listing-label">
+                                Contact:
+                            </span>
+
+                            ${escapeHTML(
+                                listing.phone
+                            )}
+
+                        </div>
+
+
+                        <div class="listing-row">
+
+                            <span class="status">
+                                ${escapeHTML(
+                                    status
+                                )}
+                            </span>
+
+                        </div>
+
+                    </article>
+
+                `;
+
+            }
+        ).join("");
+
+}
+
+
+
+/* =====================================================
+   SEARCH
+===================================================== */
+
+function searchListings() {
+
+    const input =
+        document.getElementById(
+            "searchInput"
+        );
+
+
+    const search =
+        String(
+            input?.value || ""
+        )
+            .trim()
+            .toLowerCase();
+
+
+    if (!search) {
+
+        displayListings(
+            allListings
+        );
+
+        return;
+
+    }
+
+
+    const filtered =
+        allListings.filter(
+            listing => {
+
+                const title =
+                    String(
+                        listing.title || ""
+                    ).toLowerCase();
+
+
+                const wanted =
+                    String(
+                        listing.wanted_item || ""
+                    ).toLowerCase();
+
+
+                const location =
+                    String(
+                        listing.location || ""
+                    ).toLowerCase();
+
+
+                return (
+                    title.includes(search) ||
+                    wanted.includes(search) ||
+                    location.includes(search)
+                );
+
+            }
+        );
+
+
+    displayListings(
+        filtered
+    );
+
+}
+
+
+
+/* =====================================================
+   ADD LISTING MODAL
+===================================================== */
+
+function openAddListing() {
+
+    const modal =
+        document.getElementById(
+            "addListingModal"
+        );
+
+
+    if (modal) {
+
+        modal.classList.remove(
+            "hidden"
+        );
+
+    }
+
+}
+
+
+
+function closeAddListing() {
+
+    const modal =
+        document.getElementById(
+            "addListingModal"
+        );
+
+
+    if (modal) {
+
+        modal.classList.add(
+            "hidden"
+        );
+
+    }
+
+}
+
+
+
+/* =====================================================
+   SUBMIT LISTING
+===================================================== */
+
+async function submitListing(event) {
+
+    event.preventDefault();
+
+    clearError();
+
+
+    const user =
+        await checkLogin();
+
+
+    if (!user) {
+
+        showError(
+            "Please log in before creating a barter listing."
+        );
+
+        return;
+
+    }
+
+
+
+    let token = null;
+
+
+    if (
+        typeof window.ensureValidSupabaseSession ===
+        "function"
+    ) {
+
+        await window.ensureValidSupabaseSession();
+
+    }
+
+
+    if (
+        typeof window.getSupabaseAccessToken ===
+        "function"
+    ) {
+
+        token =
+            window.getSupabaseAccessToken();
+
+    }
+
+
+    if (!token) {
+
+        showError(
+            "Your session has expired. Please log in again."
+        );
+
+        return;
+
+    }
+
+
+
+    const title =
+        document.getElementById(
+            "title"
+        )?.value.trim();
+
+
+    const wantedItem =
+        document.getElementById(
+            "wantedItem"
+        )?.value.trim();
+
+
+    const location =
+        document.getElementById(
+            "location"
+        )?.value.trim();
+
+
+    const phone =
+        document.getElementById(
+            "phone"
+        )?.value.trim();
+
+
+
+    if (
+        !title ||
+        !wantedItem ||
+        !location ||
+        !phone
+    ) {
+
+        showError(
+            "Please complete all fields."
+        );
+
+        return;
+
+    }
+
+
+
+    const button =
+        document.getElementById(
+            "submitListingButton"
+        );
+
+
+    if (button) {
+
+        button.disabled =
+            true;
+
+        button.textContent =
+            "Publishing...";
+
+    }
+
+
+
+    try {
+
+        const response =
+            await fetch(
+                SUPABASE_URL +
+                "/rest/v1/barter_listings",
+                {
+                    method: "POST",
+
+                    headers: {
+                        ...getHeaders(token),
+
+                        "Prefer":
+                            "return=representation"
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            user_id:
+                                user.id,
+
+                            title:
+                                title,
+
+                            location:
+                                location,
+
+                            wanted_item:
+                                wantedItem,
+
+                            phone:
+                                phone,
+
+                            status:
+                                "available"
+
+                        })
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            console.error(
+                "LosOja barter insert error:",
+                data
+            );
+
+            showError(
+                data?.message ||
+                data?.details ||
+                "Could not publish your barter listing."
+            );
+
+            return;
+
+        }
+
+
+
+        document.getElementById(
+            "barterForm"
+        )?.reset();
+
+
+        closeAddListing();
+
+
+        await loadListings();
+
+
+
+    } catch (error) {
+
+        console.error(
+            "LosOja barter insert network error:",
+            error
+        );
+
+        showError(
+            "Could not connect to Supabase."
+        );
+
+    } finally {
+
+        if (button) {
+
+            button.disabled =
+                false;
+
+            button.textContent =
+                "Publish Listing";
+
+        }
+
+    }
+
+}
+
+
+
+/* =====================================================
+   START
+===================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    async function () {
+
+        const user =
+            await checkLogin();
+
+
+        if (user) {
+
+            await loadListings();
+
+        }
+
+
+        const form =
+            document.getElementById(
+                "barterForm"
+            );
+
+
+        if (form) {
+
+            form.addEventListener(
+                "submit",
+                submitListing
+            );
+
+        }
+
+
+        const searchInput =
+            document.getElementById(
+                "searchInput"
+            );
+
+
+        if (searchInput) {
+
+            searchInput.addEventListener(
+                "input",
+                searchListings
+            );
+
+        }
+
+
+        const modal =
+            document.getElementById(
+                "addListingModal"
+            );
+
+
+        if (modal) {
+
+            modal.addEventListener(
+                "click",
+                function (event) {
+
+                    if (
+                        event.target ===
+                        modal
+                    ) {
+
+                        closeAddListing();
+
+                    }
+
+                }
+            );
+
+        }
+
+    }
+);
+
 </script>
+
 
 </body>
 
