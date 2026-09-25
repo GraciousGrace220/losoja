@@ -1593,7 +1593,30 @@ console.log(
                     "function"
                 ) {
 
-                    await window.loadBusinesses(true);
+                   if (
+    typeof window.loadBusinesses === "function"
+) {
+
+    await window.loadBusinesses(true);
+
+    /* Give the business grid a moment to render */
+    setTimeout(function () {
+
+        if (
+            typeof window.renderBusinesses ===
+            "function" &&
+            Array.isArray(window.losojaBusinesses)
+        ) {
+
+            window.renderBusinesses(
+                window.losojaBusinesses
+            );
+
+        }
+
+    }, 100);
+
+}
 
                 } else if (
                     window.LosOjaBusinesses &&
