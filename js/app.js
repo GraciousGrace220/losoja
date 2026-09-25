@@ -55,8 +55,6 @@ this.bindBusinessButtons();
 
 this.bindAddBusinessButtons();
 
-this.bindPlusButton();
-
 this.bindMobilityButtons();
 
 this.createBackButton();
@@ -992,45 +990,15 @@ bindAddBusinessButtons() {
 },
 
 
-/* =================================================
-   PLUS BUTTON
-================================================= */
-
-bindPlusButton() {
-
-    const plusButton =
-        document.querySelector(".nav-add-button");
-
-    const addBusinessButton =
-        document.getElementById("addBusinessBtn");
-
-    if (
-        !plusButton ||
-        !addBusinessButton
-    ) {
-        return;
-    }
-
-    plusButton.addEventListener(
-        "click",
-        event => {
-
-            event.preventDefault();
-
-            addBusinessButton.click();
-
-        }
-    );
-
-},
 
     /* ---------------------------------------------
        OPEN ADD BUSINESS MODAL
     --------------------------------------------- */
 
-    document
-        .querySelectorAll(
-            "#addBusinessBtn, .add-business-btn"
+   document
+    .querySelectorAll(
+        "#addBusinessBtn, .add-business-btn, .nav-add-button"
+    )
         )
         .forEach(button => {
 
