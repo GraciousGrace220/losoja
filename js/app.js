@@ -2369,7 +2369,148 @@ console.log(
                 type
             );
         };
+/* =====================================================
+   BUSINESS DETAILS
+===================================================== */
 
+window.showBusinessDetails = function (business) {
+
+    if (!business) {
+        console.warn(
+            "LosOja: No business supplied."
+        );
+        return;
+    }
+
+    const modal =
+        document.getElementById(
+            "businessDetailsModal"
+        );
+
+    if (!modal) {
+        console.error(
+            "LosOja: businessDetailsModal not found."
+        );
+        return;
+    }
+
+    const image =
+        document.getElementById(
+            "businessDetailsImage"
+        );
+
+    const name =
+        document.getElementById(
+            "businessDetailsName"
+        );
+
+    const category =
+        document.getElementById(
+            "businessDetailsCategory"
+        );
+
+    const location =
+        document.getElementById(
+            "businessDetailsLocation"
+        );
+
+    const phone =
+        document.getElementById(
+            "businessDetailsPhone"
+        );
+
+    const description =
+        document.getElementById(
+            "businessDetailsDescription"
+        );
+
+    const rating =
+        document.getElementById(
+            "businessDetailsRating"
+        );
+
+
+    if (image) {
+
+        image.src =
+            business.image_url ||
+            "";
+
+        image.style.display =
+            business.image_url
+                ? "block"
+                : "none";
+
+    }
+
+
+    if (name) {
+
+        name.textContent =
+            business.name ||
+            "Business";
+
+    }
+
+
+    if (category) {
+
+        category.textContent =
+            "Category: " +
+            (
+                business.category ||
+                "Not specified"
+            );
+
+    }
+
+
+    if (location) {
+
+        location.textContent =
+            "Location: " +
+            (
+                business.location ||
+                "Nigeria"
+            );
+
+    }
+
+
+    if (phone) {
+
+        phone.textContent =
+            business.phone
+                ? "Phone: " + business.phone
+                : "Phone: Not provided";
+
+    }
+
+
+    if (description) {
+
+        description.textContent =
+            business.description ||
+            "No description provided.";
+
+    }
+
+
+    if (rating) {
+
+        rating.textContent =
+            business.rating
+                ? "Rating: " + business.rating
+                : "No rating yet";
+
+    }
+
+
+    App.openModal(
+        "businessDetailsModal"
+    );
+
+};
 
     /* =====================================================
        START APPLICATION
