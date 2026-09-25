@@ -485,195 +485,198 @@ this.createBackButton();
            LOCATION BUTTON
         ================================================= */
 
-        bindLocationButton() {
+        /* =================================================
+   LOCATION BUTTON
+================================================= */
 
-            const locationBtn =
-                document.getElementById("locationBtn");
+bindLocationButton() {
 
-            if (!locationBtn) {
+    const locationBtn =
+        document.getElementById("locationBtn");
+
+    if (!locationBtn) {
+        return;
+    }
+
+    locationBtn.addEventListener(
+        "click",
+        event => {
+
+            event.preventDefault();
+
+            if (!navigator.geolocation) {
+
+                this.showToast(
+                    "Location is not supported by this browser.",
+                    "error"
+                );
+
                 return;
             }
 
-            locationBtn.addEventListener(
-                "click",
-                event => {
-
-                    event.preventDefault();
-
-                    if (!navigator.geolocation) {
-
-                        this.showToast(
-                            "Location is not supported by this browser.",
-                            "error"
-                        );
-
-                        return;
-                    }
-
-                    this.showToast(
-                        "Getting your location...",
-                        "info"
-                    );
-
-                    navigator.geolocation.getCurrentPosition(
-
-                        position => {
-
-                            const latitude =
-                                position.coords.latitude;
-
-                            const longitude =
-                                position.coords.longitude;
-
-                            console.log(
-                                "LosOja location:",
-                                latitude,
-                                longitude
-                            );
-console.log(
-    "LosOja: checking nearby businesses..."
-);
-                            localStorage.setItem(
-                                "losoja_user_location",
-                                JSON.stringify({
-                                    latitude: latitude,
-                                    longitude: longitude
-                                })
-                            );
-
-                            this.showToast(
-                                "Your location was found successfully.",
-                                "success"
-                            );
-this.showToast(
-    "Your location was found successfully.",
-    "success"
-);
-
-if (
-    typeof window.findNearbyBusinesses ===
-    "function"
-) {
-
-    const nearbyBusinesses =
-        window.findNearbyBusinesses(10);
-
-    console.log(
-        "LosOja nearby businesses:",
-        nearbyBusinesses
-    );
-
-   if (
-    nearbyBusinesses.length > 0
-) {
-
-    console.log(
-        "LosOja: Nearby businesses found:",
-        nearbyBusinesses.length
-    );
-
-    if (
-        typeof window.renderBusinesses ===
-        "function"
-    ) {
-
-        window.renderBusinesses(
-            nearbyBusinesses
-        );
-
-        console.log(
-            "LosOja: Nearby businesses rendered."
-        );
-
-        const section =
-            document.getElementById(
-                "businesses"
+            this.showToast(
+                "Getting your location...",
+                "info"
             );
 
-        if (section) {
+            navigator.geolocation.getCurrentPosition(
 
-            section.scrollIntoView({
-                behavior: "smooth",
-                block: "start"
-            });
+                position => {
 
-        }
+                    const latitude =
+                        position.coords.latitude;
 
-    } else {
+                    const longitude =
+                        position.coords.longitude;
 
-        console.error(
-            "LosOja: renderBusinesses is not available."
-        );
+                    console.log(
+                        "LosOja location:",
+                        latitude,
+                        longitude
+                    );
 
-    }
+                    console.log(
+                        "LosOja: checking nearby businesses..."
+                    );
 
-} else {
+                    localStorage.setItem(
+                        "losoja_user_location",
+                        JSON.stringify({
+                            latitude: latitude,
+                            longitude: longitude
+                        })
+                    );
 
-    this.showToast(
-        "No businesses found within 10 km yet.",
-        "info"
-    );
+                    this.showToast(
+                        "Your location was found successfully.",
+                        "success"
+                    );
 
+                    if (
+                        typeof window.findNearbyBusinesses ===
+                        "function"
+                    ) {
 
-}
-                        },
+                        const nearbyBusinesses =
+                            window.findNearbyBusinesses(10);
 
-                        error => {
+                        console.log(
+                            "LosOja nearby businesses:",
+                            nearbyBusinesses
+                        );
 
-                            console.error(
-                                "LosOja location error:",
-                                error
+                        if (
+                            nearbyBusinesses.length > 0
+                        ) {
+
+                            console.log(
+                                "LosOja: Nearby businesses found:",
+                                nearbyBusinesses.length
                             );
 
-                            let message =
-                                "Unable to get your location.";
-
                             if (
-                                error.code ===
-                                error.PERMISSION_DENIED
+                                typeof window.renderBusinesses ===
+                                "function"
                             ) {
 
-                                message =
-                                    "Location permission was denied.";
+                                window.renderBusinesses(
+                                    nearbyBusinesses
+                                );
 
-                            } else if (
-                                error.code ===
-                                error.POSITION_UNAVAILABLE
-                            ) {
+                                console.log(
+                                    "LosOja: Nearby businesses rendered."
+                                );
 
-                                message =
-                                    "Your location is currently unavailable.";
+                                const section =
+                                    document.getElementById(
+                                        "businesses"
+                                    );
 
-                            } else if (
-                                error.code ===
-                                error.TIMEOUT
-                            ) {
+                                if (section) {
 
-                                message =
-                                    "Location request timed out. Please try again.";
+                                    section.scrollIntoView({
+                                        behavior: "smooth",
+                                        block: "start"
+                                    });
+
+                                }
+
+                            } else {
+
+                                console.error(
+                                    "LosOja: renderBusinesses is not available."
+                                );
 
                             }
 
+                        } else {
+
                             this.showToast(
-                                message,
-                                "error"
+                                "No businesses found within 10 km yet.",
+                                "info"
                             );
 
-                        },
-
-                        {
-                            enableHighAccuracy: true,
-                            timeout: 10000,
-                            maximumAge: 300000
                         }
 
+                    }
+
+                },
+
+                error => {
+
+                    console.error(
+                        "LosOja location error:",
+                        error
                     );
 
+                    let message =
+                        "Unable to get your location.";
+
+                    if (
+                        error.code ===
+                        error.PERMISSION_DENIED
+                    ) {
+
+                        message =
+                            "Location permission was denied.";
+
+                    } else if (
+                        error.code ===
+                        error.POSITION_UNAVAILABLE
+                    ) {
+
+                        message =
+                            "Your location is currently unavailable.";
+
+                    } else if (
+                        error.code ===
+                        error.TIMEOUT
+                    ) {
+
+                        message =
+                            "Location request timed out. Please try again.";
+
+                    }
+
+                    this.showToast(
+                        message,
+                        "error"
+                    );
+
+                },
+
+                {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 300000
                 }
+
             );
 
-        },
+        }
+    );
 
+},
 
         /* =================================================
            POPULAR SEARCHES
