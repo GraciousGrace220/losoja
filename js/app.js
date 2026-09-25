@@ -1593,7 +1593,7 @@ console.log(
                     "function"
                 ) {
 
-                    await window.loadBusinesses();
+                    await window.loadBusinesses(true);
 
                 } else if (
                     window.LosOjaBusinesses &&
