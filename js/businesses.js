@@ -1010,7 +1010,163 @@ if (image) {
 
     window.filterByCategory =
         filterByCategory;
+    /* =====================================================
+       FIND NEARBY BUSINESSES
+    ===================================================== */
 
+    function getDistanceInKm(
+        latitude1,
+        longitude1,
+        latitude2,
+        longitude2
+    ) {
+
+        const earthRadiusKm = 6371;
+
+        const lat1 =
+            latitude1 * Math.PI / 180;
+
+        const lat2 =
+            latitude2 * Math.PI / 180;
+
+        const differenceLat =
+            (latitude2 - latitude1) *
+            Math.PI / 180;
+
+        const differenceLon =
+            (longitude2 - longitude1) *
+            Math.PI / 180;
+
+        const a =
+            Math.sin(differenceLat / 2) *
+            Math.sin(differenceLat / 2) +
+            Math.cos(lat1) *
+            Math.cos(lat2) *
+            Math.sin(differenceLon / 2) *
+            Math.sin(differenceLon / 2);
+
+        const c =
+            2 *
+            Math.atan2(
+                Math.sqrt(a),
+                Math.sqrt(1 - a)
+            );
+
+        return earthRadiusKm * c;
+    }
+
+
+    function findNearbyBusinesses(
+        maximumDistanceKm = 10
+    ) {
+
+        const savedLocation =
+            localStorage.getItem(
+                "losoja_user_location"
+            );
+
+        if (!savedLocation) {
+
+            console.warn(
+                "LosOja: No saved user location."
+            );
+
+            return [];
+
+        }
+
+        let userLocation;
+
+        try {
+
+            userLocation =
+                JSON.parse(savedLocation);
+
+        } catch (error) {
+
+            console.error(
+                "LosOja: Invalid saved location.",
+                error
+            );
+
+            return [];
+
+        }
+
+        const userLatitude =
+            Number(
+                userLocation.latitude
+            );
+
+        const userLongitude =
+            Number(
+                userLocation.longitude
+            );
+
+        if (
+            !Number.isFinite(userLatitude) ||
+            !Number.isFinite(userLongitude)
+        ) {
+
+            return [];
+
+        }
+
+        const nearbyBusinesses =
+            businesses
+                .filter(function (business) {
+
+                    const latitude =
+                        Number(
+                            business.latitude
+                        );
+
+                    const longitude =
+                        Number(
+                            business.longitude
+                        );
+
+                    if (
+                        !Number.isFinite(latitude) ||
+                        !Number.isFinite(longitude)
+                    ) {
+
+                        return false;
+
+                    }
+
+                    const distance =
+                        getDistanceInKm(
+                            userLatitude,
+                            userLongitude,
+                            latitude,
+                            longitude
+                        );
+
+                    business.distance_km =
+                        distance;
+
+                    return (
+                        distance <=
+                        maximumDistanceKm
+                    );
+
+                })
+                .sort(function (a, b) {
+
+                    return (
+                        a.distance_km -
+                        b.distance_km
+                    );
+
+                });
+
+        return nearbyBusinesses;
+    }
+
+
+    window.findNearbyBusinesses =
+        findNearbyBusinesses;
     window.openBusiness =
         openBusiness;
 
