@@ -563,23 +563,57 @@ if (
         nearbyBusinesses
     );
 
+   if (
+    nearbyBusinesses.length > 0
+) {
+
+    console.log(
+        "LosOja: Nearby businesses found:",
+        nearbyBusinesses.length
+    );
+
     if (
-        nearbyBusinesses.length > 0
+        typeof window.renderBusinesses ===
+        "function"
     ) {
 
-        console.log(
-            "LosOja: Nearby businesses found:",
-            nearbyBusinesses.length
+        window.renderBusinesses(
+            nearbyBusinesses
         );
+
+        console.log(
+            "LosOja: Nearby businesses rendered."
+        );
+
+        const section =
+            document.getElementById(
+                "businesses"
+            );
+
+        if (section) {
+
+            section.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+
+        }
 
     } else {
 
-        this.showToast(
-            "No businesses found within 10 km yet.",
-            "info"
+        console.error(
+            "LosOja: renderBusinesses is not available."
         );
 
     }
+
+} else {
+
+    this.showToast(
+        "No businesses found within 10 km yet.",
+        "info"
+    );
+
 
 }
                         },
