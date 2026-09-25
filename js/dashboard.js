@@ -596,7 +596,720 @@ Handles:
             }
         }
     }
+    /* =====================================================
+       EDIT BUSINESS
+    ===================================================== */
 
+    async function openEditBusiness(id) {
+
+        const user =
+            getUser();
+
+        const token =
+            getToken();
+
+        if (!user || !token) {
+
+            if (
+                window.App &&
+                typeof window.App.showToast ===
+                "function"
+            ) {
+                window.App.showToast(
+                    "Please log in first.",
+                    "error"
+                );
+            }
+
+            return;
+        }
+
+
+        if (!id) {
+            return;
+        }
+
+
+        try {
+
+            /* -----------------------------------------
+               LOAD BUSINESS
+            ----------------------------------------- */
+
+            const response =
+                await fetch(
+                    SUPABASE_URL +
+                    "/rest/v1/businesses?id=eq." +
+                    encodeURIComponent(id) +
+                    "&user_id=eq." +
+                    encodeURIComponent(user.id) +
+                    "&select=*",
+                    {
+                        method: "GET",
+                        headers: headers()
+                    }
+                );
+
+
+            if (!response.ok) {
+
+                let message =
+                    "Could not load this business.";
+
+                try {
+
+                    const data =
+                        await response.json();
+
+                    message =
+                        data.message ||
+                        data.details ||
+                        data.hint ||
+                        message;
+
+                } catch {}
+
+                throw new Error(message);
+            }
+
+
+            const businesses =
+                await response.json();
+
+
+            if (
+                !Array.isArray(businesses) ||
+                businesses.length === 0
+            ) {
+
+                throw new Error(
+                    "Business not found or you do not have permission to edit it."
+                );
+            }
+
+
+            const business =
+                businesses[0];
+
+
+            /* -----------------------------------------
+               CREATE EDIT MODAL
+            ----------------------------------------- */
+
+            let modal =
+                document.getElementById(
+                    "editBusinessModal"
+                );
+
+
+            if (!modal) {
+
+                modal =
+                    document.createElement("div");
+
+                modal.id =
+                    "editBusinessModal";
+
+                modal.className =
+                    "modal-overlay hidden";
+
+                modal.innerHTML = `
+                    <div class="modal-content large">
+
+                        <button
+                            type="button"
+                            class="modal-close"
+                            aria-label="Close"
+                        >
+                            ×
+                        </button>
+
+                        <h2>
+                            Edit Your Business
+                        </h2>
+
+                        <form
+                            id="editBusinessForm"
+                        >
+
+                            <div class="form-group">
+
+                                <label
+                                    for="editBusinessName"
+                                >
+                                    Business Name *
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="editBusinessName"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label
+                                    for="editBusinessCategory"
+                                >
+                                    Category *
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="editBusinessCategory"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label
+                                    for="editBusinessLocation"
+                                >
+                                    Location *
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="editBusinessLocation"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label
+                                    for="editBusinessPhone"
+                                >
+                                    Phone Number
+                                </label>
+
+                                <input
+                                    type="tel"
+                                    id="editBusinessPhone"
+                                >
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label
+                                    for="editBusinessDescription"
+                                >
+                                    Description
+                                </label>
+
+                                <textarea
+                                    id="editBusinessDescription"
+                                    rows="5"
+                                ></textarea>
+
+                            </div>
+
+
+                            <p
+                                id="editBusinessError"
+                                class="form-error hidden"
+                            ></p>
+
+
+                            <button
+                                type="submit"
+                                class="btn btn-primary form-submit"
+                            >
+                                Save Changes
+                            </button>
+
+                        </form>
+
+                    </div>
+                `;
+
+                document.body.appendChild(
+                    modal
+                );
+
+
+                const closeButton =
+                    modal.querySelector(
+                        ".modal-close"
+                    );
+
+                if (closeButton) {
+
+                    closeButton.addEventListener(
+                        "click",
+                        function () {
+
+                            if (
+                                window.App &&
+                                typeof window.App.closeModal ===
+                                "function"
+                            ) {
+                                window.App.closeModal(
+                                    modal
+                                );
+                            } else {
+                                modal.classList.add(
+                                    "hidden"
+                                );
+                                modal.style.display =
+                                    "none";
+                            }
+
+                        }
+                    );
+
+                }
+
+
+                const form =
+                    modal.querySelector(
+                        "#editBusinessForm"
+                    );
+
+
+                if (form) {
+
+                    form.addEventListener(
+                        "submit",
+                        async function (event) {
+
+                            event.preventDefault();
+
+                            await saveEditedBusiness(
+                                id
+                            );
+
+                        }
+                    );
+
+                }
+
+            }
+
+
+            /* -----------------------------------------
+               FILL FORM
+            ----------------------------------------- */
+
+            const nameInput =
+                document.getElementById(
+                    "editBusinessName"
+                );
+
+            const categoryInput =
+                document.getElementById(
+                    "editBusinessCategory"
+                );
+
+            const locationInput =
+                document.getElementById(
+                    "editBusinessLocation"
+                );
+
+            const phoneInput =
+                document.getElementById(
+                    "editBusinessPhone"
+                );
+
+            const descriptionInput =
+                document.getElementById(
+                    "editBusinessDescription"
+                );
+
+
+            if (nameInput) {
+                nameInput.value =
+                    business.name || "";
+            }
+
+            if (categoryInput) {
+                categoryInput.value =
+                    business.category || "";
+            }
+
+            if (locationInput) {
+                locationInput.value =
+                    business.location || "";
+            }
+
+            if (phoneInput) {
+                phoneInput.value =
+                    business.phone || "";
+            }
+
+            if (descriptionInput) {
+                descriptionInput.value =
+                    business.description || "";
+            }
+
+
+            const error =
+                document.getElementById(
+                    "editBusinessError"
+                );
+
+            if (error) {
+
+                error.textContent = "";
+
+                error.classList.add(
+                    "hidden"
+                );
+
+            }
+
+
+            /* -----------------------------------------
+               OPEN MODAL
+            ----------------------------------------- */
+
+            if (
+                window.App &&
+                typeof window.App.openModal ===
+                "function"
+            ) {
+
+                window.App.openModal(
+                    modal
+                );
+
+            } else {
+
+                modal.classList.remove(
+                    "hidden"
+                );
+
+                modal.classList.add(
+                    "active"
+                );
+
+                modal.style.display =
+                    "flex";
+
+            }
+
+
+        } catch (error) {
+
+            console.error(
+                "LosOja edit load error:",
+                error
+            );
+
+
+            if (
+                window.App &&
+                typeof window.App.showToast ===
+                "function"
+            ) {
+
+                window.App.showToast(
+                    error.message ||
+                    "Could not open the business for editing.",
+                    "error"
+                );
+
+            }
+
+        }
+
+    }
+
+
+    /* =====================================================
+       SAVE EDITED BUSINESS
+    ===================================================== */
+
+    async function saveEditedBusiness(id) {
+
+        const user =
+            getUser();
+
+        const token =
+            getToken();
+
+
+        if (!user || !token) {
+            return;
+        }
+
+
+        const name =
+            document.getElementById(
+                "editBusinessName"
+            )?.value.trim() || "";
+
+        const category =
+            document.getElementById(
+                "editBusinessCategory"
+            )?.value.trim() || "";
+
+        const location =
+            document.getElementById(
+                "editBusinessLocation"
+            )?.value.trim() || "";
+
+        const phone =
+            document.getElementById(
+                "editBusinessPhone"
+            )?.value.trim() || "";
+
+        const description =
+            document.getElementById(
+                "editBusinessDescription"
+            )?.value.trim() || "";
+
+
+        const error =
+            document.getElementById(
+                "editBusinessError"
+            );
+
+
+        if (
+            !name ||
+            !category ||
+            !location
+        ) {
+
+            if (error) {
+
+                error.textContent =
+                    "Please complete the required fields.";
+
+                error.classList.remove(
+                    "hidden"
+                );
+
+            }
+
+            return;
+        }
+
+
+        const form =
+            document.getElementById(
+                "editBusinessForm"
+            );
+
+
+        const submitButton =
+            form?.querySelector(
+                'button[type="submit"]'
+            );
+
+
+        const originalText =
+            submitButton
+                ? submitButton.textContent
+                : "Save Changes";
+
+
+        if (submitButton) {
+
+            submitButton.disabled =
+                true;
+
+            submitButton.textContent =
+                "Saving...";
+
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    SUPABASE_URL +
+                    "/rest/v1/businesses?id=eq." +
+                    encodeURIComponent(id) +
+                    "&user_id=eq." +
+                    encodeURIComponent(user.id),
+                    {
+                        method: "PATCH",
+
+                        headers: {
+                            ...headers(),
+
+                            "Prefer":
+                                "return=representation"
+                        },
+
+                        body:
+                            JSON.stringify({
+                                name,
+                                category,
+                                location,
+                                phone,
+                                description
+                            })
+                    }
+                );
+
+
+            const responseText =
+                await response.text();
+
+
+            let result = null;
+
+            try {
+
+                result =
+                    responseText
+                        ? JSON.parse(
+                            responseText
+                        )
+                        : null;
+
+            } catch {
+
+                result =
+                    responseText;
+
+            }
+
+
+            if (!response.ok) {
+
+                console.error(
+                    "LosOja edit save error:",
+                    result
+                );
+
+
+                const message =
+                    result &&
+                    typeof result === "object" &&
+                    (
+                        result.message ||
+                        result.details ||
+                        result.hint
+                    )
+                        ? (
+                            result.message ||
+                            result.details ||
+                            result.hint
+                        )
+                        : "Could not save your changes.";
+
+                throw new Error(
+                    message
+                );
+
+            }
+
+
+            if (
+                window.App &&
+                typeof window.App.closeModal ===
+                "function"
+            ) {
+
+                window.App.closeModal(
+                    "editBusinessModal"
+                );
+
+            }
+
+
+            if (
+                window.App &&
+                typeof window.App.showToast ===
+                "function"
+            ) {
+
+                window.App.showToast(
+                    "Business updated successfully!",
+                    "success"
+                );
+
+            }
+
+
+            /* Refresh dashboard */
+
+            await load();
+
+
+            /* Refresh main business list */
+
+            if (
+                typeof window.loadBusinesses ===
+                "function"
+            ) {
+
+                await window.loadBusinesses(
+                    true
+                );
+
+            }
+
+
+        } catch (error) {
+
+            console.error(
+                "LosOja edit business error:",
+                error
+            );
+
+
+            if (error) {
+
+                if (
+                    typeof error.message ===
+                    "string"
+                ) {
+
+                    if (
+                        document.getElementById(
+                            "editBusinessError"
+                        )
+                    ) {
+
+                        const editError =
+                            document.getElementById(
+                                "editBusinessError"
+                            );
+
+                        editError.textContent =
+                            error.message;
+
+                        editError.classList.remove(
+                            "hidden"
+                        );
+
+                    }
+
+                }
+
+            }
+
+        } finally {
+
+            if (submitButton) {
+
+                submitButton.disabled =
+                    false;
+
+                submitButton.textContent =
+                    originalText;
+
+            }
+
+        }
+
+    }
 
     /* =====================================================
        NAVIGATION
@@ -624,31 +1337,33 @@ Handles:
         );
     }
 
+/* =====================================================
+   PUBLIC API
+===================================================== */
 
-    /* =====================================================
-       PUBLIC API
-    ===================================================== */
+window.Dashboard = {
 
-    window.Dashboard = {
+    show:
+        show,
 
-        show:
-            show,
+    hide:
+        hide,
 
-        hide:
-            hide,
-
-        load:
-            load
-    };
-
-
-    window.deleteDashboardBusiness =
-        deleteDashboardBusiness;
+    load:
+        load
+};
 
 
-    /* =====================================================
-       START
-    ===================================================== */
+window.deleteDashboardBusiness =
+    deleteDashboardBusiness;
+
+window.openEditBusiness =
+    openEditBusiness;
+
+
+/* =====================================================
+   START
+===================================================== */
 
     document.addEventListener(
         "DOMContentLoaded",
