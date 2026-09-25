@@ -988,7 +988,36 @@ bindLocationButton() {
 bindAddBusinessButtons() {
     ...
 },
+const plusButton =
+    document.getElementById(
+        "navAddBusinessBtn"
+    );
 
+if (plusButton) {
+
+    plusButton.addEventListener(
+        "click",
+        event => {
+
+            event.preventDefault();
+
+            const addBusinessButton =
+                document.getElementById(
+                    "addBusinessBtn"
+                );
+
+            if (addBusinessButton) {
+                addBusinessButton.click();
+            } else {
+                console.warn(
+                    "LosOja: Add Business button not found."
+                );
+            }
+
+        }
+    );
+
+}
 
 
     /* ---------------------------------------------
