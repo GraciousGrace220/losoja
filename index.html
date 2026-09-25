@@ -1195,39 +1195,75 @@
 
 </div>  
 <script src="js/auth.js"></script>   
- <script>
-(function () {
+<script>
+document.addEventListener("DOMContentLoaded", function () {
 
-    const params = new URLSearchParams(
-        window.location.search
-    );
+    const returnToBarter =
+        sessionStorage.getItem(
+            "losoja_return_to_barter"
+        );
 
-    if (params.get("openLogin") !== "1") {
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+    const cameFromBarter =
+        returnToBarter === "true" ||
+        params.get("openLogin") === "1";
+
+    if (!cameFromBarter) {
         return;
     }
 
-    const checkLogin = setInterval(function () {
+    /* Open the login window */
+    const openLoginTimer =
+        setInterval(function () {
 
-        if (
-            typeof window.getCurrentUser === "function"
-        ) {
-
-            const user =
-                window.getCurrentUser();
-
-            if (user) {
-
-                clearInterval(checkLogin);
-
-                window.location.href =
-                    "barter.html";
+            if (
+                window.App &&
+                typeof window.App.openModal === "function"
+            ) {
+                window.App.openModal("loginModal");
+                clearInterval(openLoginTimer);
             }
-        }
 
-    }, 500);
+        }, 300);
 
-})();
-</script>  
-    
+    /* Watch for successful login */
+    const loginTimer =
+        setInterval(function () {
+
+            if (
+                typeof window.getCurrentUser === "function"
+            ) {
+
+                const user =
+                    window.getCurrentUser();
+
+                if (user) {
+
+                    clearInterval(loginTimer);
+                    clearInterval(openLoginTimer);
+
+                    sessionStorage.removeItem(
+                        "losoja_return_to_barter"
+                    );
+
+                    window.location.href =
+                        "barter.html";
+                }
+            }
+
+        }, 500);
+
+    /* Safety stop */
+    setTimeout(function () {
+        clearInterval(openLoginTimer);
+        clearInterval(loginTimer);
+    }, 120000);
+
+});
+</script> 
 </body>
 </html>
