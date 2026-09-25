@@ -1031,16 +1031,7 @@ bindAddBusinessButtons() {
         return;
     }
 
-    /* ---------------------------------------------
-       OPEN ADD BUSINESS MODAL
-    --------------------------------------------- */
-
-   document
-    .querySelectorAll(
-        "#addBusinessBtn, .add-business-btn, .nav-add-button"
-    )
-        )
-        .forEach(button => {
+   
 
             button.addEventListener(
                 "click",
@@ -1056,18 +1047,6 @@ bindAddBusinessButtons() {
             );
 
         });
-
-
-    /* ---------------------------------------------
-       HANDLE ADD BUSINESS FORM
-    --------------------------------------------- */
-
-    const form =
-        document.getElementById(
-            "addBusinessForm"
-        );
-
-    if (!form) {
 
         console.warn(
             "LosOja: addBusinessForm not found."
