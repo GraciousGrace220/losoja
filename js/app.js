@@ -988,31 +988,77 @@ bindLocationButton() {
 bindAddBusinessButtons() {
 
     /* ---------------------------------------------
-       OPEN ADD BUSINESS MODAL
-    --------------------------------------------- */
+   OPEN ADD BUSINESS MODAL
+--------------------------------------------- */
 
-    document
-        .querySelectorAll(
-            "#addBusinessBtn, .add-business-btn, .nav-add-button"
-        )
-        .forEach(button => {
+function openLosOjaAddBusiness(event) {
 
-            button.addEventListener(
-                "click",
-                event => {
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
 
-                    event.preventDefault();
+    console.log(
+        "LosOja: Add Business button clicked."
+    );
 
-                    this.openModal(
-                        "addBusinessModal"
-                    );
+    const modal =
+        document.getElementById(
+            "addBusinessModal"
+        );
 
-                }
-            );
+    if (!modal) {
 
-        });
+        console.error(
+            "LosOja: addBusinessModal not found."
+        );
+
+        return;
+    }
+
+    /* Use the existing modal system */
+    if (
+        typeof this.openModal ===
+        "function"
+    ) {
+
+        this.openModal(
+            "addBusinessModal"
+        );
+
+        return;
+    }
+
+    /* Backup opening method */
+    modal.classList.add("active");
+
+    modal.style.display = "flex";
+
+    modal.setAttribute(
+        "aria-hidden",
+        "false"
+    );
+
+    document.body.classList.add(
+        "modal-open"
+    );
+
+}
 
 
+/* Connect Add Business buttons */
+document
+    .querySelectorAll(
+        "#addBusinessBtn, .add-business-btn, .nav-add-button, #plusBtn, .plus-btn, .floating-add-btn, [data-action='add-business']"
+    )
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            openLosOjaAddBusiness.bind(this)
+        );
+
+    });
     /* ---------------------------------------------
        HANDLE ADD BUSINESS FORM
     --------------------------------------------- */
