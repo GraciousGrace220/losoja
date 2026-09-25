@@ -1186,13 +1186,101 @@
             >
                 Log In
             </button>
-
+<button
+    type="button"
+    class="secondary-button"
+    onclick="openSignup()"
+>
+    Create Account
+</button>
         </form>
 
         <p id="loginMessage"></p>
 
     </div>
 
+</div>  
+  <!-- SIGNUP MODAL -->
+<div
+    id="signupModal"
+    class="modal-overlay hidden"
+    aria-hidden="true"
+>
+    <div class="modal-content">
+
+        <button
+            type="button"
+            class="modal-close"
+            aria-label="Close"
+            onclick="closeModal('signupModal')"
+        >
+            ×
+        </button>
+
+        <h2>Create Your LosOja Account</h2>
+
+        <p>
+            Sign up to add businesses and use LosOja features.
+        </p>
+
+        <form id="signupForm">
+
+            <label for="signupName">
+                Name
+            </label>
+
+            <input
+                id="signupName"
+                type="text"
+                placeholder="Enter your name"
+                autocomplete="name"
+                required
+            >
+
+            <label for="signupEmail">
+                Email
+            </label>
+
+            <input
+                id="signupEmail"
+                type="email"
+                placeholder="Enter your email"
+                autocomplete="email"
+                required
+            >
+
+            <label for="signupPassword">
+                Password
+            </label>
+
+            <input
+                id="signupPassword"
+                type="password"
+                placeholder="Create a password"
+                autocomplete="new-password"
+                required
+            >
+
+            <button
+                type="submit"
+                class="primary-button"
+            >
+                Create Account
+            </button>
+
+        </form>
+
+        <p id="signupMessage"></p>
+
+        <button
+            type="button"
+            class="secondary-button"
+            onclick="closeModal('signupModal'); openLogin();"
+        >
+            Already have an account? Log In
+        </button>
+
+    </div>
 </div>  
 <script src="js/auth.js"></script>   
 <script>
