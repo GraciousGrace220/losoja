@@ -1076,7 +1076,124 @@ return {
             );
 
         }
+/* =================================================
+   LOGIN FORM
+================================================= */
 
+const loginForm =
+    document.getElementById(
+        "loginForm"
+    );
+
+if (loginForm) {
+
+    loginForm.addEventListener(
+        "submit",
+        async event => {
+
+            event.preventDefault();
+
+            clearError(
+                "loginError"
+            );
+
+
+            const email =
+                document.getElementById(
+                    "loginEmail"
+                )?.value;
+
+            const password =
+                document.getElementById(
+                    "loginPassword"
+                )?.value;
+
+
+            const submitButton =
+                loginForm.querySelector(
+                    'button[type="submit"]'
+                );
+
+            if (submitButton) {
+                submitButton.disabled = true;
+            }
+
+
+            const result =
+                await login(
+                    email,
+                    password
+                );
+
+
+            if (submitButton) {
+                submitButton.disabled = false;
+            }
+
+
+            if (!result.success) {
+
+                showError(
+                    "loginError",
+                    result.message
+                );
+
+                return;
+            }
+
+
+            loginForm.reset();
+
+
+            /*
+             * Check whether the user came
+             * from Trade by Barter.
+             */
+            const returnToBarter =
+                sessionStorage.getItem(
+                    "losoja_return_to_barter"
+                ) === "true";
+
+
+            if (window.App) {
+
+                window.App.closeModal(
+                    "loginModal"
+                );
+
+            }
+
+
+            if (returnToBarter) {
+
+                sessionStorage.removeItem(
+                    "losoja_return_to_barter"
+                );
+
+                window.location.href =
+                    "barter.html";
+
+                return;
+            }
+
+
+            if (
+                window.App &&
+                typeof window.App.showToast ===
+                "function"
+            ) {
+
+                window.App.showToast(
+                    "Welcome back!",
+                    "success"
+                );
+
+            }
+
+        }
+    );
+
+}
 
         /* =================================================
            SIGNUP FORM
