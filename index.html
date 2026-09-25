@@ -1129,7 +1129,59 @@
     </div>
 
 </div>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
 
+    const params = new URLSearchParams(
+        window.location.search
+    );
+
+    if (params.get("openLogin") !== "1") {
+        return;
+    }
+
+    let attempts = 0;
+
+    const timer = setInterval(function () {
+
+        attempts++;
+
+        /* Try the LosOja modal system first */
+        if (
+            window.App &&
+            typeof window.App.openModal === "function"
+        ) {
+            window.App.openModal("loginModal");
+            clearInterval(timer);
+            return;
+        }
+
+        /* Fallback: open the modal directly */
+        const loginModal =
+            document.getElementById("loginModal");
+
+        if (loginModal) {
+
+            loginModal.classList.remove("hidden");
+
+            loginModal.setAttribute(
+                "aria-hidden",
+                "false"
+            );
+
+            clearInterval(timer);
+            return;
+        }
+
+        /* Stop after 6 seconds */
+        if (attempts >= 20) {
+            clearInterval(timer);
+        }
+
+    }, 300);
+
+});
+</script>
 
 </body>
 </html>
