@@ -81,14 +81,14 @@
                     🔔
                 </button>
 
-                <button
-                    class="header-button"
-                    type="button"
-                    aria-label="Account"
-                    onclick="alert('Account coming soon')"
-                >
-                    👤
-                </button>
+               <button
+    class="header-button"
+    type="button"
+    aria-label="Account"
+    onclick="openLogin()"
+>
+    👤
+</button>
 
             </div>
 
@@ -1129,7 +1129,71 @@
     </div>
 
 </div>
-<script src="js/auth.js"></script>
-    
+<!-- =====================================================
+     LOGIN MODAL
+====================================================== -->
+
+<div
+    id="loginModal"
+    class="modal-overlay hidden"
+    aria-hidden="true"
+>
+
+    <div class="modal-content">
+
+        <button
+            type="button"
+            class="modal-close"
+            aria-label="Close"
+            onclick="closeModal('loginModal')"
+        >
+            ×
+        </button>
+
+        <h2>Welcome Back</h2>
+
+        <p>
+            Log in to your LosOja account.
+        </p>
+
+        <form id="loginForm">
+
+            <label for="loginEmail">
+                Email
+            </label>
+
+            <input
+                id="loginEmail"
+                type="email"
+                placeholder="Enter your email"
+                required
+            >
+
+            <label for="loginPassword">
+                Password
+            </label>
+
+            <input
+                id="loginPassword"
+                type="password"
+                placeholder="Enter your password"
+                required
+            >
+
+            <button
+                type="submit"
+                class="primary-button"
+            >
+                Log In
+            </button>
+
+        </form>
+
+        <p id="loginMessage"></p>
+
+    </div>
+
+</div>  
+<script src="js/auth.js"></script>    
 </body>
 </html>
