@@ -1033,101 +1033,154 @@
     }
 
 
-    function displayListings(listings) {
+function displayListings(listings) {
 
-        const container =
-            document.getElementById(
-                "listings"
-            );
-
-
-        if (!container) {
-            return;
-        }
+    const container =
+        document.getElementById(
+            "listings"
+        );
 
 
-        if (!listings.length) {
-
-            container.innerHTML = `
-                <div class="empty">
-                    No barter listings found yet.
-                    <br><br>
-                    Be the first person to add one!
-                </div>
-            `;
-
-            return;
-        }
-
-
-        container.innerHTML =
-            listings.map(
-                listing => {
-
-                    const status =
-                        listing.status ||
-                        "available";
-
-
-                    return `
-                        <article class="listing">
-
-                            <h3>
-                                ${escapeHTML(
-                                    listing.title
-                                )}
-                            </h3>
-
-                            <div class="listing-row">
-                                <span class="listing-label">
-                                    Category:
-                                </span>
-                                ${escapeHTML(
-                                    listing.category
-                                )}
-                            </div>
-
-                            <div class="listing-row">
-                                <span class="listing-label">
-                                    Wants:
-                                </span>
-                                ${escapeHTML(
-                                    listing.wanted_item
-                                )}
-                            </div>
-
-                            <div class="listing-row">
-                                <span class="listing-label">
-                                    Location:
-                                </span>
-                                ${escapeHTML(
-                                    listing.location
-                                )}
-                            </div>
-
-                            <div class="listing-row">
-                                <span class="listing-label">
-                                    Contact:
-                                </span>
-                                ${escapeHTML(
-                                    listing.phone
-                                )}
-                            </div>
-
-                            <div class="listing-row">
-                                <span class="status">
-                                    ${escapeHTML(
-                                        status
-                                    )}
-                                </span>
-                            </div>
-
-                        </article>
-                    `;
-
-                }
-            ).join("");
+    if (!container) {
+        return;
     }
+
+
+    if (!listings.length) {
+
+        container.innerHTML = `
+            <div class="empty">
+                No barter listings found yet.
+                <br><br>
+                Be the first person to add one!
+            </div>
+        `;
+
+        return;
+    }
+
+
+    container.innerHTML =
+        listings.map(
+            listing => {
+
+                const status =
+                    listing.status ||
+                    "available";
+
+
+                return `
+                    <article class="listing">
+
+                        <h3>
+                            ${escapeHTML(
+                                listing.title
+                            )}
+                        </h3>
+
+                        <div class="listing-row">
+                            <span class="listing-label">
+                                Category:
+                            </span>
+                            ${escapeHTML(
+                                listing.category
+                            )}
+                        </div>
+
+                        <div class="listing-row">
+                            <span class="listing-label">
+                                Wants:
+                            </span>
+                            ${escapeHTML(
+                                listing.wanted_item
+                            )}
+                        </div>
+
+                        <div class="listing-row">
+                            <span class="listing-label">
+                                Location:
+                            </span>
+                            ${escapeHTML(
+                                listing.location
+                            )}
+                        </div>
+
+                        <div class="listing-row">
+                            <span class="listing-label">
+                                Contact:
+                            </span>
+                            ${escapeHTML(
+                                listing.phone
+                            )}
+                        </div>
+
+                        <div class="listing-row">
+                            <span class="status">
+                                ${escapeHTML(
+                                    status
+                                )}
+                            </span>
+                        </div>
+
+                        <div
+                            style="
+                                margin-top:15px;
+                                display:flex;
+                                gap:10px;
+                                flex-wrap:wrap;
+                            "
+                        >
+
+                            <button
+                                type="button"
+                                class="button"
+                                onclick="openListingChat(
+                                    '${encodeURIComponent(
+                                        listing.user_id
+                                    )}',
+                                    '${encodeURIComponent(
+                                        listing.id
+                                    )}'
+                                )"
+                            >
+                                💬 Chat with Owner
+                            </button>
+
+                        </div>
+
+                    </article>
+                `;
+
+            }
+        ).join("");
+}
+    
+function openListingChat(
+    userId,
+    listingId
+) {
+
+    if (!userId) {
+
+        showError(
+            "This listing does not have an owner."
+        );
+
+        return;
+    }
+
+
+    const url =
+        "chat.html" +
+        "?user=" +
+        userId +
+        "&listing=" +
+        listingId;
+
+
+    window.location.href =
+        url;
+}
 
 
     function searchListings() {
