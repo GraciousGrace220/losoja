@@ -1526,7 +1526,7 @@ window.ensureValidSupabaseSession =
     }
 
 
-    if (
+       if (
         document.readyState ===
         "loading"
     ) {
@@ -1541,5 +1541,7 @@ window.ensureValidSupabaseSession =
         initAuth();
 
     }
+
+}
 
 })();
