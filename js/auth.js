@@ -17,6 +17,8 @@ Handles:
 
     "use strict";
 
+    console.log("LosOja auth.js loaded");
+
 
     /* =====================================================
        SUPABASE CONFIGURATION
