@@ -967,28 +967,28 @@ async function checkLogin() {
 
             await window.ensureValidSupabaseSession();
 
-        }
+       let user = null;
 
+try {
 
-        if (
-            typeof window.getCurrentUser ===
-            "function"
-        ) {
+    if (
+        typeof window.getCurrentUser ===
+        "function"
+    ) {
 
-            user =
-                window.getCurrentUser();
-
-        }
-
-    } catch (error) {
-
-        console.warn(
-            "LosOja barter session check failed:",
-            error
-        );
+        user =
+            await window.getCurrentUser();
 
     }
 
+} catch (error) {
+
+    console.warn(
+        "LosOja barter session check failed:",
+        error
+    );
+
+}
 
 
     const loginScreen =
