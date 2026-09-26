@@ -1243,19 +1243,26 @@
                                         method: "POST",
 
                                         headers: {
-                                            "apikey":
-                                                SUPABASE_KEY,
+    "apikey":
+        SUPABASE_KEY,
 
-                                            "Authorization":
-                                                "Bearer " +
-                                                SUPABASE_KEY,
+    "Authorization":
+        "Bearer " +
+        (
+            typeof window.getSupabaseAccessToken === "function"
+                ? (
+                    window.getSupabaseAccessToken() ||
+                    SUPABASE_KEY
+                )
+                : SUPABASE_KEY
+        ),
 
-                                            "Content-Type":
-                                                imageFile.type,
+    "Content-Type":
+        imageFile.type,
 
-                                            "x-upsert":
-                                                "false"
-                                        },
+    "x-upsert":
+        "false"
+},
 
                                         body: imageFile
                                     }
@@ -1474,20 +1481,27 @@
                                 {
                                     method: "POST",
 
-                                    headers: {
-                                        "apikey":
-                                            SUPABASE_KEY,
+                                  headers: {
+    "apikey":
+        SUPABASE_KEY,
 
-                                        "Authorization":
-                                            "Bearer " +
-                                            SUPABASE_KEY,
+    "Authorization":
+        "Bearer " +
+        (
+            typeof window.getSupabaseAccessToken === "function"
+                ? (
+                    window.getSupabaseAccessToken() ||
+                    SUPABASE_KEY
+                )
+                : SUPABASE_KEY
+        ),
 
-                                        "Content-Type":
-                                            "application/json",
+    "Content-Type":
+        "application/json",
 
-                                        "Prefer":
-                                            "return=representation"
-                                    },
+    "Prefer":
+        "return=representation"
+},
 
                                     body:
                                         JSON.stringify(
@@ -2375,7 +2389,15 @@
 
         };
 
+window.showToast =
+    function (message, type) {
 
+        App.showToast(
+            message,
+            type
+        );
+
+    };
     /* =====================================================
        BUSINESS DETAILS
     ===================================================== */
