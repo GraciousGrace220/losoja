@@ -6,73 +6,76 @@
     id="loginModal"
     class="modal-overlay hidden"
     aria-hidden="true"
+    style="display:none;"
 >
 
 <div class="modal-content">
 
-    <button
-        type="button"
-        class="modal-close"
-        aria-label="Close"
-        onclick="closeModal('loginModal')"
+```
+<button
+    type="button"
+    class="modal-close"
+    aria-label="Close"
+    onclick="closeModal('loginModal')"
+>
+    ×
+</button>
+
+<h2>Welcome Back</h2>
+
+<p>
+    Log in to your LosOja account.
+</p>
+
+<form id="loginForm">
+
+    <label for="loginEmail">
+        Email
+    </label>
+
+    <input
+        id="loginEmail"
+        type="email"
+        placeholder="Enter your email"
+        autocomplete="email"
+        required
     >
-        ×
+
+    <label for="loginPassword">
+        Password
+    </label>
+
+    <input
+        id="loginPassword"
+        type="password"
+        placeholder="Enter your password"
+        autocomplete="current-password"
+        required
+    >
+
+    <button
+        type="submit"
+        class="primary-button"
+    >
+        Log In
     </button>
 
-    <h2>Welcome Back</h2>
+    <button
+        type="button"
+        class="secondary-button"
+        id="createAccountBtn"
+    >
+        Create Account
+    </button>
 
-    <p>
-        Log in to your LosOja account.
-    </p>
+</form>
 
-    <form id="loginForm">
-
-        <label for="loginEmail">
-            Email
-        </label>
-
-        <input
-            id="loginEmail"
-            type="email"
-            placeholder="Enter your email"
-            autocomplete="email"
-            required
-        >
-
-        <label for="loginPassword">
-            Password
-        </label>
-
-        <input
-            id="loginPassword"
-            type="password"
-            placeholder="Enter your password"
-            autocomplete="current-password"
-            required
-        >
-
-        <button
-            type="submit"
-            class="primary-button"
-        >
-            Log In
-        </button>
-
-        <button
-            type="button"
-            class="secondary-button"
-            id="createAccountBtn"
-        >
-            Create Account
-        </button>
-
-    </form>
-
-    <p
-        id="loginError"
-        class="error-message"
-        aria-live="polite"
-    ></p>
+<p
+    id="loginError"
+    class="error-message"
+    aria-live="polite"
+></p>
+```
 
 </div>
 
@@ -86,85 +89,88 @@
     id="signupModal"
     class="modal-overlay hidden"
     aria-hidden="true"
+    style="display:none;"
 >
 
 <div class="modal-content">
 
-    <button
-        type="button"
-        class="modal-close"
-        aria-label="Close"
-        onclick="closeModal('signupModal')"
+```
+<button
+    type="button"
+    class="modal-close"
+    aria-label="Close"
+    onclick="closeModal('signupModal')"
+>
+    ×
+</button>
+
+<h2>Create Your LosOja Account</h2>
+
+<p>
+    Sign up to add businesses and use LosOja features.
+</p>
+
+<form id="signupForm">
+
+    <label for="signupName">
+        Name
+    </label>
+
+    <input
+        id="signupName"
+        type="text"
+        placeholder="Enter your name"
+        autocomplete="name"
+        required
     >
-        ×
-    </button>
 
-    <h2>Create Your LosOja Account</h2>
+    <label for="signupEmail">
+        Email
+    </label>
 
-    <p>
-        Sign up to add businesses and use LosOja features.
-    </p>
+    <input
+        id="signupEmail"
+        type="email"
+        placeholder="Enter your email"
+        autocomplete="email"
+        required
+    >
 
-    <form id="signupForm">
+    <label for="signupPassword">
+        Password
+    </label>
 
-        <label for="signupName">
-            Name
-        </label>
-
-        <input
-            id="signupName"
-            type="text"
-            placeholder="Enter your name"
-            autocomplete="name"
-            required
-        >
-
-        <label for="signupEmail">
-            Email
-        </label>
-
-        <input
-            id="signupEmail"
-            type="email"
-            placeholder="Enter your email"
-            autocomplete="email"
-            required
-        >
-
-        <label for="signupPassword">
-            Password
-        </label>
-
-        <input
-            id="signupPassword"
-            type="password"
-            placeholder="Create a password"
-            autocomplete="new-password"
-            required
-        >
-
-        <button
-            type="submit"
-            class="primary-button"
-        >
-            Create Account
-        </button>
-
-    </form>
-
-    <p
-        id="signupError"
-        class="error-message"
-        aria-live="polite"
-    ></p>
+    <input
+        id="signupPassword"
+        type="password"
+        placeholder="Create a password"
+        autocomplete="new-password"
+        required
+    >
 
     <button
-        type="button"
-        class="secondary-button"
-        id="backToLoginBtn"
+        type="submit"
+        class="primary-button"
     >
-        Already have an account? Log In
+        Create Account
     </button>
+
+</form>
+
+<p
+    id="signupError"
+    class="error-message"
+    aria-live="polite"
+></p>
+
+<button
+    type="button"
+    class="secondary-button"
+    id="backToLoginBtn"
+>
+    Already have an account? Log In
+</button>
+```
 
 </div>
 
