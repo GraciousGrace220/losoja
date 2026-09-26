@@ -25,9 +25,13 @@ const SESSION_KEY =
 function notify(message) {
 
     if (typeof window.showToast === "function") {
+
         window.showToast(message);
+
     } else {
+
         alert(message);
+
     }
 
 }
@@ -37,14 +41,20 @@ function getSession() {
 
     try {
 
-        const session =
+        const saved =
             localStorage.getItem(SESSION_KEY);
 
-        return session
-            ? JSON.parse(session)
-            : null;
+        if (!saved) {
+            return null;
+        }
+
+        return JSON.parse(saved);
 
     } catch (error) {
+
+        console.warn(
+            "LosOja: invalid saved session."
+        );
 
         return null;
 
@@ -75,9 +85,13 @@ function saveSession(session) {
 
 function getAccessToken() {
 
-    const session = getSession();
+    const session =
+        getSession();
 
-    return session?.access_token || null;
+    return session &&
+        session.access_token
+        ? session.access_token
+        : null;
 
 }
 
@@ -100,11 +114,19 @@ async function supabaseRequest(
             "application/json",
 
         "Accept":
-            "application/json",
-
-        ...(options.headers || {})
+            "application/json"
 
     };
+
+
+    if (options.headers) {
+
+        Object.assign(
+            headers,
+            options.headers
+        );
+
+    }
 
 
     const token =
@@ -169,26 +191,28 @@ async function supabaseRequest(
 
 function createAuthModals() {
 
-    if (
-        document.getElementById("loginModal") &&
-        document.getElementById("signupModal")
-    ) {
+    /*
+     * If the HTML already contains the login/signup
+     * modals, DO NOT create another copy.
+     */
 
-        return;
+    let loginModal =
+        document.getElementById("loginModal");
 
-    }
+    let signupModal =
+        document.getElementById("signupModal");
 
 
-    /* -------------------------
+    /* -----------------------------------------------------
        LOGIN MODAL
-    ------------------------- */
+    ----------------------------------------------------- */
 
-    if (!document.getElementById("loginModal")) {
+    if (!loginModal) {
 
-        const loginWrapper =
+        const wrapper =
             document.createElement("div");
 
-        loginWrapper.innerHTML = `
+        wrapper.innerHTML = `
 
             <div
                 id="loginModal"
@@ -212,6 +236,7 @@ function createAuthModals() {
                         </button>
 
                     </div>
+
 
                     <form id="loginForm">
 
@@ -255,7 +280,12 @@ function createAuthModals() {
                         </button>
 
 
-                        <p style="margin-top:15px;text-align:center;">
+                        <p
+                            style="
+                                margin-top:15px;
+                                text-align:center;
+                            "
+                        >
 
                             Don't have an account?
 
@@ -284,22 +314,28 @@ function createAuthModals() {
         `;
 
         document.body.appendChild(
-            loginWrapper.firstElementChild
+            wrapper.firstElementChild
         );
 
     }
 
 
-    /* -------------------------
+    /* -----------------------------------------------------
        SIGNUP MODAL
-    ------------------------- */
+    ----------------------------------------------------- */
 
-    if (!document.getElementById("signupModal")) {
+    signupModal =
+        document.getElementById(
+            "signupModal"
+        );
 
-        const signupWrapper =
+
+    if (!signupModal) {
+
+        const wrapper =
             document.createElement("div");
 
-        signupWrapper.innerHTML = `
+        wrapper.innerHTML = `
 
             <div
                 id="signupModal"
@@ -311,7 +347,9 @@ function createAuthModals() {
 
                     <div class="modal-header">
 
-                        <h2>Create LosOja Account</h2>
+                        <h2>
+                            Create LosOja Account
+                        </h2>
 
                         <button
                             type="button"
@@ -384,7 +422,12 @@ function createAuthModals() {
                         </button>
 
 
-                        <p style="margin-top:15px;text-align:center;">
+                        <p
+                            style="
+                                margin-top:15px;
+                                text-align:center;
+                            "
+                        >
 
                             Already have an account?
 
@@ -413,7 +456,7 @@ function createAuthModals() {
         `;
 
         document.body.appendChild(
-            signupWrapper.firstElementChild
+            wrapper.firstElementChild
         );
 
     }
@@ -422,21 +465,22 @@ function createAuthModals() {
 
 
 /* =========================================================
-   OPEN / CLOSE MODALS
+   OPEN LOGIN
 ========================================================= */
 
 window.openLogin = function () {
 
     createAuthModals();
 
-    const signupModal =
-        document.getElementById(
-            "signupModal"
-        );
 
     const loginModal =
         document.getElementById(
             "loginModal"
+        );
+
+    const signupModal =
+        document.getElementById(
+            "signupModal"
         );
 
 
@@ -457,11 +501,16 @@ window.openLogin = function () {
 
 };
 
+
+/* =========================================================
+   OPEN SIGNUP
+========================================================= */
 
 window.openSignup = function () {
 
     createAuthModals();
 
+
     const loginModal =
         document.getElementById(
             "loginModal"
@@ -491,7 +540,13 @@ window.openSignup = function () {
 };
 
 
-window.closeModal = function (modalId) {
+/* =========================================================
+   CLOSE MODAL
+========================================================= */
+
+window.closeModal = function (
+    modalId
+) {
 
     const modal =
         document.getElementById(
@@ -521,32 +576,38 @@ window.showSignup =
    GET CURRENT USER
 ========================================================= */
 
-window.getCurrentUser = async function () {
+window.getCurrentUser =
+    async function () {
 
-    const token =
-        getAccessToken();
-
-
-    if (!token) {
-
-        return null;
-
-    }
+        const token =
+            getAccessToken();
 
 
-    try {
+        if (!token) {
 
-        return await supabaseRequest(
-            "/auth/v1/user"
-        );
+            return null;
 
-    } catch (error) {
+        }
 
-        return null;
 
-    }
+        try {
 
-};
+            return await supabaseRequest(
+                "/auth/v1/user"
+            );
+
+        } catch (error) {
+
+            console.warn(
+                "LosOja: unable to get current user.",
+                error
+            );
+
+            return null;
+
+        }
+
+    };
 
 
 window.getSupabaseSession =
@@ -572,6 +633,10 @@ window.getSupabaseAccessToken =
 async function handleLogin(event) {
 
     event.preventDefault();
+
+
+    const form =
+        event.currentTarget;
 
 
     const email =
@@ -600,7 +665,7 @@ async function handleLogin(event) {
 
 
     const submitButton =
-        event.target.querySelector(
+        form.querySelector(
             'button[type="submit"]'
         );
 
@@ -625,17 +690,32 @@ async function handleLogin(event) {
                     method: "POST",
 
                     body: JSON.stringify({
-                        email: email,
-                        password: password
+
+                        email:
+                            email,
+
+                        password:
+                            password
+
                     })
+
                 }
             );
+
+
+        if (!session?.access_token) {
+
+            throw new Error(
+                "Login did not return a valid session."
+            );
+
+        }
 
 
         saveSession(session);
 
 
-        event.target.reset();
+        form.reset();
 
 
         window.closeModal(
@@ -646,20 +726,30 @@ async function handleLogin(event) {
         await window.updateAuthUI();
 
 
+        /*
+         * If the user originally came from
+         * Trade by Barter, send them back there.
+         */
+
         const returnToBarter =
             sessionStorage.getItem(
                 "losoja_return_to_barter"
             );
 
 
-        if (returnToBarter === "true") {
+        if (
+            returnToBarter ===
+            "true"
+        ) {
 
             sessionStorage.removeItem(
                 "losoja_return_to_barter"
             );
 
+
             window.location.href =
                 "barter.html";
+
 
             return;
 
@@ -667,9 +757,11 @@ async function handleLogin(event) {
 
 
         const userName =
-            session?.user?.user_metadata
+            session?.user
+                ?.user_metadata
                 ?.full_name ||
-            session?.user?.email ||
+            session?.user
+                ?.email ||
             "there";
 
 
@@ -720,6 +812,10 @@ async function handleSignup(event) {
     event.preventDefault();
 
 
+    const form =
+        event.currentTarget;
+
+
     const name =
         document
             .getElementById("signupName")
@@ -752,8 +848,19 @@ async function handleSignup(event) {
     }
 
 
+    if (password.length < 6) {
+
+        notify(
+            "Password must be at least 6 characters."
+        );
+
+        return;
+
+    }
+
+
     const submitButton =
-        event.target.querySelector(
+        form.querySelector(
             'button[type="submit"]'
         );
 
@@ -779,44 +886,70 @@ async function handleSignup(event) {
 
                     body: JSON.stringify({
 
-                        email: email,
+                        email:
+                            email,
 
-                        password: password,
+                        password:
+                            password,
 
                         data: {
-                            full_name: name
+
+                            full_name:
+                                name
+
                         }
 
                     })
+
                 }
             );
 
 
-        if (result?.access_token) {
+        /*
+         * Supabase can return an access token
+         * immediately, or require email confirmation.
+         */
 
-            saveSession(result);
+        if (
+            result &&
+            result.access_token
+        ) {
+
+            saveSession(
+                result
+            );
+
+
+            form.reset();
+
 
             window.closeModal(
                 "signupModal"
             );
 
+
             await window.updateAuthUI();
+
 
             notify(
                 "Account created successfully!"
             );
 
+
         } else {
 
-            event.target.reset();
+            form.reset();
+
 
             window.closeModal(
                 "signupModal"
             );
 
+
             notify(
                 "Account created. Check your email if confirmation is required, then log in."
             );
+
 
             window.openLogin();
 
@@ -858,140 +991,157 @@ async function handleSignup(event) {
    LOGOUT
 ========================================================= */
 
-window.logoutUser = async function () {
+window.logoutUser =
+    async function () {
 
-    const token =
-        getAccessToken();
+        const token =
+            getAccessToken();
 
 
-    try {
+        try {
 
-        if (token) {
+            if (token) {
 
-            await supabaseRequest(
-                "/auth/v1/logout",
-                {
-                    method: "POST"
-                }
+                await supabaseRequest(
+                    "/auth/v1/logout",
+                    {
+                        method: "POST"
+                    }
+                );
+
+            }
+
+        } catch (error) {
+
+            console.warn(
+                "LosOja logout request:",
+                error
             );
 
         }
 
-    } catch (error) {
 
-        console.warn(
-            "LosOja logout request:",
-            error
+        saveSession(null);
+
+
+        await window.updateAuthUI();
+
+
+        notify(
+            "You have been logged out."
         );
 
-    }
-
-
-    saveSession(null);
-
-
-    await window.updateAuthUI();
-
-
-    notify(
-        "You have been logged out."
-    );
-
-};
+    };
 
 
 /* =========================================================
-   AUTH UI
+   UPDATE AUTH UI
 ========================================================= */
 
-window.updateAuthUI = async function () {
+window.updateAuthUI =
+    async function () {
 
-    const session =
-        getSession();
-
-
-    const accountButtons =
-        document.querySelectorAll(
-            'button[aria-label="Account"]'
-        );
+        const session =
+            getSession();
 
 
-    const bottomAccountButton =
-        document.querySelector(
-            ".bottom-nav .nav-item:last-child"
-        );
+        const accountButtons =
+            document.querySelectorAll(
+                'button[aria-label="Account"]'
+            );
 
 
-    if (session?.access_token) {
+        const bottomAccountButton =
+            document.querySelector(
+                ".bottom-nav .nav-item:last-child"
+            );
 
-        accountButtons.forEach(
-            function (button) {
 
-                button.onclick =
+        if (
+            session &&
+            session.access_token
+        ) {
+
+            accountButtons.forEach(
+                function (button) {
+
+                    button.onclick =
+                        window.logoutUser;
+
+                    button.title =
+                        "Logout";
+
+                }
+            );
+
+
+            if (
+                bottomAccountButton
+            ) {
+
+                bottomAccountButton.onclick =
                     window.logoutUser;
 
-                button.title =
-                    "Logout";
+
+                const label =
+                    bottomAccountButton
+                        .querySelector(
+                            "span:last-child"
+                        );
+
+
+                if (label) {
+
+                    label.textContent =
+                        "Logout";
+
+                }
 
             }
-        );
 
 
-        if (bottomAccountButton) {
+        } else {
 
-            bottomAccountButton.onclick =
-                window.logoutUser;
+            accountButtons.forEach(
+                function (button) {
 
-            const label =
+                    button.onclick =
+                        window.openLogin;
+
+                    button.title =
+                        "Login";
+
+                }
+            );
+
+
+            if (
                 bottomAccountButton
-                    .querySelector("span:last-child");
+            ) {
 
-            if (label) {
-
-                label.textContent =
-                    "Logout";
-
-            }
-
-        }
-
-
-    } else {
-
-        accountButtons.forEach(
-            function (button) {
-
-                button.onclick =
+                bottomAccountButton.onclick =
                     window.openLogin;
 
-                button.title =
-                    "Login";
 
-            }
-        );
+                const label =
+                    bottomAccountButton
+                        .querySelector(
+                            "span:last-child"
+                        );
 
 
-        if (bottomAccountButton) {
+                if (label) {
 
-            bottomAccountButton.onclick =
-                window.openLogin;
+                    label.textContent =
+                        "Account";
 
-            const label =
-                bottomAccountButton
-                    .querySelector("span:last-child");
-
-            if (label) {
-
-                label.textContent =
-                    "Account";
+                }
 
             }
 
         }
 
-    }
-
-};
+    };
 
 
 /* =========================================================
@@ -1005,7 +1155,10 @@ window.refreshSupabaseSession =
             getSession();
 
 
-        if (!session?.refresh_token) {
+        if (
+            !session ||
+            !session.refresh_token
+        ) {
 
             return session;
 
@@ -1021,21 +1174,34 @@ window.refreshSupabaseSession =
                         method: "POST",
 
                         body: JSON.stringify({
+
                             refresh_token:
                                 session.refresh_token
+
                         })
+
                     }
                 );
 
 
-            saveSession(refreshed);
+            saveSession(
+                refreshed
+            );
+
 
             return refreshed;
 
 
         } catch (error) {
 
+            console.warn(
+                "LosOja: session refresh failed.",
+                error
+            );
+
+
             saveSession(null);
+
 
             return null;
 
@@ -1075,7 +1241,7 @@ window.ensureValidSupabaseSession =
 
 
 /* =========================================================
-   INITIALIZE
+   INITIALIZE EVENT LISTENERS
 ========================================================= */
 
 function initializeAuth() {
@@ -1083,11 +1249,39 @@ function initializeAuth() {
     createAuthModals();
 
 
+    /*
+     * LOGIN FORM
+     *
+     * Remove our previous listener first so this
+     * function can never submit twice.
+     */
+
     const loginForm =
         document.getElementById(
             "loginForm"
         );
 
+
+    if (
+        loginForm &&
+        !loginForm.dataset.losojaAuthReady
+    ) {
+
+        loginForm.addEventListener(
+            "submit",
+            handleLogin
+        );
+
+
+        loginForm.dataset.losojaAuthReady =
+            "true";
+
+    }
+
+
+    /*
+     * SIGNUP FORM
+     */
 
     const signupForm =
         document.getElementById(
@@ -1095,25 +1289,26 @@ function initializeAuth() {
         );
 
 
-    if (loginForm) {
-
-        loginForm.addEventListener(
-            "submit",
-            handleLogin
-        );
-
-    }
-
-
-    if (signupForm) {
+    if (
+        signupForm &&
+        !signupForm.dataset.losojaAuthReady
+    ) {
 
         signupForm.addEventListener(
             "submit",
             handleSignup
         );
 
+
+        signupForm.dataset.losojaAuthReady =
+            "true";
+
     }
 
+
+    /*
+     * CLOSE LOGIN
+     */
 
     const closeLogin =
         document.getElementById(
@@ -1121,13 +1316,10 @@ function initializeAuth() {
         );
 
 
-    const closeSignup =
-        document.getElementById(
-            "closeSignupModal"
-        );
-
-
-    if (closeLogin) {
+    if (
+        closeLogin &&
+        !closeLogin.dataset.losojaAuthReady
+    ) {
 
         closeLogin.addEventListener(
             "click",
@@ -1140,10 +1332,27 @@ function initializeAuth() {
             }
         );
 
+
+        closeLogin.dataset.losojaAuthReady =
+            "true";
+
     }
 
 
-    if (closeSignup) {
+    /*
+     * CLOSE SIGNUP
+     */
+
+    const closeSignup =
+        document.getElementById(
+            "closeSignupModal"
+        );
+
+
+    if (
+        closeSignup &&
+        !closeSignup.dataset.losojaAuthReady
+    ) {
 
         closeSignup.addEventListener(
             "click",
@@ -1156,8 +1365,16 @@ function initializeAuth() {
             }
         );
 
+
+        closeSignup.dataset.losojaAuthReady =
+            "true";
+
     }
 
+
+    /*
+     * LOGIN -> SIGNUP
+     */
 
     const switchToSignup =
         document.getElementById(
@@ -1165,55 +1382,107 @@ function initializeAuth() {
         );
 
 
+    if (
+        switchToSignup &&
+        !switchToSignup.dataset.losojaAuthReady
+    ) {
+
+        switchToSignup.addEventListener(
+            "click",
+            function (event) {
+
+                event.preventDefault();
+
+                window.openSignup();
+
+            }
+        );
+
+
+        switchToSignup.dataset.losojaAuthReady =
+            "true";
+
+    }
+
+
+    /*
+     * SIGNUP -> LOGIN
+     */
+
     const switchToLogin =
         document.getElementById(
             "switchToLogin"
         );
 
 
-    if (switchToSignup) {
-
-        switchToSignup.addEventListener(
-            "click",
-            window.openSignup
-        );
-
-    }
-
-
-    if (switchToLogin) {
+    if (
+        switchToLogin &&
+        !switchToLogin.dataset.losojaAuthReady
+    ) {
 
         switchToLogin.addEventListener(
             "click",
-            window.openLogin
+            function (event) {
+
+                event.preventDefault();
+
+                window.openLogin();
+
+            }
         );
+
+
+        switchToLogin.dataset.losojaAuthReady =
+            "true";
 
     }
 
 
-    document.addEventListener(
-        "click",
-        function (event) {
+    /*
+     * CLOSE MODAL WHEN CLICKING OUTSIDE
+     *
+     * One global listener only.
+     */
 
-            if (
-                event.target.classList.contains(
-                    "modal-overlay"
-                )
-            ) {
+    if (
+        !document.body.dataset.losojaModalReady
+    ) {
 
-                event.target.style.display =
-                    "none";
+        document.addEventListener(
+            "click",
+            function (event) {
+
+                if (
+                    event.target &&
+                    event.target.classList &&
+                    event.target.classList.contains(
+                        "modal-overlay"
+                    )
+                ) {
+
+                    event.target.style.display =
+                        "none";
+
+                }
 
             }
+        );
 
-        }
-    );
+
+        document.body.dataset.losojaModalReady =
+            "true";
+
+    }
 
 
     window.updateAuthUI();
 
 }
 
+
+/* =========================================================
+   START
+========================================================= */
 
 if (
     document.readyState ===
@@ -1222,7 +1491,10 @@ if (
 
     document.addEventListener(
         "DOMContentLoaded",
-        initializeAuth
+        initializeAuth,
+        {
+            once: true
+        }
     );
 
 } else {
