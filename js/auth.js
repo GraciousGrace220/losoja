@@ -1,11 +1,10 @@
 (function () {
-
 "use strict";
 
 /* =========================================================
    LOSOJA AUTHENTICATION
    Supabase Auth
-   ========================================================= */
+========================================================= */
 
 const SUPABASE_URL =
     "https://ycxshwgeebskdozmornh.supabase.co";
@@ -44,7 +43,9 @@ function getSession() {
             localStorage.getItem(SESSION_KEY);
 
         if (!saved) {
+
             return null;
+
         }
 
         return JSON.parse(saved);
@@ -192,14 +193,18 @@ function createAuthModals() {
 
     /*
      * If the HTML already contains the login/signup
-     * modals, DO NOT create another copy.
+     * modals, do not create another copy.
      */
 
     let loginModal =
-        document.getElementById("loginModal");
+        document.getElementById(
+            "loginModal"
+        );
 
     let signupModal =
-        document.getElementById("signupModal");
+        document.getElementById(
+            "signupModal"
+        );
 
 
     /* -----------------------------------------------------
@@ -215,7 +220,8 @@ function createAuthModals() {
 
             <div
                 id="loginModal"
-                class="modal-overlay"
+                class="modal-overlay hidden"
+                aria-hidden="true"
                 style="display:none;"
             >
 
@@ -223,7 +229,9 @@ function createAuthModals() {
 
                     <div class="modal-header">
 
-                        <h2>Login to LosOja</h2>
+                        <h2>
+                            Login to LosOja
+                        </h2>
 
                         <button
                             type="button"
@@ -338,7 +346,8 @@ function createAuthModals() {
 
             <div
                 id="signupModal"
-                class="modal-overlay"
+                class="modal-overlay hidden"
+                aria-hidden="true"
                 style="display:none;"
             >
 
@@ -485,16 +494,34 @@ window.openLogin = function () {
 
     if (signupModal) {
 
+        signupModal.classList.add(
+            "hidden"
+        );
+
         signupModal.style.display =
             "none";
+
+        signupModal.setAttribute(
+            "aria-hidden",
+            "true"
+        );
 
     }
 
 
     if (loginModal) {
 
+        loginModal.classList.remove(
+            "hidden"
+        );
+
         loginModal.style.display =
             "flex";
+
+        loginModal.setAttribute(
+            "aria-hidden",
+            "false"
+        );
 
     }
 
@@ -523,16 +550,34 @@ window.openSignup = function () {
 
     if (loginModal) {
 
+        loginModal.classList.add(
+            "hidden"
+        );
+
         loginModal.style.display =
             "none";
+
+        loginModal.setAttribute(
+            "aria-hidden",
+            "true"
+        );
 
     }
 
 
     if (signupModal) {
 
+        signupModal.classList.remove(
+            "hidden"
+        );
+
         signupModal.style.display =
             "flex";
+
+        signupModal.setAttribute(
+            "aria-hidden",
+            "false"
+        );
 
     }
 
@@ -555,8 +600,17 @@ window.closeModal = function (
 
     if (modal) {
 
+        modal.classList.add(
+            "hidden"
+        );
+
         modal.style.display =
             "none";
+
+        modal.setAttribute(
+            "aria-hidden",
+            "true"
+        );
 
     }
 
@@ -565,7 +619,6 @@ window.closeModal = function (
 
 window.showLogin =
     window.openLogin;
-
 
 window.showSignup =
     window.openSignup;
@@ -640,7 +693,9 @@ async function handleLogin(event) {
 
     const email =
         document
-            .getElementById("loginEmail")
+            .getElementById(
+                "loginEmail"
+            )
             ?.value
             .trim()
             .toLowerCase();
@@ -648,7 +703,9 @@ async function handleLogin(event) {
 
     const password =
         document
-            .getElementById("loginPassword")
+            .getElementById(
+                "loginPassword"
+            )
             ?.value;
 
 
@@ -724,11 +781,6 @@ async function handleLogin(event) {
 
         await window.updateAuthUI();
 
-
-        /*
-         * If the user originally came from
-         * Trade by Barter, send them back there.
-         */
 
         const returnToBarter =
             sessionStorage.getItem(
@@ -817,14 +869,18 @@ async function handleSignup(event) {
 
     const name =
         document
-            .getElementById("signupName")
+            .getElementById(
+                "signupName"
+            )
             ?.value
             .trim();
 
 
     const email =
         document
-            .getElementById("signupEmail")
+            .getElementById(
+                "signupEmail"
+            )
             ?.value
             .trim()
             .toLowerCase();
@@ -832,7 +888,9 @@ async function handleSignup(event) {
 
     const password =
         document
-            .getElementById("signupPassword")
+            .getElementById(
+                "signupPassword"
+            )
             ?.value;
 
 
@@ -903,11 +961,6 @@ async function handleSignup(event) {
                 }
             );
 
-
-        /*
-         * Supabase can return an access token
-         * immediately, or require email confirmation.
-         */
 
         if (
             result &&
@@ -1248,12 +1301,9 @@ function initializeAuth() {
     createAuthModals();
 
 
-    /*
-     * LOGIN FORM
-     *
-     * Remove our previous listener first so this
-     * function can never submit twice.
-     */
+    /* -----------------------------------------------------
+       LOGIN FORM
+    ----------------------------------------------------- */
 
     const loginForm =
         document.getElementById(
@@ -1278,9 +1328,9 @@ function initializeAuth() {
     }
 
 
-    /*
-     * SIGNUP FORM
-     */
+    /* -----------------------------------------------------
+       SIGNUP FORM
+    ----------------------------------------------------- */
 
     const signupForm =
         document.getElementById(
@@ -1305,9 +1355,9 @@ function initializeAuth() {
     }
 
 
-    /*
-     * CLOSE LOGIN
-     */
+    /* -----------------------------------------------------
+       CLOSE LOGIN
+    ----------------------------------------------------- */
 
     const closeLogin =
         document.getElementById(
@@ -1338,9 +1388,9 @@ function initializeAuth() {
     }
 
 
-    /*
-     * CLOSE SIGNUP
-     */
+    /* -----------------------------------------------------
+       CLOSE SIGNUP
+    ----------------------------------------------------- */
 
     const closeSignup =
         document.getElementById(
@@ -1371,9 +1421,9 @@ function initializeAuth() {
     }
 
 
-    /*
-     * LOGIN -> SIGNUP
-     */
+    /* -----------------------------------------------------
+       LOGIN -> SIGNUP
+    ----------------------------------------------------- */
 
     const switchToSignup =
         document.getElementById(
@@ -1404,9 +1454,9 @@ function initializeAuth() {
     }
 
 
-    /*
-     * SIGNUP -> LOGIN
-     */
+    /* -----------------------------------------------------
+       SIGNUP -> LOGIN
+    ----------------------------------------------------- */
 
     const switchToLogin =
         document.getElementById(
@@ -1437,11 +1487,9 @@ function initializeAuth() {
     }
 
 
-    /*
-     * CLOSE MODAL WHEN CLICKING OUTSIDE
-     *
-     * One global listener only.
-     */
+    /* -----------------------------------------------------
+       CLOSE MODAL WHEN CLICKING OUTSIDE
+    ----------------------------------------------------- */
 
     if (
         !document.body.dataset.losojaModalReady
@@ -1459,8 +1507,9 @@ function initializeAuth() {
                     )
                 ) {
 
-                    event.target.style.display =
-                        "none";
+                    window.closeModal(
+                        event.target.id
+                    );
 
                 }
 
