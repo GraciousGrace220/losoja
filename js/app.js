@@ -91,96 +91,120 @@
            MODALS
         ================================================= */
 
-        openModal(modalId) {
+      openModal(modalId) {
 
-            const modal =
-                typeof modalId === "string"
-                    ? document.getElementById(modalId)
-                    : modalId;
+    const modal =
+        typeof modalId === "string"
+            ? document.getElementById(modalId)
+            : modalId;
 
-            if (!modal) {
+    if (!modal) {
 
-                console.error(
-                    "LosOja: Modal not found:",
-                    modalId
-                );
+        console.error(
+            "LosOja: Modal not found:",
+            modalId
+        );
 
-                return;
-            }
+        return;
+    }
 
-            modal.classList.remove("hidden");
+    modal.classList.remove("hidden");
+    modal.classList.add("active");
 
-            modal.classList.add("active");
+    modal.style.display = "flex";
+    modal.style.visibility = "visible";
+    modal.style.opacity = "1";
+    modal.style.pointerEvents = "auto";
 
-            modal.style.display = "flex";
+    modal.setAttribute(
+        "aria-hidden",
+        "false"
+    );
 
-            document.body.classList.add(
-                "modal-open"
+    document.body.classList.add(
+        "modal-open"
+    );
+
+},
+
+closeModal(modal) {
+
+    if (typeof modal === "string") {
+        modal =
+            document.getElementById(modal);
+    }
+
+    if (!modal || !modal.classList) {
+        return;
+    }
+
+    /* Completely hide the modal */
+
+    modal.classList.remove("active");
+
+    modal.classList.add("hidden");
+
+    modal.style.display = "none";
+    modal.style.visibility = "hidden";
+    modal.style.opacity = "0";
+    modal.style.pointerEvents = "none";
+
+    modal.setAttribute(
+        "aria-hidden",
+        "true"
+    );
+
+
+    /* Restore page scrolling when no modal remains */
+
+    const anotherOpenModal =
+        document.querySelector(
+            ".modal-overlay.active, .modal.active"
+        );
+
+    if (!anotherOpenModal) {
+
+        document.body.classList.remove(
+            "modal-open"
+        );
+
+    }
+
+},
+
+       closeAllModals() {
+
+    document
+        .querySelectorAll(
+            ".modal-overlay, .modal"
+        )
+        .forEach(modal => {
+
+            modal.classList.remove(
+                "active"
             );
 
-        },
-
-
-        closeModal(modal) {
-
-            if (typeof modal === "string") {
-                modal =
-                    document.getElementById(modal);
-            }
-
-            if (!modal || !modal.classList) {
-                return;
-            }
-
-            modal.classList.remove("active");
-
-            modal.classList.add("hidden");
+            modal.classList.add(
+                "hidden"
+            );
 
             modal.style.display = "none";
+            modal.style.visibility = "hidden";
+            modal.style.opacity = "0";
+            modal.style.pointerEvents = "none";
 
-            const anotherOpenModal =
-                document.querySelector(
-                    ".modal-overlay.active, .modal.active"
-                );
-
-            if (!anotherOpenModal) {
-
-                document.body.classList.remove(
-                    "modal-open"
-                );
-
-            }
-
-        },
-
-
-        closeAllModals() {
-
-            document
-                .querySelectorAll(
-                    ".modal-overlay, .modal"
-                )
-                .forEach(modal => {
-
-                    modal.classList.remove(
-                        "active"
-                    );
-
-                    modal.classList.add(
-                        "hidden"
-                    );
-
-                    modal.style.display = "none";
-
-                });
-
-            document.body.classList.remove(
-                "modal-open"
+            modal.setAttribute(
+                "aria-hidden",
+                "true"
             );
 
-        },
+        });
 
+    document.body.classList.remove(
+        "modal-open"
+    );
 
+},
         /* =================================================
            MODAL CLOSE BUTTONS
         ================================================= */
@@ -976,7 +1000,14 @@
                 modal.classList.add("active");
 
                 modal.style.display = "flex";
+modal.style.visibility = "visible";
+modal.style.opacity = "1";
+modal.style.pointerEvents = "auto";
 
+modal.setAttribute(
+    "aria-hidden",
+    "false"
+);
                 modal.setAttribute(
                     "aria-hidden",
                     "false"
