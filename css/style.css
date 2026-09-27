@@ -2762,8 +2762,7 @@ button,
 
 .app-header,
 .site-header {
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    background: var(--white);
 }
 
 .logo {
