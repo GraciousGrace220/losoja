@@ -49,12 +49,22 @@
 
     <div class="header-inner">
 
-        <div class="logo">
-            LosOja
-        </div>
+     <div class="logo">
+    LosOja
+</div>
 
-        <div class="header-actions">
+<!-- MOBILE MENU BUTTON -->
+<button
+    id="mobileMenuBtn"
+    class="mobile-menu-btn"
+    type="button"
+    aria-label="Open menu"
+    aria-expanded="false"
+>
+    ☰
+</button>
 
+<div class="header-actions">
           <button
     class="header-button"
     type="button"
@@ -79,7 +89,94 @@
 
 </header>
 
+<header class="app-header">
 
+    <div class="header-inner">
+
+        <div class="logo">
+            LosOja
+        </div>
+
+        <!-- MOBILE MENU BUTTON -->
+        <button
+            id="mobileMenuBtn"
+            class="mobile-menu-btn"
+            type="button"
+            aria-label="Open menu"
+            aria-expanded="false"
+        >
+            ☰
+        </button>
+
+        <div class="header-actions">
+
+            <button
+                class="header-button"
+                type="button"
+                aria-label="Notifications"
+                onclick="openNotifications()"
+            >
+                🔔
+            </button>
+
+            <button
+                class="header-button"
+                type="button"
+                aria-label="Account"
+                onclick="openAccount()"
+            >
+                👤
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- MOBILE NAVIGATION -->
+    <nav
+        id="mobileNav"
+        class="mobile-nav"
+        aria-hidden="true"
+    >
+
+        <button
+            type="button"
+            onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
+        >
+            Home
+        </button>
+
+        <button
+            type="button"
+            onclick="document.getElementById('businesses').scrollIntoView({behavior:'smooth'})"
+        >
+            Explore
+        </button>
+
+        <button
+            type="button"
+            onclick="openAccount()"
+        >
+            Account
+        </button>
+
+        <button
+            type="button"
+            onclick="openNotifications()"
+        >
+            Notifications
+        </button>
+
+        <button
+            type="button"
+            onclick="showToast('Saved businesses coming soon')"
+        >
+            Saved
+        </button>
+
+    </nav>
+
+</header>
 
 <!-- =================================================
      HERO
@@ -1209,7 +1306,155 @@
 
 <script src="js/app.js?v=4"></script>
 
-<script> "use strict"; document.addEventListener( "DOMContentLoaded", function () { const createAccountBtn = document.getElementById( "createAccountBtn" ); const backToLoginBtn = document.getElementById( "backToLoginBtn" ); if (createAccountBtn) { createAccountBtn.addEventListener( "click", function () { if ( typeof window.openSignup === "function" ) { window.openSignup(); } } ); } if (backToLoginBtn) { backToLoginBtn.addEventListener( "click", function () { if ( typeof window.closeModal === "function" ) { window.closeModal( "signupModal" ); } if ( typeof window.openLogin === "function" ) { window.openLogin(); } } ); } const returnToBarter = sessionStorage.getItem( "losoja_return_to_barter" ); const urlParams = new URLSearchParams( window.location.search ); const openLoginParam = urlParams.get( "openLogin" ); if ( returnToBarter === "true" || openLoginParam === "1" ) { const openLoginWhenReady = function () { if ( typeof window.openLogin === "function" ) { window.openLogin(); return; } setTimeout( openLoginWhenReady, 100 ); }; openLoginWhenReady(); } } ); </script>
+<script>
+"use strict";
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    /* =========================================
+       MOBILE MENU
+    ========================================= */
+
+    const mobileMenuBtn =
+        document.getElementById("mobileMenuBtn");
+
+    const mobileNav =
+        document.getElementById("mobileNav");
+
+    if (mobileMenuBtn && mobileNav) {
+
+        mobileMenuBtn.addEventListener(
+            "click",
+            function () {
+
+                const isOpen =
+                    mobileNav.classList.toggle("open");
+
+                mobileMenuBtn.setAttribute(
+                    "aria-expanded",
+                    isOpen ? "true" : "false"
+                );
+
+                mobileNav.setAttribute(
+                    "aria-hidden",
+                    isOpen ? "false" : "true"
+                );
+
+            }
+        );
+
+    }
+
+
+    /* =========================================
+       LOGIN / SIGNUP BUTTONS
+    ========================================= */
+
+    const createAccountBtn =
+        document.getElementById("createAccountBtn");
+
+    const backToLoginBtn =
+        document.getElementById("backToLoginBtn");
+
+    if (createAccountBtn) {
+
+        createAccountBtn.addEventListener(
+            "click",
+            function () {
+
+                if (
+                    typeof window.openSignup ===
+                    "function"
+                ) {
+
+                    window.openSignup();
+
+                }
+
+            }
+        );
+
+    }
+
+
+    if (backToLoginBtn) {
+
+        backToLoginBtn.addEventListener(
+            "click",
+            function () {
+
+                if (
+                    typeof window.closeModal ===
+                    "function"
+                ) {
+
+                    window.closeModal("signupModal");
+
+                }
+
+                if (
+                    typeof window.openLogin ===
+                    "function"
+                ) {
+
+                    window.openLogin();
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* =========================================
+       RETURN TO BARTER / OPEN LOGIN
+    ========================================= */
+
+    const returnToBarter =
+        sessionStorage.getItem(
+            "losoja_return_to_barter"
+        );
+
+    const urlParams =
+        new URLSearchParams(
+            window.location.search
+        );
+
+    const openLoginParam =
+        urlParams.get("openLogin");
+
+    if (
+        returnToBarter === "true" ||
+        openLoginParam === "1"
+    ) {
+
+        const openLoginWhenReady =
+            function () {
+
+                if (
+                    typeof window.openLogin ===
+                    "function"
+                ) {
+
+                    window.openLogin();
+                    return;
+
+                }
+
+                setTimeout(
+                    openLoginWhenReady,
+                    100
+                );
+
+            };
+
+        openLoginWhenReady();
+
+    }
+
+});
+</script>
 
 </body>
 
