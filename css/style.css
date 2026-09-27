@@ -3451,3 +3451,19 @@ button,
     }
 
 }
+/* =========================================================
+   LOGIN MODAL - PREVENT BOTTOM NAV OVERLAP
+========================================================= */
+
+@media (max-width: 700px) {
+
+    #loginModal .modal-content,
+    #signupModal .modal-content {
+
+        margin-bottom: 90px;
+        max-height: calc(100vh - 120px);
+        overflow-y: auto;
+
+    }
+
+}
