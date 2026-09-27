@@ -2420,62 +2420,65 @@
         }
 
     };
-    /* =====================================================
-       ACCOUNT
-    ===================================================== */
+           /* =====================================================
+           ACCOUNT
+        ===================================================== */
 
-    openAccount() {
+        openAccount() {
 
-        if (
-            typeof window.getCurrentUser !==
-            "function"
-        ) {
-
-            this.showToast(
-                "Account is still loading. Please try again.",
-                "info"
-            );
-
-            return;
-        }
-
-
-        window.getCurrentUser()
-            .then(user => {
-
-                if (!user) {
-
-                    /* Not logged in */
-                    this.openModal(
-                        "loginModal"
-                    );
-
-                    return;
-                }
-
-
-                /* Logged in */
-                window.location.href =
-                    "account.html";
-
-            })
-            .catch(error => {
-
-                console.error(
-                    "LosOja account error:",
-                    error
-                );
+            if (
+                typeof window.getCurrentUser !==
+                "function"
+            ) {
 
                 this.showToast(
-                    "Unable to open your account right now.",
-                    "error"
+                    "Account is still loading. Please try again.",
+                    "info"
                 );
 
-            });
+                return;
+            }
 
-    },
 
-    /* =====================================================
+            window.getCurrentUser()
+                .then(user => {
+
+                    if (!user) {
+
+                        /* Not logged in */
+                        this.openModal(
+                            "loginModal"
+                        );
+
+                        return;
+                    }
+
+
+                    /* Logged in */
+                    window.location.href =
+                        "account.html";
+
+                })
+                .catch(error => {
+
+                    console.error(
+                        "LosOja account error:",
+                        error
+                    );
+
+                    this.showToast(
+                        "Unable to open your account right now.",
+                        "error"
+                    );
+
+                });
+
+        }
+
+    };
+
+
+      /* =====================================================
        PUBLIC API
     ===================================================== */
 
@@ -2484,13 +2487,21 @@
 
     window.openModal =
         function (modalId) {
-            App.openModal(modalId);
+
+            App.openModal(
+                modalId
+            );
+
         };
 
 
     window.closeModal =
         function (modalId) {
-            App.closeModal(modalId);
+
+            App.closeModal(
+                modalId
+            );
+
         };
 
 
@@ -2502,25 +2513,35 @@
                 type
             );
 
-        };  
-   
-   window.openNotifications =
+        };
+
+
+    window.openNotifications =
         function () {
 
             App.openNotifications();
 
         };
-   
 
-window.showToast =
-    function (message, type) {
 
-        App.showToast(
-            message,
-            type
-        );
+    window.openAccount =
+        function () {
 
-    };
+            App.openAccount();
+
+        };
+
+
+    window.showToast =
+        function (message, type) {
+
+            App.showToast(
+                message,
+                type
+            );
+
+        };
+
     /* =====================================================
        BUSINESS DETAILS
     ===================================================== */
