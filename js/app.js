@@ -2419,10 +2419,132 @@
 
         }
 
-    };
-           /* =====================================================
+          /* =================================================
+           NOTIFICATIONS
+        ================================================= */
+
+        openNotifications() {
+
+            let modal =
+                document.getElementById(
+                    "notificationsModal"
+                );
+
+            if (!modal) {
+
+                modal =
+                    document.createElement(
+                        "div"
+                    );
+
+                modal.id =
+                    "notificationsModal";
+
+                modal.className =
+                    "modal-overlay hidden";
+
+                modal.setAttribute(
+                    "aria-hidden",
+                    "true"
+                );
+
+                modal.innerHTML = `
+                    <div class="modal-content">
+
+                        <button
+                            type="button"
+                            class="modal-close"
+                            aria-label="Close"
+                        >
+                            ×
+                        </button>
+
+                        <h2>
+                            Notifications
+                        </h2>
+
+                        <p>
+                            You don't have any new notifications yet.
+                        </p>
+
+                    </div>
+                `;
+
+                document.body.appendChild(
+                    modal
+                );
+
+            }
+
+            this.openModal(
+                modal
+            );
+
+        },
+
+
+        /* =================================================
+           TOAST / NOTIFICATION
+        ================================================= */
+
+        showToast(message, type = "info") {
+
+            let notification =
+                document.getElementById(
+                    "notification"
+                );
+
+            if (!notification) {
+
+                notification =
+                    document.createElement(
+                        "div"
+                    );
+
+                notification.id =
+                    "notification";
+
+                notification.className =
+                    "notification";
+
+                document.body.appendChild(
+                    notification
+                );
+
+            }
+
+            notification.textContent =
+                String(message || "");
+
+            notification.dataset.type =
+                type;
+
+            notification.classList.add(
+                "show"
+            );
+
+            clearTimeout(
+                notification._losojaTimer
+            );
+
+            notification._losojaTimer =
+                setTimeout(
+                    () => {
+
+                        notification.classList.remove(
+                            "show"
+                        );
+
+                    },
+                    3000
+                );
+
+        },
+
+
+        /* =================================================
            ACCOUNT
-        ===================================================== */
+        ================================================= */
 
         openAccount() {
 
@@ -2445,7 +2567,6 @@
 
                     if (!user) {
 
-                        /* Not logged in */
                         this.openModal(
                             "loginModal"
                         );
@@ -2454,7 +2575,6 @@
                     }
 
 
-                    /* Logged in */
                     window.location.href =
                         "account.html";
 
@@ -2478,7 +2598,7 @@
     };
 
 
-      /* =====================================================
+    /* =====================================================
        PUBLIC API
     ===================================================== */
 
@@ -2541,7 +2661,7 @@
             );
 
         };
-
+   
     /* =====================================================
        BUSINESS DETAILS
     ===================================================== */
