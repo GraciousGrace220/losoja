@@ -291,26 +291,33 @@
 
     <!-- ESCROW -->
 
-    <section class="section">
+<section class="section">
 
-        <h2>Escrow</h2>
+    <h2>Escrow</h2>
 
-        <p class="info">
-            Money used for LosOja transactions can be held
-            securely in escrow until the transaction conditions
-            are completed.
-        </p>
+    <p class="info">
+        Money used for LosOja transactions can be held
+        securely in escrow until the transaction conditions
+        are completed.
+    </p>
 
-        <br>
+    <br>
 
-        <button
-            class="button deposit-button"
-            type="button"
-            onclick="openEscrowInfo()"
-        >
-            View Escrow
-        </button>
+    <button
+        id="viewEscrowButton"
+        class="button deposit-button"
+        type="button"
+        onclick="openEscrowInfo()"
+    >
+        View Escrow
+    </button>
 
+    <div
+        id="escrowTransactions"
+        style="margin-top: 15px;"
+    ></div>
+
+</section>
     </section>
 
 </main>
