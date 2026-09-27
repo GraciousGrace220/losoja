@@ -726,12 +726,154 @@ function withdrawFunds() {
 
 async function openEscrowInfo() {
 
+    const container =
+        document.getElementById(
+            "escrowTransactions"
+        );
+
+    if (!container) {
+        return;
+    }
+
     try {
 
         if (!currentUser) {
-            alert("Please log in to view your escrow transactions.");
+
+            container.innerHTML =
+                '<div class="empty">' +
+                'Please log in to view your escrow transactions.' +
+                '</div>';
+
             return;
         }
+
+        container.innerHTML =
+            '<div class="status">' +
+            'Loading escrow transactions...' +
+            '</div>';
+
+        const escrowTransactions =
+            await supabaseRequest(
+                "/rest/v1/escrow_transactions" +
+                "?select=*" +
+                "&or=(buyer_id.eq." +
+                encodeURIComponent(currentUser.id) +
+                ",seller_id.eq." +
+                encodeURIComponent(currentUser.id) +
+                ")" +
+                "&order=created_at.desc" +
+                "&limit=30"
+            );
+
+        if (
+            !escrowTransactions ||
+            !escrowTransactions.length
+        ) {
+
+            container.innerHTML =
+                '<div class="empty">' +
+                'No escrow transactions yet.' +
+                '</div>';
+
+            return;
+        }
+
+        container.innerHTML =
+            escrowTransactions
+                .map(function (escrow) {
+
+                    const amount =
+                        Number(
+                            escrow.amount || 0
+                        ).toLocaleString(
+                            "en-NG",
+                            {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                            }
+                        );
+
+                    const status =
+                        escapeHTML(
+                            escrow.status ||
+                            "unknown"
+                        );
+
+                    const description =
+                        escapeHTML(
+                            escrow.description ||
+                            "LosOja transaction"
+                        );
+
+                    const date =
+                        escrow.created_at
+                            ? new Date(
+                                escrow.created_at
+                            ).toLocaleString(
+                                "en-NG"
+                            )
+                            : "";
+
+                    const role =
+                        escrow.buyer_id ===
+                        currentUser.id
+                            ? "Buyer"
+                            : "Seller";
+
+                    return `
+                        <div
+                            class="transaction"
+                            style="display:block;"
+                        >
+
+                            <div
+                                class="transaction-name"
+                            >
+                                ₦${amount}
+                            </div>
+
+                            <div
+                                class="transaction-date"
+                            >
+                                ${escapeHTML(role)}
+                                •
+                                ${status}
+                            </div>
+
+                            <div
+                                class="transaction-date"
+                            >
+                                ${description}
+                            </div>
+
+                            <div
+                                class="transaction-date"
+                            >
+                                ${escapeHTML(date)}
+                            </div>
+
+                        </div>
+                    `;
+
+                })
+                .join("");
+
+    } catch (error) {
+
+        console.error(
+            "LosOja escrow error:",
+            error
+        );
+
+        container.innerHTML =
+            '<div class="empty">' +
+            escapeHTML(
+                error.message ||
+                "Could not load escrow transactions."
+            ) +
+            '</div>';
+    }
+}
 
         const escrowTransactions =
             await supabaseRequest(
