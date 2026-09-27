@@ -45,27 +45,36 @@
      HEADER
 ================================================== -->
 
+<!-- =================================================
+     HEADER
+================================================== -->
+
 <header class="app-header">
 
     <div class="header-inner">
 
+        <!-- LOGO -->
         <div class="logo">
             LosOja
         </div>
 
-        <!-- MOBILE MENU BUTTON -->
-        <button
-            id="mobileMenuBtn"
-            class="mobile-menu-btn"
-            type="button"
-            aria-label="Open menu"
-            aria-expanded="false"
-        >
-            ☰
-        </button>
 
         <div class="header-actions">
 
+            <!-- MOBILE MENU -->
+            <button
+                id="mobileMenuBtn"
+                class="mobile-menu-btn"
+                type="button"
+                aria-label="Open menu"
+                aria-expanded="false"
+                aria-controls="mobileNav"
+            >
+                ☰
+            </button>
+
+
+            <!-- NOTIFICATIONS -->
             <button
                 class="header-button"
                 type="button"
@@ -75,6 +84,8 @@
                 🔔
             </button>
 
+
+            <!-- ACCOUNT -->
             <button
                 class="header-button"
                 type="button"
@@ -88,6 +99,7 @@
 
     </div>
 
+
     <!-- MOBILE NAVIGATION -->
     <nav
         id="mobileNav"
@@ -99,41 +111,44 @@
             type="button"
             onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
         >
-            Home
+            🏠 Home
         </button>
+
 
         <button
             type="button"
             onclick="document.getElementById('businesses').scrollIntoView({behavior:'smooth'})"
         >
-            Explore
+            🔎 Explore
         </button>
 
-        <button
-            type="button"
-            onclick="openAccount()"
-        >
-            Account
-        </button>
-
-        <button
-            type="button"
-            onclick="openNotifications()"
-        >
-            Notifications
-        </button>
 
         <button
             type="button"
             onclick="showToast('Saved businesses coming soon')"
         >
-            Saved
+            ❤️ Saved
+        </button>
+
+
+        <button
+            type="button"
+            onclick="openAccount()"
+        >
+            👤 Account
+        </button>
+
+
+        <button
+            type="button"
+            onclick="openNotifications()"
+        >
+            🔔 Notifications
         </button>
 
     </nav>
 
 </header>
-
 <!-- =================================================
      HERO
 ================================================== -->
