@@ -3528,3 +3528,17 @@ button,
     width: 100% !important;
     cursor: pointer !important;
 }
+/* =========================================================
+   LOSOJA - ADD BUSINESS MODAL SCROLL FIX
+========================================================= */
+
+#addBusinessModal > .modal {
+    max-height: calc(100vh - 40px) !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch;
+}
+
+#addBusinessModal #submitBusinessBtn {
+    margin-bottom: 20px !important;
+}
