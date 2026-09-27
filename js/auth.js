@@ -1117,11 +1117,11 @@ window.updateAuthUI =
             accountButtons.forEach(
                 function (button) {
 
-                    button.onclick =
-                        window.logoutUser;
+                   button.onclick =
+    window.openAccount;
 
-                    button.title =
-                        "Logout";
+button.title =
+    "Account";
 
                 }
             );
