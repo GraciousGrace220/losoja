@@ -3467,3 +3467,25 @@ button,
     }
 
 }
+/* =========================================================
+   LOSOJA - LOGIN MODAL ABOVE BOTTOM NAV
+========================================================= */
+
+@media (max-width: 700px) {
+
+    .bottom-nav {
+        z-index: 1000 !important;
+    }
+
+    #loginModal,
+    #signupModal {
+        z-index: 5000 !important;
+    }
+
+    #loginModal .modal-content,
+    #signupModal .modal-content {
+        position: relative;
+        z-index: 5001 !important;
+    }
+
+}
