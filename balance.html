@@ -700,12 +700,52 @@ function escapeHTML(value) {
 ========================================================= */
 
 function depositFunds() {
+    const amount = prompt("Enter the amount you want to deposit (NGN):");
+
+    if (amount === null) {
+        return;
+    }
+
+    const value = Number(amount);
+
+    if (!Number.isFinite(value) || value <= 0) {
+        alert("Please enter a valid deposit amount.");
+        return;
+    }
+
+    if (value < 100) {
+        alert("Minimum deposit is ₦100.");
+        return;
+    }
 
     alert(
-        "Deposit payments will be connected after we set up the secure payment system."
+        "Deposit amount: ₦" +
+        value.toLocaleString("en-NG") +
+        "\n\nPayment connection is the next step."
     );
 }
 
+
+function withdrawFunds() {
+    const amount = prompt("Enter the amount you want to withdraw (NGN):");
+
+    if (amount === null) {
+        return;
+    }
+
+    const value = Number(amount);
+
+    if (!Number.isFinite(value) || value <= 0) {
+        alert("Please enter a valid withdrawal amount.");
+        return;
+    }
+
+    alert(
+        "Withdrawal amount: ₦" +
+        value.toLocaleString("en-NG") +
+        "\n\nBank withdrawal connection is the next step."
+    );
+}
 
 /* =========================================================
    WITHDRAW
