@@ -3489,3 +3489,42 @@ button,
     }
 
 }
+/* =========================================================
+   LOSOJA - ADD BUSINESS MODAL FIX
+   Prevent the form/image area from covering the submit button
+========================================================= */
+
+#addBusinessModal {
+    overflow-y: auto !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 20px !important;
+    box-sizing: border-box !important;
+}
+
+#addBusinessModal > .modal {
+    position: relative !important;
+    width: min(100%, 600px) !important;
+    max-height: calc(100vh - 40px) !important;
+    overflow-y: auto !important;
+    box-sizing: border-box !important;
+    z-index: 5001 !important;
+}
+
+#addBusinessModal .add-business-form {
+    position: relative !important;
+    z-index: 1 !important;
+}
+
+#addBusinessModal .image-upload-box {
+    position: relative !important;
+    z-index: 1 !important;
+}
+
+#addBusinessModal #submitBusinessBtn {
+    position: relative !important;
+    z-index: 2 !important;
+    display: block !important;
+    width: 100% !important;
+    cursor: pointer !important;
+}
