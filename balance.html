@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>LosOja Balance</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f7f5;
+            color: #111827;
+        }
+
+        .header {
+            background: #087a3e;
+            color: white;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .back-button {
+            border: none;
+            background: transparent;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .header h1 {
+            font-size: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .balance-card {
+            background: #087a3e;
+            color: white;
+            border-radius: 18px;
+            padding: 28px 22px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .balance-label {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+
+        .balance-amount {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 22px;
+        }
+
+        .currency {
+            font-size: 18px;
+            margin-right: 4px;
+        }
+
+        .balance-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .button {
+            flex: 1;
+            border: none;
+            border-radius: 10px;
+            padding: 13px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .deposit-button {
+            background: white;
+            color: #087a3e;
+        }
+
+        .withdraw-button {
+            background: #ffb703;
+            color: #111827;
+        }
+
+        .section {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 18px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .section h2 {
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .info {
+            color: #6b7280;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .transaction {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .transaction:last-child {
+            border-bottom: none;
+        }
+
+        .transaction-name {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .transaction-date {
+            color: #6b7280;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        .transaction-amount {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .positive {
+            color: #087a3e;
+        }
+
+        .negative {
+            color: #b91c1c;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 20px 10px;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .status {
+            text-align: center;
+            padding: 10px;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            display: none;
+            font-size: 14px;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+
+            .balance-amount {
+                font-size: 31px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="header">
+
+    <button
+        class="back-button"
+        type="button"
+        onclick="history.back()"
+        aria-label="Go back"
+    >
+        ←
+    </button>
+
+    <h1>LosOja Balance</h1>
+
+</header>
+
+
+<main class="container">
+
+    <div
+        id="errorMessage"
+        class="error"
+    ></div>
+
+
+    <!-- BALANCE -->
+
+    <section class="balance-card">
+
+        <div class="balance-label">
+            Available Balance
+        </div>
+
+        <div
+            id="balanceAmount"
+            class="balance-amount"
+        >
+            <span class="currency">₦</span>0.00
+        </div>
+
+        <div class="balance-actions">
+
+            <button
+                class="button deposit-button"
+                type="button"
+                onclick="depositFunds()"
+            >
+                + Deposit
+            </button>
+
+            <button
+                class="button withdraw-button"
+                type="button"
+                onclick="withdrawFunds()"
+            >
+                Withdraw
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- ACCOUNT STATUS -->
+
+    <section class="section">
+
+        <h2>Wallet</h2>
+
+        <p
+            id="walletStatus"
+            class="info"
+        >
+            Loading your wallet...
+        </p>
+
+    </section>
+
+
+    <!-- TRANSACTIONS -->
+
+    <section class="section">
+
+        <h2>Transaction History</h2>
+
+        <div
+            id="transactions"
+        >
+            <div class="status">
+                Loading transactions...
+            </div>
+        </div>
+
+    </section>
+
+
+    <!-- ESCROW -->
+
+    <section class="section">
+
+        <h2>Escrow</h2>
+
+        <p class="info">
+            Money used for LosOja transactions can be held
+            securely in escrow until the transaction conditions
+            are completed.
+        </p>
+
+        <br>
+
+        <button
+            class="button deposit-button"
+            type="button"
+            onclick="openEscrowInfo()"
+        >
+            View Escrow
+        </button>
+
+    </section>
+
+</main>
+
+
+<script src="js/auth.js?v=2"></script>
+
+
+<script>
+
+"use strict";
+
+
+const SUPABASE_URL =
+    "https://ycxshwgeebskdozmornh.supabase.co";
+
+
+const SUPABASE_KEY =
+    "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
+
+
+let currentUser = null;
+
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+function showError(message) {
+
+    const error =
+        document.getElementById("errorMessage");
+
+    if (!error) {
+        return;
+    }
+
+    error.textContent = message;
+
+    error.style.display = "block";
+}
+
+
+/* =========================================================
+   ACCESS TOKEN
+========================================================= */
+
+function getAccessToken() {
+
+    if (
+        typeof window.getSupabaseAccessToken ===
+        "function"
+    ) {
+        return window.getSupabaseAccessToken();
+    }
+
+    return null;
+}
+
+
+/* =========================================================
+   HEADERS
+========================================================= */
+
+function getHeaders() {
+
+    const token =
+        getAccessToken();
+
+    return {
+
+        "apikey":
+            SUPABASE_KEY,
+
+        "Authorization":
+            "Bearer " +
+            (token || SUPABASE_KEY),
+
+        "Content-Type":
+            "application/json"
+
+    };
+}
+
+
+/* =========================================================
+   SUPABASE REQUEST
+========================================================= */
+
+async function supabaseRequest(
+    endpoint,
+    options = {}
+) {
+
+    const response =
+        await fetch(
+            SUPABASE_URL +
+            endpoint,
+            {
+
+                ...options,
+
+                headers: {
+                    ...getHeaders(),
+                    ...(options.headers || {})
+                }
+
+            }
+        );
+
+
+    const text =
+        await response.text();
+
+
+    let data = null;
+
+
+    try {
+
+        data =
+            text
+                ? JSON.parse(text)
+                : null;
+
+    } catch (error) {
+
+        data = text;
+
+    }
+
+
+    if (!response.ok) {
+
+        const message =
+            data?.message ||
+            data?.error_description ||
+            data?.error ||
+            "Supabase request failed.";
+
+        throw new Error(message);
+    }
+
+
+    return data;
+}
+
+
+/* =========================================================
+   LOAD WALLET
+========================================================= */
+
+async function loadWallet() {
+
+    const data =
+        await supabaseRequest(
+            "/rest/v1/wallets" +
+            "?select=*" +
+            "&user_id=eq." +
+            encodeURIComponent(
+                currentUser.id
+            ) +
+            "&limit=1"
+        );
+
+
+    if (!data || !data.length) {
+
+        document.getElementById(
+            "balanceAmount"
+        ).innerHTML =
+            '<span class="currency">₦</span>0.00';
+
+        document.getElementById(
+            "walletStatus"
+        ).textContent =
+            "Wallet created. Your balance is ₦0.00.";
+
+        return;
+    }
+
+
+    const wallet =
+        data[0];
+
+
+    const balance =
+        Number(wallet.balance || 0);
+
+
+    document.getElementById(
+        "balanceAmount"
+    ).innerHTML =
+        '<span class="currency">₦</span>' +
+        balance.toLocaleString(
+            "en-NG",
+            {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }
+        );
+
+
+    document.getElementById(
+        "walletStatus"
+    ).textContent =
+        "Wallet currency: " +
+        (wallet.currency || "NGN");
+}
+
+
+/* =========================================================
+   LOAD TRANSACTIONS
+========================================================= */
+
+async function loadTransactions() {
+
+    const transactions =
+        await supabaseRequest(
+            "/rest/v1/wallet_transactions" +
+            "?select=*" +
+            "&user_id=eq." +
+            encodeURIComponent(
+                currentUser.id
+            ) +
+            "&order=created_at.desc" +
+            "&limit=30"
+        );
+
+
+    const container =
+        document.getElementById(
+            "transactions"
+        );
+
+
+    if (
+        !transactions ||
+        !transactions.length
+    ) {
+
+        container.innerHTML =
+            '<div class="empty">' +
+            'No transactions yet.' +
+            '</div>';
+
+        return;
+    }
+
+
+    container.innerHTML =
+        transactions
+            .map(function(transaction) {
+
+                const type =
+                    String(
+                        transaction.type || ""
+                    );
+
+                const isPositive =
+                    type === "deposit" ||
+                    type === "escrow_release" ||
+                    type === "escrow_refund";
+
+
+                const sign =
+                    isPositive
+                        ? "+"
+                        : "-";
+
+
+                const className =
+                    isPositive
+                        ? "positive"
+                        : "negative";
+
+
+                const amount =
+                    Number(
+                        transaction.amount || 0
+                    );
+
+
+                const date =
+                    transaction.created_at
+                        ? new Date(
+                            transaction.created_at
+                        ).toLocaleString(
+                            "en-NG"
+                        )
+                        : "";
+
+
+                return `
+                    <div class="transaction">
+
+                        <div>
+
+                            <div class="transaction-name">
+                                ${escapeHTML(
+                                    formatTransactionType(
+                                        type
+                                    )
+                                )}
+                            </div>
+
+                            <div class="transaction-date">
+                                ${escapeHTML(date)}
+                            </div>
+
+                        </div>
+
+                        <div class="transaction-amount ${className}">
+                            ${sign}₦${amount.toLocaleString(
+                                "en-NG",
+                                {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2
+                                }
+                            )}
+                        </div>
+
+                    </div>
+                `;
+
+            })
+            .join("");
+}
+
+
+/* =========================================================
+   FORMAT TRANSACTION
+========================================================= */
+
+function formatTransactionType(type) {
+
+    const names = {
+
+        deposit:
+            "Deposit",
+
+        withdrawal:
+            "Withdrawal",
+
+        escrow_hold:
+            "Escrow Hold",
+
+        escrow_release:
+            "Escrow Released",
+
+        escrow_refund:
+            "Escrow Refund"
+
+    };
+
+
+    return (
+        names[type] ||
+        "Transaction"
+    );
+}
+
+
+/* =========================================================
+   ESCAPE HTML
+========================================================= */
+
+function escapeHTML(value) {
+
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+
+/* =========================================================
+   DEPOSIT
+========================================================= */
+
+function depositFunds() {
+
+    alert(
+        "Deposit payments will be connected after we set up the secure payment system."
+    );
+}
+
+
+/* =========================================================
+   WITHDRAW
+========================================================= */
+
+function withdrawFunds() {
+
+    alert(
+        "Withdrawals will be connected after we set up the secure payment system."
+    );
+}
+
+
+/* =========================================================
+   ESCROW
+========================================================= */
+
+function openEscrowInfo() {
+
+    alert(
+        "Your LosOja escrow transactions will appear here."
+    );
+}
+
+
+/* =========================================================
+   INITIALIZE
+========================================================= */
+
+async function initializeBalance() {
+
+    try {
+
+        if (
+            typeof window.getCurrentUser !==
+            "function"
+        ) {
+
+            showError(
+                "Login system is not available."
+            );
+
+            return;
+        }
+
+
+        currentUser =
+            await window.getCurrentUser();
+
+
+        if (!currentUser) {
+
+            showError(
+                "Please log in to view your balance."
+            );
+
+            document.getElementById(
+                "walletStatus"
+            ).textContent =
+                "You must be logged in.";
+
+            return;
+        }
+
+
+        await loadWallet();
+
+        await loadTransactions();
+
+    } catch (error) {
+
+        console.error(
+            "LosOja balance error:",
+            error
+        );
+
+
+        showError(
+            error.message ||
+            "Could not load your wallet."
+        );
+
+    }
+
+}
+
+
+document.addEventListener(
+    "DOMContentLoaded",
+    initializeBalance
+);
+
+</script>
+
+</body>
+</html>
