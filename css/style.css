@@ -2724,20 +2724,18 @@ button {
         padding-right: 14px;
     }
 
-    .bottom-nav {
+        .bottom-nav {
         padding-left: 3px;
         padding-right: 3px;
+    }
+}
 
-       css
+
 /* =========================================================
    LOSOJA - FINAL VISUAL POLISH
    Safe visual improvements only.
    Does not change JavaScript functionality.
 ========================================================= */
-
-/* ---------------------------------------------------------
-   GLOBAL POLISH
---------------------------------------------------------- */
 
 body {
     -webkit-font-smoothing: antialiased;
@@ -2760,9 +2758,7 @@ button,
 }
 
 
-/* ---------------------------------------------------------
-   HEADER POLISH
---------------------------------------------------------- */
+/* HEADER POLISH */
 
 .app-header,
 .site-header {
@@ -2792,9 +2788,7 @@ button,
 }
 
 
-/* ---------------------------------------------------------
-   HERO POLISH
---------------------------------------------------------- */
+/* HERO POLISH */
 
 .hero {
     position: relative;
@@ -2855,9 +2849,7 @@ button,
 }
 
 
-/* ---------------------------------------------------------
-   SEARCH POLISH
---------------------------------------------------------- */
+/* SEARCH POLISH */
 
 .search-box .search-form,
 .search-form {
@@ -2888,9 +2880,7 @@ button,
 }
 
 
-/* ---------------------------------------------------------
-   CATEGORY POLISH
---------------------------------------------------------- */
+/* CATEGORY POLISH */
 
 .category-card,
 .categories .category-card {
@@ -2934,9 +2924,7 @@ button,
 }
 
 
-/* ---------------------------------------------------------
-   BUSINESS CARD POLISH
---------------------------------------------------------- */
+/* BUSINESS CARD POLISH */
 
 .business-card {
     position: relative;
@@ -2961,9 +2949,7 @@ button,
 }
 
 
-/* ---------------------------------------------------------
-   BUSINESS IMAGE POLISH
---------------------------------------------------------- */
+/* BUSINESS IMAGE POLISH */
 
 .business-image {
     isolation: isolate;
@@ -2978,14 +2964,8 @@ button,
     z-index: 1;
 }
 
-.business-image:not(:has(img)) {
-    font-weight: 700;
-}
 
-
-/* ---------------------------------------------------------
-   BUTTON POLISH
---------------------------------------------------------- */
+/* BUTTON POLISH */
 
 .btn,
 .primary-button {
@@ -3009,9 +2989,7 @@ button,
 }
 
 
-/* ---------------------------------------------------------
-   SECTION POLISH
---------------------------------------------------------- */
+/* SECTION POLISH */
 
 .section-header h2,
 .section-title h2 {
@@ -3030,9 +3008,7 @@ button,
 }
 
 
-/* ---------------------------------------------------------
-   EXPLORE CARDS
---------------------------------------------------------- */
+/* EXPLORE CARDS */
 
 .feature-card {
     position: relative;
@@ -3076,9 +3052,7 @@ button,
 }
 
 
-/* ---------------------------------------------------------
-   BUSINESS CTA
---------------------------------------------------------- */
+/* BUSINESS CTA */
 
 .business-cta {
     border: 1px solid var(--border);
@@ -3096,9 +3070,7 @@ button,
 }
 
 
-/* ---------------------------------------------------------
-   MOBILITY CARDS
---------------------------------------------------------- */
+/* MOBILITY CARDS */
 
 .mobility-card {
     position: relative;
@@ -3117,9 +3089,7 @@ button,
 }
 
 
-/* ---------------------------------------------------------
-   MODAL POLISH
---------------------------------------------------------- */
+/* MODAL POLISH */
 
 .modal,
 .modal-overlay {
@@ -3155,9 +3125,7 @@ button,
 }
 
 
-/* ---------------------------------------------------------
-   FORM POLISH
---------------------------------------------------------- */
+/* FORM POLISH */
 
 .form-group input,
 .form-group textarea,
@@ -3183,9 +3151,7 @@ button,
 }
 
 
-/* ---------------------------------------------------------
-   IMAGE UPLOAD POLISH
---------------------------------------------------------- */
+/* IMAGE UPLOAD POLISH */
 
 .image-upload-box,
 .image-preview {
@@ -3201,9 +3167,7 @@ button,
 }
 
 
-/* ---------------------------------------------------------
-   REVIEWS POLISH
---------------------------------------------------------- */
+/* REVIEWS POLISH */
 
 .review-item {
     transition:
@@ -3221,16 +3185,8 @@ button,
         0 5px 18px rgba(0, 0, 0, 0.05);
 }
 
-.review-star {
-    transition:
-        transform 0.15s ease,
-        color 0.15s ease;
-}
 
-
-/* ---------------------------------------------------------
-   BOTTOM NAVIGATION
---------------------------------------------------------- */
+/* BOTTOM NAVIGATION */
 
 .bottom-nav {
     padding-bottom: max(7px, env(safe-area-inset-bottom));
@@ -3287,9 +3243,7 @@ button,
 }
 
 
-/* ---------------------------------------------------------
-   NOTIFICATIONS / TOASTS
---------------------------------------------------------- */
+/* NOTIFICATIONS / TOASTS */
 
 .notification,
 .toast {
@@ -3300,9 +3254,7 @@ button,
 }
 
 
-/* ---------------------------------------------------------
-   BACK BUTTON
---------------------------------------------------------- */
+/* BACK BUTTON */
 
 .losoja-back-btn {
     transition:
@@ -3314,9 +3266,7 @@ button,
 }
 
 
-/* ---------------------------------------------------------
-   MOBILE POLISH
---------------------------------------------------------- */
+/* MOBILE POLISH */
 
 @media (max-width: 700px) {
 
@@ -3350,9 +3300,7 @@ button,
 }
 
 
-/* ---------------------------------------------------------
-   SMALL PHONES
---------------------------------------------------------- */
+/* SMALL PHONES */
 
 @media (max-width: 450px) {
 
@@ -3390,9 +3338,7 @@ button,
 }
 
 
-/* ---------------------------------------------------------
-   REDUCED MOTION ACCESSIBILITY
---------------------------------------------------------- */
+/* REDUCED MOTION ACCESSIBILITY */
 
 @media (prefers-reduced-motion: reduce) {
 
@@ -3404,8 +3350,4 @@ button,
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
     }
-}
-
-    }
-
 }
