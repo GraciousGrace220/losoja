@@ -238,7 +238,7 @@
             <button
                 class="button deposit-button"
                 type="button"
-                onclick="depositFunds()"
+                onclick="window.losojaDepositFunds()"
             >
                 + Deposit
             </button>
@@ -278,12 +278,12 @@
 
         <h2>Transaction History</h2>
 
-        <div id="transactions">
-
+        <div
+            id="transactions"
+        >
             <div class="status">
                 Loading transactions...
             </div>
-
         </div>
 
     </section>
@@ -304,7 +304,6 @@
         <br>
 
         <button
-            id="viewEscrowButton"
             class="button deposit-button"
             type="button"
             onclick="openEscrowInfo()"
@@ -312,17 +311,13 @@
             View Escrow
         </button>
 
-        <div
-            id="escrowTransactions"
-            style="margin-top: 15px;"
-        ></div>
-
     </section>
 
 </main>
 
 
 <script src="js/auth.js?v=2"></script>
+<script src="js/wallet.js?v=1"></script>
 
 
 <script>
@@ -700,50 +695,21 @@ function escapeHTML(value) {
 ========================================================= */
 
 function depositFunds() {
-    const amount = prompt("Enter the amount you want to deposit (NGN):");
-
-    if (amount === null) {
-        return;
-    }
-
-    const value = Number(amount);
-
-    if (!Number.isFinite(value) || value <= 0) {
-        alert("Please enter a valid deposit amount.");
-        return;
-    }
-
-    if (value < 100) {
-        alert("Minimum deposit is ₦100.");
-        return;
-    }
 
     alert(
-        "Deposit amount: ₦" +
-        value.toLocaleString("en-NG") +
-        "\n\nPayment connection is the next step."
+        "Deposit payments will be connected after we set up the secure payment system."
     );
 }
 
 
+/* =========================================================
+   WITHDRAW
+========================================================= */
+
 function withdrawFunds() {
-    const amount = prompt("Enter the amount you want to withdraw (NGN):");
-
-    if (amount === null) {
-        return;
-    }
-
-    const value = Number(amount);
-
-    if (!Number.isFinite(value) || value <= 0) {
-        alert("Please enter a valid withdrawal amount.");
-        return;
-    }
 
     alert(
-        "Withdrawal amount: ₦" +
-        value.toLocaleString("en-NG") +
-        "\n\nBank withdrawal connection is the next step."
+        "Withdrawals will be connected after we set up the secure payment system."
     );
 }
 
@@ -752,159 +718,11 @@ function withdrawFunds() {
    ESCROW
 ========================================================= */
 
-async function openEscrowInfo() {
+function openEscrowInfo() {
 
-    const container =
-        document.getElementById(
-            "escrowTransactions"
-        );
-
-    if (!container) {
-        return;
-    }
-
-
-    try {
-
-        if (!currentUser) {
-
-            container.innerHTML =
-                '<div class="empty">' +
-                'Please log in to view your escrow transactions.' +
-                '</div>';
-
-            return;
-        }
-
-
-        container.innerHTML =
-            '<div class="status">' +
-            'Loading escrow transactions...' +
-            '</div>';
-
-
-        const escrowTransactions =
-            await supabaseRequest(
-                "/rest/v1/escrow_transactions" +
-                "?select=*" +
-                "&or=(buyer_id.eq." +
-                encodeURIComponent(currentUser.id) +
-                ",seller_id.eq." +
-                encodeURIComponent(currentUser.id) +
-                ")" +
-                "&order=created_at.desc" +
-                "&limit=30"
-            );
-
-
-        if (
-            !escrowTransactions ||
-            !escrowTransactions.length
-        ) {
-
-            container.innerHTML =
-                '<div class="empty">' +
-                'No escrow transactions yet.' +
-                '</div>';
-
-            return;
-        }
-
-
-        container.innerHTML =
-            escrowTransactions
-                .map(function(escrow) {
-
-                    const amount =
-                        Number(
-                            escrow.amount || 0
-                        ).toLocaleString(
-                            "en-NG",
-                            {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2
-                            }
-                        );
-
-
-                    const status =
-                        escapeHTML(
-                            escrow.status ||
-                            "unknown"
-                        );
-
-
-                    const description =
-                        escapeHTML(
-                            escrow.description ||
-                            "LosOja transaction"
-                        );
-
-
-                    const date =
-                        escrow.created_at
-                            ? new Date(
-                                escrow.created_at
-                            ).toLocaleString(
-                                "en-NG"
-                            )
-                            : "";
-
-
-                    const role =
-                        escrow.buyer_id ===
-                        currentUser.id
-                            ? "Buyer"
-                            : "Seller";
-
-
-                    return `
-                        <div
-                            class="transaction"
-                            style="display:block;"
-                        >
-
-                            <div class="transaction-name">
-                                ₦${amount}
-                            </div>
-
-                            <div class="transaction-date">
-                                ${escapeHTML(role)}
-                                •
-                                ${status}
-                            </div>
-
-                            <div class="transaction-date">
-                                ${description}
-                            </div>
-
-                            <div class="transaction-date">
-                                ${escapeHTML(date)}
-                            </div>
-
-                        </div>
-                    `;
-
-                })
-                .join("");
-
-
-    } catch (error) {
-
-        console.error(
-            "LosOja escrow error:",
-            error
-        );
-
-
-        container.innerHTML =
-            '<div class="empty">' +
-            escapeHTML(
-                error.message ||
-                "Could not load escrow transactions."
-            ) +
-            '</div>';
-    }
+    alert(
+        "Your LosOja escrow transactions will appear here."
+    );
 }
 
 
@@ -951,7 +769,6 @@ async function initializeBalance() {
         await loadWallet();
 
         await loadTransactions();
-
 
     } catch (error) {
 
