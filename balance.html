@@ -717,11 +717,100 @@ function withdrawFunds() {
    ESCROW
 ========================================================= */
 
-function openEscrowInfo() {
+async function openEscrowInfo() {
 
-    alert(
-        "Your LosOja escrow transactions will appear here."
-    );
+    try {
+
+        if (!currentUser) {
+            alert("Please log in to view your escrow transactions.");
+            return;
+        }
+
+        const escrowTransactions =
+            await supabaseRequest(
+                "/rest/v1/escrow_transactions" +
+                "?select=*" +
+                "&or=(buyer_id.eq." +
+                encodeURIComponent(currentUser.id) +
+                ",seller_id.eq." +
+                encodeURIComponent(currentUser.id) +
+                ")" +
+                "&order=created_at.desc" +
+                "&limit=30"
+            );
+
+        if (
+            !escrowTransactions ||
+            !escrowTransactions.length
+        ) {
+            alert("You don't have any escrow transactions yet.");
+            return;
+        }
+
+        let message =
+            "LosOja Escrow Transactions\n\n";
+
+        escrowTransactions.forEach(
+            function (escrow, index) {
+
+                message +=
+                    (index + 1) +
+                    ". ₦" +
+                    Number(
+                        escrow.amount || 0
+                    ).toLocaleString(
+                        "en-NG",
+                        {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                        }
+                    ) +
+                    "\n";
+
+                message +=
+                    "Status: " +
+                    String(
+                        escrow.status || "unknown"
+                    ) +
+                    "\n";
+
+                message +=
+                    "Description: " +
+                    String(
+                        escrow.description ||
+                        "LosOja transaction"
+                    ) +
+                    "\n";
+
+                if (escrow.created_at) {
+                    message +=
+                        "Date: " +
+                        new Date(
+                            escrow.created_at
+                        ).toLocaleString(
+                            "en-NG"
+                        ) +
+                        "\n";
+                }
+
+                message += "\n";
+            }
+        );
+
+        alert(message);
+
+    } catch (error) {
+
+        console.error(
+            "LosOja escrow error:",
+            error
+        );
+
+        alert(
+            error.message ||
+            "Could not load escrow transactions."
+        );
+    }
 }
 
 
