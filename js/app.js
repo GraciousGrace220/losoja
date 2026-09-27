@@ -263,25 +263,17 @@
                 return;
             }
 
-            menuButton.addEventListener(
-                "click",
-                () => {
 
-                    const isOpen =
-                        mobileNav.classList.toggle(
-                            "active"
-                        );
+            /*
+             * The mobile menu OPEN action is handled
+             * by the inline script in index.html.
+             *
+             * Do not add another click listener here,
+             * otherwise the menu can toggle twice.
+             */
 
-                    menuButton.setAttribute(
-                        "aria-expanded",
-                        isOpen
-                            ? "true"
-                            : "false"
-                    );
 
-                }
-            );
-
+            /* Close menu after selecting an item */
 
             mobileNav
                 .querySelectorAll("a, button")
@@ -292,12 +284,17 @@
                         () => {
 
                             mobileNav.classList.remove(
-                                "active"
+                                "open"
                             );
 
                             menuButton.setAttribute(
                                 "aria-expanded",
                                 "false"
+                            );
+
+                            mobileNav.setAttribute(
+                                "aria-hidden",
+                                "true"
                             );
 
                         }
@@ -306,8 +303,6 @@
                 });
 
         },
-
-
         /* =================================================
            SMOOTH SCROLL
         ================================================= */
