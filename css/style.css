@@ -2727,6 +2727,686 @@ button {
     .bottom-nav {
         padding-left: 3px;
         padding-right: 3px;
+
+       ```css
+/* =========================================================
+   LOSOJA - FINAL VISUAL POLISH
+   Safe visual improvements only.
+   Does not change JavaScript functionality.
+========================================================= */
+
+/* ---------------------------------------------------------
+   GLOBAL POLISH
+--------------------------------------------------------- */
+
+body {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+button,
+.btn,
+.primary-button,
+.location-button,
+.nav-item,
+.nav-add-button {
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+::selection {
+    background: var(--green);
+    color: var(--white);
+}
+
+
+/* ---------------------------------------------------------
+   HEADER POLISH
+--------------------------------------------------------- */
+
+.app-header,
+.site-header {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.logo {
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.logo:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.header-button {
+    border-radius: 10px;
+    transition:
+        background-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.header-button:hover {
+    background: var(--green-light);
+    transform: translateY(-1px);
+}
+
+
+/* ---------------------------------------------------------
+   HERO POLISH
+--------------------------------------------------------- */
+
+.hero {
+    position: relative;
+    overflow: hidden;
+}
+
+.hero::before {
+    content: "";
+    position: absolute;
+
+    width: 320px;
+    height: 320px;
+
+    top: -160px;
+    left: -100px;
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.06);
+
+    pointer-events: none;
+}
+
+.hero::after {
+    content: "";
+    position: absolute;
+
+    width: 260px;
+    height: 260px;
+
+    right: -100px;
+    bottom: -140px;
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.05);
+
+    pointer-events: none;
+}
+
+.hero-inner,
+.hero-content {
+    position: relative;
+    z-index: 1;
+}
+
+.hero-badge {
+    box-shadow:
+        0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+.hero h1 {
+    letter-spacing: -1px;
+}
+
+.hero p {
+    line-height: 1.7;
+}
+
+
+/* ---------------------------------------------------------
+   SEARCH POLISH
+--------------------------------------------------------- */
+
+.search-box .search-form,
+.search-form {
+    border: 1px solid rgba(229, 231, 235, 0.9);
+}
+
+.search-box .search-form:focus-within,
+.search-form:focus-within {
+    box-shadow:
+        0 8px 28px rgba(0, 0, 0, 0.10),
+        0 0 0 3px rgba(8, 122, 62, 0.08);
+}
+
+.search-box button,
+.search-btn {
+    transition:
+        background-color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.search-box button:hover,
+.search-btn:hover {
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 5px 12px rgba(8, 122, 62, 0.20);
+}
+
+
+/* ---------------------------------------------------------
+   CATEGORY POLISH
+--------------------------------------------------------- */
+
+.category-card,
+.categories .category-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.category-card::before,
+.categories .category-card::before {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    right: 0;
+    top: 0;
+
+    height: 3px;
+
+    background: var(--green);
+
+    transform: scaleX(0);
+
+    transform-origin: center;
+
+    transition: transform 0.2s ease;
+}
+
+.category-card:hover::before,
+.categories .category-card:hover::before {
+    transform: scaleX(1);
+}
+
+.category-icon {
+    transition:
+        transform 0.2s ease;
+}
+
+.category-card:hover .category-icon {
+    transform: translateY(-2px) scale(1.05);
+}
+
+
+/* ---------------------------------------------------------
+   BUSINESS CARD POLISH
+--------------------------------------------------------- */
+
+.business-card {
+    position: relative;
+}
+
+.business-card .business-content,
+.business-card .business-card-content {
+    background: var(--white);
+}
+
+.business-card .btn {
+    min-height: 42px;
+}
+
+.business-card .business-category,
+.business-card .business-card-category {
+    line-height: 1.2;
+}
+
+.business-phone {
+    overflow-wrap: anywhere;
+}
+
+
+/* ---------------------------------------------------------
+   BUSINESS IMAGE POLISH
+--------------------------------------------------------- */
+
+.business-image {
+    isolation: isolate;
+}
+
+.business-image img {
+    position: relative;
+    z-index: 0;
+}
+
+.business-image::after {
+    z-index: 1;
+}
+
+.business-image:not(:has(img)) {
+    font-weight: 700;
+}
+
+
+/* ---------------------------------------------------------
+   BUTTON POLISH
+--------------------------------------------------------- */
+
+.btn,
+.primary-button {
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.btn:active,
+.primary-button:active,
+.search-box button:active,
+.search-btn:active {
+    transform: translateY(0);
+}
+
+.btn-outline:hover {
+    border-color: var(--green-dark);
+}
+
+
+/* ---------------------------------------------------------
+   SECTION POLISH
+--------------------------------------------------------- */
+
+.section-header h2,
+.section-title h2 {
+    letter-spacing: -0.3px;
+}
+
+.section-link {
+    transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
+}
+
+.section-link:hover {
+    opacity: 0.8;
+    transform: translateX(2px);
+}
+
+
+/* ---------------------------------------------------------
+   EXPLORE CARDS
+--------------------------------------------------------- */
+
+.feature-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.feature-card::after {
+    content: "";
+
+    position: absolute;
+
+    width: 90px;
+    height: 90px;
+
+    right: -35px;
+    bottom: -40px;
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.05);
+
+    pointer-events: none;
+
+    transition:
+        transform 0.25s ease;
+}
+
+.feature-card:hover::after {
+    transform: scale(1.3);
+}
+
+.feature-icon {
+    display: inline-block;
+
+    transition:
+        transform 0.2s ease;
+}
+
+.feature-card:hover .feature-icon {
+    transform: translateY(-2px) scale(1.05);
+}
+
+
+/* ---------------------------------------------------------
+   BUSINESS CTA
+--------------------------------------------------------- */
+
+.business-cta {
+    border: 1px solid var(--border);
+}
+
+.business-cta-icon {
+    display: inline-block;
+
+    transition:
+        transform 0.2s ease;
+}
+
+.business-cta:hover .business-cta-icon {
+    transform: translateY(-2px);
+}
+
+
+/* ---------------------------------------------------------
+   MOBILITY CARDS
+--------------------------------------------------------- */
+
+.mobility-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.mobility-icon {
+    transition:
+        transform 0.2s ease,
+        background-color 0.2s ease;
+}
+
+.mobility-card:hover .mobility-icon {
+    transform: scale(1.05);
+    background: #e2f4e9;
+}
+
+
+/* ---------------------------------------------------------
+   MODAL POLISH
+--------------------------------------------------------- */
+
+.modal,
+.modal-overlay {
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+}
+
+.modal-content,
+.modal-overlay .modal {
+    border: 1px solid rgba(229, 231, 235, 0.9);
+}
+
+.modal-close {
+    width: 40px;
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.modal-close:hover {
+    background: var(--green-light);
+    color: var(--green);
+    transform: rotate(3deg);
+}
+
+
+/* ---------------------------------------------------------
+   FORM POLISH
+--------------------------------------------------------- */
+
+.form-group input,
+.form-group textarea,
+.form-group select,
+.review-form textarea {
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background-color 0.2s ease;
+}
+
+.form-group input:hover,
+.form-group textarea:hover,
+.form-group select:hover {
+    border-color: #cbd5d1;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus,
+.review-form textarea:focus {
+    background: #ffffff;
+}
+
+
+/* ---------------------------------------------------------
+   IMAGE UPLOAD POLISH
+--------------------------------------------------------- */
+
+.image-upload-box,
+.image-preview {
+    transition:
+        border-color 0.2s ease,
+        background-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.image-upload-box:hover {
+    box-shadow:
+        0 5px 16px rgba(8, 122, 62, 0.08);
+}
+
+
+/* ---------------------------------------------------------
+   REVIEWS POLISH
+--------------------------------------------------------- */
+
+.review-item {
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.review-item:hover {
+    transform: translateY(-2px);
+
+    border-color: #d7e6dc;
+
+    box-shadow:
+        0 5px 18px rgba(0, 0, 0, 0.05);
+}
+
+.review-star {
+    transition:
+        transform 0.15s ease,
+        color 0.15s ease;
+}
+
+
+/* ---------------------------------------------------------
+   BOTTOM NAVIGATION
+--------------------------------------------------------- */
+
+.bottom-nav {
+    padding-bottom: max(7px, env(safe-area-inset-bottom));
+
+    box-shadow:
+        0 -4px 18px rgba(0, 0, 0, 0.08);
+}
+
+.nav-item {
+    border-radius: 10px;
+
+    padding: 5px 8px;
+
+    transition:
+        color 0.2s ease,
+        background-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.nav-item:hover {
+    background: var(--green-light);
+    color: var(--green);
+}
+
+.nav-item.active {
+    font-weight: 700;
+}
+
+.nav-icon {
+    transition:
+        transform 0.2s ease;
+}
+
+.nav-item:hover .nav-icon {
+    transform: translateY(-1px);
+}
+
+.nav-add-button {
+    transition:
+        background-color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.nav-add-button:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 7px 18px rgba(8, 122, 62, 0.30);
+}
+
+.nav-add-button:active {
+    transform: scale(0.96);
+}
+
+
+/* ---------------------------------------------------------
+   NOTIFICATIONS / TOASTS
+--------------------------------------------------------- */
+
+.notification,
+.toast {
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    box-shadow:
+        0 12px 30px rgba(0, 0, 0, 0.16);
+}
+
+
+/* ---------------------------------------------------------
+   BACK BUTTON
+--------------------------------------------------------- */
+
+.losoja-back-btn {
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+/* ---------------------------------------------------------
+   MOBILE POLISH
+--------------------------------------------------------- */
+
+@media (max-width: 700px) {
+
+    .hero h1 {
+        letter-spacing: -0.6px;
+    }
+
+    .business-card {
+        border-radius: 14px;
+    }
+
+    .business-image {
+        height: 190px;
+    }
+
+    .section-header {
+        align-items: flex-end;
+    }
+
+    .section-header h2 {
+        font-size: 23px;
+    }
+
+    .feature-card {
+        border-radius: 12px;
+    }
+
+    .bottom-nav {
+        min-height: 64px;
+    }
+}
+
+
+/* ---------------------------------------------------------
+   SMALL PHONES
+--------------------------------------------------------- */
+
+@media (max-width: 450px) {
+
+    .hero h1 {
+        letter-spacing: -0.4px;
+    }
+
+    .business-image {
+        height: 180px;
+    }
+
+    .business-content,
+    .business-card-content {
+        padding: 17px;
+    }
+
+    .section-header {
+        gap: 8px;
+    }
+
+    .section-header h2 {
+        font-size: 21px;
+    }
+
+    .nav-item {
+        min-width: 50px;
+        padding-left: 4px;
+        padding-right: 4px;
+    }
+
+    .nav-add-button {
+        width: 46px;
+        height: 46px;
+    }
+}
+
+
+/* ---------------------------------------------------------
+   REDUCED MOTION ACCESSIBILITY
+--------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+    }
+}
+```
+
     }
 
 }
