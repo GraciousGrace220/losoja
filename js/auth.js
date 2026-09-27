@@ -1131,8 +1131,8 @@ button.title =
                 bottomAccountButton
             ) {
 
-                bottomAccountButton.onclick =
-                    window.logoutUser;
+               bottomAccountButton.onclick =
+    window.openAccount;
 
 
                 const label =
