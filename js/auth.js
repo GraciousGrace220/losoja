@@ -1132,7 +1132,7 @@ button.title =
             ) {
 
                bottomAccountButton.onclick =
-    window.openAccount;
+                  window.openAccount;
 
 
                 const label =
@@ -1144,8 +1144,8 @@ button.title =
 
                 if (label) {
 
-                    label.textContent =
-                        "Logout";
+                   label.textContent =
+                      "Account";
 
                 }
 
