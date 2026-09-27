@@ -2420,7 +2420,60 @@
         }
 
     };
+    /* =====================================================
+       ACCOUNT
+    ===================================================== */
 
+    openAccount() {
+
+        if (
+            typeof window.getCurrentUser !==
+            "function"
+        ) {
+
+            this.showToast(
+                "Account is still loading. Please try again.",
+                "info"
+            );
+
+            return;
+        }
+
+
+        window.getCurrentUser()
+            .then(user => {
+
+                if (!user) {
+
+                    /* Not logged in */
+                    this.openModal(
+                        "loginModal"
+                    );
+
+                    return;
+                }
+
+
+                /* Logged in */
+                window.location.href =
+                    "account.html";
+
+            })
+            .catch(error => {
+
+                console.error(
+                    "LosOja account error:",
+                    error
+                );
+
+                this.showToast(
+                    "Unable to open your account right now.",
+                    "error"
+                );
+
+            });
+
+    },
 
     /* =====================================================
        PUBLIC API
