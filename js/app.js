@@ -3192,21 +3192,70 @@ const SUPABASE_KEY =
 
         };
 /* ACCOUNT GLOBAL BRIDGE */
-window.openAccount = function() {
-    if (typeof window.openLogin === "function") {
-        return window.openLogin();
+window.openAccount = async function () {
+
+    try {
+
+        /* Check if user is logged in */
+        if (
+            typeof window.getCurrentUser === "function"
+        ) {
+
+            const user =
+                await window.getCurrentUser();
+
+            /* Logged in */
+            if (user) {
+
+                window.location.href =
+                    "balance.html";
+
+                return;
+
+            }
+
+        }
+
+        /* Logged out */
+        if (
+            typeof window.openLogin === "function"
+        ) {
+
+            window.openLogin();
+
+            return;
+
+        }
+
+        const loginModal =
+            document.getElementById(
+                "loginModal"
+            );
+
+        if (loginModal) {
+
+            App.openModal(
+                "loginModal"
+            );
+
+            return;
+
+        }
+
+        console.warn(
+            "LosOja: loginModal is not available."
+        );
+
+    } catch (error) {
+
+        console.error(
+            "LosOja: Account button error:",
+            error
+        );
+
     }
 
-    const loginModal = document.getElementById("loginModal");
-
-    if (loginModal) {
-        App.openModal("loginModal");
-        return;
-    }
-
-    console.warn("LosOja: loginModal is not available.");
 };
-
     /* =====================================================
        BUSINESS DETAILS
     ===================================================== */
