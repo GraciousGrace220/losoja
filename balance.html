@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 
@@ -103,6 +102,16 @@
             color: white;
         }
 
+        .ship-btn {
+            background: #087a3e;
+            color: white;
+        }
+
+        .confirm-btn {
+            background: #087a3e;
+            color: white;
+        }
+
         .release-btn {
             background: #087a3e;
             color: white;
@@ -111,6 +120,11 @@
         .refund-btn {
             background: #dc2626;
             color: white;
+        }
+
+        .dispute-btn {
+            background: #f59e0b;
+            color: #111827;
         }
 
         button:disabled {
@@ -192,6 +206,21 @@
             gap: 8px;
             flex-wrap: wrap;
             margin-top: 12px;
+        }
+
+        .escrow-note {
+            color: #6b7280;
+            font-size: 13px;
+            margin-top: 10px;
+        }
+
+        .escrow-dispute {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 9px;
+            background: #fff7ed;
+            color: #92400e;
+            font-size: 13px;
         }
 
         .empty {
@@ -963,6 +992,118 @@ async function refundEscrow(
 
 
 /* =========================================================
+   MARK ESCROW SHIPPED
+========================================================= */
+
+async function markEscrowShipped(
+    escrowId
+) {
+
+    return await supabaseRequest(
+        "/rest/v1/rpc/mark_escrow_shipped",
+        {
+            method: "POST",
+
+            body: JSON.stringify({
+                p_escrow_id:
+                    escrowId
+            })
+        }
+    );
+
+}
+
+
+/* =========================================================
+   CONFIRM DELIVERY
+========================================================= */
+
+async function confirmEscrowDelivery(
+    escrowId
+) {
+
+    return await supabaseRequest(
+        "/rest/v1/rpc/confirm_escrow_delivery",
+        {
+            method: "POST",
+
+            body: JSON.stringify({
+                p_escrow_id:
+                    escrowId
+            })
+        }
+    );
+
+}
+
+
+/* =========================================================
+   DISPUTE ESCROW
+========================================================= */
+
+async function disputeEscrow(
+    escrowId,
+    reason
+) {
+
+    return await supabaseRequest(
+        "/rest/v1/rpc/dispute_escrow",
+        {
+            method: "POST",
+
+            body: JSON.stringify({
+                p_escrow_id:
+                    escrowId,
+
+                p_reason:
+                    reason
+            })
+        }
+    );
+
+}
+
+
+/* =========================================================
+   STATUS LABEL
+========================================================= */
+
+function formatEscrowStatus(
+    status
+) {
+
+    const labels = {
+
+        funded:
+            "Funded",
+
+        shipped:
+            "Shipped",
+
+        delivered:
+            "Delivered",
+
+        disputed:
+            "Disputed",
+
+        released:
+            "Released",
+
+        refunded:
+            "Refunded"
+
+    };
+
+    return (
+        labels[status] ||
+        String(status || "Unknown")
+            .replace(/_/g, " ")
+    );
+
+}
+
+
+/* =========================================================
    LOAD ESCROW TRANSACTIONS
 ========================================================= */
 
@@ -1039,14 +1180,28 @@ async function loadEscrowTransactions(
                         ""
                     ).toLowerCase();
 
-                const canAct =
-                    isBuyer &&
-                    status === "funded";
-
                 const created =
                     transaction.created_at
                         ? new Date(
                             transaction.created_at
+                        ).toLocaleString(
+                            "en-NG"
+                        )
+                        : "";
+
+                const shipped =
+                    transaction.shipped_at
+                        ? new Date(
+                            transaction.shipped_at
+                        ).toLocaleString(
+                            "en-NG"
+                        )
+                        : "";
+
+                const delivered =
+                    transaction.delivered_at
+                        ? new Date(
+                            transaction.delivered_at
                         ).toLocaleString(
                             "en-NG"
                         )
@@ -1058,23 +1213,268 @@ async function loadEscrowTransactions(
                         "Escrow transaction"
                     );
 
-                let role = "Participant";
+                const disputeReason =
+                    escapeHTML(
+                        transaction.dispute_reason ||
+                        ""
+                    );
+
+                let role =
+                    "Participant";
 
                 if (isBuyer) {
 
-                    role = "Buyer";
+                    role =
+                        "Buyer";
 
                 } else if (isSeller) {
 
-                    role = "Seller";
+                    role =
+                        "Seller";
 
                 }
 
-                const statusText =
-                    escapeHTML(
-                        transaction.status ||
-                        "unknown"
-                    );
+
+                /* -----------------------------------------
+                   ACTION BUTTONS
+                ------------------------------------------ */
+
+                let actions = "";
+
+                /*
+                   SELLER:
+                   funded -> mark shipped
+                */
+
+                if (
+                    isSeller &&
+                    status === "funded"
+                ) {
+
+                    actions = `
+
+                        <div
+                            class="escrow-actions"
+                        >
+
+                            <button
+                                class="ship-btn"
+                                onclick="handleMarkEscrowShipped(
+                                    '${transaction.id}',
+                                    this
+                                )"
+                            >
+                                Mark as Shipped
+                            </button>
+
+                        </div>
+
+                    `;
+
+                }
+
+
+                /*
+                   BUYER:
+                   funded -> refund only
+                */
+
+                if (
+                    isBuyer &&
+                    status === "funded"
+                ) {
+
+                    actions = `
+
+                        <div
+                            class="escrow-actions"
+                        >
+
+                            <button
+                                class="refund-btn"
+                                onclick="handleRefundEscrow(
+                                    '${transaction.id}',
+                                    this
+                                )"
+                            >
+                                Refund
+                            </button>
+
+                        </div>
+
+                        <div class="escrow-note">
+                            You can refund this payment before the seller ships.
+                        </div>
+
+                    `;
+
+                }
+
+
+                /*
+                   BUYER:
+                   shipped -> confirm delivery or dispute
+                */
+
+                if (
+                    isBuyer &&
+                    status === "shipped"
+                ) {
+
+                    actions = `
+
+                        <div
+                            class="escrow-actions"
+                        >
+
+                            <button
+                                class="confirm-btn"
+                                onclick="handleConfirmEscrowDelivery(
+                                    '${transaction.id}',
+                                    this
+                                )"
+                            >
+                                Confirm Delivery
+                            </button>
+
+                            <button
+                                class="dispute-btn"
+                                onclick="handleDisputeEscrow(
+                                    '${transaction.id}',
+                                    this
+                                )"
+                            >
+                                Dispute
+                            </button>
+
+                        </div>
+
+                    `;
+
+                }
+
+
+                /*
+                   BUYER:
+                   delivered -> release or dispute
+                */
+
+                if (
+                    isBuyer &&
+                    status === "delivered"
+                ) {
+
+                    actions = `
+
+                        <div
+                            class="escrow-actions"
+                        >
+
+                            <button
+                                class="release-btn"
+                                onclick="handleReleaseEscrow(
+                                    '${transaction.id}',
+                                    this
+                                )"
+                            >
+                                Release to Seller
+                            </button>
+
+                            <button
+                                class="dispute-btn"
+                                onclick="handleDisputeEscrow(
+                                    '${transaction.id}',
+                                    this
+                                )"
+                            >
+                                Dispute
+                            </button>
+
+                        </div>
+
+                    `;
+
+                }
+
+
+                /*
+                   SELLER:
+                   shipped -> waiting
+                */
+
+                if (
+                    isSeller &&
+                    status === "shipped"
+                ) {
+
+                    actions = `
+
+                        <div class="escrow-note">
+                            Waiting for the buyer to confirm delivery.
+                        </div>
+
+                    `;
+
+                }
+
+
+                /*
+                   SELLER:
+                   delivered -> waiting for release
+                */
+
+                if (
+                    isSeller &&
+                    status === "delivered"
+                ) {
+
+                    actions = `
+
+                        <div class="escrow-note">
+                            Delivery confirmed. Waiting for buyer to release payment.
+                        </div>
+
+                    `;
+
+                }
+
+
+                /*
+                   DISPUTED
+                */
+
+                if (
+                    status === "disputed"
+                ) {
+
+                    actions = `
+
+                        <div class="escrow-dispute">
+
+                            <strong>
+                                Dispute opened.
+                            </strong>
+
+                            ${
+                                disputeReason
+                                    ? `
+                                        <div style="margin-top:5px;">
+                                            ${disputeReason}
+                                        </div>
+                                    `
+                                    : ""
+                            }
+
+                            <div style="margin-top:5px;">
+                                LosOja will review the dispute before the payment is released or refunded.
+                            </div>
+
+                        </div>
+
+                    `;
+
+                }
+
 
                 return `
 
@@ -1103,48 +1503,40 @@ async function loadEscrowTransactions(
                         <div class="escrow-line">
                             <strong>Status:</strong>
                             <span class="escrow-status">
-                                ${statusText}
+                                ${escapeHTML(
+                                    formatEscrowStatus(status)
+                                )}
                             </span>
                         </div>
 
                         <div class="escrow-line">
-                            <strong>Date:</strong>
+                            <strong>Created:</strong>
                             ${escapeHTML(created)}
                         </div>
 
                         ${
-                            canAct
+                            shipped
                                 ? `
-
-                                <div
-                                    class="escrow-actions"
-                                >
-
-                                    <button
-                                        class="release-btn"
-                                        onclick="handleReleaseEscrow(
-                                            '${transaction.id}',
-                                            this
-                                        )"
-                                    >
-                                        Release to Seller
-                                    </button>
-
-                                    <button
-                                        class="refund-btn"
-                                        onclick="handleRefundEscrow(
-                                            '${transaction.id}',
-                                            this
-                                        )"
-                                    >
-                                        Refund
-                                    </button>
-
-                                </div>
-
-                            `
+                                    <div class="escrow-line">
+                                        <strong>Shipped:</strong>
+                                        ${escapeHTML(shipped)}
+                                    </div>
+                                `
                                 : ""
                         }
+
+                        ${
+                            delivered
+                                ? `
+                                    <div class="escrow-line">
+                                        <strong>Delivered:</strong>
+                                        ${escapeHTML(delivered)}
+                                    </div>
+                                `
+                                : ""
+                        }
+
+                        ${actions}
 
                     </div>
 
@@ -1163,6 +1555,283 @@ async function loadEscrowTransactions(
             `<div class="error">
                 Unable to load escrow transactions.
             </div>`;
+
+    }
+
+}
+
+
+/* =========================================================
+   HANDLE MARK SHIPPED
+========================================================= */
+
+async function handleMarkEscrowShipped(
+    escrowId,
+    button
+) {
+
+    const confirmed =
+        confirm(
+            "Mark this escrow order as shipped?"
+        );
+
+    if (!confirmed) {
+
+        return;
+
+    }
+
+    const actionButtons =
+        button
+            ?.parentElement
+            ?.querySelectorAll(
+                "button"
+            );
+
+    if (actionButtons) {
+
+        actionButtons.forEach(
+            btn => {
+                btn.disabled = true;
+            }
+        );
+
+    }
+
+    try {
+
+        await markEscrowShipped(
+            escrowId
+        );
+
+        alert(
+            "Escrow marked as shipped."
+        );
+
+        const section =
+            document.getElementById(
+                "escrowInfo"
+            );
+
+        await loadEscrowTransactions(
+            section
+        );
+
+    } catch (error) {
+
+        console.error(
+            "LosOja: mark shipped error:",
+            error
+        );
+
+        alert(
+            error.message ||
+            "Unable to mark escrow as shipped."
+        );
+
+        if (actionButtons) {
+
+            actionButtons.forEach(
+                btn => {
+                    btn.disabled = false;
+                }
+            );
+
+        }
+
+    }
+
+}
+
+
+/* =========================================================
+   HANDLE CONFIRM DELIVERY
+========================================================= */
+
+async function handleConfirmEscrowDelivery(
+    escrowId,
+    button
+) {
+
+    const confirmed =
+        confirm(
+            "Confirm that you received the goods?"
+        );
+
+    if (!confirmed) {
+
+        return;
+
+    }
+
+    const actionButtons =
+        button
+            ?.parentElement
+            ?.querySelectorAll(
+                "button"
+            );
+
+    if (actionButtons) {
+
+        actionButtons.forEach(
+            btn => {
+                btn.disabled = true;
+            }
+        );
+
+    }
+
+    try {
+
+        await confirmEscrowDelivery(
+            escrowId
+        );
+
+        alert(
+            "Delivery confirmed."
+        );
+
+        const section =
+            document.getElementById(
+                "escrowInfo"
+            );
+
+        await loadEscrowTransactions(
+            section
+        );
+
+    } catch (error) {
+
+        console.error(
+            "LosOja: confirm delivery error:",
+            error
+        );
+
+        alert(
+            error.message ||
+            "Unable to confirm delivery."
+        );
+
+        if (actionButtons) {
+
+            actionButtons.forEach(
+                btn => {
+                    btn.disabled = false;
+                }
+            );
+
+        }
+
+    }
+
+}
+
+
+/* =========================================================
+   HANDLE DISPUTE
+========================================================= */
+
+async function handleDisputeEscrow(
+    escrowId,
+    button
+) {
+
+    const reason =
+        prompt(
+            "Why are you disputing this escrow?"
+        );
+
+    if (
+        reason === null
+    ) {
+
+        return;
+
+    }
+
+    const trimmedReason =
+        reason.trim();
+
+    if (!trimmedReason) {
+
+        alert(
+            "Please enter a dispute reason."
+        );
+
+        return;
+
+    }
+
+    if (
+        trimmedReason.length > 1000
+    ) {
+
+        alert(
+            "Dispute reason must be 1000 characters or less."
+        );
+
+        return;
+
+    }
+
+    const actionButtons =
+        button
+            ?.parentElement
+            ?.querySelectorAll(
+                "button"
+            );
+
+    if (actionButtons) {
+
+        actionButtons.forEach(
+            btn => {
+                btn.disabled = true;
+            }
+        );
+
+    }
+
+    try {
+
+        await disputeEscrow(
+            escrowId,
+            trimmedReason
+        );
+
+        alert(
+            "Dispute opened successfully."
+        );
+
+        const section =
+            document.getElementById(
+                "escrowInfo"
+            );
+
+        await loadEscrowTransactions(
+            section
+        );
+
+    } catch (error) {
+
+        console.error(
+            "LosOja: dispute escrow error:",
+            error
+        );
+
+        alert(
+            error.message ||
+            "Unable to open dispute."
+        );
+
+        if (actionButtons) {
+
+            actionButtons.forEach(
+                btn => {
+                    btn.disabled = false;
+                }
+            );
+
+        }
 
     }
 
@@ -1412,22 +2081,3 @@ document.addEventListener(
 </body>
 
 </html>
-```
-
-### What this version now does
-
-* **Balance** loads from the user's wallet.
-* **Deposit** continues using your existing `losojaDepositFunds()` system.
-* **Transaction history** shows deposits, escrow holds, releases and refunds.
-* **View Escrow** loads the user's escrow records.
-* A buyer with a `funded` escrow sees:
-
-  * **Release to Seller**
-  * **Refund**
-* Release calls your already-tested `release_escrow` function.
-* Refund calls your existing `refund_escrow` function.
-* After either action, the **balance, transaction history, and escrow status refresh automatically**.
-* Released/refunded escrows no longer show action buttons.
-* Sellers don't get the buyer's release/refund controls.
-
-**Important:** replace the entire contents of `balance.html` with this version. Don't add it underneath the old code—replace the old file completely.
