@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>LosOja Admin</title>
+
+    <meta
+        name="theme-color"
+        content="#087a3e"
+    >
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f7f6;
+            color: #111827;
+        }
+
+        .header {
+            background: #087a3e;
+            color: white;
+            padding: 18px 20px;
+        }
+
+        .header-inner {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .header p {
+            margin: 6px 0 0;
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 0 15px 40px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 18px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.07);
+        }
+
+        h2 {
+            margin-top: 0;
+            font-size: 19px;
+        }
+
+        .top-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            border: none;
+            border-radius: 9px;
+            padding: 11px 16px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .refresh-btn {
+            background: #087a3e;
+            color: white;
+        }
+
+        .release-btn {
+            background: #087a3e;
+            color: white;
+        }
+
+        .refund-btn {
+            background: #dc2626;
+            color: white;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .admin-status {
+            margin-top: 12px;
+            padding: 10px;
+            border-radius: 9px;
+            background: #eef8f2;
+            color: #087a3e;
+            font-size: 14px;
+        }
+
+        .error {
+            color: #dc2626;
+            font-size: 14px;
+            padding: 10px 0;
+        }
+
+        .loading {
+            color: #6b7280;
+            padding: 10px 0;
+        }
+
+        .empty {
+            color: #6b7280;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .escrow-item {
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 14px;
+            background: #fafafa;
+        }
+
+        .escrow-description {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .escrow-line {
+            font-size: 14px;
+            margin: 6px 0;
+            word-break: break-word;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 20px;
+            background: #fff7ed;
+            color: #92400e;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .reason {
+            margin-top: 12px;
+            padding: 12px;
+            border-radius: 10px;
+            background: #fff7ed;
+            color: #78350f;
+            font-size: 14px;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 14px;
+        }
+
+        .footer-link {
+            display: inline-block;
+            margin-top: 5px;
+            color: #087a3e;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        @media (max-width: 600px) {
+
+            .container {
+                margin-top: 12px;
+            }
+
+            .card {
+                padding: 16px;
+            }
+
+            .actions button {
+                width: 100%;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+
+<header class="header">
+
+    <div class="header-inner">
+
+        <h1>LosOja Admin</h1>
+
+        <p>
+            Escrow dispute management
+        </p>
+
+    </div>
+
+</header>
+
+
+<main class="container">
+
+
+    <!-- =========================================
+         ADMIN ACCESS
+    ========================================== -->
+
+    <section class="card">
+
+        <h2>Admin Panel</h2>
+
+        <div
+            id="adminStatus"
+            class="admin-status"
+        >
+            Checking administrator access...
+        </div>
+
+        <div
+            class="top-actions"
+            style="margin-top:12px;"
+        >
+
+            <button
+                class="refresh-btn"
+                id="refreshButton"
+                type="button"
+            >
+                Refresh Disputes
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================================
+         DISPUTES
+    ========================================== -->
+
+    <section class="card">
+
+        <h2>Escrow Disputes</h2>
+
+        <div id="disputes">
+
+            <div class="loading">
+                Loading disputes...
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <a
+        href="balance.html"
+        class="footer-link"
+    >
+        ← Back to Balance
+    </a>
+
+
+</main>
+
+
+<script>
+
+/* =========================================================
+   LOSOJA ADMIN ESCROW
+========================================================= */
+
+const SUPABASE_URL =
+    "https://ycxshwgeebskdozmornh.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
+
+const ADMIN_FUNCTION_URL =
+    SUPABASE_URL +
+    "/functions/v1/admin-escrow";
+
+
+/* =========================================================
+   ESCAPE HTML
+========================================================= */
+
+function escapeHTML(value) {
+
+    if (
+        value === null ||
+        value === undefined
+    ) {
+
+        return "";
+
+    }
+
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+
+
+/* =========================================================
+   GET ACCESS TOKEN
+========================================================= */
+
+async function getAccessToken() {
+
+    try {
+
+        if (
+            typeof window.getSupabaseAccessToken ===
+            "function"
+        ) {
+
+            return await window.getSupabaseAccessToken();
+
+        }
+
+        return null;
+
+    } catch (error) {
+
+        console.error(
+            "LosOja admin token error:",
+            error
+        );
+
+        return null;
+
+    }
+
+}
+
+
+/* =========================================================
+   ADMIN REQUEST
+========================================================= */
+
+async function adminRequest(
+    body
+) {
+
+    const token =
+        await getAccessToken();
+
+    if (!token) {
+
+        throw new Error(
+            "You are not logged in."
+        );
+
+    }
+
+
+    const response =
+        await fetch(
+            ADMIN_FUNCTION_URL,
+            {
+                method: "POST",
+
+                headers: {
+
+                    "Content-Type":
+                        "application/json",
+
+                    "apikey":
+                        SUPABASE_KEY,
+
+                    "Authorization":
+                        "Bearer " + token
+
+                },
+
+                body:
+                    JSON.stringify(body)
+
+            }
+        );
+
+
+    const text =
+        await response.text();
+
+    let data = null;
+
+
+    try {
+
+        data =
+            text
+                ? JSON.parse(text)
+                : null;
+
+    } catch {
+
+        data =
+            text;
+
+    }
+
+
+    if (!response.ok) {
+
+        console.error(
+            "LosOja admin function error:",
+            data
+        );
+
+        throw new Error(
+            data?.error ||
+            data?.message ||
+            "Admin request failed."
+        );
+
+    }
+
+
+    return data;
+
+}
+
+
+/* =========================================================
+   CHECK ADMIN
+========================================================= */
+
+async function checkAdmin() {
+
+    const statusElement =
+        document.getElementById(
+            "adminStatus"
+        );
+
+    try {
+
+        const user =
+            await window.getCurrentUser();
+
+        if (!user) {
+
+            throw new Error(
+                "Please log in first."
+            );
+
+        }
+
+
+        if (
+            user.app_metadata?.role !==
+            "admin"
+        ) {
+
+            throw new Error(
+                "Administrator access required."
+            );
+
+        }
+
+
+        statusElement.textContent =
+            "Administrator access confirmed.";
+
+        statusElement.style.background =
+            "#eef8f2";
+
+        statusElement.style.color =
+            "#087a3e";
+
+        return true;
+
+    } catch (error) {
+
+        console.error(
+            "LosOja admin access error:",
+            error
+        );
+
+        statusElement.textContent =
+            error.message ||
+            "Administrator access denied.";
+
+        statusElement.style.background =
+            "#fef2f2";
+
+        statusElement.style.color =
+            "#dc2626";
+
+        return false;
+
+    }
+
+}
+
+
+/* =========================================================
+   FORMAT DATE
+========================================================= */
+
+function formatDate(
+    value
+) {
+
+    if (!value) {
+
+        return "";
+
+    }
+
+    try {
+
+        return new Date(
+            value
+        ).toLocaleString(
+            "en-NG"
+        );
+
+    } catch {
+
+        return "";
+
+    }
+
+}
+
+
+/* =========================================================
+   FORMAT AMOUNT
+========================================================= */
+
+function formatAmount(
+    amount
+) {
+
+    return Number(
+        amount || 0
+    ).toLocaleString(
+        "en-NG",
+        {
+            minimumFractionDigits:
+                2,
+
+            maximumFractionDigits:
+                2
+        }
+    );
+
+}
+
+
+/* =========================================================
+   LOAD DISPUTES
+========================================================= */
+
+async function loadDisputes() {
+
+    const container =
+        document.getElementById(
+            "disputes"
+        );
+
+    const refreshButton =
+        document.getElementById(
+            "refreshButton"
+        );
+
+
+    container.innerHTML =
+        `<div class="loading">
+            Loading disputes...
+        </div>`;
+
+
+    if (refreshButton) {
+
+        refreshButton.disabled =
+            true;
+
+    }
+
+
+    try {
+
+        const isAdmin =
+            await checkAdmin();
+
+        if (!isAdmin) {
+
+            container.innerHTML =
+                `<div class="error">
+                    Administrator access required.
+                </div>`;
+
+            return;
+
+        }
+
+
+        const result =
+            await adminRequest({
+                action:
+                    "list"
+            });
+
+
+        const escrows =
+            result?.escrows || [];
+
+
+        if (!escrows.length) {
+
+            container.innerHTML =
+                `<div class="empty">
+                    No disputed escrows.
+                </div>`;
+
+            return;
+
+        }
+
+
+        container.innerHTML =
+            escrows.map(
+                function (escrow) {
+
+                    return `
+
+                        <div
+                            class="escrow-item"
+                            data-escrow-id="${escapeHTML(
+                                escrow.id
+                            )}"
+                        >
+
+                            <div class="escrow-description">
+                                ${escapeHTML(
+                                    escrow.description ||
+                                    "Escrow transaction"
+                                )}
+                            </div>
+
+                            <div class="escrow-line">
+                                <strong>Amount:</strong>
+                                ₦${formatAmount(
+                                    escrow.amount
+                                )}
+                            </div>
+
+                            <div class="escrow-line">
+                                <strong>Currency:</strong>
+                                ${escapeHTML(
+                                    escrow.currency ||
+                                    "NGN"
+                                )}
+                            </div>
+
+                            <div class="escrow-line">
+                                <strong>Status:</strong>
+                                <span class="status">
+                                    ${escapeHTML(
+                                        escrow.status ||
+                                        "disputed"
+                                    )}
+                                </span>
+                            </div>
+
+                            <div class="escrow-line">
+                                <strong>Buyer ID:</strong>
+                                ${escapeHTML(
+                                    escrow.buyer_id
+                                )}
+                            </div>
+
+                            <div class="escrow-line">
+                                <strong>Seller ID:</strong>
+                                ${escapeHTML(
+                                    escrow.seller_id
+                                )}
+                            </div>
+
+                            ${
+                                escrow.reference
+                                    ? `
+                                        <div class="escrow-line">
+                                            <strong>Reference:</strong>
+                                            ${escapeHTML(
+                                                escrow.reference
+                                            )}
+                                        </div>
+                                    `
+                                    : ""
+                            }
+
+                            <div class="escrow-line">
+                                <strong>Created:</strong>
+                                ${escapeHTML(
+                                    formatDate(
+                                        escrow.created_at
+                                    )
+                                )}
+                            </div>
+
+                            ${
+                                escrow.shipped_at
+                                    ? `
+                                        <div class="escrow-line">
+                                            <strong>Shipped:</strong>
+                                            ${escapeHTML(
+                                                formatDate(
+                                                    escrow.shipped_at
+                                                )
+                                            )}
+                                        </div>
+                                    `
+                                    : ""
+                            }
+
+                            ${
+                                escrow.delivered_at
+                                    ? `
+                                        <div class="escrow-line">
+                                            <strong>Delivered:</strong>
+                                            ${escapeHTML(
+                                                formatDate(
+                                                    escrow.delivered_at
+                                                )
+                                            )}
+                                        </div>
+                                    `
+                                    : ""
+                            }
+
+                            ${
+                                escrow.disputed_at
+                                    ? `
+                                        <div class="escrow-line">
+                                            <strong>Disputed:</strong>
+                                            ${escapeHTML(
+                                                formatDate(
+                                                    escrow.disputed_at
+                                                )
+                                            )}
+                                        </div>
+                                    `
+                                    : ""
+                            }
+
+                            ${
+                                escrow.dispute_reason
+                                    ? `
+                                        <div class="reason">
+                                            <strong>
+                                                Dispute reason:
+                                            </strong>
+
+                                            <div style="margin-top:6px;">
+                                                ${escapeHTML(
+                                                    escrow.dispute_reason
+                                                )}
+                                            </div>
+                                        </div>
+                                    `
+                                    : ""
+                            }
+
+                            <div class="actions">
+
+                                <button
+                                    class="release-btn"
+                                    type="button"
+                                    onclick="resolveEscrow(
+                                        '${escapeHTML(
+                                            escrow.id
+                                        )}',
+                                        'released',
+                                        this
+                                    )"
+                                >
+                                    Release to Seller
+                                </button>
+
+                                <button
+                                    class="refund-btn"
+                                    type="button"
+                                    onclick="resolveEscrow(
+                                        '${escapeHTML(
+                                            escrow.id
+                                        )}',
+                                        'refunded',
+                                        this
+                                    )"
+                                >
+                                    Refund Buyer
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    `;
+
+                }
+            ).join("");
+
+    } catch (error) {
+
+        console.error(
+            "LosOja admin disputes error:",
+            error
+        );
+
+        container.innerHTML =
+            `<div class="error">
+                ${escapeHTML(
+                    error.message ||
+                    "Unable to load disputes."
+                )}
+            </div>`;
+
+    } finally {
+
+        if (refreshButton) {
+
+            refreshButton.disabled =
+                false;
+
+        }
+
+    }
+
+}
+
+
+/* =========================================================
+   RESOLVE ESCROW
+========================================================= */
+
+async function resolveEscrow(
+    escrowId,
+    resolution,
+    button
+) {
+
+    const actionText =
+        resolution === "released"
+            ? "release this payment to the seller"
+            : "refund this payment to the buyer";
+
+
+    const confirmed =
+        confirm(
+            "Are you sure you want to " +
+            actionText +
+            "?"
+        );
+
+
+    if (!confirmed) {
+
+        return;
+
+    }
+
+
+    const item =
+        button
+            ?.closest(
+                ".escrow-item"
+            );
+
+
+    const buttons =
+        item
+            ?.querySelectorAll(
+                "button"
+            );
+
+
+    if (buttons) {
+
+        buttons.forEach(
+            function (btn) {
+
+                btn.disabled =
+                    true;
+
+            }
+        );
+
+    }
+
+
+    try {
+
+        await adminRequest({
+
+            action:
+                "resolve",
+
+            escrow_id:
+                escrowId,
+
+            resolution:
+                resolution
+
+        });
+
+
+        alert(
+            resolution === "released"
+                ? "Escrow released to seller."
+                : "Escrow refunded to buyer."
+        );
+
+
+        await loadDisputes();
+
+    } catch (error) {
+
+        console.error(
+            "LosOja admin resolve error:",
+            error
+        );
+
+        alert(
+            error.message ||
+            "Unable to resolve escrow."
+        );
+
+
+        if (buttons) {
+
+            buttons.forEach(
+                function (btn) {
+
+                    btn.disabled =
+                        false;
+
+                }
+            );
+
+        }
+
+    }
+
+}
+
+
+/* =========================================================
+   REFRESH BUTTON
+========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const refreshButton =
+            document.getElementById(
+                "refreshButton"
+            );
+
+
+        if (refreshButton) {
+
+            refreshButton.addEventListener(
+                "click",
+                loadDisputes
+            );
+
+        }
+
+
+        loadDisputes();
+
+    }
+);
+
+</script>
+
+
+<!-- =======================================================
+     LOSOJA AUTH
+======================================================== -->
+
+<script src="js/auth.js"></script>
+
+
+</body>
+
+</html>
