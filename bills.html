@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>LosOja Bills</title>
+
+    <meta
+        name="theme-color"
+        content="#087a3e"
+    >
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f7f6;
+            color: #111827;
+        }
+
+        .header {
+            background: #087a3e;
+            color: white;
+            padding: 18px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-top: 6px;
+            color: white;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 20px auto;
+            padding: 0 15px 40px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 18px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.07);
+        }
+
+        h2 {
+            margin-top: 0;
+            font-size: 19px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+        }
+
+        .tab-btn {
+            background: #eef8f2;
+            color: #087a3e;
+            border: 1px solid #d5eadc;
+        }
+
+        .tab-btn.active {
+            background: #087a3e;
+            color: white;
+        }
+
+        .bill-form {
+            display: none;
+        }
+
+        .bill-form.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 9px;
+            font-size: 14px;
+            background: white;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #087a3e;
+        }
+
+        .pay-btn {
+            width: 100%;
+            background: #087a3e;
+            color: white;
+            margin-top: 4px;
+        }
+
+        .coming-soon {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 9px;
+            background: #fff7ed;
+            color: #92400e;
+            font-size: 13px;
+        }
+
+        .info {
+            padding: 12px;
+            border-radius: 9px;
+            background: #eef8f2;
+            color: #087a3e;
+            font-size: 13px;
+        }
+
+        .history-item {
+            padding: 14px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+        }
+
+        .history-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .history-type {
+            font-weight: bold;
+        }
+
+        .history-date {
+            margin-top: 4px;
+            color: #6b7280;
+            font-size: 12px;
+        }
+
+        .empty {
+            text-align: center;
+            color: #6b7280;
+            padding: 15px 0;
+        }
+
+        .error {
+            color: #dc2626;
+            font-size: 14px;
+            padding: 10px 0;
+        }
+
+        button {
+            border: none;
+            border-radius: 9px;
+            padding: 11px 16px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 600px) {
+
+            .card {
+                padding: 16px;
+            }
+
+            .tab-btn {
+                flex: 1 1 30%;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+
+<header class="header">
+
+    <h1>LosOja Bills</h1>
+
+    <a
+        href="balance.html"
+        class="back-btn"
+    >
+        ← Back to Balance
+    </a>
+
+</header>
+
+
+<main class="container">
+
+
+    <!-- =========================================
+         BILL SERVICES
+    ========================================== -->
+
+    <section class="card">
+
+        <h2>Pay Bills</h2>
+
+        <div class="info">
+            Airtime, Data and Electricity payments are being prepared for LosOja.
+        </div>
+
+        <div class="tabs" style="margin-top:16px;">
+
+            <button
+                type="button"
+                class="tab-btn active"
+                data-tab="airtime"
+            >
+                Airtime
+            </button>
+
+            <button
+                type="button"
+                class="tab-btn"
+                data-tab="data"
+            >
+                Data
+            </button>
+
+            <button
+                type="button"
+                class="tab-btn"
+                data-tab="electricity"
+            >
+                Electricity
+            </button>
+
+        </div>
+
+
+        <!-- =====================================
+             AIRTIME
+        ====================================== -->
+
+        <form
+            id="airtimeForm"
+            class="bill-form active"
+        >
+
+            <div class="form-group">
+
+                <label for="airtimeNetwork">
+                    Network
+                </label>
+
+                <select
+                    id="airtimeNetwork"
+                    required
+                >
+
+                    <option value="">
+                        Select network
+                    </option>
+
+                    <option value="mtn">
+                        MTN
+                    </option>
+
+                    <option value="airtel">
+                        Airtel
+                    </option>
+
+                    <option value="glo">
+                        Glo
+                    </option>
+
+                    <option value="9mobile">
+                        9mobile
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="airtimePhone">
+                    Phone Number
+                </label>
+
+                <input
+                    type="tel"
+                    id="airtimePhone"
+                    inputmode="numeric"
+                    placeholder="08012345678"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="airtimeAmount">
+                    Amount
+                </label>
+
+                <input
+                    type="number"
+                    id="airtimeAmount"
+                    min="1"
+                    step="1"
+                    placeholder="100"
+                    required
+                >
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="pay-btn"
+                disabled
+            >
+                Pay Airtime
+            </button>
+
+            <div class="coming-soon">
+                Live airtime payments are currently disabled.
+            </div>
+
+        </form>
+
+
+        <!-- =====================================
+             DATA
+        ====================================== -->
+
+        <form
+            id="dataForm"
+            class="bill-form"
+        >
+
+            <div class="form-group">
+
+                <label for="dataNetwork">
+                    Network
+                </label>
+
+                <select
+                    id="dataNetwork"
+                    required
+                >
+
+                    <option value="">
+                        Select network
+                    </option>
+
+                    <option value="mtn">
+                        MTN
+                    </option>
+
+                    <option value="airtel">
+                        Airtel
+                    </option>
+
+                    <option value="glo">
+                        Glo
+                    </option>
+
+                    <option value="9mobile">
+                        9mobile
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="dataPhone">
+                    Phone Number
+                </label>
+
+                <input
+                    type="tel"
+                    id="dataPhone"
+                    inputmode="numeric"
+                    placeholder="08012345678"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="dataPlan">
+                    Data Plan
+                </label>
+
+                <select
+                    id="dataPlan"
+                    required
+                >
+
+                    <option value="">
+                        Select data plan
+                    </option>
+
+                    <option value="small">
+                        Test Plan — ₦100
+                    </option>
+
+                    <option value="medium">
+                        Test Plan — ₦500
+                    </option>
+
+                    <option value="large">
+                        Test Plan — ₦1,000
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="pay-btn"
+                disabled
+            >
+                Buy Data
+            </button>
+
+            <div class="coming-soon">
+                Live data payments are currently disabled.
+            </div>
+
+        </form>
+
+
+        <!-- =====================================
+             ELECTRICITY
+        ====================================== -->
+
+        <form
+            id="electricityForm"
+            class="bill-form"
+        >
+
+            <div class="form-group">
+
+                <label for="electricityProvider">
+                    Electricity Provider
+                </label>
+
+                <select
+                    id="electricityProvider"
+                    required
+                >
+
+                    <option value="">
+                        Select provider
+                    </option>
+
+                    <option value="ikedc">
+                        Ikeja Electric
+                    </option>
+
+                    <option value="ekedc">
+                        Eko Electricity
+                    </option>
+
+                    <option value="ibedc">
+                        IBEDC
+                    </option>
+
+                    <option value="aedc">
+                        AEDC
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="electricityType">
+                    Meter Type
+                </label>
+
+                <select
+                    id="electricityType"
+                    required
+                >
+
+                    <option value="">
+                        Select meter type
+                    </option>
+
+                    <option value="prepaid">
+                        Prepaid
+                    </option>
+
+                    <option value="postpaid">
+                        Postpaid
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="meterNumber">
+                    Meter Number
+                </label>
+
+                <input
+                    type="text"
+                    id="meterNumber"
+                    placeholder="Enter meter number"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="electricityAmount">
+                    Amount
+                </label>
+
+                <input
+                    type="number"
+                    id="electricityAmount"
+                    min="1"
+                    step="1"
+                    placeholder="1000"
+                    required
+                >
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="pay-btn"
+                disabled
+            >
+                Pay Electricity
+            </button>
+
+            <div class="coming-soon">
+                Live electricity payments are currently disabled.
+            </div>
+
+        </form>
+
+    </section>
+
+
+    <!-- =========================================
+         BILL HISTORY
+    ========================================== -->
+
+    <section class="card">
+
+        <h2>Bill History</h2>
+
+        <div id="billHistory">
+
+            <div class="empty">
+                No bill payments yet.
+            </div>
+
+        </div>
+
+    </section>
+
+
+</main>
+
+
+<!-- =========================================
+     LOSOJA AUTH
+========================================== -->
+
+<script src="js/auth.js"></script>
+
+
+<script>
+
+/* =========================================================
+   BILL PAGE
+========================================================= */
+
+(function () {
+
+    "use strict";
+
+
+    const tabButtons =
+        document.querySelectorAll(
+            ".tab-btn"
+        );
+
+
+    const forms =
+        document.querySelectorAll(
+            ".bill-form"
+        );
+
+
+    /* =====================================================
+       TAB SWITCHING
+    ===================================================== */
+
+    tabButtons.forEach(
+        function (button) {
+
+            button.addEventListener(
+                "click",
+                function () {
+
+                    const tab =
+                        button.dataset.tab;
+
+
+                    tabButtons.forEach(
+                        function (item) {
+
+                            item.classList.remove(
+                                "active"
+                            );
+
+                        }
+                    );
+
+
+                    forms.forEach(
+                        function (form) {
+
+                            form.classList.remove(
+                                "active"
+                            );
+
+                        }
+                    );
+
+
+                    button.classList.add(
+                        "active"
+                    );
+
+
+                    const target =
+                        document.getElementById(
+                            tab + "Form"
+                        );
+
+
+                    if (target) {
+
+                        target.classList.add(
+                            "active"
+                        );
+
+                    }
+
+                }
+            );
+
+        }
+    );
+
+
+    /* =====================================================
+       TEST-ONLY FORM HANDLING
+    ===================================================== */
+
+    document.querySelectorAll(
+        ".bill-form"
+    ).forEach(
+        function (form) {
+
+            form.addEventListener(
+                "submit",
+                function (event) {
+
+                    event.preventDefault();
+
+                    alert(
+                        "Live bill payments are not enabled yet."
+                    );
+
+                }
+            );
+
+        }
+    );
+
+
+    /* =====================================================
+       LOG PAGE READY
+    ===================================================== */
+
+    console.log(
+        "LosOja bills page loaded"
+    );
+
+})();
+
+</script>
+
+
+</body>
+
+</html>
