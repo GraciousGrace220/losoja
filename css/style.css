@@ -3972,36 +3972,148 @@ LOSOJA - DESKTOP HEADER SAFETY
 
 }
 /* =========================================================
-   LOSOJA SUBTLE GREEN BRAND PATTERN
-   Soft branded background for white areas
+   LOSOJA - RESTORE ORIGINAL BOTTOM NAVIGATION
+   Home | Explore | + | Saved | Account
 ========================================================= */
 
-body {
-    background-color: #ffffff;
+.bottom-nav {
+    position: fixed;
 
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='140' viewBox='0 0 200 140'%3E%3Ctext x='25' y='70' font-family='Arial, sans-serif' font-size='20' font-weight='800' fill='%23087a3e' fill-opacity='0.055' transform='rotate(-12 100 70)'%3ELosOja%3C/text%3E%3C/svg%3E");
+    left: 0;
+    right: 0;
+    bottom: 0;
 
-    background-repeat: repeat;
-    background-size: 200px 140px;
+    z-index: 2500;
+
+    min-height: 68px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+
+    padding: 7px 8px;
+
+    background: var(--white);
+
+    border-top: 1px solid var(--border);
+
+    box-shadow:
+        0 -3px 15px rgba(0, 0, 0, 0.08);
 }
 
+.nav-item {
+    border: none;
 
-/* Let the LosOja pattern gently show through */
-.main-content {
-    background-color: rgba(255, 255, 255, 0.82);
+    background: transparent;
+
+    color: var(--gray);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    gap: 2px;
+
+    font-size: 11px;
+
+    min-width: 55px;
+
+    padding: 0;
+
+    transition: none;
 }
 
-
-/* Keep green sections exactly as they are */
-.explore-more {
-    background-image:
-        linear-gradient(
-            135deg,
-            var(--green) 0%,
-            var(--green-dark) 100%
-        );
+.nav-item:hover {
+    background: transparent;
+    color: var(--gray);
+    transform: none;
 }
 
-.business-cta {
-    background-color: rgba(255, 255, 255, 0.88);
+.nav-item.active {
+    color: var(--green);
+    font-weight: 700;
+}
+
+.nav-icon {
+    font-size: 20px;
+
+    transition: none;
+}
+
+.nav-item:hover .nav-icon {
+    transform: none;
+}
+
+.nav-add-button {
+    position: relative;
+    z-index: 9999;
+
+    pointer-events: auto;
+    cursor: pointer;
+
+    width: 48px;
+    height: 48px;
+
+    border: none;
+    border-radius: 50%;
+
+    background: var(--green);
+    color: var(--white);
+
+    font-size: 28px;
+    line-height: 1;
+
+    box-shadow:
+        0 5px 15px rgba(8, 122, 62, 0.25);
+
+    transition: none;
+}
+
+.nav-add-button:hover {
+    background: var(--green-dark);
+    transform: none;
+
+    box-shadow:
+        0 5px 15px rgba(8, 122, 62, 0.25);
+}
+
+.nav-add-button:active {
+    transform: none;
+}
+
+/* Keep the bottom navigation comfortable on phones */
+@media (max-width: 700px) {
+
+    .bottom-nav {
+        min-height: 64px;
+        padding: 7px 8px;
+    }
+
+    .nav-item {
+        min-width: 55px;
+        padding: 0;
+    }
+
+    .nav-add-button {
+        width: 48px;
+        height: 48px;
+    }
+}
+
+@media (max-width: 450px) {
+
+    .bottom-nav {
+        padding-left: 3px;
+        padding-right: 3px;
+    }
+
+    .nav-item {
+        min-width: 50px;
+    }
+
+    .nav-add-button {
+        width: 46px;
+        height: 46px;
+    }
 }
