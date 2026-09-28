@@ -950,7 +950,128 @@
 
 </div>
 
+<!-- =================================================
+     BUSINESS DETAILS MODAL
+================================================== -->
 
+<div
+    id="businessDetailsModal"
+    class="modal-overlay hidden"
+    aria-hidden="true"
+    style="display:none;"
+>
+
+    <div class="modal-content">
+
+        <button
+            type="button"
+            class="modal-close"
+            aria-label="Close"
+        >
+            ×
+        </button>
+
+
+        <!-- BUSINESS IMAGE -->
+
+        <div class="business-details-image-wrap">
+
+            <img
+                id="businessDetailsImage"
+                class="business-details-image"
+                src=""
+                alt="Business"
+                style="display:none;"
+            >
+
+        </div>
+
+
+        <!-- BUSINESS INFORMATION -->
+
+        <div class="business-details-content">
+
+            <h2 id="businessDetailsName">
+                Business
+            </h2>
+
+
+            <p id="businessDetailsCategory">
+                Category: Not specified
+            </p>
+
+
+            <p id="businessDetailsLocation">
+                Location: Nigeria
+            </p>
+
+
+            <p id="businessDetailsPhone">
+                Phone: Not provided
+            </p>
+
+
+            <p id="businessDetailsDescription">
+                No description provided.
+            </p>
+
+
+            <p id="businessDetailsRating">
+                No rating yet
+            </p>
+
+        </div>
+
+
+        <!-- BUSINESS ACTIONS -->
+
+        <div
+            id="businessDetailsActions"
+            class="business-details-actions"
+        >
+
+            <button
+                type="button"
+                id="businessChatBtn"
+                class="primary-button"
+            >
+                💬 Chat with Owner
+            </button>
+
+
+            <button
+                type="button"
+                id="businessEscrowBtn"
+                class="secondary-button"
+            >
+                💰 Create Escrow
+            </button>
+
+
+            <button
+                type="button"
+                id="businessEditBtn"
+                class="secondary-button"
+                style="display:none;"
+            >
+                ✏️ Edit Business
+            </button>
+
+
+            <button
+                type="button"
+                id="businessDeleteBtn"
+                class="secondary-button"
+                style="display:none;"
+            >
+                🗑️ Delete Business
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
 
 <!-- =================================================
      LOGIN MODAL
