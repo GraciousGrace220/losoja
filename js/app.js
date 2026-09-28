@@ -3191,7 +3191,21 @@ const SUPABASE_KEY =
             return App.openNotifications();
 
         };
+/* ACCOUNT GLOBAL BRIDGE */
+window.openAccount = function() {
+    if (typeof window.openLogin === "function") {
+        return window.openLogin();
+    }
 
+    const accountModal = document.getElementById("accountModal");
+
+    if (accountModal) {
+        App.openModal("accountModal");
+        return;
+    }
+
+    console.warn("LosOja: Account function is not available.");
+};
 
     /* =====================================================
        BUSINESS DETAILS
