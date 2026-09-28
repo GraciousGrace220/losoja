@@ -3542,3 +3542,44 @@ button,
 #addBusinessModal #submitBusinessBtn {
     margin-bottom: 20px !important;
 }
+/* =========================================================
+   LOSOJA - FIX TOAST OVER BOTTOM NAV
+   Keep toast hidden until JavaScript actually shows it.
+========================================================= */
+
+.toast {
+    display: none;
+}
+
+.toast.show {
+    display: block;
+}
+
+/* =========================================================
+   LOSOJA - MOBILE MENU COMPATIBILITY
+   app.js may use "active", while index.html uses "open".
+========================================================= */
+
+@media (max-width: 700px) {
+
+    .mobile-nav.active,
+    .mobile-nav.open {
+        display: flex !important;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+}
+
+/* =========================================================
+   LOSOJA - DESKTOP HEADER SAFETY
+========================================================= */
+
+@media (min-width: 701px) {
+
+    .mobile-menu-btn,
+    .mobile-nav {
+        display: none !important;
+    }
+
+}
