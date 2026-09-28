@@ -1170,8 +1170,7 @@ modal.setAttribute(
                      */
 
                     const SUPABASE_KEY =
-                        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InljeHNod2dlZWJza2Rvem1vcm5oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzMDY0NjUsImV4cCI6MjEwMzg4MjQ2NX0.tMl7wILdVDhu0RWFaG_84ngJEryLt2c5cB8MEKW3kfU";
-
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InljeHNod2dlZWJza2Rvem1vcm5oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzMDY0NjUsImV4cCI6MjEwMzg4MjQ2NX0.tMl7wILdVDhu0RWFaG_84ngJEryLt2c5cB8MEKW3kfU
 
                     /* -------------------------------------
                        BUSINESS IMAGE UPLOAD
@@ -2325,11 +2324,11 @@ modal.setAttribute(
         },
 
        
-          /* =================================================
+                 /* =================================================
            NOTIFICATIONS
         ================================================= */
 
-        openNotifications() {
+        async openNotifications() {
 
             let modal =
                 document.getElementById(
@@ -2369,9 +2368,14 @@ modal.setAttribute(
                             Notifications
                         </h2>
 
-                        <p>
-                            You don't have any new notifications yet.
-                        </p>
+                        <div
+                            id="notificationsList"
+                            style="margin-top:1rem;"
+                        >
+                            <p>
+                                Loading notifications...
+                            </p>
+                        </div>
 
                     </div>
                 `;
@@ -2382,12 +2386,566 @@ modal.setAttribute(
 
             }
 
+            /*
+             * Open the modal first so the user
+             * immediately sees something happening.
+             */
+
             this.openModal(
                 modal
             );
 
+
+            const list =
+                document.getElementById(
+                    "notificationsList"
+                );
+
+            if (!list) {
+                return;
+            }
+
+            list.innerHTML = `
+                <p>
+                    Loading notifications...
+                </p>
+            `;
+
+
+            /* ---------------------------------------------
+               CHECK LOGIN
+            --------------------------------------------- */
+
+            if (
+                typeof window.getCurrentUser !==
+                "function"
+            ) {
+
+                list.innerHTML = `
+                    <p>
+                        Please log in to view your notifications.
+                    </p>
+                `;
+
+                return;
+            }
+
+
+            let currentUser = null;
+
+            try {
+
+                currentUser =
+                    await window.getCurrentUser();
+
+            } catch (error) {
+
+                console.error(
+                    "LosOja notification user error:",
+                    error
+                );
+
+                list.innerHTML = `
+                    <p>
+                        Unable to load your notifications.
+                    </p>
+                `;
+
+                return;
+            }
+
+
+            if (
+                !currentUser ||
+                !currentUser.id
+            ) {
+
+                list.innerHTML = `
+                    <p>
+                        Please log in to view your notifications.
+                    </p>
+                `;
+
+                return;
+            }
+
+
+            /* ---------------------------------------------
+               GET ACCESS TOKEN
+            --------------------------------------------- */
+
+            let accessToken = null;
+
+            try {
+
+                if (
+                    typeof window.getSupabaseAccessToken ===
+                    "function"
+                ) {
+
+                    accessToken =
+                        window.getSupabaseAccessToken();
+
+                }
+
+            } catch (tokenError) {
+
+                console.warn(
+                    "LosOja: Could not get notification access token.",
+                    tokenError
+                );
+
+            }
+
+
+            if (!accessToken) {
+
+                list.innerHTML = `
+                    <p>
+                        Your login session has expired. Please log in again.
+                    </p>
+                `;
+
+                return;
+            }
+
+
+            /* ---------------------------------------------
+               SUPABASE SETTINGS
+            --------------------------------------------- */
+
+            const SUPABASE_URL =
+                "https://ycxshwgeebskdozmornh.supabase.co";
+
+            const SUPABASE_KEY =
+                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXAiLCJ...";
+
+
+            /*
+             * IMPORTANT:
+             * Use the SAME anon key already used
+             * elsewhere in your current app.js.
+             *
+             * Replace the value above with your
+             * existing working SUPABASE_KEY.
+             */
+
+
+            /* ---------------------------------------------
+               LOAD USER NOTIFICATIONS
+            --------------------------------------------- */
+
+            try {
+
+                const response =
+                    await fetch(
+                        SUPABASE_URL +
+                        "/rest/v1/notifications" +
+                        "?select=*" +
+                        "&user_id=eq." +
+                        encodeURIComponent(
+                            currentUser.id
+                        ) +
+                        "&order=created_at.desc",
+
+                        {
+                            method: "GET",
+
+                            headers: {
+                                "apikey":
+                                    SUPABASE_KEY,
+
+                                "Authorization":
+                                    "Bearer " +
+                                    accessToken,
+
+                                "Content-Type":
+                                    "application/json"
+                            }
+                        }
+                    );
+
+
+                const responseText =
+                    await response.text();
+
+
+                let result = null;
+
+                try {
+
+                    result =
+                        responseText
+                            ? JSON.parse(
+                                responseText
+                            )
+                            : null;
+
+                } catch (jsonError) {
+
+                    result =
+                        responseText;
+
+                }
+
+
+                if (!response.ok) {
+
+                    console.error(
+                        "LosOja notifications load error:",
+                        result
+                    );
+
+                    throw new Error(
+                        result &&
+                        typeof result === "object" &&
+                        (
+                            result.message ||
+                            result.error ||
+                            result.error_description
+                        )
+                            ? (
+                                result.message ||
+                                result.error ||
+                                result.error_description
+                            )
+                            : "Unable to load notifications."
+                    );
+
+                }
+
+
+                const notifications =
+                    Array.isArray(result)
+                        ? result
+                        : [];
+
+
+                /* -----------------------------------------
+                   NO NOTIFICATIONS
+                ----------------------------------------- */
+
+                if (
+                    notifications.length ===
+                    0
+                ) {
+
+                    list.innerHTML = `
+                        <p
+                            style="
+                                color:#6b7280;
+                                text-align:center;
+                                padding:1rem;
+                            "
+                        >
+                            You don't have any notifications yet.
+                        </p>
+                    `;
+
+                    return;
+                }
+
+
+                /* -----------------------------------------
+                   RENDER NOTIFICATIONS
+                ----------------------------------------- */
+
+                list.innerHTML =
+                    notifications
+                        .map(
+                            notification => {
+
+                                const title =
+                                    String(
+                                        notification.title ||
+                                        "Notification"
+                                    );
+
+                                const message =
+                                    String(
+                                        notification.message ||
+                                        ""
+                                    );
+
+                                const createdAt =
+                                    notification.created_at
+                                        ? new Date(
+                                            notification.created_at
+                                        ).toLocaleString(
+                                            "en-NG"
+                                        )
+                                        : "";
+
+                                const unread =
+                                    notification.is_read !==
+                                    true;
+
+                                return `
+                                    <div
+                                        class="losoja-notification-item"
+                                        data-notification-id="${notification.id}"
+                                        style="
+                                            padding:1rem;
+                                            margin-bottom:.75rem;
+                                            border:1px solid #e5e7eb;
+                                            border-radius:12px;
+                                            background:${unread ? "#eef8f2" : "#ffffff"};
+                                        "
+                                    >
+
+                                        <div
+                                            style="
+                                                display:flex;
+                                                justify-content:space-between;
+                                                gap:.75rem;
+                                                align-items:flex-start;
+                                            "
+                                        >
+
+                                            <strong>
+                                                ${this.escapeNotificationText(title)}
+                                            </strong>
+
+                                            ${
+                                                unread
+                                                    ? `
+                                                        <span
+                                                            style="
+                                                                font-size:.75rem;
+                                                                color:#087a3e;
+                                                                font-weight:600;
+                                                            "
+                                                        >
+                                                            NEW
+                                                        </span>
+                                                      `
+                                                    : ""
+                                            }
+
+                                        </div>
+
+                                        <p
+                                            style="
+                                                margin:.5rem 0;
+                                                color:#374151;
+                                            "
+                                        >
+                                            ${this.escapeNotificationText(message)}
+                                        </p>
+
+                                        <small
+                                            style="
+                                                color:#6b7280;
+                                            "
+                                        >
+                                            ${this.escapeNotificationText(createdAt)}
+                                        </small>
+
+                                        ${
+                                            unread
+                                                ? `
+                                                    <button
+                                                        type="button"
+                                                        class="notification-read-btn"
+                                                        data-notification-id="${notification.id}"
+                                                        style="
+                                                            margin-top:.75rem;
+                                                            border:0;
+                                                            background:none;
+                                                            color:#087a3e;
+                                                            cursor:pointer;
+                                                            font-weight:600;
+                                                            padding:0;
+                                                        "
+                                                    >
+                                                        Mark as read
+                                                    </button>
+                                                  `
+                                                : ""
+                                        }
+
+                                    </div>
+                                `;
+
+                            }
+                        )
+                        .join("");
+
+
+                /* -----------------------------------------
+                   MARK AS READ
+                ----------------------------------------- */
+
+                list
+                    .querySelectorAll(
+                        ".notification-read-btn"
+                    )
+                    .forEach(button => {
+
+                        button.addEventListener(
+                            "click",
+                            async () => {
+
+                                const notificationId =
+                                    button.getAttribute(
+                                        "data-notification-id"
+                                    );
+
+                                if (!notificationId) {
+                                    return;
+                                }
+
+
+                                button.disabled =
+                                    true;
+
+                                button.textContent =
+                                    "Updating...";
+
+
+                                try {
+
+                                    const updateResponse =
+                                        await fetch(
+                                            SUPABASE_URL +
+                                            "/rest/v1/notifications" +
+                                            "?id=eq." +
+                                            encodeURIComponent(
+                                                notificationId
+                                            ),
+
+                                            {
+                                                method:
+                                                    "PATCH",
+
+                                                headers: {
+                                                    "apikey":
+                                                        SUPABASE_KEY,
+
+                                                    "Authorization":
+                                                        "Bearer " +
+                                                        accessToken,
+
+                                                    "Content-Type":
+                                                        "application/json"
+                                                },
+
+                                                body:
+                                                    JSON.stringify({
+                                                        is_read:
+                                                            true
+                                                    })
+                                            }
+                                        );
+
+
+                                    if (
+                                        !updateResponse.ok
+                                    ) {
+
+                                        const updateText =
+                                            await updateResponse.text();
+
+                                        console.error(
+                                            "LosOja notification update error:",
+                                            updateText
+                                        );
+
+                                        throw new Error(
+                                            "Unable to mark notification as read."
+                                        );
+
+                                    }
+
+
+                                    /*
+                                     * Reload the notification
+                                     * list after updating.
+                                     */
+
+                                    await this.openNotifications();
+
+                                } catch (error) {
+
+                                    console.error(
+                                        "LosOja notification read error:",
+                                        error
+                                    );
+
+                                    button.disabled =
+                                        false;
+
+                                    button.textContent =
+                                        "Mark as read";
+
+                                    this.showToast(
+                                        error.message,
+                                        "error"
+                                    );
+
+                                }
+
+                            }
+                        );
+
+                    });
+
+
+            } catch (error) {
+
+                console.error(
+                    "LosOja notifications error:",
+                    error
+                );
+
+                list.innerHTML = `
+                    <p
+                        style="
+                            color:#b91c1c;
+                            padding:1rem;
+                        "
+                    >
+                        Could not load notifications:
+                        ${this.escapeNotificationText(error.message)}
+                    </p>
+                `;
+
+            }
+
         },
 
+
+        /* =================================================
+           ESCAPE NOTIFICATION TEXT
+        ================================================= */
+
+        escapeNotificationText(value) {
+
+            return String(
+                value || ""
+            )
+                .replace(
+                    /&/g,
+                    "&amp;"
+                )
+                .replace(
+                    /</g,
+                    "&lt;"
+                )
+                .replace(
+                    />/g,
+                    "&gt;"
+                )
+                .replace(
+                    /"/g,
+                    "&quot;"
+                )
+                .replace(
+                    /'/g,
+                    "&#039;"
+                );
+
+        },
 
         /* =================================================
            TOAST / NOTIFICATION
