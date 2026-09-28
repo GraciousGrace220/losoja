@@ -967,6 +967,7 @@
             type="button"
             class="modal-close"
             aria-label="Close"
+            onclick="closeModal('businessDetailsModal')"
         >
             ×
         </button>
@@ -995,26 +996,21 @@
                 Business
             </h2>
 
-
             <p id="businessDetailsCategory">
                 Category: Not specified
             </p>
-
 
             <p id="businessDetailsLocation">
                 Location: Nigeria
             </p>
 
-
             <p id="businessDetailsPhone">
                 Phone: Not provided
             </p>
 
-
             <p id="businessDetailsDescription">
                 No description provided.
             </p>
-
 
             <p id="businessDetailsRating">
                 No rating yet
@@ -1048,6 +1044,8 @@
             </button>
 
 
+            <!-- OWNER ONLY -->
+
             <button
                 type="button"
                 id="businessEditBtn"
@@ -1072,7 +1070,6 @@
     </div>
 
 </div>
-
 <!-- =================================================
      LOGIN MODAL
 ================================================== -->
