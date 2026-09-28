@@ -2724,10 +2724,405 @@ modal.setAttribute(
 
 
             App.openModal(
+    "businessDetailsModal"
+);
+
+};
+
+
+/* =====================================================
+   CREATE ESCROW FROM BUSINESS DETAILS
+===================================================== */
+
+window.createBusinessEscrow = async function (business) {
+
+    if (!business) {
+        window.showToast(
+            "Business information is missing.",
+            "error"
+        );
+        return;
+    }
+
+    /* CHECK LOGIN */
+
+    if (
+        typeof window.getCurrentUser !==
+        "function"
+    ) {
+        window.showToast(
+            "Please log in before creating an escrow.",
+            "error"
+        );
+        return;
+    }
+
+    let currentUser = null;
+
+    try {
+
+        currentUser =
+            await window.getCurrentUser();
+
+    } catch (error) {
+
+        console.error(
+            "LosOja: Could not get current user:",
+            error
+        );
+
+        window.showToast(
+            "Please log in before creating an escrow.",
+            "error"
+        );
+
+        return;
+    }
+
+    if (!currentUser || !currentUser.id) {
+
+        window.showToast(
+            "Please log in before creating an escrow.",
+            "info"
+        );
+
+        if (typeof window.openModal === "function") {
+            window.openModal("loginModal");
+        }
+
+        return;
+    }
+
+
+    /* GET BUSINESS OWNER */
+
+    const sellerId =
+        business.user_id || "";
+
+    if (!sellerId) {
+
+        window.showToast(
+            "This business does not have an owner account linked yet.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    /* PREVENT SELF-ESCROW */
+
+    if (sellerId === currentUser.id) {
+
+        window.showToast(
+            "You cannot create an escrow with your own business.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    /* GET AMOUNT */
+
+    const amountInput =
+        window.prompt(
+            "Enter the escrow amount in Nigerian Naira:"
+        );
+
+    if (amountInput === null) {
+        return;
+    }
+
+    const amount =
+        Number(
+            String(amountInput)
+                .replace(/,/g, "")
+                .trim()
+        );
+
+    if (
+        !Number.isFinite(amount) ||
+        amount <= 0
+    ) {
+
+        window.showToast(
+            "Please enter a valid escrow amount.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    /* GET DESCRIPTION */
+
+    const descriptionInput =
+        window.prompt(
+            "What is this escrow payment for?"
+        );
+
+    if (descriptionInput === null) {
+        return;
+    }
+
+    const description =
+        String(descriptionInput)
+            .trim();
+
+    if (!description) {
+
+        window.showToast(
+            "Please enter a description.",
+            "error"
+        );
+
+        return;
+    }
+
+    if (description.length > 500) {
+
+        window.showToast(
+            "The escrow description is too long.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    /* CONFIRM */
+
+    const confirmed =
+        window.confirm(
+            "Create a ₦" +
+            amount.toLocaleString("en-NG", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }) +
+            " escrow for " +
+            (business.name || "this business") +
+            "?"
+        );
+
+    if (!confirmed) {
+        return;
+    }
+
+
+    /* GET ACCESS TOKEN */
+
+    let accessToken = null;
+
+    try {
+
+        if (
+            typeof window.getSupabaseAccessToken ===
+            "function"
+        ) {
+
+            accessToken =
+                window.getSupabaseAccessToken();
+
+        }
+
+    } catch (tokenError) {
+
+        console.warn(
+            "LosOja: Could not get access token.",
+            tokenError
+        );
+
+    }
+
+
+    if (!accessToken) {
+
+        window.showToast(
+            "Your login session has expired. Please log in again.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    /* CREATE ESCROW */
+
+    try {
+
+        window.showToast(
+            "Creating escrow...",
+            "info"
+        );
+
+
+        const response =
+            await fetch(
+                "https://ycxshwgeebskdozmornh.supabase.co/functions/v1/create-escrow",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json",
+
+                        "Authorization":
+                            "Bearer " +
+                            accessToken
+                    },
+
+                    body:
+                        JSON.stringify({
+                            seller_id:
+                                sellerId,
+
+                            amount:
+                                amount,
+
+                            description:
+                                description
+                        })
+                }
+            );
+
+
+        const responseText =
+            await response.text();
+
+
+        let result = null;
+
+        try {
+
+            result =
+                responseText
+                    ? JSON.parse(
+                        responseText
+                    )
+                    : null;
+
+        } catch (jsonError) {
+
+            result =
+                responseText;
+
+        }
+
+
+        if (!response.ok) {
+
+            console.error(
+                "LosOja create escrow error:",
+                result
+            );
+
+            const errorMessage =
+                result &&
+                typeof result === "object" &&
+                (
+                    result.message ||
+                    result.error ||
+                    result.error_description
+                )
+                    ? (
+                        result.message ||
+                        result.error ||
+                        result.error_description
+                    )
+                    : "Unable to create escrow.";
+
+            throw new Error(
+                errorMessage
+            );
+        }
+
+
+        console.log(
+            "LosOja escrow created:",
+            result
+        );
+
+
+        /* CLOSE BUSINESS DETAILS */
+
+        if (
+            typeof window.closeModal ===
+            "function"
+        ) {
+
+            window.closeModal(
                 "businessDetailsModal"
             );
 
-        };
+        }
+
+
+        /* SUCCESS */
+
+        window.showToast(
+            "Escrow created successfully.",
+            "success"
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "LosOja escrow error:",
+            error
+        );
+
+        window.showToast(
+            "Could not create escrow: " +
+            error.message,
+            "error"
+        );
+
+    }
+
+};
+
+
+/* =====================================================
+   BUSINESS DETAILS ACTION BUTTONS
+===================================================== */
+
+document.addEventListener(
+    "click",
+    async event => {
+
+        const escrowButton =
+            event.target.closest(
+                "#businessEscrowBtn"
+            );
+
+        if (!escrowButton) {
+            return;
+        }
+
+
+        const business =
+            window.losojaSelectedBusiness;
+
+
+        if (!business) {
+
+            window.showToast(
+                "Business information is unavailable.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        await window.createBusinessEscrow(
+            business
+        );
+
+    }
+);
 
 
     /* =====================================================
