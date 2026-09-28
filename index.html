@@ -1544,7 +1544,23 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 </script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
 
+    const accountButton =
+        document.getElementById("accountButton");
+
+    if (!accountButton) return;
+
+    accountButton.addEventListener(
+        "click",
+        function () {
+            window.openAccount();
+        }
+    );
+
+});
+</script>
 </body>
 
 </html>
