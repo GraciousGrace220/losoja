@@ -3197,14 +3197,14 @@ window.openAccount = function() {
         return window.openLogin();
     }
 
-    const accountModal = document.getElementById("accountModal");
+    const loginModal = document.getElementById("loginModal");
 
-    if (accountModal) {
-        App.openModal("accountModal");
+    if (loginModal) {
+        App.openModal("loginModal");
         return;
     }
 
-    console.warn("LosOja: Account function is not available.");
+    console.warn("LosOja: loginModal is not available.");
 };
 
     /* =====================================================
