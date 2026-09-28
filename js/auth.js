@@ -1100,91 +1100,133 @@ window.updateAuthUI =
         const session =
             getSession();
 
-
         const accountButtons =
             document.querySelectorAll(
                 'button[aria-label="Account"]'
             );
-
 
         const bottomAccountButton =
             document.querySelector(
                 ".bottom-nav .nav-item:last-child"
             );
 
+        const header =
+            document.querySelector(".header");
+
+        let logoutButton =
+            document.getElementById(
+                "losojaLogoutButton"
+            );
+
+
+        /* =====================================================
+           LOGGED IN
+        ===================================================== */
 
         if (
             session &&
             session.access_token
         ) {
 
-            accountButtons.forEach(
-                function (button) {
-
-                   button.onclick =
-    window.openAccount;
-
-button.title =
-    "Account";
-
-                }
-            );
-
+            /* ---------------------------------------------
+               CREATE LOGOUT BUTTON ON BALANCE PAGE
+            --------------------------------------------- */
 
             if (
-                bottomAccountButton
+                header &&
+                !logoutButton &&
+                window.location.pathname
+                    .toLowerCase()
+                    .includes("balance.html")
             ) {
 
-               bottomAccountButton.onclick =
-                  window.openAccount;
+                logoutButton =
+                    document.createElement("button");
 
+                logoutButton.id =
+                    "losojaLogoutButton";
 
-                const label =
-                    bottomAccountButton
-                        .querySelector(
-                            "span:last-child"
-                        );
+                logoutButton.type =
+                    "button";
 
+                logoutButton.textContent =
+                    "Logout";
 
-                if (label) {
+                logoutButton.style.display =
+                    "block";
 
-                   label.textContent =
-                      "Account";
+                logoutButton.style.margin =
+                    "10px auto 0";
 
-                }
+                logoutButton.style.padding =
+                    "9px 16px";
+
+                logoutButton.style.border =
+                    "1px solid rgba(255,255,255,0.7)";
+
+                logoutButton.style.borderRadius =
+                    "8px";
+
+                logoutButton.style.background =
+                    "white";
+
+                logoutButton.style.color =
+                    "#087a3e";
+
+                logoutButton.style.fontWeight =
+                    "bold";
+
+                logoutButton.style.cursor =
+                    "pointer";
+
+                logoutButton.addEventListener(
+                    "click",
+                    function () {
+
+                        window.logoutUser();
+
+                    }
+                );
+
+                header.appendChild(
+                    logoutButton
+                );
 
             }
 
 
-        } else {
+            /* ---------------------------------------------
+               ACCOUNT BUTTONS
+            --------------------------------------------- */
 
             accountButtons.forEach(
                 function (button) {
 
                     button.onclick =
-                        window.openLogin;
+                        window.openAccount;
 
                     button.title =
-                        "Login";
+                        "Account";
 
                 }
             );
 
+
+            /* ---------------------------------------------
+               BOTTOM ACCOUNT BUTTON
+            --------------------------------------------- */
 
             if (
                 bottomAccountButton
             ) {
 
                 bottomAccountButton.onclick =
-                    window.openLogin;
-
+                    window.openAccount;
 
                 const label =
-                    bottomAccountButton
-                        .querySelector(
-                            "span:last-child"
-                        );
-
+                    bottomAccountButton.querySelector(
+                        "span:last-child"
+                    );
 
                 if (label) {
 
@@ -1195,11 +1237,58 @@ button.title =
 
             }
 
+
+            return;
+
+        }
+
+
+        /* =====================================================
+           LOGGED OUT
+        ===================================================== */
+
+        if (logoutButton) {
+
+            logoutButton.remove();
+
+        }
+
+
+        accountButtons.forEach(
+            function (button) {
+
+                button.onclick =
+                    window.openLogin;
+
+                button.title =
+                    "Login";
+
+            }
+        );
+
+
+        if (
+            bottomAccountButton
+        ) {
+
+            bottomAccountButton.onclick =
+                window.openLogin;
+
+            const label =
+                bottomAccountButton.querySelector(
+                    "span:last-child"
+                );
+
+            if (label) {
+
+                label.textContent =
+                    "Account";
+
+            }
+
         }
 
     };
-
-
 /* =========================================================
    SESSION REFRESH
 ========================================================= */
