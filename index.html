@@ -59,20 +59,55 @@
         </div>
 
 
-        <div class="header-actions">
+        <!-- DESKTOP NAVIGATION -->
+        <nav class="main-nav" aria-label="Main navigation">
 
-            <!-- MOBILE MENU -->
             <button
-                id="mobileMenuBtn"
-                class="mobile-menu-btn"
                 type="button"
-                aria-label="Open menu"
-                aria-expanded="false"
-                aria-controls="mobileNav"
+                onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
             >
-                ☰
+                🏠 Home
             </button>
 
+            <button
+                type="button"
+                onclick="document.getElementById('businesses').scrollIntoView({behavior:'smooth'})"
+            >
+                🔎 Explore
+            </button>
+
+            <button
+                type="button"
+                onclick="showToast('Saved businesses coming soon')"
+            >
+                ❤️ Saved
+            </button>
+
+            <button
+                type="button"
+                onclick="openAccount()"
+            >
+                👤 Account
+            </button>
+
+        </nav>
+
+
+        <!-- MOBILE MENU -->
+        <button
+            id="mobileMenuBtn"
+            class="mobile-menu-btn"
+            type="button"
+            aria-label="Open menu"
+            aria-expanded="false"
+            aria-controls="mobileNav"
+        >
+            ☰
+        </button>
+
+
+        <!-- HEADER ACTIONS -->
+        <div class="header-actions">
 
             <!-- NOTIFICATIONS -->
             <button
@@ -84,6 +119,71 @@
                 🔔
             </button>
 
+
+            <!-- ACCOUNT -->
+            <button
+                class="header-button"
+                type="button"
+                aria-label="Account"
+                id="accountButton"
+            >
+                👤
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- MOBILE NAVIGATION -->
+    <nav
+        id="mobileNav"
+        class="mobile-nav"
+        aria-hidden="true"
+    >
+
+        <button
+            type="button"
+            onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
+        >
+            🏠 Home
+        </button>
+
+
+        <button
+            type="button"
+            onclick="document.getElementById('businesses').scrollIntoView({behavior:'smooth'})"
+        >
+            🔎 Explore
+        </button>
+
+
+        <button
+            type="button"
+            onclick="showToast('Saved businesses coming soon')"
+        >
+            ❤️ Saved
+        </button>
+
+
+        <button
+            type="button"
+            onclick="openAccount()"
+        >
+            👤 Account
+        </button>
+
+
+        <button
+            type="button"
+            onclick="window.App.openNotifications()"
+        >
+            🔔 Notifications
+        </button>
+
+    </nav>
+
+</header>
 
             <!-- ACCOUNT -->
            <button
