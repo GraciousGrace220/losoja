@@ -634,13 +634,147 @@
 <script>
 
 /* =========================================================
-   BILL PAGE
+   LOSOJA BILL PAGE
 ========================================================= */
 
 (function () {
 
     "use strict";
 
+
+    const SUPABASE_URL =
+        "https://ycxshwgeebskdozmornh.supabase.co";
+
+    const SUPABASE_KEY =
+        "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
+
+
+    /* =====================================================
+       GET ACCESS TOKEN
+    ===================================================== */
+
+    async function getAccessToken() {
+
+        try {
+
+            if (
+                typeof window.getSupabaseAccessToken ===
+                "function"
+            ) {
+
+                return await window.getSupabaseAccessToken();
+
+            }
+
+            return null;
+
+        } catch (error) {
+
+            console.error(
+                "LosOja bills token error:",
+                error
+            );
+
+            return null;
+
+        }
+
+    }
+
+
+    /* =====================================================
+       BILL REQUEST
+    ===================================================== */
+
+    async function billRequest(
+        endpoint
+    ) {
+
+        const token =
+            await getAccessToken();
+
+
+        const headers = {
+
+            "apikey":
+                SUPABASE_KEY,
+
+            "Content-Type":
+                "application/json",
+
+            "Accept":
+                "application/json"
+
+        };
+
+
+        if (token) {
+
+            headers.Authorization =
+                "Bearer " + token;
+
+        }
+
+
+        const response =
+            await fetch(
+                SUPABASE_URL + endpoint,
+                {
+                    method:
+                        "GET",
+
+                    headers:
+                        headers
+                }
+            );
+
+
+        const text =
+            await response.text();
+
+
+        let data = null;
+
+
+        try {
+
+            data =
+                text
+                    ? JSON.parse(text)
+                    : null;
+
+        } catch {
+
+            data =
+                text;
+
+        }
+
+
+        if (!response.ok) {
+
+            console.error(
+                "LosOja bills request error:",
+                data
+            );
+
+            throw new Error(
+                data?.message ||
+                data?.error ||
+                "Unable to load bill history."
+            );
+
+        }
+
+
+        return data;
+
+    }
+
+
+    /* =====================================================
+       TAB SWITCHING
+    ===================================================== */
 
     const tabButtons =
         document.querySelectorAll(
@@ -653,10 +787,6 @@
             ".bill-form"
         );
 
-
-    /* =====================================================
-       TAB SWITCHING
-    ===================================================== */
 
     tabButtons.forEach(
         function (button) {
@@ -718,7 +848,7 @@
 
 
     /* =====================================================
-       TEST-ONLY FORM HANDLING
+       TEST-ONLY PAYMENT HANDLING
     ===================================================== */
 
     document.querySelectorAll(
@@ -744,8 +874,374 @@
 
 
     /* =====================================================
-       LOG PAGE READY
+       FORMAT SERVICE TYPE
     ===================================================== */
+
+    function formatServiceType(
+        type
+    ) {
+
+        const names = {
+
+            airtime:
+                "Airtime",
+
+            data:
+                "Data",
+
+            electricity:
+                "Electricity"
+
+        };
+
+
+        return (
+            names[type] ||
+            String(
+                type ||
+                "Bill"
+            )
+                .replace(
+                    /_/g,
+                    " "
+                )
+                .replace(
+                    /\b\w/g,
+                    function (letter) {
+                        return letter.toUpperCase();
+                    }
+                )
+        );
+
+    }
+
+
+    /* =====================================================
+       FORMAT STATUS
+    ===================================================== */
+
+    function formatStatus(
+        status
+    ) {
+
+        const names = {
+
+            pending:
+                "Pending",
+
+            successful:
+                "Successful",
+
+            failed:
+                "Failed",
+
+            reversed:
+                "Reversed"
+
+        };
+
+
+        return (
+            names[status] ||
+            String(
+                status ||
+                "Unknown"
+            )
+        );
+
+    }
+
+
+    /* =====================================================
+       FORMAT DATE
+    ===================================================== */
+
+    function formatDate(
+        value
+    ) {
+
+        if (!value) {
+
+            return "";
+
+        }
+
+
+        try {
+
+            return new Date(
+                value
+            ).toLocaleString(
+                "en-NG"
+            );
+
+        } catch {
+
+            return "";
+
+        }
+
+    }
+
+
+    /* =====================================================
+       ESCAPE HTML
+    ===================================================== */
+
+    function escapeHTML(
+        value
+    ) {
+
+        if (
+            value === null ||
+            value === undefined
+        ) {
+
+            return "";
+
+        }
+
+
+        return String(value)
+            .replace(
+                /&/g,
+                "&amp;"
+            )
+            .replace(
+                /</g,
+                "&lt;"
+            )
+            .replace(
+                />/g,
+                "&gt;"
+            )
+            .replace(
+                /"/g,
+                "&quot;"
+            )
+            .replace(
+                /'/g,
+                "&#039;"
+            );
+
+    }
+
+
+    /* =====================================================
+       LOAD BILL HISTORY
+    ===================================================== */
+
+    async function loadBillHistory() {
+
+        const container =
+            document.getElementById(
+                "billHistory"
+            );
+
+
+        if (!container) {
+
+            return;
+
+        }
+
+
+        container.innerHTML =
+            `
+            <div class="empty">
+                Loading bill history...
+            </div>
+            `;
+
+
+        try {
+
+            const user =
+                typeof window.getCurrentUser ===
+                "function"
+                    ? await window.getCurrentUser()
+                    : null;
+
+
+            if (!user?.id) {
+
+                container.innerHTML =
+                    `
+                    <div class="empty">
+                        Please login to view bill history.
+                    </div>
+                    `;
+
+                return;
+
+            }
+
+
+            const data =
+                await billRequest(
+                    `/rest/v1/bill_transactions?select=*&user_id=eq.${encodeURIComponent(
+                        user.id
+                    )}&order=created_at.desc&limit=50`
+                );
+
+
+            if (
+                !data ||
+                !data.length
+            ) {
+
+                container.innerHTML =
+                    `
+                    <div class="empty">
+                        No bill payments yet.
+                    </div>
+                    `;
+
+                return;
+
+            }
+
+
+            container.innerHTML =
+                data.map(
+                    function (transaction) {
+
+                        const amount =
+                            Number(
+                                transaction.amount ||
+                                0
+                            );
+
+
+                        const fee =
+                            Number(
+                                transaction.fee ||
+                                0
+                            );
+
+
+                        const total =
+                            Number(
+                                transaction.total_amount ||
+                                amount + fee
+                            );
+
+
+                        return `
+
+                            <div
+                                class="history-item"
+                            >
+
+                                <div
+                                    class="history-row"
+                                >
+
+                                    <div>
+
+                                        <div
+                                            class="history-type"
+                                        >
+                                            ${escapeHTML(
+                                                formatServiceType(
+                                                    transaction.service_type
+                                                )
+                                            )}
+                                        </div>
+
+                                        <div>
+                                            ${
+                                                escapeHTML(
+                                                    transaction.network ||
+                                                    transaction.provider ||
+                                                    transaction.customer_identifier ||
+                                                    ""
+                                                )
+                                            }
+                                        </div>
+
+                                        <div
+                                            class="history-date"
+                                        >
+                                            ${escapeHTML(
+                                                formatDate(
+                                                    transaction.created_at
+                                                )
+                                            )}
+                                        </div>
+
+                                        <div
+                                            class="history-date"
+                                        >
+                                            Status:
+                                            ${escapeHTML(
+                                                formatStatus(
+                                                    transaction.status
+                                                )
+                                            )}
+                                        </div>
+
+                                    </div>
+
+
+                                    <div>
+                                        <strong>
+                                            ₦${total.toLocaleString(
+                                                "en-NG",
+                                                {
+                                                    minimumFractionDigits:
+                                                        2,
+
+                                                    maximumFractionDigits:
+                                                        2
+                                                }
+                                            )}
+                                        </strong>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        `;
+
+                    }
+                ).join("");
+
+
+        } catch (error) {
+
+            console.error(
+                "LosOja bill history error:",
+                error
+            );
+
+
+            container.innerHTML =
+                `
+                <div class="error">
+                    Unable to load bill history.
+                </div>
+                `;
+
+        }
+
+    }
+
+
+    /* =====================================================
+       INITIALIZE
+    ===================================================== */
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+            loadBillHistory();
+
+        }
+    );
+
 
     console.log(
         "LosOja bills page loaded"
@@ -754,7 +1250,6 @@
 })();
 
 </script>
-
 
 </body>
 
