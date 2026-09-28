@@ -2544,16 +2544,16 @@
             --------------------------------------------- */
 
             const SUPABASE_URL =
-                "https://ycxshwgeebskdozmornh.supabase.co";
+    "https://ycxshwgeebskdozmornh.supabase.co";
 
 
-            /*
-             * Use the same existing anon/publishable key
-             * already working in LosOja.
-             */
+/*
+ * Use the same existing anon/publishable key
+ * already working in LosOja.
+ */
 
-            const SUPABASE_KEY =
-                "KEEP_YOUR_EXISTING_SUPABASE_ANON_KEY_HERE";
+const SUPABASE_KEY =
+    "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
 
 
             /* ---------------------------------------------
