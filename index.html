@@ -37,13 +37,11 @@
 
 </head>
 
+
 <body>
 
 <div class="app">
 
-<!-- =================================================
-     HEADER
-================================================== -->
 
 <!-- =================================================
      HEADER
@@ -54,62 +52,18 @@
     <div class="header-inner">
 
         <!-- LOGO -->
+
         <div class="logo">
             LosOja
         </div>
 
 
-        <!-- DESKTOP NAVIGATION -->
-        <nav class="main-nav" aria-label="Main navigation">
-
-            <button
-                type="button"
-                onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
-            >
-                🏠 Home
-            </button>
-
-            <button
-                type="button"
-                onclick="document.getElementById('businesses').scrollIntoView({behavior:'smooth'})"
-            >
-                🔎 Explore
-            </button>
-
-            <button
-                type="button"
-                onclick="showToast('Saved businesses coming soon')"
-            >
-                ❤️ Saved
-            </button>
-
-            <button
-                type="button"
-                onclick="openAccount()"
-            >
-                👤 Account
-            </button>
-
-        </nav>
-
-
-        <!-- MOBILE MENU -->
-        <button
-            id="mobileMenuBtn"
-            class="mobile-menu-btn"
-            type="button"
-            aria-label="Open menu"
-            aria-expanded="false"
-            aria-controls="mobileNav"
-        >
-            ☰
-        </button>
-
-
         <!-- HEADER ACTIONS -->
+
         <div class="header-actions">
 
             <!-- NOTIFICATIONS -->
+
             <button
                 class="header-button"
                 type="button"
@@ -121,6 +75,7 @@
 
 
             <!-- ACCOUNT -->
+
             <button
                 class="header-button"
                 type="button"
@@ -134,58 +89,10 @@
 
     </div>
 
-
-    <!-- MOBILE NAVIGATION -->
-    <nav
-        id="mobileNav"
-        class="mobile-nav"
-        aria-hidden="true"
-    >
-
-        <button
-            type="button"
-            onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
-        >
-            🏠 Home
-        </button>
-
-
-        <button
-            type="button"
-            onclick="document.getElementById('businesses').scrollIntoView({behavior:'smooth'})"
-        >
-            🔎 Explore
-        </button>
-
-
-        <button
-            type="button"
-            onclick="showToast('Saved businesses coming soon')"
-        >
-            ❤️ Saved
-        </button>
-
-
-        <button
-            type="button"
-            onclick="openAccount()"
-        >
-            👤 Account
-        </button>
-
-
-        <button
-            type="button"
-            onclick="window.App.openNotifications()"
-        >
-            🔔 Notifications
-        </button>
-
-    </nav>
-
 </header>
 
-           
+
+
 <!-- =================================================
      HERO
 ================================================== -->
@@ -198,10 +105,12 @@
             Discover what you need
         </div>
 
+
         <h1>
             Find what you need
             across Nigeria.
         </h1>
+
 
         <p>
             Discover businesses, services,
@@ -225,12 +134,14 @@
                     🔍
                 </span>
 
+
                 <input
                     id="searchInput"
                     type="search"
                     placeholder="Search businesses, services..."
                     autocomplete="off"
                 >
+
 
                 <button type="submit">
                     Search
@@ -277,6 +188,7 @@
                 <h2>
                     Categories
                 </h2>
+
 
                 <button
                     class="section-link"
@@ -520,6 +432,7 @@
                     Nearby on LosOja
                 </h2>
 
+
                 <button
                     class="section-link"
                     type="button"
@@ -573,6 +486,7 @@
                 <h2>
                     Explore more
                 </h2>
+
 
                 <button
                     class="section-link"
@@ -987,6 +901,8 @@
 
 </div>
 
+
+
 <!-- =================================================
      BUSINESS DETAILS MODAL
 ================================================== -->
@@ -1107,6 +1023,9 @@
     </div>
 
 </div>
+
+
+
 <!-- =================================================
      LOGIN MODAL
 ================================================== -->
@@ -1129,15 +1048,18 @@
             ×
         </button>
 
-       <h2>
-    Welcome Back
-</h2>
 
-<p>
-    Log in to your LosOja account.
-</p>
+        <h2>
+            Welcome Back
+        </h2>
 
-<form id="loginForm">
+
+        <p>
+            Log in to your LosOja account.
+        </p>
+
+
+        <form id="loginForm">
 
             <label for="loginEmail">
                 Email
@@ -1151,6 +1073,7 @@
                 required
             >
 
+
             <label for="loginPassword">
                 Password
             </label>
@@ -1163,12 +1086,14 @@
                 required
             >
 
+
             <button
                 type="submit"
                 class="primary-button"
             >
                 Log In
             </button>
+
 
             <button
                 type="button"
@@ -1179,6 +1104,7 @@
             </button>
 
         </form>
+
 
         <p
             id="loginError"
@@ -1214,13 +1140,16 @@
             ×
         </button>
 
+
         <h2>
             Create Your LosOja Account
         </h2>
 
+
         <p>
             Sign up to add businesses and use LosOja features.
         </p>
+
 
         <form id="signupForm">
 
@@ -1236,6 +1165,7 @@
                 required
             >
 
+
             <label for="signupEmail">
                 Email
             </label>
@@ -1247,6 +1177,7 @@
                 autocomplete="email"
                 required
             >
+
 
             <label for="signupPassword">
                 Password
@@ -1260,6 +1191,7 @@
                 required
             >
 
+
             <button
                 type="submit"
                 class="primary-button"
@@ -1269,11 +1201,13 @@
 
         </form>
 
+
         <p
             id="signupError"
             class="error-message"
             aria-live="polite"
         ></p>
+
 
         <button
             type="button"
@@ -1366,6 +1300,7 @@
         class="nav-add-button"
         type="button"
         aria-label="Add business"
+        onclick="openModal('addBusinessModal')"
     >
         +
     </button>
@@ -1423,8 +1358,9 @@
 
 
 
-
-<!-- ================================================= SCRIPTS ================================================== -->
+<!-- =================================================
+     SCRIPTS
+================================================== -->
 
 <script src="js/businesses.js?v=4"></script>
 
@@ -1432,44 +1368,13 @@
 
 <script src="js/app.js?v=4"></script>
 
+
 <script>
+
 "use strict";
 
+
 document.addEventListener("DOMContentLoaded", function () {
-
-    /* =========================================
-       MOBILE MENU
-    ========================================= */
-
-    const mobileMenuBtn =
-        document.getElementById("mobileMenuBtn");
-
-    const mobileNav =
-        document.getElementById("mobileNav");
-
-    if (mobileMenuBtn && mobileNav) {
-
-        mobileMenuBtn.addEventListener(
-            "click",
-            function () {
-
-                const isOpen =
-                    mobileNav.classList.toggle("open");
-
-                mobileMenuBtn.setAttribute(
-                    "aria-expanded",
-                    isOpen ? "true" : "false"
-                );
-
-                mobileNav.setAttribute(
-                    "aria-hidden",
-                    isOpen ? "false" : "true"
-                );
-
-            }
-        );
-
-    }
 
 
     /* =========================================
@@ -1479,8 +1384,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const createAccountBtn =
         document.getElementById("createAccountBtn");
 
+
     const backToLoginBtn =
         document.getElementById("backToLoginBtn");
+
 
     if (createAccountBtn) {
 
@@ -1518,6 +1425,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 }
 
+
                 if (
                     typeof window.openLogin ===
                     "function"
@@ -1533,6 +1441,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
+
     /* =========================================
        RETURN TO BARTER / OPEN LOGIN
     ========================================= */
@@ -1542,13 +1451,16 @@ document.addEventListener("DOMContentLoaded", function () {
             "losoja_return_to_barter"
         );
 
+
     const urlParams =
         new URLSearchParams(
             window.location.search
         );
 
+
     const openLoginParam =
         urlParams.get("openLogin");
+
 
     if (
         returnToBarter === "true" ||
@@ -1564,9 +1476,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 ) {
 
                     window.openLogin();
+
                     return;
 
                 }
+
 
                 setTimeout(
                     openLoginWhenReady,
@@ -1575,29 +1489,54 @@ document.addEventListener("DOMContentLoaded", function () {
 
             };
 
+
         openLoginWhenReady();
 
     }
 
 });
+
 </script>
+
+
+
 <script>
-document.addEventListener("DOMContentLoaded", function () {
 
-    const accountButton =
-        document.getElementById("accountButton");
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
 
-    if (!accountButton) return;
+        const accountButton =
+            document.getElementById(
+                "accountButton"
+            );
 
-    accountButton.addEventListener(
-        "click",
-        function () {
-            window.openAccount();
-        }
-    );
 
-});
+        if (!accountButton) return;
+
+
+        accountButton.addEventListener(
+            "click",
+            function () {
+
+                if (
+                    typeof window.openAccount ===
+                    "function"
+                ) {
+
+                    window.openAccount();
+
+                }
+
+            }
+        );
+
+    }
+);
+
 </script>
+
+
 </body>
 
 </html>
