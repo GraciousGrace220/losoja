@@ -126,6 +126,7 @@
             align-items: center;
             padding: 14px 0;
             border-bottom: 1px solid #e5e7eb;
+            gap: 15px;
         }
 
         .transaction:last-child {
@@ -146,6 +147,7 @@
         .transaction-amount {
             font-weight: bold;
             font-size: 14px;
+            white-space: nowrap;
         }
 
         .positive {
@@ -178,6 +180,10 @@
             margin-bottom: 15px;
             display: none;
             font-size: 14px;
+        }
+
+        .escrow-status {
+            text-transform: capitalize;
         }
 
         @media (max-width: 480px) {
@@ -278,9 +284,7 @@
 
         <h2>Transaction History</h2>
 
-        <div
-            id="transactions"
-        >
+        <div id="transactions">
             <div class="status">
                 Loading transactions...
             </div>
@@ -720,9 +724,220 @@ function withdrawFunds() {
 
 function openEscrowInfo() {
 
-    alert(
-        "Your LosOja escrow transactions will appear here."
+    const existing =
+        document.getElementById(
+            "escrowInfo"
+        );
+
+    if (existing) {
+
+        existing.remove();
+
+        return;
+    }
+
+
+    const section =
+        document.createElement(
+            "section"
+        );
+
+    section.id =
+        "escrowInfo";
+
+    section.className =
+        "section";
+
+
+    section.innerHTML = `
+        <h2>Escrow Transactions</h2>
+
+        <div class="status">
+            Loading escrow transactions...
+        </div>
+    `;
+
+
+    const main =
+        document.querySelector(
+            "main"
+        );
+
+
+    if (!main) {
+
+        return;
+    }
+
+
+    main.appendChild(
+        section
     );
+
+
+    loadEscrowTransactions(
+        section
+    );
+}
+
+
+/* =========================================================
+   LOAD ESCROW TRANSACTIONS
+========================================================= */
+
+async function loadEscrowTransactions(
+    section
+) {
+
+    try {
+
+        if (!currentUser) {
+
+            throw new Error(
+                "Please log in to view escrow transactions."
+            );
+        }
+
+
+        const userId =
+            encodeURIComponent(
+                currentUser.id
+            );
+
+
+        const transactions =
+            await supabaseRequest(
+                "/rest/v1/escrow_transactions" +
+                "?select=*" +
+                "&or=" +
+                "(buyer_id.eq." +
+                userId +
+                ",seller_id.eq." +
+                userId +
+                ")" +
+                "&limit=30"
+            );
+
+
+        if (
+            !transactions ||
+            !transactions.length
+        ) {
+
+            section.innerHTML = `
+                <h2>Escrow Transactions</h2>
+
+                <div class="empty">
+                    No escrow transactions yet.
+                </div>
+            `;
+
+            return;
+        }
+
+
+        section.innerHTML = `
+            <h2>Escrow Transactions</h2>
+        `;
+
+
+        transactions.forEach(
+            function(transaction) {
+
+                const amount =
+                    Number(
+                        transaction.amount || 0
+                    );
+
+
+                const status =
+                    String(
+                        transaction.status ||
+                        "pending"
+                    );
+
+
+                const description =
+                    transaction.description ||
+                    "LosOja transaction";
+
+
+                const isBuyer =
+                    String(
+                        transaction.buyer_id
+                    ) ===
+                    String(
+                        currentUser.id
+                    );
+
+
+                const item =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                item.className =
+                    "transaction";
+
+
+                item.innerHTML = `
+                    <div>
+
+                        <div class="transaction-name">
+                            ${escapeHTML(
+                                description
+                            )}
+                        </div>
+
+                        <div class="transaction-date escrow-status">
+                            ${isBuyer ? "Buyer" : "Seller"}
+                            · ${escapeHTML(status)}
+                        </div>
+
+                    </div>
+
+                    <div class="transaction-amount">
+                        ₦${amount.toLocaleString(
+                            "en-NG",
+                            {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                            }
+                        )}
+                    </div>
+                `;
+
+
+                section.appendChild(
+                    item
+                );
+
+            }
+        );
+
+    } catch (error) {
+
+        console.error(
+            "LosOja escrow error:",
+            error
+        );
+
+
+        section.innerHTML = `
+            <h2>Escrow Transactions</h2>
+
+            <div
+                class="error"
+                style="display:block;"
+            >
+                ${escapeHTML(
+                    error.message ||
+                    "Unable to load escrow transactions."
+                )}
+            </div>
+        `;
+    }
 }
 
 
