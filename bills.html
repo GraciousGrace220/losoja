@@ -847,31 +847,690 @@
     );
 
 
-    /* =====================================================
-       TEST-ONLY PAYMENT HANDLING
-    ===================================================== */
+   /* =====================================================
+   TEST-ONLY PAYMENT HANDLING
+===================================================== */
 
-    document.querySelectorAll(
-        ".bill-form"
-    ).forEach(
-        function (form) {
+const TEST_BILL_FUNCTION_URL =
+    SUPABASE_URL +
+    "/functions/v1/test-bill-payment";
 
-            form.addEventListener(
-                "submit",
-                function (event) {
 
-                    event.preventDefault();
+/* =====================================================
+   GET CURRENT TEST TOKEN
+===================================================== */
 
-                    alert(
-                        "Live bill payments are not enabled yet."
+async function getTestToken() {
+
+    try {
+
+        if (
+            typeof window.ensureValidSupabaseSession ===
+            "function"
+        ) {
+
+            const session =
+                await window.ensureValidSupabaseSession();
+
+            return session?.access_token || null;
+
+        }
+
+
+        if (
+            typeof window.getSupabaseAccessToken ===
+            "function"
+        ) {
+
+            return await window.getSupabaseAccessToken();
+
+        }
+
+
+        return null;
+
+    } catch (error) {
+
+        console.error(
+            "LosOja test bill token error:",
+            error
+        );
+
+        return null;
+
+    }
+
+}
+
+
+/* =====================================================
+   RUN TEST BILL
+===================================================== */
+
+async function runTestBillPayment(
+    serviceType,
+    customerIdentifier,
+    amount,
+    options = {}
+) {
+
+    const token =
+        await getTestToken();
+
+
+    if (!token) {
+
+        throw new Error(
+            "Please log in to test bill payments."
+        );
+
+    }
+
+
+    const response =
+        await fetch(
+            TEST_BILL_FUNCTION_URL,
+            {
+                method:
+                    "POST",
+
+                headers: {
+
+                    "Content-Type":
+                        "application/json",
+
+                    "apikey":
+                        SUPABASE_KEY,
+
+                    "Authorization":
+                        "Bearer " + token
+
+                },
+
+                body:
+                    JSON.stringify({
+
+                        service_type:
+                            serviceType,
+
+                        customer_identifier:
+                            customerIdentifier,
+
+                        network:
+                            options.network ||
+                            "",
+
+                        provider:
+                            options.provider ||
+                            "",
+
+                        amount:
+                            Number(amount),
+
+                        status:
+                            "successful"
+
+                    })
+
+            }
+        );
+
+
+    const text =
+        await response.text();
+
+
+    let data = null;
+
+
+    try {
+
+        data =
+            text
+                ? JSON.parse(text)
+                : null;
+
+    } catch {
+
+        data =
+            null;
+
+    }
+
+
+    if (!response.ok) {
+
+        throw new Error(
+            data?.error ||
+            data?.message ||
+            "Test bill payment failed."
+        );
+
+    }
+
+
+    if (
+        !data?.success ||
+        !data?.test_mode
+    ) {
+
+        throw new Error(
+            "Unexpected test payment response."
+        );
+
+    }
+
+
+    return data;
+
+}
+
+
+/* =====================================================
+   SHOW TEST MODE
+===================================================== */
+
+function enableTestButtons() {
+
+    document
+        .querySelectorAll(
+            ".pay-btn"
+        )
+        .forEach(
+            function (button) {
+
+                button.disabled =
+                    false;
+
+            }
+        );
+
+
+    const airtimeButton =
+        document.querySelector(
+            "#airtimeForm .pay-btn"
+        );
+
+
+    const dataButton =
+        document.querySelector(
+            "#dataForm .pay-btn"
+        );
+
+
+    const electricityButton =
+        document.querySelector(
+            "#electricityForm .pay-btn"
+        );
+
+
+    if (airtimeButton) {
+
+        airtimeButton.textContent =
+            "Test Airtime";
+
+    }
+
+
+    if (dataButton) {
+
+        dataButton.textContent =
+            "Test Data";
+
+    }
+
+
+    if (electricityButton) {
+
+        electricityButton.textContent =
+            "Test Electricity";
+
+    }
+
+}
+
+
+/* =====================================================
+   TEST AIRTIME
+===================================================== */
+
+const airtimeForm =
+    document.getElementById(
+        "airtimeForm"
+    );
+
+
+if (airtimeForm) {
+
+    airtimeForm.addEventListener(
+        "submit",
+        async function (event) {
+
+            event.preventDefault();
+
+
+            const network =
+                document.getElementById(
+                    "airtimeNetwork"
+                )?.value
+                .trim()
+                .toLowerCase();
+
+
+            const phone =
+                document.getElementById(
+                    "airtimePhone"
+                )?.value
+                .trim();
+
+
+            const amount =
+                Number(
+                    document.getElementById(
+                        "airtimeAmount"
+                    )?.value
+                );
+
+
+            if (
+                !network ||
+                !phone ||
+                !amount ||
+                amount <= 0
+            ) {
+
+                alert(
+                    "Please complete the Airtime form."
+                );
+
+                return;
+
+            }
+
+
+            const button =
+                airtimeForm.querySelector(
+                    ".pay-btn"
+                );
+
+
+            if (button) {
+
+                button.disabled =
+                    true;
+
+                button.textContent =
+                    "Testing...";
+
+            }
+
+
+            try {
+
+                const result =
+                    await runTestBillPayment(
+                        "airtime",
+                        phone,
+                        amount,
+                        {
+                            network:
+                                network
+                        }
                     );
 
+
+                alert(
+                    "TEST Airtime successful.\n\n" +
+                    "Amount: ₦" +
+                    Number(
+                        result.transaction.amount
+                    ).toLocaleString(
+                        "en-NG"
+                    )
+                );
+
+
+                airtimeForm.reset();
+
+
+                await loadBillHistory();
+
+            } catch (error) {
+
+                console.error(
+                    "LosOja test Airtime error:",
+                    error
+                );
+
+
+                alert(
+                    error.message ||
+                    "Test Airtime failed."
+                );
+
+            } finally {
+
+                if (button) {
+
+                    button.disabled =
+                        false;
+
+                    button.textContent =
+                        "Test Airtime";
+
                 }
-            );
+
+            }
 
         }
     );
 
+}
+
+
+/* =====================================================
+   TEST DATA
+===================================================== */
+
+const dataForm =
+    document.getElementById(
+        "dataForm"
+    );
+
+
+if (dataForm) {
+
+    dataForm.addEventListener(
+        "submit",
+        async function (event) {
+
+            event.preventDefault();
+
+
+            const network =
+                document.getElementById(
+                    "dataNetwork"
+                )?.value
+                .trim()
+                .toLowerCase();
+
+
+            const phone =
+                document.getElementById(
+                    "dataPhone"
+                )?.value
+                .trim();
+
+
+            const plan =
+                document.getElementById(
+                    "dataPlan"
+                )?.value;
+
+
+            const planAmounts = {
+
+                small:
+                    100,
+
+                medium:
+                    500,
+
+                large:
+                    1000
+
+            };
+
+
+            const amount =
+                planAmounts[plan];
+
+
+            if (
+                !network ||
+                !phone ||
+                !amount
+            ) {
+
+                alert(
+                    "Please complete the Data form."
+                );
+
+                return;
+
+            }
+
+
+            const button =
+                dataForm.querySelector(
+                    ".pay-btn"
+                );
+
+
+            if (button) {
+
+                button.disabled =
+                    true;
+
+                button.textContent =
+                    "Testing...";
+
+            }
+
+
+            try {
+
+                const result =
+                    await runTestBillPayment(
+                        "data",
+                        phone,
+                        amount,
+                        {
+                            network:
+                                network
+                        }
+                    );
+
+
+                alert(
+                    "TEST Data purchase successful.\n\n" +
+                    "Amount: ₦" +
+                    Number(
+                        result.transaction.amount
+                    ).toLocaleString(
+                        "en-NG"
+                    )
+                );
+
+
+                dataForm.reset();
+
+
+                await loadBillHistory();
+
+            } catch (error) {
+
+                console.error(
+                    "LosOja test Data error:",
+                    error
+                );
+
+
+                alert(
+                    error.message ||
+                    "Test Data payment failed."
+                );
+
+            } finally {
+
+                if (button) {
+
+                    button.disabled =
+                        false;
+
+                    button.textContent =
+                        "Test Data";
+
+                }
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   TEST ELECTRICITY
+===================================================== */
+
+const electricityForm =
+    document.getElementById(
+        "electricityForm"
+    );
+
+
+if (electricityForm) {
+
+    electricityForm.addEventListener(
+        "submit",
+        async function (event) {
+
+            event.preventDefault();
+
+
+            const provider =
+                document.getElementById(
+                    "electricityProvider"
+                )?.value
+                .trim();
+
+
+            const meterType =
+                document.getElementById(
+                    "electricityType"
+                )?.value
+                .trim();
+
+
+            const meterNumber =
+                document.getElementById(
+                    "meterNumber"
+                )?.value
+                .trim();
+
+
+            const amount =
+                Number(
+                    document.getElementById(
+                        "electricityAmount"
+                    )?.value
+                );
+
+
+            if (
+                !provider ||
+                !meterType ||
+                !meterNumber ||
+                !amount ||
+                amount <= 0
+            ) {
+
+                alert(
+                    "Please complete the Electricity form."
+                );
+
+                return;
+
+            }
+
+
+            const button =
+                electricityForm.querySelector(
+                    ".pay-btn"
+                );
+
+
+            if (button) {
+
+                button.disabled =
+                    true;
+
+                button.textContent =
+                    "Testing...";
+
+            }
+
+
+            try {
+
+                const result =
+                    await runTestBillPayment(
+                        "electricity",
+                        meterNumber,
+                        amount,
+                        {
+                            provider:
+                                provider
+                        }
+                    );
+
+
+                alert(
+                    "TEST Electricity payment successful.\n\n" +
+                    "Amount: ₦" +
+                    Number(
+                        result.transaction.amount
+                    ).toLocaleString(
+                        "en-NG"
+                    )
+                );
+
+
+                electricityForm.reset();
+
+
+                await loadBillHistory();
+
+            } catch (error) {
+
+                console.error(
+                    "LosOja test Electricity error:",
+                    error
+                );
+
+
+                alert(
+                    error.message ||
+                    "Test Electricity payment failed."
+                );
+
+            } finally {
+
+                if (button) {
+
+                    button.disabled =
+                        false;
+
+                    button.textContent =
+                        "Test Electricity";
+
+                }
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   ENABLE TEST BUTTONS
+===================================================== */
+
+enableTestButtons();
 
     /* =====================================================
        FORMAT SERVICE TYPE
