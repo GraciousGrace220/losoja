@@ -137,7 +137,10 @@ closeModal(modal) {
     if (!modal || !modal.classList) {
         return;
     }
-
+/* Remove focus before hiding the modal */
+if (modal.contains(document.activeElement)) {
+    document.activeElement.blur();
+}
     /* Completely hide the modal */
 
     modal.classList.remove("active");
