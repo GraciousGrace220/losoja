@@ -127,6 +127,15 @@
             color: #111827;
         }
 
+        /* =====================================================
+           ESCROW CHAT BUTTON
+        ===================================================== */
+
+        .chat-btn {
+            background: #2563eb;
+            color: white;
+        }
+
         button:disabled {
             opacity: 0.6;
             cursor: not-allowed;
@@ -201,16 +210,16 @@
             margin-top: 5px;
         }
 
-       .escrow-actions {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-    margin-top: 12px;
-}
+        .escrow-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
 
-.escrow-actions button {
-    margin: 0;
-}
+        .escrow-actions button {
+            margin: 0;
+        }
 
         .escrow-note {
             color: #6b7280;
@@ -317,28 +326,28 @@
              WALLET
         ========================================== -->
 
-       <section class="card">
+        <section class="card">
 
-    <h2>Wallet</h2>
+            <h2>Wallet</h2>
 
-    <p>
-        Wallet currency:
-        <strong>NGN</strong>
-    </p>
+            <p>
+                Wallet currency:
+                <strong>NGN</strong>
+            </p>
 
-    <button
-        type="button"
-        onclick="window.location.href='bills.html'"
-        style="
-            background:#087a3e;
-            color:white;
-            margin-top:8px;
-        "
-    >
-        Pay Bills
-    </button>
+            <button
+                type="button"
+                onclick="window.location.href='bills.html'"
+                style="
+                    background:#087a3e;
+                    color:white;
+                    margin-top:8px;
+                "
+            >
+                Pay Bills
+            </button>
 
-</section>
+        </section>
 
 
         <!-- =========================================
@@ -1120,6 +1129,30 @@ function formatEscrowStatus(
 
 
 /* =========================================================
+   OPEN ESCROW CHAT
+========================================================= */
+
+function openEscrowChat(
+    escrowId
+) {
+
+    if (!escrowId) {
+
+        alert(
+            "Unable to open escrow chat."
+        );
+
+        return;
+
+    }
+
+    window.location.href =
+        `chat.html?escrow=${encodeURIComponent(escrowId)}`;
+
+}
+
+
+/* =========================================================
    LOAD ESCROW TRANSACTIONS
 ========================================================= */
 
@@ -1484,6 +1517,43 @@ async function loadEscrowTransactions(
                             <div style="margin-top:5px;">
                                 LosOja will review the dispute before the payment is released or refunded.
                             </div>
+
+                        </div>
+
+                    `;
+
+                }
+
+
+                /*
+                   CHAT BUTTON
+                   
+                   This is added AFTER the escrow
+                   action logic so it does not overwrite
+                   any existing Ship / Refund / Confirm /
+                   Dispute / Release buttons.
+                */
+
+                if (
+                    isBuyer ||
+                    isSeller
+                ) {
+
+                    actions += `
+
+                        <div class="escrow-actions">
+
+                            <button
+                                class="chat-btn"
+                                onclick="openEscrowChat(
+                                    '${transaction.id}'
+                                )"
+                            >
+                                ${isBuyer
+                                    ? "Chat with Seller"
+                                    : "Chat with Buyer"
+                                }
+                            </button>
 
                         </div>
 
