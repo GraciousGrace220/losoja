@@ -981,7 +981,59 @@ async function findOrCreateConversation() {
     let query;
 
 
-    if (currentListingId) {
+    /*
+       OJA CHAT
+
+       Find the conversation using
+       the Oja listing ID and both users.
+    */
+
+    if (currentOjaListingId) {
+
+        query =
+            "/rest/v1/conversations" +
+            "?select=*" +
+
+            "&oja_listing_id=eq." +
+            encodeURIComponent(
+                currentOjaListingId
+            ) +
+
+            "&or=(" +
+
+            "and(user_one_id.eq." +
+            encodeURIComponent(
+                currentUser.id
+            ) +
+
+            ",user_two_id.eq." +
+            encodeURIComponent(
+                currentOtherUserId
+            ) +
+            ")," +
+
+            "and(user_one_id.eq." +
+            encodeURIComponent(
+                currentOtherUserId
+            ) +
+
+            ",user_two_id.eq." +
+            encodeURIComponent(
+                currentUser.id
+            ) +
+
+            ")" +
+
+            ")";
+
+
+    /*
+       BARTER CHAT
+
+       Keep the existing barter behavior.
+    */
+
+    } else if (currentListingId) {
 
         query =
             "/rest/v1/conversations" +
@@ -1018,6 +1070,11 @@ async function findOrCreateConversation() {
             ")" +
 
             ")";
+
+
+    /*
+       NORMAL CHAT
+    */
 
     } else {
 
@@ -1069,6 +1126,13 @@ async function findOrCreateConversation() {
     }
 
 
+    /*
+       Create the conversation.
+
+       Keep barter_listing_id and add
+       Oja listing ID separately.
+    */
+
     const conversation = {
 
         user_one_id:
@@ -1078,7 +1142,10 @@ async function findOrCreateConversation() {
             currentOtherUserId,
 
         barter_listing_id:
-            currentListingId || null
+            currentListingId || null,
+
+        oja_listing_id:
+            currentOjaListingId || null
 
     };
 
@@ -1110,7 +1177,6 @@ async function findOrCreateConversation() {
 
     return created[0];
 }
-
 
 /* =========================================================
    LOAD MESSAGES
@@ -1437,6 +1503,94 @@ async function sendMessage() {
 
 
 /* =========================================================
+   LOAD OJA LISTING
+========================================================= */
+
+async function loadOjaListing(listingId) {
+
+    if (!listingId) {
+        return null;
+    }
+
+    try {
+
+        const listings =
+            await supabaseRequest(
+
+                "/rest/v1/oja_listings" +
+
+                "?select=" +
+                "id,user_id,title,description,category,price,currency,location,status,created_at" +
+
+                "&id=eq." +
+                encodeURIComponent(
+                    listingId
+                )
+            );
+
+
+        if (
+            !Array.isArray(listings) ||
+            !listings[0]
+        ) {
+
+            console.error(
+                "LosOja Oja listing not found."
+            );
+
+            return null;
+        }
+
+
+        const listing =
+            listings[0];
+
+
+        const images =
+            await supabaseRequest(
+
+                "/rest/v1/oja_listing_images" +
+
+                "?select=id,image_url,sort_order" +
+
+                "&listing_id=eq." +
+                encodeURIComponent(
+                    listingId
+                ) +
+
+                "&order=sort_order.asc"
+            );
+
+
+        currentOjaListing =
+            listing;
+
+
+        currentOjaImages =
+            Array.isArray(images)
+                ? images
+                : [];
+
+
+        currentOjaListingId =
+            listing.id;
+
+
+        return listing;
+
+
+    } catch (error) {
+
+        console.error(
+            "LosOja Oja listing load failed:",
+            error
+        );
+
+        return null;
+    }
+}
+
+/* =========================================================
    LOAD CONVERSATIONS
 ========================================================= */
 
@@ -1446,7 +1600,6 @@ async function loadConversations() {
 
         return;
     }
-
 
     const conversations =
         await supabaseRequest(
@@ -1474,7 +1627,6 @@ async function loadConversations() {
             "&order=updated_at.desc"
         );
 
-
     renderConversationList(
         Array.isArray(
             conversations
@@ -1483,7 +1635,6 @@ async function loadConversations() {
             : []
     );
 }
-
 
 /* =========================================================
    RENDER CONVERSATION LIST
@@ -1679,8 +1830,52 @@ async function openSpecificChat() {
         params.get("listing");
 
 
+    currentOjaListingId =
+        params.get("oja_listing");
+
+
     currentEscrowId =
         params.get("escrow");
+
+
+    /*
+       OJA CHAT
+
+       Load the Oja item first.
+       The seller ID comes directly
+       from the listing.
+    */
+
+    if (currentOjaListingId) {
+
+        const ojaListing =
+            await loadOjaListing(
+                currentOjaListingId
+            );
+
+
+        if (!ojaListing) {
+
+            throw new Error(
+                "Oja listing could not be found."
+            );
+        }
+
+
+        if (
+            ojaListing.status !==
+            "available"
+        ) {
+
+            throw new Error(
+                "This Oja item is no longer available."
+            );
+        }
+
+
+        currentOtherUserId =
+            ojaListing.user_id;
+    }
 
 
     /*
