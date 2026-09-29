@@ -957,13 +957,30 @@ async function depositFunds() {
 }
 
 
+```javascript
 /* =========================================================
    WITHDRAW
 ========================================================= */
 
 async function withdrawFunds() {
 
+    const withdrawButton =
+        document.querySelector(".withdraw-btn");
+
     try {
+
+        /* ================================================
+           PREVENT DOUBLE CLICK
+        ================================================= */
+
+        if (withdrawButton) {
+
+            withdrawButton.disabled = true;
+            withdrawButton.textContent =
+                "Checking...";
+
+        }
+
 
         const userId =
             await getCurrentUserId();
@@ -1046,6 +1063,13 @@ async function withdrawFunds() {
         /* ================================================
            LOAD BANKS
         ================================================= */
+
+        if (withdrawButton) {
+
+            withdrawButton.textContent =
+                "Loading banks...";
+
+        }
 
         const banksResponse =
             await fetch(
@@ -1169,11 +1193,6 @@ async function withdrawFunds() {
             }
 
 
-            /*
-             * If there is only one result,
-             * select it automatically.
-             */
-
             if (
                 matches.length === 1
             ) {
@@ -1185,12 +1204,6 @@ async function withdrawFunds() {
 
             }
 
-
-            /*
-             * Multiple results.
-             * Let the user choose from the
-             * matching banks only.
-             */
 
             const matchList =
                 matches
@@ -1292,6 +1305,13 @@ async function withdrawFunds() {
            VERIFY ACCOUNT
         ================================================= */
 
+        if (withdrawButton) {
+
+            withdrawButton.textContent =
+                "Verifying account...";
+
+        }
+
         const verifyResponse =
             await fetch(
                 `${SUPABASE_URL}/functions/v1/withdraw-funds`,
@@ -1388,6 +1408,13 @@ async function withdrawFunds() {
            PROCESS WITHDRAWAL
         ================================================= */
 
+        if (withdrawButton) {
+
+            withdrawButton.textContent =
+                "Processing...";
+
+        }
+
         const withdrawalResponse =
             await fetch(
                 `${SUPABASE_URL}/functions/v1/withdraw-funds`,
@@ -1425,6 +1452,69 @@ async function withdrawFunds() {
         const withdrawalResult =
             await withdrawalResponse.json();
 
+
+        /* ================================================
+           PAYSTACK PAYOUT RESTRICTION
+        ================================================= */
+
+        const payoutUnavailable =
+            withdrawalResult?.payout_available === false ||
+            String(
+                withdrawalResult?.error || ""
+            )
+                .toLowerCase()
+                .includes(
+                    "third-party payout"
+                ) ||
+            String(
+                withdrawalResult?.error || ""
+            )
+                .toLowerCase()
+                .includes(
+                    "third party payout"
+                ) ||
+            String(
+                withdrawalResult?.error || ""
+            )
+                .toLowerCase()
+                .includes(
+                    "starter business"
+                );
+
+
+        if (payoutUnavailable) {
+
+            alert(
+
+                "LosOja Withdrawals\n\n" +
+
+                "Withdrawals are temporarily unavailable because Paystack has not enabled third-party payouts for this LosOja account yet.\n\n" +
+
+                "Your withdrawal was NOT sent to the bank.\n\n" +
+
+                "If any wallet funds were reserved, they have been returned to your LosOja balance.\n\n" +
+
+                "You can continue using your LosOja wallet for available features."
+
+            );
+
+
+            /* ============================================
+               REFRESH BALANCE + TRANSACTIONS
+            ============================================ */
+
+            await loadWallet();
+
+            await loadTransactions();
+
+            return;
+
+        }
+
+
+        /* ================================================
+           OTHER WITHDRAWAL ERRORS
+        ================================================= */
 
         if (
             !withdrawalResponse.ok ||
@@ -1491,15 +1581,81 @@ async function withdrawFunds() {
         );
 
 
-        alert(
-            error.message ||
-            "Unable to process withdrawal."
-        );
+        /* ================================================
+           USER-FRIENDLY PAYOUT ERROR
+        ================================================= */
+
+        const errorMessage =
+            String(
+                error?.message || ""
+            );
+
+
+        const payoutError =
+            errorMessage
+                .toLowerCase()
+                .includes(
+                    "third-party payout"
+                ) ||
+            errorMessage
+                .toLowerCase()
+                .includes(
+                    "third party payout"
+                ) ||
+            errorMessage
+                .toLowerCase()
+                .includes(
+                    "starter business"
+                );
+
+
+        if (payoutError) {
+
+            alert(
+
+                "LosOja Withdrawals\n\n" +
+
+                "Withdrawals are temporarily unavailable because Paystack has not enabled third-party payouts for this LosOja account yet.\n\n" +
+
+                "No bank transfer was made.\n\n" +
+
+                "Please try again after payout access has been enabled."
+
+            );
+
+        } else {
+
+            alert(
+                errorMessage ||
+                "Unable to process withdrawal."
+            );
+
+        }
+
+    } finally {
+
+        /* ================================================
+           RESTORE BUTTON
+        ================================================= */
+
+        if (withdrawButton) {
+
+            withdrawButton.disabled = false;
+
+            withdrawButton.textContent =
+                "Withdraw";
+
+        }
 
     }
 
 }
-        
+```
+
+This leaves the rest of your `balance.html` unchanged.
+
+**Important:** this does not bypass Paystack's restriction. It simply makes LosOja handle the restriction properly and keeps the user-facing experience clean. Your server-side refund logic remains responsible for returning reserved funds when the payout is rejected.
+
 
 /* =========================================================
    RELEASE ESCROW
