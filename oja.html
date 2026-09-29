@@ -391,7 +391,7 @@
 
     <!-- =====================================================
          OJA
-    ====================================================== -->
+    ===================================================== -->
 
     <main class="oja-page">
 
@@ -757,31 +757,32 @@
            LOGIN
         ===================================================== */
 
-      async function getOjaCurrentUser() {
+        async function getOjaCurrentUser() {
 
-    if (
-        typeof window.ensureValidSupabaseSession ===
-        "function"
-    ) {
+            if (
+                typeof window.ensureValidSupabaseSession ===
+                "function"
+            ) {
 
-        const session =
-            await window.ensureValidSupabaseSession();
+                const session =
+                    await window.ensureValidSupabaseSession();
 
-        return session?.user || null;
-    }
+                return session?.user || null;
+            }
 
-    if (
-        typeof window.getCurrentUser ===
-        "function"
-    ) {
+            if (
+                typeof window.getCurrentUser ===
+                "function"
+            ) {
 
-        return await window.getCurrentUser();
-    }
+                return await window.getCurrentUser();
+            }
 
-    return null;
-}
+            return null;
+        }
 
-        function updateLoginButton() {
+
+        async function updateLoginButton() {
 
             const button =
                 document.getElementById(
@@ -792,8 +793,8 @@
                 return;
             }
 
-          const user =
-    getOjaCurrentUser();
+            const user =
+                await getOjaCurrentUser();
 
             if (user) {
 
@@ -897,10 +898,10 @@
            POST ITEM MODAL
         ===================================================== */
 
-        function startPosting() {
+        async function startPosting() {
 
-           const user =
-    getOjaCurrentUser();
+            const user =
+                await getOjaCurrentUser();
 
             if (!user) {
 
@@ -1123,6 +1124,7 @@
                 listingsContainer.innerHTML =
                     `
                     <div class="oja-empty">
+
                         <div class="oja-empty-icon">
                             ⚠️
                         </div>
@@ -1134,6 +1136,7 @@
                         <p>
                             Please refresh and try again.
                         </p>
+
                     </div>
                     `;
 
@@ -1340,8 +1343,8 @@
 
                     event.preventDefault();
 
-                   const user =
-                       getOjaCurrentUser();
+                    const user =
+                        await getOjaCurrentUser();
 
                     if (!user || !user.id) {
 
