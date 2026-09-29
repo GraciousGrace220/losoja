@@ -757,31 +757,17 @@
            LOGIN
         ===================================================== */
 
-        function getCurrentUser() {
+       function getCurrentUser() {
 
-            try {
+    if (
+        typeof window.getCurrentUser ===
+        "function"
+    ) {
+        return window.getCurrentUser();
+    }
 
-                const raw =
-                    localStorage.getItem(
-                        "losoja_current_user"
-                    );
-
-                if (!raw) {
-                    return null;
-                }
-
-                return JSON.parse(raw);
-
-            } catch (error) {
-
-                console.error(
-                    "LosOja user lookup error:",
-                    error
-                );
-
-                return null;
-            }
-        }
+    return null;
+}
 
 
         function updateLoginButton() {
