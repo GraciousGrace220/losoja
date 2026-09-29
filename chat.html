@@ -412,6 +412,1250 @@
 
 <script src="js/auth.js?v=2"></script>
 
-<script> "use strict"; const SUPABASE_URL = "https://ycxshwgeebskdozmornh.supabase.co"; const SUPABASE_KEY = "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe"; let currentUser = null; let currentConversationId = null; let currentOtherUserId = null; let currentListingId = null; let messagePolling = null; /* ========================================================= HELPERS ========================================================= */ function showError(message) { const box = document.getElementById( "errorMessage" ); if (!box) return; box.textContent = message; box.style.display = "block"; } function clearError() { const box = document.getElementById( "errorMessage" ); if (!box) return; box.textContent = ""; box.style.display = "none"; } function goToLogin() { localStorage.setItem( "losoja_return_to_chat", window.location.href ); if ( typeof window.openLogin === "function" ) { window.openLogin(); return; } window.location.href = "index.html"; } function getAccessToken() { if ( typeof window.getSupabaseAccessToken === "function" ) { return window.getSupabaseAccessToken(); } return null; } function getHeaders() { const token = getAccessToken(); return { "apikey": SUPABASE_KEY, "Authorization": "Bearer " + (token || SUPABASE_KEY), "Content-Type": "application/json", "Prefer": "return=representation" }; } async function supabaseRequest( path, options = {} ) { const response = await fetch( SUPABASE_URL + path, { ...options, headers: { ...getHeaders(), ...(options.headers || {}) } } ); const text = await response.text(); let data = null; try { data = text ? JSON.parse(text) : null; } catch { data = text; } if (!response.ok) { console.error( "LosOja Supabase error:", response.status, data ); throw new Error( data?.message || data?.error_description || data?.error || "Supabase request failed." ); } return data; } /* ========================================================= FIND OR CREATE CONVERSATION ========================================================= */ async function findOrCreateConversation() { if (!currentUser) { throw new Error( "You must be logged in." ); } if (!currentOtherUserId) { throw new Error( "The other user could not be found." ); } if ( currentOtherUserId === currentUser.id ) { throw new Error( "You cannot chat with yourself." ); } let query; if (currentListingId) { query = "/rest/v1/conversations" + "?select=*" + "&barter_listing_id=eq." + encodeURIComponent( currentListingId ) + "&or=(" + "and(user_one_id.eq." + encodeURIComponent( currentUser.id ) + ",user_two_id.eq." + encodeURIComponent( currentOtherUserId ) + ")," + "and(user_one_id.eq." + encodeURIComponent( currentOtherUserId ) + ",user_two_id.eq." + encodeURIComponent( currentUser.id ) + ")" + ")"; } else { query = "/rest/v1/conversations" + "?select=*" + "&or=(" + "and(user_one_id.eq." + encodeURIComponent( currentUser.id ) + ",user_two_id.eq." + encodeURIComponent( currentOtherUserId ) + ")," + "and(user_one_id.eq." + encodeURIComponent( currentOtherUserId ) + ",user_two_id.eq." + encodeURIComponent( currentUser.id ) + ")" + ")"; } const existing = await supabaseRequest( query ); if ( Array.isArray(existing) && existing.length > 0 ) { return existing[0]; } const conversation = { user_one_id: currentUser.id, user_two_id: currentOtherUserId, barter_listing_id: currentListingId || null }; const created = await supabaseRequest( "/rest/v1/conversations", { method: "POST", body: JSON.stringify( conversation ) } ); if ( !Array.isArray(created) || !created[0] ) { throw new Error( "Conversation could not be created." ); } return created[0]; } /* ========================================================= LOAD MESSAGES ========================================================= */ async function loadMessages() { if (!currentConversationId) { return; } const messages = await supabaseRequest( "/rest/v1/messages" + "?select=*" + "&conversation_id=eq." + encodeURIComponent( currentConversationId ) + "&order=created_at.asc" ); renderMessages( Array.isArray(messages) ? messages : [] ); } /* ========================================================= RENDER MESSAGES ========================================================= */ function renderMessages( messages ) { const container = document.getElementById( "messages" ); if (!container) { return; } if (!messages.length) { container.innerHTML = ` <div class="empty-message"> No messages yet.<br> Start the conversation. </div> `; return; } container.innerHTML = messages .map( message => { const mine = message.sender_id === currentUser.id; const time = message.created_at ? new Date( message.created_at ).toLocaleTimeString( [], { hour: "2-digit", minute: "2-digit" } ) : ""; return ` <div class="message-row ${ mine ? "mine" : "" }" > <div class="message-bubble" > <div> ${escapeHTML( message.message )} </div> <div class="message-time" > ${time} </div> </div> </div> `; } ) .join(""); container.scrollTop = container.scrollHeight; } /* ========================================================= ESCAPE HTML ========================================================= */ function escapeHTML( value ) { return String( value ?? "" ) .replace( /&/g, "&amp;" ) .replace( /</g, "&lt;" ) .replace( />/g, "&gt;" ) .replace( /"/g, "&quot;" ) .replace( /'/g, "&#039;" ); } /* ========================================================= SEND MESSAGE ========================================================= */ async function sendMessage() { if ( !currentUser || !currentConversationId ) { showError( "Chat is not ready yet." ); return; } const input = document.getElementById( "messageInput" ); const button = document.getElementById( "sendButton" ); if (!input) { return; } const cleanMessage = input.value.trim(); if (!cleanMessage) { return; } if (cleanMessage.length > 2000) { showError( "Message is too long." ); return; } clearError(); if (button) { button.disabled = true; } try { const message = { conversation_id: currentConversationId, sender_id: currentUser.id, message: cleanMessage }; await supabaseRequest( "/rest/v1/messages", { method: "POST", body: JSON.stringify( message ) } ); input.value = ""; console.log( "LosOja message saved." ); await loadMessages(); } catch (error) { console.error( "LosOja send message error:", error ); showError( error.message || "Message could not be sent." ); } finally { if (button) { button.disabled = false; } input.focus(); } } /* ========================================================= LOAD CONVERSATIONS ========================================================= */ async function loadConversations() { if (!currentUser) { return; } const conversations = await supabaseRequest( "/rest/v1/conversations" + "?select=*" + "&or=(" + "user_one_id.eq." + encodeURIComponent( currentUser.id ) + "," + "user_two_id.eq." + encodeURIComponent( currentUser.id ) + ")" + "&order=updated_at.desc" ); renderConversationList( Array.isArray(conversations) ? conversations : [] ); } /* ========================================================= RENDER CONVERSATION LIST ========================================================= */ async function renderConversationList( conversations ) { const container = document.getElementById( "conversationList" ); if (!container) { return; } if (!conversations.length) { container.innerHTML = ` <div class="status"> You do not have any chats yet. </div> `; return; } container.innerHTML = ""; for ( const conversation of conversations ) { const otherUserId = conversation.user_one_id === currentUser.id ? conversation.user_two_id : conversation.user_one_id; let listingTitle = "General chat"; if ( conversation.barter_listing_id ) { try { const listing = await supabaseRequest( "/rest/v1/barter_listings" + "?select=title" + "&id=eq." + encodeURIComponent( conversation.barter_listing_id ) ); if ( Array.isArray(listing) && listing[0] ) { listingTitle = listing[0].title || "Trade listing"; } } catch (error) { console.warn( "Could not load listing:", error ); } } const card = document.createElement( "div" ); card.className = "conversation-card"; card.innerHTML = ` <div class="conversation-title" > ${escapeHTML( listingTitle )} </div> <div class="conversation-time" > Open chat </div> `; card.addEventListener( "click", () => { const url = "chat.html" + "?user=" + encodeURIComponent( otherUserId ) + ( conversation.barter_listing_id ? "&listing=" + encodeURIComponent( conversation.barter_listing_id ) : "" ); window.location.href = url; } ); container.appendChild( card ); } } /* ========================================================= OPEN SPECIFIC CHAT ========================================================= */ async function openSpecificChat() { const params = new URLSearchParams( window.location.search ); currentOtherUserId = params.get("user"); currentListingId = params.get("listing"); if (!currentOtherUserId) { await loadConversations(); return; } if ( currentOtherUserId === currentUser.id ) { showError( "You cannot open a chat with yourself." ); return; } document.getElementById( "conversationList" ).style.display = "none"; document.getElementById( "chatSection" ).style.display = "block"; document.getElementById( "chatUser" ).textContent = "Chat with Owner"; if (currentListingId) { document.getElementById( "listingInfo" ).textContent = "Trade listing"; } const conversation = await findOrCreateConversation(); currentConversationId = conversation.id; await loadMessages(); if (messagePolling) { clearInterval( messagePolling ); } messagePolling = setInterval( async () => { try { await loadMessages(); } catch (error) { console.warn( "Message refresh failed:", error ); } }, 3000 ); } /* ========================================================= AUTH INITIALIZATION ========================================================= */ async function initializeChat() { clearError(); try { if ( typeof window.getCurrentUser !== "function" ) { throw new Error( "LosOja authentication is not available." ); } currentUser = await window.getCurrentUser(); if (!currentUser) { document.getElementById( "status" ).innerHTML = "<strong>Please login to use chat.</strong>"; document.getElementById( "conversationList" ).innerHTML = ` <div class="status"> Please login to send and receive messages. </div> `; return; } document.getElementById( "status" ).innerHTML = "<strong>Connected</strong>"; await openSpecificChat(); } catch (error) { console.error( "LosOja chat initialization error:", error ); showError( error.message || "Chat could not be loaded." ); } } /* ========================================================= FORM ========================================================= */ document .getElementById( "chatForm" ) .addEventListener( "submit", event => { event.preventDefault(); sendMessage(); } ); /* ========================================================= START ========================================================= */ document.addEventListener( "DOMContentLoaded", initializeChat ); </script>
+<script>
 
-</body> </html>
+"use strict";
+
+
+const SUPABASE_URL =
+    "https://ycxshwgeebskdozmornh.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
+
+
+let currentUser = null;
+
+let currentConversationId = null;
+
+let currentOtherUserId = null;
+
+let currentListingId = null;
+
+let currentEscrowId = null;
+
+let currentEscrow = null;
+
+let messagePolling = null;
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function showError(message) {
+
+    const box =
+        document.getElementById(
+            "errorMessage"
+        );
+
+    if (!box) return;
+
+    box.textContent = message;
+
+    box.style.display = "block";
+}
+
+
+function clearError() {
+
+    const box =
+        document.getElementById(
+            "errorMessage"
+        );
+
+    if (!box) return;
+
+    box.textContent = "";
+
+    box.style.display = "none";
+}
+
+
+function goToLogin() {
+
+    localStorage.setItem(
+        "losoja_return_to_chat",
+        window.location.href
+    );
+
+    if (
+        typeof window.openLogin ===
+        "function"
+    ) {
+
+        window.openLogin();
+
+        return;
+    }
+
+    window.location.href =
+        "index.html";
+}
+
+
+function getAccessToken() {
+
+    if (
+        typeof window.getSupabaseAccessToken ===
+        "function"
+    ) {
+
+        return window.getSupabaseAccessToken();
+    }
+
+    return null;
+}
+
+
+function getHeaders() {
+
+    const token =
+        getAccessToken();
+
+    return {
+
+        "apikey":
+            SUPABASE_KEY,
+
+        "Authorization":
+            "Bearer " +
+            (token || SUPABASE_KEY),
+
+        "Content-Type":
+            "application/json",
+
+        "Prefer":
+            "return=representation"
+
+    };
+}
+
+
+async function supabaseRequest(
+    path,
+    options = {}
+) {
+
+    const response =
+        await fetch(
+            SUPABASE_URL + path,
+            {
+                ...options,
+
+                headers: {
+                    ...getHeaders(),
+
+                    ...(options.headers || {})
+                }
+            }
+        );
+
+    const text =
+        await response.text();
+
+    let data = null;
+
+    try {
+
+        data =
+            text
+                ? JSON.parse(text)
+                : null;
+
+    } catch {
+
+        data = text;
+
+    }
+
+    if (!response.ok) {
+
+        console.error(
+            "LosOja Supabase error:",
+            response.status,
+            data
+        );
+
+        throw new Error(
+            data?.message ||
+            data?.error_description ||
+            data?.error ||
+            "Supabase request failed."
+        );
+    }
+
+    return data;
+}
+
+
+/* =========================================================
+   LOAD ESCROW CHAT CONTEXT
+========================================================= */
+
+async function loadEscrowChatContext() {
+
+    if (!currentEscrowId) {
+
+        return false;
+    }
+
+    const escrow =
+        await supabaseRequest(
+            "/rest/v1/escrow_transactions" +
+            "?select=id,buyer_id,seller_id,amount,currency,status,description,dispute_reason" +
+            "&id=eq." +
+            encodeURIComponent(
+                currentEscrowId
+            )
+        );
+
+    if (
+        !Array.isArray(escrow) ||
+        !escrow[0]
+    ) {
+
+        throw new Error(
+            "Escrow transaction could not be found."
+        );
+    }
+
+    currentEscrow =
+        escrow[0];
+
+    const buyerId =
+        currentEscrow.buyer_id;
+
+    const sellerId =
+        currentEscrow.seller_id;
+
+
+    if (
+        currentUser.id !== buyerId &&
+        currentUser.id !== sellerId
+    ) {
+
+        throw new Error(
+            "You are not a participant in this escrow."
+        );
+    }
+
+
+    currentOtherUserId =
+        currentUser.id === buyerId
+            ? sellerId
+            : buyerId;
+
+
+    return true;
+}
+
+
+/* =========================================================
+   FIND OR CREATE CONVERSATION
+========================================================= */
+
+async function findOrCreateConversation() {
+
+    if (!currentUser) {
+
+        throw new Error(
+            "You must be logged in."
+        );
+    }
+
+
+    if (!currentOtherUserId) {
+
+        throw new Error(
+            "The other user could not be found."
+        );
+    }
+
+
+    if (
+        currentOtherUserId ===
+        currentUser.id
+    ) {
+
+        throw new Error(
+            "You cannot chat with yourself."
+        );
+    }
+
+
+    let query;
+
+
+    if (currentListingId) {
+
+        query =
+            "/rest/v1/conversations" +
+            "?select=*" +
+
+            "&barter_listing_id=eq." +
+            encodeURIComponent(
+                currentListingId
+            ) +
+
+            "&or=(" +
+
+            "and(user_one_id.eq." +
+            encodeURIComponent(
+                currentUser.id
+            ) +
+
+            ",user_two_id.eq." +
+            encodeURIComponent(
+                currentOtherUserId
+            ) +
+            ")," +
+
+            "and(user_one_id.eq." +
+            encodeURIComponent(
+                currentOtherUserId
+            ) +
+
+            ",user_two_id.eq." +
+            encodeURIComponent(
+                currentUser.id
+            ) +
+
+            ")" +
+
+            ")";
+
+    } else {
+
+        query =
+            "/rest/v1/conversations" +
+            "?select=*" +
+
+            "&or=(" +
+
+            "and(user_one_id.eq." +
+            encodeURIComponent(
+                currentUser.id
+            ) +
+
+            ",user_two_id.eq." +
+            encodeURIComponent(
+                currentOtherUserId
+            ) +
+            ")," +
+
+            "and(user_one_id.eq." +
+            encodeURIComponent(
+                currentOtherUserId
+            ) +
+
+            ",user_two_id.eq." +
+            encodeURIComponent(
+                currentUser.id
+            ) +
+
+            ")" +
+
+            ")";
+    }
+
+
+    const existing =
+        await supabaseRequest(
+            query
+        );
+
+
+    if (
+        Array.isArray(existing) &&
+        existing.length > 0
+    ) {
+
+        return existing[0];
+    }
+
+
+    const conversation = {
+
+        user_one_id:
+            currentUser.id,
+
+        user_two_id:
+            currentOtherUserId,
+
+        barter_listing_id:
+            currentListingId || null
+
+    };
+
+
+    const created =
+        await supabaseRequest(
+            "/rest/v1/conversations",
+            {
+                method: "POST",
+
+                body:
+                    JSON.stringify(
+                        conversation
+                    )
+            }
+        );
+
+
+    if (
+        !Array.isArray(created) ||
+        !created[0]
+    ) {
+
+        throw new Error(
+            "Conversation could not be created."
+        );
+    }
+
+
+    return created[0];
+}
+
+
+/* =========================================================
+   LOAD MESSAGES
+========================================================= */
+
+async function loadMessages() {
+
+    if (!currentConversationId) {
+
+        return;
+    }
+
+
+    const messages =
+        await supabaseRequest(
+
+            "/rest/v1/messages" +
+
+            "?select=*" +
+
+            "&conversation_id=eq." +
+
+            encodeURIComponent(
+                currentConversationId
+            ) +
+
+            "&order=created_at.asc"
+        );
+
+
+    renderMessages(
+        Array.isArray(messages)
+            ? messages
+            : []
+    );
+}
+
+
+/* =========================================================
+   RENDER MESSAGES
+========================================================= */
+
+function renderMessages(messages) {
+
+    const container =
+        document.getElementById(
+            "messages"
+        );
+
+
+    if (!container) {
+
+        return;
+    }
+
+
+    if (!messages.length) {
+
+        container.innerHTML = `
+
+            <div class="empty-message">
+
+                No messages yet.<br>
+
+                Start the conversation.
+
+            </div>
+
+        `;
+
+        return;
+    }
+
+
+    container.innerHTML =
+
+        messages
+
+            .map(message => {
+
+                const mine =
+                    message.sender_id ===
+                    currentUser.id;
+
+
+                const time =
+                    message.created_at
+
+                        ? new Date(
+                            message.created_at
+                        ).toLocaleTimeString(
+                            [],
+                            {
+                                hour:
+                                    "2-digit",
+
+                                minute:
+                                    "2-digit"
+                            }
+                        )
+
+                        : "";
+
+
+                return `
+
+                    <div
+                        class="message-row ${
+                            mine
+                                ? "mine"
+                                : ""
+                        }"
+                    >
+
+                        <div
+                            class="message-bubble"
+                        >
+
+                            <div>
+
+                                ${
+                                    escapeHTML(
+                                        message.message
+                                    )
+                                }
+
+                            </div>
+
+                            <div
+                                class="message-time"
+                            >
+
+                                ${time}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                `;
+
+            })
+
+            .join("");
+
+
+    container.scrollTop =
+        container.scrollHeight;
+}
+
+
+/* =========================================================
+   ESCAPE HTML
+========================================================= */
+
+function escapeHTML(value) {
+
+    return String(
+        value ?? ""
+    )
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+}
+
+
+/* =========================================================
+   SEND MESSAGE
+========================================================= */
+
+async function sendMessage() {
+
+    if (
+        !currentUser ||
+        !currentConversationId
+    ) {
+
+        showError(
+            "Chat is not ready yet."
+        );
+
+        return;
+    }
+
+
+    const input =
+        document.getElementById(
+            "messageInput"
+        );
+
+
+    const button =
+        document.getElementById(
+            "sendButton"
+        );
+
+
+    if (!input) {
+
+        return;
+    }
+
+
+    const cleanMessage =
+        input.value.trim();
+
+
+    if (!cleanMessage) {
+
+        return;
+    }
+
+
+    if (
+        cleanMessage.length >
+        2000
+    ) {
+
+        showError(
+            "Message is too long."
+        );
+
+        return;
+    }
+
+
+    clearError();
+
+
+    if (button) {
+
+        button.disabled = true;
+    }
+
+
+    try {
+
+        const message = {
+
+            conversation_id:
+                currentConversationId,
+
+            sender_id:
+                currentUser.id,
+
+            message:
+                cleanMessage
+
+        };
+
+
+        await supabaseRequest(
+            "/rest/v1/messages",
+            {
+                method: "POST",
+
+                body:
+                    JSON.stringify(
+                        message
+                    )
+            }
+        );
+
+
+        input.value = "";
+
+
+        console.log(
+            "LosOja message saved."
+        );
+
+
+        await loadMessages();
+
+
+    } catch (error) {
+
+        console.error(
+            "LosOja send message error:",
+            error
+        );
+
+
+        showError(
+            error.message ||
+            "Message could not be sent."
+        );
+
+
+    } finally {
+
+        if (button) {
+
+            button.disabled = false;
+        }
+
+
+        input.focus();
+    }
+}
+
+
+/* =========================================================
+   LOAD CONVERSATIONS
+========================================================= */
+
+async function loadConversations() {
+
+    if (!currentUser) {
+
+        return;
+    }
+
+
+    const conversations =
+        await supabaseRequest(
+
+            "/rest/v1/conversations" +
+
+            "?select=*" +
+
+            "&or=(" +
+
+            "user_one_id.eq." +
+            encodeURIComponent(
+                currentUser.id
+            ) +
+
+            "," +
+
+            "user_two_id.eq." +
+            encodeURIComponent(
+                currentUser.id
+            ) +
+
+            ")" +
+
+            "&order=updated_at.desc"
+        );
+
+
+    renderConversationList(
+        Array.isArray(
+            conversations
+        )
+            ? conversations
+            : []
+    );
+}
+
+
+/* =========================================================
+   RENDER CONVERSATION LIST
+========================================================= */
+
+async function renderConversationList(
+    conversations
+) {
+
+    const container =
+        document.getElementById(
+            "conversationList"
+        );
+
+
+    if (!container) {
+
+        return;
+    }
+
+
+    if (!conversations.length) {
+
+        container.innerHTML = `
+
+            <div class="status">
+
+                You do not have any chats yet.
+
+            </div>
+
+        `;
+
+        return;
+    }
+
+
+    container.innerHTML = "";
+
+
+    for (
+        const conversation
+        of conversations
+    ) {
+
+
+        const otherUserId =
+
+            conversation.user_one_id ===
+            currentUser.id
+
+                ? conversation.user_two_id
+
+                : conversation.user_one_id;
+
+
+        let listingTitle =
+            "General chat";
+
+
+        if (
+            conversation.barter_listing_id
+        ) {
+
+            try {
+
+                const listing =
+                    await supabaseRequest(
+
+                        "/rest/v1/barter_listings" +
+
+                        "?select=title" +
+
+                        "&id=eq." +
+
+                        encodeURIComponent(
+                            conversation.barter_listing_id
+                        )
+                    );
+
+
+                if (
+                    Array.isArray(listing) &&
+                    listing[0]
+                ) {
+
+                    listingTitle =
+                        listing[0].title ||
+                        "Trade listing";
+                }
+
+
+            } catch (error) {
+
+                console.warn(
+                    "Could not load listing:",
+                    error
+                );
+            }
+        }
+
+
+        const card =
+            document.createElement(
+                "div"
+            );
+
+
+        card.className =
+            "conversation-card";
+
+
+        card.innerHTML = `
+
+            <div
+                class="conversation-title"
+            >
+
+                ${
+                    escapeHTML(
+                        listingTitle
+                    )
+                }
+
+            </div>
+
+            <div
+                class="conversation-time"
+            >
+
+                Open chat
+
+            </div>
+
+        `;
+
+
+        card.addEventListener(
+            "click",
+            () => {
+
+                const url =
+                    "chat.html" +
+
+                    "?user=" +
+
+                    encodeURIComponent(
+                        otherUserId
+                    ) +
+
+                    (
+                        conversation.barter_listing_id
+
+                            ? "&listing=" +
+
+                              encodeURIComponent(
+                                  conversation.barter_listing_id
+                              )
+
+                            : ""
+                    );
+
+
+                window.location.href =
+                    url;
+            }
+        );
+
+
+        container.appendChild(
+            card
+        );
+    }
+}
+
+
+/* =========================================================
+   OPEN SPECIFIC CHAT
+========================================================= */
+
+async function openSpecificChat() {
+
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+
+    currentOtherUserId =
+        params.get("user");
+
+
+    currentListingId =
+        params.get("listing");
+
+
+    currentEscrowId =
+        params.get("escrow");
+
+
+    /*
+       ESCROW CHAT
+
+       If an escrow ID exists,
+       the buyer/seller are determined
+       from the escrow itself.
+    */
+
+    if (currentEscrowId) {
+
+        await loadEscrowChatContext();
+
+    }
+
+
+    /*
+       NORMAL CHAT
+
+       If there is no escrow and
+       no user parameter, show chats.
+    */
+
+    if (!currentOtherUserId) {
+
+        await loadConversations();
+
+        return;
+    }
+
+
+    if (
+        currentOtherUserId ===
+        currentUser.id
+    ) {
+
+        showError(
+            "You cannot open a chat with yourself."
+        );
+
+        return;
+    }
+
+
+    document.getElementById(
+        "conversationList"
+    ).style.display =
+        "none";
+
+
+    document.getElementById(
+        "chatSection"
+    ).style.display =
+        "block";
+
+
+    /*
+       Change title depending
+       on whether this is escrow.
+    */
+
+    if (currentEscrowId) {
+
+        const isBuyer =
+            currentUser.id ===
+            currentEscrow.buyer_id;
+
+
+        document.getElementById(
+            "chatUser"
+        ).textContent =
+            isBuyer
+                ? "Chat with Seller"
+                : "Chat with Buyer";
+
+
+        const amount =
+            Number(
+                currentEscrow.amount || 0
+            ).toLocaleString(
+                "en-NG",
+                {
+                    minimumFractionDigits:
+                        2,
+
+                    maximumFractionDigits:
+                        2
+                }
+            );
+
+
+        document.getElementById(
+            "listingInfo"
+        ).textContent =
+            "Escrow • ₦" +
+            amount +
+            " • " +
+            (
+                currentEscrow.status ||
+                "active"
+            );
+
+
+    } else {
+
+        document.getElementById(
+            "chatUser"
+        ).textContent =
+            "Chat with Owner";
+
+
+        if (currentListingId) {
+
+            document.getElementById(
+                "listingInfo"
+            ).textContent =
+                "Trade listing";
+        }
+    }
+
+
+    const conversation =
+        await findOrCreateConversation();
+
+
+    currentConversationId =
+        conversation.id;
+
+
+    await loadMessages();
+
+
+    if (messagePolling) {
+
+        clearInterval(
+            messagePolling
+        );
+    }
+
+
+    messagePolling =
+        setInterval(
+            async () => {
+
+                try {
+
+                    await loadMessages();
+
+                } catch (error) {
+
+                    console.warn(
+                        "Message refresh failed:",
+                        error
+                    );
+                }
+
+            },
+            3000
+        );
+}
+
+
+/* =========================================================
+   AUTH INITIALIZATION
+========================================================= */
+
+async function initializeChat() {
+
+    clearError();
+
+
+    try {
+
+        if (
+            typeof window.getCurrentUser !==
+            "function"
+        ) {
+
+            throw new Error(
+                "LosOja authentication is not available."
+            );
+        }
+
+
+        currentUser =
+            await window.getCurrentUser();
+
+
+        if (!currentUser) {
+
+            document.getElementById(
+                "status"
+            ).innerHTML =
+                "<strong>Please login to use chat.</strong>";
+
+
+            document.getElementById(
+                "conversationList"
+            ).innerHTML = `
+
+                <div class="status">
+
+                    Please login to send and receive messages.
+
+                </div>
+
+            `;
+
+            return;
+        }
+
+
+        document.getElementById(
+            "status"
+        ).innerHTML =
+            "<strong>Connected</strong>";
+
+
+        await openSpecificChat();
+
+
+    } catch (error) {
+
+        console.error(
+            "LosOja chat initialization error:",
+            error
+        );
+
+
+        showError(
+            error.message ||
+            "Chat could not be loaded."
+        );
+    }
+}
+
+
+/* =========================================================
+   FORM
+========================================================= */
+
+document
+    .getElementById("chatForm")
+    .addEventListener(
+        "submit",
+        event => {
+
+            event.preventDefault();
+
+            sendMessage();
+
+        }
+    );
+
+
+/* =========================================================
+   START
+========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    initializeChat
+);
+
+</script>
+
+</body>
+
+</html>
