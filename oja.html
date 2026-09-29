@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Oja - LosOja Marketplace</title>
+
+    <meta
+        name="theme-color"
+        content="#087a3e"
+    >
+
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
+    <style>
+
+        /* =====================================================
+           OJA MARKETPLACE
+        ===================================================== */
+
+        .oja-page {
+            padding: 30px 15px 80px;
+        }
+
+        .oja-container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .oja-hero {
+            background: #087a3e;
+            color: white;
+            border-radius: 16px;
+            padding: 30px 20px;
+            margin-bottom: 25px;
+        }
+
+        .oja-hero h1 {
+            margin: 0 0 8px;
+            font-size: 32px;
+        }
+
+        .oja-hero p {
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        .oja-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .oja-button {
+            border: none;
+            border-radius: 8px;
+            padding: 12px 18px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .oja-button-primary {
+            background: white;
+            color: #087a3e;
+        }
+
+        .oja-button-secondary {
+            background: #055c2e;
+            color: white;
+        }
+
+        .oja-search {
+            background: white;
+            padding: 18px;
+            border-radius: 14px;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 20px;
+        }
+
+        .oja-search input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 13px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .oja-categories {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+            margin-bottom: 25px;
+        }
+
+        .oja-category {
+            flex: 0 0 auto;
+            border: 1px solid #ddd;
+            background: white;
+            color: #333;
+            border-radius: 20px;
+            padding: 9px 15px;
+            cursor: pointer;
+        }
+
+        .oja-category.active {
+            background: #087a3e;
+            color: white;
+            border-color: #087a3e;
+        }
+
+        .oja-section-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .oja-section-title h2 {
+            margin: 0;
+        }
+
+        .oja-listings {
+            display: grid;
+            grid-template-columns: repeat(
+                auto-fit,
+                minmax(220px, 1fr)
+            );
+            gap: 18px;
+        }
+
+        .oja-empty {
+            background: white;
+            border-radius: 14px;
+            padding: 40px 20px;
+            text-align: center;
+            color: #666;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.06);
+        }
+
+        .oja-empty-icon {
+            font-size: 45px;
+            margin-bottom: 10px;
+        }
+
+        .oja-card {
+            background: white;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .oja-card-image {
+            width: 100%;
+            height: 180px;
+            background: #eef8f2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 55px;
+        }
+
+        .oja-card-body {
+            padding: 15px;
+        }
+
+        .oja-card h3 {
+            margin: 0 0 8px;
+            font-size: 18px;
+        }
+
+        .oja-price {
+            color: #087a3e;
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .oja-location {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .oja-status {
+            display: inline-block;
+            background: #eef8f2;
+            color: #087a3e;
+            padding: 5px 9px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 600px) {
+
+            .oja-page {
+                padding-top: 20px;
+            }
+
+            .oja-hero h1 {
+                font-size: 27px;
+            }
+
+            .oja-listings {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+
+            .oja-card-image {
+                height: 140px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <header class="site-header">
+
+        <div class="container">
+
+            <a
+                href="index.html"
+                class="logo"
+            >
+                LosOja
+            </a>
+
+            <div class="header-actions">
+
+                <button
+                    id="loginButton"
+                    type="button"
+                    onclick="goToLogin()"
+                >
+                    Login
+                </button>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         OJA
+    ====================================================== -->
+
+    <main class="oja-page">
+
+        <div class="oja-container">
+
+
+            <!-- HERO -->
+
+            <section class="oja-hero">
+
+                <h1>
+                    🛍️ Oja
+                </h1>
+
+                <p>
+                    Buy and sell products with people
+                    across Nigeria.
+                </p>
+
+                <div class="oja-actions">
+
+                    <button
+                        class="oja-button oja-button-primary"
+                        type="button"
+                        onclick="startPosting()"
+                    >
+                        + Post an Item
+                    </button>
+
+                    <button
+                        class="oja-button oja-button-secondary"
+                        type="button"
+                        onclick="window.location.href='index.html'"
+                    >
+                        Back to LosOja
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- SEARCH -->
+
+            <section class="oja-search">
+
+                <input
+                    id="ojaSearch"
+                    type="search"
+                    placeholder="Search Oja..."
+                    autocomplete="off"
+                >
+
+            </section>
+
+
+            <!-- CATEGORIES -->
+
+            <div
+                class="oja-categories"
+                id="ojaCategories"
+            >
+
+                <button
+                    class="oja-category active"
+                    data-category="all"
+                >
+                    All
+                </button>
+
+                <button
+                    class="oja-category"
+                    data-category="phones"
+                >
+                    📱 Phones
+                </button>
+
+                <button
+                    class="oja-category"
+                    data-category="fashion"
+                >
+                    👕 Fashion
+                </button>
+
+                <button
+                    class="oja-category"
+                    data-category="electronics"
+                >
+                    💻 Electronics
+                </button>
+
+                <button
+                    class="oja-category"
+                    data-category="vehicles"
+                >
+                    🚗 Vehicles
+                </button>
+
+                <button
+                    class="oja-category"
+                    data-category="property"
+                >
+                    🏠 Property
+                </button>
+
+                <button
+                    class="oja-category"
+                    data-category="home"
+                >
+                    🛋️ Home
+                </button>
+
+                <button
+                    class="oja-category"
+                    data-category="other"
+                >
+                    📦 Other
+                </button>
+
+            </div>
+
+
+            <!-- LISTINGS -->
+
+            <section>
+
+                <div class="oja-section-title">
+
+                    <h2>
+                        Oja Listings
+                    </h2>
+
+                </div>
+
+
+                <div
+                    id="ojaListings"
+                    class="oja-listings"
+                >
+
+                    <div class="oja-empty">
+
+                        <div class="oja-empty-icon">
+                            🛍️
+                        </div>
+
+                        <h3>
+                            Oja is ready
+                        </h3>
+
+                        <p>
+                            No products have been posted yet.
+                        </p>
+
+                        <button
+                            class="oja-button oja-button-primary"
+                            type="button"
+                            onclick="startPosting()"
+                        >
+                            Be the first to post
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </main>
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ====================================================== -->
+
+    <script>
+
+        /* =====================================================
+           LOGIN
+        ===================================================== */
+
+        function getCurrentUser() {
+
+            try {
+
+                const raw =
+                    localStorage.getItem(
+                        "losoja_current_user"
+                    );
+
+                if (!raw) {
+                    return null;
+                }
+
+                return JSON.parse(raw);
+
+            } catch (error) {
+
+                console.error(
+                    "LosOja user lookup error:",
+                    error
+                );
+
+                return null;
+            }
+        }
+
+
+        /* =====================================================
+           LOGIN BUTTON
+        ===================================================== */
+
+        function updateLoginButton() {
+
+            const button =
+                document.getElementById(
+                    "loginButton"
+                );
+
+            if (!button) {
+                return;
+            }
+
+            const user =
+                getCurrentUser();
+
+            if (user) {
+
+                button.textContent =
+                    "My Account";
+
+                button.onclick =
+                    function () {
+
+                        window.location.href =
+                            "account.html";
+
+                    };
+
+            } else {
+
+                button.textContent =
+                    "Login";
+
+                button.onclick =
+                    goToLogin;
+
+            }
+
+        }
+
+
+        /* =====================================================
+           LOGIN
+        ===================================================== */
+
+        function goToLogin() {
+
+            window.location.href =
+                "login.html";
+
+        }
+
+
+        /* =====================================================
+           POST ITEM
+        ===================================================== */
+
+        function startPosting() {
+
+            const user =
+                getCurrentUser();
+
+            if (!user) {
+
+                alert(
+                    "Please login before posting an item."
+                );
+
+                goToLogin();
+
+                return;
+            }
+
+            /*
+             * We will connect this to the real
+             * Oja posting form in the next step.
+             */
+
+            alert(
+                "Oja posting is being connected now."
+            );
+
+        }
+
+
+        /* =====================================================
+           SEARCH
+        ===================================================== */
+
+        const searchInput =
+            document.getElementById(
+                "ojaSearch"
+            );
+
+        if (searchInput) {
+
+            searchInput.addEventListener(
+                "input",
+                function () {
+
+                    const search =
+                        this.value
+                            .trim()
+                            .toLowerCase();
+
+                    document
+                        .querySelectorAll(
+                            ".oja-card"
+                        )
+                        .forEach(
+                            function (card) {
+
+                                const text =
+                                    card.textContent
+                                        .toLowerCase();
+
+                                card.style.display =
+                                    !search ||
+                                    text.includes(search)
+                                        ? ""
+                                        : "none";
+
+                            }
+                        );
+
+                }
+            );
+
+        }
+
+
+        /* =====================================================
+           CATEGORY BUTTONS
+        ===================================================== */
+
+        document
+            .querySelectorAll(
+                ".oja-category"
+            )
+            .forEach(
+                function (button) {
+
+                    button.addEventListener(
+                        "click",
+                        function () {
+
+                            document
+                                .querySelectorAll(
+                                    ".oja-category"
+                                )
+                                .forEach(
+                                    function (item) {
+                                        item.classList.remove(
+                                            "active"
+                                        );
+                                    }
+                                );
+
+                            this.classList.add(
+                                "active"
+                            );
+
+                            /*
+                             * Real category filtering
+                             * will be connected after
+                             * Supabase listings are added.
+                             */
+
+                        }
+                    );
+
+                }
+            );
+
+
+        /* =====================================================
+           INITIALIZE
+        ===================================================== */
+
+        updateLoginButton();
+
+        console.log(
+            "LosOja Oja marketplace loaded"
+        );
+
+    </script>
+
+
+</body>
+
+</html>
