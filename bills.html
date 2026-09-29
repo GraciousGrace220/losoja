@@ -1,628 +1,694 @@
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
 
-    <meta charset="UTF-8">
+```
+<meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
 
-    <title>LosOja Bills</title>
+<title>LosOja Bills</title>
 
-    <meta
-        name="theme-color"
-        content="#087a3e"
-    >
+<meta
+    name="theme-color"
+    content="#087a3e"
+>
 
-    <style>
+<style>
 
-        * {
-            box-sizing: border-box;
-        }
+    * {
+        box-sizing: border-box;
+    }
 
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f5f7f6;
-            color: #111827;
-        }
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f5f7f6;
+        color: #111827;
+    }
 
-        .header {
-            background: #087a3e;
-            color: white;
-            padding: 18px 20px;
-            text-align: center;
-        }
+    .header {
+        background: #087a3e;
+        color: white;
+        padding: 18px 20px;
+        text-align: center;
+    }
 
-        .header h1 {
-            margin: 0;
-            font-size: 24px;
-        }
+    .header h1 {
+        margin: 0;
+        font-size: 24px;
+    }
 
-        .back-btn {
-            display: inline-block;
-            margin-top: 6px;
-            color: white;
-            text-decoration: none;
-            font-size: 13px;
-        }
+    .back-btn {
+        display: inline-block;
+        margin-top: 6px;
+        color: white;
+        text-decoration: none;
+        font-size: 13px;
+    }
 
-        .container {
-            max-width: 700px;
-            margin: 20px auto;
-            padding: 0 15px 40px;
-        }
+    .container {
+        max-width: 700px;
+        margin: 20px auto;
+        padding: 0 15px 40px;
+    }
+
+    .card {
+        background: white;
+        border-radius: 14px;
+        padding: 20px;
+        margin-bottom: 18px;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.07);
+    }
+
+    h2 {
+        margin-top: 0;
+        font-size: 19px;
+    }
+
+    .tabs {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 18px;
+    }
+
+    .tab-btn {
+        background: #eef8f2;
+        color: #087a3e;
+        border: 1px solid #d5eadc;
+    }
+
+    .tab-btn.active {
+        background: #087a3e;
+        color: white;
+    }
+
+    .bill-form {
+        display: none;
+    }
+
+    .bill-form.active {
+        display: block;
+    }
+
+    .form-group {
+        margin-bottom: 14px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 13px;
+        font-weight: bold;
+    }
+
+    input,
+    select {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 9px;
+        font-size: 14px;
+        background: white;
+    }
+
+    input:focus,
+    select:focus {
+        outline: none;
+        border-color: #087a3e;
+    }
+
+    .pay-btn {
+        width: 100%;
+        background: #087a3e;
+        color: white;
+        margin-top: 4px;
+    }
+
+    .pay-btn:hover {
+        background: #055c2e;
+    }
+
+    .coming-soon {
+        margin-top: 10px;
+        padding: 10px;
+        border-radius: 9px;
+        background: #fff7ed;
+        color: #92400e;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .info {
+        padding: 12px;
+        border-radius: 9px;
+        background: #eef8f2;
+        color: #087a3e;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .airtime-notice {
+        margin-bottom: 16px;
+        padding: 13px;
+        border-radius: 10px;
+        background: #f0fdf4;
+        border: 1px solid #bbf7d0;
+        color: #166534;
+    }
+
+    .airtime-notice strong {
+        display: block;
+        margin-bottom: 4px;
+        font-size: 14px;
+    }
+
+    .airtime-notice span {
+        display: block;
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    .history-item {
+        padding: 14px 0;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .history-item:last-child {
+        border-bottom: none;
+    }
+
+    .history-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+    .history-type {
+        font-weight: bold;
+    }
+
+    .history-date {
+        margin-top: 4px;
+        color: #6b7280;
+        font-size: 12px;
+    }
+
+    .empty {
+        text-align: center;
+        color: #6b7280;
+        padding: 15px 0;
+    }
+
+    .error {
+        color: #dc2626;
+        font-size: 14px;
+        padding: 10px 0;
+    }
+
+    button {
+        border: none;
+        border-radius: 9px;
+        padding: 11px 16px;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    @media (max-width: 600px) {
 
         .card {
-            background: white;
-            border-radius: 14px;
-            padding: 20px;
-            margin-bottom: 18px;
-            box-shadow: 0 3px 12px rgba(0,0,0,0.07);
-        }
-
-        h2 {
-            margin-top: 0;
-            font-size: 19px;
-        }
-
-        .tabs {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-bottom: 18px;
+            padding: 16px;
         }
 
         .tab-btn {
-            background: #eef8f2;
-            color: #087a3e;
-            border: 1px solid #d5eadc;
+            flex: 1 1 30%;
         }
 
-        .tab-btn.active {
-            background: #087a3e;
-            color: white;
-        }
+    }
 
-        .bill-form {
-            display: none;
-        }
-
-        .bill-form.active {
-            display: block;
-        }
-
-        .form-group {
-            margin-bottom: 14px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 6px;
-            font-size: 13px;
-            font-weight: bold;
-        }
-
-        input,
-        select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #d1d5db;
-            border-radius: 9px;
-            font-size: 14px;
-            background: white;
-        }
-
-        input:focus,
-        select:focus {
-            outline: none;
-            border-color: #087a3e;
-        }
-
-        .pay-btn {
-            width: 100%;
-            background: #087a3e;
-            color: white;
-            margin-top: 4px;
-        }
-
-        .coming-soon {
-            margin-top: 10px;
-            padding: 10px;
-            border-radius: 9px;
-            background: #fff7ed;
-            color: #92400e;
-            font-size: 13px;
-        }
-
-        .info {
-            padding: 12px;
-            border-radius: 9px;
-            background: #eef8f2;
-            color: #087a3e;
-            font-size: 13px;
-        }
-
-        .history-item {
-            padding: 14px 0;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .history-item:last-child {
-            border-bottom: none;
-        }
-
-        .history-row {
-            display: flex;
-            justify-content: space-between;
-            gap: 12px;
-        }
-
-        .history-type {
-            font-weight: bold;
-        }
-
-        .history-date {
-            margin-top: 4px;
-            color: #6b7280;
-            font-size: 12px;
-        }
-
-        .empty {
-            text-align: center;
-            color: #6b7280;
-            padding: 15px 0;
-        }
-
-        .error {
-            color: #dc2626;
-            font-size: 14px;
-            padding: 10px 0;
-        }
-
-        button {
-            border: none;
-            border-radius: 9px;
-            padding: 11px 16px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        @media (max-width: 600px) {
-
-            .card {
-                padding: 16px;
-            }
-
-            .tab-btn {
-                flex: 1 1 30%;
-            }
-
-        }
-
-    </style>
+</style>
+```
 
 </head>
 
 <body>
 
-
 <header class="header">
 
-    <h1>LosOja Bills</h1>
+```
+<h1>LosOja Bills</h1>
 
-    <a
-        href="balance.html"
-        class="back-btn"
-    >
-        ← Back to Balance
-    </a>
+<a
+    href="balance.html"
+    class="back-btn"
+>
+    ← Back to Balance
+</a>
+```
 
 </header>
 
-
 <main class="container">
 
+```
+<!-- =========================================
+     BILL SERVICES
+========================================== -->
 
-    <!-- =========================================
-         BILL SERVICES
-    ========================================== -->
+<section class="card">
 
-    <section class="card">
+    <h2>Pay Bills</h2>
 
-        <h2>Pay Bills</h2>
-
-        <div class="info">
-            Airtime, Data and Electricity payments are being prepared for LosOja.
-        </div>
-
-        <div class="tabs" style="margin-top:16px;">
-
-            <button
-                type="button"
-                class="tab-btn active"
-                data-tab="airtime"
-            >
-                Airtime
-            </button>
-
-            <button
-                type="button"
-                class="tab-btn"
-                data-tab="data"
-            >
-                Data
-            </button>
-
-            <button
-                type="button"
-                class="tab-btn"
-                data-tab="electricity"
-            >
-                Electricity
-            </button>
-
-        </div>
+    <div class="info">
+        Airtime is available in test mode through VTpass.
+        Data and Electricity are still being prepared.
+    </div>
 
 
-        <!-- =====================================
-             AIRTIME
-        ====================================== -->
+    <div
+        class="tabs"
+        style="margin-top:16px;"
+    >
 
-        <form
-            id="airtimeForm"
-            class="bill-form active"
+        <button
+            type="button"
+            class="tab-btn active"
+            data-tab="airtime"
         >
+            Airtime
+        </button>
 
-            <div class="form-group">
-
-                <label for="airtimeNetwork">
-                    Network
-                </label>
-
-                <select
-                    id="airtimeNetwork"
-                    required
-                >
-
-                    <option value="">
-                        Select network
-                    </option>
-
-                    <option value="mtn">
-                        MTN
-                    </option>
-
-                    <option value="airtel">
-                        Airtel
-                    </option>
-
-                    <option value="glo">
-                        Glo
-                    </option>
-
-                    <option value="9mobile">
-                        9mobile
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label for="airtimePhone">
-                    Phone Number
-                </label>
-
-                <input
-                    type="tel"
-                    id="airtimePhone"
-                    inputmode="numeric"
-                    placeholder="08012345678"
-                    required
-                >
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label for="airtimeAmount">
-                    Amount
-                </label>
-
-                <input
-                    type="number"
-                    id="airtimeAmount"
-                    min="1"
-                    step="1"
-                    placeholder="100"
-                    required
-                >
-
-            </div>
-
-
-            <button
-                type="submit"
-                class="pay-btn"
-                disabled
-            >
-                Pay Airtime
-            </button>
-
-            <div class="coming-soon">
-                Live airtime payments are currently disabled.
-            </div>
-
-        </form>
-
-
-        <!-- =====================================
-             DATA
-        ====================================== -->
-
-        <form
-            id="dataForm"
-            class="bill-form"
+        <button
+            type="button"
+            class="tab-btn"
+            data-tab="data"
         >
+            Data
+        </button>
 
-            <div class="form-group">
-
-                <label for="dataNetwork">
-                    Network
-                </label>
-
-                <select
-                    id="dataNetwork"
-                    required
-                >
-
-                    <option value="">
-                        Select network
-                    </option>
-
-                    <option value="mtn">
-                        MTN
-                    </option>
-
-                    <option value="airtel">
-                        Airtel
-                    </option>
-
-                    <option value="glo">
-                        Glo
-                    </option>
-
-                    <option value="9mobile">
-                        9mobile
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label for="dataPhone">
-                    Phone Number
-                </label>
-
-                <input
-                    type="tel"
-                    id="dataPhone"
-                    inputmode="numeric"
-                    placeholder="08012345678"
-                    required
-                >
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label for="dataPlan">
-                    Data Plan
-                </label>
-
-                <select
-                    id="dataPlan"
-                    required
-                >
-
-                    <option value="">
-                        Select data plan
-                    </option>
-
-                    <option value="small">
-                        Test Plan — ₦100
-                    </option>
-
-                    <option value="medium">
-                        Test Plan — ₦500
-                    </option>
-
-                    <option value="large">
-                        Test Plan — ₦1,000
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <button
-                type="submit"
-                class="pay-btn"
-                disabled
-            >
-                Buy Data
-            </button>
-
-            <div class="coming-soon">
-                Live data payments are currently disabled.
-            </div>
-
-        </form>
-
-
-        <!-- =====================================
-             ELECTRICITY
-        ====================================== -->
-
-        <form
-            id="electricityForm"
-            class="bill-form"
+        <button
+            type="button"
+            class="tab-btn"
+            data-tab="electricity"
         >
+            Electricity
+        </button>
 
-            <div class="form-group">
-
-                <label for="electricityProvider">
-                    Electricity Provider
-                </label>
-
-                <select
-                    id="electricityProvider"
-                    required
-                >
-
-                    <option value="">
-                        Select provider
-                    </option>
-
-                    <option value="ikedc">
-                        Ikeja Electric
-                    </option>
-
-                    <option value="ekedc">
-                        Eko Electricity
-                    </option>
-
-                    <option value="ibedc">
-                        IBEDC
-                    </option>
-
-                    <option value="aedc">
-                        AEDC
-                    </option>
-
-                </select>
-
-            </div>
+    </div>
 
 
-            <div class="form-group">
+    <!-- =====================================
+         AIRTIME
+    ====================================== -->
 
-                <label for="electricityType">
-                    Meter Type
-                </label>
+    <form
+        id="airtimeForm"
+        class="bill-form active"
+    >
 
-                <select
-                    id="electricityType"
-                    required
-                >
+        <div class="airtime-notice">
 
-                    <option value="">
-                        Select meter type
-                    </option>
+            <strong>
+                Buy Airtime
+            </strong>
 
-                    <option value="prepaid">
-                        Prepaid
-                    </option>
-
-                    <option value="postpaid">
-                        Postpaid
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label for="meterNumber">
-                    Meter Number
-                </label>
-
-                <input
-                    type="text"
-                    id="meterNumber"
-                    placeholder="Enter meter number"
-                    required
-                >
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label for="electricityAmount">
-                    Amount
-                </label>
-
-                <input
-                    type="number"
-                    id="electricityAmount"
-                    min="1"
-                    step="1"
-                    placeholder="1000"
-                    required
-                >
-
-            </div>
-
-
-            <button
-                type="submit"
-                class="pay-btn"
-                disabled
-            >
-                Pay Electricity
-            </button>
-
-            <div class="coming-soon">
-                Live electricity payments are currently disabled.
-            </div>
-
-        </form>
-
-    </section>
-
-
-    <!-- =========================================
-         BILL HISTORY
-    ========================================== -->
-
-    <section class="card">
-
-        <h2>Bill History</h2>
-
-        <div id="billHistory">
-
-            <div class="empty">
-                No bill payments yet.
-            </div>
+            <span>
+                Choose a network, enter the phone number
+                and amount, then purchase airtime.
+                VTpass sandbox is currently being used.
+            </span>
 
         </div>
 
-    </section>
 
+        <div class="form-group">
+
+            <label for="airtimeNetwork">
+                Network
+            </label>
+
+            <select
+                id="airtimeNetwork"
+                required
+            >
+
+                <option value="">
+                    Select network
+                </option>
+
+                <option value="mtn">
+                    MTN
+                </option>
+
+                <option value="airtel">
+                    Airtel
+                </option>
+
+                <option value="glo">
+                    Glo
+                </option>
+
+                <option value="9mobile">
+                    9mobile
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="airtimePhone">
+                Phone Number
+            </label>
+
+            <input
+                type="tel"
+                id="airtimePhone"
+                inputmode="numeric"
+                maxlength="11"
+                placeholder="08012345678"
+                required
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="airtimeAmount">
+                Amount
+            </label>
+
+            <input
+                type="number"
+                id="airtimeAmount"
+                min="50"
+                max="100000"
+                step="1"
+                placeholder="100"
+                required
+            >
+
+        </div>
+
+
+        <button
+            type="submit"
+            class="pay-btn"
+        >
+            Buy Airtime
+        </button>
+
+
+        <div class="coming-soon">
+
+            <strong>
+                Airtime Test Mode
+            </strong>
+            <br>
+
+            Your LosOja wallet is used for the transaction.
+            VTpass sandbox processes the Airtime request.
+            Live production payments will be enabled after
+            production setup.
+
+        </div>
+
+    </form>
+
+
+    <!-- =====================================
+         DATA
+    ====================================== -->
+
+    <form
+        id="dataForm"
+        class="bill-form"
+    >
+
+        <div class="form-group">
+
+            <label for="dataNetwork">
+                Network
+            </label>
+
+            <select
+                id="dataNetwork"
+                required
+            >
+
+                <option value="">
+                    Select network
+                </option>
+
+                <option value="mtn">
+                    MTN
+                </option>
+
+                <option value="airtel">
+                    Airtel
+                </option>
+
+                <option value="glo">
+                    Glo
+                </option>
+
+                <option value="9mobile">
+                    9mobile
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="dataPhone">
+                Phone Number
+            </label>
+
+            <input
+                type="tel"
+                id="dataPhone"
+                inputmode="numeric"
+                maxlength="11"
+                placeholder="08012345678"
+                required
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="dataPlan">
+                Data Plan
+            </label>
+
+            <select
+                id="dataPlan"
+                required
+            >
+
+                <option value="">
+                    Select data plan
+                </option>
+
+                <option value="small">
+                    Test Plan — ₦100
+                </option>
+
+                <option value="medium">
+                    Test Plan — ₦500
+                </option>
+
+                <option value="large">
+                    Test Plan — ₦1,000
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <button
+            type="submit"
+            class="pay-btn"
+        >
+            Test Data
+        </button>
+
+
+        <div class="coming-soon">
+            Data payments are currently available for
+            internal testing only.
+        </div>
+
+    </form>
+
+
+    <!-- =====================================
+         ELECTRICITY
+    ====================================== -->
+
+    <form
+        id="electricityForm"
+        class="bill-form"
+    >
+
+        <div class="form-group">
+
+            <label for="electricityProvider">
+                Electricity Provider
+            </label>
+
+            <select
+                id="electricityProvider"
+                required
+            >
+
+                <option value="">
+                    Select provider
+                </option>
+
+                <option value="ikedc">
+                    Ikeja Electric
+                </option>
+
+                <option value="ekedc">
+                    Eko Electricity
+                </option>
+
+                <option value="ibedc">
+                    IBEDC
+                </option>
+
+                <option value="aedc">
+                    AEDC
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="electricityType">
+                Meter Type
+            </label>
+
+            <select
+                id="electricityType"
+                required
+            >
+
+                <option value="">
+                    Select meter type
+                </option>
+
+                <option value="prepaid">
+                    Prepaid
+                </option>
+
+                <option value="postpaid">
+                    Postpaid
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="meterNumber">
+                Meter Number
+            </label>
+
+            <input
+                type="text"
+                id="meterNumber"
+                placeholder="Enter meter number"
+                required
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="electricityAmount">
+                Amount
+            </label>
+
+            <input
+                type="number"
+                id="electricityAmount"
+                min="1"
+                step="1"
+                placeholder="1000"
+                required
+            >
+
+        </div>
+
+
+        <button
+            type="submit"
+            class="pay-btn"
+        >
+            Test Electricity
+        </button>
+
+
+        <div class="coming-soon">
+            Electricity payments are currently available
+            for internal testing only.
+        </div>
+
+    </form>
+
+</section>
+
+
+<!-- =========================================
+     BILL HISTORY
+========================================== -->
+
+<section class="card">
+
+    <h2>
+        Bill History
+    </h2>
+
+    <div id="billHistory">
+
+        <div class="empty">
+            No bill payments yet.
+        </div>
+
+    </div>
+
+</section>
+```
 
 </main>
-
 
 <!-- =========================================
      LOSOJA AUTH
@@ -630,12 +696,7 @@
 
 <script src="js/auth.js"></script>
 
-
 <script>
-
-/* =========================================================
-   LOSOJA BILL PAGE
-========================================================= */
 
 (function () {
 
@@ -645,12 +706,13 @@
     const SUPABASE_URL =
         "https://ycxshwgeebskdozmornh.supabase.co";
 
+
     const SUPABASE_KEY =
         "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
 
 
     /* =====================================================
-       GET ACCESS TOKEN
+       ACCESS TOKEN
     ===================================================== */
 
     async function getAccessToken() {
@@ -683,12 +745,10 @@
 
 
     /* =====================================================
-       BILL REQUEST
+       BILL HISTORY REQUEST
     ===================================================== */
 
-    async function billRequest(
-        endpoint
-    ) {
+    async function billRequest(endpoint) {
 
         const token =
             await getAccessToken();
@@ -745,8 +805,7 @@
 
         } catch {
 
-            data =
-                text;
+            data = text;
 
         }
 
@@ -847,698 +906,772 @@
     );
 
 
-   /* =====================================================
-   TEST-ONLY PAYMENT HANDLING
-===================================================== */
+    /* =====================================================
+       REAL AIRTIME FUNCTION
+    ===================================================== */
 
-const TEST_BILL_FUNCTION_URL =
-    SUPABASE_URL +
-    "/functions/v1/test-bill-payment";
-
-
-/* =====================================================
-   GET CURRENT TEST TOKEN
-===================================================== */
-
-async function getTestToken() {
-
-    try {
-
-        if (
-            typeof window.ensureValidSupabaseSession ===
-            "function"
-        ) {
-
-            const session =
-                await window.ensureValidSupabaseSession();
-
-            return session?.access_token || null;
-
-        }
+    const PAY_BILL_FUNCTION_URL =
+        SUPABASE_URL +
+        "/functions/v1/pay-bill";
 
 
-        if (
-            typeof window.getSupabaseAccessToken ===
-            "function"
-        ) {
-
-            return await window.getSupabaseAccessToken();
-
-        }
-
-
-        return null;
-
-    } catch (error) {
-
-        console.error(
-            "LosOja test bill token error:",
-            error
-        );
-
-        return null;
-
-    }
-
-}
-
-
-/* =====================================================
-   RUN TEST BILL
-===================================================== */
-
-async function runTestBillPayment(
-    serviceType,
-    customerIdentifier,
-    amount,
-    options = {}
-) {
-
-    const token =
-        await getTestToken();
-
-
-    if (!token) {
-
-        throw new Error(
-            "Please log in to test bill payments."
-        );
-
-    }
-
-
-    const response =
-        await fetch(
-            TEST_BILL_FUNCTION_URL,
-            {
-                method:
-                    "POST",
-
-                headers: {
-
-                    "Content-Type":
-                        "application/json",
-
-                    "apikey":
-                        SUPABASE_KEY,
-
-                    "Authorization":
-                        "Bearer " + token
-
-                },
-
-                body:
-                    JSON.stringify({
-
-                        service_type:
-                            serviceType,
-
-                        customer_identifier:
-                            customerIdentifier,
-
-                        network:
-                            options.network ||
-                            "",
-
-                        provider:
-                            options.provider ||
-                            "",
-
-                        amount:
-                            Number(amount),
-
-                        status:
-                            "successful"
-
-                    })
-
-            }
-        );
-
-
-    const text =
-        await response.text();
-
-
-    let data = null;
-
-
-    try {
-
-        data =
-            text
-                ? JSON.parse(text)
-                : null;
-
-    } catch {
-
-        data =
-            null;
-
-    }
-
-
-    if (!response.ok) {
-
-        throw new Error(
-            data?.error ||
-            data?.message ||
-            "Test bill payment failed."
-        );
-
-    }
-
-
-    if (
-        !data?.success ||
-        !data?.test_mode
+    async function runRealAirtimePayment(
+        network,
+        phone,
+        amount
     ) {
 
-        throw new Error(
-            "Unexpected test payment response."
-        );
+        const token =
+            await getAccessToken();
 
-    }
 
+        if (!token) {
 
-    return data;
-
-}
-
-
-/* =====================================================
-   SHOW TEST MODE
-===================================================== */
-
-function enableTestButtons() {
-
-    document
-        .querySelectorAll(
-            ".pay-btn"
-        )
-        .forEach(
-            function (button) {
-
-                button.disabled =
-                    false;
-
-            }
-        );
-
-
-    const airtimeButton =
-        document.querySelector(
-            "#airtimeForm .pay-btn"
-        );
-
-
-    const dataButton =
-        document.querySelector(
-            "#dataForm .pay-btn"
-        );
-
-
-    const electricityButton =
-        document.querySelector(
-            "#electricityForm .pay-btn"
-        );
-
-
-    if (airtimeButton) {
-
-        airtimeButton.textContent =
-            "Test Airtime";
-
-    }
-
-
-    if (dataButton) {
-
-        dataButton.textContent =
-            "Test Data";
-
-    }
-
-
-    if (electricityButton) {
-
-        electricityButton.textContent =
-            "Test Electricity";
-
-    }
-
-}
-
-
-/* =====================================================
-   TEST AIRTIME
-===================================================== */
-
-const airtimeForm =
-    document.getElementById(
-        "airtimeForm"
-    );
-
-
-if (airtimeForm) {
-
-    airtimeForm.addEventListener(
-        "submit",
-        async function (event) {
-
-            event.preventDefault();
-
-
-            const network =
-                document.getElementById(
-                    "airtimeNetwork"
-                )?.value
-                .trim()
-                .toLowerCase();
-
-
-            const phone =
-                document.getElementById(
-                    "airtimePhone"
-                )?.value
-                .trim();
-
-
-            const amount =
-                Number(
-                    document.getElementById(
-                        "airtimeAmount"
-                    )?.value
-                );
-
-
-            if (
-                !network ||
-                !phone ||
-                !amount ||
-                amount <= 0
-            ) {
-
-                alert(
-                    "Please complete the Airtime form."
-                );
-
-                return;
-
-            }
-
-
-            const button =
-                airtimeForm.querySelector(
-                    ".pay-btn"
-                );
-
-
-            if (button) {
-
-                button.disabled =
-                    true;
-
-                button.textContent =
-                    "Testing...";
-
-            }
-
-
-            try {
-
-                const result =
-                    await runTestBillPayment(
-                        "airtime",
-                        phone,
-                        amount,
-                        {
-                            network:
-                                network
-                        }
-                    );
-
-
-                alert(
-                    "TEST Airtime successful.\n\n" +
-                    "Amount: ₦" +
-                    Number(
-                        result.transaction.amount
-                    ).toLocaleString(
-                        "en-NG"
-                    )
-                );
-
-
-                airtimeForm.reset();
-
-
-                await loadBillHistory();
-
-            } catch (error) {
-
-                console.error(
-                    "LosOja test Airtime error:",
-                    error
-                );
-
-
-                alert(
-                    error.message ||
-                    "Test Airtime failed."
-                );
-
-            } finally {
-
-                if (button) {
-
-                    button.disabled =
-                        false;
-
-                    button.textContent =
-                        "Test Airtime";
-
-                }
-
-            }
+            throw new Error(
+                "Please log in to buy Airtime."
+            );
 
         }
-    );
-
-}
 
 
-/* =====================================================
-   TEST DATA
-===================================================== */
+        const response =
+            await fetch(
+                PAY_BILL_FUNCTION_URL,
+                {
+                    method:
+                        "POST",
 
-const dataForm =
-    document.getElementById(
-        "dataForm"
-    );
+                    headers: {
 
+                        "Content-Type":
+                            "application/json",
 
-if (dataForm) {
+                        "apikey":
+                            SUPABASE_KEY,
 
-    dataForm.addEventListener(
-        "submit",
-        async function (event) {
+                        "Authorization":
+                            "Bearer " + token
 
-            event.preventDefault();
+                    },
 
+                    body:
+                        JSON.stringify({
 
-            const network =
-                document.getElementById(
-                    "dataNetwork"
-                )?.value
-                .trim()
-                .toLowerCase();
+                            service_type:
+                                "airtime",
 
-
-            const phone =
-                document.getElementById(
-                    "dataPhone"
-                )?.value
-                .trim();
-
-
-            const plan =
-                document.getElementById(
-                    "dataPlan"
-                )?.value;
-
-
-            const planAmounts = {
-
-                small:
-                    100,
-
-                medium:
-                    500,
-
-                large:
-                    1000
-
-            };
-
-
-            const amount =
-                planAmounts[plan];
-
-
-            if (
-                !network ||
-                !phone ||
-                !amount
-            ) {
-
-                alert(
-                    "Please complete the Data form."
-                );
-
-                return;
-
-            }
-
-
-            const button =
-                dataForm.querySelector(
-                    ".pay-btn"
-                );
-
-
-            if (button) {
-
-                button.disabled =
-                    true;
-
-                button.textContent =
-                    "Testing...";
-
-            }
-
-
-            try {
-
-                const result =
-                    await runTestBillPayment(
-                        "data",
-                        phone,
-                        amount,
-                        {
                             network:
-                                network
-                        }
-                    );
+                                network,
 
+                            phone:
+                                phone,
 
-                alert(
-                    "TEST Data purchase successful.\n\n" +
-                    "Amount: ₦" +
-                    Number(
-                        result.transaction.amount
-                    ).toLocaleString(
-                        "en-NG"
-                    )
-                );
+                            amount:
+                                Number(amount)
 
-
-                dataForm.reset();
-
-
-                await loadBillHistory();
-
-            } catch (error) {
-
-                console.error(
-                    "LosOja test Data error:",
-                    error
-                );
-
-
-                alert(
-                    error.message ||
-                    "Test Data payment failed."
-                );
-
-            } finally {
-
-                if (button) {
-
-                    button.disabled =
-                        false;
-
-                    button.textContent =
-                        "Test Data";
+                        })
 
                 }
+            );
 
-            }
+
+        const text =
+            await response.text();
+
+
+        let data = null;
+
+
+        try {
+
+            data =
+                text
+                    ? JSON.parse(text)
+                    : null;
+
+        } catch {
+
+            data = null;
 
         }
-    );
-
-}
 
 
-/* =====================================================
-   TEST ELECTRICITY
-===================================================== */
+        if (!response.ok) {
 
-const electricityForm =
-    document.getElementById(
-        "electricityForm"
-    );
+            throw new Error(
+                data?.error ||
+                data?.message ||
+                "Airtime payment failed."
+            );
 
-
-if (electricityForm) {
-
-    electricityForm.addEventListener(
-        "submit",
-        async function (event) {
-
-            event.preventDefault();
+        }
 
 
-            const provider =
-                document.getElementById(
-                    "electricityProvider"
-                )?.value
-                .trim();
+        return data;
+
+    }
 
 
-            const meterType =
-                document.getElementById(
-                    "electricityType"
-                )?.value
-                .trim();
+    /* =====================================================
+       TEST BILL FUNCTION
+    ===================================================== */
+
+    const TEST_BILL_FUNCTION_URL =
+        SUPABASE_URL +
+        "/functions/v1/test-bill-payment";
 
 
-            const meterNumber =
-                document.getElementById(
-                    "meterNumber"
-                )?.value
-                .trim();
+    async function getTestToken() {
 
+        try {
 
-            const amount =
-                Number(
-                    document.getElementById(
-                        "electricityAmount"
-                    )?.value
-                );
+            if (
+                typeof window.ensureValidSupabaseSession ===
+                "function"
+            ) {
+
+                const session =
+                    await window.ensureValidSupabaseSession();
+
+                return session?.access_token || null;
+
+            }
 
 
             if (
-                !provider ||
-                !meterType ||
-                !meterNumber ||
-                !amount ||
-                amount <= 0
+                typeof window.getSupabaseAccessToken ===
+                "function"
             ) {
 
-                alert(
-                    "Please complete the Electricity form."
-                );
-
-                return;
+                return await window.getSupabaseAccessToken();
 
             }
 
 
-            const button =
-                electricityForm.querySelector(
-                    ".pay-btn"
-                );
+            return null;
+
+        } catch (error) {
+
+            console.error(
+                "LosOja test bill token error:",
+                error
+            );
+
+            return null;
+
+        }
+
+    }
 
 
-            if (button) {
+    async function runTestBillPayment(
+        serviceType,
+        customerIdentifier,
+        amount,
+        options = {}
+    ) {
 
-                button.disabled =
-                    true;
-
-                button.textContent =
-                    "Testing...";
-
-            }
+        const token =
+            await getTestToken();
 
 
-            try {
+        if (!token) {
 
-                const result =
-                    await runTestBillPayment(
-                        "electricity",
-                        meterNumber,
-                        amount,
-                        {
+            throw new Error(
+                "Please log in to test bill payments."
+            );
+
+        }
+
+
+        const response =
+            await fetch(
+                TEST_BILL_FUNCTION_URL,
+                {
+                    method:
+                        "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json",
+
+                        "apikey":
+                            SUPABASE_KEY,
+
+                        "Authorization":
+                            "Bearer " + token
+
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            service_type:
+                                serviceType,
+
+                            customer_identifier:
+                                customerIdentifier,
+
+                            network:
+                                options.network || "",
+
                             provider:
-                                provider
-                        }
+                                options.provider || "",
+
+                            amount:
+                                Number(amount),
+
+                            status:
+                                "successful"
+
+                        })
+
+                }
+            );
+
+
+        const text =
+            await response.text();
+
+
+        let data = null;
+
+
+        try {
+
+            data =
+                text
+                    ? JSON.parse(text)
+                    : null;
+
+        } catch {
+
+            data = null;
+
+        }
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data?.error ||
+                data?.message ||
+                "Test bill payment failed."
+            );
+
+        }
+
+
+        if (
+            !data?.success ||
+            !data?.test_mode
+        ) {
+
+            throw new Error(
+                "Unexpected test payment response."
+            );
+
+        }
+
+
+        return data;
+
+    }
+
+
+    /* =====================================================
+       REAL AIRTIME
+    ===================================================== */
+
+    const airtimeForm =
+        document.getElementById(
+            "airtimeForm"
+        );
+
+
+    if (airtimeForm) {
+
+        airtimeForm.addEventListener(
+            "submit",
+            async function (event) {
+
+                event.preventDefault();
+
+
+                const network =
+                    document.getElementById(
+                        "airtimeNetwork"
+                    )?.value
+                    .trim()
+                    .toLowerCase();
+
+
+                const phone =
+                    document.getElementById(
+                        "airtimePhone"
+                    )?.value
+                    .trim();
+
+
+                const amount =
+                    Number(
+                        document.getElementById(
+                            "airtimeAmount"
+                        )?.value
                     );
 
 
-                alert(
-                    "TEST Electricity payment successful.\n\n" +
-                    "Amount: ₦" +
-                    Number(
-                        result.transaction.amount
-                    ).toLocaleString(
-                        "en-NG"
-                    )
-                );
+                if (!network) {
+
+                    alert(
+                        "Please select a network."
+                    );
+
+                    return;
+
+                }
 
 
-                electricityForm.reset();
+                if (
+                    !/^[0-9]{11}$/.test(phone)
+                ) {
+
+                    alert(
+                        "Enter a valid 11-digit Nigerian phone number."
+                    );
+
+                    return;
+
+                }
 
 
-                await loadBillHistory();
+                if (
+                    !Number.isFinite(amount) ||
+                    amount < 50
+                ) {
 
-            } catch (error) {
+                    alert(
+                        "Airtime amount must be at least ₦50."
+                    );
 
-                console.error(
-                    "LosOja test Electricity error:",
-                    error
-                );
+                    return;
+
+                }
 
 
-                alert(
-                    error.message ||
-                    "Test Electricity payment failed."
-                );
+                if (amount > 100000) {
 
-            } finally {
+                    alert(
+                        "Airtime amount cannot exceed ₦100,000 in sandbox."
+                    );
+
+                    return;
+
+                }
+
+
+                const button =
+                    airtimeForm.querySelector(
+                        ".pay-btn"
+                    );
+
 
                 if (button) {
 
                     button.disabled =
-                        false;
+                        true;
 
                     button.textContent =
-                        "Test Electricity";
+                        "Processing...";
+
+                }
+
+
+                try {
+
+                    const result =
+                        await runRealAirtimePayment(
+                            network,
+                            phone,
+                            amount
+                        );
+
+
+                    if (
+                        result?.status ===
+                        "successful"
+                    ) {
+
+                        alert(
+                            "Airtime purchase successful.\n\n" +
+                            "Network: " +
+                            network.toUpperCase() +
+                            "\n" +
+                            "Amount: ₦" +
+                            Number(amount).toLocaleString(
+                                "en-NG"
+                            )
+                        );
+
+                    } else if (
+                        result?.status ===
+                        "pending"
+                    ) {
+
+                        alert(
+                            "Airtime transaction is still being processed.\n\n" +
+                            "Please check your Bill History shortly."
+                        );
+
+                    } else {
+
+                        alert(
+                            result?.message ||
+                            "Airtime payment could not be completed."
+                        );
+
+                    }
+
+
+                    airtimeForm.reset();
+
+                    await loadBillHistory();
+
+                } catch (error) {
+
+                    console.error(
+                        "LosOja Airtime error:",
+                        error
+                    );
+
+
+                    alert(
+                        error.message ||
+                        "Airtime payment failed."
+                    );
+
+                } finally {
+
+                    if (button) {
+
+                        button.disabled =
+                            false;
+
+                        button.textContent =
+                            "Buy Airtime";
+
+                    }
 
                 }
 
             }
+        );
 
-        }
-    );
-
-}
+    }
 
 
-/* =====================================================
-   ENABLE TEST BUTTONS
-===================================================== */
+    /* =====================================================
+       TEST DATA
+    ===================================================== */
 
-enableTestButtons();
+    const dataForm =
+        document.getElementById(
+            "dataForm"
+        );
+
+
+    if (dataForm) {
+
+        dataForm.addEventListener(
+            "submit",
+            async function (event) {
+
+                event.preventDefault();
+
+
+                const network =
+                    document.getElementById(
+                        "dataNetwork"
+                    )?.value
+                    .trim()
+                    .toLowerCase();
+
+
+                const phone =
+                    document.getElementById(
+                        "dataPhone"
+                    )?.value
+                    .trim();
+
+
+                const plan =
+                    document.getElementById(
+                        "dataPlan"
+                    )?.value;
+
+
+                const planAmounts = {
+
+                    small:
+                        100,
+
+                    medium:
+                        500,
+
+                    large:
+                        1000
+
+                };
+
+
+                const amount =
+                    planAmounts[plan];
+
+
+                if (
+                    !network ||
+                    !phone ||
+                    !amount
+                ) {
+
+                    alert(
+                        "Please complete the Data form."
+                    );
+
+                    return;
+
+                }
+
+
+                const button =
+                    dataForm.querySelector(
+                        ".pay-btn"
+                    );
+
+
+                if (button) {
+
+                    button.disabled =
+                        true;
+
+                    button.textContent =
+                        "Testing...";
+
+                }
+
+
+                try {
+
+                    const result =
+                        await runTestBillPayment(
+                            "data",
+                            phone,
+                            amount,
+                            {
+                                network:
+                                    network
+                            }
+                        );
+
+
+                    alert(
+                        "TEST Data purchase successful.\n\n" +
+                        "Amount: ₦" +
+                        Number(
+                            result.transaction.amount
+                        ).toLocaleString(
+                            "en-NG"
+                        )
+                    );
+
+
+                    dataForm.reset();
+
+                    await loadBillHistory();
+
+                } catch (error) {
+
+                    console.error(
+                        "LosOja test Data error:",
+                        error
+                    );
+
+
+                    alert(
+                        error.message ||
+                        "Test Data payment failed."
+                    );
+
+                } finally {
+
+                    if (button) {
+
+                        button.disabled =
+                            false;
+
+                        button.textContent =
+                            "Test Data";
+
+                    }
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       TEST ELECTRICITY
+    ===================================================== */
+
+    const electricityForm =
+        document.getElementById(
+            "electricityForm"
+        );
+
+
+    if (electricityForm) {
+
+        electricityForm.addEventListener(
+            "submit",
+            async function (event) {
+
+                event.preventDefault();
+
+
+                const provider =
+                    document.getElementById(
+                        "electricityProvider"
+                    )?.value
+                    .trim();
+
+
+                const meterType =
+                    document.getElementById(
+                        "electricityType"
+                    )?.value
+                    .trim();
+
+
+                const meterNumber =
+                    document.getElementById(
+                        "meterNumber"
+                    )?.value
+                    .trim();
+
+
+                const amount =
+                    Number(
+                        document.getElementById(
+                            "electricityAmount"
+                        )?.value
+                    );
+
+
+                if (
+                    !provider ||
+                    !meterType ||
+                    !meterNumber ||
+                    !amount ||
+                    amount <= 0
+                ) {
+
+                    alert(
+                        "Please complete the Electricity form."
+                    );
+
+                    return;
+
+                }
+
+
+                const button =
+                    electricityForm.querySelector(
+                        ".pay-btn"
+                    );
+
+
+                if (button) {
+
+                    button.disabled =
+                        true;
+
+                    button.textContent =
+                        "Testing...";
+
+                }
+
+
+                try {
+
+                    const result =
+                        await runTestBillPayment(
+                            "electricity",
+                            meterNumber,
+                            amount,
+                            {
+                                provider:
+                                    provider
+                            }
+                        );
+
+
+                    alert(
+                        "TEST Electricity payment successful.\n\n" +
+                        "Amount: ₦" +
+                        Number(
+                            result.transaction.amount
+                        ).toLocaleString(
+                            "en-NG"
+                        )
+                    );
+
+
+                    electricityForm.reset();
+
+                    await loadBillHistory();
+
+                } catch (error) {
+
+                    console.error(
+                        "LosOja test Electricity error:",
+                        error
+                    );
+
+
+                    alert(
+                        error.message ||
+                        "Test Electricity payment failed."
+                    );
+
+                } finally {
+
+                    if (button) {
+
+                        button.disabled =
+                            false;
+
+                        button.textContent =
+                            "Test Electricity";
+
+                    }
+
+                }
+
+            }
+        );
+
+    }
+
 
     /* =====================================================
        FORMAT SERVICE TYPE
     ===================================================== */
 
-    function formatServiceType(
-        type
-    ) {
+    function formatServiceType(type) {
 
         const names = {
 
@@ -1567,7 +1700,9 @@ enableTestButtons();
                 .replace(
                     /\b\w/g,
                     function (letter) {
+
                         return letter.toUpperCase();
+
                     }
                 )
         );
@@ -1579,9 +1714,7 @@ enableTestButtons();
        FORMAT STATUS
     ===================================================== */
 
-    function formatStatus(
-        status
-    ) {
+    function formatStatus(status) {
 
         const names = {
 
@@ -1615,9 +1748,7 @@ enableTestButtons();
        FORMAT DATE
     ===================================================== */
 
-    function formatDate(
-        value
-    ) {
+    function formatDate(value) {
 
         if (!value) {
 
@@ -1647,9 +1778,7 @@ enableTestButtons();
        ESCAPE HTML
     ===================================================== */
 
-    function escapeHTML(
-        value
-    ) {
+    function escapeHTML(value) {
 
         if (
             value === null ||
@@ -1844,6 +1973,7 @@ enableTestButtons();
 
 
                                     <div>
+
                                         <strong>
                                             ₦${total.toLocaleString(
                                                 "en-NG",
@@ -1856,6 +1986,7 @@ enableTestButtons();
                                                 }
                                             )}
                                         </strong>
+
                                     </div>
 
                                 </div>
