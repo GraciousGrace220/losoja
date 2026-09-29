@@ -1726,21 +1726,23 @@ async function loadOjaListing(listingId) {
 
 
         currentOjaListing =
-            listing;
+    listing;
 
 
-        currentOjaImages =
-            Array.isArray(images)
-                ? images
-                : [];
+currentOjaImages =
+    Array.isArray(images)
+        ? images
+        : [];
 
 
-        currentOjaListingId =
-            listing.id;
+currentOjaListingId =
+    listing.id;
 
 
-        return listing;
+renderOjaDetails();
 
+
+return listing;
 
     } catch (error) {
 
