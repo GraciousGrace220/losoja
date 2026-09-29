@@ -2339,7 +2339,27 @@ function renderOjaDetails() {
         "block";
 }
 
+const buyButton =
+    document.getElementById(
+        "buyWithEscrowButton"
+    );
 
+if (buyButton) {
+
+    if (
+        currentOjaListing.user_id !==
+        currentUser.id
+    ) {
+
+        buyButton.style.display =
+            "block";
+
+    } else {
+
+        buyButton.style.display =
+            "none";
+    }
+}
 /* =========================================================
    LOAD OJA LISTING
 ========================================================= */
