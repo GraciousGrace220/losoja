@@ -165,13 +165,28 @@
             box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
         }
 
+        /* PERFECT SQUARE IMAGE FRAME */
+
         .oja-card-image {
             width: 100%;
-            height: 180px;
+            aspect-ratio: 1 / 1;
+            height: auto;
+            overflow: hidden;
             background: #eef8f2;
             display: flex;
             align-items: center;
             justify-content: center;
+        }
+
+        .oja-card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            display: block;
+        }
+
+        .oja-card-placeholder {
             font-size: 55px;
         }
 
@@ -289,6 +304,52 @@
             margin-top: 5px;
         }
 
+        /* PHOTO UPLOADER */
+
+        .oja-photo-input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px;
+            border: 1px dashed #087a3e;
+            border-radius: 8px;
+            background: #f7fbf8;
+            cursor: pointer;
+        }
+
+        .oja-photo-preview {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .oja-photo-preview-item {
+            position: relative;
+            aspect-ratio: 1 / 1;
+            overflow: hidden;
+            border-radius: 8px;
+            background: #eef8f2;
+            border: 1px solid #ddd;
+        }
+
+        .oja-photo-preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .oja-photo-main {
+            position: absolute;
+            left: 5px;
+            bottom: 5px;
+            background: rgba(8, 122, 62, 0.9);
+            color: white;
+            font-size: 10px;
+            padding: 3px 5px;
+            border-radius: 4px;
+        }
+
         .oja-form-error {
             display: none;
             background: #fff1f1;
@@ -339,8 +400,8 @@
                 gap: 12px;
             }
 
-            .oja-card-image {
-                height: 140px;
+            .oja-photo-preview {
+                grid-template-columns: repeat(3, 1fr);
             }
 
             .oja-modal {
@@ -692,6 +753,35 @@
                 </div>
 
 
+                <!-- PHOTOS -->
+
+                <div class="oja-form-group">
+
+                    <label for="ojaImages">
+                        Photos
+                    </label>
+
+                    <input
+                        id="ojaImages"
+                        class="oja-photo-input"
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp"
+                        multiple
+                    >
+
+                    <div class="oja-form-note">
+                        Add 1–5 photos. Maximum 5 MB per photo.
+                        The first photo will be the main photo.
+                    </div>
+
+                    <div
+                        id="ojaPhotoPreview"
+                        class="oja-photo-preview"
+                    ></div>
+
+                </div>
+
+
                 <!-- DESCRIPTION -->
 
                 <div class="oja-form-group">
@@ -1034,6 +1124,229 @@
 
 
         /* =====================================================
+           PHOTO VARIABLES
+        ===================================================== */
+
+        let selectedOjaImages = [];
+
+
+        /* =====================================================
+           PHOTO PREVIEW
+        ===================================================== */
+
+        const ojaImagesInput =
+            document.getElementById(
+                "ojaImages"
+            );
+
+        const ojaPhotoPreview =
+            document.getElementById(
+                "ojaPhotoPreview"
+            );
+
+
+        if (ojaImagesInput) {
+
+            ojaImagesInput.addEventListener(
+                "change",
+                function () {
+
+                    selectedOjaImages = [];
+
+                    const files =
+                        Array.from(
+                            this.files || []
+                        );
+
+
+                    if (!files.length) {
+
+                        if (ojaPhotoPreview) {
+                            ojaPhotoPreview.innerHTML =
+                                "";
+                        }
+
+                        return;
+
+                    }
+
+
+                    if (files.length > 5) {
+
+                        showOjaError(
+                            "You can upload a maximum of 5 photos."
+                        );
+
+                        this.value =
+                            "";
+
+                        if (ojaPhotoPreview) {
+                            ojaPhotoPreview.innerHTML =
+                                "";
+                        }
+
+                        return;
+
+                    }
+
+
+                    const allowedTypes = [
+                        "image/jpeg",
+                        "image/png",
+                        "image/webp"
+                    ];
+
+
+                    for (
+                        const file of files
+                    ) {
+
+                        if (
+                            !allowedTypes.includes(
+                                file.type
+                            )
+                        ) {
+
+                            showOjaError(
+                                "Only JPG, PNG and WebP images are allowed."
+                            );
+
+                            this.value =
+                                "";
+
+                            selectedOjaImages =
+                                [];
+
+                            if (ojaPhotoPreview) {
+                                ojaPhotoPreview.innerHTML =
+                                    "";
+                            }
+
+                            return;
+
+                        }
+
+
+                        if (
+                            file.size >
+                            5 * 1024 * 1024
+                        ) {
+
+                            showOjaError(
+                                "Each photo must be 5 MB or smaller."
+                            );
+
+                            this.value =
+                                "";
+
+                            selectedOjaImages =
+                                [];
+
+                            if (ojaPhotoPreview) {
+                                ojaPhotoPreview.innerHTML =
+                                    "";
+                            }
+
+                            return;
+
+                        }
+
+                    }
+
+
+                    selectedOjaImages =
+                        files;
+
+
+                    renderOjaPhotoPreviews();
+
+                }
+            );
+
+        }
+
+
+        function renderOjaPhotoPreviews() {
+
+            if (!ojaPhotoPreview) {
+                return;
+            }
+
+            ojaPhotoPreview.innerHTML =
+                "";
+
+
+            selectedOjaImages.forEach(
+                function (file, index) {
+
+                    const wrapper =
+                        document.createElement(
+                            "div"
+                        );
+
+                    wrapper.className =
+                        "oja-photo-preview-item";
+
+
+                    const image =
+                        document.createElement(
+                            "img"
+                        );
+
+                    const reader =
+                        new FileReader();
+
+
+                    reader.onload =
+                        function (event) {
+
+                            image.src =
+                                event.target.result;
+
+                        };
+
+
+                    reader.readAsDataURL(
+                        file
+                    );
+
+
+                    wrapper.appendChild(
+                        image
+                    );
+
+
+                    if (index === 0) {
+
+                        const mainLabel =
+                            document.createElement(
+                                "span"
+                            );
+
+                        mainLabel.className =
+                            "oja-photo-main";
+
+                        mainLabel.textContent =
+                            "Main";
+
+                        wrapper.appendChild(
+                            mainLabel
+                        );
+
+                    }
+
+
+                    ojaPhotoPreview.appendChild(
+                        wrapper
+                    );
+
+                }
+            );
+
+        }
+
+
+        /* =====================================================
            LOAD OJA LISTINGS
         ===================================================== */
 
@@ -1111,6 +1424,108 @@
                     Array.isArray(data)
                         ? data
                         : [];
+
+
+                /* ---------------------------------------------
+                   LOAD OJA IMAGES
+                --------------------------------------------- */
+
+                if (ojaListings.length) {
+
+                    const imageResponse =
+                        await fetch(
+                            OJA_SUPABASE_URL +
+                            "/rest/v1/oja_listing_images" +
+                            "?select=*" +
+                            "&order=sort_order.asc",
+                            {
+                                method: "GET",
+
+                                headers: {
+                                    "apikey":
+                                        OJA_SUPABASE_KEY,
+
+                                    "Authorization":
+                                        "Bearer " +
+                                        OJA_SUPABASE_KEY,
+
+                                    "Content-Type":
+                                        "application/json"
+                                }
+                            }
+                        );
+
+
+                    if (imageResponse.ok) {
+
+                        const imageData =
+                            await imageResponse.json();
+
+
+                        if (
+                            Array.isArray(
+                                imageData
+                            )
+                        ) {
+
+                            const imagesByListing =
+                                {};
+
+
+                            imageData.forEach(
+                                function (image) {
+
+                                    if (
+                                        !imagesByListing[
+                                            image.listing_id
+                                        ]
+                                    ) {
+
+                                        imagesByListing[
+                                            image.listing_id
+                                        ] = [];
+
+                                    }
+
+
+                                    imagesByListing[
+                                        image.listing_id
+                                    ].push(
+                                        image
+                                    );
+
+                                }
+                            );
+
+
+                            ojaListings =
+                                ojaListings.map(
+                                    function (item) {
+
+                                        return {
+                                            ...item,
+
+                                            images:
+                                                imagesByListing[
+                                                    item.id
+                                                ] || []
+                                        };
+
+                                    }
+                                );
+
+                        }
+
+                    } else {
+
+                        console.warn(
+                            "LosOja: Oja images could not be loaded."
+                        );
+
+                    }
+
+                }
+
 
                 renderOjaListings();
 
@@ -1260,6 +1675,58 @@
                                     }
                                 );
 
+
+                            const mainImage =
+                                item.images &&
+                                item.images.length
+                                    ? item.images
+                                        .sort(
+                                            function (
+                                                a,
+                                                b
+                                            ) {
+
+                                                return (
+                                                    Number(
+                                                        a.sort_order ||
+                                                        0
+                                                    ) -
+                                                    Number(
+                                                        b.sort_order ||
+                                                        0
+                                                    )
+                                                );
+
+                                            }
+                                        )[0]
+                                    : null;
+
+
+                            const imageHTML =
+                                mainImage &&
+                                mainImage.image_url
+                                    ? `
+                                        <div class="oja-card-image">
+                                            <img
+                                                src="${escapeHTML(
+                                                    mainImage.image_url
+                                                )}"
+                                                alt="${escapeHTML(
+                                                    item.title
+                                                )}"
+                                                loading="lazy"
+                                            >
+                                        </div>
+                                    `
+                                    : `
+                                        <div class="oja-card-image">
+                                            <span class="oja-card-placeholder">
+                                                🛍️
+                                            </span>
+                                        </div>
+                                    `;
+
+
                             return `
                                 <article
                                     class="oja-card"
@@ -1268,9 +1735,7 @@
                                     )}"
                                 >
 
-                                    <div class="oja-card-image">
-                                        🛍️
-                                    </div>
+                                    ${imageHTML}
 
                                     <div class="oja-card-body">
 
@@ -1321,6 +1786,181 @@
                         }
                     )
                     .join("");
+
+        }
+
+
+        /* =====================================================
+           UPLOAD OJA IMAGE
+        ===================================================== */
+
+        async function uploadOjaImage(
+            file,
+            userId,
+            listingId,
+            index,
+            accessToken
+        ) {
+
+            const extension =
+                file.name
+                    .split(".")
+                    .pop()
+                    .toLowerCase();
+
+
+            const safeExtension =
+                extension === "jpg"
+                    ? "jpg"
+                    : extension;
+
+
+            const fileName =
+                userId +
+                "/" +
+                listingId +
+                "/" +
+                Date.now() +
+                "_" +
+                index +
+                "_" +
+                crypto.randomUUID() +
+                "." +
+                safeExtension;
+
+
+            const uploadUrl =
+                OJA_SUPABASE_URL +
+                "/storage/v1/object/oja-images/" +
+                fileName;
+
+
+            const response =
+                await fetch(
+                    uploadUrl,
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "apikey":
+                                OJA_SUPABASE_KEY,
+
+                            "Authorization":
+                                "Bearer " +
+                                accessToken,
+
+                            "Content-Type":
+                                file.type,
+
+                            "x-upsert":
+                                "false"
+                        },
+
+                        body:
+                            file
+                    }
+                );
+
+
+            if (!response.ok) {
+
+                const errorText =
+                    await response.text();
+
+                console.error(
+                    "LosOja image upload error:",
+                    response.status,
+                    errorText
+                );
+
+                throw new Error(
+                    "A photo could not be uploaded."
+                );
+
+            }
+
+
+            return (
+                OJA_SUPABASE_URL +
+                "/storage/v1/object/public/oja-images/" +
+                fileName
+            );
+
+        }
+
+
+        /* =====================================================
+           SAVE OJA IMAGE RECORD
+        ===================================================== */
+
+        async function saveOjaImageRecord(
+            listingId,
+            userId,
+            imageUrl,
+            sortOrder,
+            accessToken
+        ) {
+
+            const response =
+                await fetch(
+                    OJA_SUPABASE_URL +
+                    "/rest/v1/oja_listing_images",
+                    {
+                        method: "POST",
+
+                        headers: {
+
+                            "apikey":
+                                OJA_SUPABASE_KEY,
+
+                            "Authorization":
+                                "Bearer " +
+                                accessToken,
+
+                            "Content-Type":
+                                "application/json",
+
+                            "Prefer":
+                                "return=minimal"
+
+                        },
+
+                        body:
+                            JSON.stringify({
+
+                                listing_id:
+                                    listingId,
+
+                                user_id:
+                                    userId,
+
+                                image_url:
+                                    imageUrl,
+
+                                sort_order:
+                                    sortOrder
+
+                            })
+                    }
+                );
+
+
+            if (!response.ok) {
+
+                const errorText =
+                    await response.text();
+
+                console.error(
+                    "LosOja image record error:",
+                    response.status,
+                    errorText
+                );
+
+                throw new Error(
+                    "The photo record could not be saved."
+                );
+
+            }
 
         }
 
@@ -1444,6 +2084,34 @@
                     }
 
 
+                    /* PHOTO REQUIRED */
+
+                    if (
+                        selectedOjaImages.length <
+                        1
+                    ) {
+
+                        showOjaError(
+                            "Please add at least 1 photo."
+                        );
+
+                        return;
+                    }
+
+
+                    if (
+                        selectedOjaImages.length >
+                        5
+                    ) {
+
+                        showOjaError(
+                            "You can upload a maximum of 5 photos."
+                        );
+
+                        return;
+                    }
+
+
                     const submitButton =
                         document.getElementById(
                             "ojaSubmitButton"
@@ -1457,6 +2125,10 @@
 
 
                     try {
+
+                        /* -----------------------------------------
+                           CREATE LISTING
+                        ----------------------------------------- */
 
                         const response =
                             await fetch(
@@ -1482,10 +2154,12 @@
 
                                         "Prefer":
                                             "return=representation"
+
                                     },
 
                                     body:
                                         JSON.stringify({
+
                                             user_id:
                                                 user.id,
 
@@ -1511,6 +2185,7 @@
 
                                             status:
                                                 "available"
+
                                         })
                                 }
                             );
@@ -1534,12 +2209,87 @@
                         }
 
 
+                        const createdListing =
+                            await response.json();
+
+
+                        const listing =
+                            Array.isArray(
+                                createdListing
+                            )
+                                ? createdListing[0]
+                                : createdListing;
+
+
+                        if (
+                            !listing ||
+                            !listing.id
+                        ) {
+
+                            throw new Error(
+                                "The item was posted but its ID could not be found."
+                            );
+
+                        }
+
+
+                        /* -----------------------------------------
+                           UPLOAD PHOTOS
+                        ----------------------------------------- */
+
+                        for (
+                            let index = 0;
+                            index <
+                            selectedOjaImages.length;
+                            index++
+                        ) {
+
+                            submitButton.textContent =
+                                "Uploading photo " +
+                                (index + 1) +
+                                " of " +
+                                selectedOjaImages.length +
+                                "...";
+
+
+                            const imageUrl =
+                                await uploadOjaImage(
+                                    selectedOjaImages[index],
+                                    user.id,
+                                    listing.id,
+                                    index,
+                                    accessToken
+                                );
+
+
+                            await saveOjaImageRecord(
+                                listing.id,
+                                user.id,
+                                imageUrl,
+                                index,
+                                accessToken
+                            );
+
+                        }
+
+
                         showOjaSuccess(
-                            "Item posted successfully!"
+                            "Item and photos posted successfully!"
                         );
 
 
                         ojaForm.reset();
+
+                        selectedOjaImages =
+                            [];
+
+
+                        if (ojaPhotoPreview) {
+
+                            ojaPhotoPreview.innerHTML =
+                                "";
+
+                        }
 
 
                         await loadOjaListings();
@@ -1551,7 +2301,7 @@
                                 closePostModal();
 
                             },
-                            800
+                            1000
                         );
 
 
