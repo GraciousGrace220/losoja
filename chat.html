@@ -149,6 +149,101 @@
         margin-top: 4px;
     }
 
+    /* =====================================================
+       ESCROW PURCHASE DETAILS
+    ===================================================== */
+
+    .escrow-details {
+        display: none;
+
+        background: white;
+        border: 1px solid #dfe7e2;
+        border-left: 4px solid #087a3e;
+
+        border-radius: 12px;
+
+        padding: 15px;
+
+        margin-bottom: 12px;
+    }
+
+    .escrow-details-title {
+        font-size: 16px;
+        font-weight: 700;
+
+        color: #087a3e;
+
+        margin-bottom: 12px;
+    }
+
+    .escrow-detail-row {
+        margin-bottom: 10px;
+    }
+
+    .escrow-detail-row:last-child {
+        margin-bottom: 0;
+    }
+
+    .escrow-detail-label {
+        display: block;
+
+        color: #6b7280;
+
+        font-size: 12px;
+        font-weight: 600;
+
+        margin-bottom: 3px;
+
+        text-transform: uppercase;
+    }
+
+    .escrow-detail-value {
+        color: #111827;
+
+        font-size: 14px;
+
+        line-height: 1.5;
+
+        word-break: break-word;
+    }
+
+    .escrow-amount {
+        font-weight: 700;
+        color: #087a3e;
+        font-size: 16px;
+    }
+
+    .escrow-status {
+        display: inline-block;
+
+        background: #eef8f2;
+        color: #087a3e;
+
+        padding: 4px 9px;
+
+        border-radius: 20px;
+
+        font-size: 12px;
+        font-weight: 700;
+
+        text-transform: capitalize;
+    }
+
+    .escrow-dispute {
+        background: #fff7ed;
+        color: #9a3412;
+
+        border-radius: 8px;
+
+        padding: 10px;
+
+        margin-top: 10px;
+
+        font-size: 13px;
+
+        line-height: 1.5;
+    }
+
     .messages {
         background: white;
         border: 1px solid #e5e7eb;
@@ -313,6 +408,7 @@
 </div>
 
 <button
+    id="loginButton"
     class="login-button"
     type="button"
     onclick="goToLogin()"
@@ -363,6 +459,77 @@
         <div
             id="listingInfo"
             class="listing-info"
+        ></div>
+
+    </div>
+
+
+    <!-- =====================================================
+         ESCROW PURCHASE DETAILS
+    ====================================================== -->
+
+    <div
+        id="escrowDetails"
+        class="escrow-details"
+    >
+
+        <div class="escrow-details-title">
+            Escrow Purchase Details
+        </div>
+
+
+        <div class="escrow-detail-row">
+
+            <span class="escrow-detail-label">
+                What is being bought
+            </span>
+
+            <div
+                id="escrowDescription"
+                class="escrow-detail-value"
+            >
+                -
+            </div>
+
+        </div>
+
+
+        <div class="escrow-detail-row">
+
+            <span class="escrow-detail-label">
+                Amount
+            </span>
+
+            <div
+                id="escrowAmount"
+                class="escrow-detail-value escrow-amount"
+            >
+                -
+            </div>
+
+        </div>
+
+
+        <div class="escrow-detail-row">
+
+            <span class="escrow-detail-label">
+                Escrow Status
+            </span>
+
+            <div
+                id="escrowStatus"
+                class="escrow-detail-value"
+            >
+                -
+            </div>
+
+        </div>
+
+
+        <div
+            id="escrowDispute"
+            class="escrow-dispute"
+            style="display:none;"
         ></div>
 
     </div>
@@ -552,10 +719,13 @@ async function supabaseRequest(
             }
         );
 
+
     const text =
         await response.text();
 
+
     let data = null;
+
 
     try {
 
@@ -569,6 +739,7 @@ async function supabaseRequest(
         data = text;
 
     }
+
 
     if (!response.ok) {
 
@@ -586,6 +757,7 @@ async function supabaseRequest(
         );
     }
 
+
     return data;
 }
 
@@ -601,6 +773,7 @@ async function loadEscrowChatContext() {
         return false;
     }
 
+
     const escrow =
         await supabaseRequest(
             "/rest/v1/escrow_transactions" +
@@ -610,6 +783,7 @@ async function loadEscrowChatContext() {
                 currentEscrowId
             )
         );
+
 
     if (
         !Array.isArray(escrow) ||
@@ -621,8 +795,10 @@ async function loadEscrowChatContext() {
         );
     }
 
+
     currentEscrow =
         escrow[0];
+
 
     const buyerId =
         currentEscrow.buyer_id;
@@ -649,6 +825,117 @@ async function loadEscrowChatContext() {
 
 
     return true;
+}
+
+
+/* =========================================================
+   DISPLAY ESCROW DETAILS
+========================================================= */
+
+function renderEscrowDetails() {
+
+    if (!currentEscrow) {
+
+        return;
+    }
+
+
+    const details =
+        document.getElementById(
+            "escrowDetails"
+        );
+
+
+    if (!details) {
+
+        return;
+    }
+
+
+    const description =
+        currentEscrow.description ||
+        "No purchase description was provided.";
+
+
+    const amount =
+        Number(
+            currentEscrow.amount || 0
+        ).toLocaleString(
+            "en-NG",
+            {
+                minimumFractionDigits:
+                    2,
+
+                maximumFractionDigits:
+                    2
+            }
+        );
+
+
+    const currency =
+        currentEscrow.currency ||
+        "NGN";
+
+
+    const status =
+        currentEscrow.status ||
+        "active";
+
+
+    document.getElementById(
+        "escrowDescription"
+    ).textContent =
+        description;
+
+
+    document.getElementById(
+        "escrowAmount"
+    ).textContent =
+        currency +
+        " " +
+        amount;
+
+
+    document.getElementById(
+        "escrowStatus"
+    ).innerHTML = `
+
+        <span class="escrow-status">
+
+            ${escapeHTML(status)}
+
+        </span>
+
+    `;
+
+
+    const disputeBox =
+        document.getElementById(
+            "escrowDispute"
+        );
+
+
+    if (
+        currentEscrow.dispute_reason &&
+        disputeBox
+    ) {
+
+        disputeBox.textContent =
+            "Dispute reason: " +
+            currentEscrow.dispute_reason;
+
+        disputeBox.style.display =
+            "block";
+
+    } else if (disputeBox) {
+
+        disputeBox.style.display =
+            "none";
+    }
+
+
+    details.style.display =
+        "block";
 }
 
 
@@ -1236,7 +1523,6 @@ async function renderConversationList(
         of conversations
     ) {
 
-
         const otherUserId =
 
             conversation.user_one_id ===
@@ -1493,6 +1779,14 @@ async function openSpecificChat() {
             );
 
 
+        /*
+           Show the full escrow
+           purchase information.
+        */
+
+        renderEscrowDetails();
+
+
     } else {
 
         document.getElementById(
@@ -1576,6 +1870,26 @@ async function initializeChat() {
 
         currentUser =
             await window.getCurrentUser();
+
+
+        /*
+           Hide Login button when
+           the user is already logged in.
+        */
+
+        const loginButton =
+            document.getElementById(
+                "loginButton"
+            );
+
+
+        if (loginButton) {
+
+            loginButton.style.display =
+                currentUser
+                    ? "none"
+                    : "block";
+        }
 
 
         if (!currentUser) {
