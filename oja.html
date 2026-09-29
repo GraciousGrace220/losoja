@@ -1560,234 +1560,274 @@
         }
 
 
-        /* =====================================================
-           RENDER OJA LISTINGS
-        ===================================================== */
+     /* =====================================================
+   RENDER OJA LISTINGS
+===================================================== */
 
-        function renderOjaListings() {
+function renderOjaListings() {
 
-            const container =
-                document.getElementById(
-                    "ojaListings"
+    const container =
+        document.getElementById(
+            "ojaListings"
+        );
+
+    if (!container) {
+        return;
+    }
+
+    const searchInput =
+        document.getElementById(
+            "ojaSearch"
+        );
+
+    const search =
+        searchInput
+            ? searchInput.value
+                .trim()
+                .toLowerCase()
+            : "";
+
+    const filtered =
+        ojaListings.filter(
+            function (item) {
+
+                const matchesCategory =
+                    activeOjaCategory ===
+                    "all" ||
+                    String(
+                        item.category || ""
+                    ).toLowerCase() ===
+                    activeOjaCategory;
+
+                const searchableText =
+                    (
+                        String(item.title || "") +
+                        " " +
+                        String(item.description || "") +
+                        " " +
+                        String(item.location || "") +
+                        " " +
+                        String(item.category || "")
+                    )
+                    .toLowerCase();
+
+                const matchesSearch =
+                    !search ||
+                    searchableText.includes(
+                        search
+                    );
+
+                return (
+                    matchesCategory &&
+                    matchesSearch
                 );
 
-            if (!container) {
-                return;
             }
+        );
 
-            const searchInput =
-                document.getElementById(
-                    "ojaSearch"
-                );
 
-            const search =
-                searchInput
-                    ? searchInput.value
-                        .trim()
-                        .toLowerCase()
-                    : "";
+    if (!filtered.length) {
 
-            const filtered =
-                ojaListings.filter(
-                    function (item) {
+        container.innerHTML =
+            `
+            <div class="oja-empty">
 
-                        const matchesCategory =
-                            activeOjaCategory ===
-                            "all" ||
-                            String(
-                                item.category || ""
-                            ).toLowerCase() ===
-                            activeOjaCategory;
+                <div class="oja-empty-icon">
+                    🛍️
+                </div>
 
-                        const searchableText =
-                            (
-                                String(item.title || "") +
-                                " " +
-                                String(item.description || "") +
-                                " " +
-                                String(item.location || "") +
-                                " " +
-                                String(item.category || "")
-                            )
-                            .toLowerCase();
+                <h3>
+                    No listings found
+                </h3>
 
-                        const matchesSearch =
-                            !search ||
-                            searchableText.includes(
-                                search
-                            );
+                <p>
+                    Be the first to post an item on Oja.
+                </p>
 
-                        return (
-                            matchesCategory &&
-                            matchesSearch
+                <button
+                    class="oja-button oja-button-primary"
+                    type="button"
+                    onclick="startPosting()"
+                >
+                    + Post an Item
+                </button>
+
+            </div>
+            `;
+
+        return;
+    }
+
+
+    container.innerHTML =
+        filtered
+            .map(
+                function (item) {
+
+                    const price =
+                        Number(
+                            item.price || 0
+                        ).toLocaleString(
+                            "en-NG",
+                            {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                            }
                         );
 
-                    }
-                );
+
+                    const images =
+                        Array.isArray(
+                            item.images
+                        )
+                            ? [...item.images].sort(
+                                function (
+                                    a,
+                                    b
+                                ) {
+
+                                    return (
+                                        Number(
+                                            a.sort_order || 0
+                                        ) -
+                                        Number(
+                                            b.sort_order || 0
+                                        )
+                                    );
+
+                                }
+                            )
+                            : [];
 
 
-            if (!filtered.length) {
-
-                container.innerHTML =
-                    `
-                    <div class="oja-empty">
-
-                        <div class="oja-empty-icon">
-                            🛍️
-                        </div>
-
-                        <h3>
-                            No listings found
-                        </h3>
-
-                        <p>
-                            Be the first to post an item on Oja.
-                        </p>
-
-                        <button
-                            class="oja-button oja-button-primary"
-                            type="button"
-                            onclick="startPosting()"
-                        >
-                            + Post an Item
-                        </button>
-
-                    </div>
-                    `;
-
-                return;
-            }
+                    const mainImage =
+                        images.length
+                            ? images[0]
+                            : null;
 
 
-            container.innerHTML =
-                filtered
-                    .map(
-                        function (item) {
-
-                            const price =
-                                Number(
-                                    item.price || 0
-                                ).toLocaleString(
-                                    "en-NG",
-                                    {
-                                        minimumFractionDigits: 2,
-                                        maximumFractionDigits: 2
-                                    }
-                                );
-
-
-                            const mainImage =
-                                item.images &&
-                                item.images.length
-                                    ? item.images
-                                        .sort(
-                                            function (
-                                                a,
-                                                b
-                                            ) {
-
-                                                return (
-                                                    Number(
-                                                        a.sort_order ||
-                                                        0
-                                                    ) -
-                                                    Number(
-                                                        b.sort_order ||
-                                                        0
-                                                    )
-                                                );
-
-                                            }
-                                        )[0]
-                                    : null;
-
-
-                            const imageHTML =
-                                mainImage &&
-                                mainImage.image_url
-                                    ? `
-                                        <div class="oja-card-image">
-                                            <img
-                                                src="${escapeHTML(
-                                                    mainImage.image_url
-                                                )}"
-                                                alt="${escapeHTML(
-                                                    item.title
-                                                )}"
-                                                loading="lazy"
-                                            >
-                                        </div>
-                                    `
-                                    : `
-                                        <div class="oja-card-image">
-                                            <span class="oja-card-placeholder">
-                                                🛍️
-                                            </span>
-                                        </div>
-                                    `;
-
-
-                            return `
-                                <article
-                                    class="oja-card"
-                                    data-category="${escapeHTML(
-                                        item.category
-                                    )}"
-                                >
-
-                                    ${imageHTML}
-
-                                    <div class="oja-card-body">
-
-                                        <h3>
-                                            ${escapeHTML(
-                                                item.title
-                                            )}
-                                        </h3>
-
-                                        <div class="oja-price">
-                                            ₦${price}
-                                        </div>
-
-                                        ${
-                                            item.location
-                                                ? `
-                                                <div class="oja-location">
-                                                    📍
-                                                    ${escapeHTML(
-                                                        item.location
-                                                    )}
-                                                </div>
-                                                `
-                                                : ""
-                                        }
-
-                                        ${
-                                            item.description
-                                                ? `
-                                                <p>
-                                                    ${escapeHTML(
-                                                        item.description
-                                                    )}
-                                                </p>
-                                                `
-                                                : ""
-                                        }
-
-                                        <span class="oja-status">
-                                            Available
-                                        </span>
-
-                                    </div>
-
-                                </article>
+                    const imageHTML =
+                        mainImage &&
+                        mainImage.image_url
+                            ? `
+                                <div class="oja-card-image">
+                                    <img
+                                        src="${escapeHTML(
+                                            mainImage.image_url
+                                        )}"
+                                        alt="${escapeHTML(
+                                            item.title
+                                        )}"
+                                        loading="lazy"
+                                    >
+                                </div>
+                            `
+                            : `
+                                <div class="oja-card-image">
+                                    <span class="oja-card-placeholder">
+                                        🛍️
+                                    </span>
+                                </div>
                             `;
 
-                        }
-                    )
-                    .join("");
 
-        }
+                    return `
+                        <article
+                            class="oja-card"
+                            data-category="${escapeHTML(
+                                item.category
+                            )}"
+                        >
+
+                            ${imageHTML}
+
+                            <div class="oja-card-body">
+
+                                <h3>
+                                    ${escapeHTML(
+                                        item.title
+                                    )}
+                                </h3>
+
+                                <div class="oja-price">
+                                    ₦${price}
+                                </div>
+
+                                ${
+                                    item.location
+                                        ? `
+                                        <div class="oja-location">
+                                            📍
+                                            ${escapeHTML(
+                                                item.location
+                                            )}
+                                        </div>
+                                        `
+                                        : ""
+                                }
+
+                                ${
+                                    item.description
+                                        ? `
+                                        <p>
+                                            ${escapeHTML(
+                                                item.description
+                                            )}
+                                        </p>
+                                        `
+                                        : ""
+                                }
+
+                                <span class="oja-status">
+                                    Available
+                                </span>
+
+                                <div
+                                    class="oja-card-actions"
+                                    style="
+                                        display:flex;
+                                        gap:8px;
+                                        margin-top:12px;
+                                    "
+                                >
+
+                                    <button
+                                        type="button"
+                                        class="oja-button oja-button-secondary"
+                                        style="
+                                            flex:1;
+                                            padding:10px;
+                                        "
+                                        onclick="viewOjaDetails('${item.id}')"
+                                    >
+                                        View Details
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        class="oja-button oja-button-primary"
+                                        style="
+                                            flex:1;
+                                            padding:10px;
+                                            border:1px solid #087a3e;
+                                        "
+                                        onclick="chatWithOjaSeller('${item.id}')"
+                                    >
+                                        Chat Seller
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        </article>
+                    `;
+
+                }
+            )
+            .join("");
+
+}}
 
 
         /* =====================================================
