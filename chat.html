@@ -603,25 +603,41 @@
     </div>
 
 
-    <form
-        id="chatForm"
-        class="chat-form"
+   <form
+    id="chatForm"
+    class="chat-form"
+>
+    <input
+        id="messageInput"
+        class="message-input"
+        type="text"
+        maxlength="2000"
+        placeholder="Type a message..."
+        autocomplete="off"
     >
 
-        <input
-            id="messageInput"
-            class="message-input"
-            type="text"
-            maxlength="2000"
-            placeholder="Type a message..."
-            autocomplete="off"
-            required
-        >
+    <input
+        id="imageInput"
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        hidden
+    >
 
-        <button
-            id="sendButton"
-            class="send-button"
-            type="submit"
+    <button
+        id="imageButton"
+        class="image-button"
+        type="button"
+        aria-label="Send picture"
+        title="Send picture"
+    >
+        📷
+    </button>
+
+    <button
+        id="sendButton"
+        class="send-button"
+        type="submit"
+    >
             aria-label="Send message"
         >
             &gt;
