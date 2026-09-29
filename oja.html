@@ -150,6 +150,7 @@
             text-align: center;
             color: #666;
             box-shadow: 0 3px 15px rgba(0, 0, 0, 0.06);
+            grid-column: 1 / -1;
         }
 
         .oja-empty-icon {
@@ -206,6 +207,123 @@
             font-weight: 600;
         }
 
+        /* =====================================================
+           POST FORM
+        ===================================================== */
+
+        .oja-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: rgba(0, 0, 0, 0.55);
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .oja-modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .oja-modal-box {
+            width: 100%;
+            max-width: 560px;
+            background: white;
+            border-radius: 16px;
+            padding: 22px;
+            box-sizing: border-box;
+        }
+
+        .oja-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .oja-modal-header h2 {
+            margin: 0;
+        }
+
+        .oja-close {
+            border: none;
+            background: transparent;
+            font-size: 28px;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .oja-form-group {
+            margin-bottom: 16px;
+        }
+
+        .oja-form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 7px;
+        }
+
+        .oja-form-group input,
+        .oja-form-group select,
+        .oja-form-group textarea {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 12px;
+            border: 1px solid #d7d7d7;
+            border-radius: 8px;
+            font-size: 15px;
+            font-family: inherit;
+        }
+
+        .oja-form-group textarea {
+            min-height: 110px;
+            resize: vertical;
+        }
+
+        .oja-form-note {
+            color: #666;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        .oja-form-error {
+            display: none;
+            background: #fff1f1;
+            color: #b42318;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .oja-form-success {
+            display: none;
+            background: #eef8f2;
+            color: #087a3e;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .oja-submit {
+            width: 100%;
+            background: #087a3e;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 13px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .oja-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
         @media (max-width: 600px) {
 
             .oja-page {
@@ -223,6 +341,10 @@
 
             .oja-card-image {
                 height: 140px;
+            }
+
+            .oja-modal {
+                padding: 10px;
             }
 
         }
@@ -404,37 +526,10 @@
 
                 </div>
 
-
                 <div
                     id="ojaListings"
                     class="oja-listings"
-                >
-
-                    <div class="oja-empty">
-
-                        <div class="oja-empty-icon">
-                            🛍️
-                        </div>
-
-                        <h3>
-                            Oja is ready
-                        </h3>
-
-                        <p>
-                            No products have been posted yet.
-                        </p>
-
-                        <button
-                            class="oja-button oja-button-primary"
-                            type="button"
-                            onclick="startPosting()"
-                        >
-                            Be the first to post
-                        </button>
-
-                    </div>
-
-                </div>
+                ></div>
 
             </section>
 
@@ -444,10 +539,219 @@
 
 
     <!-- =====================================================
-         JAVASCRIPT
+         POST ITEM MODAL
+    ====================================================== -->
+
+    <div
+        id="ojaPostModal"
+        class="oja-modal"
+    >
+
+        <div class="oja-modal-box">
+
+            <div class="oja-modal-header">
+
+                <h2>
+                    Post an Item
+                </h2>
+
+                <button
+                    type="button"
+                    class="oja-close"
+                    onclick="closePostModal()"
+                    aria-label="Close"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <div
+                id="ojaFormError"
+                class="oja-form-error"
+            ></div>
+
+            <div
+                id="ojaFormSuccess"
+                class="oja-form-success"
+            ></div>
+
+
+            <form id="ojaPostForm">
+
+
+                <!-- TITLE -->
+
+                <div class="oja-form-group">
+
+                    <label for="ojaTitle">
+                        Item name
+                    </label>
+
+                    <input
+                        id="ojaTitle"
+                        name="title"
+                        type="text"
+                        maxlength="120"
+                        required
+                        placeholder="e.g. iPhone 13"
+                    >
+
+                </div>
+
+
+                <!-- CATEGORY -->
+
+                <div class="oja-form-group">
+
+                    <label for="ojaCategory">
+                        Category
+                    </label>
+
+                    <select
+                        id="ojaCategory"
+                        name="category"
+                        required
+                    >
+
+                        <option value="">
+                            Select category
+                        </option>
+
+                        <option value="phones">
+                            Phones
+                        </option>
+
+                        <option value="fashion">
+                            Fashion
+                        </option>
+
+                        <option value="electronics">
+                            Electronics
+                        </option>
+
+                        <option value="vehicles">
+                            Vehicles
+                        </option>
+
+                        <option value="property">
+                            Property
+                        </option>
+
+                        <option value="home">
+                            Home
+                        </option>
+
+                        <option value="other">
+                            Other
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- PRICE -->
+
+                <div class="oja-form-group">
+
+                    <label for="ojaPrice">
+                        Price (₦)
+                    </label>
+
+                    <input
+                        id="ojaPrice"
+                        name="price"
+                        type="number"
+                        min="1"
+                        step="0.01"
+                        required
+                        placeholder="e.g. 250000"
+                    >
+
+                </div>
+
+
+                <!-- LOCATION -->
+
+                <div class="oja-form-group">
+
+                    <label for="ojaLocation">
+                        Location
+                    </label>
+
+                    <input
+                        id="ojaLocation"
+                        name="location"
+                        type="text"
+                        maxlength="150"
+                        placeholder="e.g. Port Harcourt"
+                    >
+
+                </div>
+
+
+                <!-- DESCRIPTION -->
+
+                <div class="oja-form-group">
+
+                    <label for="ojaDescription">
+                        Description
+                    </label>
+
+                    <textarea
+                        id="ojaDescription"
+                        name="description"
+                        maxlength="1000"
+                        placeholder="Describe the item..."
+                    ></textarea>
+
+                    <div class="oja-form-note">
+                        Give buyers useful information about the item.
+                    </div>
+
+                </div>
+
+
+                <button
+                    id="ojaSubmitButton"
+                    class="oja-submit"
+                    type="submit"
+                >
+                    Post Item
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         EXISTING LOSOJA AUTH
+    ====================================================== -->
+
+    <script src="js/auth.js"></script>
+
+
+    <!-- =====================================================
+         OJA JAVASCRIPT
     ====================================================== -->
 
     <script>
+
+        /* =====================================================
+           SUPABASE CONFIG
+        ===================================================== */
+
+        const OJA_SUPABASE_URL =
+            "https://ycxshwgeebskdozmornh.supabase.co";
+
+        const OJA_SUPABASE_KEY =
+            "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
+
 
         /* =====================================================
            LOGIN
@@ -479,10 +783,6 @@
             }
         }
 
-
-        /* =====================================================
-           LOGIN BUTTON
-        ===================================================== */
 
         function updateLoginButton() {
 
@@ -524,10 +824,6 @@
         }
 
 
-        /* =====================================================
-           LOGIN
-        ===================================================== */
-
         function goToLogin() {
 
             window.location.href =
@@ -537,7 +833,71 @@
 
 
         /* =====================================================
-           POST ITEM
+           ESCAPE HTML
+        ===================================================== */
+
+        function escapeHTML(value) {
+
+            return String(value || "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+
+        }
+
+
+        /* =====================================================
+           SUPABASE ACCESS TOKEN
+        ===================================================== */
+
+        function getOjaAccessToken() {
+
+            if (
+                typeof window.getSupabaseAccessToken ===
+                "function"
+            ) {
+
+                return window.getSupabaseAccessToken();
+
+            }
+
+            try {
+
+                const raw =
+                    localStorage.getItem(
+                        "losoja_supabase_session"
+                    );
+
+                if (!raw) {
+                    return null;
+                }
+
+                const session =
+                    JSON.parse(raw);
+
+                return (
+                    session.access_token ||
+                    session.accessToken ||
+                    null
+                );
+
+            } catch (error) {
+
+                console.error(
+                    "LosOja session lookup error:",
+                    error
+                );
+
+                return null;
+            }
+
+        }
+
+
+        /* =====================================================
+           POST ITEM MODAL
         ===================================================== */
 
         function startPosting() {
@@ -556,13 +916,668 @@
                 return;
             }
 
-            /*
-             * We will connect this to the real
-             * Oja posting form in the next step.
-             */
+            const modal =
+                document.getElementById(
+                    "ojaPostModal"
+                );
 
-            alert(
-                "Oja posting is being connected now."
+            if (modal) {
+
+                modal.classList.add(
+                    "show"
+                );
+
+            }
+
+        }
+
+
+        function closePostModal() {
+
+            const modal =
+                document.getElementById(
+                    "ojaPostModal"
+                );
+
+            if (modal) {
+
+                modal.classList.remove(
+                    "show"
+                );
+
+            }
+
+        }
+
+
+        /* Close when clicking outside modal */
+
+        document
+            .getElementById("ojaPostModal")
+            .addEventListener(
+                "click",
+                function (event) {
+
+                    if (
+                        event.target ===
+                        this
+                    ) {
+
+                        closePostModal();
+
+                    }
+
+                }
+            );
+
+
+        /* =====================================================
+           FORM MESSAGE
+        ===================================================== */
+
+        function showOjaError(message) {
+
+            const errorBox =
+                document.getElementById(
+                    "ojaFormError"
+                );
+
+            const successBox =
+                document.getElementById(
+                    "ojaFormSuccess"
+                );
+
+            if (successBox) {
+                successBox.style.display =
+                    "none";
+            }
+
+            if (errorBox) {
+
+                errorBox.textContent =
+                    message;
+
+                errorBox.style.display =
+                    "block";
+
+            }
+
+        }
+
+
+        function showOjaSuccess(message) {
+
+            const errorBox =
+                document.getElementById(
+                    "ojaFormError"
+                );
+
+            const successBox =
+                document.getElementById(
+                    "ojaFormSuccess"
+                );
+
+            if (errorBox) {
+                errorBox.style.display =
+                    "none";
+            }
+
+            if (successBox) {
+
+                successBox.textContent =
+                    message;
+
+                successBox.style.display =
+                    "block";
+
+            }
+
+        }
+
+
+        /* =====================================================
+           LOAD OJA LISTINGS
+        ===================================================== */
+
+        let ojaListings = [];
+
+        let activeOjaCategory =
+            "all";
+
+
+        async function loadOjaListings() {
+
+            const listingsContainer =
+                document.getElementById(
+                    "ojaListings"
+                );
+
+            if (!listingsContainer) {
+                return;
+            }
+
+            listingsContainer.innerHTML =
+                `
+                <div class="oja-empty">
+                    Loading Oja listings...
+                </div>
+                `;
+
+            try {
+
+                const response =
+                    await fetch(
+                        OJA_SUPABASE_URL +
+                        "/rest/v1/oja_listings" +
+                        "?select=*" +
+                        "&status=eq.available" +
+                        "&order=created_at.desc",
+                        {
+                            method: "GET",
+
+                            headers: {
+                                "apikey":
+                                    OJA_SUPABASE_KEY,
+
+                                "Authorization":
+                                    "Bearer " +
+                                    OJA_SUPABASE_KEY,
+
+                                "Content-Type":
+                                    "application/json"
+                            }
+                        }
+                    );
+
+                if (!response.ok) {
+
+                    const errorText =
+                        await response.text();
+
+                    console.error(
+                        "LosOja Oja loading error:",
+                        response.status,
+                        errorText
+                    );
+
+                    throw new Error(
+                        "Oja listings could not be loaded."
+                    );
+
+                }
+
+                const data =
+                    await response.json();
+
+                ojaListings =
+                    Array.isArray(data)
+                        ? data
+                        : [];
+
+                renderOjaListings();
+
+            } catch (error) {
+
+                console.error(
+                    "LosOja Oja error:",
+                    error
+                );
+
+                listingsContainer.innerHTML =
+                    `
+                    <div class="oja-empty">
+                        <div class="oja-empty-icon">
+                            ⚠️
+                        </div>
+
+                        <h3>
+                            Could not load Oja
+                        </h3>
+
+                        <p>
+                            Please refresh and try again.
+                        </p>
+                    </div>
+                    `;
+
+            }
+
+        }
+
+
+        /* =====================================================
+           RENDER OJA LISTINGS
+        ===================================================== */
+
+        function renderOjaListings() {
+
+            const container =
+                document.getElementById(
+                    "ojaListings"
+                );
+
+            if (!container) {
+                return;
+            }
+
+            const searchInput =
+                document.getElementById(
+                    "ojaSearch"
+                );
+
+            const search =
+                searchInput
+                    ? searchInput.value
+                        .trim()
+                        .toLowerCase()
+                    : "";
+
+            const filtered =
+                ojaListings.filter(
+                    function (item) {
+
+                        const matchesCategory =
+                            activeOjaCategory ===
+                            "all" ||
+                            String(
+                                item.category || ""
+                            ).toLowerCase() ===
+                            activeOjaCategory;
+
+                        const searchableText =
+                            (
+                                String(item.title || "") +
+                                " " +
+                                String(item.description || "") +
+                                " " +
+                                String(item.location || "") +
+                                " " +
+                                String(item.category || "")
+                            )
+                            .toLowerCase();
+
+                        const matchesSearch =
+                            !search ||
+                            searchableText.includes(
+                                search
+                            );
+
+                        return (
+                            matchesCategory &&
+                            matchesSearch
+                        );
+
+                    }
+                );
+
+
+            if (!filtered.length) {
+
+                container.innerHTML =
+                    `
+                    <div class="oja-empty">
+
+                        <div class="oja-empty-icon">
+                            🛍️
+                        </div>
+
+                        <h3>
+                            No listings found
+                        </h3>
+
+                        <p>
+                            Be the first to post an item on Oja.
+                        </p>
+
+                        <button
+                            class="oja-button oja-button-primary"
+                            type="button"
+                            onclick="startPosting()"
+                        >
+                            + Post an Item
+                        </button>
+
+                    </div>
+                    `;
+
+                return;
+            }
+
+
+            container.innerHTML =
+                filtered
+                    .map(
+                        function (item) {
+
+                            const price =
+                                Number(
+                                    item.price || 0
+                                ).toLocaleString(
+                                    "en-NG",
+                                    {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2
+                                    }
+                                );
+
+                            return `
+                                <article
+                                    class="oja-card"
+                                    data-category="${escapeHTML(
+                                        item.category
+                                    )}"
+                                >
+
+                                    <div class="oja-card-image">
+                                        🛍️
+                                    </div>
+
+                                    <div class="oja-card-body">
+
+                                        <h3>
+                                            ${escapeHTML(
+                                                item.title
+                                            )}
+                                        </h3>
+
+                                        <div class="oja-price">
+                                            ₦${price}
+                                        </div>
+
+                                        ${
+                                            item.location
+                                                ? `
+                                                <div class="oja-location">
+                                                    📍
+                                                    ${escapeHTML(
+                                                        item.location
+                                                    )}
+                                                </div>
+                                                `
+                                                : ""
+                                        }
+
+                                        ${
+                                            item.description
+                                                ? `
+                                                <p>
+                                                    ${escapeHTML(
+                                                        item.description
+                                                    )}
+                                                </p>
+                                                `
+                                                : ""
+                                        }
+
+                                        <span class="oja-status">
+                                            Available
+                                        </span>
+
+                                    </div>
+
+                                </article>
+                            `;
+
+                        }
+                    )
+                    .join("");
+
+        }
+
+
+        /* =====================================================
+           SUBMIT OJA LISTING
+        ===================================================== */
+
+        const ojaForm =
+            document.getElementById(
+                "ojaPostForm"
+            );
+
+
+        if (ojaForm) {
+
+            ojaForm.addEventListener(
+                "submit",
+                async function (event) {
+
+                    event.preventDefault();
+
+                    const user =
+                        getCurrentUser();
+
+                    if (!user || !user.id) {
+
+                        showOjaError(
+                            "Please login before posting."
+                        );
+
+                        return;
+                    }
+
+
+                    const accessToken =
+                        getOjaAccessToken();
+
+                    if (!accessToken) {
+
+                        showOjaError(
+                            "Your login session has expired. Please log in again."
+                        );
+
+                        return;
+                    }
+
+
+                    const title =
+                        document
+                            .getElementById(
+                                "ojaTitle"
+                            )
+                            .value
+                            .trim();
+
+                    const category =
+                        document
+                            .getElementById(
+                                "ojaCategory"
+                            )
+                            .value
+                            .trim();
+
+                    const price =
+                        Number(
+                            document
+                                .getElementById(
+                                    "ojaPrice"
+                                )
+                                .value
+                        );
+
+                    const location =
+                        document
+                            .getElementById(
+                                "ojaLocation"
+                            )
+                            .value
+                            .trim();
+
+                    const description =
+                        document
+                            .getElementById(
+                                "ojaDescription"
+                            )
+                            .value
+                            .trim();
+
+
+                    if (!title) {
+
+                        showOjaError(
+                            "Please enter the item name."
+                        );
+
+                        return;
+                    }
+
+
+                    if (!category) {
+
+                        showOjaError(
+                            "Please select a category."
+                        );
+
+                        return;
+                    }
+
+
+                    if (
+                        !Number.isFinite(price) ||
+                        price <= 0
+                    ) {
+
+                        showOjaError(
+                            "Please enter a valid price."
+                        );
+
+                        return;
+                    }
+
+
+                    const submitButton =
+                        document.getElementById(
+                            "ojaSubmitButton"
+                        );
+
+                    submitButton.disabled =
+                        true;
+
+                    submitButton.textContent =
+                        "Posting...";
+
+
+                    try {
+
+                        const response =
+                            await fetch(
+                                OJA_SUPABASE_URL +
+                                "/rest/v1/oja_listings",
+                                {
+                                    method: "POST",
+
+                                    headers: {
+
+                                        "apikey":
+                                            OJA_SUPABASE_KEY,
+
+                                        "Authorization":
+                                            "Bearer " +
+                                            accessToken,
+
+                                        "Content-Type":
+                                            "application/json",
+
+                                        "Accept":
+                                            "application/json",
+
+                                        "Prefer":
+                                            "return=representation"
+                                    },
+
+                                    body:
+                                        JSON.stringify({
+                                            user_id:
+                                                user.id,
+
+                                            title:
+                                                title,
+
+                                            description:
+                                                description ||
+                                                null,
+
+                                            category:
+                                                category,
+
+                                            price:
+                                                price,
+
+                                            currency:
+                                                "NGN",
+
+                                            location:
+                                                location ||
+                                                null,
+
+                                            status:
+                                                "available"
+                                        })
+                                }
+                            );
+
+
+                        if (!response.ok) {
+
+                            const errorText =
+                                await response.text();
+
+                            console.error(
+                                "LosOja Oja posting error:",
+                                response.status,
+                                errorText
+                            );
+
+                            throw new Error(
+                                "The item could not be posted. Please try again."
+                            );
+
+                        }
+
+
+                        showOjaSuccess(
+                            "Item posted successfully!"
+                        );
+
+
+                        ojaForm.reset();
+
+
+                        await loadOjaListings();
+
+
+                        setTimeout(
+                            function () {
+
+                                closePostModal();
+
+                            },
+                            800
+                        );
+
+
+                    } catch (error) {
+
+                        console.error(
+                            "LosOja Oja posting error:",
+                            error
+                        );
+
+                        showOjaError(
+                            error.message ||
+                            "The item could not be posted."
+                        );
+
+                    } finally {
+
+                        submitButton.disabled =
+                            false;
+
+                        submitButton.textContent =
+                            "Post Item";
+
+                    }
+
+                }
             );
 
         }
@@ -583,30 +1598,7 @@
                 "input",
                 function () {
 
-                    const search =
-                        this.value
-                            .trim()
-                            .toLowerCase();
-
-                    document
-                        .querySelectorAll(
-                            ".oja-card"
-                        )
-                        .forEach(
-                            function (card) {
-
-                                const text =
-                                    card.textContent
-                                        .toLowerCase();
-
-                                card.style.display =
-                                    !search ||
-                                    text.includes(search)
-                                        ? ""
-                                        : "none";
-
-                            }
-                        );
+                    renderOjaListings();
 
                 }
             );
@@ -635,21 +1627,26 @@
                                 )
                                 .forEach(
                                     function (item) {
+
                                         item.classList.remove(
                                             "active"
                                         );
+
                                     }
                                 );
+
 
                             this.classList.add(
                                 "active"
                             );
 
-                            /*
-                             * Real category filtering
-                             * will be connected after
-                             * Supabase listings are added.
-                             */
+
+                            activeOjaCategory =
+                                this.dataset.category ||
+                                "all";
+
+
+                            renderOjaListings();
 
                         }
                     );
@@ -663,6 +1660,8 @@
         ===================================================== */
 
         updateLoginButton();
+
+        loadOjaListings();
 
         console.log(
             "LosOja Oja marketplace loaded"
