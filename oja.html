@@ -757,18 +757,29 @@
            LOGIN
         ===================================================== */
 
-       function getOjaCurrentUser() {
+      async function getOjaCurrentUser() {
+
+    if (
+        typeof window.ensureValidSupabaseSession ===
+        "function"
+    ) {
+
+        const session =
+            await window.ensureValidSupabaseSession();
+
+        return session?.user || null;
+    }
 
     if (
         typeof window.getCurrentUser ===
         "function"
     ) {
-        return window.getCurrentUser();
+
+        return await window.getCurrentUser();
     }
 
     return null;
 }
-
 
         function updateLoginButton() {
 
