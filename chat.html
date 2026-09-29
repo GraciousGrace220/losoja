@@ -1542,7 +1542,129 @@ async function sendMessage() {
     }
 }
 
+/* =========================================================
+   DISPLAY OJA LISTING
+========================================================= */
 
+function renderOjaDetails() {
+
+    if (!currentOjaListing) {
+        return;
+    }
+
+    const details =
+        document.getElementById(
+            "ojaDetails"
+        );
+
+    if (!details) {
+        return;
+    }
+
+    const title =
+        document.getElementById(
+            "ojaTitle"
+        );
+
+    const price =
+        document.getElementById(
+            "ojaPrice"
+        );
+
+    const location =
+        document.getElementById(
+            "ojaLocation"
+        );
+
+    const description =
+        document.getElementById(
+            "ojaDescription"
+        );
+
+    const gallery =
+        document.getElementById(
+            "ojaImageGallery"
+        );
+
+    if (title) {
+
+        title.textContent =
+            currentOjaListing.title ||
+            "Oja Item";
+    }
+
+    if (price) {
+
+        const amount =
+            Number(
+                currentOjaListing.price || 0
+            ).toLocaleString(
+                "en-NG",
+                {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                }
+            );
+
+        price.textContent =
+            (
+                currentOjaListing.currency ||
+                "NGN"
+            ) +
+            " " +
+            amount;
+    }
+
+    if (location) {
+
+        location.textContent =
+            currentOjaListing.location ||
+            "Location not provided";
+    }
+
+    if (description) {
+
+        description.textContent =
+            currentOjaListing.description ||
+            "No description provided.";
+    }
+
+    if (gallery) {
+
+        gallery.innerHTML = "";
+
+        currentOjaImages.forEach(
+            image => {
+
+                if (!image.image_url) {
+                    return;
+                }
+
+                const img =
+                    document.createElement(
+                        "img"
+                    );
+
+                img.src =
+                    image.image_url;
+
+                img.alt =
+                    currentOjaListing.title ||
+                    "Oja item";
+
+                img.loading =
+                    "lazy";
+
+                gallery.appendChild(
+                    img
+                );
+            }
+        );
+    }
+
+    details.style.display =
+        "block";
+}
 /* =========================================================
    LOAD OJA LISTING
 ========================================================= */
