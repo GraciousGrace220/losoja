@@ -1,400 +1,400 @@
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
 
-    <meta charset="UTF-8">
+```
+<meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
 
-    <title>LosOja Balance</title>
+<title>LosOja Balance</title>
 
-    <meta
-        name="theme-color"
-        content="#087a3e"
-    >
+<meta
+    name="theme-color"
+    content="#087a3e"
+>
 
-    <style>
+<style>
 
-        * {
-            box-sizing: border-box;
-        }
+    * {
+        box-sizing: border-box;
+    }
 
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f5f7f6;
-            color: #111827;
-        }
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f5f7f6;
+        color: #111827;
+    }
 
-        .header {
-            background: #087a3e;
-            color: white;
-            padding: 18px 20px;
-            text-align: center;
-        }
+    .header {
+        background: #087a3e;
+        color: white;
+        padding: 18px 20px;
+        text-align: center;
+    }
 
-        .header h1 {
-            margin: 0;
-            font-size: 24px;
-        }
+    .header h1 {
+        margin: 0;
+        font-size: 24px;
+    }
 
-        .container {
-            max-width: 700px;
-            margin: 20px auto;
-            padding: 0 15px 40px;
-        }
+    .container {
+        max-width: 700px;
+        margin: 20px auto;
+        padding: 0 15px 40px;
+    }
 
-        .card {
-            background: white;
-            border-radius: 14px;
-            padding: 20px;
-            margin-bottom: 18px;
-            box-shadow: 0 3px 12px rgba(0,0,0,0.07);
-        }
+    .card {
+        background: white;
+        border-radius: 14px;
+        padding: 20px;
+        margin-bottom: 18px;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.07);
+    }
 
-        .balance-card {
-            background: #087a3e;
-            color: white;
-        }
+    .balance-card {
+        background: #087a3e;
+        color: white;
+    }
 
-        .balance-label {
-            font-size: 14px;
-            opacity: 0.9;
-        }
+    .balance-label {
+        font-size: 14px;
+        opacity: 0.9;
+    }
 
-        .balance {
-            font-size: 34px;
-            font-weight: bold;
-            margin: 8px 0 18px;
-        }
+    .balance {
+        font-size: 34px;
+        font-weight: bold;
+        margin: 8px 0 18px;
+    }
 
-        .actions {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
+    .actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
 
-        button {
-            border: none;
-            border-radius: 9px;
-            padding: 11px 16px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-        }
+    button {
+        border: none;
+        border-radius: 9px;
+        padding: 11px 16px;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+    }
 
-        .deposit-btn {
-            background: #ffb703;
-            color: #111827;
-        }
+    .deposit-btn {
+        background: #ffb703;
+        color: #111827;
+    }
 
-        .withdraw-btn {
-            background: white;
-            color: #087a3e;
-        }
+    .withdraw-btn {
+        background: white;
+        color: #087a3e;
+    }
 
-        .escrow-btn {
-            background: #087a3e;
-            color: white;
-        }
+    .escrow-btn {
+        background: #087a3e;
+        color: white;
+    }
 
-        .ship-btn {
-            background: #087a3e;
-            color: white;
-        }
+    .ship-btn {
+        background: #087a3e;
+        color: white;
+    }
 
-        .confirm-btn {
-            background: #087a3e;
-            color: white;
-        }
+    .confirm-btn {
+        background: #087a3e;
+        color: white;
+    }
 
-        .release-btn {
-            background: #087a3e;
-            color: white;
-        }
+    .release-btn {
+        background: #087a3e;
+        color: white;
+    }
 
-        .refund-btn {
-            background: #dc2626;
-            color: white;
-        }
+    .refund-btn {
+        background: #dc2626;
+        color: white;
+    }
 
-        .dispute-btn {
-            background: #f59e0b;
-            color: #111827;
-        }
+    .dispute-btn {
+        background: #f59e0b;
+        color: #111827;
+    }
 
-        /* =====================================================
-           ESCROW CHAT BUTTON
-        ===================================================== */
+    .chat-btn {
+        background: #2563eb;
+        color: white;
+    }
 
-        .chat-btn {
-            background: #2563eb;
-            color: white;
-        }
+    button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
 
-        button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
+    h2 {
+        margin-top: 0;
+        font-size: 19px;
+    }
 
-        h2 {
-            margin-top: 0;
-            font-size: 19px;
-        }
+    .transaction {
+        padding: 14px 0;
+        border-bottom: 1px solid #e5e7eb;
+    }
 
-        .transaction {
-            padding: 14px 0;
-            border-bottom: 1px solid #e5e7eb;
-        }
+    .transaction:last-child {
+        border-bottom: none;
+    }
 
-        .transaction:last-child {
-            border-bottom: none;
-        }
+    .transaction-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 15px;
+    }
 
-        .transaction-row {
-            display: flex;
-            justify-content: space-between;
-            gap: 15px;
-        }
+    .transaction-type {
+        font-weight: bold;
+    }
 
-        .transaction-type {
-            font-weight: bold;
-        }
+    .transaction-date {
+        color: #6b7280;
+        font-size: 12px;
+        margin-top: 5px;
+    }
 
-        .transaction-date {
-            color: #6b7280;
-            font-size: 12px;
-            margin-top: 5px;
-        }
+    .positive {
+        color: #087a3e;
+        font-weight: bold;
+    }
 
-        .positive {
-            color: #087a3e;
-            font-weight: bold;
-        }
+    .negative {
+        color: #dc2626;
+        font-weight: bold;
+    }
 
-        .negative {
-            color: #dc2626;
-            font-weight: bold;
-        }
+    .escrow-item {
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 15px;
+        margin-bottom: 12px;
+        background: #fafafa;
+    }
 
-        .escrow-item {
-            border: 1px solid #e5e7eb;
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 12px;
-            background: #fafafa;
-        }
+    .escrow-description {
+        font-weight: bold;
+        margin-bottom: 8px;
+    }
 
-        .escrow-description {
-            font-weight: bold;
-            margin-bottom: 8px;
-        }
+    .escrow-line {
+        font-size: 14px;
+        margin: 5px 0;
+    }
 
-        .escrow-line {
-            font-size: 14px;
-            margin: 5px 0;
-        }
+    .escrow-status {
+        display: inline-block;
+        padding: 5px 9px;
+        border-radius: 20px;
+        background: #eef8f2;
+        color: #087a3e;
+        font-size: 12px;
+        font-weight: bold;
+        margin-top: 5px;
+    }
 
-        .escrow-status {
-            display: inline-block;
-            padding: 5px 9px;
-            border-radius: 20px;
-            background: #eef8f2;
-            color: #087a3e;
-            font-size: 12px;
-            font-weight: bold;
-            margin-top: 5px;
-        }
+    .escrow-actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 12px;
+    }
 
-        .escrow-actions {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin-top: 12px;
-        }
+    .escrow-actions button {
+        margin: 0;
+    }
 
-        .escrow-actions button {
-            margin: 0;
-        }
+    .escrow-note {
+        color: #6b7280;
+        font-size: 13px;
+        margin-top: 10px;
+    }
 
-        .escrow-note {
-            color: #6b7280;
-            font-size: 13px;
-            margin-top: 10px;
-        }
+    .escrow-dispute {
+        margin-top: 10px;
+        padding: 10px;
+        border-radius: 9px;
+        background: #fff7ed;
+        color: #92400e;
+        font-size: 13px;
+    }
 
-        .escrow-dispute {
-            margin-top: 10px;
-            padding: 10px;
-            border-radius: 9px;
-            background: #fff7ed;
-            color: #92400e;
-            font-size: 13px;
-        }
+    .empty {
+        color: #6b7280;
+        text-align: center;
+        padding: 15px 0;
+    }
 
-        .empty {
-            color: #6b7280;
-            text-align: center;
-            padding: 15px 0;
-        }
+    .error {
+        color: #dc2626;
+        font-size: 14px;
+        padding: 10px 0;
+    }
 
-        .error {
-            color: #dc2626;
-            font-size: 14px;
-            padding: 10px 0;
-        }
+    .loading {
+        color: #6b7280;
+        padding: 10px 0;
+    }
 
-        .loading {
-            color: #6b7280;
-            padding: 10px 0;
-        }
+    .back-btn {
+        display: inline-block;
+        margin-top: 5px;
+        color: white;
+        text-decoration: none;
+        font-size: 13px;
+    }
 
-        .back-btn {
-            display: inline-block;
-            margin-top: 5px;
-            color: white;
-            text-decoration: none;
-            font-size: 13px;
-        }
-
-    </style>
+</style>
+```
 
 </head>
 
 <body>
 
-    <header class="header">
+```
+<header class="header">
 
-        <h1>LosOja Balance</h1>
+    <h1>LosOja Balance</h1>
 
-        <a
-            href="index.html"
-            class="back-btn"
+    <a
+        href="index.html"
+        class="back-btn"
+    >
+        ← Back to LosOja
+    </a>
+
+</header>
+
+
+<main class="container">
+
+
+    <!-- =========================================
+         BALANCE
+    ========================================== -->
+
+    <section class="card balance-card">
+
+        <div class="balance-label">
+            Available Balance
+        </div>
+
+        <div
+            class="balance"
+            id="balanceAmount"
         >
-            ← Back to LosOja
-        </a>
+            ₦0.00
+        </div>
 
-    </header>
-
-
-    <main class="container">
-
-
-        <!-- =========================================
-             BALANCE
-        ========================================== -->
-
-        <section class="card balance-card">
-
-            <div class="balance-label">
-                Available Balance
-            </div>
-
-            <div
-                class="balance"
-                id="balanceAmount"
-            >
-                ₦0.00
-            </div>
-
-            <div class="actions">
-
-                <button
-                    class="deposit-btn"
-                    onclick="depositFunds()"
-                >
-                    + Deposit
-                </button>
-
-                <button
-                    class="withdraw-btn"
-                    onclick="withdrawFunds()"
-                >
-                    Withdraw
-                </button>
-
-            </div>
-
-        </section>
-
-
-        <!-- =========================================
-             WALLET
-        ========================================== -->
-
-        <section class="card">
-
-            <h2>Wallet</h2>
-
-            <p>
-                Wallet currency:
-                <strong>NGN</strong>
-            </p>
+        <div class="actions">
 
             <button
-                type="button"
-                onclick="window.location.href='bills.html'"
-                style="
-                    background:#087a3e;
-                    color:white;
-                    margin-top:8px;
-                "
+                class="deposit-btn"
+                onclick="depositFunds()"
             >
-                Pay Bills
+                + Deposit
             </button>
-
-        </section>
-
-
-        <!-- =========================================
-             TRANSACTIONS
-        ========================================== -->
-
-        <section class="card">
-
-            <h2>Transaction History</h2>
-
-            <div id="transactions">
-
-                <div class="loading">
-                    Loading transactions...
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- =========================================
-             ESCROW
-        ========================================== -->
-
-        <section class="card">
-
-            <h2>Escrow</h2>
-
-            <p>
-                Secure payments between buyers and sellers.
-            </p>
 
             <button
-                class="escrow-btn"
-                onclick="openEscrowInfo()"
+                class="withdraw-btn"
+                onclick="withdrawFunds()"
             >
-                View Escrow
+                Withdraw
             </button>
 
-            <div id="escrowInfo"></div>
+        </div>
 
-        </section>
+    </section>
 
 
-    </main>
+    <!-- =========================================
+         WALLET
+    ========================================== -->
 
+    <section class="card">
+
+        <h2>Wallet</h2>
+
+        <p>
+            Wallet currency:
+            <strong>NGN</strong>
+        </p>
+
+        <button
+            type="button"
+            onclick="window.location.href='bills.html'"
+            style="
+                background:#087a3e;
+                color:white;
+                margin-top:8px;
+            "
+        >
+            Pay Bills
+        </button>
+
+    </section>
+
+
+    <!-- =========================================
+         TRANSACTIONS
+    ========================================== -->
+
+    <section class="card">
+
+        <h2>Transaction History</h2>
+
+        <div id="transactions">
+
+            <div class="loading">
+                Loading transactions...
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================================
+         ESCROW
+    ========================================== -->
+
+    <section class="card">
+
+        <h2>Escrow</h2>
+
+        <p>
+            Secure payments between buyers and sellers.
+        </p>
+
+        <button
+            class="escrow-btn"
+            onclick="openEscrowInfo()"
+        >
+            View Escrow
+        </button>
+
+        <div id="escrowInfo"></div>
+
+    </section>
+
+
+</main>
+```
 
 <script>
 
@@ -957,7 +957,6 @@ async function depositFunds() {
 }
 
 
-```javascript
 /* =========================================================
    WITHDRAW
 ========================================================= */
@@ -969,13 +968,10 @@ async function withdrawFunds() {
 
     try {
 
-        /* ================================================
-           PREVENT DOUBLE CLICK
-        ================================================= */
-
         if (withdrawButton) {
 
             withdrawButton.disabled = true;
+
             withdrawButton.textContent =
                 "Checking...";
 
@@ -1011,7 +1007,7 @@ async function withdrawFunds() {
 
 
         /* ================================================
-           GET WITHDRAWAL AMOUNT
+           WITHDRAWAL AMOUNT
         ================================================= */
 
         const amountInput =
@@ -1499,10 +1495,6 @@ async function withdrawFunds() {
             );
 
 
-            /* ============================================
-               REFRESH BALANCE + TRANSACTIONS
-            ============================================ */
-
             await loadWallet();
 
             await loadTransactions();
@@ -1564,10 +1556,6 @@ async function withdrawFunds() {
         );
 
 
-        /* ================================================
-           REFRESH WALLET
-        ================================================= */
-
         await loadWallet();
 
         await loadTransactions();
@@ -1580,10 +1568,6 @@ async function withdrawFunds() {
             error
         );
 
-
-        /* ================================================
-           USER-FRIENDLY PAYOUT ERROR
-        ================================================= */
 
         const errorMessage =
             String(
@@ -1632,11 +1616,11 @@ async function withdrawFunds() {
 
         }
 
-    } finally {
+        await loadWallet();
 
-        /* ================================================
-           RESTORE BUTTON
-        ================================================= */
+        await loadTransactions();
+
+    } finally {
 
         if (withdrawButton) {
 
@@ -1650,11 +1634,6 @@ async function withdrawFunds() {
     }
 
 }
-```
-
-This leaves the rest of your `balance.html` unchanged.
-
-**Important:** this does not bypass Paystack's restriction. It simply makes LosOja handle the restriction properly and keeps the user-facing experience clean. Your server-side refund logic remains responsible for returning reserved funds when the payout is rejected.
 
 
 /* =========================================================
@@ -1971,16 +1950,10 @@ async function loadEscrowTransactions(
                 }
 
 
-                /* -----------------------------------------
-                   ACTION BUTTONS
-                ------------------------------------------ */
-
                 let actions = "";
 
-                /*
-                   SELLER:
-                   funded -> mark shipped
-                */
+
+                /* SELLER: FUNDED */
 
                 if (
                     isSeller &&
@@ -1989,9 +1962,7 @@ async function loadEscrowTransactions(
 
                     actions = `
 
-                        <div
-                            class="escrow-actions"
-                        >
+                        <div class="escrow-actions">
 
                             <button
                                 class="ship-btn"
@@ -2010,10 +1981,7 @@ async function loadEscrowTransactions(
                 }
 
 
-                /*
-                   BUYER:
-                   funded -> refund only
-                */
+                /* BUYER: FUNDED */
 
                 if (
                     isBuyer &&
@@ -2022,9 +1990,7 @@ async function loadEscrowTransactions(
 
                     actions = `
 
-                        <div
-                            class="escrow-actions"
-                        >
+                        <div class="escrow-actions">
 
                             <button
                                 class="refund-btn"
@@ -2047,10 +2013,7 @@ async function loadEscrowTransactions(
                 }
 
 
-                /*
-                   BUYER:
-                   shipped -> confirm delivery or dispute
-                */
+                /* BUYER: SHIPPED */
 
                 if (
                     isBuyer &&
@@ -2059,9 +2022,7 @@ async function loadEscrowTransactions(
 
                     actions = `
 
-                        <div
-                            class="escrow-actions"
-                        >
+                        <div class="escrow-actions">
 
                             <button
                                 class="confirm-btn"
@@ -2090,10 +2051,7 @@ async function loadEscrowTransactions(
                 }
 
 
-                /*
-                   BUYER:
-                   delivered -> release or dispute
-                */
+                /* BUYER: DELIVERED */
 
                 if (
                     isBuyer &&
@@ -2102,9 +2060,7 @@ async function loadEscrowTransactions(
 
                     actions = `
 
-                        <div
-                            class="escrow-actions"
-                        >
+                        <div class="escrow-actions">
 
                             <button
                                 class="release-btn"
@@ -2133,10 +2089,7 @@ async function loadEscrowTransactions(
                 }
 
 
-                /*
-                   SELLER:
-                   shipped -> waiting
-                */
+                /* SELLER: SHIPPED */
 
                 if (
                     isSeller &&
@@ -2154,10 +2107,7 @@ async function loadEscrowTransactions(
                 }
 
 
-                /*
-                   SELLER:
-                   delivered -> waiting for release
-                */
+                /* SELLER: DELIVERED */
 
                 if (
                     isSeller &&
@@ -2175,9 +2125,7 @@ async function loadEscrowTransactions(
                 }
 
 
-                /*
-                   DISPUTED
-                */
+                /* DISPUTED */
 
                 if (
                     status === "disputed"
@@ -2212,14 +2160,7 @@ async function loadEscrowTransactions(
                 }
 
 
-                /*
-                   CHAT BUTTON
-                   
-                   This is added AFTER the escrow
-                   action logic so it does not overwrite
-                   any existing Ship / Refund / Confirm /
-                   Dispute / Release buttons.
-                */
+                /* CHAT */
 
                 if (
                     isBuyer ||
@@ -2836,20 +2777,17 @@ document.addEventListener(
 
 </script>
 
-
 <!-- =======================================================
      LOSOJA AUTH
 ======================================================== -->
 
 <script src="js/auth.js"></script>
 
-
 <!-- =======================================================
      LOSOJA WALLET
 ======================================================== -->
 
 <script src="js/wallet.js"></script>
-
 
 </body>
 
