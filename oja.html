@@ -1595,13 +1595,13 @@
 
                         const imageData =
                             await imageResponse.json();
+if (
+    Array.isArray(
+        imageData
+    )
+) {
 
 
-                        if (
-                            Array.isArray(
-                                imageData
-                            )
-                        {
 
                             const imagesByListing =
                                 {};
