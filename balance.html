@@ -962,8 +962,207 @@ async function depositFunds() {
 ========================================================= */
 
 async function withdrawFunds() {
-
     try {
+        const userId = await getCurrentUserId();
+
+        if (!userId) {
+            alert("Please log in before withdrawing.");
+            return;
+        }
+
+        const accessToken = await getAccessToken();
+
+        if (!accessToken) {
+            alert("Your login session has expired. Please log in again.");
+            return;
+        }
+
+        // Get withdrawal amount
+        const amountInput = prompt("Enter the amount you want to withdraw (₦):");
+
+        if (amountInput === null) return;
+
+        const amount = Number(
+            amountInput.replace(/,/g, "").trim()
+        );
+
+        if (!Number.isFinite(amount) || amount <= 0) {
+            alert("Please enter a valid withdrawal amount.");
+            return;
+        }
+
+        if (amount < 100) {
+            alert("Minimum withdrawal amount is ₦100.");
+            return;
+        }
+
+        // Load Nigerian banks from the withdrawal function
+        const banksResponse = await fetch(
+            `${SUPABASE_URL}/functions/v1/withdraw-funds`,
+            {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "apikey": SUPABASE_KEY,
+                    "Authorization": `Bearer ${accessToken}`
+                }
+            }
+        );
+
+        const banksResult = await banksResponse.json();
+
+        if (!banksResponse.ok || !banksResult.success) {
+            throw new Error(
+                banksResult.error || "Unable to load Nigerian banks."
+            );
+        }
+
+        const banks = Array.isArray(banksResult.banks)
+            ? banksResult.banks
+            : [];
+
+        if (!banks.length) {
+            throw new Error("No banks are currently available.");
+        }
+
+        // Create a numbered bank list
+        const bankList = banks
+            .map(
+                (bank, index) =>
+                    `${index + 1}. ${bank.name}`
+            )
+            .join("\n");
+
+        const bankChoice = prompt(
+            `Select your bank by entering its number:\n\n${bankList}`
+        );
+
+        if (bankChoice === null) return;
+
+        const bankIndex = Number(bankChoice.trim()) - 1;
+
+        if (
+            !Number.isInteger(bankIndex) ||
+            bankIndex < 0 ||
+            bankIndex >= banks.length
+        ) {
+            alert("Invalid bank selection.");
+            return;
+        }
+
+        const selectedBank = banks[bankIndex];
+
+        // Get account number
+        const accountNumber = prompt(
+            `Enter your 10-digit ${selectedBank.name} account number:`
+        );
+
+        if (accountNumber === null) return;
+
+        const cleanAccountNumber = accountNumber.replace(/\D/g, "");
+
+        if (!/^\d{10}$/.test(cleanAccountNumber)) {
+            alert("Please enter a valid 10-digit Nigerian bank account number.");
+            return;
+        }
+
+        // Verify the bank account before touching the wallet balance
+        const verifyResponse = await fetch(
+            `${SUPABASE_URL}/functions/v1/withdraw-funds`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "apikey": SUPABASE_KEY,
+                    "Authorization": `Bearer ${accessToken}`
+                },
+                body: JSON.stringify({
+                    verify_only: true,
+                    bank_code: selectedBank.code,
+                    account_number: cleanAccountNumber
+                })
+            }
+        );
+
+        const verifyResult = await verifyResponse.json();
+
+        if (!verifyResponse.ok || !verifyResult.verified) {
+            throw new Error(
+                verifyResult.error ||
+                "Unable to verify this bank account."
+            );
+        }
+
+        const accountName = verifyResult.account_name;
+
+        // Final confirmation
+        const confirmed = confirm(
+            `Please confirm your withdrawal:\n\n` +
+            `Amount: ₦${amount.toLocaleString("en-NG", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            })}\n\n` +
+            `Bank: ${selectedBank.name}\n` +
+            `Account name: ${accountName}\n` +
+            `Account number: ${cleanAccountNumber}\n\n` +
+            `Continue with this withdrawal?`
+        );
+
+        if (!confirmed) return;
+
+        // Process the actual withdrawal
+        const withdrawalResponse = await fetch(
+            `${SUPABASE_URL}/functions/v1/withdraw-funds`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "apikey": SUPABASE_KEY,
+                    "Authorization": `Bearer ${accessToken}`
+                },
+                body: JSON.stringify({
+                    amount: amount,
+                    bank_code: selectedBank.code,
+                    account_number: cleanAccountNumber
+                })
+            }
+        );
+
+        const withdrawalResult = await withdrawalResponse.json();
+
+        if (!withdrawalResponse.ok || !withdrawalResult.success) {
+            throw new Error(
+                withdrawalResult.error ||
+                "Withdrawal could not be processed."
+            );
+        }
+
+        alert(
+            `Withdrawal submitted successfully.\n\n` +
+            `Amount: ₦${amount.toLocaleString("en-NG", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            })}\n` +
+            `Bank: ${selectedBank.name}\n` +
+            `Account name: ${accountName}\n` +
+            `Account: ${cleanAccountNumber}\n` +
+            `Status: ${withdrawalResult.status || "processing"}\n\n` +
+            `Reference: ${withdrawalResult.reference || "N/A"}`
+        );
+
+        // Refresh balance and transaction history
+        await loadWallet();
+        await loadTransactions();
+
+    } catch (error) {
+        console.error("LosOja withdrawal error:", error);
+
+        alert(
+            error.message ||
+            "Unable to process withdrawal."
+        );
+    }
+}
 
         /* -----------------------------------------
            CHECK LOGIN
