@@ -1485,7 +1485,35 @@
 
             }
 
+            /* -----------------------------------------------
+               Saved Items
+            ------------------------------------------------ */
 
+            const savedNavButton =
+                document.getElementById("savedNavButton");
+
+            if (savedNavButton) {
+
+                savedNavButton.addEventListener(
+                    "click",
+                    function () {
+
+                        const savedSection =
+                            document.getElementById("saved");
+
+                        if (savedSection) {
+
+                            savedSection.scrollIntoView({
+                                behavior: "smooth",
+                                block: "start"
+                            });
+
+                        }
+
+                    }
+                );
+
+            }
             /* -----------------------------------------------
                Create Account / Login
             ------------------------------------------------ */
