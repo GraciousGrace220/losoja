@@ -2059,13 +2059,10 @@ try {
 const saveButtonHTML = `
     <button
         type="button"
+        class="oja-save-button"
         aria-label="${isSaved ? "Remove from saved" : "Save item"}"
         title="${isSaved ? "Remove from saved" : "Save item"}"
-        onclick="
-            event.stopPropagation();
-            window.toggleSavedOjaItem &&
-            window.toggleSavedOjaItem('${escapeHTML(item.id)}')
-        "
+        onclick="event.stopPropagation(); window.toggleSavedOjaItem && window.toggleSavedOjaItem('${String(item.id).replace(/'/g, "\\'")}')"
         style="
             position:absolute;
             top:12px;
@@ -2078,14 +2075,13 @@ const saveButtonHTML = `
             box-shadow:0 2px 8px rgba(0,0,0,0.15);
             cursor:pointer;
             font-size:21px;
+            line-height:1;
             display:flex;
             align-items:center;
             justify-content:center;
-            z-index:5;
+            z-index:10;
         "
-    >
-        ${isSaved ? "❤️" : "♡"}
-    </button>
+    >${isSaved ? "❤️" : "♡"}</button>
 `;
                            let imageHTML =
     mainImage &&
