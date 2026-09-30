@@ -763,7 +763,179 @@ const url =
         </article>
     `;
 }
+/* =====================================================
+   SAVE / UNSAVE BUSINESS
+===================================================== */
 
+function toggleSavedBusiness(businessId) {
+
+    const storageKey =
+        "losoja_saved_items";
+
+    let savedItems = [];
+
+    try {
+
+        savedItems =
+            JSON.parse(
+                localStorage.getItem(
+                    storageKey
+                ) || "[]"
+            );
+
+        if (!Array.isArray(savedItems)) {
+            savedItems = [];
+        }
+
+    } catch (error) {
+
+        console.error(
+            "LosOja: Could not read saved items.",
+            error
+        );
+
+        savedItems = [];
+    }
+
+
+    const existingIndex =
+        savedItems.findIndex(function (item) {
+
+            return (
+                item &&
+                item.type === "business" &&
+                String(item.id) ===
+                String(businessId)
+            );
+
+        });
+
+
+    if (existingIndex !== -1) {
+
+        savedItems.splice(
+            existingIndex,
+            1
+        );
+
+        console.log(
+            "LosOja: Business removed from saved:",
+            businessId
+        );
+
+    } else {
+
+        const business =
+            businesses.find(function (item) {
+
+                return String(item.id) ===
+                    String(businessId);
+
+            });
+
+
+        if (!business) {
+
+            console.warn(
+                "LosOja: Cannot save business. Business not found:",
+                businessId
+            );
+
+            return;
+        }
+
+
+        savedItems.push({
+
+            type: "business",
+
+            id: String(
+                business.id
+            ),
+
+            name:
+                business.name ||
+                "Unnamed Business",
+
+            category:
+                business.category ||
+                "Business",
+
+            location:
+                business.location ||
+                business.address ||
+                "Nigeria",
+
+            phone:
+                business.phone ||
+                "",
+
+            description:
+                business.description ||
+                "",
+
+            image:
+                business.image_url ||
+                business.image ||
+                business.photo_url ||
+                ""
+
+        });
+
+
+        console.log(
+            "LosOja: Business saved:",
+            businessId
+        );
+    }
+
+
+    try {
+
+        localStorage.setItem(
+            storageKey,
+            JSON.stringify(savedItems)
+        );
+
+    } catch (error) {
+
+        console.error(
+            "LosOja: Could not save favorites.",
+            error
+        );
+
+        return;
+    }
+
+
+    /*
+       Re-render the business cards
+       so the heart changes immediately.
+    */
+
+    renderBusinesses(
+        businesses
+    );
+
+
+    /*
+       If the Saved section renderer
+       exists later, update it too.
+    */
+
+    if (
+        typeof window.renderSavedItems ===
+        "function"
+    ) {
+
+        window.renderSavedItems();
+
+    }
+}
+
+
+window.toggleSavedBusiness =
+    toggleSavedBusiness;
     /* =====================================================
        SEARCH
     ===================================================== */
