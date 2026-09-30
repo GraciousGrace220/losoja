@@ -141,6 +141,11 @@
             background: #055c2e;
         }
 
+        .submit-button:disabled {
+            opacity: .7;
+            cursor: not-allowed;
+        }
+
         .status-message {
             display: none;
             margin-top: 18px;
@@ -367,197 +372,319 @@
 </main>
 
 
+<!-- LosOja authentication -->
+
+<script src="js/auth.js?v=2"></script>
+
+
 <script>
 
-const SUPABASE_URL =
-    "https://ycxshwgeebskdozmornh.supabase.co";
+(function () {
 
-const SUPABASE_KEY =
-    "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
+    "use strict";
 
 
-const form =
-    document.getElementById("mobilityDriverForm");
+    const SUPABASE_URL =
+        "https://ycxshwgeebskdozmornh.supabase.co";
 
-const statusMessage =
-    document.getElementById("statusMessage");
-
-const submitButton =
-    document.getElementById("submitDriverButton");
+    const SUPABASE_KEY =
+        "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
 
 
-function showStatus(message, success) {
+    const form =
+        document.getElementById(
+            "mobilityDriverForm"
+        );
 
-    statusMessage.textContent = message;
+    const statusMessage =
+        document.getElementById(
+            "statusMessage"
+        );
 
-    statusMessage.className =
-        "status-message " +
-        (success
-            ? "status-success"
-            : "status-error");
-}
+    const submitButton =
+        document.getElementById(
+            "submitDriverButton"
+        );
 
 
-async function getCurrentUser() {
+    function showStatus(
+        message,
+        success
+    ) {
 
-    const response = await fetch(
-        SUPABASE_URL +
-        "/auth/v1/user",
-        {
-            headers: {
-                "apikey": SUPABASE_KEY,
-                "Authorization":
-                    "Bearer " + SUPABASE_KEY
+        statusMessage.textContent =
+            message;
+
+        statusMessage.className =
+            "status-message " +
+            (
+                success
+                    ? "status-success"
+                    : "status-error"
+            );
+
+    }
+
+
+    async function getLoggedInUser() {
+
+        /*
+         * Use LosOja's existing authentication system.
+         */
+
+        if (
+            typeof window.ensureValidSupabaseSession ===
+            "function"
+        ) {
+
+            await window.ensureValidSupabaseSession();
+
+        }
+
+
+        if (
+            typeof window.getCurrentUser !==
+            "function"
+        ) {
+
+            return null;
+
+        }
+
+
+        return await window.getCurrentUser();
+
+    }
+
+
+    form.addEventListener(
+        "submit",
+        async function (event) {
+
+            event.preventDefault();
+
+
+            submitButton.disabled =
+                true;
+
+            submitButton.textContent =
+                "Submitting...";
+
+
+            try {
+
+                const user =
+                    await getLoggedInUser();
+
+
+                if (
+                    !user ||
+                    !user.id
+                ) {
+
+                    showStatus(
+                        "Please log in to apply as a Mobility provider.",
+                        false
+                    );
+
+
+                    if (
+                        typeof window.openLogin ===
+                        "function"
+                    ) {
+
+                        window.openLogin();
+
+                    }
+
+
+                    return;
+
+                }
+
+
+                const token =
+                    typeof window.getSupabaseAccessToken ===
+                    "function"
+                        ? window.getSupabaseAccessToken()
+                        : null;
+
+
+                if (!token) {
+
+                    throw new Error(
+                        "Your login session could not be found. Please log in again."
+                    );
+
+                }
+
+
+                const serviceType =
+                    document.getElementById(
+                        "serviceType"
+                    ).value;
+
+
+                const fullName =
+                    document.getElementById(
+                        "fullName"
+                    ).value.trim();
+
+
+                const phone =
+                    document.getElementById(
+                        "phone"
+                    ).value.trim();
+
+
+                const vehicleName =
+                    document.getElementById(
+                        "vehicleName"
+                    ).value.trim();
+
+
+                const vehiclePlate =
+                    document.getElementById(
+                        "vehiclePlate"
+                    ).value.trim();
+
+
+                const location =
+                    document.getElementById(
+                        "location"
+                    ).value.trim();
+
+
+                const response =
+                    await fetch(
+                        SUPABASE_URL +
+                        "/rest/v1/mobility_drivers",
+                        {
+                            method: "POST",
+
+                            headers: {
+
+                                "apikey":
+                                    SUPABASE_KEY,
+
+                                "Authorization":
+                                    "Bearer " +
+                                    token,
+
+                                "Content-Type":
+                                    "application/json",
+
+                                "Prefer":
+                                    "return=minimal"
+
+                            },
+
+                            body:
+                                JSON.stringify({
+
+                                    user_id:
+                                        user.id,
+
+                                    service_type:
+                                        serviceType,
+
+                                    verification_status:
+                                        "pending",
+
+                                    full_name:
+                                        fullName,
+
+                                    phone:
+                                        phone,
+
+                                    vehicle_name:
+                                        vehicleName ||
+                                        null,
+
+                                    vehicle_plate:
+                                        vehiclePlate ||
+                                        null,
+
+                                    location:
+                                        location,
+
+                                    is_available:
+                                        false
+
+                                })
+
+                        }
+                    );
+
+
+                if (!response.ok) {
+
+                    const errorText =
+                        await response.text();
+
+                    console.error(
+                        "LosOja Mobility application error:",
+                        errorText
+                    );
+
+
+                    throw new Error(
+                        "Application could not be submitted."
+                    );
+
+                }
+
+
+                form.reset();
+
+
+                showStatus(
+                    "Application submitted successfully. Your profile is now pending review.",
+                    true
+                );
+
+
+                console.log(
+                    "LosOja: Mobility application submitted:",
+                    user.id
+                );
+
+
+            } catch (error) {
+
+                console.error(
+                    "LosOja Mobility:",
+                    error
+                );
+
+
+                showStatus(
+                    error.message ||
+                    "Something went wrong. Please try again.",
+                    false
+                );
+
+
+            } finally {
+
+                submitButton.disabled =
+                    false;
+
+                submitButton.textContent =
+                    "Submit Application";
+
             }
+
         }
     );
 
-    if (!response.ok) {
-        return null;
-    }
 
-    return await response.json();
-}
+    console.log(
+        "LosOja mobility driver application loaded"
+    );
 
 
-form.addEventListener("submit", async function(event) {
-
-    event.preventDefault();
-
-    submitButton.disabled = true;
-    submitButton.textContent =
-        "Submitting...";
-
-    try {
-
-        const user =
-            await getCurrentUser();
-
-        if (!user || !user.id) {
-
-            showStatus(
-                "Please log in to apply as a Mobility provider.",
-                false
-            );
-
-            submitButton.disabled = false;
-            submitButton.textContent =
-                "Submit Application";
-
-            return;
-        }
-
-
-        const serviceType =
-            document.getElementById("serviceType").value;
-
-        const fullName =
-            document.getElementById("fullName").value.trim();
-
-        const phone =
-            document.getElementById("phone").value.trim();
-
-        const vehicleName =
-            document.getElementById("vehicleName").value.trim();
-
-        const vehiclePlate =
-            document.getElementById("vehiclePlate").value.trim();
-
-        const location =
-            document.getElementById("location").value.trim();
-
-
-        const response = await fetch(
-            SUPABASE_URL +
-            "/rest/v1/mobility_drivers",
-            {
-                method: "POST",
-
-                headers: {
-                    "apikey": SUPABASE_KEY,
-                    "Authorization":
-                        "Bearer " + SUPABASE_KEY,
-                    "Content-Type":
-                        "application/json",
-                    "Prefer":
-                        "return=minimal"
-                },
-
-                body: JSON.stringify({
-
-                    user_id: user.id,
-
-                    service_type: serviceType,
-
-                    verification_status:
-                        "pending",
-
-                    full_name: fullName,
-
-                    phone: phone,
-
-                    vehicle_name:
-                        vehicleName || null,
-
-                    vehicle_plate:
-                        vehiclePlate || null,
-
-                    location: location,
-
-                    is_available: false
-
-                })
-            }
-        );
-
-
-        if (!response.ok) {
-
-            const errorText =
-                await response.text();
-
-            console.error(
-                "LosOja Mobility application error:",
-                errorText
-            );
-
-            throw new Error(
-                "Application could not be submitted."
-            );
-        }
-
-
-        form.reset();
-
-        showStatus(
-            "Application submitted successfully. Your profile is now pending review.",
-            true
-        );
-
-
-    } catch (error) {
-
-        console.error(
-            "LosOja Mobility:",
-            error
-        );
-
-        showStatus(
-            error.message ||
-            "Something went wrong. Please try again.",
-            false
-        );
-
-    } finally {
-
-        submitButton.disabled = false;
-
-        submitButton.textContent =
-            "Submit Application";
-
-    }
-
-});
+})();
 
 </script>
 
