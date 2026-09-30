@@ -1693,7 +1693,186 @@ if (
 
         }
 
+/* =====================================================
+   SAVE / UNSAVE OJA ITEM
+===================================================== */
 
+function toggleSavedOjaItem(listingId) {
+
+    const storageKey =
+        "losoja_saved_items";
+
+    let savedItems = [];
+
+    try {
+
+        savedItems =
+            JSON.parse(
+                localStorage.getItem(
+                    storageKey
+                ) || "[]"
+            );
+
+        if (!Array.isArray(savedItems)) {
+            savedItems = [];
+        }
+
+    } catch (error) {
+
+        console.error(
+            "LosOja: Could not read saved items.",
+            error
+        );
+
+        savedItems = [];
+    }
+
+
+    const existingIndex =
+        savedItems.findIndex(function (item) {
+
+            return (
+                item &&
+                item.type === "oja" &&
+                String(item.id) ===
+                String(listingId)
+            );
+
+        });
+
+
+    if (existingIndex !== -1) {
+
+        savedItems.splice(
+            existingIndex,
+            1
+        );
+
+        console.log(
+            "LosOja: Oja item removed from saved:",
+            listingId
+        );
+
+    } else {
+
+        const listing =
+            ojaListings.find(function (item) {
+
+                return String(item.id) ===
+                    String(listingId);
+
+            });
+
+
+        if (!listing) {
+
+            console.warn(
+                "LosOja: Cannot save Oja item. Listing not found:",
+                listingId
+            );
+
+            return;
+        }
+
+
+        const images =
+            Array.isArray(listing.images)
+                ? listing.images
+                : [];
+
+
+        const mainImage =
+            images.length &&
+            images[0].image_url
+                ? images[0].image_url
+                : "";
+
+
+        savedItems.push({
+
+            type: "oja",
+
+            id: String(
+                listing.id
+            ),
+
+            name:
+                listing.title ||
+                "Oja Item",
+
+            category:
+                listing.category ||
+                "Other",
+
+            location:
+                listing.location ||
+                "Nigeria",
+
+            price:
+                listing.price ||
+                0,
+
+            description:
+                listing.description ||
+                "",
+
+            image:
+                mainImage
+
+        });
+
+
+        console.log(
+            "LosOja: Oja item saved:",
+            listingId
+        );
+    }
+
+
+    try {
+
+        localStorage.setItem(
+            storageKey,
+            JSON.stringify(savedItems)
+        );
+
+    } catch (error) {
+
+        console.error(
+            "LosOja: Could not save Oja item.",
+            error
+        );
+
+        return;
+    }
+
+
+    /*
+       Re-render Oja listings
+       so the heart changes immediately.
+    */
+
+    renderOjaListings();
+
+
+    /*
+       Update the Saved section
+       if it exists on the page.
+    */
+
+    if (
+        typeof window.renderSavedItems ===
+        "function"
+    ) {
+
+        window.renderSavedItems();
+
+    }
+}
+
+
+window.toggleSavedOjaItem =
+    toggleSavedOjaItem;
         /* =====================================================
            RENDER OJA LISTINGS
         ===================================================== */
@@ -1843,29 +2022,106 @@ if (
                                     ? images[0]
                                     : null;
 
+let isSaved = false;
 
-                            const imageHTML =
-                                mainImage &&
-                                mainImage.image_url
-                                    ? `
-                                        <div class="oja-card-image">
-                                            <img
-                                                src="${escapeHTML(
-                                                    mainImage.image_url
-                                                )}"
-                                                alt="${escapeHTML(
-                                                    item.title
-                                                )}"
-                                                loading="lazy"
-                                            >
-                                        </div>
-                                    `
-                                    : `
-                                        <div class="oja-card-image">
-                                            <span class="oja-card-placeholder">
-                                                🛍️
-                                            </span>
-                                        </div>
+try {
+
+    const savedItems =
+        JSON.parse(
+            localStorage.getItem(
+                "losoja_saved_items"
+            ) || "[]"
+        );
+
+    isSaved =
+        Array.isArray(savedItems) &&
+        savedItems.some(function (saved) {
+
+            return (
+                saved &&
+                saved.type === "oja" &&
+                String(saved.id) ===
+                String(item.id)
+            );
+
+        });
+
+} catch (error) {
+
+    console.warn(
+        "LosOja: Could not read Oja saved items.",
+        error
+    );
+
+}
+
+
+const saveButtonHTML = `
+    <button
+        type="button"
+        aria-label="${isSaved ? "Remove from saved" : "Save item"}"
+        title="${isSaved ? "Remove from saved" : "Save item"}"
+        onclick="
+            event.stopPropagation();
+            window.toggleSavedOjaItem &&
+            window.toggleSavedOjaItem('${escapeHTML(item.id)}')
+        "
+        style="
+            position:absolute;
+            top:12px;
+            right:12px;
+            width:42px;
+            height:42px;
+            border:0;
+            border-radius:50%;
+            background:#ffffff;
+            box-shadow:0 2px 8px rgba(0,0,0,0.15);
+            cursor:pointer;
+            font-size:21px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            z-index:5;
+        "
+    >
+        ${isSaved ? "❤️" : "♡"}
+    </button>
+`;
+                           let imageHTML =
+    mainImage &&
+    mainImage.image_url
+        ? `
+            <div
+                class="oja-card-image"
+                style="position:relative;"
+            >
+                <img
+                    src="${escapeHTML(
+                        mainImage.image_url
+                    )}"
+                    alt="${escapeHTML(
+                        item.title
+                    )}"
+                    loading="lazy"
+                >
+
+                ${saveButtonHTML}
+
+            </div>
+        `
+        : `
+            <div
+                class="oja-card-image"
+                style="position:relative;"
+            >
+                <span class="oja-card-placeholder">
+                    🛍️
+                </span>
+
+                ${saveButtonHTML}
+
+            </div>
+        `;
                                     `;
 
 
