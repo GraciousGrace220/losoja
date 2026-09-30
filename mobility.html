@@ -145,6 +145,17 @@
             background: #055c2e;
         }
 
+        .verified-badge {
+            display: inline-block;
+            margin-bottom: 12px;
+            padding: 5px 9px;
+            border-radius: 999px;
+            background: #eef8f2;
+            color: #087a3e;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
         .notice {
             margin-top: 24px;
             background: #eef8f2;
@@ -278,6 +289,94 @@
                     onclick="showMessage('Tricycle')"
                 >
                     Request Tricycle
+                </button>
+
+            </div>
+
+
+            <!-- BIKE -->
+
+            <div class="ride-card">
+
+                <div class="ride-icon">
+                    🏍️
+                </div>
+
+                <h2>
+                    Bike
+                </h2>
+
+                <p>
+                    Find a bike rider for
+                    convenient local transportation.
+                </p>
+
+                <button
+                    class="ride-button"
+                    type="button"
+                    onclick="showMessage('Bike')"
+                >
+                    Request Bike
+                </button>
+
+            </div>
+
+
+            <!-- DISPATCH RIDER -->
+
+            <div class="ride-card">
+
+                <div class="ride-icon">
+                    🛵
+                </div>
+
+                <div class="verified-badge">
+                    ✓ Verified Riders Only
+                </div>
+
+                <h2>
+                    Dispatch Rider
+                </h2>
+
+                <p>
+                    Send packages and goods with
+                    verified dispatch riders.
+                </p>
+
+                <button
+                    class="ride-button"
+                    type="button"
+                    onclick="showMessage('Dispatch Rider')"
+                >
+                    Request Dispatch
+                </button>
+
+            </div>
+
+
+            <!-- RENT A TRUCK -->
+
+            <div class="ride-card">
+
+                <div class="ride-icon">
+                    🚚
+                </div>
+
+                <h2>
+                    Rent a Truck
+                </h2>
+
+                <p>
+                    Find a truck for moving goods,
+                    equipment and larger items.
+                </p>
+
+                <button
+                    class="ride-button"
+                    type="button"
+                    onclick="showMessage('Rent a Truck')"
+                >
+                    Find a Truck
                 </button>
 
             </div>
