@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="theme-color"
+        content="#087a3e"
+    >
+
+    <meta
+        name="description"
+        content="Become a verified LosOja Mobility driver or rider."
+    >
+
+    <title>Become a Mobility Provider - LosOja</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f5faf7;
+            color: #111827;
+        }
+
+        .header {
+            background: #087a3e;
+            color: white;
+            padding: 18px 20px;
+        }
+
+        .header-inner {
+            max-width: 700px;
+            margin: auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+        }
+
+        .back-button {
+            border: 1px solid rgba(255,255,255,.6);
+            background: transparent;
+            color: white;
+            padding: 9px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .main {
+            max-width: 700px;
+            margin: auto;
+            padding: 30px 20px 80px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 28px 22px;
+            box-shadow: 0 8px 25px rgba(0,0,0,.06);
+        }
+
+        h1 {
+            color: #087a3e;
+            margin-bottom: 10px;
+        }
+
+        .intro {
+            color: #6b7280;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .notice {
+            background: #eef8f2;
+            border: 1px solid #cde8d7;
+            color: #055c2e;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 22px;
+            line-height: 1.5;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 7px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #d1d5db;
+            border-radius: 10px;
+            font-size: 15px;
+            background: white;
+        }
+
+        input:focus,
+        select:focus {
+            outline: 2px solid #087a3e;
+            border-color: #087a3e;
+        }
+
+        .submit-button {
+            width: 100%;
+            border: 0;
+            background: #087a3e;
+            color: white;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        .submit-button:hover {
+            background: #055c2e;
+        }
+
+        .status-message {
+            display: none;
+            margin-top: 18px;
+            padding: 14px;
+            border-radius: 10px;
+            line-height: 1.5;
+        }
+
+        .status-success {
+            display: block;
+            background: #eef8f2;
+            color: #055c2e;
+        }
+
+        .status-error {
+            display: block;
+            background: #fff1f2;
+            color: #9f1239;
+        }
+
+        @media (max-width: 600px) {
+
+            .main {
+                padding: 20px 15px 60px;
+            }
+
+            .card {
+                padding: 23px 18px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header class="header">
+
+    <div class="header-inner">
+
+        <div class="logo">
+            LosOja
+        </div>
+
+        <button
+            type="button"
+            class="back-button"
+            onclick="window.location.href='mobility.html'"
+        >
+            ← Back
+        </button>
+
+    </div>
+
+</header>
+
+
+<main class="main">
+
+    <section class="card">
+
+        <h1>
+            Become a Mobility Provider
+        </h1>
+
+        <p class="intro">
+            Apply to provide transportation or dispatch services
+            through LosOja.
+        </p>
+
+
+        <div class="notice">
+
+            🔐 All Mobility providers must be reviewed before
+            becoming available to customers.
+
+        </div>
+
+
+        <form id="mobilityDriverForm">
+
+
+            <div class="form-group">
+
+                <label for="serviceType">
+                    Service Type
+                </label>
+
+                <select id="serviceType" required>
+
+                    <option value="">
+                        Select a service
+                    </option>
+
+                    <option value="cab">
+                        Cab
+                    </option>
+
+                    <option value="tricycle">
+                        Tricycle (Keke)
+                    </option>
+
+                    <option value="bike">
+                        Bike
+                    </option>
+
+                    <option value="dispatch">
+                        Dispatch Rider
+                    </option>
+
+                    <option value="truck">
+                        Rent a Truck
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="fullName">
+                    Full Name
+                </label>
+
+                <input
+                    type="text"
+                    id="fullName"
+                    required
+                    autocomplete="name"
+                    placeholder="Your full name"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="phone">
+                    Phone Number
+                </label>
+
+                <input
+                    type="tel"
+                    id="phone"
+                    required
+                    autocomplete="tel"
+                    placeholder="Your phone number"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="vehicleName">
+                    Vehicle / Bike
+                </label>
+
+                <input
+                    type="text"
+                    id="vehicleName"
+                    placeholder="Example: Toyota Corolla"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="vehiclePlate">
+                    Vehicle Plate Number
+                </label>
+
+                <input
+                    type="text"
+                    id="vehiclePlate"
+                    placeholder="Vehicle plate number"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="location">
+                    Operating Location
+                </label>
+
+                <input
+                    type="text"
+                    id="location"
+                    required
+                    placeholder="City or area you operate in"
+                >
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="submit-button"
+                id="submitDriverButton"
+            >
+                Submit Application
+            </button>
+
+
+        </form>
+
+
+        <div
+            id="statusMessage"
+            class="status-message"
+        ></div>
+
+
+    </section>
+
+</main>
+
+
+<script>
+
+const SUPABASE_URL =
+    "https://ycxshwgeebskdozmornh.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
+
+
+const form =
+    document.getElementById("mobilityDriverForm");
+
+const statusMessage =
+    document.getElementById("statusMessage");
+
+const submitButton =
+    document.getElementById("submitDriverButton");
+
+
+function showStatus(message, success) {
+
+    statusMessage.textContent = message;
+
+    statusMessage.className =
+        "status-message " +
+        (success
+            ? "status-success"
+            : "status-error");
+}
+
+
+async function getCurrentUser() {
+
+    const response = await fetch(
+        SUPABASE_URL +
+        "/auth/v1/user",
+        {
+            headers: {
+                "apikey": SUPABASE_KEY,
+                "Authorization":
+                    "Bearer " + SUPABASE_KEY
+            }
+        }
+    );
+
+    if (!response.ok) {
+        return null;
+    }
+
+    return await response.json();
+}
+
+
+form.addEventListener("submit", async function(event) {
+
+    event.preventDefault();
+
+    submitButton.disabled = true;
+    submitButton.textContent =
+        "Submitting...";
+
+    try {
+
+        const user =
+            await getCurrentUser();
+
+        if (!user || !user.id) {
+
+            showStatus(
+                "Please log in to apply as a Mobility provider.",
+                false
+            );
+
+            submitButton.disabled = false;
+            submitButton.textContent =
+                "Submit Application";
+
+            return;
+        }
+
+
+        const serviceType =
+            document.getElementById("serviceType").value;
+
+        const fullName =
+            document.getElementById("fullName").value.trim();
+
+        const phone =
+            document.getElementById("phone").value.trim();
+
+        const vehicleName =
+            document.getElementById("vehicleName").value.trim();
+
+        const vehiclePlate =
+            document.getElementById("vehiclePlate").value.trim();
+
+        const location =
+            document.getElementById("location").value.trim();
+
+
+        const response = await fetch(
+            SUPABASE_URL +
+            "/rest/v1/mobility_drivers",
+            {
+                method: "POST",
+
+                headers: {
+                    "apikey": SUPABASE_KEY,
+                    "Authorization":
+                        "Bearer " + SUPABASE_KEY,
+                    "Content-Type":
+                        "application/json",
+                    "Prefer":
+                        "return=minimal"
+                },
+
+                body: JSON.stringify({
+
+                    user_id: user.id,
+
+                    service_type: serviceType,
+
+                    verification_status:
+                        "pending",
+
+                    full_name: fullName,
+
+                    phone: phone,
+
+                    vehicle_name:
+                        vehicleName || null,
+
+                    vehicle_plate:
+                        vehiclePlate || null,
+
+                    location: location,
+
+                    is_available: false
+
+                })
+            }
+        );
+
+
+        if (!response.ok) {
+
+            const errorText =
+                await response.text();
+
+            console.error(
+                "LosOja Mobility application error:",
+                errorText
+            );
+
+            throw new Error(
+                "Application could not be submitted."
+            );
+        }
+
+
+        form.reset();
+
+        showStatus(
+            "Application submitted successfully. Your profile is now pending review.",
+            true
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "LosOja Mobility:",
+            error
+        );
+
+        showStatus(
+            error.message ||
+            "Something went wrong. Please try again.",
+            false
+        );
+
+    } finally {
+
+        submitButton.disabled = false;
+
+        submitButton.textContent =
+            "Submit Application";
+
+    }
+
+});
+
+</script>
+
+
+</body>
+
+</html>
