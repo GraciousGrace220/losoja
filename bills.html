@@ -707,37 +707,59 @@
         "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
 
 
-    /* =====================================================
-       ACCESS TOKEN
-    ===================================================== */
+/* =====================================================
+   ACCESS TOKEN
+===================================================== */
 
-    async function getAccessToken() {
+async function getAccessToken() {
 
-        try {
+    try {
 
-            if (
-                typeof window.getSupabaseAccessToken ===
-                "function"
-            ) {
-
-                return await window.getSupabaseAccessToken();
-
-            }
-
-            return null;
-
-        } catch (error) {
+        if (
+            typeof window.getSupabaseAccessToken !==
+            "function"
+        ) {
 
             console.error(
-                "LosOja bills token error:",
-                error
+                "LosOja bills: getSupabaseAccessToken() is not available."
             );
 
             return null;
 
         }
 
+        const token =
+            await window.getSupabaseAccessToken();
+
+        console.log(
+            "LosOja bills: access token available:",
+            !!token
+        );
+
+        if (!token) {
+
+            console.error(
+                "LosOja bills: no Supabase access token found."
+            );
+
+            return null;
+
+        }
+
+        return token;
+
+    } catch (error) {
+
+        console.error(
+            "LosOja bills token error:",
+            error
+        );
+
+        return null;
+
     }
+
+}
 
 
     /* =====================================================
