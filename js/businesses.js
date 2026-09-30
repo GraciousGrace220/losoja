@@ -471,214 +471,298 @@ const url =
        BUSINESS CARD
     ===================================================== */
 
-    function createBusinessCard(business) {
+   function createBusinessCard(business) {
 
-        const id =
-            escapeHTML(
-                business.id
-            );
-
-
-        const name =
-            escapeHTML(
-                business.name ||
-                "Unnamed Business"
-            );
+    const id =
+        escapeHTML(
+            business.id
+        );
 
 
-        const category =
-            escapeHTML(
-                business.category ||
-                "Business"
-            );
+    const name =
+        escapeHTML(
+            business.name ||
+            "Unnamed Business"
+        );
 
 
-        const location =
-            escapeHTML(
-                business.location ||
-                business.address ||
-                "Nigeria"
-            );
+    const category =
+        escapeHTML(
+            business.category ||
+            "Business"
+        );
 
 
-        const phone =
-            escapeHTML(
-                business.phone ||
-                ""
-            );
+    const location =
+        escapeHTML(
+            business.location ||
+            business.address ||
+            "Nigeria"
+        );
 
 
-        const description =
-            escapeHTML(
-                business.description ||
-                ""
-            );
+    const phone =
+        escapeHTML(
+            business.phone ||
+            ""
+        );
 
 
-       const image =
-    String(
-        business.image_url ||
-        business.image ||
-        business.photo_url ||
-        ""
-    ).trim();
+    const description =
+        escapeHTML(
+            business.description ||
+            ""
+        );
 
-let imageHTML = "";
 
-if (image) {
+    const image =
+        String(
+            business.image_url ||
+            business.image ||
+            business.photo_url ||
+            ""
+        ).trim();
 
-    imageHTML = `
-        <div
-            class="business-card-image"
-            style="
-                width:100%;
-                height:220px;
-                overflow:hidden;
-                background:#f3f4f6;
-                border-radius:12px 12px 0 0;
-            "
-        >
-            <img
-                src="${escapeHTML(image)}"
-                alt="${name}"
-                loading="lazy"
+
+    let imageHTML = "";
+
+
+    if (image) {
+
+        imageHTML = `
+            <div
+                class="business-card-image"
                 style="
                     width:100%;
-                    height:100%;
-                    display:block;
-                    object-fit:cover;
+                    height:220px;
+                    overflow:hidden;
+                    background:#f3f4f6;
+                    border-radius:12px 12px 0 0;
+                    position:relative;
                 "
             >
-        </div>
-    `;
-
-} else {
-
-    imageHTML = `
-        <div
-            class="business-card-image"
-            style="
-                width:100%;
-                height:220px;
-                display:flex;
-                align-items:center;
-                justify-content:center;
-                background:#f3f4f6;
-                border-radius:12px 12px 0 0;
-                font-size:42px;
-            "
-        >
-            🏪
-        </div>
-    `;
-}
-
-        let ratingHTML = "";
-
-
-        if (
-            business.rating !== null &&
-            business.rating !== undefined &&
-            business.rating !== ""
-        ) {
-
-            const rating =
-                Number(
-                    business.rating
-                );
-
-
-            if (!Number.isNaN(rating)) {
-
-                const reviews =
-                    Number(
-                        business.reviews_count ||
-                        business.review_count ||
-                        business.total_reviews ||
-                        0
-                    );
-
-
-                ratingHTML = `
-                    <p
-                        style="
-                            margin-top:7px;
-                            color:#087a3e;
-                            font-weight:700;
-                        "
-                    >
-                        ⭐ ${rating.toFixed(1)}
-                        ${
-                            reviews > 0
-                                ? ` (${reviews} reviews)`
-                                : ""
-                        }
-                    </p>
-                `;
-            }
-        }
-
-
-        return `
-            <article
-                class="business-card"
-                data-business-id="${id}"
-                onclick="openBusiness('${id}')"
-                style="cursor:pointer;"
-            >
-
-                ${imageHTML}
-
-                <div
-                    class="business-card-content"
+                <img
+                    src="${escapeHTML(image)}"
+                    alt="${name}"
+                    loading="lazy"
+                    style="
+                        width:100%;
+                        height:100%;
+                        display:block;
+                        object-fit:cover;
+                    "
                 >
+            </div>
+        `;
 
-                    <h3>
-                        ${name}
-                    </h3>
+    } else {
 
-                    <p>
-                        ${category}
-                    </p>
-
-                    <p>
-                        📍 ${location}
-                    </p>
-
-                    ${
-                        phone
-                            ? `
-                                <p>
-                                    📞 ${phone}
-                                </p>
-                              `
-                            : ""
-                    }
-
-                    ${
-                        description
-                            ? `
-                                <p>
-                                    ${description}
-                                </p>
-                              `
-                            : ""
-                    }
-
-                    ${ratingHTML}
-
-                    <span
-                        class="business-category"
-                    >
-                        ${category}
-                    </span>
-
-                </div>
-
-            </article>
+        imageHTML = `
+            <div
+                class="business-card-image"
+                style="
+                    width:100%;
+                    height:220px;
+                    display:flex;
+                    align-items:center;
+                    justify-content:center;
+                    background:#f3f4f6;
+                    border-radius:12px 12px 0 0;
+                    font-size:42px;
+                "
+            >
+                🏪
+            </div>
         `;
     }
 
+
+    let ratingHTML = "";
+
+
+    if (
+        business.rating !== null &&
+        business.rating !== undefined &&
+        business.rating !== ""
+    ) {
+
+        const rating =
+            Number(
+                business.rating
+            );
+
+
+        if (!Number.isNaN(rating)) {
+
+            const reviews =
+                Number(
+                    business.reviews_count ||
+                    business.review_count ||
+                    business.total_reviews ||
+                    0
+                );
+
+
+            ratingHTML = `
+                <p
+                    style="
+                        margin-top:7px;
+                        color:#087a3e;
+                        font-weight:700;
+                    "
+                >
+                    ⭐ ${rating.toFixed(1)}
+                    ${
+                        reviews > 0
+                            ? ` (${reviews} reviews)`
+                            : ""
+                    }
+                </p>
+            `;
+        }
+    }
+
+
+    /* =====================================================
+       SAVED BUTTON
+    ===================================================== */
+
+    let isSaved = false;
+
+    try {
+
+        const savedItems =
+            JSON.parse(
+                localStorage.getItem(
+                    "losoja_saved_items"
+                ) || "[]"
+            );
+
+        isSaved =
+            Array.isArray(savedItems) &&
+            savedItems.some(function (item) {
+
+                return (
+                    item &&
+                    item.type === "business" &&
+                    String(item.id) ===
+                    String(business.id)
+                );
+
+            });
+
+    } catch (error) {
+
+        console.warn(
+            "LosOja: Could not read saved items.",
+            error
+        );
+
+    }
+
+
+    const saveButtonHTML = `
+        <button
+            type="button"
+            class="business-save-button"
+            data-business-id="${id}"
+            aria-label="${isSaved ? "Remove from saved" : "Save business"}"
+            title="${isSaved ? "Remove from saved" : "Save business"}"
+            onclick="event.stopPropagation(); window.toggleSavedBusiness && window.toggleSavedBusiness('${id}')"
+            style="
+                position:absolute;
+                top:12px;
+                right:12px;
+                width:42px;
+                height:42px;
+                border:0;
+                border-radius:50%;
+                background:#ffffff;
+                box-shadow:0 2px 8px rgba(0,0,0,0.15);
+                cursor:pointer;
+                font-size:21px;
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                z-index:5;
+            "
+        >
+            ${isSaved ? "❤️" : "♡"}
+        </button>
+    `;
+
+
+    /*
+       Add the Save button over the business image.
+       This does NOT change the existing business card click.
+    */
+
+    imageHTML =
+        imageHTML.replace(
+            "</div>",
+            saveButtonHTML + "</div>"
+        );
+
+
+    return `
+        <article
+            class="business-card"
+            data-business-id="${id}"
+            onclick="openBusiness('${id}')"
+            style="cursor:pointer;"
+        >
+
+            ${imageHTML}
+
+            <div
+                class="business-card-content"
+            >
+
+                <h3>
+                    ${name}
+                </h3>
+
+                <p>
+                    ${category}
+                </p>
+
+                <p>
+                    📍 ${location}
+                </p>
+
+                ${
+                    phone
+                        ? `
+                            <p>
+                                📞 ${phone}
+                            </p>
+                          `
+                        : ""
+                }
+
+                ${
+                    description
+                        ? `
+                            <p>
+                                ${description}
+                            </p>
+                          `
+                        : ""
+                }
+
+                ${ratingHTML}
+
+                <span
+                    class="business-category"
+                >
+                    ${category}
+                </span>
+
+            </div>
+
+        </article>
+    `;
+}
 
     /* =====================================================
        SEARCH
