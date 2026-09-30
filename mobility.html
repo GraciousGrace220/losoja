@@ -162,6 +162,11 @@
             background: #055c2e;
         }
 
+        .ride-button:disabled {
+            opacity: .7;
+            cursor: not-allowed;
+        }
+
         .verified-badge {
             display: inline-block;
             margin-bottom: 12px;
@@ -349,6 +354,8 @@
 <div class="page">
 
 
+    <!-- HEADER -->
+
     <header class="header">
 
         <div class="header-inner">
@@ -360,7 +367,7 @@
             <button
                 class="back-button"
                 type="button"
-                onclick="window.location.href='index.html'"
+                id="backButton"
             >
                 ← Back
             </button>
@@ -370,8 +377,12 @@
     </header>
 
 
+    <!-- MAIN -->
+
     <main class="main">
 
+
+        <!-- HERO -->
 
         <section class="hero">
 
@@ -389,8 +400,6 @@
             </p>
 
 
-            <!-- MOBILITY PROVIDER -->
-
             <a
                 href="mobility-driver.html"
                 class="provider-button"
@@ -400,6 +409,8 @@
 
         </section>
 
+
+        <!-- RIDE OPTIONS -->
 
         <section class="ride-grid">
 
@@ -424,7 +435,8 @@
                 <button
                     class="ride-button"
                     type="button"
-                    onclick="window.openRideRequest('cab', 'Cab')"
+                    data-service="cab"
+                    data-service-name="Cab"
                 >
                     Request Cab
                 </button>
@@ -452,7 +464,8 @@
                 <button
                     class="ride-button"
                     type="button"
-                    onclick="window.openRideRequest('tricycle', 'Tricycle (Keke)')"
+                    data-service="tricycle"
+                    data-service-name="Tricycle (Keke)"
                 >
                     Request Tricycle
                 </button>
@@ -480,7 +493,8 @@
                 <button
                     class="ride-button"
                     type="button"
-                    onclick="window.openRideRequest('bike', 'Bike')"
+                    data-service="bike"
+                    data-service-name="Bike"
                 >
                     Request Bike
                 </button>
@@ -488,7 +502,7 @@
             </div>
 
 
-            <!-- DISPATCH RIDER -->
+            <!-- DISPATCH -->
 
             <div class="ride-card">
 
@@ -512,7 +526,8 @@
                 <button
                     class="ride-button"
                     type="button"
-                    onclick="window.openRideRequest('dispatch', 'Dispatch Rider')"
+                    data-service="dispatch"
+                    data-service-name="Dispatch Rider"
                 >
                     Request Dispatch
                 </button>
@@ -520,7 +535,7 @@
             </div>
 
 
-            <!-- RENT A TRUCK -->
+            <!-- TRUCK -->
 
             <div class="ride-card">
 
@@ -540,7 +555,8 @@
                 <button
                     class="ride-button"
                     type="button"
-                    onclick="window.openRideRequest('truck', 'Rent a Truck')"
+                    data-service="truck"
+                    data-service-name="Rent a Truck"
                 >
                     Find a Truck
                 </button>
@@ -550,6 +566,8 @@
 
         </section>
 
+
+        <!-- NOTICE -->
 
         <div class="notice">
 
@@ -564,7 +582,7 @@
 </div>
 
 
-<!-- RIDE REQUEST MODAL -->
+<!-- REQUEST MODAL -->
 
 <div
     class="modal"
@@ -576,6 +594,7 @@
 
     <div class="modal-card">
 
+
         <div class="modal-header">
 
             <h2 id="rideRequestTitle">
@@ -585,7 +604,7 @@
             <button
                 type="button"
                 class="close-button"
-                onclick="window.closeRideRequest()"
+                id="closeRideRequestButton"
                 aria-label="Close"
             >
                 ×
@@ -674,7 +693,7 @@
 </div>
 
 
-<!-- LosOja authentication -->
+<!-- LOSOJA AUTHENTICATION -->
 
 <script src="js/auth.js?v=3"></script>
 
@@ -686,20 +705,21 @@
     "use strict";
 
 
+    /*
+     * SUPABASE
+     */
+
     const SUPABASE_URL =
         "https://ycxshwgeebskdozmornh.supabase.co";
 
-
-    /*
-        Correct LosOja Supabase publishable key
-    */
 
     const SUPABASE_KEY =
         "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
 
 
-    let selectedServiceType = "";
-
+    /*
+     * ELEMENTS
+     */
 
     const modal =
         document.getElementById(
@@ -731,6 +751,52 @@
         );
 
 
+    const closeButton =
+        document.getElementById(
+            "closeRideRequestButton"
+        );
+
+
+    const backButton =
+        document.getElementById(
+            "backButton"
+        );
+
+
+    const rideButtons =
+        document.querySelectorAll(
+            ".ride-button"
+        );
+
+
+    let selectedServiceType = "";
+
+
+    /*
+     * CHECK PAGE ELEMENTS
+     */
+
+    if (
+        !modal ||
+        !serviceDisplay ||
+        !form ||
+        !submitButton ||
+        !statusMessage
+    ) {
+
+        console.error(
+            "LosOja Mobility: required page elements are missing."
+        );
+
+        return;
+
+    }
+
+
+    /*
+     * STATUS MESSAGE
+     */
+
     function showStatus(
         message,
         success
@@ -752,7 +818,8 @@
 
     function clearStatus() {
 
-        statusMessage.textContent = "";
+        statusMessage.textContent =
+            "";
 
         statusMessage.className =
             "request-status";
@@ -761,47 +828,145 @@
 
 
     /*
-        OPEN REQUEST MODAL
-    */
+     * OPEN REQUEST MODAL
+     */
 
-    window.openRideRequest =
-        function (
-            serviceType,
-            serviceName
-        ) {
+    function openRideRequest(
+        serviceType,
+        serviceName
+    ) {
 
-            selectedServiceType =
-                serviceType;
+        selectedServiceType =
+            serviceType;
 
-            serviceDisplay.textContent =
-                "🚕 " + serviceName;
 
-            clearStatus();
+        serviceDisplay.textContent =
+            "🚕 " + serviceName;
 
-            form.reset();
 
-            modal.classList.add("show");
+        document.getElementById(
+            "rideRequestTitle"
+        ).textContent =
+            "Request " + serviceName;
 
-        };
+
+        clearStatus();
+
+
+        form.reset();
+
+
+        /*
+         * Restore selected service
+         * after form.reset()
+         */
+
+        selectedServiceType =
+            serviceType;
+
+
+        modal.classList.add(
+            "show"
+        );
+
+
+        const pickupInput =
+            document.getElementById(
+                "pickupLocation"
+            );
+
+
+        if (pickupInput) {
+
+            setTimeout(
+                function () {
+
+                    pickupInput.focus();
+
+                },
+                100
+            );
+
+        }
+
+    }
 
 
     /*
-        CLOSE REQUEST MODAL
-    */
+     * CLOSE REQUEST MODAL
+     */
 
-    window.closeRideRequest =
-        function () {
+    function closeRideRequest() {
 
-            modal.classList.remove("show");
+        modal.classList.remove(
+            "show"
+        );
 
-            clearStatus();
+        clearStatus();
 
-        };
+    }
 
 
     /*
-        CLOSE WHEN CLICKING OUTSIDE
-    */
+     * CONNECT ALL RIDE BUTTONS
+     *
+     * No inline onclick is used.
+     */
+
+    rideButtons.forEach(
+        function (button) {
+
+            button.addEventListener(
+                "click",
+                function () {
+
+                    const serviceType =
+                        button.dataset.service;
+
+
+                    const serviceName =
+                        button.dataset.serviceName;
+
+
+                    if (
+                        !serviceType ||
+                        !serviceName
+                    ) {
+
+                        console.error(
+                            "LosOja Mobility: service information missing."
+                        );
+
+                        return;
+
+                    }
+
+
+                    openRideRequest(
+                        serviceType,
+                        serviceName
+                    );
+
+                }
+            );
+
+        }
+    );
+
+
+    /*
+     * CLOSE BUTTON
+     */
+
+    closeButton.addEventListener(
+        "click",
+        closeRideRequest
+    );
+
+
+    /*
+     * CLICK OUTSIDE MODAL
+     */
 
     modal.addEventListener(
         "click",
@@ -811,7 +976,7 @@
                 event.target === modal
             ) {
 
-                window.closeRideRequest();
+                closeRideRequest();
 
             }
 
@@ -820,14 +985,180 @@
 
 
     /*
-        SUBMIT MOBILITY REQUEST
-    */
+     * ESCAPE KEY
+     */
+
+    document.addEventListener(
+        "keydown",
+        function (event) {
+
+            if (
+                event.key === "Escape" &&
+                modal.classList.contains("show")
+            ) {
+
+                closeRideRequest();
+
+            }
+
+        }
+    );
+
+
+    /*
+     * BACK BUTTON
+     */
+
+    backButton.addEventListener(
+        "click",
+        function () {
+
+            window.location.href =
+                "index.html";
+
+        }
+    );
+
+
+    /*
+     * GET LOGGED-IN USER
+     */
+
+    async function getLoggedInUser() {
+
+        let user = null;
+
+
+        /*
+         * First use existing LosOja auth
+         */
+
+        try {
+
+            if (
+                window.getCurrentUser &&
+                typeof window.getCurrentUser ===
+                    "function"
+            ) {
+
+                user =
+                    await window.getCurrentUser();
+
+            }
+
+        } catch (error) {
+
+            console.warn(
+                "LosOja: getCurrentUser failed.",
+                error
+            );
+
+        }
+
+
+        /*
+         * Get access token
+         */
+
+        let accessToken = null;
+
+
+        try {
+
+            if (
+                window.getSupabaseAccessToken &&
+                typeof window.getSupabaseAccessToken ===
+                    "function"
+            ) {
+
+                accessToken =
+                    await window.getSupabaseAccessToken();
+
+            }
+
+        } catch (error) {
+
+            console.warn(
+                "LosOja: access token lookup failed.",
+                error
+            );
+
+        }
+
+
+        /*
+         * If auth.js did not return user,
+         * ask Supabase directly.
+         */
+
+        if (
+            !user &&
+            accessToken
+        ) {
+
+            try {
+
+                const response =
+                    await fetch(
+                        SUPABASE_URL +
+                        "/auth/v1/user",
+                        {
+                            method: "GET",
+
+                            headers: {
+
+                                "apikey":
+                                    SUPABASE_KEY,
+
+                                "Authorization":
+                                    "Bearer " +
+                                    accessToken
+
+                            }
+
+                        }
+                    );
+
+
+                if (
+                    response.ok
+                ) {
+
+                    user =
+                        await response.json();
+
+                }
+
+            } catch (error) {
+
+                console.warn(
+                    "LosOja: Supabase user lookup failed.",
+                    error
+                );
+
+            }
+
+        }
+
+
+        return {
+            user: user,
+            accessToken: accessToken
+        };
+
+    }
+
+
+    /*
+     * SUBMIT MOBILITY REQUEST
+     */
 
     form.addEventListener(
         "submit",
         async function (event) {
 
             event.preventDefault();
+
 
             clearStatus();
 
@@ -859,6 +1190,10 @@
                     .trim();
 
 
+            /*
+             * Validate service
+             */
+
             if (
                 !selectedServiceType
             ) {
@@ -872,6 +1207,10 @@
 
             }
 
+
+            /*
+             * Validate locations
+             */
 
             if (
                 !pickupLocation ||
@@ -889,117 +1228,24 @@
 
 
             /*
-                GET CURRENT USER
-            */
+             * Get authentication
+             */
 
-            let user = null;
+            const auth =
+                await getLoggedInUser();
 
 
-            try {
+            const user =
+                auth.user;
 
-                if (
-                    window.getCurrentUser &&
-                    typeof window.getCurrentUser === "function"
-                ) {
 
-                    user =
-                        await window.getCurrentUser();
-
-                }
-
-            } catch (error) {
-
-                console.warn(
-                    "LosOja: getCurrentUser failed.",
-                    error
-                );
-
-            }
+            const accessToken =
+                auth.accessToken;
 
 
             /*
-                FALLBACK TO SUPABASE AUTH USER
-            */
-
-            let accessToken = null;
-
-
-            try {
-
-                if (
-                    window.getSupabaseAccessToken &&
-                    typeof window.getSupabaseAccessToken === "function"
-                ) {
-
-                    accessToken =
-                        await window.getSupabaseAccessToken();
-
-                }
-
-            } catch (error) {
-
-                console.warn(
-                    "LosOja: access token lookup failed.",
-                    error
-                );
-
-            }
-
-
-            /*
-                If auth.js did not provide the user,
-                use Supabase directly.
-            */
-
-            if (
-                !user &&
-                accessToken
-            ) {
-
-                try {
-
-                    const userResponse =
-                        await fetch(
-                            SUPABASE_URL +
-                            "/auth/v1/user",
-                            {
-                                method: "GET",
-
-                                headers: {
-
-                                    "apikey":
-                                        SUPABASE_KEY,
-
-                                    "Authorization":
-                                        "Bearer " +
-                                        accessToken
-
-                                }
-
-                            }
-                        );
-
-
-                    if (
-                        userResponse.ok
-                    ) {
-
-                        user =
-                            await userResponse.json();
-
-                    }
-
-                } catch (error) {
-
-                    console.warn(
-                        "LosOja: Supabase user lookup failed.",
-                        error
-                    );
-
-                }
-
-            }
-
+             * Require login
+             */
 
             if (
                 !user ||
@@ -1016,6 +1262,10 @@
             }
 
 
+            /*
+             * Require access token
+             */
+
             if (!accessToken) {
 
                 showStatus(
@@ -1028,14 +1278,24 @@
             }
 
 
+            /*
+             * Disable button
+             */
+
             submitButton.disabled =
                 true;
+
 
             submitButton.textContent =
                 "Submitting...";
 
 
             try {
+
+
+                /*
+                 * Request data
+                 */
 
                 const requestData = {
 
@@ -1081,6 +1341,10 @@
                 );
 
 
+                /*
+                 * Send request to Supabase
+                 */
+
                 const response =
                     await fetch(
                         SUPABASE_URL +
@@ -1117,6 +1381,10 @@
                 const responseText =
                     await response.text();
 
+
+                /*
+                 * Handle Supabase error
+                 */
 
                 if (
                     !response.ok
@@ -1185,10 +1453,15 @@
                         false
                     );
 
+
                     return;
 
                 }
 
+
+                /*
+                 * Success
+                 */
 
                 console.log(
                     "LosOja: mobility request created successfully."
@@ -1204,10 +1477,14 @@
                 form.reset();
 
 
+                /*
+                 * Close after success
+                 */
+
                 setTimeout(
                     function () {
 
-                        window.closeRideRequest();
+                        closeRideRequest();
 
                     },
                     1800
@@ -1227,10 +1504,12 @@
                     false
                 );
 
+
             } finally {
 
                 submitButton.disabled =
                     false;
+
 
                 submitButton.textContent =
                     "Submit Request";
@@ -1240,6 +1519,10 @@
         }
     );
 
+
+    /*
+     * SUCCESSFUL LOAD MESSAGE
+     */
 
     console.log(
         "LosOja Mobility request system loaded."
