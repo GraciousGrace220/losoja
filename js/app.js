@@ -3122,6 +3122,203 @@
                         .join("");
 
 
+              
+               /* =================================================
+                  NOTIFICATION CLICK ACTIONS
+               ================================================= */
+
+                list
+                    .querySelectorAll(
+                        ".notification-item"
+                    )
+                    .forEach(
+                        item => {
+
+                            item.style.cursor = "pointer";
+
+                            item.addEventListener(
+                                "click",
+                                async event => {
+
+                                    /* Do not open the notification
+                                       when Mark as read is clicked */
+                                    if (
+                                        event.target.closest(
+                                            ".notification-read-btn"
+                                        )
+                                    ) {
+                                        return;
+                                    }
+
+                                    const notificationId =
+                                        item.getAttribute(
+                                            "data-notification-id"
+                                        );
+
+                                    const notification =
+                                        notifications.find(
+                                            itemNotification =>
+                                                String(
+                                                    itemNotification.id
+                                                ) ===
+                                                String(
+                                                    notificationId
+                                                )
+                                        );
+
+                                    if (!notification) {
+                                        return;
+                                    }
+
+                                    try {
+
+                                        /* Mark as read before opening */
+                                        if (
+                                            !notification.is_read &&
+                                            notificationId
+                                        ) {
+
+                                            const updateResponse =
+                                                await fetch(
+                                                    SUPABASE_URL +
+                                                    "/rest/v1/notifications?id=eq." +
+                                                    encodeURIComponent(
+                                                        notificationId
+                                                    ),
+                                                    {
+                                                        method: "PATCH",
+
+                                                        headers: {
+                                                            apikey:
+                                                                SUPABASE_KEY,
+
+                                                            Authorization:
+                                                                "Bearer " +
+                                                                accessToken,
+
+                                                            "Content-Type":
+                                                                "application/json",
+
+                                                            Prefer:
+                                                                "return=minimal"
+                                                        },
+
+                                                        body:
+                                                            JSON.stringify({
+                                                                is_read: true
+                                                            })
+                                                    }
+                                                );
+
+                                            if (
+                                                !updateResponse.ok
+                                            ) {
+
+                                                console.warn(
+                                                    "LosOja: Could not mark notification as read before opening."
+                                                );
+
+                                            }
+
+                                        }
+
+
+                                        /* =================================================
+                                           OPEN NOTIFICATION DESTINATION
+                                        ================================================= */
+
+                                        const notificationType =
+                                            String(
+                                                notification.type ||
+                                                ""
+                                            ).toLowerCase();
+
+
+                                        /* Escrow notification */
+                                        if (
+                                            notification.escrow_id ||
+                                            notificationType.includes(
+                                                "escrow"
+                                            )
+                                        ) {
+
+                                            window.location.href =
+                                                "balance.html";
+
+                                            return;
+
+                                        }
+
+
+                                        /* Business notification */
+                                        if (
+                                            notification.business_id
+                                        ) {
+
+                                            window.location.href =
+                                                "index.html#businesses";
+
+                                            return;
+
+                                        }
+
+
+                                        /* Chat/message notification */
+                                        if (
+                                            notificationType.includes(
+                                                "message"
+                                            ) ||
+                                            notificationType.includes(
+                                                "chat"
+                                            )
+                                        ) {
+
+                                            window.location.href =
+                                                "chat.html";
+
+                                            return;
+
+                                        }
+
+
+                                        /* No specific destination */
+                                        console.log(
+                                            "LosOja: No specific destination for notification:",
+                                            notification
+                                        );
+
+                                    } catch (error) {
+
+                                        console.error(
+                                            "LosOja notification click error:",
+                                            error
+                                        );
+
+                                        if (
+                                            typeof window.showToast ===
+                                            "function"
+                                        ) {
+
+                                            window.showToast(
+                                                "Could not open this notification.",
+                                                "error"
+                                            );
+
+                                        }
+
+                                    }
+
+                                }
+                            );
+
+                        }
+                    );
+
+
+                /* =================================================
+                   MARK NOTIFICATION AS READ
+                ================================================= */
+
                 list
                     .querySelectorAll(
                         ".notification-read-btn"
@@ -3131,20 +3328,22 @@
 
                             button.addEventListener(
                                 "click",
-                                async () => {
+                                async event => {
+
+                                    event.preventDefault();
+
+                                    event.stopPropagation();
 
                                     const notificationId =
                                         button.getAttribute(
                                             "data-notification-id"
                                         );
 
-
                                     if (
                                         !notificationId
                                     ) {
                                         return;
                                     }
-
 
                                     try {
 
@@ -3156,12 +3355,9 @@
                                                     notificationId
                                                 ),
                                                 {
-
-                                                    method:
-                                                        "PATCH",
+                                                    method: "PATCH",
 
                                                     headers: {
-
                                                         apikey:
                                                             SUPABASE_KEY,
 
@@ -3174,17 +3370,12 @@
 
                                                         Prefer:
                                                             "return=minimal"
-
                                                     },
 
                                                     body:
-                                                        JSON.stringify(
-                                                            {
-                                                                is_read:
-                                                                    true
-                                                            }
-                                                        )
-
+                                                        JSON.stringify({
+                                                            is_read: true
+                                                        })
                                                 }
                                             );
 
@@ -3196,14 +3387,13 @@
                                             let updateError =
                                                 null;
 
-
                                             try {
 
                                                 updateError =
                                                     await updateResponse.json();
 
                                             } catch (
-                                                error
+                                                parseError
                                             ) {
 
                                                 updateError =
@@ -3228,7 +3418,6 @@
 
                                         await this.openNotifications();
 
-
                                     } catch (
                                         error
                                     ) {
@@ -3237,7 +3426,6 @@
                                             "LosOja notifications read error:",
                                             error
                                         );
-
 
                                         if (
                                             typeof window.showToast ===
@@ -3298,8 +3486,6 @@
             }
 
         },
-
-
         /* =================================================
            BACK TO TOP
         ================================================= */
