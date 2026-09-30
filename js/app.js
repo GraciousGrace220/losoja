@@ -14,6 +14,8 @@
    - Mobility / TryCircle / Bike / Cab
    - Mobility request form
    - Notifications
+   - Notification button
+   - Notification sound
    - Back-to-top button
    - Toast notifications
 ========================================================= */
@@ -28,6 +30,15 @@
     ===================================================== */
 
     const App = {
+
+        /* =================================================
+           NOTIFICATION STATE
+        ================================================= */
+
+        notificationKnownIds: new Set(),
+
+        notificationBaselineLoaded: false,
+
 
         /* =================================================
            INITIALIZATION
@@ -58,6 +69,8 @@
             this.bindAddBusinessButtons();
 
             this.bindMobilityButtons();
+
+            this.bindNotificationButton();
 
             this.createBackButton();
 
@@ -1192,12 +1205,6 @@
                     const SUPABASE_URL =
                         "https://ycxshwgeebskdozmornh.supabase.co";
 
-
-                    /*
-                     * IMPORTANT:
-                     * Put your existing working LosOja
-                     * anon/publishable key here.
-                     */
 
                     const SUPABASE_KEY =
                         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InljeHNod2dlZWJza2Rvem1vcm5oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzMDY0NjUsImV4cCI6MjEwMzg4MjQ2NX0.tMl7wILdVDhu0RWFaG_84ngJEryLt2c5cB8MEKW3kfU";
@@ -2363,6 +2370,228 @@
 
 
         /* =================================================
+           NOTIFICATION BUTTON
+        ================================================= */
+
+        bindNotificationButton() {
+
+            const notificationButtons =
+                document.querySelectorAll(
+                    '#notificationBtn, .notification-btn, button[aria-label="Notifications"], button[aria-label="Notification"], [data-action="notifications"]'
+                );
+
+
+            if (!notificationButtons.length) {
+
+                console.warn(
+                    "LosOja: Notification button not found."
+                );
+
+                return;
+
+            }
+
+
+            notificationButtons.forEach(button => {
+
+                if (
+                    button.dataset
+                        .losojaNotificationReady ===
+                    "true"
+                ) {
+
+                    return;
+
+                }
+
+
+                button.dataset
+                    .losojaNotificationReady =
+                    "true";
+
+
+                button.addEventListener(
+                    "click",
+                    event => {
+
+                        event.preventDefault();
+
+                        this.prepareNotificationSound();
+
+                        this.openNotifications();
+
+                    }
+                );
+
+            });
+
+        },
+
+
+        /* =================================================
+           NOTIFICATION SOUND
+        ================================================= */
+
+        prepareNotificationSound() {
+
+            try {
+
+                const AudioContext =
+                    window.AudioContext ||
+                    window.webkitAudioContext;
+
+
+                if (!AudioContext) {
+                    return;
+                }
+
+
+                if (!this.notificationAudioContext) {
+
+                    this.notificationAudioContext =
+                        new AudioContext();
+
+                }
+
+
+                if (
+                    this.notificationAudioContext.state ===
+                    "suspended"
+                ) {
+
+                    this.notificationAudioContext
+                        .resume()
+                        .catch(() => {});
+
+                }
+
+            } catch (error) {
+
+                console.warn(
+                    "LosOja: Could not prepare notification sound.",
+                    error
+                );
+
+            }
+
+        },
+
+
+        playNotificationSound() {
+
+            try {
+
+                const AudioContext =
+                    window.AudioContext ||
+                    window.webkitAudioContext;
+
+
+                if (!AudioContext) {
+                    return;
+                }
+
+
+                if (!this.notificationAudioContext) {
+
+                    this.notificationAudioContext =
+                        new AudioContext();
+
+                }
+
+
+                const audioContext =
+                    this.notificationAudioContext;
+
+
+                if (
+                    audioContext.state ===
+                    "suspended"
+                ) {
+
+                    audioContext
+                        .resume()
+                        .catch(() => {});
+
+                }
+
+
+                const oscillator =
+                    audioContext.createOscillator();
+
+
+                const gainNode =
+                    audioContext.createGain();
+
+
+                oscillator.type =
+                    "sine";
+
+
+                /*
+                 * Original LosOja coin-style chime.
+                 */
+
+                oscillator.frequency.setValueAtTime(
+                    880,
+                    audioContext.currentTime
+                );
+
+
+                oscillator.frequency.exponentialRampToValueAtTime(
+                    520,
+                    audioContext.currentTime + 0.18
+                );
+
+
+                gainNode.gain.setValueAtTime(
+                    0.0001,
+                    audioContext.currentTime
+                );
+
+
+                gainNode.gain.exponentialRampToValueAtTime(
+                    0.22,
+                    audioContext.currentTime + 0.015
+                );
+
+
+                gainNode.gain.exponentialRampToValueAtTime(
+                    0.0001,
+                    audioContext.currentTime + 0.32
+                );
+
+
+                oscillator.connect(
+                    gainNode
+                );
+
+
+                gainNode.connect(
+                    audioContext.destination
+                );
+
+
+                oscillator.start();
+
+
+                oscillator.stop(
+                    audioContext.currentTime + 0.32
+                );
+
+
+            } catch (error) {
+
+                console.warn(
+                    "LosOja: Could not play notification sound.",
+                    error
+                );
+
+            }
+
+        },
+
+
+        /* =================================================
            NOTIFICATIONS
         ================================================= */
 
@@ -2544,16 +2773,11 @@
             --------------------------------------------- */
 
             const SUPABASE_URL =
-    "https://ycxshwgeebskdozmornh.supabase.co";
+                "https://ycxshwgeebskdozmornh.supabase.co";
 
 
-/*
- * Use the same existing anon/publishable key
- * already working in LosOja.
- */
-
-const SUPABASE_KEY =
-    "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
+            const SUPABASE_KEY =
+                "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
 
 
             /* ---------------------------------------------
@@ -2628,6 +2852,74 @@ const SUPABASE_KEY =
 
                 const notifications =
                     await response.json();
+
+
+                /* -----------------------------------------
+                   DETECT NEW UNREAD NOTIFICATIONS
+                ----------------------------------------- */
+
+                const unreadNotifications =
+                    Array.isArray(notifications)
+                        ? notifications.filter(
+                            notification =>
+                                notification &&
+                                notification.is_read !== true
+                        )
+                        : [];
+
+
+                const newUnreadNotifications =
+                    unreadNotifications.filter(
+                        notification => {
+
+                            const id =
+                                String(
+                                    notification.id
+                                );
+
+                            return !this.notificationKnownIds.has(
+                                id
+                            );
+
+                        }
+                    );
+
+
+                /*
+                 * First successful load establishes the
+                 * current notification list.
+                 *
+                 * If unread notifications appear after
+                 * that, the LosOja sound plays.
+                 */
+
+                if (
+                    this.notificationBaselineLoaded &&
+                    newUnreadNotifications.length > 0
+                ) {
+
+                    this.prepareNotificationSound();
+
+                    this.playNotificationSound();
+
+                }
+
+
+                unreadNotifications.forEach(
+                    notification => {
+
+                        this.notificationKnownIds.add(
+                            String(
+                                notification.id
+                            )
+                        );
+
+                    }
+                );
+
+
+                this.notificationBaselineLoaded =
+                    true;
 
 
                 if (
@@ -3188,74 +3480,83 @@ const SUPABASE_KEY =
     window.openNotifications =
         function () {
 
+            App.prepareNotificationSound();
+
             return App.openNotifications();
 
         };
-/* ACCOUNT GLOBAL BRIDGE */
-window.openAccount = async function () {
 
-    try {
 
-        /* Check if user is logged in */
-        if (
-            typeof window.getCurrentUser === "function"
-        ) {
+    /* =====================================================
+       ACCOUNT GLOBAL BRIDGE
+    ===================================================== */
 
-            const user =
-                await window.getCurrentUser();
+    window.openAccount = async function () {
 
-            /* Logged in */
-            if (user) {
+        try {
 
-                window.location.href =
-                    "balance.html";
+            /* Check if user is logged in */
+            if (
+                typeof window.getCurrentUser === "function"
+            ) {
+
+                const user =
+                    await window.getCurrentUser();
+
+                /* Logged in */
+                if (user) {
+
+                    window.location.href =
+                        "balance.html";
+
+                    return;
+
+                }
+
+            }
+
+            /* Logged out */
+            if (
+                typeof window.openLogin === "function"
+            ) {
+
+                window.openLogin();
 
                 return;
 
             }
 
-        }
+            const loginModal =
+                document.getElementById(
+                    "loginModal"
+                );
 
-        /* Logged out */
-        if (
-            typeof window.openLogin === "function"
-        ) {
+            if (loginModal) {
 
-            window.openLogin();
+                App.openModal(
+                    "loginModal"
+                );
 
-            return;
+                return;
 
-        }
+            }
 
-        const loginModal =
-            document.getElementById(
-                "loginModal"
+            console.warn(
+                "LosOja: loginModal is not available."
             );
 
-        if (loginModal) {
+        } catch (error) {
 
-            App.openModal(
-                "loginModal"
+            console.error(
+                "LosOja: Account button error:",
+                error
             );
-
-            return;
 
         }
 
-        console.warn(
-            "LosOja: loginModal is not available."
-        );
+    };
 
-    } catch (error) {
 
-        console.error(
-            "LosOja: Account button error:",
-            error
-        );
-
-    }
-
-};
     /* =====================================================
        BUSINESS DETAILS
     ===================================================== */
