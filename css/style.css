@@ -1879,23 +1879,23 @@ breaking cards or modal layouts. */
 FINAL RESPONSIVE OVERRIDES
 ========================================================= */
 
-@media (max-width: 900px) {
-
-    #businessGrid,
-    #businessesGrid,
-    .businessGrid,
-    .businessesGrid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-}
-
 @media (max-width: 700px) {
 
     #businessGrid,
     #businessesGrid,
     .businessGrid,
     .businessesGrid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+}
+
+@media (max-width: 700px) {
+
+    .businesses-section .business-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+
+        gap: 12px;
     }
 
     .modal {
