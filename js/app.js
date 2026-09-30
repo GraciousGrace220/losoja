@@ -912,7 +912,10 @@
                             if (!category) {
                                 return;
                             }
-
+if (category === "Trade by Barter") {
+    window.location.href = "barter.html";
+    return;
+}
 
                             document
                                 .querySelectorAll(
