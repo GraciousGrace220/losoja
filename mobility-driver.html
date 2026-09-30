@@ -374,7 +374,7 @@
 
 <!-- LosOja authentication -->
 
-<script src="js/auth.js?v=2"></script>
+<script src="js/auth.js?v=3"></script>
 
 
 <script>
@@ -387,6 +387,7 @@
     const SUPABASE_URL =
         "https://ycxshwgeebskdozmornh.supabase.co";
 
+
     const SUPABASE_KEY =
         "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
 
@@ -396,10 +397,12 @@
             "mobilityDriverForm"
         );
 
+
     const statusMessage =
         document.getElementById(
             "statusMessage"
         );
+
 
     const submitButton =
         document.getElementById(
@@ -415,6 +418,7 @@
         statusMessage.textContent =
             message;
 
+
         statusMessage.className =
             "status-message " +
             (
@@ -426,82 +430,234 @@
     }
 
 
-   async function getLoggedInUser() {
+    /*
+     * Get the currently logged-in LosOja user.
+     *
+     * We first use the existing authentication system.
+     * If that does not return a user, we check the saved
+     * Supabase session directly.
+     */
 
-    try {
+    async function getLoggedInUser() {
 
-        /*
-         * First make sure LosOja has a valid Supabase session.
-         */
-        if (
-            typeof window.ensureValidSupabaseSession ===
-            "function"
-        ) {
+        try {
 
-            await window.ensureValidSupabaseSession();
-
-        }
-
-
-        /*
-         * Use LosOja's existing authenticated user lookup.
-         */
-        if (
-            typeof window.getCurrentUser ===
-            "function"
-        ) {
-
-            const user =
-                await window.getCurrentUser();
+            /*
+             * First make sure the existing LosOja
+             * Supabase session is still valid.
+             */
 
             if (
-                user &&
-                user.id
+                typeof window.ensureValidSupabaseSession ===
+                "function"
             ) {
 
-                return user;
+                try {
+
+                    await window.ensureValidSupabaseSession();
+
+                } catch (error) {
+
+                    console.warn(
+                        "LosOja Mobility: Session refresh was not available.",
+                        error
+                    );
+
+                }
 
             }
 
-        }
 
-
-        /*
-         * Fallback: check the saved LosOja session directly.
-         */
-        if (
-            typeof window.getSupabaseSession ===
-            "function"
-        ) {
-
-            const session =
-                window.getSupabaseSession();
+            /*
+             * Try the normal LosOja user lookup.
+             */
 
             if (
-                session &&
-                session.user &&
-                session.user.id
+                typeof window.getCurrentUser ===
+                "function"
             ) {
 
-                return session.user;
+                try {
+
+                    const user =
+                        await window.getCurrentUser();
+
+
+                    if (
+                        user &&
+                        user.id
+                    ) {
+
+                        console.log(
+                            "LosOja Mobility: Logged-in user:",
+                            user.id
+                        );
+
+
+                        return user;
+
+                    }
+
+                } catch (error) {
+
+                    console.warn(
+                        "LosOja Mobility: Normal user lookup failed.",
+                        error
+                    );
+
+                }
 
             }
 
+
+            /*
+             * Fallback:
+             * Read the saved LosOja Supabase session.
+             */
+
+            const savedSession =
+                localStorage.getItem(
+                    "losoja_supabase_session"
+                );
+
+
+            if (savedSession) {
+
+                try {
+
+                    const session =
+                        JSON.parse(
+                            savedSession
+                        );
+
+
+                    if (
+                        session &&
+                        session.user &&
+                        session.user.id
+                    ) {
+
+                        console.log(
+                            "LosOja Mobility: User found from saved session:",
+                            session.user.id
+                        );
+
+
+                        return session.user;
+
+                    }
+
+                } catch (error) {
+
+                    console.error(
+                        "LosOja Mobility: Could not read saved session.",
+                        error
+                    );
+
+                }
+
+            }
+
+        } catch (error) {
+
+            console.error(
+                "LosOja Mobility: Login check failed.",
+                error
+            );
+
         }
 
-    } catch (error) {
 
-        console.error(
-            "LosOja Mobility: Could not read login session:",
-            error
-        );
+        return null;
 
     }
 
 
-    return null;
+    /*
+     * Get the current Supabase access token.
+     */
 
-}
+    function getAccessToken() {
+
+        let token = null;
+
+
+        /*
+         * First use LosOja's existing auth helper.
+         */
+
+        if (
+            typeof window.getSupabaseAccessToken ===
+            "function"
+        ) {
+
+            try {
+
+                token =
+                    window.getSupabaseAccessToken();
+
+            } catch (error) {
+
+                console.warn(
+                    "LosOja Mobility: Could not get token from auth helper.",
+                    error
+                );
+
+            }
+
+        }
+
+
+        /*
+         * Fallback to the saved LosOja session.
+         */
+
+        if (!token) {
+
+            try {
+
+                const savedSession =
+                    localStorage.getItem(
+                        "losoja_supabase_session"
+                    );
+
+
+                if (savedSession) {
+
+                    const session =
+                        JSON.parse(
+                            savedSession
+                        );
+
+
+                    if (
+                        session &&
+                        session.access_token
+                    ) {
+
+                        token =
+                            session.access_token;
+
+                    }
+
+                }
+
+            } catch (error) {
+
+                console.error(
+                    "LosOja Mobility: Could not read access token.",
+                    error
+                );
+
+            }
+
+        }
+
+
+        return token;
+
+    }
+
 
     form.addEventListener(
         "submit",
@@ -513,11 +669,16 @@
             submitButton.disabled =
                 true;
 
+
             submitButton.textContent =
                 "Submitting...";
 
 
             try {
+
+                /*
+                 * Check login.
+                 */
 
                 const user =
                     await getLoggedInUser();
@@ -549,11 +710,12 @@
                 }
 
 
+                /*
+                 * Get authenticated Supabase access token.
+                 */
+
                 const token =
-                    typeof window.getSupabaseAccessToken ===
-                    "function"
-                        ? window.getSupabaseAccessToken()
-                        : null;
+                    getAccessToken();
 
 
                 if (!token) {
@@ -564,6 +726,10 @@
 
                 }
 
+
+                /*
+                 * Read form values.
+                 */
 
                 const serviceType =
                     document.getElementById(
@@ -600,6 +766,10 @@
                         "location"
                     ).value.trim();
 
+
+                /*
+                 * Submit the Mobility provider application.
+                 */
 
                 const response =
                     await fetch(
@@ -663,13 +833,19 @@
                     );
 
 
+                /*
+                 * Handle Supabase response.
+                 */
+
                 if (!response.ok) {
 
                     const errorText =
                         await response.text();
 
+
                     console.error(
                         "LosOja Mobility application error:",
+                        response.status,
                         errorText
                     );
 
@@ -680,6 +856,10 @@
 
                 }
 
+
+                /*
+                 * Application successfully submitted.
+                 */
 
                 form.reset();
 
@@ -715,6 +895,7 @@
 
                 submitButton.disabled =
                     false;
+
 
                 submitButton.textContent =
                     "Submit Application";
