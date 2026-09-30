@@ -184,6 +184,137 @@
             line-height: 1.5;
         }
 
+        /* REQUEST MODAL */
+
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: rgba(0,0,0,.55);
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-card {
+            width: 100%;
+            max-width: 520px;
+            background: white;
+            border-radius: 20px;
+            padding: 25px 22px;
+            box-shadow: 0 15px 45px rgba(0,0,0,.2);
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            color: #087a3e;
+        }
+
+        .close-button {
+            border: 0;
+            background: #f3f4f6;
+            color: #374151;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .request-service {
+            background: #eef8f2;
+            color: #055c2e;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 18px;
+            font-weight: 700;
+        }
+
+        .form-group {
+            margin-bottom: 17px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 7px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #d1d5db;
+            border-radius: 10px;
+            font-size: 15px;
+            font-family: inherit;
+        }
+
+        .form-group textarea {
+            min-height: 90px;
+            resize: vertical;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: 2px solid #087a3e;
+            border-color: #087a3e;
+        }
+
+        .request-submit {
+            width: 100%;
+            border: 0;
+            background: #087a3e;
+            color: white;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .request-submit:hover {
+            background: #055c2e;
+        }
+
+        .request-submit:disabled {
+            opacity: .7;
+            cursor: not-allowed;
+        }
+
+        .request-status {
+            display: none;
+            margin-top: 15px;
+            padding: 13px;
+            border-radius: 10px;
+            line-height: 1.5;
+        }
+
+        .request-status.success {
+            display: block;
+            background: #eef8f2;
+            color: #055c2e;
+        }
+
+        .request-status.error {
+            display: block;
+            background: #fff1f2;
+            color: #9f1239;
+        }
+
         @media (max-width: 600px) {
 
             .main {
@@ -196,6 +327,14 @@
 
             .hero {
                 padding: 25px 18px;
+            }
+
+            .modal {
+                padding: 12px;
+            }
+
+            .modal-card {
+                padding: 22px 17px;
             }
 
         }
@@ -285,7 +424,7 @@
                 <button
                     class="ride-button"
                     type="button"
-                    onclick="showMessage('Cab')"
+                    onclick="openRideRequest('cab', 'Cab')"
                 >
                     Request Cab
                 </button>
@@ -313,7 +452,7 @@
                 <button
                     class="ride-button"
                     type="button"
-                    onclick="showMessage('Tricycle')"
+                    onclick="openRideRequest('tricycle', 'Tricycle (Keke)')"
                 >
                     Request Tricycle
                 </button>
@@ -341,7 +480,7 @@
                 <button
                     class="ride-button"
                     type="button"
-                    onclick="showMessage('Bike')"
+                    onclick="openRideRequest('bike', 'Bike')"
                 >
                     Request Bike
                 </button>
@@ -373,7 +512,7 @@
                 <button
                     class="ride-button"
                     type="button"
-                    onclick="showMessage('Dispatch Rider')"
+                    onclick="openRideRequest('dispatch', 'Dispatch Rider')"
                 >
                     Request Dispatch
                 </button>
@@ -401,7 +540,7 @@
                 <button
                     class="ride-button"
                     type="button"
-                    onclick="showMessage('Rent a Truck')"
+                    onclick="openRideRequest('truck', 'Rent a Truck')"
                 >
                     Find a Truck
                 </button>
@@ -414,8 +553,8 @@
 
         <div class="notice">
 
-            🚧 Mobility ride requests are being
-            prepared for LosOja.
+            🔐 Verified providers are required
+            before a driver can receive customer requests.
 
         </div>
 
@@ -425,19 +564,215 @@
 </div>
 
 
+<!-- RIDE REQUEST MODAL -->
+
+<div
+    class="modal"
+    id="rideRequestModal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="rideRequestTitle"
+>
+
+    <div class="modal-card">
+
+        <div class="modal-header">
+
+            <h2 id="rideRequestTitle">
+                Request Mobility
+            </h2>
+
+            <button
+                type="button"
+                class="close-button"
+                onclick="closeRideRequest()"
+                aria-label="Close"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div
+            class="request-service"
+            id="requestService"
+        >
+            Service
+        </div>
+
+
+        <form id="mobilityRequestForm">
+
+
+            <div class="form-group">
+
+                <label for="pickupLocation">
+                    Pickup Location
+                </label>
+
+                <input
+                    type="text"
+                    id="pickupLocation"
+                    required
+                    placeholder="Where should we pick you up?"
+                    autocomplete="street-address"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="destinationLocation">
+                    Destination
+                </label>
+
+                <input
+                    type="text"
+                    id="destinationLocation"
+                    required
+                    placeholder="Where are you going?"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="requestNotes">
+                    Notes
+                </label>
+
+                <textarea
+                    id="requestNotes"
+                    placeholder="Anything the driver should know?"
+                ></textarea>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="request-submit"
+                id="submitMobilityRequest"
+            >
+                Submit Request
+            </button>
+
+
+        </form>
+
+
+        <div
+            id="requestStatus"
+            class="request-status"
+        ></div>
+
+    </div>
+
+</div>
+
+
+<!-- Existing LosOja authentication -->
+
+<script src="js/auth.js?v=3"></script>
+
+
 <script>
 
-    function showMessage(type) {
+(function () {
 
-        alert(
-            type +
-            " requests are coming soon on LosOja."
+    "use strict";
+
+
+    const SUPABASE_URL =
+        "https://ycxshwgeebskdozmornh.supabase.co";
+
+
+    const SUPABASE_KEY =
+        "sb_publishable_jFSLacWnupO6T8EnSqb2bw_bZmy7rVe";
+
+
+    let selectedServiceType = "";
+
+
+    const modal =
+        document.getElementById(
+            "rideRequestModal"
         );
+
+
+    const serviceDisplay =
+        document.getElementById(
+            "requestService"
+        );
+
+
+    const form =
+        document.getElementById(
+            "mobilityRequestForm"
+        );
+
+
+    const submitButton =
+        document.getElementById(
+            "submitMobilityRequest"
+        );
+
+
+    const statusMessage =
+        document.getElementById(
+            "requestStatus"
+        );
+
+
+    function showStatus(
+        message,
+        success
+    ) {
+
+        statusMessage.textContent =
+            message;
+
+        statusMessage.className =
+            "request-status " +
+            (
+                success
+                    ? "success"
+                    : "error"
+            );
 
     }
 
-</script>
 
-</body>
+    function clearStatus() {
 
-</html>
+        statusMessage.textContent = "";
+
+        statusMessage.className =
+            "request-status";
+
+    }
+
+
+    window.openRideRequest =
+        function (
+            serviceType,
+            serviceName
+        ) {
+
+            selectedServiceType =
+                serviceType;
+
+            serviceDisplay.textContent =
+                "🚕 " + serviceName;
+
+            clearStatus();
+
+            form.reset();
+
+            modal.classList.add("show");
+
+            document
+                .getElementById("pickupLocation
