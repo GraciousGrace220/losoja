@@ -1,0 +1,1480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Provider Dashboard - LosOja</title>
+
+    <meta
+        name="theme-color"
+        content="#087a3e"
+    >
+
+    <style>
+        :root {
+            --green: #087a3e;
+            --green-dark: #055c2e;
+            --green-light: #eef8f2;
+            --white: #ffffff;
+            --black: #111827;
+            --gray-dark: #374151;
+            --gray: #6b7280;
+            --gray-light: #f3f4f6;
+            --border: #e5e7eb;
+            --danger: #dc2626;
+            --warning: #d97706;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+            background: #f7f9f8;
+            color: var(--black);
+        }
+
+        button {
+            font: inherit;
+        }
+
+        .provider-header {
+            background: var(--green);
+            color: var(--white);
+            padding: 16px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 20;
+        }
+
+        .header-inner {
+            max-width: 900px;
+            margin: 0 auto;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .logo {
+            color: white;
+            text-decoration: none;
+            font-size: 24px;
+            font-weight: 800;
+        }
+
+        .back-button {
+            border: 1px solid rgba(255,255,255,.35);
+            background: rgba(255,255,255,.12);
+            color: white;
+            padding: 9px 14px;
+            border-radius: 9px;
+            cursor: pointer;
+        }
+
+        .page {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 24px 16px 100px;
+        }
+
+        .page-title {
+            margin-bottom: 20px;
+        }
+
+        .page-title h1 {
+            margin: 0 0 7px;
+            font-size: 28px;
+        }
+
+        .page-title p {
+            margin: 0;
+            color: var(--gray);
+        }
+
+        .card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 18px;
+            box-shadow: 0 3px 12px rgba(0,0,0,.04);
+        }
+
+        .card h2 {
+            margin: 0 0 16px;
+            font-size: 19px;
+        }
+
+        .profile-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .info-box {
+            background: var(--gray-light);
+            border-radius: 11px;
+            padding: 13px;
+        }
+
+        .info-label {
+            display: block;
+            font-size: 12px;
+            color: var(--gray);
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-weight: 700;
+            word-break: break-word;
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .status-pending {
+            background: #fff7ed;
+            color: var(--warning);
+        }
+
+        .status-verified {
+            background: var(--green-light);
+            color: var(--green-dark);
+        }
+
+        .status-rejected {
+            background: #fef2f2;
+            color: var(--danger);
+        }
+
+        .availability-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .availability-text strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .availability-text span {
+            color: var(--gray);
+            font-size: 14px;
+        }
+
+        .toggle {
+            width: 62px;
+            height: 34px;
+            border: 0;
+            border-radius: 999px;
+            background: #d1d5db;
+            padding: 4px;
+            cursor: pointer;
+            transition: .2s;
+        }
+
+        .toggle span {
+            display: block;
+            width: 26px;
+            height: 26px;
+            background: white;
+            border-radius: 50%;
+            transition: .2s;
+        }
+
+        .toggle.active {
+            background: var(--green);
+        }
+
+        .toggle.active span {
+            transform: translateX(28px);
+        }
+
+        .toggle:disabled {
+            opacity: .45;
+            cursor: not-allowed;
+        }
+
+        .message {
+            padding: 13px;
+            border-radius: 10px;
+            background: var(--gray-light);
+            color: var(--gray-dark);
+            font-size: 14px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .message.show {
+            display: block;
+        }
+
+        .request-list {
+            display: grid;
+            gap: 14px;
+        }
+
+        .request-card {
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            padding: 16px;
+        }
+
+        .request-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 13px;
+        }
+
+        .request-service {
+            font-weight: 800;
+            color: var(--green-dark);
+        }
+
+        .request-status {
+            font-size: 12px;
+            font-weight: 700;
+            background: var(--green-light);
+            color: var(--green-dark);
+            padding: 5px 8px;
+            border-radius: 999px;
+        }
+
+        .route {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .route-item {
+            padding: 11px;
+            background: var(--gray-light);
+            border-radius: 9px;
+        }
+
+        .route-label {
+            display: block;
+            font-size: 11px;
+            color: var(--gray);
+            margin-bottom: 3px;
+        }
+
+        .route-value {
+            font-weight: 600;
+        }
+
+        .request-notes {
+            color: var(--gray-dark);
+            font-size: 14px;
+            margin-bottom: 14px;
+        }
+
+        .request-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .primary-button,
+        .secondary-button,
+        .danger-button {
+            border: 0;
+            border-radius: 9px;
+            padding: 10px 14px;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .primary-button {
+            background: var(--green);
+            color: white;
+        }
+
+        .primary-button:hover {
+            background: var(--green-dark);
+        }
+
+        .secondary-button {
+            background: var(--gray-light);
+            color: var(--black);
+        }
+
+        .danger-button {
+            background: #fef2f2;
+            color: var(--danger);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 28px 15px;
+            color: var(--gray);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 25px;
+            color: var(--gray);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        @media (max-width: 600px) {
+            .profile-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .availability-row {
+                align-items: flex-start;
+            }
+
+            .page-title h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="provider-header">
+    <div class="header-inner">
+
+        <a href="index.html" class="logo">
+            LosOja
+        </a>
+
+        <button
+            type="button"
+            class="back-button"
+            id="backButton"
+        >
+            ← Back
+        </button>
+
+    </div>
+</header>
+
+
+<main class="page">
+
+    <div class="page-title">
+        <h1>Provider Dashboard</h1>
+        <p>Manage your mobility service and customer requests.</p>
+    </div>
+
+
+    <!-- PROVIDER PROFILE -->
+
+    <section class="card">
+
+        <h2>My Provider Profile</h2>
+
+        <div
+            id="profileLoading"
+            class="loading"
+        >
+            Loading provider profile...
+        </div>
+
+        <div
+            id="profileContent"
+            class="hidden"
+        >
+
+            <div class="profile-grid">
+
+                <div class="info-box">
+                    <span class="info-label">
+                        Name
+                    </span>
+
+                    <span
+                        class="info-value"
+                        id="providerName"
+                    >
+                        —
+                    </span>
+                </div>
+
+
+                <div class="info-box">
+                    <span class="info-label">
+                        Service
+                    </span>
+
+                    <span
+                        class="info-value"
+                        id="providerService"
+                    >
+                        —
+                    </span>
+                </div>
+
+
+                <div class="info-box">
+                    <span class="info-label">
+                        Phone
+                    </span>
+
+                    <span
+                        class="info-value"
+                        id="providerPhone"
+                    >
+                        —
+                    </span>
+                </div>
+
+
+                <div class="info-box">
+                    <span class="info-label">
+                        Vehicle
+                    </span>
+
+                    <span
+                        class="info-value"
+                        id="providerVehicle"
+                    >
+                        —
+                    </span>
+                </div>
+
+
+                <div class="info-box">
+                    <span class="info-label">
+                        Plate
+                    </span>
+
+                    <span
+                        class="info-value"
+                        id="providerPlate"
+                    >
+                        —
+                    </span>
+                </div>
+
+
+                <div class="info-box">
+                    <span class="info-label">
+                        Verification
+                    </span>
+
+                    <span id="providerVerification">
+                        —
+                    </span>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div
+            id="profileMessage"
+            class="message"
+        ></div>
+
+    </section>
+
+
+    <!-- AVAILABILITY -->
+
+    <section class="card">
+
+        <h2>Availability</h2>
+
+        <div class="availability-row">
+
+            <div class="availability-text">
+
+                <strong id="availabilityTitle">
+                    You're currently unavailable
+                </strong>
+
+                <span id="availabilityDescription">
+                    You won't receive new customer requests.
+                </span>
+
+            </div>
+
+
+            <button
+                type="button"
+                class="toggle"
+                id="availabilityToggle"
+                aria-label="Toggle provider availability"
+                disabled
+            >
+                <span></span>
+            </button>
+
+        </div>
+
+        <div
+            id="availabilityMessage"
+            class="message"
+        ></div>
+
+    </section>
+
+
+    <!-- REQUESTS -->
+
+    <section class="card">
+
+        <h2>Customer Requests</h2>
+
+        <div
+            id="requestsLoading"
+            class="loading"
+        >
+            Loading requests...
+        </div>
+
+        <div
+            id="requestList"
+            class="request-list hidden"
+        ></div>
+
+        <div
+            id="requestEmpty"
+            class="empty-state hidden"
+        >
+            No matching customer requests right now.
+        </div>
+
+    </section>
+
+</main>
+
+
+<script src="js/auth.js?v=3"></script>
+
+
+<script>
+(function () {
+
+    "use strict";
+
+
+    const SUPABASE_URL =
+        "https://ycxshwgeebskdozmornh.supabase.co";
+
+
+    const SUPABASE_KEY =
+        "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
+
+
+    let currentUser = null;
+    let providerProfile = null;
+
+
+    const serviceNames = {
+        cab: "Cab",
+        tricycle: "Tricycle (Keke)",
+        bike: "Bike",
+        dispatch: "Dispatch Rider",
+        truck: "Rent a Truck"
+    };
+
+
+    function getToken() {
+
+        try {
+
+            if (
+                window.getSupabaseAccessToken &&
+                typeof window.getSupabaseAccessToken === "function"
+            ) {
+                return window.getSupabaseAccessToken();
+            }
+
+        } catch (error) {
+            console.warn(
+                "LosOja: token helper failed.",
+                error
+            );
+        }
+
+        return null;
+    }
+
+
+    async function getLoggedInUser() {
+
+        try {
+
+            if (
+                window.getCurrentUser &&
+                typeof window.getCurrentUser === "function"
+            ) {
+
+                const user =
+                    await window.getCurrentUser();
+
+                if (user) {
+                    return user;
+                }
+            }
+
+        } catch (error) {
+
+            console.warn(
+                "LosOja: getCurrentUser failed.",
+                error
+            );
+        }
+
+
+        const token = getToken();
+
+        if (!token) {
+            return null;
+        }
+
+
+        const response = await fetch(
+            SUPABASE_URL +
+            "/auth/v1/user",
+            {
+                headers: {
+                    "apikey": SUPABASE_KEY,
+                    "Authorization": "Bearer " + token
+                }
+            }
+        );
+
+
+        if (!response.ok) {
+            return null;
+        }
+
+
+        return await response.json();
+    }
+
+
+    function headers(includeContentType) {
+
+        const token = getToken();
+
+        const result = {
+            "apikey": SUPABASE_KEY,
+            "Authorization": "Bearer " + token
+        };
+
+        if (includeContentType) {
+            result["Content-Type"] =
+                "application/json";
+        }
+
+        return result;
+    }
+
+
+    function showMessage(element, message) {
+
+        if (!element) {
+            return;
+        }
+
+        element.textContent = message;
+        element.classList.add("show");
+    }
+
+
+    function hideMessage(element) {
+
+        if (!element) {
+            return;
+        }
+
+        element.textContent = "";
+        element.classList.remove("show");
+    }
+
+
+    function verificationLabel(status) {
+
+        const normalized =
+            String(status || "").toLowerCase();
+
+
+        if (normalized === "verified") {
+
+            return `
+                <span class="status status-verified">
+                    Verified
+                </span>
+            `;
+        }
+
+
+        if (normalized === "rejected") {
+
+            return `
+                <span class="status status-rejected">
+                    Rejected
+                </span>
+            `;
+        }
+
+
+        return `
+            <span class="status status-pending">
+                ${escapeHtml(
+                    normalized || "Pending"
+                )}
+            </span>
+        `;
+    }
+
+
+    function escapeHtml(value) {
+
+        return String(value ?? "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+
+    async function loadProviderProfile() {
+
+        const loading =
+            document.getElementById(
+                "profileLoading"
+            );
+
+        const content =
+            document.getElementById(
+                "profileContent"
+            );
+
+        const message =
+            document.getElementById(
+                "profileMessage"
+            );
+
+
+        try {
+
+            currentUser =
+                await getLoggedInUser();
+
+
+            if (!currentUser) {
+
+                showMessage(
+                    message,
+                    "Please log in to access the provider dashboard."
+                );
+
+                loading.classList.add("hidden");
+
+                return;
+            }
+
+
+            const response =
+                await fetch(
+                    SUPABASE_URL +
+                    "/rest/v1/mobility_drivers" +
+                    "?select=*" +
+                    "&user_id=eq." +
+                    encodeURIComponent(
+                        currentUser.id
+                    ) +
+                    "&order=created_at.desc" +
+                    "&limit=1",
+                    {
+                        headers:
+                            headers(false)
+                    }
+                );
+
+
+            if (!response.ok) {
+
+                const errorText =
+                    await response.text();
+
+                throw new Error(
+                    errorText ||
+                    "Could not load provider profile."
+                );
+            }
+
+
+            const rows =
+                await response.json();
+
+
+            if (!rows.length) {
+
+                loading.classList.add("hidden");
+
+                showMessage(
+                    message,
+                    "No provider application was found. Apply to become a provider first."
+                );
+
+                return;
+            }
+
+
+            providerProfile =
+                rows[0];
+
+
+            document.getElementById(
+                "providerName"
+            ).textContent =
+                providerProfile.full_name ||
+                "Not provided";
+
+
+            document.getElementById(
+                "providerService"
+            ).textContent =
+                serviceNames[
+                    providerProfile.service_type
+                ] ||
+                providerProfile.service_type ||
+                "—";
+
+
+            document.getElementById(
+                "providerPhone"
+            ).textContent =
+                providerProfile.phone ||
+                "Not provided";
+
+
+            document.getElementById(
+                "providerVehicle"
+            ).textContent =
+                providerProfile.vehicle_name ||
+                "Not provided";
+
+
+            document.getElementById(
+                "providerPlate"
+            ).textContent =
+                providerProfile.vehicle_plate ||
+                "Not provided";
+
+
+            document.getElementById(
+                "providerVerification"
+            ).innerHTML =
+                verificationLabel(
+                    providerProfile.verification_status
+                );
+
+
+            loading.classList.add("hidden");
+
+            content.classList.remove("hidden");
+
+
+            updateAvailabilityUI();
+
+            await loadRequests();
+
+        } catch (error) {
+
+            console.error(
+                "LosOja: provider profile error:",
+                error
+            );
+
+            loading.classList.add("hidden");
+
+            showMessage(
+                message,
+                "Unable to load your provider profile."
+            );
+        }
+    }
+
+
+    function updateAvailabilityUI() {
+
+        if (!providerProfile) {
+            return;
+        }
+
+
+        const toggle =
+            document.getElementById(
+                "availabilityToggle"
+            );
+
+        const title =
+            document.getElementById(
+                "availabilityTitle"
+            );
+
+        const description =
+            document.getElementById(
+                "availabilityDescription"
+            );
+
+
+        const verified =
+            providerProfile.verification_status ===
+            "verified";
+
+
+        toggle.disabled = !verified;
+
+
+        if (!verified) {
+
+            title.textContent =
+                "Verification required";
+
+            description.textContent =
+                "Your provider account must be verified before you can go available.";
+
+            toggle.classList.remove("active");
+
+            return;
+        }
+
+
+        if (providerProfile.is_available) {
+
+            toggle.classList.add("active");
+
+            title.textContent =
+                "You're available";
+
+            description.textContent =
+                "You'll receive matching customer requests.";
+
+        } else {
+
+            toggle.classList.remove("active");
+
+            title.textContent =
+                "You're currently unavailable";
+
+            description.textContent =
+                "You won't receive new customer requests.";
+        }
+    }
+
+
+    async function toggleAvailability() {
+
+        if (!providerProfile) {
+            return;
+        }
+
+
+        if (
+            providerProfile.verification_status !==
+            "verified"
+        ) {
+            return;
+        }
+
+
+        const toggle =
+            document.getElementById(
+                "availabilityToggle"
+            );
+
+        const message =
+            document.getElementById(
+                "availabilityMessage"
+            );
+
+
+        const newValue =
+            !providerProfile.is_available;
+
+
+        toggle.disabled = true;
+
+        hideMessage(message);
+
+
+        try {
+
+            const response =
+                await fetch(
+                    SUPABASE_URL +
+                    "/rest/v1/mobility_drivers" +
+                    "?id=eq." +
+                    encodeURIComponent(
+                        providerProfile.id
+                    ),
+                    {
+                        method: "PATCH",
+
+                        headers:
+                            headers(true),
+
+                        body: JSON.stringify({
+                            is_available:
+                                newValue,
+                            updated_at:
+                                new Date()
+                                    .toISOString()
+                        })
+                    }
+                );
+
+
+            if (!response.ok) {
+
+                const errorText =
+                    await response.text();
+
+                throw new Error(
+                    errorText ||
+                    "Availability update failed."
+                );
+            }
+
+
+            providerProfile.is_available =
+                newValue;
+
+
+            updateAvailabilityUI();
+
+            showMessage(
+                message,
+                newValue
+                    ? "You are now available for customer requests."
+                    : "You are now unavailable."
+            );
+
+
+            await loadRequests();
+
+        } catch (error) {
+
+            console.error(
+                "LosOja: availability error:",
+                error
+            );
+
+            showMessage(
+                message,
+                "Could not update availability. Please try again."
+            );
+
+            toggle.disabled = false;
+        }
+    }
+
+
+    async function loadRequests() {
+
+        const loading =
+            document.getElementById(
+                "requestsLoading"
+            );
+
+        const list =
+            document.getElementById(
+                "requestList"
+            );
+
+        const empty =
+            document.getElementById(
+                "requestEmpty"
+            );
+
+
+        loading.classList.remove("hidden");
+        list.classList.add("hidden");
+        empty.classList.add("hidden");
+
+
+        if (
+            !providerProfile ||
+            providerProfile.verification_status !==
+                "verified" ||
+            !providerProfile.is_available
+        ) {
+
+            loading.classList.add("hidden");
+
+            empty.textContent =
+                "Go available to see matching customer requests.";
+
+            empty.classList.remove("hidden");
+
+            return;
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    SUPABASE_URL +
+                    "/rest/v1/mobility_requests" +
+                    "?select=*" +
+                    "&driver_id=is.null" +
+                    "&status=eq.requested" +
+                    "&service_type=eq." +
+                    encodeURIComponent(
+                        providerProfile.service_type
+                    ) +
+                    "&order=created_at.desc",
+                    {
+                        headers:
+                            headers(false)
+                    }
+                );
+
+
+            if (!response.ok) {
+
+                const errorText =
+                    await response.text();
+
+                throw new Error(
+                    errorText ||
+                    "Could not load requests."
+                );
+            }
+
+
+            const requests =
+                await response.json();
+
+
+            loading.classList.add("hidden");
+
+
+            if (!requests.length) {
+
+                empty.textContent =
+                    "No matching customer requests right now.";
+
+                empty.classList.remove("hidden");
+
+                return;
+            }
+
+
+            list.innerHTML =
+                requests
+                    .map(createRequestCard)
+                    .join("");
+
+
+            list.classList.remove("hidden");
+
+
+        } catch (error) {
+
+            console.error(
+                "LosOja: request loading error:",
+                error
+            );
+
+            loading.classList.add("hidden");
+
+            empty.textContent =
+                "Unable to load customer requests.";
+
+            empty.classList.remove("hidden");
+        }
+    }
+
+
+    function createRequestCard(request) {
+
+        const service =
+            serviceNames[
+                request.service_type
+            ] ||
+            request.service_type;
+
+
+        const pickup =
+            request.pickup_location ||
+            "Not provided";
+
+
+        const destination =
+            request.destination_location ||
+            "Not provided";
+
+
+        const notes =
+            request.notes ||
+            "";
+
+
+        return `
+            <article
+                class="request-card"
+                data-request-id="${escapeHtml(
+                    request.id
+                )}"
+            >
+
+                <div class="request-top">
+
+                    <span class="request-service">
+                        ${escapeHtml(service)}
+                    </span>
+
+                    <span class="request-status">
+                        Requested
+                    </span>
+
+                </div>
+
+
+                <div class="route">
+
+                    <div class="route-item">
+                        <span class="route-label">
+                            Pickup
+                        </span>
+
+                        <span class="route-value">
+                            ${escapeHtml(pickup)}
+                        </span>
+                    </div>
+
+
+                    <div class="route-item">
+                        <span class="route-label">
+                            Destination
+                        </span>
+
+                        <span class="route-value">
+                            ${escapeHtml(destination)}
+                        </span>
+                    </div>
+
+                </div>
+
+
+                ${
+                    notes
+                        ? `
+                            <div class="request-notes">
+                                <strong>Notes:</strong>
+                                ${escapeHtml(notes)}
+                            </div>
+                          `
+                        : ""
+                }
+
+
+                <div class="request-actions">
+
+                    <button
+                        type="button"
+                        class="primary-button"
+                        onclick="window.acceptMobilityRequest('${escapeHtml(
+                            request.id
+                        )}')"
+                    >
+                        Accept Request
+                    </button>
+
+                </div>
+
+            </article>
+        `;
+    }
+
+
+    async function acceptMobilityRequest(requestId) {
+
+        if (!providerProfile) {
+            return;
+        }
+
+
+        if (
+            providerProfile.verification_status !==
+            "verified"
+        ) {
+            alert(
+                "Your provider account must be verified."
+            );
+
+            return;
+        }
+
+
+        if (!providerProfile.is_available) {
+            alert(
+                "You must be available to accept requests."
+            );
+
+            return;
+        }
+
+
+        const confirmed =
+            confirm(
+                "Accept this customer request?"
+            );
+
+
+        if (!confirmed) {
+            return;
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    SUPABASE_URL +
+                    "/rest/v1/mobility_requests" +
+                    "?id=eq." +
+                    encodeURIComponent(
+                        requestId
+                    ) +
+                    "&driver_id=is.null" +
+                    "&status=eq.requested",
+                    {
+                        method: "PATCH",
+
+                        headers: {
+                            ...headers(true),
+                            "Prefer":
+                                "return=representation"
+                        },
+
+                        body: JSON.stringify({
+                            driver_id:
+                                providerProfile.id,
+
+                            status:
+                                "accepted",
+
+                            updated_at:
+                                new Date()
+                                    .toISOString()
+                        })
+                    }
+                );
+
+
+            if (!response.ok) {
+
+                const errorText =
+                    await response.text();
+
+                throw new Error(
+                    errorText ||
+                    "Could not accept request."
+                );
+            }
+
+
+            const updated =
+                await response.json();
+
+
+            if (!updated.length) {
+
+                alert(
+                    "This request is no longer available."
+                );
+
+                await loadRequests();
+
+                return;
+            }
+
+
+            alert(
+                "Request accepted successfully."
+            );
+
+
+            await loadRequests();
+
+        } catch (error) {
+
+            console.error(
+                "LosOja: accept request error:",
+                error
+            );
+
+            alert(
+                "Unable to accept this request. Please try again."
+            );
+        }
+    }
+
+
+    window.acceptMobilityRequest =
+        acceptMobilityRequest;
+
+
+    document
+        .getElementById("availabilityToggle")
+        .addEventListener(
+            "click",
+            toggleAvailability
+        );
+
+
+    document
+        .getElementById("backButton")
+        .addEventListener(
+            "click",
+            function () {
+
+                window.location.href =
+                    "mobility.html";
+            }
+        );
+
+
+    console.log(
+        "LosOja Provider Dashboard loaded."
+    );
+
+
+    loadProviderProfile();
+
+})();
+</script>
+
+</body>
+</html>
