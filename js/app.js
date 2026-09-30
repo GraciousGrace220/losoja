@@ -3727,7 +3727,114 @@
 
             }
 
+            /* =================================================
+               BUSINESS CHAT
+            ================================================= */
 
+            const chatButton =
+                document.getElementById(
+                    "businessChatBtn"
+                );
+
+            if (chatButton) {
+
+                chatButton.onclick =
+                    async function () {
+
+                        try {
+
+                            if (
+                                !business.user_id
+                            ) {
+
+                                App.showToast(
+                                    "This business does not have a registered owner yet.",
+                                    "error"
+                                );
+
+                                return;
+                            }
+
+
+                            if (
+                                typeof window.getCurrentUser !==
+                                "function"
+                            ) {
+
+                                App.showToast(
+                                    "Please login before starting a chat.",
+                                    "error"
+                                );
+
+                                return;
+                            }
+
+
+                            const currentUser =
+                                await window.getCurrentUser();
+
+
+                            if (!currentUser) {
+
+                                if (
+                                    typeof window.openLogin ===
+                                    "function"
+                                ) {
+
+                                    window.openLogin();
+
+                                } else {
+
+                                    window.location.href =
+                                        "index.html";
+
+                                }
+
+                                return;
+                            }
+
+
+                            if (
+                                String(
+                                    currentUser.id
+                                ) ===
+                                String(
+                                    business.user_id
+                                )
+                            ) {
+
+                                App.showToast(
+                                    "You cannot chat with yourself.",
+                                    "error"
+                                );
+
+                                return;
+                            }
+
+
+                            window.location.href =
+                                "chat.html?user=" +
+                                encodeURIComponent(
+                                    business.user_id
+                                );
+
+                        } catch (error) {
+
+                            console.error(
+                                "LosOja business chat error:",
+                                error
+                            );
+
+                            App.showToast(
+                                "Could not open chat right now.",
+                                "error"
+                            );
+
+                        }
+
+                    };
+
+            }
             App.openModal(
                 "businessDetailsModal"
             );
