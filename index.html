@@ -500,7 +500,275 @@
             </div>
 
         </section>
+<script>
+/* -----------------------------------------------
+   Saved Items Renderer
+------------------------------------------------ */
 
+window.renderSavedItems = function () {
+
+    const savedGrid =
+        document.getElementById("savedItemsGrid");
+
+    if (!savedGrid) {
+        return;
+    }
+
+    let savedItems = [];
+
+    try {
+
+        savedItems =
+            JSON.parse(
+                localStorage.getItem(
+                    "losoja_saved_items"
+                ) || "[]"
+            );
+
+        if (!Array.isArray(savedItems)) {
+            savedItems = [];
+        }
+
+    } catch (error) {
+
+        console.error(
+            "LosOja: Could not read saved items.",
+            error
+        );
+
+        savedItems = [];
+    }
+
+
+    if (savedItems.length === 0) {
+
+        savedGrid.innerHTML = `
+            <div class="verified-business-empty">
+
+                <div class="verified-empty-icon">
+                    ❤️
+                </div>
+
+                <div>
+                    <strong>
+                        Nothing saved yet
+                    </strong>
+
+                    <p>
+                        Save businesses and marketplace
+                        items to find them here.
+                    </p>
+                </div>
+
+            </div>
+        `;
+
+        return;
+    }
+
+
+    savedGrid.innerHTML =
+        savedItems
+            .map(function (item) {
+
+                if (
+                    !item ||
+                    item.type !== "business"
+                ) {
+                    return "";
+                }
+
+
+                const name =
+                    String(
+                        item.name ||
+                        "Unnamed Business"
+                    )
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;");
+
+
+                const category =
+                    String(
+                        item.category ||
+                        "Business"
+                    )
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;");
+
+
+                const location =
+                    String(
+                        item.location ||
+                        "Nigeria"
+                    )
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;");
+
+
+                const image =
+                    String(
+                        item.image ||
+                        ""
+                    ).trim();
+
+
+                const imageHTML =
+                    image
+                        ? `
+                            <img
+                                src="${image}"
+                                alt="${name}"
+                                loading="lazy"
+                                style="
+                                    width:100%;
+                                    height:180px;
+                                    object-fit:cover;
+                                    display:block;
+                                "
+                            >
+                          `
+                        : `
+                            <div
+                                style="
+                                    height:180px;
+                                    display:flex;
+                                    align-items:center;
+                                    justify-content:center;
+                                    background:#f3f4f6;
+                                    font-size:42px;
+                                "
+                            >
+                                🏪
+                            </div>
+                          `;
+
+
+                return `
+                    <article
+                        class="business-card"
+                        style="cursor:pointer;"
+                        onclick="
+                            window.openBusiness &&
+                            window.openBusiness('${item.id}')
+                        "
+                    >
+
+                        <div
+                            style="
+                                width:100%;
+                                position:relative;
+                                overflow:hidden;
+                                border-radius:12px 12px 0 0;
+                            "
+                        >
+
+                            ${imageHTML}
+
+                            <button
+                                type="button"
+                                aria-label="Remove from saved"
+                                title="Remove from saved"
+                                onclick="
+                                    event.stopPropagation();
+                                    window.toggleSavedBusiness &&
+                                    window.toggleSavedBusiness('${item.id}')
+                                "
+                                style="
+                                    position:absolute;
+                                    top:12px;
+                                    right:12px;
+                                    width:42px;
+                                    height:42px;
+                                    border:0;
+                                    border-radius:50%;
+                                    background:#ffffff;
+                                    box-shadow:0 2px 8px rgba(0,0,0,0.15);
+                                    cursor:pointer;
+                                    font-size:21px;
+                                "
+                            >
+                                ❤️
+                            </button>
+
+                        </div>
+
+
+                        <div
+                            class="business-card-content"
+                        >
+
+                            <h3>
+                                ${name}
+                            </h3>
+
+                            <p>
+                                ${category}
+                            </p>
+
+                            <p>
+                                📍 ${location}
+                            </p>
+
+                        </div>
+
+                    </article>
+                `;
+            })
+            .join("");
+
+
+    /*
+       If saved items contained only
+       unsupported types, show empty state.
+    */
+
+    if (!savedGrid.innerHTML.trim()) {
+
+        savedGrid.innerHTML = `
+            <div class="verified-business-empty">
+
+                <div class="verified-empty-icon">
+                    ❤️
+                </div>
+
+                <div>
+                    <strong>
+                        Nothing saved yet
+                    </strong>
+
+                    <p>
+                        Save businesses and marketplace
+                        items to find them here.
+                    </p>
+                </div>
+
+            </div>
+        `;
+    }
+};
+
+
+/*
+   Render saved items when the page loads.
+*/
+
+if (
+    document.readyState === "loading"
+) {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+            window.renderSavedItems();
+        }
+    );
+
+} else {
+
+    window.renderSavedItems();
+}
+</script>
         <!-- =================================================
              EXPLORE MORE
         ================================================== -->
