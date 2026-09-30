@@ -4613,3 +4613,729 @@ Home | Explore | + | Saved | Account
         flex: 1 1 100%;
     }
 }
+/* =========================================================
+   LOSOJA MARKETPLACE-STYLE BUSINESS AREA
+   CSS ONLY
+   Does not change businesses.js
+========================================================= */
+
+/* =========================================================
+   VERIFIED BUSINESSES - TOP MARKETPLACE STRIP
+========================================================= */
+
+.verified-business-section {
+    width: 100%;
+    margin-bottom: 28px;
+
+    background: var(--white);
+
+    border: 1px solid var(--border);
+    border-radius: 16px;
+
+    padding: 20px;
+
+    box-shadow:
+        0 4px 16px rgba(0, 0, 0, 0.05);
+}
+
+.verified-business-header {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    margin-bottom: 16px;
+}
+
+.verified-business-title {
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    color: var(--black);
+
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.verified-business-subtitle {
+    color: var(--gray);
+
+    font-size: 13px;
+}
+
+.verified-business-link {
+    border: none;
+
+    background: transparent;
+
+    color: var(--green);
+
+    font-size: 13px;
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+/* =========================================================
+   VERIFIED BUSINESS HORIZONTAL LIST
+========================================================= */
+
+.verified-business-grid {
+    display: flex;
+
+    gap: 15px;
+
+    overflow-x: auto;
+
+    padding: 3px 2px 8px;
+
+    scroll-snap-type: x proximity;
+
+    scrollbar-width: thin;
+}
+
+.verified-business-grid::-webkit-scrollbar {
+    height: 5px;
+}
+
+.verified-business-grid::-webkit-scrollbar-track {
+    background: var(--gray-light);
+
+    border-radius: 10px;
+}
+
+.verified-business-grid::-webkit-scrollbar-thumb {
+    background: #cfd8d3;
+
+    border-radius: 10px;
+}
+
+/* =========================================================
+   VERIFIED BUSINESS CARD
+========================================================= */
+
+.verified-business-card {
+    flex: 0 0 210px;
+
+    scroll-snap-align: start;
+
+    overflow: hidden;
+
+    background: var(--white);
+
+    border: 1px solid var(--border);
+
+    border-radius: 14px;
+
+    box-shadow:
+        0 3px 12px rgba(0, 0, 0, 0.06);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.verified-business-card:hover {
+    transform: translateY(-3px);
+
+    border-color: rgba(8, 122, 62, 0.35);
+
+    box-shadow:
+        0 8px 20px rgba(0, 0, 0, 0.10);
+}
+
+/* =========================================================
+   VERIFIED BUSINESS IMAGE
+========================================================= */
+
+.verified-business-image {
+    position: relative;
+
+    width: 100%;
+    height: 135px;
+
+    overflow: hidden;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--green-light),
+            #f7fbf8
+        );
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    color: var(--green);
+
+    font-size: 42px;
+}
+
+.verified-business-image img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    display: block;
+
+    transition:
+        transform 0.3s ease;
+}
+
+.verified-business-card:hover
+.verified-business-image img {
+    transform: scale(1.04);
+}
+
+/* =========================================================
+   VERIFIED BADGE
+========================================================= */
+
+.verified-badge {
+    position: absolute;
+
+    top: 9px;
+    left: 9px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 4px;
+
+    padding: 5px 8px;
+
+    border-radius: 20px;
+
+    background: var(--green);
+
+    color: var(--white);
+
+    font-size: 11px;
+    font-weight: 800;
+
+    box-shadow:
+        0 3px 8px rgba(0, 0, 0, 0.15);
+
+    z-index: 2;
+}
+
+/* =========================================================
+   VERIFIED BUSINESS CONTENT
+========================================================= */
+
+.verified-business-content {
+    padding: 13px 14px 14px;
+}
+
+.verified-business-content h3 {
+    margin: 0 0 5px;
+
+    color: var(--black);
+
+    font-size: 16px;
+    line-height: 1.3;
+
+    overflow-wrap: anywhere;
+}
+
+.verified-business-category {
+    display: inline-block;
+
+    margin-bottom: 6px;
+
+    padding: 4px 8px;
+
+    border-radius: 20px;
+
+    background: var(--green-light);
+
+    color: var(--green);
+
+    font-size: 10px;
+    font-weight: 800;
+
+    text-transform: uppercase;
+}
+
+.verified-business-location {
+    color: var(--gray);
+
+    font-size: 12px;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+/* =========================================================
+   MARKETPLACE BUSINESS AREA
+========================================================= */
+
+.business-marketplace-area {
+    width: 100%;
+}
+
+.business-marketplace-header {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    margin-bottom: 18px;
+}
+
+.business-marketplace-title {
+    color: var(--black);
+
+    font-size: 24px;
+    font-weight: 800;
+}
+
+.business-marketplace-subtitle {
+    color: var(--gray);
+
+    font-size: 13px;
+
+    margin-top: 3px;
+}
+
+/* =========================================================
+   MARKETPLACE FILTERS
+========================================================= */
+
+.marketplace-filters {
+    display: flex;
+
+    gap: 8px;
+
+    overflow-x: auto;
+
+    padding: 2px 0 8px;
+
+    margin-bottom: 20px;
+
+    scrollbar-width: none;
+}
+
+.marketplace-filters::-webkit-scrollbar {
+    display: none;
+}
+
+.marketplace-filter {
+    flex: 0 0 auto;
+
+    border: 1px solid var(--border);
+
+    border-radius: 20px;
+
+    background: var(--white);
+
+    color: var(--gray-dark);
+
+    padding: 8px 14px;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.marketplace-filter:hover,
+.marketplace-filter.active {
+    background: var(--green);
+
+    border-color: var(--green);
+
+    color: var(--white);
+}
+
+/* =========================================================
+   MARKETPLACE BUSINESS CARDS
+========================================================= */
+
+.business-marketplace-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 18px;
+}
+
+.business-marketplace-card {
+    min-width: 0;
+
+    background: var(--white);
+
+    border: 1px solid var(--border);
+
+    border-radius: 14px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 4px 15px rgba(0, 0, 0, 0.05);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.business-marketplace-card:hover {
+    transform: translateY(-3px);
+
+    border-color: rgba(8, 122, 62, 0.30);
+
+    box-shadow:
+        0 9px 24px rgba(0, 0, 0, 0.09);
+}
+
+/* =========================================================
+   MARKETPLACE IMAGE
+========================================================= */
+
+.business-marketplace-image {
+    position: relative;
+
+    width: 100%;
+    height: 180px;
+
+    overflow: hidden;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--green-light),
+            #f7fbf8
+        );
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    color: var(--green);
+
+    font-size: 50px;
+}
+
+.business-marketplace-image img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    display: block;
+}
+
+/* =========================================================
+   MARKETPLACE CARD CONTENT
+========================================================= */
+
+.business-marketplace-content {
+    padding: 16px;
+}
+
+.business-marketplace-content h3 {
+    color: var(--black);
+
+    font-size: 18px;
+
+    line-height: 1.3;
+
+    margin-bottom: 6px;
+
+    overflow-wrap: anywhere;
+}
+
+.business-marketplace-category {
+    display: inline-flex;
+
+    padding: 4px 8px;
+
+    margin-bottom: 7px;
+
+    border-radius: 20px;
+
+    background: var(--green-light);
+
+    color: var(--green);
+
+    font-size: 10px;
+    font-weight: 800;
+
+    text-transform: uppercase;
+}
+
+.business-marketplace-location {
+    color: var(--gray);
+
+    font-size: 13px;
+
+    margin-bottom: 10px;
+
+    overflow-wrap: anywhere;
+}
+
+.business-marketplace-description {
+    color: var(--gray-dark);
+
+    font-size: 13px;
+
+    line-height: 1.5;
+
+    margin-bottom: 13px;
+
+    display: -webkit-box;
+
+    -webkit-line-clamp: 2;
+
+    -webkit-box-orient: vertical;
+
+    overflow: hidden;
+}
+
+/* =========================================================
+   MARKETPLACE QUICK ACTIONS
+========================================================= */
+
+.marketplace-actions {
+    display: flex;
+
+    gap: 8px;
+
+    margin-top: 12px;
+}
+
+.marketplace-actions .btn {
+    flex: 1;
+
+    padding: 9px 10px;
+
+    font-size: 12px;
+
+    text-align: center;
+}
+
+.marketplace-chat-btn {
+    background: var(--green-light);
+
+    color: var(--green);
+
+    border: 1px solid rgba(8, 122, 62, 0.18);
+}
+
+.marketplace-chat-btn:hover {
+    background: #dff2e7;
+}
+
+.marketplace-view-btn {
+    background: var(--green);
+
+    color: var(--white);
+}
+
+.marketplace-view-btn:hover {
+    background: var(--green-dark);
+}
+
+/* =========================================================
+   MARKETPLACE QUICK FUNCTIONS
+   Keeps important actions easy to reach
+========================================================= */
+
+.marketplace-quick-actions {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 10px;
+
+    margin-bottom: 25px;
+}
+
+.marketplace-quick-action {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    min-height: 46px;
+
+    padding: 10px 12px;
+
+    border: 1px solid var(--border);
+
+    border-radius: 10px;
+
+    background: var(--white);
+
+    color: var(--gray-dark);
+
+    font-size: 12px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 2px 8px rgba(0, 0, 0, 0.04);
+
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.marketplace-quick-action:hover {
+    color: var(--green);
+
+    border-color: var(--green);
+
+    background: var(--green-light);
+
+    transform: translateY(-2px);
+}
+
+/* =========================================================
+   BUSINESS SECTION SPACING
+========================================================= */
+
+.business-section .section-header {
+    margin-bottom: 16px;
+}
+
+/* =========================================================
+   MARKETPLACE RESPONSIVE
+========================================================= */
+
+@media (max-width: 900px) {
+
+    .business-marketplace-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .marketplace-quick-actions {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 700px) {
+
+    .verified-business-section {
+        padding: 16px;
+
+        border-radius: 14px;
+    }
+
+    .verified-business-header {
+        align-items: flex-start;
+
+        flex-direction: column;
+
+        gap: 5px;
+    }
+
+    .verified-business-title {
+        font-size: 18px;
+    }
+
+    .verified-business-card {
+        flex-basis: 190px;
+    }
+
+    .verified-business-image {
+        height: 125px;
+    }
+
+    .business-marketplace-grid {
+        grid-template-columns: 1fr;
+
+        gap: 15px;
+    }
+
+    .business-marketplace-image {
+        height: 190px;
+    }
+
+    .business-marketplace-header {
+        align-items: flex-start;
+
+        flex-direction: column;
+
+        gap: 5px;
+    }
+
+    .marketplace-quick-actions {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 8px;
+    }
+
+    .marketplace-quick-action {
+        min-height: 44px;
+
+        padding: 9px 8px;
+
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 450px) {
+
+    .verified-business-section {
+        margin-bottom: 22px;
+
+        padding: 14px;
+    }
+
+    .verified-business-card {
+        flex-basis: 175px;
+    }
+
+    .verified-business-image {
+        height: 115px;
+    }
+
+    .verified-business-content {
+        padding: 11px;
+    }
+
+    .business-marketplace-image {
+        height: 175px;
+    }
+
+    .business-marketplace-content {
+        padding: 14px;
+    }
+
+    .marketplace-quick-actions {
+        grid-template-columns: 1fr 1fr;
+    }
+}
