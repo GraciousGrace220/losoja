@@ -4119,7 +4119,7 @@ Home | Explore | + | Saved | Account
 @media (max-width: 450px) {
 
     .header-marketplace-btn {
-        display: none;
+        display: inline-flex;
     }
 
     .hero-section h1 {
