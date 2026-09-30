@@ -502,67 +502,123 @@
            SEARCH
         ================================================= */
 
-        bindSearch() {
+       bindSearch() {
 
-            const searchForm =
-                document.getElementById(
-                    "searchForm"
-                );
+    const searchInput =
+        document.getElementById(
+            "businessSearch"
+        ) ||
+        document.getElementById(
+            "searchInput"
+        );
 
-            if (!searchForm) {
-                return;
-            }
+    const searchButton =
+        document.getElementById(
+            "searchButton"
+        );
 
-            searchForm.addEventListener(
-                "submit",
-                event => {
-
-                    event.preventDefault();
-
-                    const searchInput =
-                        document.getElementById(
-                            "searchInput"
-                        );
-
-                    const locationInput =
-                        document.getElementById(
-                            "locationInput"
-                        );
-
-                    const search =
-                        searchInput
-                            ? searchInput.value.trim()
-                            : "";
-
-                    const location =
-                        locationInput
-                            ? locationInput.value.trim()
-                            : "";
+    if (!searchInput) {
+        console.warn(
+            "LosOja: Search input not found."
+        );
+        return;
+    }
 
 
-                    if (
-                        typeof window.searchBusinesses ===
-                        "function"
-                    ) {
+    const performSearch = () => {
 
-                        window.searchBusinesses(
-                            search,
-                            location
-                        );
+        const search =
+            searchInput.value.trim();
 
-                    } else {
-
-                        this.showToast(
-                            "Search is still loading. Please try again.",
-                            "info"
-                        );
-
-                    }
-
-                }
+        const locationInput =
+            document.getElementById(
+                "locationInput"
             );
 
-        },
+        const location =
+            locationInput
+                ? locationInput.value.trim()
+                : "";
+
+
+        if (
+            typeof window.searchBusinesses ===
+            "function"
+        ) {
+
+            window.searchBusinesses(
+                search,
+                location
+            );
+
+
+            const businesses =
+                document.getElementById(
+                    "businesses"
+                );
+
+            if (businesses) {
+
+                setTimeout(
+                    () => {
+
+                        businesses.scrollIntoView({
+                            behavior: "smooth",
+                            block: "start"
+                        });
+
+                    },
+                    50
+                );
+
+            }
+
+        } else {
+
+            this.showToast(
+                "Search is still loading. Please try again.",
+                "info"
+            );
+
+        }
+
+    };
+
+
+    if (searchButton) {
+
+        searchButton.addEventListener(
+            "click",
+            event => {
+
+                event.preventDefault();
+
+                performSearch();
+
+            }
+        );
+
+    }
+
+
+    searchInput.addEventListener(
+        "keydown",
+        event => {
+
+            if (
+                event.key === "Enter"
+            ) {
+
+                event.preventDefault();
+
+                performSearch();
+
+            }
+
+        }
+    );
+
+},
 
 
         /* =================================================
@@ -571,10 +627,10 @@
 
         bindLocationButton() {
 
-            const locationBtn =
-                document.getElementById(
-                    "locationBtn"
-                );
+           const locationBtn =
+    document.getElementById(
+        "locationButton"
+    );
 
             if (!locationBtn) {
                 return;
