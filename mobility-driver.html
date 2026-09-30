@@ -426,12 +426,13 @@
     }
 
 
-    async function getLoggedInUser() {
+   async function getLoggedInUser() {
+
+    try {
 
         /*
-         * Use LosOja's existing authentication system.
+         * First make sure LosOja has a valid Supabase session.
          */
-
         if (
             typeof window.ensureValidSupabaseSession ===
             "function"
@@ -442,20 +443,65 @@
         }
 
 
+        /*
+         * Use LosOja's existing authenticated user lookup.
+         */
         if (
-            typeof window.getCurrentUser !==
+            typeof window.getCurrentUser ===
             "function"
         ) {
 
-            return null;
+            const user =
+                await window.getCurrentUser();
+
+            if (
+                user &&
+                user.id
+            ) {
+
+                return user;
+
+            }
 
         }
 
 
-        return await window.getCurrentUser();
+        /*
+         * Fallback: check the saved LosOja session directly.
+         */
+        if (
+            typeof window.getSupabaseSession ===
+            "function"
+        ) {
+
+            const session =
+                window.getSupabaseSession();
+
+            if (
+                session &&
+                session.user &&
+                session.user.id
+            ) {
+
+                return session.user;
+
+            }
+
+        }
+
+    } catch (error) {
+
+        console.error(
+            "LosOja Mobility: Could not read login session:",
+            error
+        );
 
     }
 
+
+    return null;
+
+}
 
     form.addEventListener(
         "submit",
