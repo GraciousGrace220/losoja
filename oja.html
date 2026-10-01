@@ -1047,40 +1047,46 @@
        USER
     ========================================================== */
 
-    async function getOjaCurrentUser() {
+   async function getOjaCurrentUser() {
 
-        try {
+    try {
 
-            if (
-                typeof window.ensureValidSupabaseSession ===
-                "function"
-            ) {
+        if (
+            typeof window.ensureValidSupabaseSession ===
+            "function"
+        ) {
 
-                return await window.ensureValidSupabaseSession();
+            const result =
+                await window.ensureValidSupabaseSession();
 
-            }
-
-            if (
-                typeof window.getCurrentUser ===
-                "function"
-            ) {
-
-                return await window.getCurrentUser();
-
-            }
-
-        } catch (error) {
-
-            console.error(
-                "Oja user lookup error:",
-                error
-            );
+            return result?.user || result || null;
 
         }
 
-        return null;
+        if (
+            typeof window.getCurrentUser ===
+            "function"
+        ) {
+
+            const result =
+                await window.getCurrentUser();
+
+            return result?.user || result || null;
+
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Oja user lookup error:",
+            error
+        );
 
     }
+
+    return null;
+
+}
 
 
     /* =========================================================
