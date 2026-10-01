@@ -27,9 +27,156 @@
         href="css/style.css"
     >
 
+    <style>
+        /* =========================================================
+           LOSOJA HOMEPAGE EXTRAS
+           Page-level only
+           businesses.js and style.css remain untouched
+        ========================================================= */
+
+        /* ---------------------------------------------------------
+           BUSINESS PICTURES
+        --------------------------------------------------------- */
+
+        .business-card img,
+        .business-image,
+        .business-card-image {
+            width: 100% !important;
+            height: 210px !important;
+            object-fit: cover !important;
+            object-position: center !important;
+            display: block !important;
+        }
+
+
+        /* ---------------------------------------------------------
+           HOW TO USE LOSOJA SLIDER
+        --------------------------------------------------------- */
+
+        .losoja-tutorial-section {
+            padding: 24px 16px;
+        }
+
+        .losoja-slider {
+            display: flex;
+            gap: 16px;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            padding: 4px 2px 14px;
+            scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .losoja-slider::-webkit-scrollbar {
+            display: none;
+        }
+
+        .losoja-slide {
+            flex: 0 0 min(86vw, 360px);
+            scroll-snap-align: start;
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.07);
+        }
+
+        .losoja-slide-video {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background: #111827;
+            display: block;
+            object-fit: cover;
+        }
+
+        .losoja-slide-content {
+            padding: 14px;
+        }
+
+        .losoja-slide-content h3 {
+            margin: 0 0 6px;
+            font-size: 17px;
+        }
+
+        .losoja-slide-content p {
+            margin: 0;
+            color: #6b7280;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+
+        /* ---------------------------------------------------------
+           PAY BILLS CARD
+        --------------------------------------------------------- */
+
+        .losoja-bills-card {
+            margin: 20px 16px;
+            padding: 20px;
+            border-radius: 18px;
+            background: #087a3e;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            box-shadow: 0 6px 18px rgba(8, 122, 62, 0.20);
+        }
+
+        .losoja-bills-card h2 {
+            margin: 0 0 6px;
+            font-size: 20px;
+        }
+
+        .losoja-bills-card p {
+            margin: 0;
+            opacity: 0.92;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .losoja-bills-button {
+            flex-shrink: 0;
+            border: 0;
+            border-radius: 12px;
+            padding: 11px 16px;
+            background: #ffffff;
+            color: #087a3e;
+            font-weight: 700;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+
+        /* ---------------------------------------------------------
+           MOBILE
+        --------------------------------------------------------- */
+
+        @media (max-width: 600px) {
+
+            .business-card img,
+            .business-image,
+            .business-card-image {
+                height: 190px !important;
+            }
+
+            .losoja-bills-card {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .losoja-bills-button {
+                width: 100%;
+                text-align: center;
+            }
+
+        }
+    </style>
+
 </head>
 
 <body>
+
 
     <!-- =====================================================
          HEADER
@@ -47,6 +194,7 @@
                 LosOja
             </a>
 
+
             <div class="header-actions">
 
                 <button
@@ -59,6 +207,7 @@
                     🔔
                 </button>
 
+
                 <button
                     type="button"
                     class="header-icon-btn"
@@ -67,6 +216,7 @@
                 >
                     👤
                 </button>
+
 
                 <a
                     href="oja.html"
@@ -88,6 +238,7 @@
 
     <main>
 
+
         <!-- =================================================
              HERO / SEARCH
         ================================================== -->
@@ -104,6 +255,7 @@
                     Find businesses, products, services and more across Nigeria.
                 </p>
 
+
                 <div class="search-container">
 
                     <input
@@ -114,6 +266,7 @@
                         autocomplete="off"
                     >
 
+
                     <button
                         type="button"
                         id="searchButton"
@@ -122,6 +275,7 @@
                     </button>
 
                 </div>
+
 
                 <button
                     type="button"
@@ -147,47 +301,78 @@
 
             <div class="quick-actions">
 
+
                 <button
                     type="button"
                     class="quick-action"
                     onclick="document.getElementById('categories')?.scrollIntoView({ behavior: 'smooth' })"
                 >
-                    <span class="quick-action-icon">📂</span>
-                    <span>Categories</span>
+                    <span class="quick-action-icon">
+                        📂
+                    </span>
+
+                    <span>
+                        Categories
+                    </span>
                 </button>
+
 
                 <a
                     href="oja.html"
                     class="quick-action"
                 >
-                    <span class="quick-action-icon">🛍️</span>
-                    <span>Marketplace</span>
+                    <span class="quick-action-icon">
+                        🛍️
+                    </span>
+
+                    <span>
+                        Marketplace
+                    </span>
                 </a>
+
 
                 <a
                     href="property.html"
                     class="quick-action"
                 >
-                    <span class="quick-action-icon">🏠</span>
-                    <span>Property</span>
+                    <span class="quick-action-icon">
+                        🏠
+                    </span>
+
+                    <span>
+                        Property
+                    </span>
                 </a>
+
 
                 <a
                     href="mobility.html"
                     class="quick-action"
                 >
-                    <span class="quick-action-icon">🚕</span>
-                    <span>Mobility</span>
+                    <span class="quick-action-icon">
+                        🚕
+                    </span>
+
+                    <span>
+                        Mobility
+                    </span>
                 </a>
 
-                              <button
+
+                <button
                     type="button"
                     class="quick-action"
                     id="quickAddBusinessBtn"
                 >
-                    <span class="quick-action-icon">➕</span>
-                    <span>Add Business</span>
+                    <span class="quick-action-icon">
+                        ➕
+                    </span>
+
+                    <span>
+                        Add Business
+                    </span>
                 </button>
+
 
                 <button
                     type="button"
@@ -195,8 +380,13 @@
                     id="chatBabaOjaBtn"
                     onclick="window.location.href='chat.html?user=8c914d84-ae77-4d5e-a3f1-ae591d7fdfb3'"
                 >
-                    <span class="quick-action-icon">💬</span>
-                    <span>Chat with Baba Oja</span>
+                    <span class="quick-action-icon">
+                        💬
+                    </span>
+
+                    <span>
+                        Chat with Baba Oja
+                    </span>
                 </button>
 
             </div>
@@ -205,9 +395,226 @@
 
 
         <!-- =================================================
+             HOW TO USE LOSOJA
+        ================================================== -->
+
+        <section
+            class="losoja-tutorial-section"
+            id="howLosOjaWorks"
+        >
+
+            <div class="section-header">
+
+                <div>
+
+                    <span class="section-kicker">
+                        Learn LosOja
+                    </span>
+
+                    <h2>
+                        How to Use LosOja
+                    </h2>
+
+                    <p>
+                        Quick guides to help you get the most from LosOja.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="losoja-slider">
+
+
+                <!-- SEARCH VIDEO -->
+
+                <article class="losoja-slide">
+
+                    <video
+                        class="losoja-slide-video"
+                        controls
+                        preload="metadata"
+                        playsinline
+                    >
+
+                        <source
+                            src="videos/how-to-search.mp4"
+                            type="video/mp4"
+                        >
+
+                        Your browser does not support video playback.
+
+                    </video>
+
+
+                    <div class="losoja-slide-content">
+
+                        <h3>
+                            🔎 Find What You Need
+                        </h3>
+
+                        <p>
+                            Learn how to search for businesses,
+                            products and services on LosOja.
+                        </p>
+
+                    </div>
+
+                </article>
+
+
+                <!-- ADD BUSINESS VIDEO -->
+
+                <article class="losoja-slide">
+
+                    <video
+                        class="losoja-slide-video"
+                        controls
+                        preload="metadata"
+                        playsinline
+                    >
+
+                        <source
+                            src="videos/how-to-add-business.mp4"
+                            type="video/mp4"
+                        >
+
+                        Your browser does not support video playback.
+
+                    </video>
+
+
+                    <div class="losoja-slide-content">
+
+                        <h3>
+                            ➕ Add Your Business
+                        </h3>
+
+                        <p>
+                            Learn how business owners can create
+                            a listing and reach customers.
+                        </p>
+
+                    </div>
+
+                </article>
+
+
+                <!-- ESCROW VIDEO -->
+
+                <article class="losoja-slide">
+
+                    <video
+                        class="losoja-slide-video"
+                        controls
+                        preload="metadata"
+                        playsinline
+                    >
+
+                        <source
+                            src="videos/how-escrow-works.mp4"
+                            type="video/mp4"
+                        >
+
+                        Your browser does not support video playback.
+
+                    </video>
+
+
+                    <div class="losoja-slide-content">
+
+                        <h3>
+                            🔐 How Escrow Works
+                        </h3>
+
+                        <p>
+                            Learn how LosOja Escrow keeps
+                            marketplace payments inside the transaction.
+                        </p>
+
+                    </div>
+
+                </article>
+
+
+                <!-- PAY BILLS VIDEO -->
+
+                <article class="losoja-slide">
+
+                    <video
+                        class="losoja-slide-video"
+                        controls
+                        preload="metadata"
+                        playsinline
+                    >
+
+                        <source
+                            src="videos/how-to-pay-bills.mp4"
+                            type="video/mp4"
+                        >
+
+                        Your browser does not support video playback.
+
+                    </video>
+
+
+                    <div class="losoja-slide-content">
+
+                        <h3>
+                            💳 Pay Bills
+                        </h3>
+
+                        <p>
+                            Learn how to use your LosOja wallet
+                            for available bill payments.
+                        </p>
+
+                    </div>
+
+                </article>
+
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             PAY BILLS
+        ================================================== -->
+
+        <section
+            class="losoja-bills-card"
+            aria-label="LosOja Pay Bills"
+        >
+
+            <div>
+
+                <h2>
+                    💳 Pay Bills on LosOja
+                </h2>
+
+                <p>
+                    Airtime, data and available bill payments
+                    from your LosOja wallet.
+                </p>
+
+            </div>
+
+
+            <a
+                href="bills.html"
+                class="losoja-bills-button"
+            >
+                Pay Bills
+            </a>
+
+        </section>
+
+
+        <!-- =================================================
              VERIFIED BUSINESSES
-             This section is intentionally separate from
-             #businessGrid so businesses.js remains untouched.
         ================================================== -->
 
         <section
@@ -218,6 +625,7 @@
             <div class="section-header">
 
                 <div>
+
                     <span class="section-kicker">
                         Trusted on LosOja
                     </span>
@@ -229,7 +637,9 @@
                     <p>
                         Discover trusted businesses with verified profiles.
                     </p>
+
                 </div>
+
 
                 <button
                     type="button"
@@ -247,17 +657,12 @@
                 id="verifiedBusinessGrid"
             >
 
-                <!--
-                    Real verified businesses will be inserted here later.
-
-                    We are NOT displaying ordinary businesses as verified.
-                -->
-
                 <div class="verified-business-empty">
 
                     <div class="verified-empty-icon">
                         ✓
                     </div>
+
 
                     <div>
 
@@ -290,6 +695,7 @@
             <div class="section-header">
 
                 <div>
+
                     <span class="section-kicker">
                         Explore
                     </span>
@@ -297,6 +703,7 @@
                     <h2>
                         Categories
                     </h2>
+
                 </div>
 
             </div>
@@ -304,85 +711,139 @@
 
             <div class="category-grid">
 
+
                 <button
                     type="button"
                     class="category-card"
                     data-category="Food"
                 >
-                    <span class="category-icon">🍲</span>
-                    <span>Food</span>
+                    <span class="category-icon">
+                        🍲
+                    </span>
+
+                    <span>
+                        Food
+                    </span>
                 </button>
+
 
                 <button
                     type="button"
                     class="category-card"
                     data-category="Fashion"
                 >
-                    <span class="category-icon">👕</span>
-                    <span>Fashion</span>
+                    <span class="category-icon">
+                        👕
+                    </span>
+
+                    <span>
+                        Fashion
+                    </span>
                 </button>
+
 
                 <button
                     type="button"
                     class="category-card"
                     data-category="Phones"
                 >
-                    <span class="category-icon">📱</span>
-                    <span>Phones</span>
+                    <span class="category-icon">
+                        📱
+                    </span>
+
+                    <span>
+                        Phones
+                    </span>
                 </button>
+
 
                 <button
                     type="button"
                     class="category-card"
                     data-category="Vehicles"
                 >
-                    <span class="category-icon">🚗</span>
-                    <span>Vehicles</span>
+                    <span class="category-icon">
+                        🚗
+                    </span>
+
+                    <span>
+                        Vehicles
+                    </span>
                 </button>
+
 
                 <button
                     type="button"
                     class="category-card"
                     data-category="Property"
                 >
-                    <span class="category-icon">🏠</span>
-                    <span>Property</span>
+                    <span class="category-icon">
+                        🏠
+                    </span>
+
+                    <span>
+                        Property
+                    </span>
                 </button>
+
 
                 <button
                     type="button"
                     class="category-card"
                     data-category="Services"
                 >
-                    <span class="category-icon">🛠️</span>
-                    <span>Services</span>
+                    <span class="category-icon">
+                        🛠️
+                    </span>
+
+                    <span>
+                        Services
+                    </span>
                 </button>
+
 
                 <button
                     type="button"
                     class="category-card"
                     data-category="Beauty"
                 >
-                    <span class="category-icon">✨</span>
-                    <span>Beauty</span>
+                    <span class="category-icon">
+                        ✨
+                    </span>
+
+                    <span>
+                        Beauty
+                    </span>
                 </button>
+
 
                 <button
                     type="button"
                     class="category-card"
                     data-category="Technology"
                 >
-                    <span class="category-icon">💻</span>
-                    <span>Technology</span>
+                    <span class="category-icon">
+                        💻
+                    </span>
+
+                    <span>
+                        Technology
+                    </span>
                 </button>
+
 
                 <button
                     type="button"
                     class="category-card"
                     data-category="Trade by Barter"
                 >
-                    <span class="category-icon">🔄</span>
-                    <span>Trade by Barter</span>
+                    <span class="category-icon">
+                        🔄
+                    </span>
+
+                    <span>
+                        Trade by Barter
+                    </span>
                 </button>
 
             </div>
@@ -432,16 +893,20 @@
             >
 
                 <div class="business-loading-card">
+
                     <div class="loading-spinner"></div>
 
                     <p>
                         Loading businesses...
                     </p>
+
                 </div>
 
             </div>
 
         </section>
+
+
         <!-- =================================================
              SAVED ITEMS
         ================================================== -->
@@ -483,6 +948,7 @@
                         ❤️
                     </div>
 
+
                     <div>
 
                         <strong>
@@ -490,7 +956,8 @@
                         </strong>
 
                         <p>
-                            Save businesses and marketplace items to find them here.
+                            Save businesses and marketplace items
+                            to find them here.
                         </p>
 
                     </div>
@@ -500,275 +967,297 @@
             </div>
 
         </section>
-<script>
-/* -----------------------------------------------
-   Saved Items Renderer
------------------------------------------------- */
-
-window.renderSavedItems = function () {
-
-    const savedGrid =
-        document.getElementById("savedItemsGrid");
-
-    if (!savedGrid) {
-        return;
-    }
-
-    let savedItems = [];
-
-    try {
-
-        savedItems =
-            JSON.parse(
-                localStorage.getItem(
-                    "losoja_saved_items"
-                ) || "[]"
-            );
-
-        if (!Array.isArray(savedItems)) {
-            savedItems = [];
-        }
-
-    } catch (error) {
-
-        console.error(
-            "LosOja: Could not read saved items.",
-            error
-        );
-
-        savedItems = [];
-    }
 
 
-    if (savedItems.length === 0) {
+        <!-- =================================================
+             SAVED ITEMS RENDERER
+        ================================================== -->
 
-        savedGrid.innerHTML = `
-            <div class="verified-business-empty">
+        <script>
 
-                <div class="verified-empty-icon">
-                    ❤️
-                </div>
+            window.renderSavedItems = function () {
 
-                <div>
-                    <strong>
-                        Nothing saved yet
-                    </strong>
-
-                    <p>
-                        Save businesses and marketplace
-                        items to find them here.
-                    </p>
-                </div>
-
-            </div>
-        `;
-
-        return;
-    }
+                const savedGrid =
+                    document.getElementById("savedItemsGrid");
 
 
-    savedGrid.innerHTML =
-        savedItems
-            .map(function (item) {
-
-                if (
-                    !item ||
-                    item.type !== "business"
-                ) {
-                    return "";
+                if (!savedGrid) {
+                    return;
                 }
 
 
-                const name =
-                    String(
-                        item.name ||
-                        "Unnamed Business"
-                    )
-                    .replace(/</g, "&lt;")
-                    .replace(/>/g, "&gt;");
+                let savedItems = [];
 
 
-                const category =
-                    String(
-                        item.category ||
-                        "Business"
-                    )
-                    .replace(/</g, "&lt;")
-                    .replace(/>/g, "&gt;");
+                try {
+
+                    savedItems =
+                        JSON.parse(
+                            localStorage.getItem(
+                                "losoja_saved_items"
+                            ) || "[]"
+                        );
 
 
-                const location =
-                    String(
-                        item.location ||
-                        "Nigeria"
-                    )
-                    .replace(/</g, "&lt;")
-                    .replace(/>/g, "&gt;");
+                    if (!Array.isArray(savedItems)) {
+                        savedItems = [];
+                    }
+
+                } catch (error) {
+
+                    console.error(
+                        "LosOja: Could not read saved items.",
+                        error
+                    );
+
+                    savedItems = [];
+                }
 
 
-                const image =
-                    String(
-                        item.image ||
-                        ""
-                    ).trim();
+                if (savedItems.length === 0) {
 
+                    savedGrid.innerHTML = `
 
-                const imageHTML =
-                    image
-                        ? `
-                            <img
-                                src="${image}"
-                                alt="${name}"
-                                loading="lazy"
-                                style="
-                                    width:100%;
-                                    height:180px;
-                                    object-fit:cover;
-                                    display:block;
-                                "
-                            >
-                          `
-                        : `
-                            <div
-                                style="
-                                    height:180px;
-                                    display:flex;
-                                    align-items:center;
-                                    justify-content:center;
-                                    background:#f3f4f6;
-                                    font-size:42px;
-                                "
-                            >
-                                🏪
-                            </div>
-                          `;
+                        <div class="verified-business-empty">
 
-
-                return `
-                    <article
-                        class="business-card"
-                        style="cursor:pointer;"
-                        onclick="
-                            window.openBusiness &&
-                            window.openBusiness('${item.id}')
-                        "
-                    >
-
-                        <div
-                            style="
-                                width:100%;
-                                position:relative;
-                                overflow:hidden;
-                                border-radius:12px 12px 0 0;
-                            "
-                        >
-
-                            ${imageHTML}
-
-                            <button
-                                type="button"
-                                aria-label="Remove from saved"
-                                title="Remove from saved"
-                                onclick="
-                                    event.stopPropagation();
-                                    window.toggleSavedBusiness &&
-                                    window.toggleSavedBusiness('${item.id}')
-                                "
-                                style="
-                                    position:absolute;
-                                    top:12px;
-                                    right:12px;
-                                    width:42px;
-                                    height:42px;
-                                    border:0;
-                                    border-radius:50%;
-                                    background:#ffffff;
-                                    box-shadow:0 2px 8px rgba(0,0,0,0.15);
-                                    cursor:pointer;
-                                    font-size:21px;
-                                "
-                            >
+                            <div class="verified-empty-icon">
                                 ❤️
-                            </button>
+                            </div>
+
+                            <div>
+
+                                <strong>
+                                    Nothing saved yet
+                                </strong>
+
+                                <p>
+                                    Save businesses and marketplace
+                                    items to find them here.
+                                </p>
+
+                            </div>
 
                         </div>
 
+                    `;
 
-                        <div
-                            class="business-card-content"
-                        >
+                    return;
+                }
 
-                            <h3>
-                                ${name}
-                            </h3>
 
-                            <p>
-                                ${category}
-                            </p>
+                savedGrid.innerHTML =
+                    savedItems
+                        .map(function (item) {
 
-                            <p>
-                                📍 ${location}
-                            </p>
+                            if (
+                                !item ||
+                                item.type !== "business"
+                            ) {
+                                return "";
+                            }
+
+
+                            const name =
+                                String(
+                                    item.name ||
+                                    "Unnamed Business"
+                                )
+                                .replace(/</g, "&lt;")
+                                .replace(/>/g, "&gt;");
+
+
+                            const category =
+                                String(
+                                    item.category ||
+                                    "Business"
+                                )
+                                .replace(/</g, "&lt;")
+                                .replace(/>/g, "&gt;");
+
+
+                            const location =
+                                String(
+                                    item.location ||
+                                    "Nigeria"
+                                )
+                                .replace(/</g, "&lt;")
+                                .replace(/>/g, "&gt;");
+
+
+                            const image =
+                                String(
+                                    item.image ||
+                                    ""
+                                ).trim();
+
+
+                            const imageHTML =
+                                image
+                                    ? `
+
+                                        <img
+                                            src="${image}"
+                                            alt="${name}"
+                                            loading="lazy"
+                                            style="
+                                                width:100%;
+                                                height:180px;
+                                                object-fit:cover;
+                                                object-position:center;
+                                                display:block;
+                                            "
+                                        >
+
+                                      `
+                                    : `
+
+                                        <div
+                                            style="
+                                                height:180px;
+                                                display:flex;
+                                                align-items:center;
+                                                justify-content:center;
+                                                background:#f3f4f6;
+                                                font-size:42px;
+                                            "
+                                        >
+                                            🏪
+                                        </div>
+
+                                      `;
+
+
+                            return `
+
+                                <article
+                                    class="business-card"
+                                    style="cursor:pointer;"
+                                    onclick="
+                                        window.openBusiness &&
+                                        window.openBusiness('${item.id}')
+                                    "
+                                >
+
+
+                                    <div
+                                        style="
+                                            width:100%;
+                                            position:relative;
+                                            overflow:hidden;
+                                            border-radius:12px 12px 0 0;
+                                        "
+                                    >
+
+                                        ${imageHTML}
+
+
+                                        <button
+                                            type="button"
+                                            aria-label="Remove from saved"
+                                            title="Remove from saved"
+                                            onclick="
+                                                event.stopPropagation();
+                                                window.toggleSavedBusiness &&
+                                                window.toggleSavedBusiness('${item.id}')
+                                            "
+                                            style="
+                                                position:absolute;
+                                                top:12px;
+                                                right:12px;
+                                                width:42px;
+                                                height:42px;
+                                                border:0;
+                                                border-radius:50%;
+                                                background:#ffffff;
+                                                box-shadow:0 2px 8px rgba(0,0,0,0.15);
+                                                cursor:pointer;
+                                                font-size:21px;
+                                            "
+                                        >
+                                            ❤️
+                                        </button>
+
+                                    </div>
+
+
+                                    <div
+                                        class="business-card-content"
+                                    >
+
+                                        <h3>
+                                            ${name}
+                                        </h3>
+
+                                        <p>
+                                            ${category}
+                                        </p>
+
+                                        <p>
+                                            📍 ${location}
+                                        </p>
+
+                                    </div>
+
+                                </article>
+
+                            `;
+
+                        })
+                        .join("");
+
+
+                if (!savedGrid.innerHTML.trim()) {
+
+                    savedGrid.innerHTML = `
+
+                        <div class="verified-business-empty">
+
+                            <div class="verified-empty-icon">
+                                ❤️
+                            </div>
+
+                            <div>
+
+                                <strong>
+                                    Nothing saved yet
+                                </strong>
+
+                                <p>
+                                    Save businesses and marketplace
+                                    items to find them here.
+                                </p>
+
+                            </div>
 
                         </div>
 
-                    </article>
-                `;
-            })
-            .join("");
+                    `;
+
+                }
+
+            };
 
 
-    /*
-       If saved items contained only
-       unsupported types, show empty state.
-    */
+            if (
+                document.readyState === "loading"
+            ) {
 
-    if (!savedGrid.innerHTML.trim()) {
+                document.addEventListener(
+                    "DOMContentLoaded",
+                    function () {
+                        window.renderSavedItems();
+                    }
+                );
 
-        savedGrid.innerHTML = `
-            <div class="verified-business-empty">
+            } else {
 
-                <div class="verified-empty-icon">
-                    ❤️
-                </div>
+                window.renderSavedItems();
 
-                <div>
-                    <strong>
-                        Nothing saved yet
-                    </strong>
+            }
 
-                    <p>
-                        Save businesses and marketplace
-                        items to find them here.
-                    </p>
-                </div>
-
-            </div>
-        `;
-    }
-};
+        </script>
 
 
-/*
-   Render saved items when the page loads.
-*/
-
-if (
-    document.readyState === "loading"
-) {
-
-    document.addEventListener(
-        "DOMContentLoaded",
-        function () {
-            window.renderSavedItems();
-        }
-    );
-
-} else {
-
-    window.renderSavedItems();
-}
-</script>
         <!-- =================================================
              EXPLORE MORE
         ================================================== -->
@@ -784,24 +1273,33 @@ if (
                     More on LosOja
                 </span>
 
+
                 <h2>
                     Explore More
                 </h2>
 
+
                 <p>
-                    Find products, property, transportation and useful services.
+                    Find products, property, transportation
+                    and useful services.
                 </p>
 
 
                 <div class="explore-grid">
 
+
                     <a
                         href="property.html"
                         class="explore-card"
                     >
-                        <span>🏠</span>
+
+                        <span>
+                            🏠
+                        </span>
+
 
                         <div>
+
                             <strong>
                                 Property
                             </strong>
@@ -809,7 +1307,9 @@ if (
                             <small>
                                 Find property and real estate.
                             </small>
+
                         </div>
+
                     </a>
 
 
@@ -817,17 +1317,25 @@ if (
                         href="mobility.html"
                         class="explore-card"
                     >
-                        <span>🚕</span>
+
+                        <span>
+                            🚕
+                        </span>
+
 
                         <div>
+
                             <strong>
                                 Mobility
                             </strong>
 
                             <small>
-                                Cab, Tricycle, Bike and transport options.
+                                Cab, Tricycle, Bike and
+                                transport options.
                             </small>
+
                         </div>
+
                     </a>
 
 
@@ -835,9 +1343,14 @@ if (
                         href="oja.html"
                         class="explore-card"
                     >
-                        <span>🛍️</span>
+
+                        <span>
+                            🛍️
+                        </span>
+
 
                         <div>
+
                             <strong>
                                 Marketplace
                             </strong>
@@ -845,7 +1358,9 @@ if (
                             <small>
                                 Buy and sell products on Oja.
                             </small>
+
                         </div>
+
                     </a>
 
 
@@ -854,17 +1369,25 @@ if (
                         class="explore-card"
                         id="exploreServicesBtn"
                     >
-                        <span>🛠️</span>
+
+                        <span>
+                            🛠️
+                        </span>
+
 
                         <div>
+
                             <strong>
                                 Services
                             </strong>
 
                             <small>
-                                Find people and businesses offering services.
+                                Find people and businesses
+                                offering services.
                             </small>
+
                         </div>
+
                     </button>
 
                 </div>
@@ -888,15 +1411,19 @@ if (
                         Business Owners
                     </span>
 
+
                     <h2>
                         Add Your Business
                     </h2>
 
+
                     <p>
-                        Put your business in front of customers searching on LosOja.
+                        Put your business in front of customers
+                        searching on LosOja.
                     </p>
 
                 </div>
+
 
                 <button
                     type="button"
@@ -928,6 +1455,7 @@ if (
             data-close-modal="addBusinessModal"
         ></div>
 
+
         <div
             class="modal-content"
             role="dialog"
@@ -944,9 +1472,11 @@ if (
                 ×
             </button>
 
+
             <h2 id="addBusinessTitle">
                 Add Your Business
             </h2>
+
 
             <p>
                 Add your business information to LosOja.
@@ -955,11 +1485,13 @@ if (
 
             <form id="addBusinessForm">
 
+
                 <div class="form-group">
 
                     <label for="businessName">
                         Business Name
                     </label>
+
 
                     <input
                         type="text"
@@ -977,6 +1509,7 @@ if (
                         Category
                     </label>
 
+
                     <select
                         id="businessCategory"
                         name="category"
@@ -987,45 +1520,56 @@ if (
                             Select a category
                         </option>
 
+
                         <option value="Food">
                             Food
                         </option>
+
 
                         <option value="Fashion">
                             Fashion
                         </option>
 
+
                         <option value="Phones">
                             Phones
                         </option>
+
 
                         <option value="Vehicles">
                             Vehicles
                         </option>
 
+
                         <option value="Property">
                             Property
                         </option>
+
 
                         <option value="Services">
                             Services
                         </option>
 
+
                         <option value="Beauty">
                             Beauty
                         </option>
+
 
                         <option value="Technology">
                             Technology
                         </option>
 
+
                         <option value="Agriculture">
                             Agriculture
                         </option>
 
+
                         <option value="Home & Building">
                             Home & Building
                         </option>
+
 
                         <option value="Professional Services">
                             Professional Services
@@ -1041,6 +1585,7 @@ if (
                     <label for="businessLocation">
                         Location
                     </label>
+
 
                     <input
                         type="text"
@@ -1058,6 +1603,7 @@ if (
                         Phone Number
                     </label>
 
+
                     <input
                         type="tel"
                         id="businessPhone"
@@ -1074,6 +1620,7 @@ if (
                         Description
                     </label>
 
+
                     <textarea
                         id="businessDescription"
                         name="description"
@@ -1089,12 +1636,14 @@ if (
                         Business Image
                     </label>
 
+
                     <input
                         type="file"
                         id="businessImage"
                         name="image"
                         accept="image/jpeg,image/jpg,image/png,image/webp"
                     >
+
 
                     <div
                         id="imagePreview"
@@ -1134,6 +1683,7 @@ if (
             data-close-modal="businessDetailsModal"
         ></div>
 
+
         <div
             class="modal-content business-details-modal"
             role="dialog"
@@ -1172,20 +1722,25 @@ if (
                     class="business-category"
                 ></span>
 
+
                 <h2 id="businessDetailsName">
                     Business
                 </h2>
+
 
                 <p id="businessDetailsLocation">
                     📍
                 </p>
 
+
                 <p id="businessDetailsPhone">
                     📞
                 </p>
 
+
                 <p id="businessDetailsDescription">
                 </p>
+
 
                 <div
                     id="businessDetailsRating"
@@ -1203,6 +1758,7 @@ if (
                     >
                         💬 Chat
                     </button>
+
 
                     <button
                         type="button"
@@ -1228,6 +1784,7 @@ if (
                     >
                         Edit Business
                     </button>
+
 
                     <button
                         type="button"
@@ -1261,6 +1818,7 @@ if (
             data-close-modal="loginModal"
         ></div>
 
+
         <div
             class="modal-content"
             role="dialog"
@@ -1277,9 +1835,11 @@ if (
                 ×
             </button>
 
+
             <h2 id="loginTitle">
                 Login
             </h2>
+
 
             <p>
                 Login to continue using LosOja.
@@ -1293,6 +1853,7 @@ if (
                     <label for="loginEmail">
                         Email
                     </label>
+
 
                     <input
                         type="email"
@@ -1309,6 +1870,7 @@ if (
                     <label for="loginPassword">
                         Password
                     </label>
+
 
                     <input
                         type="password"
@@ -1333,6 +1895,7 @@ if (
             <p class="modal-switch-text">
 
                 Don't have an account?
+
 
                 <button
                     type="button"
@@ -1364,6 +1927,7 @@ if (
             data-close-modal="signupModal"
         ></div>
 
+
         <div
             class="modal-content"
             role="dialog"
@@ -1380,9 +1944,11 @@ if (
                 ×
             </button>
 
+
             <h2 id="signupTitle">
                 Create Account
             </h2>
+
 
             <p>
                 Create your LosOja account.
@@ -1396,6 +1962,7 @@ if (
                     <label for="signupName">
                         Full Name
                     </label>
+
 
                     <input
                         type="text"
@@ -1413,6 +1980,7 @@ if (
                         Email
                     </label>
 
+
                     <input
                         type="email"
                         id="signupEmail"
@@ -1428,6 +1996,7 @@ if (
                     <label for="signupPassword">
                         Password
                     </label>
+
 
                     <input
                         type="password"
@@ -1452,6 +2021,7 @@ if (
             <p class="modal-switch-text">
 
                 Already have an account?
+
 
                 <button
                     type="button"
@@ -1489,12 +2059,20 @@ if (
         aria-label="Main navigation"
     >
 
+
         <a
             href="index.html"
             class="bottom-nav-item active"
         >
-            <span>🏠</span>
-            <small>Home</small>
+
+            <span>
+                🏠
+            </span>
+
+            <small>
+                Home
+            </small>
+
         </a>
 
 
@@ -1502,8 +2080,15 @@ if (
             href="#explore"
             class="bottom-nav-item"
         >
-            <span>🔎</span>
-            <small>Explore</small>
+
+            <span>
+                🔎
+            </span>
+
+            <small>
+                Explore
+            </small>
+
         </a>
 
 
@@ -1512,26 +2097,49 @@ if (
             class="bottom-nav-item nav-add-button"
             id="bottomAddBusinessBtn"
         >
-            <span>➕</span>
-            <small>Add</small>
+
+            <span>
+                ➕
+            </span>
+
+            <small>
+                Add
+            </small>
+
         </button>
 
-<button
-    type="button"
-    class="bottom-nav-item"
-    id="savedNavButton"
->
-    <span>❤️</span>
-    <small>Saved</small>
-</button>
+
+        <button
+            type="button"
+            class="bottom-nav-item"
+            id="savedNavButton"
+        >
+
+            <span>
+                ❤️
+            </span>
+
+            <small>
+                Saved
+            </small>
+
+        </button>
+
 
         <button
             type="button"
             class="bottom-nav-item"
             id="bottomAccountButton"
         >
-            <span>👤</span>
-            <small>Account</small>
+
+            <span>
+                👤
+            </span>
+
+            <small>
+                Account
+            </small>
+
         </button>
 
     </nav>
@@ -1555,286 +2163,357 @@ if (
 
     <script>
 
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener(
+            "DOMContentLoaded",
+            function () {
 
-            /* -----------------------------------------------
-               Quick Add Business
-            ------------------------------------------------ */
 
-            const quickAddBusinessBtn =
-                document.getElementById("quickAddBusinessBtn");
+                /* -----------------------------------------------
+                   Quick Add Business
+                ------------------------------------------------ */
 
-            if (quickAddBusinessBtn) {
+                const quickAddBusinessBtn =
+                    document.getElementById(
+                        "quickAddBusinessBtn"
+                    );
 
-                quickAddBusinessBtn.addEventListener("click", function () {
 
-                    if (window.App && typeof window.App.openModal === "function") {
+                if (quickAddBusinessBtn) {
 
-                        window.App.openModal("addBusinessModal");
+                    quickAddBusinessBtn.addEventListener(
+                        "click",
+                        function () {
+
+                            if (
+                                window.App &&
+                                typeof window.App.openModal === "function"
+                            ) {
+
+                                window.App.openModal(
+                                    "addBusinessModal"
+                                );
+
+                                return;
+
+                            }
+
+
+                            const modal =
+                                document.getElementById(
+                                    "addBusinessModal"
+                                );
+
+
+                            if (modal) {
+
+                                modal.classList.add(
+                                    "active"
+                                );
+
+                                modal.setAttribute(
+                                    "aria-hidden",
+                                    "false"
+                                );
+
+                            }
+
+                        }
+                    );
+
+                }
+
+
+                /* -----------------------------------------------
+                   Bottom Add Business
+                ------------------------------------------------ */
+
+                const bottomAddBusinessBtn =
+                    document.getElementById(
+                        "bottomAddBusinessBtn"
+                    );
+
+
+                if (bottomAddBusinessBtn) {
+
+                    bottomAddBusinessBtn.addEventListener(
+                        "click",
+                        function () {
+
+                            if (
+                                window.App &&
+                                typeof window.App.openModal === "function"
+                            ) {
+
+                                window.App.openModal(
+                                    "addBusinessModal"
+                                );
+
+                                return;
+
+                            }
+
+
+                            const modal =
+                                document.getElementById(
+                                    "addBusinessModal"
+                                );
+
+
+                            if (modal) {
+
+                                modal.classList.add(
+                                    "active"
+                                );
+
+                                modal.setAttribute(
+                                    "aria-hidden",
+                                    "false"
+                                );
+
+                            }
+
+                        }
+                    );
+
+                }
+
+
+                /* -----------------------------------------------
+                   Account Button
+                ------------------------------------------------ */
+
+                const bottomAccountButton =
+                    document.getElementById(
+                        "bottomAccountButton"
+                    );
+
+
+                const accountButton =
+                    document.getElementById(
+                        "accountButton"
+                    );
+
+
+                function openAccount() {
+
+                    if (
+                        window.App &&
+                        typeof window.App.openAccount === "function"
+                    ) {
+
+                        window.App.openAccount();
 
                         return;
 
                     }
 
-                    const modal =
-                        document.getElementById("addBusinessModal");
 
-                    if (modal) {
+                    if (
+                        window.openLoginModal &&
+                        typeof window.openLoginModal === "function"
+                    ) {
 
-                        modal.classList.add("active");
-
-                        modal.setAttribute(
-                            "aria-hidden",
-                            "false"
-                        );
+                        window.openLoginModal();
 
                     }
-
-                });
-
-            }
-
-
-            /* -----------------------------------------------
-               Bottom Add Business
-            ------------------------------------------------ */
-
-            const bottomAddBusinessBtn =
-                document.getElementById("bottomAddBusinessBtn");
-
-            if (bottomAddBusinessBtn) {
-
-                bottomAddBusinessBtn.addEventListener("click", function () {
-
-                    if (window.App && typeof window.App.openModal === "function") {
-
-                        window.App.openModal("addBusinessModal");
-
-                        return;
-
-                    }
-
-                    const modal =
-                        document.getElementById("addBusinessModal");
-
-                    if (modal) {
-
-                        modal.classList.add("active");
-
-                        modal.setAttribute(
-                            "aria-hidden",
-                            "false"
-                        );
-
-                    }
-
-                });
-
-            }
-
-
-            /* -----------------------------------------------
-               Account Button
-            ------------------------------------------------ */
-
-            const bottomAccountButton =
-                document.getElementById("bottomAccountButton");
-
-            const accountButton =
-                document.getElementById("accountButton");
-
-            function openAccount() {
-
-                if (
-                    window.App &&
-                    typeof window.App.openAccount === "function"
-                ) {
-
-                    window.App.openAccount();
-
-                    return;
 
                 }
 
-                if (
-                    window.openLoginModal &&
-                    typeof window.openLoginModal === "function"
-                ) {
 
-                    window.openLoginModal();
+                if (bottomAccountButton) {
+
+                    bottomAccountButton.addEventListener(
+                        "click",
+                        openAccount
+                    );
+
+                }
+
+
+                if (accountButton) {
+
+                    accountButton.addEventListener(
+                        "click",
+                        openAccount
+                    );
+
+                }
+
+
+                /* -----------------------------------------------
+                   View Verified Businesses
+                ------------------------------------------------ */
+
+                const viewVerifiedBusinessesBtn =
+                    document.getElementById(
+                        "viewVerifiedBusinessesBtn"
+                    );
+
+
+                if (viewVerifiedBusinessesBtn) {
+
+                    viewVerifiedBusinessesBtn.addEventListener(
+                        "click",
+                        function () {
+
+                            const businesses =
+                                document.getElementById(
+                                    "businesses"
+                                );
+
+
+                            if (businesses) {
+
+                                businesses.scrollIntoView({
+                                    behavior: "smooth",
+                                    block: "start"
+                                });
+
+                            }
+
+                        }
+                    );
+
+                }
+
+
+                /* -----------------------------------------------
+                   Explore Services
+                ------------------------------------------------ */
+
+                const exploreServicesBtn =
+                    document.getElementById(
+                        "exploreServicesBtn"
+                    );
+
+
+                if (exploreServicesBtn) {
+
+                    exploreServicesBtn.addEventListener(
+                        "click",
+                        function () {
+
+                            const categories =
+                                document.getElementById(
+                                    "categories"
+                                );
+
+
+                            if (categories) {
+
+                                categories.scrollIntoView({
+                                    behavior: "smooth",
+                                    block: "start"
+                                });
+
+                            }
+
+                        }
+                    );
+
+                }
+
+
+                /* -----------------------------------------------
+                   Saved Items
+                ------------------------------------------------ */
+
+                const savedNavButton =
+                    document.getElementById(
+                        "savedNavButton"
+                    );
+
+
+                if (savedNavButton) {
+
+                    savedNavButton.addEventListener(
+                        "click",
+                        function () {
+
+                            const savedSection =
+                                document.getElementById(
+                                    "saved"
+                                );
+
+
+                            if (savedSection) {
+
+                                savedSection.scrollIntoView({
+                                    behavior: "smooth",
+                                    block: "start"
+                                });
+
+                            }
+
+                        }
+                    );
+
+                }
+
+
+                /* -----------------------------------------------
+                   Create Account / Login
+                ------------------------------------------------ */
+
+                const showSignupBtn =
+                    document.getElementById(
+                        "showSignupBtn"
+                    );
+
+
+                if (showSignupBtn) {
+
+                    showSignupBtn.addEventListener(
+                        "click",
+                        function () {
+
+                            if (
+                                window.App &&
+                                typeof window.App.openModal === "function"
+                            ) {
+
+                                window.App.openModal(
+                                    "signupModal"
+                                );
+
+                            }
+
+                        }
+                    );
+
+                }
+
+
+                const backToLoginBtn =
+                    document.getElementById(
+                        "backToLoginBtn"
+                    );
+
+
+                if (backToLoginBtn) {
+
+                    backToLoginBtn.addEventListener(
+                        "click",
+                        function () {
+
+                            if (
+                                window.App &&
+                                typeof window.App.openModal === "function"
+                            ) {
+
+                                window.App.openModal(
+                                    "loginModal"
+                                );
+
+                            }
+
+                        }
+                    );
 
                 }
 
             }
-
-
-            if (bottomAccountButton) {
-
-                bottomAccountButton.addEventListener(
-                    "click",
-                    openAccount
-                );
-
-            }
-
-
-            if (accountButton) {
-
-                accountButton.addEventListener(
-                    "click",
-                    openAccount
-                );
-
-            }
-
-
-            /* -----------------------------------------------
-               View Verified Businesses
-            ------------------------------------------------ */
-
-            const viewVerifiedBusinessesBtn =
-                document.getElementById(
-                    "viewVerifiedBusinessesBtn"
-                );
-
-            if (viewVerifiedBusinessesBtn) {
-
-                viewVerifiedBusinessesBtn.addEventListener(
-                    "click",
-                    function () {
-
-                        const businesses =
-                            document.getElementById("businesses");
-
-                        if (businesses) {
-
-                            businesses.scrollIntoView({
-                                behavior: "smooth",
-                                block: "start"
-                            });
-
-                        }
-
-                    }
-                );
-
-            }
-
-
-            /* -----------------------------------------------
-               Explore Services
-            ------------------------------------------------ */
-
-            const exploreServicesBtn =
-                document.getElementById(
-                    "exploreServicesBtn"
-                );
-
-            if (exploreServicesBtn) {
-
-                exploreServicesBtn.addEventListener(
-                    "click",
-                    function () {
-
-                        const categories =
-                            document.getElementById("categories");
-
-                        if (categories) {
-
-                            categories.scrollIntoView({
-                                behavior: "smooth",
-                                block: "start"
-                            });
-
-                        }
-
-                    }
-                );
-
-            }
-
-            /* -----------------------------------------------
-               Saved Items
-            ------------------------------------------------ */
-
-            const savedNavButton =
-                document.getElementById("savedNavButton");
-
-            if (savedNavButton) {
-
-                savedNavButton.addEventListener(
-                    "click",
-                    function () {
-
-                        const savedSection =
-                            document.getElementById("saved");
-
-                        if (savedSection) {
-
-                            savedSection.scrollIntoView({
-                                behavior: "smooth",
-                                block: "start"
-                            });
-
-                        }
-
-                    }
-                );
-
-            }
-            /* -----------------------------------------------
-               Create Account / Login
-            ------------------------------------------------ */
-
-            const showSignupBtn =
-                document.getElementById("showSignupBtn");
-
-            if (showSignupBtn) {
-
-                showSignupBtn.addEventListener(
-                    "click",
-                    function () {
-
-                        if (
-                            window.App &&
-                            typeof window.App.openModal === "function"
-                        ) {
-
-                            window.App.openModal("signupModal");
-
-                        }
-
-                    }
-                );
-
-            }
-
-
-            const backToLoginBtn =
-                document.getElementById("backToLoginBtn");
-
-            if (backToLoginBtn) {
-
-                backToLoginBtn.addEventListener(
-                    "click",
-                    function () {
-
-                        if (
-                            window.App &&
-                            typeof window.App.openModal === "function"
-                        ) {
-
-                            window.App.openModal("loginModal");
-
-                        }
-
-                    }
-                );
-
-            }
-
-
-        });
+        );
 
     </script>
 
