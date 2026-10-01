@@ -28,10 +28,11 @@
     >
 
     <style>
+
         /* =========================================================
            LOSOJA HOMEPAGE EXTRAS
            Page-level only
-           
+
            IMPORTANT:
            businesses.js and css/style.css remain untouched.
         ========================================================= */
@@ -59,8 +60,6 @@
         }
 
 
-        /* Make every business card stay inside the screen */
-
         .business-card {
             width: 100% !important;
             min-width: 0 !important;
@@ -69,8 +68,6 @@
             box-sizing: border-box !important;
         }
 
-
-        /* Business card image */
 
         .business-card img,
         .business-image,
@@ -86,11 +83,6 @@
         }
 
 
-        /*
-           Some business cards may use a wrapper around the image.
-           Keep the image contained inside that wrapper.
-        */
-
         .business-card-image-wrapper,
         .business-image-wrapper {
             width: 100% !important;
@@ -99,8 +91,6 @@
             box-sizing: border-box !important;
         }
 
-
-        /* Business card content */
 
         .business-card-content {
             width: 100%;
@@ -127,12 +117,6 @@
         }
 
 
-        /*
-           Business descriptions can become very long.
-           Keep the card compact without deleting the actual
-           description from the business details view.
-        */
-
         .business-card-content .description,
         .business-card-description {
             display: -webkit-box;
@@ -141,8 +125,6 @@
             overflow: hidden;
         }
 
-
-        /* Loading card */
 
         .business-loading-card {
             width: 100%;
@@ -288,7 +270,7 @@
 
 
         /* =========================================================
-           HOW TO USE LOSOJA SLIDER
+           HOW TO USE LOSOJA
         ========================================================= */
 
         .losoja-tutorial-section {
@@ -548,6 +530,7 @@
 
 </head>
 
+
 <body>
 
 
@@ -800,6 +783,43 @@
             <div class="losoja-slider">
 
 
+                <!-- HOW TO USE OJA -->
+
+                <article class="losoja-slide">
+
+                    <video
+                        class="losoja-slide-video"
+                        controls
+                        preload="metadata"
+                        playsinline
+                    >
+
+                        <source
+                            src="videos/how-to-use-oja.mp4"
+                            type="video/mp4"
+                        >
+
+                        Your browser does not support video playback.
+
+                    </video>
+
+
+                    <div class="losoja-slide-content">
+
+                        <h3>
+                            🛍️ How to Use Oja
+                        </h3>
+
+                        <p>
+                            Learn how to browse items, find what you need,
+                            contact sellers and use LosOja safely.
+                        </p>
+
+                    </div>
+
+                </article>
+
+
                 <!-- SEARCH VIDEO -->
 
                 <article class="losoja-slide">
@@ -853,7 +873,9 @@
                             type="video/mp4"
                         >
 
-                        Your browser does not support video playback.
+                        <div>
+                            Your browser does not support video playback.
+                        </div>
 
                     </video>
 
@@ -1070,12 +1092,17 @@
                 <div>
 
                     <span class="section-kicker">
-                        Explore
+                        Explore LosOja
                     </span>
 
                     <h2>
                         Categories
                     </h2>
+
+                    <p>
+                        Find businesses, professionals and services
+                        for everyday needs.
+                    </p>
 
                 </div>
 
@@ -1125,7 +1152,7 @@
                     </span>
 
                     <span>
-                        Phones
+                        Phones & Electronics
                     </span>
                 </button>
 
@@ -1163,14 +1190,89 @@
                 <button
                     type="button"
                     class="category-card"
-                    data-category="Services"
+                    data-category="Furniture & Home"
                 >
                     <span class="category-icon">
-                        🛠️
+                        🛋️
                     </span>
 
                     <span>
-                        Services
+                        Furniture & Home
+                    </span>
+                </button>
+
+
+                <button
+                    type="button"
+                    class="category-card"
+                    data-category="Plumbing"
+                >
+                    <span class="category-icon">
+                        🚰
+                    </span>
+
+                    <span>
+                        Plumbing
+                    </span>
+                </button>
+
+
+                <button
+                    type="button"
+                    class="category-card"
+                    data-category="Electrical"
+                >
+                    <span class="category-icon">
+                        ⚡
+                    </span>
+
+                    <span>
+                        Electrical
+                    </span>
+                </button>
+
+
+                <button
+                    type="button"
+                    class="category-card"
+                    data-category="Carpentry"
+                >
+                    <span class="category-icon">
+                        🪚
+                    </span>
+
+                    <span>
+                        Carpentry
+                    </span>
+                </button>
+
+
+                <button
+                    type="button"
+                    class="category-card"
+                    data-category="Construction"
+                >
+                    <span class="category-icon">
+                        🏗️
+                    </span>
+
+                    <span>
+                        Construction
+                    </span>
+                </button>
+
+
+                <button
+                    type="button"
+                    class="category-card"
+                    data-category="Healthcare"
+                >
+                    <span class="category-icon">
+                        🩺
+                    </span>
+
+                    <span>
+                        Healthcare
                     </span>
                 </button>
 
@@ -1193,6 +1295,36 @@
                 <button
                     type="button"
                     class="category-card"
+                    data-category="Cleaning"
+                >
+                    <span class="category-icon">
+                        🧹
+                    </span>
+
+                    <span>
+                        Cleaning
+                    </span>
+                </button>
+
+
+                <button
+                    type="button"
+                    class="category-card"
+                    data-category="Repairs & Maintenance"
+                >
+                    <span class="category-icon">
+                        🔧
+                    </span>
+
+                    <span>
+                        Repairs & Maintenance
+                    </span>
+                </button>
+
+
+                <button
+                    type="button"
+                    class="category-card"
                     data-category="Technology"
                 >
                     <span class="category-icon">
@@ -1201,6 +1333,81 @@
 
                     <span>
                         Technology
+                    </span>
+                </button>
+
+
+                <button
+                    type="button"
+                    class="category-card"
+                    data-category="Agriculture"
+                >
+                    <span class="category-icon">
+                        🌾
+                    </span>
+
+                    <span>
+                        Agriculture
+                    </span>
+                </button>
+
+
+                <button
+                    type="button"
+                    class="category-card"
+                    data-category="Logistics & Moving"
+                >
+                    <span class="category-icon">
+                        🚚
+                    </span>
+
+                    <span>
+                        Logistics & Moving
+                    </span>
+                </button>
+
+
+                <button
+                    type="button"
+                    class="category-card"
+                    data-category="Education & Tutors"
+                >
+                    <span class="category-icon">
+                        📚
+                    </span>
+
+                    <span>
+                        Education & Tutors
+                    </span>
+                </button>
+
+
+                <button
+                    type="button"
+                    class="category-card"
+                    data-category="Professional Services"
+                >
+                    <span class="category-icon">
+                        💼
+                    </span>
+
+                    <span>
+                        Professional Services
+                    </span>
+                </button>
+
+
+                <button
+                    type="button"
+                    class="category-card"
+                    data-category="Services"
+                >
+                    <span class="category-icon">
+                        🛠️
+                    </span>
+
+                    <span>
+                        General Services
                     </span>
                 </button>
 
@@ -1510,7 +1717,6 @@
                                         window.openBusiness('${item.id}')
                                     "
                                 >
-
 
                                     <div
                                         style="
@@ -1905,7 +2111,7 @@
 
 
                         <option value="Phones">
-                            Phones
+                            Phones & Electronics
                         </option>
 
 
@@ -1919,13 +2125,48 @@
                         </option>
 
 
-                        <option value="Services">
-                            Services
+                        <option value="Furniture & Home">
+                            Furniture & Home
+                        </option>
+
+
+                        <option value="Plumbing">
+                            Plumbing
+                        </option>
+
+
+                        <option value="Electrical">
+                            Electrical
+                        </option>
+
+
+                        <option value="Carpentry">
+                            Carpentry
+                        </option>
+
+
+                        <option value="Construction">
+                            Construction
+                        </option>
+
+
+                        <option value="Healthcare">
+                            Healthcare
                         </option>
 
 
                         <option value="Beauty">
                             Beauty
+                        </option>
+
+
+                        <option value="Cleaning">
+                            Cleaning
+                        </option>
+
+
+                        <option value="Repairs & Maintenance">
+                            Repairs & Maintenance
                         </option>
 
 
@@ -1939,13 +2180,28 @@
                         </option>
 
 
-                        <option value="Home & Building">
-                            Home & Building
+                        <option value="Logistics & Moving">
+                            Logistics & Moving
+                        </option>
+
+
+                        <option value="Education & Tutors">
+                            Education & Tutors
                         </option>
 
 
                         <option value="Professional Services">
                             Professional Services
+                        </option>
+
+
+                        <option value="Services">
+                            General Services
+                        </option>
+
+
+                        <option value="Trade by Barter">
+                            Trade by Barter
                         </option>
 
                     </select>
@@ -2216,6 +2472,8 @@
             </button>
 
 
+            <!-- LOSOJA LOGIN BRANDING -->
+
             <div class="losoja-auth-brand">
 
                 <div class="losoja-auth-logo">
@@ -2343,6 +2601,8 @@
                 ×
             </button>
 
+
+            <!-- LOSOJA SIGNUP BRANDING -->
 
             <div class="losoja-auth-brand">
 
@@ -2931,6 +3191,7 @@
                     );
 
                 }
+
 
             }
         );
