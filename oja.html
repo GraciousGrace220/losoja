@@ -2397,22 +2397,45 @@
                         );
 
 
-                    if (!listingResponse.ok) {
+                   if (!listingResponse.ok) {
 
-                        const text =
-                            await listingResponse.text();
+    const text =
+        await listingResponse.text();
 
-                        console.error(
-                            "Listing creation error:",
-                            text
-                        );
+    console.error(
+        "Listing creation error:",
+        text
+    );
 
-                        throw new Error(
-                            "Failed to create marketplace listing."
-                        );
+    let errorMessage =
+        "Failed to create marketplace listing.";
 
-                    }
+    try {
 
+        const errorData =
+            JSON.parse(text);
+
+        errorMessage =
+            errorData.message ||
+            errorData.error_description ||
+            errorData.details ||
+            errorData.hint ||
+            text ||
+            errorMessage;
+
+    } catch (parseError) {
+
+        if (text) {
+            errorMessage = text;
+        }
+
+    }
+
+    throw new Error(
+        errorMessage
+    );
+
+}
 
                     const createdListings =
                         await listingResponse.json();
