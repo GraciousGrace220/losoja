@@ -31,31 +31,270 @@
         /* =========================================================
            LOSOJA HOMEPAGE EXTRAS
            Page-level only
-           businesses.js and style.css remain untouched
+           
+           IMPORTANT:
+           businesses.js and css/style.css remain untouched.
         ========================================================= */
 
-        /* ---------------------------------------------------------
-           BUSINESS PICTURES
-        --------------------------------------------------------- */
+
+        /* =========================================================
+           BUSINESS MARKETPLACE
+        ========================================================= */
+
+        #businessGrid {
+            width: 100%;
+            display: grid;
+            grid-template-columns: repeat(
+                auto-fit,
+                minmax(260px, 1fr)
+            );
+            gap: 18px;
+            align-items: stretch;
+        }
+
+
+        .business-grid {
+            width: 100%;
+            min-width: 0;
+        }
+
+
+        /* Make every business card stay inside the screen */
+
+        .business-card {
+            width: 100% !important;
+            min-width: 0 !important;
+            max-width: 100% !important;
+            overflow: hidden !important;
+            box-sizing: border-box !important;
+        }
+
+
+        /* Business card image */
 
         .business-card img,
         .business-image,
         .business-card-image {
             width: 100% !important;
-            height: 210px !important;
+            height: 190px !important;
+            min-height: 190px !important;
+            max-height: 190px !important;
+            object-fit: cover !important;
+            object-position: center !important;
+            display: block !important;
+            box-sizing: border-box !important;
+        }
+
+
+        /*
+           Some business cards may use a wrapper around the image.
+           Keep the image contained inside that wrapper.
+        */
+
+        .business-card-image-wrapper,
+        .business-image-wrapper {
+            width: 100% !important;
+            max-width: 100% !important;
+            overflow: hidden !important;
+            box-sizing: border-box !important;
+        }
+
+
+        /* Business card content */
+
+        .business-card-content {
+            width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+            padding: 14px;
+            overflow: hidden;
+        }
+
+
+        .business-card-content h3,
+        .business-card h3 {
+            margin-top: 0;
+            margin-bottom: 7px;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+
+
+        .business-card-content p,
+        .business-card p {
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+
+
+        /*
+           Business descriptions can become very long.
+           Keep the card compact without deleting the actual
+           description from the business details view.
+        */
+
+        .business-card-content .description,
+        .business-card-description {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+
+        /* Loading card */
+
+        .business-loading-card {
+            width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+        }
+
+
+        /* =========================================================
+           BUSINESS DETAILS MODAL
+        ========================================================= */
+
+        .business-details-modal {
+            width: min(620px, calc(100vw - 28px)) !important;
+            max-width: 620px !important;
+            max-height: calc(100vh - 30px);
+            overflow-y: auto;
+            box-sizing: border-box;
+        }
+
+
+        .business-details-image-wrapper {
+            width: 100%;
+            max-width: 100%;
+            overflow: hidden;
+            border-radius: 14px;
+            background: #f3f4f6;
+        }
+
+
+        .business-details-image {
+            width: 100% !important;
+            height: auto !important;
+            aspect-ratio: 16 / 10;
+            max-height: 360px;
             object-fit: cover !important;
             object-position: center !important;
             display: block !important;
         }
 
 
-        /* ---------------------------------------------------------
+        .business-details-content {
+            min-width: 0;
+            overflow-wrap: anywhere;
+        }
+
+
+        #businessDetailsDescription {
+            overflow-wrap: anywhere;
+            word-break: break-word;
+            line-height: 1.6;
+        }
+
+
+        /* =========================================================
+           ADD BUSINESS IMAGE
+        ========================================================= */
+
+        #businessImage {
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+
+        .image-preview {
+            width: 100%;
+            max-width: 100%;
+            overflow: hidden;
+            border-radius: 12px;
+            margin-top: 10px;
+        }
+
+
+        .image-preview img {
+            width: 100%;
+            max-width: 100%;
+            height: 190px;
+            object-fit: cover;
+            object-position: center;
+            display: block;
+            border-radius: 12px;
+        }
+
+
+        .business-photo-help {
+            margin: 5px 0 10px;
+            font-size: 13px;
+            color: #6b7280;
+            line-height: 1.5;
+        }
+
+
+        /* =========================================================
+           LOSOJA LOGIN / SIGNUP BRANDING
+        ========================================================= */
+
+        #loginModal .modal-content,
+        #signupModal .modal-content {
+            width: min(430px, calc(100vw - 28px));
+            box-sizing: border-box;
+        }
+
+
+        .losoja-auth-brand {
+            text-align: center;
+            margin-bottom: 18px;
+        }
+
+
+        .losoja-auth-logo {
+            width: 58px;
+            height: 58px;
+            margin: 0 auto 10px;
+            border-radius: 18px;
+            background: linear-gradient(
+                135deg,
+                #087a3e,
+                #0a9a50
+            );
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: 800;
+            box-shadow: 0 6px 16px rgba(8, 122, 62, 0.20);
+        }
+
+
+        .losoja-auth-brand-name {
+            margin: 0;
+            color: #087a3e;
+            font-size: 21px;
+            font-weight: 800;
+        }
+
+
+        .losoja-auth-brand-text {
+            margin: 4px 0 0;
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+
+        /* =========================================================
            HOW TO USE LOSOJA SLIDER
-        --------------------------------------------------------- */
+        ========================================================= */
 
         .losoja-tutorial-section {
             padding: 24px 16px;
         }
+
 
         .losoja-slider {
             display: flex;
@@ -67,9 +306,11 @@
             -webkit-overflow-scrolling: touch;
         }
 
+
         .losoja-slider::-webkit-scrollbar {
             display: none;
         }
+
 
         .losoja-slide {
             flex: 0 0 min(86vw, 360px);
@@ -81,6 +322,7 @@
             box-shadow: 0 4px 14px rgba(0, 0, 0, 0.07);
         }
 
+
         .losoja-slide-video {
             width: 100%;
             aspect-ratio: 16 / 9;
@@ -89,14 +331,17 @@
             object-fit: cover;
         }
 
+
         .losoja-slide-content {
             padding: 14px;
         }
+
 
         .losoja-slide-content h3 {
             margin: 0 0 6px;
             font-size: 17px;
         }
+
 
         .losoja-slide-content p {
             margin: 0;
@@ -106,9 +351,9 @@
         }
 
 
-        /* ---------------------------------------------------------
+        /* =========================================================
            PAY BILLS CARD
-        --------------------------------------------------------- */
+        ========================================================= */
 
         .losoja-bills-card {
             margin: 20px 16px;
@@ -121,12 +366,15 @@
             justify-content: space-between;
             gap: 16px;
             box-shadow: 0 6px 18px rgba(8, 122, 62, 0.20);
+            box-sizing: border-box;
         }
+
 
         .losoja-bills-card h2 {
             margin: 0 0 6px;
             font-size: 20px;
         }
+
 
         .losoja-bills-card p {
             margin: 0;
@@ -134,6 +382,7 @@
             font-size: 14px;
             line-height: 1.5;
         }
+
 
         .losoja-bills-button {
             flex-shrink: 0;
@@ -148,29 +397,153 @@
         }
 
 
-        /* ---------------------------------------------------------
-           MOBILE
-        --------------------------------------------------------- */
+        /* =========================================================
+           GENERAL MOBILE PROTECTION
+        ========================================================= */
 
-        @media (max-width: 600px) {
+        html,
+        body {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+
+        main,
+        section,
+        .header-inner,
+        .hero-content,
+        .quick-actions,
+        .businesses-section,
+        .categories-section {
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+
+        /* =========================================================
+           MOBILE
+        ========================================================= */
+
+        @media (max-width: 700px) {
+
+            #businessGrid {
+                grid-template-columns: repeat(
+                    2,
+                    minmax(0, 1fr)
+                );
+                gap: 12px;
+            }
+
 
             .business-card img,
             .business-image,
             .business-card-image {
-                height: 190px !important;
+                height: 170px !important;
+                min-height: 170px !important;
+                max-height: 170px !important;
             }
+
+
+            .business-card-content {
+                padding: 11px;
+            }
+
+
+            .business-card-content h3,
+            .business-card h3 {
+                font-size: 16px;
+            }
+
+
+            .business-card-content p,
+            .business-card p {
+                font-size: 13px;
+            }
+
 
             .losoja-bills-card {
                 align-items: flex-start;
                 flex-direction: column;
             }
 
+
             .losoja-bills-button {
                 width: 100%;
                 text-align: center;
+                box-sizing: border-box;
+            }
+
+
+            .business-details-image {
+                aspect-ratio: 4 / 3;
+                max-height: 300px;
             }
 
         }
+
+
+        /* =========================================================
+           SMALL PHONES
+        ========================================================= */
+
+        @media (max-width: 430px) {
+
+            #businessGrid {
+                grid-template-columns: 1fr;
+                gap: 14px;
+            }
+
+
+            .business-card img,
+            .business-image,
+            .business-card-image {
+                height: 190px !important;
+                min-height: 190px !important;
+                max-height: 190px !important;
+            }
+
+
+            .losoja-slide {
+                flex-basis: 88vw;
+            }
+
+
+            .losoja-tutorial-section {
+                padding-left: 12px;
+                padding-right: 12px;
+            }
+
+
+            .losoja-bills-card {
+                margin-left: 12px;
+                margin-right: 12px;
+            }
+
+
+            .business-details-modal {
+                width: calc(100vw - 20px) !important;
+                max-height: calc(100vh - 20px);
+            }
+
+        }
+
+
+        /* =========================================================
+           VERY SMALL PHONES
+        ========================================================= */
+
+        @media (max-width: 360px) {
+
+            .business-card img,
+            .business-image,
+            .business-card-image {
+                height: 175px !important;
+                min-height: 175px !important;
+                max-height: 175px !important;
+            }
+
+        }
+
     </style>
 
 </head>
@@ -1625,6 +1998,7 @@
                         id="businessDescription"
                         name="description"
                         rows="4"
+                        placeholder="Tell customers what your business offers..."
                     ></textarea>
 
                 </div>
@@ -1633,8 +2007,14 @@
                 <div class="form-group">
 
                     <label for="businessImage">
-                        Business Image
+                        Business Photo
                     </label>
+
+
+                    <p class="business-photo-help">
+                        Upload one clear photo of your business,
+                        product or storefront. Maximum 5 MB.
+                    </p>
 
 
                     <input
@@ -1836,8 +2216,25 @@
             </button>
 
 
+            <div class="losoja-auth-brand">
+
+                <div class="losoja-auth-logo">
+                    L
+                </div>
+
+                <p class="losoja-auth-brand-name">
+                    LosOja
+                </p>
+
+                <p class="losoja-auth-brand-text">
+                    Discover. Connect. Trade.
+                </p>
+
+            </div>
+
+
             <h2 id="loginTitle">
-                Login
+                Welcome Back
             </h2>
 
 
@@ -1859,6 +2256,7 @@
                         type="email"
                         id="loginEmail"
                         name="email"
+                        autocomplete="email"
                         required
                     >
 
@@ -1876,6 +2274,7 @@
                         type="password"
                         id="loginPassword"
                         name="password"
+                        autocomplete="current-password"
                         required
                     >
 
@@ -1945,13 +2344,31 @@
             </button>
 
 
+            <div class="losoja-auth-brand">
+
+                <div class="losoja-auth-logo">
+                    L
+                </div>
+
+                <p class="losoja-auth-brand-name">
+                    LosOja
+                </p>
+
+                <p class="losoja-auth-brand-text">
+                    Your Nigerian marketplace
+                </p>
+
+            </div>
+
+
             <h2 id="signupTitle">
-                Create Account
+                Create Your LosOja Account
             </h2>
 
 
             <p>
-                Create your LosOja account.
+                Create an account to add businesses
+                and use LosOja features.
             </p>
 
 
@@ -1968,6 +2385,7 @@
                         type="text"
                         id="signupName"
                         name="name"
+                        autocomplete="name"
                         required
                     >
 
@@ -1985,6 +2403,7 @@
                         type="email"
                         id="signupEmail"
                         name="email"
+                        autocomplete="email"
                         required
                     >
 
@@ -2002,6 +2421,7 @@
                         type="password"
                         id="signupPassword"
                         name="password"
+                        autocomplete="new-password"
                         required
                     >
 
