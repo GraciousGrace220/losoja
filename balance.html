@@ -4,7 +4,6 @@
 
 <head>
 
-```
 <meta charset="UTF-8">
 
 <meta
@@ -373,24 +372,79 @@
          ESCROW
     ========================================== -->
 
-    <section class="card">
+   <section class="card">
 
-        <h2>Escrow</h2>
+    <h2>Escrow</h2>
 
-        <p>
-            Secure payments between buyers and sellers.
+    <p>
+        Secure payments between buyers and sellers.
+    </p>
+
+    <div
+        style="
+            background:#fff7ed;
+            border:1px solid #fed7aa;
+            border-radius:12px;
+            padding:14px;
+            margin:12px 0;
+            color:#7c2d12;
+        "
+    >
+
+        <strong>
+            ⚠️ LosOja Escrow Safety Warning
+        </strong>
+
+        <p
+            style="
+                margin:8px 0 0;
+                font-size:14px;
+                line-height:1.5;
+            "
+        >
+            Keep your conversation and payment inside LosOja.
+            Never click payment, verification, refund, delivery,
+            or account links sent by another user.
         </p>
 
-        <button
-            class="escrow-btn"
-            onclick="openEscrowInfo()"
+        <p
+            style="
+                margin:8px 0 0;
+                font-size:14px;
+                line-height:1.5;
+            "
         >
-            View Escrow
-        </button>
+            LosOja will never ask you to enter your password,
+            OTP, PIN, or financial information through a link
+            sent by a buyer or seller.
+        </p>
 
-        <div id="escrowInfo"></div>
+        <p
+            style="
+                margin:8px 0 0;
+                font-size:14px;
+                line-height:1.5;
+                font-weight:bold;
+            "
+        >
+            Never send additional money outside LosOja Escrow.
+            If someone pressures you to leave LosOja or click
+            an external payment link, stop the transaction
+            and report it.
+        </p>
 
-    </section>
+    </div>
+
+    <button
+        class="escrow-btn"
+        onclick="openEscrowInfo()"
+    >
+        View Escrow
+    </button>
+
+    <div id="escrowInfo"></div>
+
+</section>
 
 
 </main>
@@ -2284,10 +2338,14 @@ async function handleMarkEscrowShipped(
     button
 ) {
 
-    const confirmed =
-        confirm(
-            "Mark this escrow order as shipped?"
-        );
+const confirmed =
+    confirm(
+        "LosOja Safety Warning\n\n" +
+        "Only mark the order as shipped when you have actually shipped it.\n\n" +
+        "Never use an external link sent by another user to verify payment " +
+        "or delivery.\n\n" +
+        "Mark this escrow order as shipped?"
+    );
 
     if (!confirmed) {
 
@@ -2368,9 +2426,13 @@ async function handleConfirmEscrowDelivery(
 ) {
 
     const confirmed =
-        confirm(
-            "Confirm that you received the goods?"
-        );
+    confirm(
+        "LosOja Safety Warning\n\n" +
+        "Only confirm delivery after you have actually received the goods " +
+        "and checked the transaction.\n\n" +
+        "Do not confirm because someone sends you a verification link.\n\n" +
+        "Confirm that you received the goods?"
+    );
 
     if (!confirmed) {
 
@@ -2561,11 +2623,14 @@ async function handleReleaseEscrow(
     button
 ) {
 
-    const confirmed =
-        confirm(
-            "Release this escrow payment to the seller?"
-        );
-
+   const confirmed =
+    confirm(
+        "LosOja Safety Warning\n\n" +
+        "Only release the payment when you are satisfied with the transaction.\n\n" +
+        "Never release payment because a seller sends you an external link " +
+        "or asks you to pay an additional fee outside LosOja.\n\n" +
+        "Release this escrow payment to the seller?"
+    );
     if (!confirmed) {
 
         return;
@@ -2648,11 +2713,14 @@ async function handleRefundEscrow(
     button
 ) {
 
-    const confirmed =
-        confirm(
-            "Refund this escrow payment to your wallet?"
-        );
-
+   const confirmed =
+    confirm(
+        "LosOja Safety Warning\n\n" +
+        "Only continue if you are sure you want to refund this escrow.\n\n" +
+        "Never follow payment, verification, refund, or delivery links " +
+        "sent by another user.\n\n" +
+        "Refund this escrow payment to your wallet?"
+    );
     if (!confirmed) {
 
         return;
