@@ -505,17 +505,17 @@
                     Select data plan
                 </option>
 
-                <option value="small">
-                    Test Plan — ₦100
-                </option>
+                <option value="mtn-10mb-100" data-amount="100">
+    MTN 100MB — ₦100
+</option>
 
-                <option value="medium">
-                    Test Plan — ₦500
-                </option>
+<option value="mtn-50mb-200" data-amount="200">
+    MTN 200MB — ₦200
+</option>
 
-                <option value="large">
-                    Test Plan — ₦1,000
-                </option>
+<option value="mtn-100mb-1000" data-amount="1000">
+    MTN 1.5GB — ₦1,000
+</option>
 
             </select>
 
@@ -1034,11 +1034,98 @@ async function getAccessToken() {
        REAL DATA FUNCTION
     ===================================================== */
 
-    async function runRealDataPayment(
-        network,
-        phone,
-        amount
-    ) {
+   async function runRealDataPayment(
+    network,
+    phone,
+    amount,
+    variationCode
+) {
+
+    const token =
+        await getAccessToken();
+
+    if (!token) {
+
+        throw new Error(
+            "Please log in to buy Data."
+        );
+
+    }
+
+    const response =
+        await fetch(
+            PAY_BILL_FUNCTION_URL,
+            {
+                method:
+                    "POST",
+
+                headers: {
+
+                    "Content-Type":
+                        "application/json",
+
+                    "apikey":
+                        SUPABASE_KEY,
+
+                    "Authorization":
+                        "Bearer " + token
+
+                },
+
+                body:
+                    JSON.stringify({
+
+                        service_type:
+                            "data",
+
+                        network:
+                            network,
+
+                        phone:
+                            phone,
+
+                        amount:
+                            Number(amount),
+
+                        variation_code:
+                            variationCode
+
+                    })
+
+            }
+        );
+
+    const text =
+        await response.text();
+
+    let data = null;
+
+    try {
+
+        data =
+            text
+                ? JSON.parse(text)
+                : null;
+
+    } catch {
+
+        data = null;
+
+    }
+
+    if (!response.ok) {
+
+        throw new Error(
+            data?.error ||
+            data?.message ||
+            "Data payment failed."
+        );
+
+    }
+
+    return data;
+
+}
 
         const token =
             await getAccessToken();
@@ -1517,35 +1604,28 @@ async function getAccessToken() {
                     .trim();
 
 
-                const plan =
-                    document.getElementById(
-                        "dataPlan"
-                    )?.value;
+               const planSelect =
+    document.getElementById(
+        "dataPlan"
+    );
 
+const variationCode =
+    planSelect?.value;
 
-                const planAmounts = {
+const selectedOption =
+    planSelect?.selectedOptions?.[0];
 
-                    small:
-                        100,
+const amount =
+    Number(
+        selectedOption?.dataset?.amount
+    );
 
-                    medium:
-                        500,
-
-                    large:
-                        1000
-
-                };
-
-
-                const amount =
-                    planAmounts[plan];
-
-
-                if (
-                    !network ||
-                    !phone ||
-                    !amount
-                ) {
+               if (
+    !network ||
+    !phone ||
+    !amount ||
+    !variationCode
+) {
 
                     alert(
                         "Please complete the Data form."
@@ -1589,11 +1669,12 @@ async function getAccessToken() {
                 try {
 
                     const result =
-                        await runRealDataPayment(
-                            network,
-                            phone,
-                            amount
-                        );
+                       await runRealDataPayment(
+    network,
+    phone,
+    amount,
+    variationCode
+);
 
 
                     if (
