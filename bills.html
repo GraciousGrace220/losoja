@@ -1,4 +1,3 @@
-html
 <!DOCTYPE html>
 <html lang="en">
 
@@ -96,8 +95,7 @@ html
 
         .tabs {
             display: grid;
-            grid-template-columns:
-                repeat(3, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 8px;
             margin-bottom: 18px;
         }
@@ -444,9 +442,7 @@ html
                 class="processing"
             >
 
-                <div
-                    id="airtimeProcessingTime"
-                >
+                <div id="airtimeProcessingTime">
                     Your transaction is being
                     processed. Please do not click
                     the payment button again.
@@ -561,9 +557,7 @@ html
                 class="processing"
             >
 
-                <div
-                    id="dataProcessingTime"
-                >
+                <div id="dataProcessingTime">
                     Your transaction is being
                     processed. Please do not click
                     the payment button again.
@@ -705,9 +699,7 @@ html
                 Bill History
             </h2>
 
-            <div
-                id="billHistory"
-            >
+            <div id="billHistory">
 
                 <div class="empty">
                     Loading bill history...
@@ -720,734 +712,850 @@ html
     </main>
 
 
-<script src="auth.js"></script>
+    <!-- LOSOJA AUTHENTICATION -->
 
-<script>
+    <script src="auth.js"></script>
 
-(function () {
 
-    "use strict";
+    <!-- LOSOJA BILLS -->
 
+    <script>
 
-    const SUPABASE_URL =
-        "https://ycxshwgeebskdozmornh.supabase.co";
+    (function () {
 
+        "use strict";
 
-    const SUPABASE_KEY =
-        "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
 
+        const SUPABASE_URL =
+            "https://ycxshwgeebskdozmornh.supabase.co";
 
-    let paymentInProgress = false;
 
-    let activePaymentType = null;
+        const SUPABASE_KEY =
+            "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
 
 
-    function lockPayment(type) {
+        let paymentInProgress = false;
 
-        if (paymentInProgress) {
+        let activePaymentType = null;
 
-            return false;
 
-        }
+        function lockPayment(type) {
 
-        paymentInProgress = true;
+            if (paymentInProgress) {
 
-        activePaymentType = type;
-
-        return true;
-
-    }
-
-
-    function unlockPayment() {
-
-        paymentInProgress = false;
-
-        activePaymentType = null;
-
-    }
-
-
-    function isPaymentLocked() {
-
-        return paymentInProgress;
-
-    }
-
-
-    function setProcessingState(
-        form,
-        text
-    ) {
-
-        if (!form) {
-
-            return;
-
-        }
-
-
-        const button =
-            form.querySelector(
-                ".pay-btn"
-            );
-
-
-        if (button) {
-
-            button.disabled = true;
-
-            button.textContent = text;
-
-        }
-
-
-        form
-            .querySelectorAll(
-                "input, select"
-            )
-            .forEach(
-                function (field) {
-
-                    field.disabled = true;
-
-                }
-            );
-
-    }
-
-
-    function restoreFormState(
-        form,
-        buttonText
-    ) {
-
-        if (!form) {
-
-            return;
-
-        }
-
-
-        const button =
-            form.querySelector(
-                ".pay-btn"
-            );
-
-
-        if (button) {
-
-            button.disabled = false;
-
-            button.textContent =
-                buttonText;
-
-        }
-
-
-        form
-            .querySelectorAll(
-                "input, select"
-            )
-            .forEach(
-                function (field) {
-
-                    field.disabled = false;
-
-                }
-            );
-
-    }
-
-
-    function showProcessingMessage(
-        boxId,
-        timeId,
-        message
-    ) {
-
-        const box =
-            document.getElementById(
-                boxId
-            );
-
-        const timeElement =
-            document.getElementById(
-                timeId
-            );
-
-
-        if (box) {
-
-            box.classList.add(
-                "active"
-            );
-
-        }
-
-
-        if (timeElement) {
-
-            timeElement.textContent =
-                message ||
-                "Your transaction is being processed. Please keep this page open.";
-
-        }
-
-    }
-
-
-    function updateProcessingMessage(
-        timeId,
-        seconds
-    ) {
-
-        const element =
-            document.getElementById(
-                timeId
-            );
-
-
-        if (!element) {
-
-            return;
-
-        }
-
-
-        element.textContent =
-            "Processing for " +
-            seconds +
-            " second" +
-            (
-                seconds === 1
-                    ? ""
-                    : "s"
-            ) +
-            ". Please do not click the payment button again.";
-
-    }
-
-
-    function hideProcessingMessage(
-        boxId
-    ) {
-
-        const box =
-            document.getElementById(
-                boxId
-            );
-
-
-        if (box) {
-
-            box.classList.remove(
-                "active"
-            );
-
-        }
-
-    }
-
-
-    function startProcessingTimer(
-        boxId,
-        timeId
-    ) {
-
-        let seconds = 0;
-
-
-        showProcessingMessage(
-            boxId,
-            timeId,
-            "Your transaction is being processed. Please do not click the payment button again."
-        );
-
-
-        const interval =
-            setInterval(
-                function () {
-
-                    seconds++;
-
-                    updateProcessingMessage(
-                        timeId,
-                        seconds
-                    );
-
-                },
-                1000
-            );
-
-
-        return interval;
-
-    }
-
-
-    function stopProcessingTimer(
-        boxId,
-        interval
-    ) {
-
-        if (interval) {
-
-            clearInterval(
-                interval
-            );
-
-        }
-
-
-        hideProcessingMessage(
-            boxId
-        );
-
-    }
-
-
-    async function getAccessToken() {
-
-        try {
-
-            if (
-                typeof window.getSupabaseAccessToken ===
-                "function"
-            ) {
-
-                return await window.getSupabaseAccessToken();
+                return false;
 
             }
 
-            return null;
+            paymentInProgress = true;
 
-        } catch (error) {
+            activePaymentType = type;
 
-            console.error(
-                "LosOja bills token error:",
-                error
-            );
-
-            return null;
-
-        }
-
-    }
-
-
-    async function billRequest(endpoint) {
-
-        const token =
-            await getAccessToken();
-
-
-        const headers = {
-
-            "apikey":
-                SUPABASE_KEY,
-
-            "Content-Type":
-                "application/json",
-
-            "Accept":
-                "application/json"
-
-        };
-
-
-        if (token) {
-
-            headers.Authorization =
-                "Bearer " + token;
+            return true;
 
         }
 
 
-        const response =
-            await fetch(
-                SUPABASE_URL + endpoint,
-                {
-                    method:
-                        "GET",
+        function unlockPayment() {
 
-                    headers:
-                        headers
-                }
-            );
+            paymentInProgress = false;
+
+            activePaymentType = null;
+
+        }
 
 
-        const text =
-            await response.text();
+        function isPaymentLocked() {
+
+            return paymentInProgress;
+
+        }
 
 
-        let data = null;
+        function setProcessingState(
+            form,
+            text
+        ) {
+
+            if (!form) {
+
+                return;
+
+            }
 
 
-        try {
+            const button =
+                form.querySelector(
+                    ".pay-btn"
+                );
 
-            data =
-                text
-                    ? JSON.parse(text)
+
+            if (button) {
+
+                button.disabled = true;
+
+                button.textContent = text;
+
+            }
+
+
+            form
+                .querySelectorAll(
+                    "input, select"
+                )
+                .forEach(
+                    function (field) {
+
+                        field.disabled = true;
+
+                    }
+                );
+
+        }
+
+
+        function restoreFormState(
+            form,
+            buttonText
+        ) {
+
+            if (!form) {
+
+                return;
+
+            }
+
+
+            const button =
+                form.querySelector(
+                    ".pay-btn"
+                );
+
+
+            if (button) {
+
+                button.disabled = false;
+
+                button.textContent =
+                    buttonText;
+
+            }
+
+
+            form
+                .querySelectorAll(
+                    "input, select"
+                )
+                .forEach(
+                    function (field) {
+
+                        field.disabled = false;
+
+                    }
+                );
+
+        }
+
+
+        function showProcessingMessage(
+            boxId,
+            timeId,
+            message
+        ) {
+
+            const box =
+                document.getElementById(
+                    boxId
+                );
+
+
+            const timeElement =
+                timeId
+                    ? document.getElementById(
+                        timeId
+                    )
                     : null;
 
-        } catch {
 
-            data = text;
+            if (box) {
 
-        }
+                box.classList.add(
+                    "active"
+                );
+
+            }
 
 
-        if (!response.ok) {
+            if (timeElement) {
 
-            console.error(
-                "LosOja bills request error:",
-                data
-            );
+                timeElement.textContent =
+                    message ||
+                    "Your transaction is being processed. Please keep this page open.";
 
-            throw new Error(
-                data?.message ||
-                data?.error ||
-                "Unable to load bill history."
-            );
+            }
 
         }
 
 
-        return data;
+        function updateProcessingMessage(
+            timeId,
+            seconds
+        ) {
 
-    }
+            if (!timeId) {
+
+                return;
+
+            }
 
 
-    const tabButtons =
-        document.querySelectorAll(
-            ".tab-btn"
+            const element =
+                document.getElementById(
+                    timeId
+                );
+
+
+            if (!element) {
+
+                return;
+
+            }
+
+
+            element.textContent =
+                "Processing for " +
+                seconds +
+                " second" +
+                (
+                    seconds === 1
+                        ? ""
+                        : "s"
+                ) +
+                ". Please do not click the payment button again.";
+
+        }
+
+
+        function hideProcessingMessage(
+            boxId
+        ) {
+
+            const box =
+                document.getElementById(
+                    boxId
+                );
+
+
+            if (box) {
+
+                box.classList.remove(
+                    "active"
+                );
+
+            }
+
+        }
+
+
+        function startProcessingTimer(
+            boxId,
+            timeId
+        ) {
+
+            let seconds = 0;
+
+
+            showProcessingMessage(
+                boxId,
+                timeId,
+                "Your transaction is being processed. Please do not click the payment button again."
+            );
+
+
+            const interval =
+                setInterval(
+                    function () {
+
+                        seconds++;
+
+
+                        updateProcessingMessage(
+                            timeId,
+                            seconds
+                        );
+
+                    },
+                    1000
+                );
+
+
+            return interval;
+
+        }
+
+
+        function stopProcessingTimer(
+            boxId,
+            interval
+        ) {
+
+            if (interval) {
+
+                clearInterval(
+                    interval
+                );
+
+            }
+
+
+            hideProcessingMessage(
+                boxId
+            );
+
+        }
+
+
+        async function getAccessToken() {
+
+            try {
+
+                if (
+                    typeof window.getSupabaseAccessToken ===
+                    "function"
+                ) {
+
+                    return await window.getSupabaseAccessToken();
+
+                }
+
+
+                return null;
+
+            } catch (error) {
+
+                console.error(
+                    "LosOja bills token error:",
+                    error
+                );
+
+
+                return null;
+
+            }
+
+        }
+
+
+        async function billRequest(endpoint) {
+
+            const token =
+                await getAccessToken();
+
+
+            const headers = {
+
+                "apikey":
+                    SUPABASE_KEY,
+
+                "Content-Type":
+                    "application/json",
+
+                "Accept":
+                    "application/json"
+
+            };
+
+
+            if (token) {
+
+                headers.Authorization =
+                    "Bearer " + token;
+
+            }
+
+
+            const response =
+                await fetch(
+                    SUPABASE_URL + endpoint,
+                    {
+                        method:
+                            "GET",
+
+                        headers:
+                            headers
+                    }
+                );
+
+
+            const text =
+                await response.text();
+
+
+            let data = null;
+
+
+            try {
+
+                data =
+                    text
+                        ? JSON.parse(text)
+                        : null;
+
+            } catch {
+
+                data = text;
+
+            }
+
+
+            if (!response.ok) {
+
+                console.error(
+                    "LosOja bills request error:",
+                    data
+                );
+
+
+                throw new Error(
+                    data?.message ||
+                    data?.error ||
+                    "Unable to load bill history."
+                );
+
+            }
+
+
+            return data;
+
+        }
+
+
+        /* =====================================================
+           TABS
+        ===================================================== */
+
+        const tabButtons =
+            document.querySelectorAll(
+                ".tab-btn"
+            );
+
+
+        const forms =
+            document.querySelectorAll(
+                ".bill-form"
+            );
+
+
+        tabButtons.forEach(
+            function (button) {
+
+                button.addEventListener(
+                    "click",
+                    function () {
+
+                        if (
+                            isPaymentLocked()
+                        ) {
+
+                            alert(
+                                "A bill payment is currently being processed. Please wait for the transaction result."
+                            );
+
+
+                            return;
+
+                        }
+
+
+                        const tab =
+                            button.dataset.tab;
+
+
+                        tabButtons.forEach(
+                            function (item) {
+
+                                item.classList.remove(
+                                    "active"
+                                );
+
+                            }
+                        );
+
+
+                        forms.forEach(
+                            function (form) {
+
+                                form.classList.remove(
+                                    "active"
+                                );
+
+                            }
+                        );
+
+
+                        button.classList.add(
+                            "active"
+                        );
+
+
+                        const target =
+                            document.getElementById(
+                                tab + "Form"
+                            );
+
+
+                        if (target) {
+
+                            target.classList.add(
+                                "active"
+                            );
+
+                        }
+
+                    }
+                );
+
+            }
         );
 
 
-    const forms =
-        document.querySelectorAll(
-            ".bill-form"
-        );
+        const PAY_BILL_FUNCTION_URL =
+            SUPABASE_URL +
+            "/functions/v1/pay-bill";
 
 
-    tabButtons.forEach(
-        function (button) {
+        /* =====================================================
+           AIRTIME
+        ===================================================== */
 
-            button.addEventListener(
-                "click",
-                function () {
+        async function runRealAirtimePayment(
+            network,
+            phone,
+            amount
+        ) {
+
+            const token =
+                await getAccessToken();
+
+
+            if (!token) {
+
+                throw new Error(
+                    "Please log in to buy Airtime."
+                );
+
+            }
+
+
+            const response =
+                await fetch(
+                    PAY_BILL_FUNCTION_URL,
+                    {
+                        method:
+                            "POST",
+
+                        headers: {
+
+                            "Content-Type":
+                                "application/json",
+
+                            "apikey":
+                                SUPABASE_KEY,
+
+                            "Authorization":
+                                "Bearer " + token
+
+                        },
+
+                        body:
+                            JSON.stringify({
+
+                                service_type:
+                                    "airtime",
+
+                                network:
+                                    network,
+
+                                phone:
+                                    phone,
+
+                                amount:
+                                    Number(amount)
+
+                            })
+
+                    }
+                );
+
+
+            const text =
+                await response.text();
+
+
+            let data = null;
+
+
+            try {
+
+                data =
+                    text
+                        ? JSON.parse(text)
+                        : null;
+
+            } catch {
+
+                data = null;
+
+            }
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data?.error ||
+                    data?.message ||
+                    "Airtime payment failed."
+                );
+
+            }
+
+
+            return data;
+
+        }
+
+
+        const airtimeForm =
+            document.getElementById(
+                "airtimeForm"
+            );
+
+
+        if (airtimeForm) {
+
+            airtimeForm.addEventListener(
+                "submit",
+                async function (event) {
+
+                    event.preventDefault();
+
 
                     if (
-                        isPaymentLocked()
+                        !lockPayment(
+                            "airtime"
+                        )
                     ) {
 
                         alert(
-                            "A bill payment is currently being processed. Please wait for the transaction result."
+                            "A payment is already being processed. Please wait."
                         );
+
 
                         return;
 
                     }
 
 
-                    const tab =
-                        button.dataset.tab;
-
-
-                    tabButtons.forEach(
-                        function (item) {
-
-                            item.classList.remove(
-                                "active"
-                            );
-
-                        }
-                    );
-
-
-                    forms.forEach(
-                        function (form) {
-
-                            form.classList.remove(
-                                "active"
-                            );
-
-                        }
-                    );
-
-
-                    button.classList.add(
-                        "active"
-                    );
-
-
-                    const target =
+                    const network =
                         document.getElementById(
-                            tab + "Form"
+                            "airtimeNetwork"
+                        )?.value
+                        .trim()
+                        .toLowerCase();
+
+
+                    const phone =
+                        document.getElementById(
+                            "airtimePhone"
+                        )?.value
+                        .trim();
+
+
+                    const amount =
+                        Number(
+                            document.getElementById(
+                                "airtimeAmount"
+                            )?.value
                         );
 
 
-                    if (target) {
+                    if (!network) {
 
-                        target.classList.add(
-                            "active"
+                        unlockPayment();
+
+
+                        alert(
+                            "Please select a network."
                         );
+
+
+                        return;
 
                     }
 
-                }
-            );
 
-        }
-    );
+                    if (
+                        !/^[0-9]{11}$/.test(
+                            phone
+                        )
+                    ) {
 
+                        unlockPayment();
 
-    const PAY_BILL_FUNCTION_URL =
-        SUPABASE_URL +
-        "/functions/v1/pay-bill";
 
-
-    async function runRealAirtimePayment(
-        network,
-        phone,
-        amount
-    ) {
-
-        const token =
-            await getAccessToken();
-
-
-        if (!token) {
-
-            throw new Error(
-                "Please log in to buy Airtime."
-            );
-
-        }
-
-
-        const response =
-            await fetch(
-                PAY_BILL_FUNCTION_URL,
-                {
-                    method:
-                        "POST",
-
-                    headers: {
-
-                        "Content-Type":
-                            "application/json",
-
-                        "apikey":
-                            SUPABASE_KEY,
-
-                        "Authorization":
-                            "Bearer " + token
-
-                    },
-
-                    body:
-                        JSON.stringify({
-
-                            service_type:
-                                "airtime",
-
-                            network:
-                                network,
-
-                            phone:
-                                phone,
-
-                            amount:
-                                Number(amount)
-
-                        })
-
-                }
-            );
-
-
-        const text =
-            await response.text();
-
-
-        let data = null;
-
-
-        try {
-
-            data =
-                text
-                    ? JSON.parse(text)
-                    : null;
-
-        } catch {
-
-            data = null;
-
-        }
-
-
-        if (!response.ok) {
-
-            throw new Error(
-                data?.error ||
-                data?.message ||
-                "Airtime payment failed."
-            );
-
-        }
-
-
-        return data;
-
-    }
-
-
-    const airtimeForm =
-        document.getElementById(
-            "airtimeForm"
-        );
-
-
-    if (airtimeForm) {
-
-        airtimeForm.addEventListener(
-            "submit",
-            async function (event) {
-
-                event.preventDefault();
-
-
-                if (
-                    !lockPayment(
-                        "airtime"
-                    )
-                ) {
-
-                    alert(
-                        "A payment is already being processed. Please wait."
-                    );
-
-                    return;
-
-                }
-
-
-                const network =
-                    document.getElementById(
-                        "airtimeNetwork"
-                    )?.value
-                    .trim()
-                    .toLowerCase();
-
-
-                const phone =
-                    document.getElementById(
-                        "airtimePhone"
-                    )?.value
-                    .trim();
-
-
-                const amount =
-                    Number(
-                        document.getElementById(
-                            "airtimeAmount"
-                        )?.value
-                    );
-
-
-                if (!network) {
-
-                    unlockPayment();
-
-                    alert(
-                        "Please select a network."
-                    );
-
-                    return;
-
-                }
-
-
-                if (
-                    !/^[0-9]{11}$/.test(
-                        phone
-                    )
-                ) {
-
-                    unlockPayment();
-
-                    alert(
-                        "Enter a valid 11-digit Nigerian phone number."
-                    );
-
-                    return;
-
-                }
-
-
-                if (
-                    !Number.isFinite(
-                        amount
-                    ) ||
-                    amount < 50
-                ) {
-
-                    unlockPayment();
-
-                    alert(
-                        "Airtime amount must be at least ₦50."
-                    );
-
-                    return;
-
-                }
-
-
-                if (
-                    amount > 100000
-                ) {
-
-                    unlockPayment();
-
-                    alert(
-                        "Airtime amount cannot exceed ₦100,000 in sandbox."
-                    );
-
-                    return;
-
-                }
-
-
-                setProcessingState(
-                    airtimeForm,
-                    "Processing Airtime..."
-                );
-
-
-                const processingInterval =
-                    startProcessingTimer(
-                        "airtimeProcessing",
-                        "airtimeProcessingTime"
-                    );
-
-
-                try {
-
-                    const result =
-                        await runRealAirtimePayment(
-                            network,
-                            phone,
-                            amount
+                        alert(
+                            "Enter a valid 11-digit Nigerian phone number."
                         );
 
 
+                        return;
+
+                    }
+
+
                     if (
-                        result?.status ===
-                        "successful"
+                        !Number.isFinite(
+                            amount
+                        ) ||
+                        amount < 50
                     ) {
+
+                        unlockPayment();
+
+
+                        alert(
+                            "Airtime amount must be at least ₦50."
+                        );
+
+
+                        return;
+
+                    }
+
+
+                    if (
+                        amount > 100000
+                    ) {
+
+                        unlockPayment();
+
+
+                        alert(
+                            "Airtime amount cannot exceed ₦100,000 in sandbox."
+                        );
+
+
+                        return;
+
+                    }
+
+
+                    setProcessingState(
+                        airtimeForm,
+                        "Processing Airtime..."
+                    );
+
+
+                    const processingInterval =
+                        startProcessingTimer(
+                            "airtimeProcessing",
+                            "airtimeProcessingTime"
+                        );
+
+
+                    try {
+
+                        const result =
+                            await runRealAirtimePayment(
+                                network,
+                                phone,
+                                amount
+                            );
+
+
+                        if (
+                            result?.status ===
+                            "successful"
+                        ) {
+
+                            stopProcessingTimer(
+                                "airtimeProcessing",
+                                processingInterval
+                            );
+
+
+                            alert(
+                                "Airtime purchase successful.\n\n" +
+                                "Network: " +
+                                network.toUpperCase() +
+                                "\n" +
+                                "Amount: ₦" +
+                                Number(
+                                    amount
+                                ).toLocaleString(
+                                    "en-NG"
+                                )
+                            );
+
+
+                            airtimeForm.reset();
+
+
+                            restoreFormState(
+                                airtimeForm,
+                                "Buy Airtime"
+                            );
+
+
+                            unlockPayment();
+
+
+                            loadBillHistory();
+
+
+                            return;
+
+                        }
+
+
+                        if (
+                            result?.status ===
+                            "pending"
+                        ) {
+
+                            stopProcessingTimer(
+                                "airtimeProcessing",
+                                processingInterval
+                            );
+
+
+                            const button =
+                                airtimeForm.querySelector(
+                                    ".pay-btn"
+                                );
+
+
+                            if (button) {
+
+                                button.textContent =
+                                    "Transaction Pending — Do Not Retry";
+
+                            }
+
+
+                            alert(
+                                "Your Airtime transaction is still being processed.\n\n" +
+                                "Do not submit the payment again. Check Bill History shortly."
+                            );
+
+
+                            loadBillHistory();
+
+
+                            return;
+
+                        }
+
 
                         stopProcessingTimer(
                             "airtimeProcessing",
@@ -1456,20 +1564,9 @@ html
 
 
                         alert(
-                            "Airtime purchase successful.\n\n" +
-                            "Network: " +
-                            network.toUpperCase() +
-                            "\n" +
-                            "Amount: ₦" +
-                            Number(
-                                amount
-                            ).toLocaleString(
-                                "en-NG"
-                            )
+                            result?.message ||
+                            "Airtime payment could not be completed."
                         );
-
-
-                        airtimeForm.reset();
 
 
                         restoreFormState(
@@ -1480,18 +1577,13 @@ html
 
                         unlockPayment();
 
+                    } catch (error) {
 
-                        loadBillHistory();
+                        console.error(
+                            "LosOja Airtime error:",
+                            error
+                        );
 
-                        return;
-
-                    }
-
-
-                    if (
-                        result?.status ===
-                        "pending"
-                    ) {
 
                         stopProcessingTimer(
                             "airtimeProcessing",
@@ -1508,319 +1600,345 @@ html
                         if (button) {
 
                             button.textContent =
-                                "Transaction Pending — Do Not Retry";
+                                "Request Sent — Check History";
 
                         }
 
 
                         alert(
-                            "Your Airtime transaction is still being processed.\n\n" +
-                            "Do not submit the payment again. Check Bill History shortly."
+                            "We could not confirm the Airtime result.\n\n" +
+                            "The request may already have been received. " +
+                            "Please check Bill History before trying again."
                         );
 
 
                         loadBillHistory();
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        /* =====================================================
+           DATA
+        ===================================================== */
+
+        async function runRealDataPayment(
+            network,
+            phone,
+            amount
+        ) {
+
+            const token =
+                await getAccessToken();
+
+
+            if (!token) {
+
+                throw new Error(
+                    "Please log in to buy Data."
+                );
+
+            }
+
+
+            const response =
+                await fetch(
+                    PAY_BILL_FUNCTION_URL,
+                    {
+                        method:
+                            "POST",
+
+                        headers: {
+
+                            "Content-Type":
+                                "application/json",
+
+                            "apikey":
+                                SUPABASE_KEY,
+
+                            "Authorization":
+                                "Bearer " + token
+
+                        },
+
+                        body:
+                            JSON.stringify({
+
+                                service_type:
+                                    "data",
+
+                                network:
+                                    network,
+
+                                phone:
+                                    phone,
+
+                                amount:
+                                    Number(amount)
+
+                            })
+
+                    }
+                );
+
+
+            const text =
+                await response.text();
+
+
+            let data = null;
+
+
+            try {
+
+                data =
+                    text
+                        ? JSON.parse(text)
+                        : null;
+
+            } catch {
+
+                data = null;
+
+            }
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data?.error ||
+                    data?.message ||
+                    "Data payment failed."
+                );
+
+            }
+
+
+            return data;
+
+        }
+
+
+        const dataForm =
+            document.getElementById(
+                "dataForm"
+            );
+
+
+        if (dataForm) {
+
+            dataForm.addEventListener(
+                "submit",
+                async function (event) {
+
+                    event.preventDefault();
+
+
+                    if (
+                        !lockPayment(
+                            "data"
+                        )
+                    ) {
+
+                        alert(
+                            "A payment is already being processed. Please wait."
+                        );
+
 
                         return;
 
                     }
 
 
-                    stopProcessingTimer(
-                        "airtimeProcessing",
-                        processingInterval
-                    );
+                    const network =
+                        document.getElementById(
+                            "dataNetwork"
+                        )?.value
+                        .trim()
+                        .toLowerCase();
 
 
-                    alert(
-                        result?.message ||
-                        "Airtime payment could not be completed."
-                    );
+                    const phone =
+                        document.getElementById(
+                            "dataPhone"
+                        )?.value
+                        .trim();
 
 
-                    restoreFormState(
-                        airtimeForm,
-                        "Buy Airtime"
-                    );
+                    const plan =
+                        document.getElementById(
+                            "dataPlan"
+                        )?.value;
 
 
-                    unlockPayment();
+                    const planAmounts = {
+
+                        small:
+                            100,
+
+                        medium:
+                            500,
+
+                        large:
+                            1000
+
+                    };
 
 
-                } catch (error) {
-
-                    console.error(
-                        "LosOja Airtime error:",
-                        error
-                    );
+                    const amount =
+                        planAmounts[
+                            plan
+                        ];
 
 
-                    stopProcessingTimer(
-                        "airtimeProcessing",
-                        processingInterval
-                    );
+                    if (
+                        !network ||
+                        !phone ||
+                        !amount
+                    ) {
+
+                        unlockPayment();
 
 
-                    const button =
-                        airtimeForm.querySelector(
-                            ".pay-btn"
+                        alert(
+                            "Please complete the Data form."
                         );
 
 
-                    if (button) {
-
-                        button.textContent =
-                            "Request Sent — Check History";
+                        return;
 
                     }
 
 
-                    alert(
-                        "We could not confirm the Airtime result.\n\n" +
-                        "The request may already have been received. " +
-                        "Please check Bill History before trying again."
-                    );
+                    if (
+                        !/^[0-9]{11}$/.test(
+                            phone
+                        )
+                    ) {
 
+                        unlockPayment();
 
-                    loadBillHistory();
 
-                }
-
-            }
-        );
-
-    }
-
-
-    async function runRealDataPayment(
-        network,
-        phone,
-        amount
-    ) {
-
-        const token =
-            await getAccessToken();
-
-
-        if (!token) {
-
-            throw new Error(
-                "Please log in to buy Data."
-            );
-
-        }
-
-
-        const response =
-            await fetch(
-                PAY_BILL_FUNCTION_URL,
-                {
-                    method:
-                        "POST",
-
-                    headers: {
-
-                        "Content-Type":
-                            "application/json",
-
-                        "apikey":
-                            SUPABASE_KEY,
-
-                        "Authorization":
-                            "Bearer " + token
-
-                    },
-
-                    body:
-                        JSON.stringify({
-
-                            service_type:
-                                "data",
-
-                            network:
-                                network,
-
-                            phone:
-                                phone,
-
-                            amount:
-                                Number(amount)
-
-                        })
-
-                }
-            );
-
-
-        const text =
-            await response.text();
-
-
-        let data = null;
-
-
-        try {
-
-            data =
-                text
-                    ? JSON.parse(text)
-                    : null;
-
-        } catch {
-
-            data = null;
-
-        }
-
-
-        if (!response.ok) {
-
-            throw new Error(
-                data?.error ||
-                data?.message ||
-                "Data payment failed."
-            );
-
-        }
-
-
-        return data;
-
-    }
-
-
-    const dataForm =
-        document.getElementById(
-            "dataForm"
-        );
-
-
-    if (dataForm) {
-
-        dataForm.addEventListener(
-            "submit",
-            async function (event) {
-
-                event.preventDefault();
-
-
-                if (
-                    !lockPayment(
-                        "data"
-                    )
-                ) {
-
-                    alert(
-                        "A payment is already being processed. Please wait."
-                    );
-
-                    return;
-
-                }
-
-
-                const network =
-                    document.getElementById(
-                        "dataNetwork"
-                    )?.value
-                    .trim()
-                    .toLowerCase();
-
-
-                const phone =
-                    document.getElementById(
-                        "dataPhone"
-                    )?.value
-                    .trim();
-
-
-                const plan =
-                    document.getElementById(
-                        "dataPlan"
-                    )?.value;
-
-
-                const planAmounts = {
-
-                    small:
-                        100,
-
-                    medium:
-                        500,
-
-                    large:
-                        1000
-
-                };
-
-
-                const amount =
-                    planAmounts[
-                        plan
-                    ];
-
-
-                if (
-                    !network ||
-                    !phone ||
-                    !amount
-                ) {
-
-                    unlockPayment();
-
-                    alert(
-                        "Please complete the Data form."
-                    );
-
-                    return;
-
-                }
-
-
-                if (
-                    !/^[0-9]{11}$/.test(
-                        phone
-                    )
-                ) {
-
-                    unlockPayment();
-
-                    alert(
-                        "Enter a valid 11-digit Nigerian phone number."
-                    );
-
-                    return;
-
-                }
-
-
-                setProcessingState(
-                    dataForm,
-                    "Processing Data..."
-                );
-
-
-                const processingInterval =
-                    startProcessingTimer(
-                        "dataProcessing",
-                        "dataProcessingTime"
-                    );
-
-
-                try {
-
-                    const result =
-                        await runRealDataPayment(
-                            network,
-                            phone,
-                            amount
+                        alert(
+                            "Enter a valid 11-digit Nigerian phone number."
                         );
 
 
-                    if (
-                        result?.status ===
-                        "successful"
-                    ) {
+                        return;
+
+                    }
+
+
+                    setProcessingState(
+                        dataForm,
+                        "Processing Data..."
+                    );
+
+
+                    const processingInterval =
+                        startProcessingTimer(
+                            "dataProcessing",
+                            "dataProcessingTime"
+                        );
+
+
+                    try {
+
+                        const result =
+                            await runRealDataPayment(
+                                network,
+                                phone,
+                                amount
+                            );
+
+
+                        if (
+                            result?.status ===
+                            "successful"
+                        ) {
+
+                            stopProcessingTimer(
+                                "dataProcessing",
+                                processingInterval
+                            );
+
+
+                            alert(
+                                "Data purchase successful.\n\n" +
+                                "Network: " +
+                                network.toUpperCase() +
+                                "\n" +
+                                "Amount: ₦" +
+                                Number(
+                                    amount
+                                ).toLocaleString(
+                                    "en-NG"
+                                )
+                            );
+
+
+                            dataForm.reset();
+
+
+                            restoreFormState(
+                                dataForm,
+                                "Buy Data"
+                            );
+
+
+                            unlockPayment();
+
+
+                            loadBillHistory();
+
+
+                            return;
+
+                        }
+
+
+                        if (
+                            result?.status ===
+                            "pending"
+                        ) {
+
+                            stopProcessingTimer(
+                                "dataProcessing",
+                                processingInterval
+                            );
+
+
+                            const button =
+                                dataForm.querySelector(
+                                    ".pay-btn"
+                                );
+
+
+                            if (button) {
+
+                                button.textContent =
+                                    "Transaction Pending — Do Not Retry";
+
+                            }
+
+
+                            alert(
+                                "Your Data transaction is still being processed.\n\n" +
+                                "Do not submit the payment again. Check Bill History shortly."
+                            );
+
+
+                            loadBillHistory();
+
+
+                            return;
+
+                        }
+
 
                         stopProcessingTimer(
                             "dataProcessing",
@@ -1829,20 +1947,9 @@ html
 
 
                         alert(
-                            "Data purchase successful.\n\n" +
-                            "Network: " +
-                            network.toUpperCase() +
-                            "\n" +
-                            "Amount: ₦" +
-                            Number(
-                                amount
-                            ).toLocaleString(
-                                "en-NG"
-                            )
+                            result?.message ||
+                            "Data payment could not be completed."
                         );
-
-
-                        dataForm.reset();
 
 
                         restoreFormState(
@@ -1853,18 +1960,13 @@ html
 
                         unlockPayment();
 
+                    } catch (error) {
 
-                        loadBillHistory();
+                        console.error(
+                            "LosOja Data error:",
+                            error
+                        );
 
-                        return;
-
-                    }
-
-
-                    if (
-                        result?.status ===
-                        "pending"
-                    ) {
 
                         stopProcessingTimer(
                             "dataProcessing",
@@ -1881,632 +1983,530 @@ html
                         if (button) {
 
                             button.textContent =
-                                "Transaction Pending — Do Not Retry";
+                                "Request Sent — Check History";
 
                         }
 
 
                         alert(
-                            "Your Data transaction is still being processed.\n\n" +
-                            "Do not submit the payment again. Check Bill History shortly."
+                            "We could not confirm the Data result.\n\n" +
+                            "The request may already have been received. " +
+                            "Please check Bill History before trying again."
                         );
 
 
                         loadBillHistory();
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        /* =====================================================
+           TEST ELECTRICITY
+        ===================================================== */
+
+        const TEST_BILL_FUNCTION_URL =
+            SUPABASE_URL +
+            "/functions/v1/test-bill-payment";
+
+
+        async function getTestToken() {
+
+            try {
+
+                if (
+                    typeof window.ensureValidSupabaseSession ===
+                    "function"
+                ) {
+
+                    const session =
+                        await window.ensureValidSupabaseSession();
+
+
+                    return session?.access_token ||
+                        null;
+
+                }
+
+
+                if (
+                    typeof window.getSupabaseAccessToken ===
+                    "function"
+                ) {
+
+                    return await window.getSupabaseAccessToken();
+
+                }
+
+
+                return null;
+
+            } catch (error) {
+
+                console.error(
+                    "LosOja test bill token error:",
+                    error
+                );
+
+
+                return null;
+
+            }
+
+        }
+
+
+        async function runTestBillPayment(
+            serviceType,
+            customerIdentifier,
+            amount,
+            options = {}
+        ) {
+
+            const token =
+                await getTestToken();
+
+
+            if (!token) {
+
+                throw new Error(
+                    "Please log in to test bill payments."
+                );
+
+            }
+
+
+            const response =
+                await fetch(
+                    TEST_BILL_FUNCTION_URL,
+                    {
+                        method:
+                            "POST",
+
+                        headers: {
+
+                            "Content-Type":
+                                "application/json",
+
+                            "apikey":
+                                SUPABASE_KEY,
+
+                            "Authorization":
+                                "Bearer " + token
+
+                        },
+
+                        body:
+                            JSON.stringify({
+
+                                service_type:
+                                    serviceType,
+
+                                customer_identifier:
+                                    customerIdentifier,
+
+                                network:
+                                    options.network ||
+                                    "",
+
+                                provider:
+                                    options.provider ||
+                                    "",
+
+                                amount:
+                                    Number(amount),
+
+                                status:
+                                    "successful"
+
+                            })
+
+                    }
+                );
+
+
+            const text =
+                await response.text();
+
+
+            let data = null;
+
+
+            try {
+
+                data =
+                    text
+                        ? JSON.parse(text)
+                        : null;
+
+            } catch {
+
+                data = null;
+
+            }
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data?.error ||
+                    data?.message ||
+                    "Test bill payment failed."
+                );
+
+            }
+
+
+            if (
+                !data?.success ||
+                !data?.test_mode
+            ) {
+
+                throw new Error(
+                    "Unexpected test payment response."
+                );
+
+            }
+
+
+            return data;
+
+        }
+
+
+        const electricityForm =
+            document.getElementById(
+                "electricityForm"
+            );
+
+
+        if (electricityForm) {
+
+            electricityForm.addEventListener(
+                "submit",
+                async function (event) {
+
+                    event.preventDefault();
+
+
+                    if (
+                        !lockPayment(
+                            "electricity"
+                        )
+                    ) {
+
+                        alert(
+                            "A payment is already being processed. Please wait."
+                        );
+
 
                         return;
 
                     }
 
 
-                    stopProcessingTimer(
-                        "dataProcessing",
-                        processingInterval
-                    );
-
-
-                    alert(
-                        result?.message ||
-                        "Data payment could not be completed."
-                    );
-
-
-                    restoreFormState(
-                        dataForm,
-                        "Buy Data"
-                    );
-
-
-                    unlockPayment();
-
-
-                } catch (error) {
-
-                    console.error(
-                        "LosOja Data error:",
-                        error
-                    );
-
-
-                    stopProcessingTimer(
-                        "dataProcessing",
-                        processingInterval
-                    );
-
-
-                    const button =
-                        dataForm.querySelector(
-                            ".pay-btn"
-                        );
-
-
-                    if (button) {
-
-                        button.textContent =
-                            "Request Sent — Check History";
-
-                    }
-
-
-                    alert(
-                        "We could not confirm the Data result.\n\n" +
-                        "The request may already have been received. " +
-                        "Please check Bill History before trying again."
-                    );
-
-
-                    loadBillHistory();
-
-                }
-
-            }
-        );
-
-    }
-
-
-    const TEST_BILL_FUNCTION_URL =
-        SUPABASE_URL +
-        "/functions/v1/test-bill-payment";
-
-
-    async function getTestToken() {
-
-        try {
-
-            if (
-                typeof window.ensureValidSupabaseSession ===
-                "function"
-            ) {
-
-                const session =
-                    await window.ensureValidSupabaseSession();
-
-                return session?.access_token ||
-                    null;
-
-            }
-
-
-            if (
-                typeof window.getSupabaseAccessToken ===
-                "function"
-            ) {
-
-                return await window.getSupabaseAccessToken();
-
-            }
-
-
-            return null;
-
-        } catch (error) {
-
-            console.error(
-                "LosOja test bill token error:",
-                error
-            );
-
-            return null;
-
-        }
-
-    }
-
-
-    async function runTestBillPayment(
-        serviceType,
-        customerIdentifier,
-        amount,
-        options = {}
-    ) {
-
-        const token =
-            await getTestToken();
-
-
-        if (!token) {
-
-            throw new Error(
-                "Please log in to test bill payments."
-            );
-
-        }
-
-
-        const response =
-            await fetch(
-                TEST_BILL_FUNCTION_URL,
-                {
-                    method:
-                        "POST",
-
-                    headers: {
-
-                        "Content-Type":
-                            "application/json",
-
-                        "apikey":
-                            SUPABASE_KEY,
-
-                        "Authorization":
-                            "Bearer " + token
-
-                    },
-
-                    body:
-                        JSON.stringify({
-
-                            service_type:
-                                serviceType,
-
-                            customer_identifier:
-                                customerIdentifier,
-
-                            network:
-                                options.network ||
-                                "",
-
-                            provider:
-                                options.provider ||
-                                "",
-
-                            amount:
-                                Number(amount),
-
-                            status:
-                                "successful"
-
-                        })
-
-                }
-            );
-
-
-        const text =
-            await response.text();
-
-
-        let data = null;
-
-
-        try {
-
-            data =
-                text
-                    ? JSON.parse(text)
-                    : null;
-
-        } catch {
-
-            data = null;
-
-        }
-
-
-        if (!response.ok) {
-
-            throw new Error(
-                data?.error ||
-                data?.message ||
-                "Test bill payment failed."
-            );
-
-        }
-
-
-        if (
-            !data?.success ||
-            !data?.test_mode
-        ) {
-
-            throw new Error(
-                "Unexpected test payment response."
-            );
-
-        }
-
-
-        return data;
-
-    }
-
-
-    const electricityForm =
-        document.getElementById(
-            "electricityForm"
-        );
-
-
-    if (electricityForm) {
-
-        electricityForm.addEventListener(
-            "submit",
-            async function (event) {
-
-                event.preventDefault();
-
-
-                if (
-                    !lockPayment(
-                        "electricity"
-                    )
-                ) {
-
-                    alert(
-                        "A payment is already being processed. Please wait."
-                    );
-
-                    return;
-
-                }
-
-
-                const provider =
-                    document.getElementById(
-                        "electricityProvider"
-                    )?.value
-                    .trim();
-
-
-                const meterType =
-                    document.getElementById(
-                        "electricityType"
-                    )?.value
-                    .trim();
-
-
-                const meterNumber =
-                    document.getElementById(
-                        "meterNumber"
-                    )?.value
-                    .trim();
-
-
-                const amount =
-                    Number(
+                    const provider =
                         document.getElementById(
-                            "electricityAmount"
+                            "electricityProvider"
                         )?.value
-                    );
+                        .trim();
 
 
-                if (
-                    !provider ||
-                    !meterType ||
-                    !meterNumber ||
-                    !amount ||
-                    amount <= 0
-                ) {
-
-                    unlockPayment();
-
-                    alert(
-                        "Please complete the Electricity form."
-                    );
-
-                    return;
-
-                }
+                    const meterType =
+                        document.getElementById(
+                            "electricityType"
+                        )?.value
+                        .trim();
 
 
-                setProcessingState(
-                    electricityForm,
-                    "Testing..."
-                );
+                    const meterNumber =
+                        document.getElementById(
+                            "meterNumber"
+                        )?.value
+                        .trim();
 
 
-                const processingInterval =
-                    startProcessingTimer(
-                        "electricityProcessing",
-                        null
-                    );
-
-
-                try {
-
-                    const result =
-                        await runTestBillPayment(
-                            "electricity",
-                            meterNumber,
-                            amount,
-                            {
-                                provider:
-                                    provider
-                            }
-                        );
-
-
-                    stopProcessingTimer(
-                        "electricityProcessing",
-                        processingInterval
-                    );
-
-
-                    alert(
-                        "TEST Electricity payment successful.\n\n" +
-                        "Amount: ₦" +
+                    const amount =
                         Number(
-                            result.transaction.amount
-                        ).toLocaleString(
-                            "en-NG"
-                        )
-                    );
-
-
-                    electricityForm.reset();
-
-
-                    restoreFormState(
-                        electricityForm,
-                        "Test Electricity"
-                    );
-
-
-                    unlockPayment();
-
-
-                    loadBillHistory();
-
-
-                } catch (error) {
-
-                    console.error(
-                        "LosOja test Electricity error:",
-                        error
-                    );
-
-
-                    stopProcessingTimer(
-                        "electricityProcessing",
-                        processingInterval
-                    );
-
-
-                    const button =
-                        electricityForm.querySelector(
-                            ".pay-btn"
+                            document.getElementById(
+                                "electricityAmount"
+                            )?.value
                         );
 
 
-                    if (button) {
+                    if (
+                        !provider ||
+                        !meterType ||
+                        !meterNumber ||
+                        !amount ||
+                        amount <= 0
+                    ) {
 
-                        button.textContent =
-                            "Request Sent — Check History";
+                        unlockPayment();
+
+
+                        alert(
+                            "Please complete the Electricity form."
+                        );
+
+
+                        return;
 
                     }
 
 
-                    alert(
-                        "We could not confirm the test payment result.\n\n" +
-                        "Please check Bill History before trying again."
+                    setProcessingState(
+                        electricityForm,
+                        "Testing..."
                     );
 
-                }
 
-            }
-        );
-
-    }
-
-
-    function formatServiceType(type) {
-
-        const names = {
-
-            airtime:
-                "Airtime",
-
-            data:
-                "Data",
-
-            electricity:
-                "Electricity"
-
-        };
+                    const processingInterval =
+                        startProcessingTimer(
+                            "electricityProcessing",
+                            null
+                        );
 
 
-        return (
-            names[type] ||
-            String(
-                type ||
-                "Bill"
-            )
-                .replace(
-                    /_/g,
-                    " "
-                )
-                .replace(
-                    /\b\w/g,
-                    function (letter) {
+                    try {
 
-                        return letter.toUpperCase();
+                        const result =
+                            await runTestBillPayment(
+                                "electricity",
+                                meterNumber,
+                                amount,
+                                {
+                                    provider:
+                                        provider
+                                }
+                            );
+
+
+                        stopProcessingTimer(
+                            "electricityProcessing",
+                            processingInterval
+                        );
+
+
+                        alert(
+                            "TEST Electricity payment successful.\n\n" +
+                            "Amount: ₦" +
+                            Number(
+                                result.transaction.amount
+                            ).toLocaleString(
+                                "en-NG"
+                            )
+                        );
+
+
+                        electricityForm.reset();
+
+
+                        restoreFormState(
+                            electricityForm,
+                            "Test Electricity"
+                        );
+
+
+                        unlockPayment();
+
+
+                        loadBillHistory();
+
+                    } catch (error) {
+
+                        console.error(
+                            "LosOja test Electricity error:",
+                            error
+                        );
+
+
+                        stopProcessingTimer(
+                            "electricityProcessing",
+                            processingInterval
+                        );
+
+
+                        const button =
+                            electricityForm.querySelector(
+                                ".pay-btn"
+                            );
+
+
+                        if (button) {
+
+                            button.textContent =
+                                "Request Sent — Check History";
+
+                        }
+
+
+                        alert(
+                            "We could not confirm the test payment result.\n\n" +
+                            "Please check Bill History before trying again."
+                        );
 
                     }
+
+                }
+            );
+
+        }
+
+
+        /* =====================================================
+           HISTORY HELPERS
+        ===================================================== */
+
+        function formatServiceType(type) {
+
+            const names = {
+
+                airtime:
+                    "Airtime",
+
+                data:
+                    "Data",
+
+                electricity:
+                    "Electricity"
+
+            };
+
+
+            return (
+                names[type] ||
+                String(
+                    type ||
+                    "Bill"
                 )
-        );
+                    .replace(
+                        /_/g,
+                        " "
+                    )
+                    .replace(
+                        /\b\w/g,
+                        function (letter) {
 
-    }
+                            return letter.toUpperCase();
 
-
-    function formatStatus(status) {
-
-        const names = {
-
-            pending:
-                "Pending",
-
-            successful:
-                "Successful",
-
-            failed:
-                "Failed",
-
-            reversed:
-                "Reversed"
-
-        };
-
-
-        return (
-            names[status] ||
-            String(
-                status ||
-                "Unknown"
-            )
-        );
-
-    }
-
-
-    function formatDate(value) {
-
-        if (!value) {
-
-            return "";
-
-        }
-
-
-        try {
-
-            return new Date(
-                value
-            ).toLocaleString(
-                "en-NG"
+                        }
+                    )
             );
 
-        } catch {
-
-            return "";
-
-        }
-
-    }
-
-
-    function escapeHTML(value) {
-
-        if (
-            value === null ||
-            value === undefined
-        ) {
-
-            return "";
-
         }
 
 
-        return String(value)
-            .replace(
-                /&/g,
-                "&amp;"
-            )
-            .replace(
-                /</g,
-                "&lt;"
-            )
-            .replace(
-                />/g,
-                "&gt;"
-            )
-            .replace(
-                /"/g,
-                "&quot;"
-            )
-            .replace(
-                /'/g,
-                "&#039;"
+        function formatStatus(status) {
+
+            const names = {
+
+                pending:
+                    "Pending",
+
+                successful:
+                    "Successful",
+
+                failed:
+                    "Failed",
+
+                reversed:
+                    "Reversed"
+
+            };
+
+
+            return (
+                names[status] ||
+                String(
+                    status ||
+                    "Unknown"
+                )
             );
 
-    }
-
-
-    async function loadBillHistory() {
-
-        const container =
-            document.getElementById(
-                "billHistory"
-            );
-
-
-        if (!container) {
-
-            return;
-
         }
 
 
-        container.innerHTML =
-            `
-            <div class="empty">
-                Loading bill history...
-            </div>
-            `;
+        function formatDate(value) {
 
+            if (!value) {
 
-        try {
-
-            const user =
-                typeof window.getCurrentUser ===
-                "function"
-                    ? await window.getCurrentUser()
-                    : null;
-
-
-            if (!user?.id) {
-
-                container.innerHTML =
-                    `
-                    <div class="empty">
-                        Please login to view bill history.
-                    </div>
-                    `;
-
-                return;
+                return "";
 
             }
 
 
-            const data =
-                await billRequest(
-                    `/rest/v1/bill_transactions?select=*&user_id=eq.${encodeURIComponent(
-                        user.id
-                    )}&order=created_at.desc&limit=50`
+            try {
+
+                return new Date(
+                    value
+                ).toLocaleString(
+                    "en-NG"
                 );
 
+            } catch {
+
+                return "";
+
+            }
+
+        }
+
+
+        function escapeHTML(value) {
 
             if (
-                !data ||
-                !data.length
+                value === null ||
+                value === undefined
             ) {
 
-                container.innerHTML =
-                    `
-                    <div class="empty">
-                        No bill payments yet.
-                    </div>
-                    `;
+                return "";
+
+            }
+
+
+            return String(value)
+                .replace(
+                    /&/g,
+                    "&amp;"
+                )
+                .replace(
+                    /</g,
+                    "&lt;"
+                )
+                .replace(
+                    />/g,
+                    "&gt;"
+                )
+                .replace(
+                    /"/g,
+                    "&quot;"
+                )
+                .replace(
+                    /'/g,
+                    "&#039;"
+                );
+
+        }
+
+
+        /* =====================================================
+           BILL HISTORY
+        ===================================================== */
+
+        async function loadBillHistory() {
+
+            const container =
+                document.getElementById(
+                    "billHistory"
+                );
+
+
+            if (!container) {
 
                 return;
 
@@ -2514,167 +2514,200 @@ html
 
 
             container.innerHTML =
-                data.map(
-                    function (transaction) {
-
-                        const amount =
-                            Number(
-                                transaction.amount ||
-                                0
-                            );
+                `
+                <div class="empty">
+                    Loading bill history...
+                </div>
+                `;
 
 
-                        const fee =
-                            Number(
-                                transaction.fee ||
-                                0
-                            );
+            try {
+
+                const user =
+                    typeof window.getCurrentUser ===
+                    "function"
+                        ? await window.getCurrentUser()
+                        : null;
 
 
-                        const total =
-                            Number(
-                                transaction.total_amount ||
-                                amount + fee
-                            );
+                if (!user?.id) {
+
+                    container.innerHTML =
+                        `
+                        <div class="empty">
+                            Please login to view bill history.
+                        </div>
+                        `;
 
 
-                        return `
+                    return;
 
-                            <div
-                                class="history-item"
-                            >
+                }
 
-                                <div
-                                    class="history-row"
-                                >
 
-                                    <div>
+                const data =
+                    await billRequest(
+                        `/rest/v1/bill_transactions?select=*&user_id=eq.${encodeURIComponent(
+                            user.id
+                        )}&order=created_at.desc&limit=50`
+                    );
 
-                                        <div
-                                            class="history-type"
-                                        >
-                                            ${escapeHTML(
-                                                formatServiceType(
-                                                    transaction.service_type
-                                                )
-                                            )}
-                                        </div>
+
+                if (
+                    !data ||
+                    !data.length
+                ) {
+
+                    container.innerHTML =
+                        `
+                        <div class="empty">
+                            No bill payments yet.
+                        </div>
+                        `;
+
+
+                    return;
+
+                }
+
+
+                container.innerHTML =
+                    data.map(
+                        function (transaction) {
+
+                            const amount =
+                                Number(
+                                    transaction.amount ||
+                                    0
+                                );
+
+
+                            const fee =
+                                Number(
+                                    transaction.fee ||
+                                    0
+                                );
+
+
+                            const total =
+                                Number(
+                                    transaction.total_amount ||
+                                    amount + fee
+                                );
+
+
+                            return `
+
+                                <div class="history-item">
+
+                                    <div class="history-row">
 
                                         <div>
-                                            ${
-                                                escapeHTML(
-                                                    transaction.network ||
-                                                    transaction.provider ||
-                                                    transaction.customer_identifier ||
-                                                    ""
-                                                )
-                                            }
-                                        </div>
 
-                                        <div
-                                            class="history-date"
-                                        >
-                                            ${escapeHTML(
-                                                formatDate(
-                                                    transaction.created_at
-                                                )
-                                            )}
-                                        </div>
+                                            <div class="history-type">
+                                                ${escapeHTML(
+                                                    formatServiceType(
+                                                        transaction.service_type
+                                                    )
+                                                )}
+                                            </div>
 
-                                        <div
-                                            class="history-date"
-                                        >
-                                            Status:
-                                            ${escapeHTML(
-                                                formatStatus(
-                                                    transaction.status
-                                                )
-                                            )}
-                                        </div>
-
-                                    </div>
-
-
-                                    <div>
-
-                                        <strong>
-                                            ₦${total.toLocaleString(
-                                                "en-NG",
-                                                {
-                                                    minimumFractionDigits:
-                                                        2,
-
-                                                    maximumFractionDigits:
-                                                        2
+                                            <div>
+                                                ${
+                                                    escapeHTML(
+                                                        transaction.network ||
+                                                        transaction.provider ||
+                                                        transaction.customer_identifier ||
+                                                        ""
+                                                    )
                                                 }
-                                            )}
-                                        </strong>
+                                            </div>
+
+                                            <div class="history-date">
+                                                ${escapeHTML(
+                                                    formatDate(
+                                                        transaction.created_at
+                                                    )
+                                                )}
+                                            </div>
+
+                                            <div class="history-date">
+                                                Status:
+                                                ${escapeHTML(
+                                                    formatStatus(
+                                                        transaction.status
+                                                    )
+                                                )}
+                                            </div>
+
+                                        </div>
+
+
+                                        <div>
+
+                                            <strong>
+                                                ₦${total.toLocaleString(
+                                                    "en-NG",
+                                                    {
+                                                        minimumFractionDigits:
+                                                            2,
+
+                                                        maximumFractionDigits:
+                                                            2
+                                                    }
+                                                )}
+                                            </strong>
+
+                                        </div>
 
                                     </div>
 
                                 </div>
 
-                            </div>
+                            `;
 
-                        `;
-
-                    }
-                ).join("");
+                        }
+                    ).join("");
 
 
-        } catch (error) {
+            } catch (error) {
 
-            console.error(
-                "LosOja bill history error:",
-                error
-            );
-
-
-            container.innerHTML =
-                `
-                <div class="error">
-                    Unable to load bill history.
-                </div>
-                `;
-
-        }
-
-    }
+                console.error(
+                    "LosOja bill history error:",
+                    error
+                );
 
 
-    document.addEventListener(
-        "DOMContentLoaded",
-        function () {
+                container.innerHTML =
+                    `
+                    <div class="error">
+                        Unable to load bill history.
+                    </div>
+                    `;
 
-            loadBillHistory();
+            }
 
         }
-    );
 
 
-    console.log(
-        "LosOja bills page loaded — duplicate payment protection active"
-    );
+        document.addEventListener(
+            "DOMContentLoaded",
+            function () {
 
-})();
+                loadBillHistory();
 
-</script>
+            }
+        );
+
+
+        console.log(
+            "LosOja bills page loaded — auth loaded, duplicate payment protection active"
+        );
+
+    })();
+
+    </script>
 
 </body>
 
 </html>
-</main>
-
-<script src="auth.js"></script>
-
-<script>
-
-(function () {
-
-    "use strict";
-
-    const SUPABASE_URL =
-        "https://ycxshwgeebskdozmornh.supabase.co";
-
-    const SUPABASE_KEY =
-        "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
