@@ -1,1032 +1,3202 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
 
-```
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-<title>LosOja - Find What You Need Across Nigeria</title>
+    <title>LosOja - Find What You Need Across Nigeria</title>
 
-<meta
-    name="description"
-    content="LosOja helps you find trusted Nigerian businesses, services, products, property, transportation and more."
->
+    <meta
+        name="description"
+        content="LosOja helps you find trusted Nigerian businesses, services, products, property, transportation and more."
+    >
 
-<meta name="theme-color" content="#087a3e">
+    <meta
+        name="theme-color"
+        content="#087a3e"
+    >
 
-<!-- =====================================================
-     LOSOJA FAVICON / APP ICON
-====================================================== -->
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
 
-<link
-    rel="icon"
-    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23087a3e'/%3E%3Ctext x='50' y='68' font-size='55' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'%3EL%3C/text%3E%3C/svg%3E"
->
+    <style>
 
-<!-- =====================================================
-     STYLES
-====================================================== -->
+        /* =========================================================
+           LOSOJA HOMEPAGE EXTRAS
+           Page-level only
 
-<style>
+           IMPORTANT:
+           businesses.js and css/style.css remain untouched.
+        ========================================================= */
 
-    :root {
-        --green: #087a3e;
-        --green-dark: #055c2e;
-        --green-light: #eef8f2;
-        --white: #ffffff;
-        --black: #111827;
-        --gray: #6b7280;
-        --border: #e5e7eb;
-        --accent: #ffb703;
-    }
 
-    * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-    }
+        /* =========================================================
+           BUSINESS MARKETPLACE
+        ========================================================= */
 
-    body {
-        font-family:
-            Arial,
-            Helvetica,
-            sans-serif;
-
-        background: var(--green-light);
-        color: var(--black);
-
-        min-height: 100vh;
-    }
-
-
-    /* =================================================
-       LOSOJA LOGO SYSTEM
-    ================================================== */
-
-    .losoja-logo {
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-
-        text-decoration: none;
-
-        color: var(--green);
-
-        font-weight: 800;
-        font-size: 26px;
-    }
-
-    .logo-mark {
-        width: 46px;
-        height: 46px;
-
-        border-radius: 13px;
-
-        background:
-            linear-gradient(
-                135deg,
-                var(--green),
-                var(--green-dark)
-            );
-
-        color: white;
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        font-size: 27px;
-        font-weight: 900;
-
-        box-shadow:
-            0 7px 18px rgba(8, 122, 62, 0.20);
-    }
-
-    .logo-text {
-        letter-spacing: -0.7px;
-    }
-
-
-    /* =================================================
-       HEADER
-    ================================================== */
-
-    header {
-        position: sticky;
-        top: 0;
-        z-index: 1000;
-
-        background:
-            rgba(255, 255, 255, 0.96);
-
-        backdrop-filter:
-            blur(12px);
-
-        border-bottom:
-            1px solid var(--border);
-    }
-
-    .header-inner {
-        max-width: 1200px;
-
-        margin: auto;
-
-        min-height: 70px;
-
-        padding: 10px 20px;
-
-        display: flex;
-
-        align-items: center;
-
-        justify-content: space-between;
-
-        gap: 20px;
-    }
-
-
-    /* =================================================
-       NAVIGATION
-    ================================================== */
-
-    nav {
-        display: flex;
-
-        align-items: center;
-
-        gap: 20px;
-    }
-
-    nav a {
-        text-decoration: none;
-
-        color: var(--black);
-
-        font-weight: 600;
-
-        font-size: 14px;
-    }
-
-    nav a:hover {
-        color: var(--green);
-    }
-
-    .login-button {
-        border: none;
-
-        background: var(--green);
-
-        color: white;
-
-        padding: 11px 18px;
-
-        border-radius: 9px;
-
-        font-weight: 700;
-
-        cursor: pointer;
-    }
-
-    .login-button:hover {
-        background: var(--green-dark);
-    }
-
-
-    /* =================================================
-       HERO
-    ================================================== */
-
-    .hero {
-        position: relative;
-
-        overflow: hidden;
-
-        min-height: 620px;
-
-        display: flex;
-
-        align-items: center;
-
-        justify-content: center;
-
-        padding: 70px 20px;
-
-        background:
-            radial-gradient(
-                circle at 15% 20%,
-                rgba(8, 122, 62, 0.13),
-                transparent 30%
-            ),
-            radial-gradient(
-                circle at 85% 70%,
-                rgba(255, 183, 3, 0.10),
-                transparent 25%
-            ),
-            var(--green-light);
-    }
-
-
-    /* =================================================
-       LARGE BACKGROUND LOGO
-    ================================================== */
-
-    .hero-logo-bg {
-        position: absolute;
-
-        width: 500px;
-        height: 500px;
-
-        border-radius: 50%;
-
-        background:
-            rgba(8, 122, 62, 0.045);
-
-        display: flex;
-
-        align-items: center;
-
-        justify-content: center;
-
-        right: -160px;
-
-        top: 30px;
-
-        pointer-events: none;
-    }
-
-    .hero-logo-bg .logo-mark {
-        width: 170px;
-        height: 170px;
-
-        border-radius: 45px;
-
-        font-size: 100px;
-
-        opacity: 0.13;
-
-        box-shadow: none;
-    }
-
-
-    /* =================================================
-       HOME LOGO
-    ================================================== */
-
-    .hero-content {
-        position: relative;
-
-        z-index: 2;
-
-        width: 100%;
-
-        max-width: 850px;
-
-        text-align: center;
-    }
-
-    .hero-logo {
-        display: flex;
-
-        justify-content: center;
-
-        margin-bottom: 28px;
-    }
-
-    .hero-logo .logo-mark {
-        width: 86px;
-        height: 86px;
-
-        border-radius: 25px;
-
-        font-size: 50px;
-
-        box-shadow:
-            0 12px 30px
-            rgba(8, 122, 62, 0.25);
-    }
-
-
-    /* =================================================
-       HERO TEXT
-    ================================================== */
-
-    .hero h1 {
-        font-size:
-            clamp(38px, 7vw, 70px);
-
-        line-height: 1.03;
-
-        letter-spacing: -2px;
-
-        margin-bottom: 20px;
-    }
-
-    .hero h1 span {
-        color: var(--green);
-    }
-
-    .hero p {
-        max-width: 650px;
-
-        margin: auto;
-
-        color: var(--gray);
-
-        font-size: 18px;
-
-        line-height: 1.65;
-    }
-
-
-    /* =================================================
-       SEARCH
-    ================================================== */
-
-    .search-box {
-        max-width: 720px;
-
-        margin: 32px auto 0;
-
-        background: white;
-
-        padding: 8px;
-
-        border-radius: 14px;
-
-        display: flex;
-
-        gap: 8px;
-
-        box-shadow:
-            0 12px 35px
-            rgba(0, 0, 0, 0.08);
-
-        border:
-            1px solid var(--border);
-    }
-
-    .search-box input {
-        flex: 1;
-
-        border: none;
-
-        outline: none;
-
-        padding: 15px;
-
-        font-size: 16px;
-    }
-
-    .search-box button {
-        border: none;
-
-        background: var(--green);
-
-        color: white;
-
-        padding: 0 24px;
-
-        border-radius: 9px;
-
-        font-weight: 700;
-
-        cursor: pointer;
-    }
-
-    .search-box button:hover {
-        background: var(--green-dark);
-    }
-
-
-    /* =================================================
-       CATEGORIES
-    ================================================== */
-
-    .categories {
-        padding: 70px 20px;
-
-        background: white;
-    }
-
-    .section-container {
-        max-width: 1100px;
-
-        margin: auto;
-    }
-
-    .section-title {
-        text-align: center;
-
-        margin-bottom: 35px;
-    }
-
-    .section-title h2 {
-        font-size: 32px;
-
-        margin-bottom: 10px;
-    }
-
-    .section-title p {
-        color: var(--gray);
-    }
-
-    .category-grid {
-        display: grid;
-
-        grid-template-columns:
-            repeat(
+        #businessGrid {
+            width: 100%;
+            display: grid;
+            grid-template-columns: repeat(
                 auto-fit,
-                minmax(130px, 1fr)
+                minmax(260px, 1fr)
             );
-
-        gap: 15px;
-    }
-
-    .category {
-        background:
-            var(--green-light);
-
-        border:
-            1px solid #dceee4;
-
-        border-radius: 14px;
-
-        padding: 25px 12px;
-
-        text-align: center;
-
-        cursor: pointer;
-
-        transition:
-            transform 0.2s ease,
-            box-shadow 0.2s ease;
-    }
-
-    .category:hover {
-        transform:
-            translateY(-4px);
-
-        box-shadow:
-            0 10px 25px
-            rgba(0, 0, 0, 0.07);
-    }
-
-    .category-icon {
-        font-size: 30px;
-
-        margin-bottom: 10px;
-    }
-
-    .category strong {
-        font-size: 14px;
-    }
-
-
-    /* =================================================
-       FOOTER
-    ================================================== */
-
-    footer {
-        background:
-            var(--green-dark);
-
-        color: white;
-
-        padding: 35px 20px;
-
-        text-align: center;
-    }
-
-    footer .losoja-logo {
-        color: white;
-
-        justify-content: center;
-
-        margin-bottom: 12px;
-    }
-
-    footer p {
-        opacity: 0.8;
-
-        font-size: 14px;
-    }
-
-
-    /* =================================================
-       MOBILE
-    ================================================== */
-
-    @media (max-width: 700px) {
-
-        .header-inner {
-            min-height: 62px;
-
-            padding:
-                8px 14px;
+            gap: 18px;
+            align-items: stretch;
         }
 
-        .losoja-logo {
+
+        .business-grid {
+            width: 100%;
+            min-width: 0;
+        }
+
+
+        .business-card {
+            width: 100% !important;
+            min-width: 0 !important;
+            max-width: 100% !important;
+            overflow: hidden !important;
+            box-sizing: border-box !important;
+        }
+
+
+        .business-card img,
+        .business-image,
+        .business-card-image {
+            width: 100% !important;
+            height: 190px !important;
+            min-height: 190px !important;
+            max-height: 190px !important;
+            object-fit: cover !important;
+            object-position: center !important;
+            display: block !important;
+            box-sizing: border-box !important;
+        }
+
+
+        .business-card-image-wrapper,
+        .business-image-wrapper {
+            width: 100% !important;
+            max-width: 100% !important;
+            overflow: hidden !important;
+            box-sizing: border-box !important;
+        }
+
+
+        .business-card-content {
+            width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+            padding: 14px;
+            overflow: hidden;
+        }
+
+
+        .business-card-content h3,
+        .business-card h3 {
+            margin-top: 0;
+            margin-bottom: 7px;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+
+
+        .business-card-content p,
+        .business-card p {
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+
+
+        .business-card-content .description,
+        .business-card-description {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+
+        .business-loading-card {
+            width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+        }
+
+
+        /* =========================================================
+           BUSINESS DETAILS MODAL
+        ========================================================= */
+
+        .business-details-modal {
+            width: min(620px, calc(100vw - 28px)) !important;
+            max-width: 620px !important;
+            max-height: calc(100vh - 30px);
+            overflow-y: auto;
+            box-sizing: border-box;
+        }
+
+
+        .business-details-image-wrapper {
+            width: 100%;
+            max-width: 100%;
+            overflow: hidden;
+            border-radius: 14px;
+            background: #f3f4f6;
+        }
+
+
+        .business-details-image {
+            width: 100% !important;
+            height: auto !important;
+            aspect-ratio: 16 / 10;
+            max-height: 360px;
+            object-fit: cover !important;
+            object-position: center !important;
+            display: block !important;
+        }
+
+
+        .business-details-content {
+            min-width: 0;
+            overflow-wrap: anywhere;
+        }
+
+
+        #businessDetailsDescription {
+            overflow-wrap: anywhere;
+            word-break: break-word;
+            line-height: 1.6;
+        }
+
+
+        /* =========================================================
+           ADD BUSINESS IMAGE
+        ========================================================= */
+
+        #businessImage {
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+
+        .image-preview {
+            width: 100%;
+            max-width: 100%;
+            overflow: hidden;
+            border-radius: 12px;
+            margin-top: 10px;
+        }
+
+
+        .image-preview img {
+            width: 100%;
+            max-width: 100%;
+            height: 190px;
+            object-fit: cover;
+            object-position: center;
+            display: block;
+            border-radius: 12px;
+        }
+
+
+        .business-photo-help {
+            margin: 5px 0 10px;
+            font-size: 13px;
+            color: #6b7280;
+            line-height: 1.5;
+        }
+
+
+        /* =========================================================
+           LOSOJA LOGIN / SIGNUP BRANDING
+        ========================================================= */
+
+        #loginModal .modal-content,
+        #signupModal .modal-content {
+            width: min(430px, calc(100vw - 28px));
+            box-sizing: border-box;
+        }
+
+
+        .losoja-auth-brand {
+            text-align: center;
+            margin-bottom: 18px;
+        }
+
+
+        .losoja-auth-logo {
+            width: 58px;
+            height: 58px;
+            margin: 0 auto 10px;
+            border-radius: 18px;
+            background: linear-gradient(
+                135deg,
+                #087a3e,
+                #0a9a50
+            );
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: 800;
+            box-shadow: 0 6px 16px rgba(8, 122, 62, 0.20);
+        }
+
+
+        .losoja-auth-brand-name {
+            margin: 0;
+            color: #087a3e;
             font-size: 21px;
+            font-weight: 800;
         }
 
-        .logo-mark {
-            width: 38px;
-            height: 38px;
 
-            border-radius: 10px;
-
-            font-size: 23px;
+        .losoja-auth-brand-text {
+            margin: 4px 0 0;
+            color: #6b7280;
+            font-size: 13px;
         }
 
-        nav {
-            gap: 8px;
+
+        /* =========================================================
+           HOW TO USE LOSOJA
+        ========================================================= */
+
+        .losoja-tutorial-section {
+            padding: 24px 16px;
         }
 
-        nav a {
+
+        .losoja-slider {
+            display: flex;
+            gap: 16px;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            padding: 4px 2px 14px;
+            scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
+        }
+
+
+        .losoja-slider::-webkit-scrollbar {
             display: none;
         }
 
-        .login-button {
-            padding:
-                9px 13px;
+
+        .losoja-slide {
+            flex: 0 0 min(86vw, 360px);
+            scroll-snap-align: start;
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.07);
         }
 
-        .hero {
-            min-height: 570px;
 
-            padding:
-                55px 16px;
+        .losoja-slide-video {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background: #111827;
+            display: block;
+            object-fit: cover;
         }
 
-        .hero-logo .logo-mark {
-            width: 70px;
-            height: 70px;
 
-            font-size: 40px;
-
-            border-radius: 21px;
+        .losoja-slide-content {
+            padding: 14px;
         }
 
-        .hero h1 {
-            font-size: 43px;
 
-            letter-spacing: -1.5px;
+        .losoja-slide-content h3 {
+            margin: 0 0 6px;
+            font-size: 17px;
         }
 
-        .hero p {
-            font-size: 16px;
+
+        .losoja-slide-content p {
+            margin: 0;
+            color: #6b7280;
+            font-size: 14px;
+            line-height: 1.5;
         }
 
-        .search-box {
-            flex-direction: column;
+
+        /* =========================================================
+           PAY BILLS CARD
+        ========================================================= */
+
+        .losoja-bills-card {
+            margin: 20px 16px;
+            padding: 20px;
+            border-radius: 18px;
+            background: #087a3e;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            box-shadow: 0 6px 18px rgba(8, 122, 62, 0.20);
+            box-sizing: border-box;
         }
 
-        .search-box button {
-            min-height: 48px;
+
+        .losoja-bills-card h2 {
+            margin: 0 0 6px;
+            font-size: 20px;
         }
 
-        .category-grid {
-            grid-template-columns:
-                repeat(2, 1fr);
-        }
-    }
 
-</style>
-```
+        .losoja-bills-card p {
+            margin: 0;
+            opacity: 0.92;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+
+        .losoja-bills-button {
+            flex-shrink: 0;
+            border: 0;
+            border-radius: 12px;
+            padding: 11px 16px;
+            background: #ffffff;
+            color: #087a3e;
+            font-weight: 700;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+
+        /* =========================================================
+           GENERAL MOBILE PROTECTION
+        ========================================================= */
+
+        html,
+        body {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+
+        main,
+        section,
+        .header-inner,
+        .hero-content,
+        .quick-actions,
+        .businesses-section,
+        .categories-section {
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+
+        /* =========================================================
+           MOBILE
+        ========================================================= */
+
+        @media (max-width: 700px) {
+
+            #businessGrid {
+                grid-template-columns: repeat(
+                    2,
+                    minmax(0, 1fr)
+                );
+                gap: 12px;
+            }
+
+
+            .business-card img,
+            .business-image,
+            .business-card-image {
+                height: 170px !important;
+                min-height: 170px !important;
+                max-height: 170px !important;
+            }
+
+
+            .business-card-content {
+                padding: 11px;
+            }
+
+
+            .business-card-content h3,
+            .business-card h3 {
+                font-size: 16px;
+            }
+
+
+            .business-card-content p,
+            .business-card p {
+                font-size: 13px;
+            }
+
+
+            .losoja-bills-card {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+
+            .losoja-bills-button {
+                width: 100%;
+                text-align: center;
+                box-sizing: border-box;
+            }
+
+
+            .business-details-image {
+                aspect-ratio: 4 / 3;
+                max-height: 300px;
+            }
+
+        }
+
+
+        /* =========================================================
+           SMALL PHONES
+        ========================================================= */
+
+        @media (max-width: 430px) {
+
+            #businessGrid {
+                grid-template-columns: 1fr;
+                gap: 14px;
+            }
+
+
+            .business-card img,
+            .business-image,
+            .business-card-image {
+                height: 190px !important;
+                min-height: 190px !important;
+                max-height: 190px !important;
+            }
+
+
+            .losoja-slide {
+                flex-basis: 88vw;
+            }
+
+
+            .losoja-tutorial-section {
+                padding-left: 12px;
+                padding-right: 12px;
+            }
+
+
+            .losoja-bills-card {
+                margin-left: 12px;
+                margin-right: 12px;
+            }
+
+
+            .business-details-modal {
+                width: calc(100vw - 20px) !important;
+                max-height: calc(100vh - 20px);
+            }
+
+        }
+
+
+        /* =========================================================
+           VERY SMALL PHONES
+        ========================================================= */
+
+        @media (max-width: 360px) {
+
+            .business-card img,
+            .business-image,
+            .business-card-image {
+                height: 175px !important;
+                min-height: 175px !important;
+                max-height: 175px !important;
+            }
+
+        }
+
+    </style>
 
 </head>
 
+
 <body>
 
-<!-- =====================================================
-     HEADER
-====================================================== -->
 
-<header>
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
 
-```
-<div class="header-inner">
+    <header class="site-header">
 
-    <a
-        href="index.html"
-        class="losoja-logo"
-        aria-label="LosOja home"
-    >
+        <div class="header-inner">
 
-        <div
-            class="logo-mark"
-            aria-hidden="true"
-        >
-            L
-        </div>
-
-        <span class="logo-text">
-            LosOja
-        </span>
-
-    </a>
+            <a
+                href="index.html"
+                class="logo"
+                aria-label="LosOja Home"
+            >
+                LosOja
+            </a>
 
 
-    <nav>
+            <div class="header-actions">
 
-        <a href="#categories">
-            Categories
-        </a>
-
-        <a href="property.html">
-            Property
-        </a>
-
-        <a href="mobility.html">
-            Mobility
-        </a>
-
-        <a href="barter.html">
-            Barter
-        </a>
-
-        <button
-            class="login-button"
-            onclick="openLogin()"
-        >
-            Sign In
-        </button>
-
-    </nav>
-
-</div>
-```
-
-</header>
-
-<!-- =====================================================
-     HERO / HOME SCREEN
-====================================================== -->
-
-<main>
-
-```
-<section class="hero">
-
-    <div
-        class="hero-logo-bg"
-        aria-hidden="true"
-    >
-
-        <div class="logo-mark">
-            L
-        </div>
-
-    </div>
+                <button
+                    type="button"
+                    class="header-icon-btn notification-btn"
+                    id="notificationBtn"
+                    aria-label="Notifications"
+                    onclick="window.App && window.App.openNotifications ? window.App.openNotifications() : window.openNotifications && window.openNotifications()"
+                >
+                    🔔
+                </button>
 
 
-    <div class="hero-content">
+                <button
+                    type="button"
+                    class="header-icon-btn"
+                    id="accountButton"
+                    aria-label="Account"
+                >
+                    👤
+                </button>
 
-        <div
-            class="hero-logo"
-            aria-label="LosOja"
-        >
 
-            <div class="logo-mark">
-                L
+                <a
+                    href="oja.html"
+                    class="header-marketplace-btn"
+                >
+                    Oja
+                </a>
+
             </div>
 
         </div>
 
-
-        <h1>
-
-            Find What You Need
-
-            <span>
-                Across Nigeria
-            </span>
-
-        </h1>
+    </header>
 
 
-        <p>
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
 
-            Discover trusted Nigerian businesses,
-            services, products, property, transportation
-            and more — all in one place.
-
-        </p>
+    <main>
 
 
-        <div class="search-box">
+        <!-- =================================================
+             HERO / SEARCH
+        ================================================== -->
 
-            <input
-                type="search"
-                id="homeSearch"
-                placeholder="What are you looking for?"
-                aria-label="Search LosOja"
+        <section class="hero-section">
+
+            <div class="hero-content">
+
+                <h1>
+                    Discover what you need
+                </h1>
+
+                <p>
+                    Find businesses, products, services and more across Nigeria.
+                </p>
+
+
+                <div class="search-container">
+
+                    <input
+                        type="search"
+                        id="businessSearch"
+                        placeholder="Search businesses, products or services..."
+                        aria-label="Search businesses, products or services"
+                        autocomplete="off"
+                    >
+
+
+                    <button
+                        type="button"
+                        id="searchButton"
+                    >
+                        Search
+                    </button>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    id="locationButton"
+                    class="location-button"
+                >
+                    📍 Discover Near Me
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             QUICK ACTIONS
+        ================================================== -->
+
+        <section
+            class="quick-actions-section"
+            aria-label="Quick actions"
+        >
+
+            <div class="quick-actions">
+
+
+                <button
+                    type="button"
+                    class="quick-action"
+                    onclick="document.getElementById('categories')?.scrollIntoView({ behavior: 'smooth' })"
+                >
+                    <span class="quick-action-icon">
+                        📂
+                    </span>
+
+                    <span>
+                        Categories
+                    </span>
+                </button>
+
+
+                <a
+                    href="oja.html"
+                    class="quick-action"
+                >
+                    <span class="quick-action-icon">
+                        🛍️
+                    </span>
+
+                    <span>
+                        Marketplace
+                    </span>
+                </a>
+
+
+                <a
+                    href="property.html"
+                    class="quick-action"
+                >
+                    <span class="quick-action-icon">
+                        🏠
+                    </span>
+
+                    <span>
+                        Property
+                    </span>
+                </a>
+
+
+                <a
+                    href="mobility.html"
+                    class="quick-action"
+                >
+                    <span class="quick-action-icon">
+                        🚕
+                    </span>
+
+                    <span>
+                        Mobility
+                    </span>
+                </a>
+
+
+                <button
+                    type="button"
+                    class="quick-action"
+                    id="quickAddBusinessBtn"
+                >
+                    <span class="quick-action-icon">
+                        ➕
+                    </span>
+
+                    <span>
+                        Add Business
+                    </span>
+                </button>
+
+
+                <button
+                    type="button"
+                    class="quick-action"
+                    id="chatBabaOjaBtn"
+                    onclick="window.location.href='chat.html?user=8c914d84-ae77-4d5e-a3f1-ae591d7fdfb3'"
+                >
+                    <span class="quick-action-icon">
+                        💬
+                    </span>
+
+                    <span>
+                        Chat with Baba Oja
+                    </span>
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             HOW TO USE LOSOJA
+        ================================================== -->
+
+        <section
+            class="losoja-tutorial-section"
+            id="howLosOjaWorks"
+        >
+
+            <div class="section-header">
+
+                <div>
+
+                    <span class="section-kicker">
+                        Learn LosOja
+                    </span>
+
+                    <h2>
+                        How to Use LosOja
+                    </h2>
+
+                    <p>
+                        Quick guides to help you get the most from LosOja.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="losoja-slider">
+
+
+                <!-- HOW TO USE OJA -->
+
+                <article class="losoja-slide">
+
+                    <video
+                        class="losoja-slide-video"
+                        controls
+                        preload="metadata"
+                        playsinline
+                    >
+
+                        <source
+                            src="videos/how-to-use-oja.mp4"
+                            type="video/mp4"
+                        >
+
+                        Your browser does not support video playback.
+
+                    </video>
+
+
+                    <div class="losoja-slide-content">
+
+                        <h3>
+                            🛍️ How to Use Oja
+                        </h3>
+
+                        <p>
+                            Learn how to browse items, find what you need,
+                            contact sellers and use LosOja safely.
+                        </p>
+
+                    </div>
+
+                </article>
+
+
+                <!-- SEARCH VIDEO -->
+
+                <article class="losoja-slide">
+
+                    <video
+                        class="losoja-slide-video"
+                        controls
+                        preload="metadata"
+                        playsinline
+                    >
+
+                        <source
+                            src="videos/how-to-search.mp4"
+                            type="video/mp4"
+                        >
+
+                        Your browser does not support video playback.
+
+                    </video>
+
+
+                    <div class="losoja-slide-content">
+
+                        <h3>
+                            🔎 Find What You Need
+                        </h3>
+
+                        <p>
+                            Learn how to search for businesses,
+                            products and services on LosOja.
+                        </p>
+
+                    </div>
+
+                </article>
+
+
+                <!-- ADD BUSINESS VIDEO -->
+
+                <article class="losoja-slide">
+
+                    <video
+                        class="losoja-slide-video"
+                        controls
+                        preload="metadata"
+                        playsinline
+                    >
+
+                        <source
+                            src="videos/how-to-add-business.mp4"
+                            type="video/mp4"
+                        >
+
+                        <div>
+                            Your browser does not support video playback.
+                        </div>
+
+                    </video>
+
+
+                    <div class="losoja-slide-content">
+
+                        <h3>
+                            ➕ Add Your Business
+                        </h3>
+
+                        <p>
+                            Learn how business owners can create
+                            a listing and reach customers.
+                        </p>
+
+                    </div>
+
+                </article>
+
+
+                <!-- ESCROW VIDEO -->
+
+                <article class="losoja-slide">
+
+                    <video
+                        class="losoja-slide-video"
+                        controls
+                        preload="metadata"
+                        playsinline
+                    >
+
+                        <source
+                            src="videos/how-escrow-works.mp4"
+                            type="video/mp4"
+                        >
+
+                        Your browser does not support video playback.
+
+                    </video>
+
+
+                    <div class="losoja-slide-content">
+
+                        <h3>
+                            🔐 How Escrow Works
+                        </h3>
+
+                        <p>
+                            Learn how LosOja Escrow keeps
+                            marketplace payments inside the transaction.
+                        </p>
+
+                    </div>
+
+                </article>
+
+
+                <!-- PAY BILLS VIDEO -->
+
+                <article class="losoja-slide">
+
+                    <video
+                        class="losoja-slide-video"
+                        controls
+                        preload="metadata"
+                        playsinline
+                    >
+
+                        <source
+                            src="videos/how-to-pay-bills.mp4"
+                            type="video/mp4"
+                        >
+
+                        Your browser does not support video playback.
+
+                    </video>
+
+
+                    <div class="losoja-slide-content">
+
+                        <h3>
+                            💳 Pay Bills
+                        </h3>
+
+                        <p>
+                            Learn how to use your LosOja wallet
+                            for available bill payments.
+                        </p>
+
+                    </div>
+
+                </article>
+
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             PAY BILLS
+        ================================================== -->
+
+        <section
+            class="losoja-bills-card"
+            aria-label="LosOja Pay Bills"
+        >
+
+            <div>
+
+                <h2>
+                    💳 Pay Bills on LosOja
+                </h2>
+
+                <p>
+                    Airtime, data and available bill payments
+                    from your LosOja wallet.
+                </p>
+
+            </div>
+
+
+            <a
+                href="bills.html"
+                class="losoja-bills-button"
             >
+                Pay Bills
+            </a>
+
+        </section>
+
+
+        <!-- =================================================
+             VERIFIED BUSINESSES
+        ================================================== -->
+
+        <section
+            class="verified-business-section"
+            id="verifiedBusinesses"
+        >
+
+            <div class="section-header">
+
+                <div>
+
+                    <span class="section-kicker">
+                        Trusted on LosOja
+                    </span>
+
+                    <h2>
+                        Verified Businesses
+                    </h2>
+
+                    <p>
+                        Discover trusted businesses with verified profiles.
+                    </p>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="section-link"
+                    id="viewVerifiedBusinessesBtn"
+                >
+                    View All
+                </button>
+
+            </div>
+
+
+            <div
+                class="verified-business-grid"
+                id="verifiedBusinessGrid"
+            >
+
+                <div class="verified-business-empty">
+
+                    <div class="verified-empty-icon">
+                        ✓
+                    </div>
+
+
+                    <div>
+
+                        <strong>
+                            Verified businesses
+                        </strong>
+
+                        <p>
+                            Verified listings will appear here.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             CATEGORIES
+        ================================================== -->
+
+        <section
+            class="categories-section"
+            id="categories"
+        >
+
+            <div class="section-header">
+
+                <div>
+
+                    <span class="section-kicker">
+                        Explore LosOja
+                    </span>
+
+                    <h2>
+                        Categories
+                    </h2>
+
+                    <p>
+                        Find businesses, professionals and services
+                        for everyday needs.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="category-grid">
+
+
+                <button
+                    type="button"
+                    class="category-card"
+                    data-category="Food"
+                >
+                    <span class="category-icon">
+                        🍲
+                    </span>
+
+                    <span>
+                        Food
+                    </span>
+                </button>
+
+
+                <button
+                    type="button"
+                    class="category-card"
+                    data-category="Fashion"
+                >
+                    <span class="category-icon">
+                        👕
+                    </span>
+
+                    <span>
+                        Fashion
+                    </span>
+                </button>
+
+
+                <button
+                    type="button"
+                    class="category-card"
+                    data-category="Phones"
+                >
+                    <span class="category-icon">
+                        📱
+                    </span>
+
+                    <span>
+                        Phones & Electronics
+                    </span>
+                </button>
+
+
+                <button
+                    type="button"
+                    class="category-card"
+                    data-category="Vehicles"
+                >
+                    <span class="category-icon">
+                        🚗
+                    </span>
+
+                    <span>
+                        Vehicles
+                    </span>
+                </button>
+
+
+                <button
+                    type="button"
+                    class="category-card"
+                    data-category="Property"
+                >
+                    <span class="category-icon">
+                        🏠
+                    </span>
+
+                    <span>
+                        Property
+                    </span>
+                </button>
+
+
+                <button
+                    type="button"
+                    class="category-card"
+                    data-category="Furniture & Home"
+                >
+                    <span class="category-icon">
+                        🛋️
+                    </span>
+
+                    <span>
+                        Furniture & Home
+                    </span>
+                </button>
+
+
+                <button
+                    type="button"
+                    class="category-card"
+                    data-category="Plumbing"
+                >
+                    <span class="category-icon">
+                        🚰
+                    </span>
+
+                    <span>
+                        Plumbing
+                    </span>
+                </button>
+
+
+                <button
+                    type="button"
+                    class="category-card"
+                    data-category="Electrical"
+                >
+                    <span class="category-icon">
+                        ⚡
+                    </span>
+
+                    <span>
+                        Electrical
+                    </span>
+                </button>
+
+
+                <button
+                    type="button"
+                    class="category-card"
+                    data-category="Carpentry"
+                >
+                    <span class="category-icon">
+                        🪚
+                    </span>
+
+                    <span>
+                        Carpentry
+                    </span>
+                </button>
+
+
+                <button
+                    type="button"
+                    class="category-card"
+                    data-category="Construction"
+                >
+                    <span class="category-icon">
+                        🏗️
+                    </span>
+
+                    <span>
+                        Construction
+                    </span>
+                </button>
+
+
+                <button
+                    type="button"
+                    class="category-card"
+                    data-category="Healthcare"
+                >
+                    <span class="category-icon">
+                        🩺
+                    </span>
+
+                    <span>
+                        Healthcare
+                    </span>
+                </button>
+
+
+                <button
+                    type="button"
+                    class="category-card"
+                    data-category="Beauty"
+                >
+                    <span class="category-icon">
+                        ✨
+                    </span>
+
+                    <span>
+                        Beauty
+                    </span>
+                </button>
+
+
+                <button
+                    type="button"
+                    class="category-card"
+                    data-category="Cleaning"
+                >
+                    <span class="category-icon">
+                        🧹
+                    </span>
+
+                    <span>
+                        Cleaning
+                    </span>
+                </button>
+
+
+                <button
+                    type="button"
+                    class="category-card"
+                    data-category="Repairs & Maintenance"
+                >
+                    <span class="category-icon">
+                        🔧
+                    </span>
+
+                    <span>
+                        Repairs & Maintenance
+                    </span>
+                </button>
+
+
+                <button
+                    type="button"
+                    class="category-card"
+                    data-category="Technology"
+                >
+                    <span class="category-icon">
+                        💻
+                    </span>
+
+                    <span>
+                        Technology
+                    </span>
+                </button>
+
+
+                <button
+                    type="button"
+                    class="category-card"
+                    data-category="Agriculture"
+                >
+                    <span class="category-icon">
+                        🌾
+                    </span>
+
+                    <span>
+                        Agriculture
+                    </span>
+                </button>
+
+
+                <button
+                    type="button"
+                    class="category-card"
+                    data-category="Logistics & Moving"
+                >
+                    <span class="category-icon">
+                        🚚
+                    </span>
+
+                    <span>
+                        Logistics & Moving
+                    </span>
+                </button>
+
+
+                <button
+                    type="button"
+                    class="category-card"
+                    data-category="Education & Tutors"
+                >
+                    <span class="category-icon">
+                        📚
+                    </span>
+
+                    <span>
+                        Education & Tutors
+                    </span>
+                </button>
+
+
+                <button
+                    type="button"
+                    class="category-card"
+                    data-category="Professional Services"
+                >
+                    <span class="category-icon">
+                        💼
+                    </span>
+
+                    <span>
+                        Professional Services
+                    </span>
+                </button>
+
+
+                <button
+                    type="button"
+                    class="category-card"
+                    data-category="Services"
+                >
+                    <span class="category-icon">
+                        🛠️
+                    </span>
+
+                    <span>
+                        General Services
+                    </span>
+                </button>
+
+
+                <button
+                    type="button"
+                    class="category-card"
+                    data-category="Trade by Barter"
+                >
+                    <span class="category-icon">
+                        🔄
+                    </span>
+
+                    <span>
+                        Trade by Barter
+                    </span>
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             BUSINESS MARKETPLACE
+        ================================================== -->
+
+        <section
+            class="businesses-section"
+            id="businesses"
+        >
+
+            <div class="section-header">
+
+                <div>
+
+                    <span class="section-kicker">
+                        LosOja Marketplace
+                    </span>
+
+                    <h2>
+                        Nearby Businesses
+                    </h2>
+
+                    <p>
+                        Find businesses and services available on LosOja.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!--
+                IMPORTANT:
+                businesses.js already uses #businessGrid.
+                Do not rename or remove this element.
+            -->
+
+            <div
+                id="businessGrid"
+                class="business-grid"
+            >
+
+                <div class="business-loading-card">
+
+                    <div class="loading-spinner"></div>
+
+                    <p>
+                        Loading businesses...
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             SAVED ITEMS
+        ================================================== -->
+
+        <section
+            class="saved-section"
+            id="saved"
+        >
+
+            <div class="section-header">
+
+                <div>
+
+                    <span class="section-kicker">
+                        Your Favorites
+                    </span>
+
+                    <h2>
+                        ❤️ Saved
+                    </h2>
+
+                    <p>
+                        Businesses and marketplace items you saved.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="savedItemsGrid"
+                class="business-grid"
+            >
+
+                <div class="verified-business-empty">
+
+                    <div class="verified-empty-icon">
+                        ❤️
+                    </div>
+
+
+                    <div>
+
+                        <strong>
+                            Nothing saved yet
+                        </strong>
+
+                        <p>
+                            Save businesses and marketplace items
+                            to find them here.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             SAVED ITEMS RENDERER
+        ================================================== -->
+
+        <script>
+
+            window.renderSavedItems = function () {
+
+                const savedGrid =
+                    document.getElementById("savedItemsGrid");
+
+
+                if (!savedGrid) {
+                    return;
+                }
+
+
+                let savedItems = [];
+
+
+                try {
+
+                    savedItems =
+                        JSON.parse(
+                            localStorage.getItem(
+                                "losoja_saved_items"
+                            ) || "[]"
+                        );
+
+
+                    if (!Array.isArray(savedItems)) {
+                        savedItems = [];
+                    }
+
+                } catch (error) {
+
+                    console.error(
+                        "LosOja: Could not read saved items.",
+                        error
+                    );
+
+                    savedItems = [];
+                }
+
+
+                if (savedItems.length === 0) {
+
+                    savedGrid.innerHTML = `
+
+                        <div class="verified-business-empty">
+
+                            <div class="verified-empty-icon">
+                                ❤️
+                            </div>
+
+                            <div>
+
+                                <strong>
+                                    Nothing saved yet
+                                </strong>
+
+                                <p>
+                                    Save businesses and marketplace
+                                    items to find them here.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    `;
+
+                    return;
+                }
+
+
+                savedGrid.innerHTML =
+                    savedItems
+                        .map(function (item) {
+
+                            if (
+                                !item ||
+                                item.type !== "business"
+                            ) {
+                                return "";
+                            }
+
+
+                            const name =
+                                String(
+                                    item.name ||
+                                    "Unnamed Business"
+                                )
+                                .replace(/</g, "&lt;")
+                                .replace(/>/g, "&gt;");
+
+
+                            const category =
+                                String(
+                                    item.category ||
+                                    "Business"
+                                )
+                                .replace(/</g, "&lt;")
+                                .replace(/>/g, "&gt;");
+
+
+                            const location =
+                                String(
+                                    item.location ||
+                                    "Nigeria"
+                                )
+                                .replace(/</g, "&lt;")
+                                .replace(/>/g, "&gt;");
+
+
+                            const image =
+                                String(
+                                    item.image ||
+                                    ""
+                                ).trim();
+
+
+                            const imageHTML =
+                                image
+                                    ? `
+
+                                        <img
+                                            src="${image}"
+                                            alt="${name}"
+                                            loading="lazy"
+                                            style="
+                                                width:100%;
+                                                height:180px;
+                                                object-fit:cover;
+                                                object-position:center;
+                                                display:block;
+                                            "
+                                        >
+
+                                      `
+                                    : `
+
+                                        <div
+                                            style="
+                                                height:180px;
+                                                display:flex;
+                                                align-items:center;
+                                                justify-content:center;
+                                                background:#f3f4f6;
+                                                font-size:42px;
+                                            "
+                                        >
+                                            🏪
+                                        </div>
+
+                                      `;
+
+
+                            return `
+
+                                <article
+                                    class="business-card"
+                                    style="cursor:pointer;"
+                                    onclick="
+                                        window.openBusiness &&
+                                        window.openBusiness('${item.id}')
+                                    "
+                                >
+
+                                    <div
+                                        style="
+                                            width:100%;
+                                            position:relative;
+                                            overflow:hidden;
+                                            border-radius:12px 12px 0 0;
+                                        "
+                                    >
+
+                                        ${imageHTML}
+
+
+                                        <button
+                                            type="button"
+                                            aria-label="Remove from saved"
+                                            title="Remove from saved"
+                                            onclick="
+                                                event.stopPropagation();
+                                                window.toggleSavedBusiness &&
+                                                window.toggleSavedBusiness('${item.id}')
+                                            "
+                                            style="
+                                                position:absolute;
+                                                top:12px;
+                                                right:12px;
+                                                width:42px;
+                                                height:42px;
+                                                border:0;
+                                                border-radius:50%;
+                                                background:#ffffff;
+                                                box-shadow:0 2px 8px rgba(0,0,0,0.15);
+                                                cursor:pointer;
+                                                font-size:21px;
+                                            "
+                                        >
+                                            ❤️
+                                        </button>
+
+                                    </div>
+
+
+                                    <div
+                                        class="business-card-content"
+                                    >
+
+                                        <h3>
+                                            ${name}
+                                        </h3>
+
+                                        <p>
+                                            ${category}
+                                        </p>
+
+                                        <p>
+                                            📍 ${location}
+                                        </p>
+
+                                    </div>
+
+                                </article>
+
+                            `;
+
+                        })
+                        .join("");
+
+
+                if (!savedGrid.innerHTML.trim()) {
+
+                    savedGrid.innerHTML = `
+
+                        <div class="verified-business-empty">
+
+                            <div class="verified-empty-icon">
+                                ❤️
+                            </div>
+
+                            <div>
+
+                                <strong>
+                                    Nothing saved yet
+                                </strong>
+
+                                <p>
+                                    Save businesses and marketplace
+                                    items to find them here.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    `;
+
+                }
+
+            };
+
+
+            if (
+                document.readyState === "loading"
+            ) {
+
+                document.addEventListener(
+                    "DOMContentLoaded",
+                    function () {
+                        window.renderSavedItems();
+                    }
+                );
+
+            } else {
+
+                window.renderSavedItems();
+
+            }
+
+        </script>
+
+
+        <!-- =================================================
+             EXPLORE MORE
+        ================================================== -->
+
+        <section
+            class="explore-section"
+            id="explore"
+        >
+
+            <div class="explore-content">
+
+                <span class="section-kicker">
+                    More on LosOja
+                </span>
+
+
+                <h2>
+                    Explore More
+                </h2>
+
+
+                <p>
+                    Find products, property, transportation
+                    and useful services.
+                </p>
+
+
+                <div class="explore-grid">
+
+
+                    <a
+                        href="property.html"
+                        class="explore-card"
+                    >
+
+                        <span>
+                            🏠
+                        </span>
+
+
+                        <div>
+
+                            <strong>
+                                Property
+                            </strong>
+
+                            <small>
+                                Find property and real estate.
+                            </small>
+
+                        </div>
+
+                    </a>
+
+
+                    <a
+                        href="mobility.html"
+                        class="explore-card"
+                    >
+
+                        <span>
+                            🚕
+                        </span>
+
+
+                        <div>
+
+                            <strong>
+                                Mobility
+                            </strong>
+
+                            <small>
+                                Cab, Tricycle, Bike and
+                                transport options.
+                            </small>
+
+                        </div>
+
+                    </a>
+
+
+                    <a
+                        href="oja.html"
+                        class="explore-card"
+                    >
+
+                        <span>
+                            🛍️
+                        </span>
+
+
+                        <div>
+
+                            <strong>
+                                Marketplace
+                            </strong>
+
+                            <small>
+                                Buy and sell products on Oja.
+                            </small>
+
+                        </div>
+
+                    </a>
+
+
+                    <button
+                        type="button"
+                        class="explore-card"
+                        id="exploreServicesBtn"
+                    >
+
+                        <span>
+                            🛠️
+                        </span>
+
+
+                        <div>
+
+                            <strong>
+                                Services
+                            </strong>
+
+                            <small>
+                                Find people and businesses
+                                offering services.
+                            </small>
+
+                        </div>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             ADD BUSINESS CTA
+        ================================================== -->
+
+        <section class="business-cta-section">
+
+            <div class="business-cta">
+
+                <div>
+
+                    <span class="section-kicker">
+                        Business Owners
+                    </span>
+
+
+                    <h2>
+                        Add Your Business
+                    </h2>
+
+
+                    <p>
+                        Put your business in front of customers
+                        searching on LosOja.
+                    </p>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    id="addBusinessBtn"
+                    class="primary-button"
+                >
+                    Add Business
+                </button>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =====================================================
+         ADD BUSINESS MODAL
+    ====================================================== -->
+
+    <div
+        class="modal"
+        id="addBusinessModal"
+        aria-hidden="true"
+    >
+
+        <div
+            class="modal-overlay"
+            data-close-modal="addBusinessModal"
+        ></div>
+
+
+        <div
+            class="modal-content"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="addBusinessTitle"
+        >
 
             <button
                 type="button"
-                onclick="performSearch()"
+                class="modal-close"
+                data-close-modal="addBusinessModal"
+                aria-label="Close"
             >
-                Search
+                ×
             </button>
+
+
+            <h2 id="addBusinessTitle">
+                Add Your Business
+            </h2>
+
+
+            <p>
+                Add your business information to LosOja.
+            </p>
+
+
+            <form id="addBusinessForm">
+
+
+                <div class="form-group">
+
+                    <label for="businessName">
+                        Business Name
+                    </label>
+
+
+                    <input
+                        type="text"
+                        id="businessName"
+                        name="name"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="businessCategory">
+                        Category
+                    </label>
+
+
+                    <select
+                        id="businessCategory"
+                        name="category"
+                        required
+                    >
+
+                        <option value="">
+                            Select a category
+                        </option>
+
+
+                        <option value="Food">
+                            Food
+                        </option>
+
+
+                        <option value="Fashion">
+                            Fashion
+                        </option>
+
+
+                        <option value="Phones">
+                            Phones & Electronics
+                        </option>
+
+
+                        <option value="Vehicles">
+                            Vehicles
+                        </option>
+
+
+                        <option value="Property">
+                            Property
+                        </option>
+
+
+                        <option value="Furniture & Home">
+                            Furniture & Home
+                        </option>
+
+
+                        <option value="Plumbing">
+                            Plumbing
+                        </option>
+
+
+                        <option value="Electrical">
+                            Electrical
+                        </option>
+
+
+                        <option value="Carpentry">
+                            Carpentry
+                        </option>
+
+
+                        <option value="Construction">
+                            Construction
+                        </option>
+
+
+                        <option value="Healthcare">
+                            Healthcare
+                        </option>
+
+
+                        <option value="Beauty">
+                            Beauty
+                        </option>
+
+
+                        <option value="Cleaning">
+                            Cleaning
+                        </option>
+
+
+                        <option value="Repairs & Maintenance">
+                            Repairs & Maintenance
+                        </option>
+
+
+                        <option value="Technology">
+                            Technology
+                        </option>
+
+
+                        <option value="Agriculture">
+                            Agriculture
+                        </option>
+
+
+                        <option value="Logistics & Moving">
+                            Logistics & Moving
+                        </option>
+
+
+                        <option value="Education & Tutors">
+                            Education & Tutors
+                        </option>
+
+
+                        <option value="Professional Services">
+                            Professional Services
+                        </option>
+
+
+                        <option value="Services">
+                            General Services
+                        </option>
+
+
+                        <option value="Trade by Barter">
+                            Trade by Barter
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="businessLocation">
+                        Location
+                    </label>
+
+
+                    <input
+                        type="text"
+                        id="businessLocation"
+                        name="location"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="businessPhone">
+                        Phone Number
+                    </label>
+
+
+                    <input
+                        type="tel"
+                        id="businessPhone"
+                        name="phone"
+                        inputmode="tel"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="businessDescription">
+                        Description
+                    </label>
+
+
+                    <textarea
+                        id="businessDescription"
+                        name="description"
+                        rows="4"
+                        placeholder="Tell customers what your business offers..."
+                    ></textarea>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="businessImage">
+                        Business Photo
+                    </label>
+
+
+                    <p class="business-photo-help">
+                        Upload one clear photo of your business,
+                        product or storefront. Maximum 5 MB.
+                    </p>
+
+
+                    <input
+                        type="file"
+                        id="businessImage"
+                        name="image"
+                        accept="image/jpeg,image/jpg,image/png,image/webp"
+                    >
+
+
+                    <div
+                        id="imagePreview"
+                        class="image-preview"
+                    ></div>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    id="submitBusinessBtn"
+                    class="primary-button"
+                >
+                    Add Business
+                </button>
+
+            </form>
 
         </div>
 
     </div>
 
-</section>
+
+    <!-- =====================================================
+         BUSINESS DETAILS MODAL
+    ====================================================== -->
+
+    <div
+        class="modal"
+        id="businessDetailsModal"
+        aria-hidden="true"
+    >
+
+        <div
+            class="modal-overlay"
+            data-close-modal="businessDetailsModal"
+        ></div>
 
 
-<!-- =================================================
-     CATEGORIES
-================================================== -->
+        <div
+            class="modal-content business-details-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="businessDetailsName"
+        >
 
-<section
-    class="categories"
-    id="categories"
->
+            <button
+                type="button"
+                class="modal-close"
+                data-close-modal="businessDetailsModal"
+                aria-label="Close"
+            >
+                ×
+            </button>
 
-    <div class="section-container">
 
-        <div class="section-title">
+            <div
+                class="business-details-image-wrapper"
+            >
 
-            <h2>
-                Explore LosOja
+                <img
+                    id="businessDetailsImage"
+                    src=""
+                    alt="Business"
+                    class="business-details-image"
+                >
+
+            </div>
+
+
+            <div class="business-details-content">
+
+                <span
+                    id="businessDetailsCategory"
+                    class="business-category"
+                ></span>
+
+
+                <h2 id="businessDetailsName">
+                    Business
+                </h2>
+
+
+                <p id="businessDetailsLocation">
+                    📍
+                </p>
+
+
+                <p id="businessDetailsPhone">
+                    📞
+                </p>
+
+
+                <p id="businessDetailsDescription">
+                </p>
+
+
+                <div
+                    id="businessDetailsRating"
+                    class="business-rating"
+                >
+                </div>
+
+
+                <div class="business-details-actions">
+
+                    <button
+                        type="button"
+                        id="businessChatBtn"
+                        class="primary-button"
+                    >
+                        💬 Chat
+                    </button>
+
+
+                    <button
+                        type="button"
+                        id="businessEscrowBtn"
+                        class="secondary-button"
+                    >
+                        🔐 Create Escrow
+                    </button>
+
+                </div>
+
+
+                <div
+                    id="businessOwnerActions"
+                    class="business-owner-actions"
+                    hidden
+                >
+
+                    <button
+                        type="button"
+                        id="businessEditBtn"
+                        class="secondary-button"
+                    >
+                        Edit Business
+                    </button>
+
+
+                    <button
+                        type="button"
+                        id="businessDeleteBtn"
+                        class="danger-button"
+                    >
+                        Delete Business
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         LOGIN MODAL
+    ====================================================== -->
+
+    <div
+        class="modal"
+        id="loginModal"
+        aria-hidden="true"
+    >
+
+        <div
+            class="modal-overlay"
+            data-close-modal="loginModal"
+        ></div>
+
+
+        <div
+            class="modal-content"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="loginTitle"
+        >
+
+            <button
+                type="button"
+                class="modal-close"
+                data-close-modal="loginModal"
+                aria-label="Close"
+            >
+                ×
+            </button>
+
+
+            <!-- LOSOJA LOGIN BRANDING -->
+
+            <div class="losoja-auth-brand">
+
+                <div class="losoja-auth-logo">
+                    L
+                </div>
+
+                <p class="losoja-auth-brand-name">
+                    LosOja
+                </p>
+
+                <p class="losoja-auth-brand-text">
+                    Discover. Connect. Trade.
+                </p>
+
+            </div>
+
+
+            <h2 id="loginTitle">
+                Welcome Back
             </h2>
 
+
             <p>
-                Find businesses, products and services near you.
+                Login to continue using LosOja.
+            </p>
+
+
+            <form id="loginForm">
+
+                <div class="form-group">
+
+                    <label for="loginEmail">
+                        Email
+                    </label>
+
+
+                    <input
+                        type="email"
+                        id="loginEmail"
+                        name="email"
+                        autocomplete="email"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="loginPassword">
+                        Password
+                    </label>
+
+
+                    <input
+                        type="password"
+                        id="loginPassword"
+                        name="password"
+                        autocomplete="current-password"
+                        required
+                    >
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="primary-button"
+                >
+                    Login
+                </button>
+
+            </form>
+
+
+            <p class="modal-switch-text">
+
+                Don't have an account?
+
+
+                <button
+                    type="button"
+                    id="showSignupBtn"
+                    class="text-button"
+                >
+                    Create Account
+                </button>
+
             </p>
 
         </div>
 
+    </div>
 
-        <div class="category-grid">
 
-            <div
-                class="category"
-                onclick="goCategory('Food')"
+    <!-- =====================================================
+         SIGNUP MODAL
+    ====================================================== -->
+
+    <div
+        class="modal"
+        id="signupModal"
+        aria-hidden="true"
+    >
+
+        <div
+            class="modal-overlay"
+            data-close-modal="signupModal"
+        ></div>
+
+
+        <div
+            class="modal-content"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="signupTitle"
+        >
+
+            <button
+                type="button"
+                class="modal-close"
+                data-close-modal="signupModal"
+                aria-label="Close"
             >
-                <div class="category-icon">
-                    🍔
+                ×
+            </button>
+
+
+            <!-- LOSOJA SIGNUP BRANDING -->
+
+            <div class="losoja-auth-brand">
+
+                <div class="losoja-auth-logo">
+                    L
                 </div>
 
-                <strong>
-                    Food
-                </strong>
+                <p class="losoja-auth-brand-name">
+                    LosOja
+                </p>
+
+                <p class="losoja-auth-brand-text">
+                    Your Nigerian marketplace
+                </p>
+
             </div>
 
 
-            <div
-                class="category"
-                onclick="goCategory('Fashion')"
-            >
-                <div class="category-icon">
-                    👕
+            <h2 id="signupTitle">
+                Create Your LosOja Account
+            </h2>
+
+
+            <p>
+                Create an account to add businesses
+                and use LosOja features.
+            </p>
+
+
+            <form id="signupForm">
+
+                <div class="form-group">
+
+                    <label for="signupName">
+                        Full Name
+                    </label>
+
+
+                    <input
+                        type="text"
+                        id="signupName"
+                        name="name"
+                        autocomplete="name"
+                        required
+                    >
+
                 </div>
 
-                <strong>
-                    Fashion
-                </strong>
-            </div>
+
+                <div class="form-group">
+
+                    <label for="signupEmail">
+                        Email
+                    </label>
 
 
-            <div
-                class="category"
-                onclick="goCategory('Phones')"
-            >
-                <div class="category-icon">
-                    📱
+                    <input
+                        type="email"
+                        id="signupEmail"
+                        name="email"
+                        autocomplete="email"
+                        required
+                    >
+
                 </div>
 
-                <strong>
-                    Phones
-                </strong>
-            </div>
+
+                <div class="form-group">
+
+                    <label for="signupPassword">
+                        Password
+                    </label>
 
 
-            <div
-                class="category"
-                onclick="goCategory('Vehicles')"
-            >
-                <div class="category-icon">
-                    🚗
+                    <input
+                        type="password"
+                        id="signupPassword"
+                        name="password"
+                        autocomplete="new-password"
+                        required
+                    >
+
                 </div>
 
-                <strong>
-                    Vehicles
-                </strong>
-            </div>
+
+                <button
+                    type="submit"
+                    class="primary-button"
+                >
+                    Create Account
+                </button>
+
+            </form>
 
 
-            <div
-                class="category"
-                onclick="goCategory('Property')"
-            >
-                <div class="category-icon">
-                    🏠
-                </div>
+            <p class="modal-switch-text">
 
-                <strong>
-                    Property
-                </strong>
-            </div>
+                Already have an account?
 
 
-            <div
-                class="category"
-                onclick="goCategory('Services')"
-            >
-                <div class="category-icon">
-                    🛠️
-                </div>
+                <button
+                    type="button"
+                    id="backToLoginBtn"
+                    class="text-button"
+                >
+                    Login
+                </button>
 
-                <strong>
-                    Services
-                </strong>
-            </div>
-
-
-            <div
-                class="category"
-                onclick="goCategory('Beauty')"
-            >
-                <div class="category-icon">
-                    ✨
-                </div>
-
-                <strong>
-                    Beauty
-                </strong>
-            </div>
-
-
-            <div
-                class="category"
-                onclick="goCategory('Technology')"
-            >
-                <div class="category-icon">
-                    💻
-                </div>
-
-                <strong>
-                    Technology
-                </strong>
-            </div>
+            </p>
 
         </div>
 
     </div>
 
-</section>
-```
 
-</main>
-
-<!-- =====================================================
-     FOOTER
-====================================================== -->
-
-<footer>
-
-```
-<a
-    href="index.html"
-    class="losoja-logo"
->
+    <!-- =====================================================
+         TOAST
+    ====================================================== -->
 
     <div
-        class="logo-mark"
-        aria-hidden="true"
+        id="toast"
+        class="toast"
+        role="status"
+        aria-live="polite"
+    ></div>
+
+
+    <!-- =====================================================
+         BOTTOM NAVIGATION
+    ====================================================== -->
+
+    <nav
+        class="bottom-nav"
+        aria-label="Main navigation"
     >
-        L
-    </div>
-
-    <span>
-        LosOja
-    </span>
-
-</a>
-
-<p>
-    Find what you need across Nigeria.
-</p>
-```
-
-</footer>
-
-<!-- =====================================================
-     HOME PAGE FUNCTIONS
-====================================================== -->
-
-<script>
-
-    function performSearch() {
-
-        const input =
-            document.getElementById(
-                "homeSearch"
-            );
-
-        const query =
-            input.value.trim();
 
 
-        if (!query) {
+        <a
+            href="index.html"
+            class="bottom-nav-item active"
+        >
 
-            input.focus();
+            <span>
+                🏠
+            </span>
 
-            return;
+            <small>
+                Home
+            </small>
 
-        }
-
-
-        if (
-            typeof window.searchBusinesses ===
-            "function"
-        ) {
-
-            window.searchBusinesses(
-                query
-            );
-
-            return;
-
-        }
+        </a>
 
 
-        window.location.href =
-            "businesses.html?search=" +
-            encodeURIComponent(
-                query
-            );
+        <a
+            href="#explore"
+            class="bottom-nav-item"
+        >
 
-    }
+            <span>
+                🔎
+            </span>
 
+            <small>
+                Explore
+            </small>
 
-    function goCategory(category) {
-
-        if (
-            typeof window.filterByCategory ===
-            "function"
-        ) {
-
-            window.filterByCategory(
-                category
-            );
-
-            return;
-
-        }
+        </a>
 
 
-        window.location.href =
-            "businesses.html?category=" +
-            encodeURIComponent(
-                category
-            );
+        <button
+            type="button"
+            class="bottom-nav-item nav-add-button"
+            id="bottomAddBusinessBtn"
+        >
 
-    }
+            <span>
+                ➕
+            </span>
+
+            <small>
+                Add
+            </small>
+
+        </button>
 
 
-    document
-        .getElementById("homeSearch")
-        .addEventListener(
-            "keydown",
-            function (event) {
+        <button
+            type="button"
+            class="bottom-nav-item"
+            id="savedNavButton"
+        >
 
-                if (
-                    event.key ===
-                    "Enter"
-                ) {
+            <span>
+                ❤️
+            </span>
 
-                    event.preventDefault();
+            <small>
+                Saved
+            </small>
 
-                    performSearch();
+        </button>
+
+
+        <button
+            type="button"
+            class="bottom-nav-item"
+            id="bottomAccountButton"
+        >
+
+            <span>
+                👤
+            </span>
+
+            <small>
+                Account
+            </small>
+
+        </button>
+
+    </nav>
+
+
+    <!-- =====================================================
+         SCRIPTS
+         KEEP businesses.js UNTOUCHED
+    ====================================================== -->
+
+    <script src="js/businesses.js?v=4"></script>
+
+    <script src="js/auth.js?v=2"></script>
+
+    <script src="js/app.js?v=4"></script>
+
+
+    <!-- =====================================================
+         PAGE-LEVEL CONNECTIONS
+    ====================================================== -->
+
+    <script>
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            function () {
+
+
+                /* -----------------------------------------------
+                   Quick Add Business
+                ------------------------------------------------ */
+
+                const quickAddBusinessBtn =
+                    document.getElementById(
+                        "quickAddBusinessBtn"
+                    );
+
+
+                if (quickAddBusinessBtn) {
+
+                    quickAddBusinessBtn.addEventListener(
+                        "click",
+                        function () {
+
+                            if (
+                                window.App &&
+                                typeof window.App.openModal === "function"
+                            ) {
+
+                                window.App.openModal(
+                                    "addBusinessModal"
+                                );
+
+                                return;
+
+                            }
+
+
+                            const modal =
+                                document.getElementById(
+                                    "addBusinessModal"
+                                );
+
+
+                            if (modal) {
+
+                                modal.classList.add(
+                                    "active"
+                                );
+
+                                modal.setAttribute(
+                                    "aria-hidden",
+                                    "false"
+                                );
+
+                            }
+
+                        }
+                    );
 
                 }
+
+
+                /* -----------------------------------------------
+                   Bottom Add Business
+                ------------------------------------------------ */
+
+                const bottomAddBusinessBtn =
+                    document.getElementById(
+                        "bottomAddBusinessBtn"
+                    );
+
+
+                if (bottomAddBusinessBtn) {
+
+                    bottomAddBusinessBtn.addEventListener(
+                        "click",
+                        function () {
+
+                            if (
+                                window.App &&
+                                typeof window.App.openModal === "function"
+                            ) {
+
+                                window.App.openModal(
+                                    "addBusinessModal"
+                                );
+
+                                return;
+
+                            }
+
+
+                            const modal =
+                                document.getElementById(
+                                    "addBusinessModal"
+                                );
+
+
+                            if (modal) {
+
+                                modal.classList.add(
+                                    "active"
+                                );
+
+                                modal.setAttribute(
+                                    "aria-hidden",
+                                    "false"
+                                );
+
+                            }
+
+                        }
+                    );
+
+                }
+
+
+                /* -----------------------------------------------
+                   Account Button
+                ------------------------------------------------ */
+
+                const bottomAccountButton =
+                    document.getElementById(
+                        "bottomAccountButton"
+                    );
+
+
+                const accountButton =
+                    document.getElementById(
+                        "accountButton"
+                    );
+
+
+                function openAccount() {
+
+                    if (
+                        window.App &&
+                        typeof window.App.openAccount === "function"
+                    ) {
+
+                        window.App.openAccount();
+
+                        return;
+
+                    }
+
+
+                    if (
+                        window.openLoginModal &&
+                        typeof window.openLoginModal === "function"
+                    ) {
+
+                        window.openLoginModal();
+
+                    }
+
+                }
+
+
+                if (bottomAccountButton) {
+
+                    bottomAccountButton.addEventListener(
+                        "click",
+                        openAccount
+                    );
+
+                }
+
+
+                if (accountButton) {
+
+                    accountButton.addEventListener(
+                        "click",
+                        openAccount
+                    );
+
+                }
+
+
+                /* -----------------------------------------------
+                   View Verified Businesses
+                ------------------------------------------------ */
+
+                const viewVerifiedBusinessesBtn =
+                    document.getElementById(
+                        "viewVerifiedBusinessesBtn"
+                    );
+
+
+                if (viewVerifiedBusinessesBtn) {
+
+                    viewVerifiedBusinessesBtn.addEventListener(
+                        "click",
+                        function () {
+
+                            const businesses =
+                                document.getElementById(
+                                    "businesses"
+                                );
+
+
+                            if (businesses) {
+
+                                businesses.scrollIntoView({
+                                    behavior: "smooth",
+                                    block: "start"
+                                });
+
+                            }
+
+                        }
+                    );
+
+                }
+
+
+                /* -----------------------------------------------
+                   Explore Services
+                ------------------------------------------------ */
+
+                const exploreServicesBtn =
+                    document.getElementById(
+                        "exploreServicesBtn"
+                    );
+
+
+                if (exploreServicesBtn) {
+
+                    exploreServicesBtn.addEventListener(
+                        "click",
+                        function () {
+
+                            const categories =
+                                document.getElementById(
+                                    "categories"
+                                );
+
+
+                            if (categories) {
+
+                                categories.scrollIntoView({
+                                    behavior: "smooth",
+                                    block: "start"
+                                });
+
+                            }
+
+                        }
+                    );
+
+                }
+
+
+                /* -----------------------------------------------
+                   Saved Items
+                ------------------------------------------------ */
+
+                const savedNavButton =
+                    document.getElementById(
+                        "savedNavButton"
+                    );
+
+
+                if (savedNavButton) {
+
+                    savedNavButton.addEventListener(
+                        "click",
+                        function () {
+
+                            const savedSection =
+                                document.getElementById(
+                                    "saved"
+                                );
+
+
+                            if (savedSection) {
+
+                                savedSection.scrollIntoView({
+                                    behavior: "smooth",
+                                    block: "start"
+                                });
+
+                            }
+
+                        }
+                    );
+
+                }
+
+
+                /* -----------------------------------------------
+                   Create Account / Login
+                ------------------------------------------------ */
+
+                const showSignupBtn =
+                    document.getElementById(
+                        "showSignupBtn"
+                    );
+
+
+                if (showSignupBtn) {
+
+                    showSignupBtn.addEventListener(
+                        "click",
+                        function () {
+
+                            if (
+                                window.App &&
+                                typeof window.App.openModal === "function"
+                            ) {
+
+                                window.App.openModal(
+                                    "signupModal"
+                                );
+
+                            }
+
+                        }
+                    );
+
+                }
+
+
+                const backToLoginBtn =
+                    document.getElementById(
+                        "backToLoginBtn"
+                    );
+
+
+                if (backToLoginBtn) {
+
+                    backToLoginBtn.addEventListener(
+                        "click",
+                        function () {
+
+                            if (
+                                window.App &&
+                                typeof window.App.openModal === "function"
+                            ) {
+
+                                window.App.openModal(
+                                    "loginModal"
+                                );
+
+                            }
+
+                        }
+                    );
+
+                }
+
 
             }
         );
 
-</script>
-
-<!-- =====================================================
-     EXISTING LOSOJA JAVASCRIPT
-====================================================== -->
-
-<script src="auth.js"></script>
-
-<script src="businesses.js"></script>
-
-<script src="app.js"></script>
+    </script>
 
 </body>
 
