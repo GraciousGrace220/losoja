@@ -27,8 +27,32 @@
         href="css/style.css"
     >
 
-    <style>
+<style>
 
+    /* all your existing CSS */
+
+
+    /* =========================================================
+       FIX BOTTOM NAVIGATION
+    ========================================================= */
+
+    .bottom-nav,
+    .bottom-navigation,
+    #bottomNav {
+        position: fixed !important;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        z-index: 9999;
+        box-sizing: border-box;
+    }
+
+    body {
+        padding-bottom: 90px;
+    }
+
+</style>
         /* =========================================================
            LOSOJA HOMEPAGE EXTRAS
            Page-level only
