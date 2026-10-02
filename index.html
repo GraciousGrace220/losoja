@@ -270,6 +270,123 @@
 
 
         /* =========================================================
+           LOSOJA WALLET BALANCE
+        ========================================================= */
+
+        .losoja-wallet-card {
+            margin: 20px 16px;
+            padding: 22px;
+            border-radius: 20px;
+            background: linear-gradient(
+                135deg,
+                #087a3e,
+                #055c2e
+            );
+            color: #ffffff;
+            box-shadow: 0 8px 22px rgba(8, 122, 62, 0.22);
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+
+        .losoja-wallet-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+
+        .losoja-wallet-label {
+            margin: 0 0 6px;
+            font-size: 13px;
+            font-weight: 700;
+            opacity: 0.88;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+
+        .losoja-wallet-balance {
+            margin: 0;
+            font-size: clamp(26px, 6vw, 38px);
+            line-height: 1.15;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            overflow-wrap: anywhere;
+        }
+
+
+        .losoja-wallet-icon {
+            width: 48px;
+            height: 48px;
+            flex-shrink: 0;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.16);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 800;
+        }
+
+
+        .losoja-wallet-subtext {
+            margin: 8px 0 0;
+            font-size: 13px;
+            opacity: 0.82;
+        }
+
+
+        .losoja-wallet-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 18px;
+            flex-wrap: wrap;
+        }
+
+
+        .losoja-wallet-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 42px;
+            padding: 10px 16px;
+            border-radius: 12px;
+            background: #ffffff;
+            color: #087a3e;
+            font-weight: 700;
+            text-decoration: none;
+            border: 0;
+            cursor: pointer;
+            box-sizing: border-box;
+        }
+
+
+        .losoja-wallet-button.secondary {
+            background: rgba(255, 255, 255, 0.14);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
+
+
+        .losoja-wallet-visibility {
+            width: 42px;
+            height: 42px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.12);
+            color: #ffffff;
+            cursor: pointer;
+            font-size: 18px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+
+        /* =========================================================
            HOW TO USE LOSOJA
         ========================================================= */
 
@@ -443,6 +560,23 @@
             }
 
 
+            .losoja-wallet-card {
+                margin-left: 12px;
+                margin-right: 12px;
+                padding: 20px;
+            }
+
+
+            .losoja-wallet-controls {
+                width: 100%;
+            }
+
+
+            .losoja-wallet-button {
+                flex: 1;
+            }
+
+
             .losoja-bills-card {
                 align-items: flex-start;
                 flex-direction: column;
@@ -502,6 +636,24 @@
             }
 
 
+            .losoja-wallet-card {
+                margin-left: 12px;
+                margin-right: 12px;
+            }
+
+
+            .losoja-wallet-top {
+                gap: 10px;
+            }
+
+
+            .losoja-wallet-icon {
+                width: 42px;
+                height: 42px;
+                font-size: 20px;
+            }
+
+
             .business-details-modal {
                 width: calc(100vw - 20px) !important;
                 max-height: calc(100vh - 20px);
@@ -522,6 +674,11 @@
                 height: 175px !important;
                 min-height: 175px !important;
                 max-height: 175px !important;
+            }
+
+
+            .losoja-wallet-balance {
+                font-size: 25px;
             }
 
         }
@@ -743,6 +900,83 @@
                     <span>
                         Chat with Baba Oja
                     </span>
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             LOSOJA WALLET
+        ================================================== -->
+
+        <section
+            class="losoja-wallet-card"
+            id="losojaBalanceCard"
+            aria-label="LosOja wallet balance"
+        >
+
+            <div class="losoja-wallet-top">
+
+                <div>
+
+                    <p class="losoja-wallet-label">
+                        LosOja Wallet
+                    </p>
+
+
+                    <h2
+                        class="losoja-wallet-balance"
+                        id="losojaBalanceAmount"
+                    >
+                        Checking balance...
+                    </h2>
+
+
+                    <p class="losoja-wallet-subtext">
+                        Your available LosOja balance
+                    </p>
+
+                </div>
+
+
+                <div
+                    class="losoja-wallet-icon"
+                    aria-hidden="true"
+                >
+                    ₦
+                </div>
+
+            </div>
+
+
+            <div class="losoja-wallet-controls">
+
+                <a
+                    href="balance.html"
+                    class="losoja-wallet-button"
+                >
+                    View Wallet
+                </a>
+
+
+                <a
+                    href="bills.html"
+                    class="losoja-wallet-button secondary"
+                >
+                    Pay Bills
+                </a>
+
+
+                <button
+                    type="button"
+                    id="toggleBalanceVisibility"
+                    class="losoja-wallet-visibility"
+                    aria-label="Hide balance"
+                    title="Hide balance"
+                >
+                    👁️
                 </button>
 
             </div>
@@ -2835,6 +3069,325 @@
     <script src="js/auth.js?v=2"></script>
 
     <script src="js/app.js?v=4"></script>
+
+
+    <!-- =====================================================
+         LOSOJA WALLET BALANCE
+         This must be JavaScript, NOT CSS.
+    ====================================================== -->
+
+    <script>
+
+        const balanceAmount =
+            document.getElementById(
+                "losojaBalanceAmount"
+            );
+
+
+        const balanceVisibilityButton =
+            document.getElementById(
+                "toggleBalanceVisibility"
+            );
+
+
+        let currentLosOjaBalance = 0;
+
+        let balanceVisible = true;
+
+
+        function formatLosOjaBalance(amount) {
+
+            return Number(
+                amount || 0
+            ).toLocaleString(
+                "en-NG",
+                {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                }
+            );
+
+        }
+
+
+        function renderLosOjaBalance() {
+
+            if (!balanceAmount) {
+                return;
+            }
+
+
+            if (!balanceVisible) {
+
+                balanceAmount.textContent =
+                    "₦••••••";
+
+                return;
+
+            }
+
+
+            balanceAmount.textContent =
+                "₦" +
+                formatLosOjaBalance(
+                    currentLosOjaBalance
+                );
+
+        }
+
+
+        async function loadLosOjaBalance() {
+
+            if (!balanceAmount) {
+                return;
+            }
+
+
+            try {
+
+                /*
+                 * Give auth.js a chance to restore
+                 * the current Supabase session.
+                 */
+
+                if (
+                    typeof window.ensureValidSupabaseSession ===
+                    "function"
+                ) {
+
+                    try {
+
+                        await window.ensureValidSupabaseSession();
+
+                    } catch (sessionError) {
+
+                        console.warn(
+                            "LosOja: Session check did not complete.",
+                            sessionError
+                        );
+
+                    }
+
+                }
+
+
+                if (
+                    typeof window.getSupabaseAccessToken !==
+                    "function"
+                ) {
+
+                    balanceAmount.textContent =
+                        "Login to view";
+
+                    return;
+
+                }
+
+
+                const token =
+                    await window.getSupabaseAccessToken();
+
+
+                if (!token) {
+
+                    balanceAmount.textContent =
+                        "Login to view";
+
+                    return;
+
+                }
+
+
+                const session =
+                    typeof window.getSupabaseSession ===
+                    "function"
+                        ? await window.getSupabaseSession()
+                        : null;
+
+
+                let userId = null;
+
+
+                if (
+                    session &&
+                    session.user
+                ) {
+
+                    userId =
+                        session.user.id;
+
+                }
+
+
+                if (
+                    !userId &&
+                    typeof window.getCurrentUser ===
+                    "function"
+                ) {
+
+                    const user =
+                        await window.getCurrentUser();
+
+
+                    if (user) {
+
+                        userId =
+                            user.id;
+
+                    }
+
+                }
+
+
+                if (!userId) {
+
+                    balanceAmount.textContent =
+                        "Login to view";
+
+                    return;
+
+                }
+
+
+                const response =
+                    await fetch(
+                        "https://ycxshwgeebskdozmornh.supabase.co/rest/v1/wallets?user_id=eq." +
+                        encodeURIComponent(userId) +
+                        "&select=balance&limit=1",
+                        {
+                            method: "GET",
+                            headers: {
+
+                                "apikey":
+                                    "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe",
+
+                                "Authorization":
+                                    "Bearer " + token
+
+                            }
+                        }
+                    );
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "Could not load wallet balance. HTTP " +
+                        response.status
+                    );
+
+                }
+
+
+                const wallets =
+                    await response.json();
+
+
+                if (
+                    Array.isArray(wallets) &&
+                    wallets.length > 0
+                ) {
+
+                    currentLosOjaBalance =
+                        Number(
+                            wallets[0].balance || 0
+                        );
+
+                } else {
+
+                    currentLosOjaBalance = 0;
+
+                }
+
+
+                renderLosOjaBalance();
+
+            } catch (error) {
+
+                console.error(
+                    "LosOja: Could not load wallet balance.",
+                    error
+                );
+
+
+                balanceAmount.textContent =
+                    "Unable to load";
+
+            }
+
+        }
+
+
+        if (balanceVisibilityButton) {
+
+            balanceVisibilityButton.addEventListener(
+                "click",
+                function () {
+
+                    balanceVisible =
+                        !balanceVisible;
+
+
+                    balanceVisibilityButton.textContent =
+                        balanceVisible
+                            ? "👁️"
+                            : "🙈";
+
+
+                    balanceVisibilityButton.setAttribute(
+                        "aria-label",
+                        balanceVisible
+                            ? "Hide balance"
+                            : "Show balance"
+                    );
+
+
+                    balanceVisibilityButton.setAttribute(
+                        "title",
+                        balanceVisible
+                            ? "Hide balance"
+                            : "Show balance"
+                    );
+
+
+                    renderLosOjaBalance();
+
+                }
+            );
+
+        }
+
+
+        /*
+         * Initial balance load.
+         */
+
+        loadLosOjaBalance();
+
+
+        /*
+         * Refresh when the user returns to the page.
+         * This helps show a newly updated balance after
+         * deposits, refunds or bill payments.
+         */
+
+        document.addEventListener(
+            "visibilitychange",
+            function () {
+
+                if (
+                    document.visibilityState === "visible"
+                ) {
+
+                    loadLosOjaBalance();
+
+                }
+
+            }
+        );
+
+
+    </script>
 
 
     <!-- =====================================================
