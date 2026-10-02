@@ -281,6 +281,182 @@ header {
 }
 
 /* =====================================================
+   CREATE ESCROW IN CHAT
+===================================================== */
+
+.chat-escrow-card {
+    background: white;
+
+    border: 1px solid #dfe7e2;
+    border-left: 4px solid #087a3e;
+
+    border-radius: 12px;
+
+    padding: 15px;
+
+    margin-bottom: 12px;
+}
+
+.chat-escrow-title {
+    color: #087a3e;
+
+    font-size: 16px;
+    font-weight: 700;
+
+    margin-bottom: 6px;
+}
+
+.chat-escrow-subtitle {
+    color: #6b7280;
+
+    font-size: 13px;
+
+    line-height: 1.5;
+
+    margin-bottom: 12px;
+}
+
+.create-escrow-button {
+    width: 100%;
+
+    border: none;
+    border-radius: 9px;
+
+    background: #087a3e;
+    color: white;
+
+    padding: 12px;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+.create-escrow-button:hover {
+    background: #055c2e;
+}
+
+.create-escrow-form {
+    display: none;
+
+    margin-top: 12px;
+
+    padding-top: 12px;
+
+    border-top: 1px solid #e5e7eb;
+}
+
+.escrow-form-group {
+    margin-bottom: 12px;
+}
+
+.escrow-form-group label {
+    display: block;
+
+    color: #374151;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    margin-bottom: 5px;
+}
+
+.escrow-form-input,
+.escrow-form-textarea {
+    width: 100%;
+
+    border: 1px solid #d1d5db;
+
+    border-radius: 9px;
+
+    padding: 11px 12px;
+
+    font-family: inherit;
+
+    font-size: 14px;
+
+    outline: none;
+}
+
+.escrow-form-input:focus,
+.escrow-form-textarea:focus {
+    border-color: #087a3e;
+}
+
+.escrow-form-textarea {
+    min-height: 90px;
+
+    resize: vertical;
+}
+
+.escrow-form-actions {
+    display: flex;
+
+    gap: 8px;
+
+    flex-wrap: wrap;
+}
+
+.confirm-create-escrow-button {
+    flex: 1;
+
+    min-width: 140px;
+
+    border: none;
+
+    border-radius: 9px;
+
+    background: #087a3e;
+
+    color: white;
+
+    padding: 11px 14px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+.cancel-create-escrow-button {
+    flex: 1;
+
+    min-width: 100px;
+
+    border: 1px solid #d1d5db;
+
+    border-radius: 9px;
+
+    background: white;
+
+    color: #374151;
+
+    padding: 11px 14px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+.escrow-create-message {
+    display: none;
+
+    margin-top: 10px;
+
+    padding: 10px;
+
+    border-radius: 8px;
+
+    background: #fee2e2;
+
+    color: #991b1b;
+
+    font-size: 13px;
+
+    line-height: 1.4;
+}
+
+/* =====================================================
    OJA ITEM DETAILS
 ===================================================== */
 
@@ -775,6 +951,106 @@ header {
 
 </div>
 
+
+<!-- =====================================================
+     CREATE ESCROW IN CHAT
+===================================================== -->
+
+<div
+    id="chatEscrowCard"
+    class="chat-escrow-card"
+    style="display:none;"
+>
+
+    <div class="chat-escrow-title">
+        💰 Create Escrow
+    </div>
+
+    <div class="chat-escrow-subtitle">
+        Pay securely through LosOja. Your money stays protected
+        until the transaction is completed according to the
+        escrow process.
+    </div>
+
+    <button
+        id="showCreateEscrowButton"
+        class="create-escrow-button"
+        type="button"
+    >
+        Create Escrow
+    </button>
+
+    <div
+        id="createEscrowForm"
+        class="create-escrow-form"
+    >
+
+        <div class="escrow-form-group">
+
+            <label for="escrowCreateAmount">
+                Amount (₦)
+            </label>
+
+            <input
+                id="escrowCreateAmount"
+                class="escrow-form-input"
+                type="number"
+                min="1"
+                step="0.01"
+                inputmode="decimal"
+                placeholder="Enter amount"
+            >
+
+        </div>
+
+
+        <div class="escrow-form-group">
+
+            <label for="escrowCreateDescription">
+                What are you paying for?
+            </label>
+
+            <textarea
+                id="escrowCreateDescription"
+                class="escrow-form-textarea"
+                maxlength="500"
+                placeholder="Example: Payment for the item/service discussed in this chat."
+            ></textarea>
+
+        </div>
+
+
+        <div
+            id="escrowCreateMessage"
+            class="escrow-create-message"
+        ></div>
+
+
+        <div class="escrow-form-actions">
+
+            <button
+                id="confirmCreateEscrowButton"
+                class="confirm-create-escrow-button"
+                type="button"
+            >
+                Create Escrow
+            </button>
+
+            <button
+                id="cancelCreateEscrowButton"
+                class="cancel-create-escrow-button"
+                type="button"
+            >
+                Cancel
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
 <div
     id="ojaDetails"
     class="oja-details"
@@ -820,6 +1096,7 @@ header {
     </button>
 
 </div>
+
 
 <div
     id="escrowDetails"
@@ -883,6 +1160,7 @@ header {
 
 </div>
 
+
 <div
     id="messages"
     class="messages"
@@ -894,10 +1172,12 @@ header {
 
 </div>
 
+
 <div
     id="selectedImage"
     class="selected-image"
 ></div>
+
 
 <form
     id="chatForm"
@@ -970,6 +1250,15 @@ const ALLOWED_CHAT_IMAGE_TYPES = [
     "image/png",
     "image/webp"
 ];
+
+
+/* =========================================================
+   CREATE ESCROW ENDPOINT
+========================================================= */
+
+const CREATE_ESCROW_FUNCTION =
+    SUPABASE_URL +
+    "/functions/v1/create-escrow";
 
 
 let currentUser = null;
@@ -1053,24 +1342,25 @@ function goToLogin() {
 }
 
 
-function getAccessToken() {
+async function getAccessToken() {
 
     if (
         typeof window.getSupabaseAccessToken ===
         "function"
     ) {
 
-        return window.getSupabaseAccessToken();
+        return await window.getSupabaseAccessToken();
+
     }
 
     return null;
 }
 
 
-function getHeaders() {
+async function getHeaders() {
 
     const token =
-        getAccessToken();
+        await getAccessToken();
 
     return {
 
@@ -1096,6 +1386,9 @@ async function supabaseRequest(
     options = {}
 ) {
 
+    const headers =
+        await getHeaders();
+
     const response =
         await fetch(
             SUPABASE_URL + path,
@@ -1103,7 +1396,7 @@ async function supabaseRequest(
                 ...options,
 
                 headers: {
-                    ...getHeaders(),
+                    ...headers,
 
                     ...(options.headers || {})
                 }
@@ -1254,7 +1547,7 @@ async function uploadChatImage(file) {
 
 
     const token =
-        getAccessToken();
+        await getAccessToken();
 
 
     if (!token) {
@@ -1823,6 +2116,570 @@ async function findOrCreateConversation() {
 
 
 /* =========================================================
+   CREATE ESCROW
+   REUSES EXISTING LOSOJA ESCROW SYSTEM
+========================================================= */
+
+function showEscrowCreateMessage(
+    message
+) {
+
+    const box =
+        document.getElementById(
+            "escrowCreateMessage"
+        );
+
+    if (!box) {
+        return;
+    }
+
+    box.textContent =
+        message || "";
+
+    box.style.display =
+        message
+            ? "block"
+            : "none";
+}
+
+
+function openCreateEscrowForm() {
+
+    const form =
+        document.getElementById(
+            "createEscrowForm"
+        );
+
+    const button =
+        document.getElementById(
+            "showCreateEscrowButton"
+        );
+
+    if (!form) {
+        return;
+    }
+
+    form.style.display =
+        "block";
+
+    if (button) {
+
+        button.style.display =
+            "none";
+    }
+
+    showEscrowCreateMessage("");
+
+    const amount =
+        document.getElementById(
+            "escrowCreateAmount"
+        );
+
+    if (amount) {
+        amount.focus();
+    }
+}
+
+
+function closeCreateEscrowForm() {
+
+    const form =
+        document.getElementById(
+            "createEscrowForm"
+        );
+
+    const button =
+        document.getElementById(
+            "showCreateEscrowButton"
+        );
+
+    if (form) {
+
+        form.style.display =
+            "none";
+    }
+
+    if (button) {
+
+        button.style.display =
+            "block";
+    }
+
+    showEscrowCreateMessage("");
+}
+
+
+async function createEscrowFromChat() {
+
+    if (!currentUser) {
+
+        showEscrowCreateMessage(
+            "Please log in before creating an escrow."
+        );
+
+        return;
+    }
+
+
+    if (!currentOtherUserId) {
+
+        showEscrowCreateMessage(
+            "The seller or business owner could not be found."
+        );
+
+        return;
+    }
+
+
+    if (
+        String(currentOtherUserId) ===
+        String(currentUser.id)
+    ) {
+
+        showEscrowCreateMessage(
+            "You cannot create an escrow with your own account."
+        );
+
+        return;
+    }
+
+
+    const amountInput =
+        document.getElementById(
+            "escrowCreateAmount"
+        );
+
+
+    const descriptionInput =
+        document.getElementById(
+            "escrowCreateDescription"
+        );
+
+
+    const createButton =
+        document.getElementById(
+            "confirmCreateEscrowButton"
+        );
+
+
+    if (
+        !amountInput ||
+        !descriptionInput
+    ) {
+
+        return;
+    }
+
+
+    const amount =
+        Number(
+            String(
+                amountInput.value || ""
+            )
+                .replace(/,/g, "")
+                .trim()
+        );
+
+
+    const description =
+        descriptionInput.value.trim();
+
+
+    if (
+        !Number.isFinite(amount) ||
+        amount <= 0
+    ) {
+
+        showEscrowCreateMessage(
+            "Please enter a valid escrow amount."
+        );
+
+        amountInput.focus();
+
+        return;
+    }
+
+
+    if (
+        amount > 100000000
+    ) {
+
+        showEscrowCreateMessage(
+            "Escrow amount is too large."
+        );
+
+        amountInput.focus();
+
+        return;
+    }
+
+
+    if (!description) {
+
+        showEscrowCreateMessage(
+            "Please describe what the payment is for."
+        );
+
+        descriptionInput.focus();
+
+        return;
+    }
+
+
+    if (
+        description.length >
+        500
+    ) {
+
+        showEscrowCreateMessage(
+            "Description must be 500 characters or less."
+        );
+
+        descriptionInput.focus();
+
+        return;
+    }
+
+
+    const confirmed =
+        confirm(
+
+            "LosOja Escrow\n\n" +
+
+            "Amount: ₦" +
+
+            amount.toLocaleString(
+                "en-NG",
+                {
+                    minimumFractionDigits:
+                        2,
+
+                    maximumFractionDigits:
+                        2
+                }
+            ) +
+
+            "\n\n" +
+
+            "Payment for:\n" +
+
+            description +
+
+            "\n\n" +
+
+            "The money will be handled through LosOja Escrow.\n\n" +
+
+            "Create this escrow?"
+
+        );
+
+
+    if (!confirmed) {
+
+        return;
+    }
+
+
+    try {
+
+        const token =
+            await getAccessToken();
+
+
+        if (!token) {
+
+            throw new Error(
+                "Your login session has expired. Please log in again."
+            );
+        }
+
+
+        if (createButton) {
+
+            createButton.disabled =
+                true;
+
+            createButton.textContent =
+                "Creating Escrow...";
+        }
+
+
+        showEscrowCreateMessage("");
+
+
+        /*
+           Existing LosOja create-escrow
+           Edge Function.
+
+           Seller is the business owner
+           or Oja seller represented by
+           currentOtherUserId.
+        */
+
+        const response =
+            await fetch(
+                CREATE_ESCROW_FUNCTION,
+                {
+                    method: "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json",
+
+                        "apikey":
+                            SUPABASE_KEY,
+
+                        "Authorization":
+                            "Bearer " +
+                            token
+
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            seller_id:
+                                currentOtherUserId,
+
+                            amount:
+                                amount,
+
+                            description:
+                                description
+
+                        })
+                }
+            );
+
+
+        const responseText =
+            await response.text();
+
+
+        let result =
+            null;
+
+
+        try {
+
+            result =
+                responseText
+                    ? JSON.parse(
+                        responseText
+                    )
+                    : null;
+
+        } catch {
+
+            result =
+                responseText;
+        }
+
+
+        if (!response.ok) {
+
+            console.error(
+                "LosOja create escrow error:",
+                response.status,
+                result
+            );
+
+
+            throw new Error(
+                result?.error ||
+                result?.message ||
+                "Unable to create escrow."
+            );
+        }
+
+
+        /*
+           The existing Edge Function may
+           return the escrow directly or
+           inside an escrow/data object.
+        */
+
+        const createdEscrow =
+            result?.escrow ||
+            result?.data ||
+            result;
+
+
+        const escrowId =
+            createdEscrow?.id ||
+            result?.escrow_id ||
+            result?.id;
+
+
+        if (!escrowId) {
+
+            console.error(
+                "LosOja escrow created but ID was not returned:",
+                result
+            );
+
+
+            throw new Error(
+                "Escrow was created, but its transaction ID was not returned."
+            );
+        }
+
+
+        /*
+           Open the SAME business conversation
+           with the new escrow attached.
+
+           This preserves the existing
+           business conversation instead of
+           creating a second chat.
+        */
+
+        let url =
+            "chat.html" +
+
+            "?user=" +
+
+            encodeURIComponent(
+                currentOtherUserId
+            );
+
+
+        if (currentBusinessId) {
+
+            url +=
+                "&business=" +
+
+                encodeURIComponent(
+                    currentBusinessId
+                );
+        }
+
+
+        if (currentOjaListingId) {
+
+            url +=
+                "&oja_listing=" +
+
+                encodeURIComponent(
+                    currentOjaListingId
+                );
+        }
+
+
+        if (currentListingId) {
+
+            url +=
+                "&listing=" +
+
+                encodeURIComponent(
+                    currentListingId
+                );
+        }
+
+
+        url +=
+            "&escrow=" +
+
+            encodeURIComponent(
+                escrowId
+            );
+
+
+        window.location.href =
+            url;
+
+
+    } catch (error) {
+
+        console.error(
+            "LosOja create escrow from chat failed:",
+            error
+        );
+
+
+        showEscrowCreateMessage(
+            error.message ||
+            "Unable to create escrow."
+        );
+
+
+        if (createButton) {
+
+            createButton.disabled =
+                false;
+
+            createButton.textContent =
+                "Create Escrow";
+        }
+    }
+}
+
+
+/* =========================================================
+   SHOW / HIDE CHAT ESCROW CARD
+========================================================= */
+
+function setupChatEscrowCard() {
+
+    const card =
+        document.getElementById(
+            "chatEscrowCard"
+        );
+
+
+    if (!card) {
+        return;
+    }
+
+
+    /*
+       Only show Create Escrow when
+       there is another participant.
+
+       For business chats this means
+       customer ↔ business owner.
+
+       For Oja chats this means
+       buyer ↔ seller.
+    */
+
+    if (
+        currentOtherUserId &&
+        String(currentOtherUserId) !==
+        String(currentUser?.id)
+    ) {
+
+        /*
+           If this is an existing escrow
+           chat, the escrow details already
+           appear below.
+
+           We can still allow another
+           escrow only when this is a
+           normal business/Oja conversation.
+        */
+
+        if (!currentEscrowId) {
+
+            card.style.display =
+                "block";
+
+        } else {
+
+            card.style.display =
+                "none";
+        }
+
+    } else {
+
+        card.style.display =
+            "none";
+    }
+}
+
+
+/* =========================================================
    LOAD MESSAGES
 ========================================================= */
 
@@ -2384,6 +3241,55 @@ if (
 
 
 /* =========================================================
+   CREATE ESCROW BUTTON EVENTS
+========================================================= */
+
+const showCreateEscrowButton =
+    document.getElementById(
+        "showCreateEscrowButton"
+    );
+
+
+const cancelCreateEscrowButton =
+    document.getElementById(
+        "cancelCreateEscrowButton"
+    );
+
+
+const confirmCreateEscrowButton =
+    document.getElementById(
+        "confirmCreateEscrowButton"
+    );
+
+
+if (showCreateEscrowButton) {
+
+    showCreateEscrowButton.addEventListener(
+        "click",
+        openCreateEscrowForm
+    );
+}
+
+
+if (cancelCreateEscrowButton) {
+
+    cancelCreateEscrowButton.addEventListener(
+        "click",
+        closeCreateEscrowForm
+    );
+}
+
+
+if (confirmCreateEscrowButton) {
+
+    confirmCreateEscrowButton.addEventListener(
+        "click",
+        createEscrowFromChat
+    );
+}
+
+
+/* =========================================================
    DISPLAY OJA LISTING
 ========================================================= */
 
@@ -2892,6 +3798,7 @@ async function renderConversationList(
             </div>
 
         `;
+
     }
 
 
@@ -3386,6 +4293,10 @@ async function openSpecificChat() {
 
     /*
        ESCROW CHAT
+
+       Load this before creating or
+       opening the conversation so
+       the participant is known.
     */
 
     if (currentEscrowId) {
@@ -3498,6 +4409,7 @@ async function openSpecificChat() {
                 ""
             );
 
+
     /*
        ESCROW TITLE
     */
@@ -3574,6 +4486,16 @@ async function openSpecificChat() {
                 "Oja item";
         }
     }
+
+
+    /*
+       BUSINESS / NORMAL CHAT ESCROW CARD
+
+       This appears inside the same
+       conversation.
+    */
+
+    setupChatEscrowCard();
 
 
     const conversation =
