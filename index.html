@@ -896,12 +896,12 @@ main {
             Account
         </button>
 
-        <a
-            href="#businessGrid"
-            class="header-btn"
-        >
-            Oja
-        </a>
+       <a
+    href="oja.html"
+    class="header-btn"
+>
+    Oja
+</a>
 
     </div>
 
@@ -2777,37 +2777,25 @@ document.addEventListener(
 
         ];
 
+marketplaceButtons.forEach(
+    function (button) {
 
-        marketplaceButtons.forEach(
-            function (button) {
+        if (button) {
 
-                if (button) {
+            button.addEventListener(
+                "click",
+                function () {
 
-                    button.addEventListener(
-                        "click",
-                        function () {
-
-                            const grid =
-                                document.getElementById(
-                                    "businessGrid"
-                                );
-
-                            if (grid) {
-
-                                grid.scrollIntoView({
-                                    behavior: "smooth"
-                                });
-
-                            }
-
-                        }
-                    );
+                    window.location.href =
+                        "oja.html";
 
                 }
+            );
 
-            }
-        );
+        }
 
+    }
+);
 
         /* =================================================
            SERVICES
