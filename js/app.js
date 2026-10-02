@@ -4290,13 +4290,35 @@ window.showBusinessDetails =
 
         }
 
+    /* =================================================
+       OPEN BUSINESS DETAILS MODAL
+    ================================================= */
 
-        /* =================================================
-           OPEN BUSINESS DETAILS MODAL
-        ================================================= */
+    App.openModal(
+        "businessDetailsModal"
+    );
 
-        App.openModal(
-            "businessDetailsModal"
-        );
+};
 
-    };
+
+/* =====================================================
+   START APPLICATION
+===================================================== */
+
+if (
+    document.readyState ===
+    "loading"
+) {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        () => App.init()
+    );
+
+} else {
+
+    App.init();
+
+}
+
+})();
