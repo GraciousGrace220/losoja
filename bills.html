@@ -1,791 +1,10 @@
-<!DOCTYPE html>
-
-<html lang="en">
-
-<head>
-
-<meta charset="UTF-8">
-
-<meta
-name="viewport"
-content="width=device-width, initial-scale=1.0"
-
->
-
-<title>LosOja Bills</title>
-
-<meta
-name="theme-color"
-content="#087a3e"
-
->
-
-<style>
-
-    * {
-        box-sizing: border-box;
-    }
-
-    body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-        background: #f5f7f6;
-        color: #111827;
-    }
-
-    .header {
-        background: #087a3e;
-        color: white;
-        padding: 18px 20px;
-        text-align: center;
-    }
-
-    .header h1 {
-        margin: 0;
-        font-size: 24px;
-    }
-
-    .back-btn {
-        display: inline-block;
-        margin-top: 6px;
-        color: white;
-        text-decoration: none;
-        font-size: 13px;
-    }
-
-    .container {
-        max-width: 700px;
-        margin: 20px auto;
-        padding: 0 15px 40px;
-    }
-
-    .card {
-        background: white;
-        border-radius: 14px;
-        padding: 20px;
-        margin-bottom: 18px;
-        box-shadow: 0 3px 12px rgba(0,0,0,0.07);
-    }
-
-    h2 {
-        margin-top: 0;
-        font-size: 19px;
-    }
-
-    .tabs {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-        margin-bottom: 18px;
-    }
-
-    .tab-btn {
-        background: #eef8f2;
-        color: #087a3e;
-        border: 1px solid #d5eadc;
-    }
-
-    .tab-btn.active {
-        background: #087a3e;
-        color: white;
-    }
-
-    .bill-form {
-        display: none;
-    }
-
-    .bill-form.active {
-        display: block;
-    }
-
-    .form-group {
-        margin-bottom: 14px;
-    }
-
-    label {
-        display: block;
-        margin-bottom: 6px;
-        font-size: 13px;
-        font-weight: bold;
-    }
-
-    input,
-    select {
-        width: 100%;
-        padding: 12px;
-        border: 1px solid #d1d5db;
-        border-radius: 9px;
-        font-size: 14px;
-        background: white;
-    }
-
-    input:focus,
-    select:focus {
-        outline: none;
-        border-color: #087a3e;
-    }
-
-    .pay-btn {
-        width: 100%;
-        background: #087a3e;
-        color: white;
-        margin-top: 4px;
-        transition: opacity 0.2s ease;
-    }
-
-    .pay-btn:hover {
-        background: #055c2e;
-    }
-
-    .processing-box {
-        display: none;
-        margin-top: 12px;
-        padding: 12px;
-        border-radius: 9px;
-        background: #eef8f2;
-        border: 1px solid #d5eadc;
-        color: #087a3e;
-        font-size: 13px;
-        line-height: 1.5;
-        text-align: center;
-    }
-
-    .processing-box.active {
-        display: block;
-    }
-
-    .processing-title {
-        font-weight: bold;
-        margin-bottom: 3px;
-    }
-
-    .processing-time {
-        font-size: 12px;
-        color: #4b5563;
-    }
-
-    .coming-soon {
-        margin-top: 10px;
-        padding: 10px;
-        border-radius: 9px;
-        background: #fff7ed;
-        color: #92400e;
-        font-size: 13px;
-        line-height: 1.5;
-    }
-
-    .info {
-        padding: 12px;
-        border-radius: 9px;
-        background: #eef8f2;
-        color: #087a3e;
-        font-size: 13px;
-        line-height: 1.5;
-    }
-
-    .airtime-notice {
-        margin-bottom: 16px;
-        padding: 13px;
-        border-radius: 10px;
-        background: #f0fdf4;
-        border: 1px solid #bbf7d0;
-        color: #166534;
-    }
-
-    .airtime-notice strong {
-        display: block;
-        margin-bottom: 4px;
-        font-size: 14px;
-    }
-
-    .airtime-notice span {
-        display: block;
-        font-size: 12px;
-        line-height: 1.5;
-    }
-
-    .history-item {
-        padding: 14px 0;
-        border-bottom: 1px solid #e5e7eb;
-    }
-
-    .history-item:last-child {
-        border-bottom: none;
-    }
-
-    .history-row {
-        display: flex;
-        justify-content: space-between;
-        gap: 12px;
-    }
-
-    .history-type {
-        font-weight: bold;
-    }
-
-    .history-date {
-        margin-top: 4px;
-        color: #6b7280;
-        font-size: 12px;
-    }
-
-    .empty {
-        text-align: center;
-        color: #6b7280;
-        padding: 15px 0;
-    }
-
-    .error {
-        color: #dc2626;
-        font-size: 14px;
-        padding: 10px 0;
-    }
-
-    button {
-        border: none;
-        border-radius: 9px;
-        padding: 11px 16px;
-        font-size: 14px;
-        font-weight: bold;
-        cursor: pointer;
-    }
-
-    button:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-    }
-
-    @media (max-width: 600px) {
-
-        .card {
-            padding: 16px;
-        }
-
-        .tab-btn {
-            flex: 1 1 30%;
-        }
-
-    }
-
-</style>
-
-</head>
-
-<body>
-
-<header class="header">
-
-<h1>LosOja Bills</h1>
-
-<a
-href="balance.html"
-class="back-btn"
-
->
-
-```
-← Back to Balance
-```
-
-</a>
-
-</header>
-
-<main class="container">
-
-<section class="card">
-
-```
-<h2>Pay Bills</h2>
-
-<div class="info">
-    Airtime and Data are available in VTpass sandbox test mode.
-    Electricity is still being prepared.
-</div>
-
-<div
-    class="tabs"
-    style="margin-top:16px;"
->
-
-    <button
-        type="button"
-        class="tab-btn active"
-        data-tab="airtime"
-    >
-        Airtime
-    </button>
-
-    <button
-        type="button"
-        class="tab-btn"
-        data-tab="data"
-    >
-        Data
-    </button>
-
-    <button
-        type="button"
-        class="tab-btn"
-        data-tab="electricity"
-    >
-        Electricity
-    </button>
-
-</div>
-
-
-<!-- AIRTIME -->
-
-<form
-    id="airtimeForm"
-    class="bill-form active"
->
-
-    <div class="airtime-notice">
-
-        <strong>
-            Buy Airtime
-        </strong>
-
-        <span>
-            Choose a network, enter the phone number
-            and amount, then purchase airtime.
-            VTpass sandbox is currently being used.
-        </span>
-
-    </div>
-
-
-    <div class="form-group">
-
-        <label for="airtimeNetwork">
-            Network
-        </label>
-
-        <select
-            id="airtimeNetwork"
-            required
-        >
-
-            <option value="">
-                Select network
-            </option>
-
-            <option value="mtn">
-                MTN
-            </option>
-
-            <option value="airtel">
-                Airtel
-            </option>
-
-            <option value="glo">
-                Glo
-            </option>
-
-            <option value="9mobile">
-                9mobile
-            </option>
-
-        </select>
-
-    </div>
-
-
-    <div class="form-group">
-
-        <label for="airtimePhone">
-            Phone Number
-        </label>
-
-        <input
-            type="tel"
-            id="airtimePhone"
-            inputmode="numeric"
-            maxlength="11"
-            placeholder="08012345678"
-            required
-        >
-
-    </div>
-
-
-    <div class="form-group">
-
-        <label for="airtimeAmount">
-            Amount
-        </label>
-
-        <input
-            type="number"
-            id="airtimeAmount"
-            min="50"
-            max="100000"
-            step="1"
-            placeholder="100"
-            required
-        >
-
-    </div>
-
-
-    <button
-        type="submit"
-        class="pay-btn"
-    >
-        Buy Airtime
-    </button>
-
-    <div
-        id="airtimeProcessing"
-        class="processing-box"
-    >
-
-        <div class="processing-title">
-            Processing Airtime...
-        </div>
-
-        <div>
-            LosOja is waiting for VTpass to complete the transaction.
-        </div>
-
-        <div
-            id="airtimeProcessingTime"
-            class="processing-time"
-        >
-            Please keep this page open.
-        </div>
-
-    </div>
-
-
-    <div class="coming-soon">
-
-        <strong>
-            Airtime Test Mode
-        </strong>
-        <br>
-
-        Your LosOja wallet is used for the transaction.
-        VTpass sandbox processes the Airtime request.
-        Live production payments will be enabled after
-        production setup.
-
-    </div>
-
-</form>
-
-
-<!-- DATA -->
-
-<form
-    id="dataForm"
-    class="bill-form"
->
-
-    <div class="form-group">
-
-        <label for="dataNetwork">
-            Network
-        </label>
-
-        <select
-            id="dataNetwork"
-            required
-        >
-
-            <option value="">
-                Select network
-            </option>
-
-            <option value="mtn">
-                MTN
-            </option>
-
-        </select>
-
-    </div>
-
-
-    <div class="form-group">
-
-        <label for="dataPhone">
-            Phone Number
-        </label>
-
-        <input
-            type="tel"
-            id="dataPhone"
-            inputmode="numeric"
-            maxlength="11"
-            placeholder="08011111111"
-            required
-        >
-
-    </div>
-
-
-    <div class="form-group">
-
-        <label for="dataPlan">
-            Data Plan
-        </label>
-
-        <select
-            id="dataPlan"
-            required
-        >
-
-            <option value="">
-                Select data plan
-            </option>
-
-            <option
-                value="mtn-10mb-100"
-                data-amount="100"
-            >
-                MTN 100MB — ₦100
-            </option>
-
-            <option
-                value="mtn-50mb-200"
-                data-amount="200"
-            >
-                MTN 200MB — ₦200
-            </option>
-
-            <option
-                value="mtn-100mb-1000"
-                data-amount="1000"
-            >
-                MTN 1.5GB — ₦1,000
-            </option>
-
-        </select>
-
-    </div>
-
-
-    <button
-        type="submit"
-        class="pay-btn"
-    >
-        Buy Data
-    </button>
-
-    <div
-        id="dataProcessing"
-        class="processing-box"
-    >
-
-        <div class="processing-title">
-            Processing Data...
-        </div>
-
-        <div>
-            LosOja is waiting for VTpass to complete the transaction.
-        </div>
-
-        <div
-            id="dataProcessingTime"
-            class="processing-time"
-        >
-            Please keep this page open.
-        </div>
-
-    </div>
-
-
-    <div class="coming-soon">
-
-        Data payments use your LosOja wallet and
-        VTpass sandbox.
-
-        Live production payments will be enabled
-        after production setup.
-
-    </div>
-
-</form>
-
-
-<!-- ELECTRICITY -->
-
-<form
-    id="electricityForm"
-    class="bill-form"
->
-
-    <div class="form-group">
-
-        <label for="electricityProvider">
-            Electricity Provider
-        </label>
-
-        <select
-            id="electricityProvider"
-            required
-        >
-
-            <option value="">
-                Select provider
-            </option>
-
-            <option value="ikedc">
-                Ikeja Electric
-            </option>
-
-            <option value="ekedc">
-                Eko Electricity
-            </option>
-
-            <option value="ibedc">
-                IBEDC
-            </option>
-
-            <option value="aedc">
-                AEDC
-            </option>
-
-        </select>
-
-    </div>
-
-
-    <div class="form-group">
-
-        <label for="electricityType">
-            Meter Type
-        </label>
-
-        <select
-            id="electricityType"
-            required
-        >
-
-            <option value="">
-                Select meter type
-            </option>
-
-            <option value="prepaid">
-                Prepaid
-            </option>
-
-            <option value="postpaid">
-                Postpaid
-            </option>
-
-        </select>
-
-    </div>
-
-
-    <div class="form-group">
-
-        <label for="meterNumber">
-            Meter Number
-        </label>
-
-        <input
-            type="text"
-            id="meterNumber"
-            placeholder="Enter meter number"
-            required
-        >
-
-    </div>
-
-
-    <div class="form-group">
-
-        <label for="electricityAmount">
-            Amount
-        </label>
-
-        <input
-            type="number"
-            id="electricityAmount"
-            min="1"
-            step="1"
-            placeholder="1000"
-            required
-        >
-
-    </div>
-
-
-    <button
-        type="submit"
-        class="pay-btn"
-    >
-        Test Electricity
-    </button>
-
-    <div
-        id="electricityProcessing"
-        class="processing-box"
-    >
-
-        <div class="processing-title">
-            Processing Test...
-        </div>
-
-        <div>
-            LosOja is processing the test electricity payment.
-        </div>
-
-    </div>
-
-
-    <div class="coming-soon">
-
-        Electricity payments are currently available
-        for internal testing only.
-
-    </div>
-
-</form>
-```
-
-</section>
-
-<!-- BILL HISTORY -->
-
-<section class="card">
-
-```
-<h2>
-    Bill History
-</h2>
-
-<div id="billHistory">
-
-    <div class="empty">
-        No bill payments yet.
-    </div>
-
-</div>
-```
-
-</section>
-
-</main>
-
-<!-- LOSOJA AUTH -->
-
-<script src="js/auth.js"></script>
-
+```html
 <script>
 
 (function () {
 
     "use strict";
 
-
-    /* =====================================================
-       SUPABASE
-    ===================================================== */
 
     const SUPABASE_URL =
         "https://ycxshwgeebskdozmornh.supabase.co";
@@ -795,58 +14,324 @@ class="back-btn"
         "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
 
 
-    /* =====================================================
+    /*
+    =========================================================
+       PAYMENT SAFETY LOCK
+
+       Prevents accidental duplicate submissions.
+
+       IMPORTANT:
+       We never automatically retry a bill payment.
+    =========================================================
+    */
+
+    let paymentInProgress = false;
+
+    let activePaymentType = null;
+
+
+    function lockPayment(type) {
+
+        if (paymentInProgress) {
+
+            return false;
+
+        }
+
+        paymentInProgress = true;
+
+        activePaymentType = type;
+
+        return true;
+
+    }
+
+
+    function unlockPayment() {
+
+        paymentInProgress = false;
+
+        activePaymentType = null;
+
+    }
+
+
+    function isPaymentLocked() {
+
+        return paymentInProgress;
+
+    }
+
+
+    /*
+    =========================================================
+       BUTTON STATE
+    =========================================================
+    */
+
+    function setProcessingState(
+        form,
+        text
+    ) {
+
+        if (!form) {
+
+            return;
+
+        }
+
+
+        const button =
+            form.querySelector(
+                ".pay-btn"
+            );
+
+
+        if (button) {
+
+            button.disabled = true;
+
+            button.textContent = text;
+
+        }
+
+
+        form
+            .querySelectorAll(
+                "input, select"
+            )
+            .forEach(
+                function (field) {
+
+                    field.disabled = true;
+
+                }
+            );
+
+    }
+
+
+    function restoreFormState(
+        form,
+        buttonText
+    ) {
+
+        if (!form) {
+
+            return;
+
+        }
+
+
+        const button =
+            form.querySelector(
+                ".pay-btn"
+            );
+
+
+        if (button) {
+
+            button.disabled = false;
+
+            button.textContent =
+                buttonText;
+
+        }
+
+
+        form
+            .querySelectorAll(
+                "input, select"
+            )
+            .forEach(
+                function (field) {
+
+                    field.disabled = false;
+
+                }
+            );
+
+    }
+
+
+    /*
+    =========================================================
+       PROCESSING MESSAGE
+    =========================================================
+    */
+
+    function showProcessingMessage(
+        boxId,
+        timeId,
+        message
+    ) {
+
+        const box =
+            document.getElementById(
+                boxId
+            );
+
+        const timeElement =
+            document.getElementById(
+                timeId
+            );
+
+
+        if (box) {
+
+            box.classList.add(
+                "active"
+            );
+
+        }
+
+
+        if (timeElement) {
+
+            timeElement.textContent =
+                message ||
+                "Your transaction is being processed. Please keep this page open.";
+
+        }
+
+    }
+
+
+    function updateProcessingMessage(
+        timeId,
+        seconds
+    ) {
+
+        const element =
+            document.getElementById(
+                timeId
+            );
+
+
+        if (!element) {
+
+            return;
+
+        }
+
+
+        element.textContent =
+            "Processing for " +
+            seconds +
+            " second" +
+            (
+                seconds === 1
+                    ? ""
+                    : "s"
+            ) +
+            ". Please do not click the payment button again.";
+
+    }
+
+
+    function hideProcessingMessage(
+        boxId
+    ) {
+
+        const box =
+            document.getElementById(
+                boxId
+            );
+
+
+        if (box) {
+
+            box.classList.remove(
+                "active"
+            );
+
+        }
+
+    }
+
+
+    function startProcessingTimer(
+        boxId,
+        timeId
+    ) {
+
+        let seconds = 0;
+
+
+        showProcessingMessage(
+            boxId,
+            timeId,
+            "Your transaction is being processed. Please do not click the payment button again."
+        );
+
+
+        const interval =
+            setInterval(
+                function () {
+
+                    seconds++;
+
+                    updateProcessingMessage(
+                        timeId,
+                        seconds
+                    );
+
+                },
+                1000
+            );
+
+
+        return interval;
+
+    }
+
+
+    function stopProcessingTimer(
+        boxId,
+        interval
+    ) {
+
+        if (interval) {
+
+            clearInterval(
+                interval
+            );
+
+        }
+
+
+        hideProcessingMessage(
+            boxId
+        );
+
+    }
+
+
+    /*
+    =========================================================
        ACCESS TOKEN
-    ===================================================== */
+    =========================================================
+    */
 
     async function getAccessToken() {
 
         try {
 
-            const saved =
-                localStorage.getItem(
-                    "losoja_supabase_session"
-                );
-
-
-            if (!saved) {
-
-                return null;
-
-            }
-
-
-            const session =
-                JSON.parse(saved);
-
-
             if (
-                session &&
-                session.access_token
+                typeof window.getSupabaseAccessToken ===
+                "function"
             ) {
 
-                return session.access_token;
+                return await window.getSupabaseAccessToken();
 
             }
-
-
-            if (
-                session &&
-                session.session &&
-                session.session.access_token
-            ) {
-
-                return session.session.access_token;
-
-            }
-
 
             return null;
 
         } catch (error) {
 
             console.error(
-                "LosOja: failed to read session",
+                "LosOja bills token error:",
                 error
             );
 
@@ -857,23 +342,16 @@ class="back-btn"
     }
 
 
-    /* =====================================================
+    /*
+    =========================================================
        BILL HISTORY REQUEST
-    ===================================================== */
+    =========================================================
+    */
 
     async function billRequest(endpoint) {
 
         const token =
             await getAccessToken();
-
-
-        if (!token) {
-
-            throw new Error(
-                "Please log in to view bill history."
-            );
-
-        }
 
 
         const headers = {
@@ -885,12 +363,17 @@ class="back-btn"
                 "application/json",
 
             "Accept":
-                "application/json",
-
-            "Authorization":
-                "Bearer " + token
+                "application/json"
 
         };
+
+
+        if (token) {
+
+            headers.Authorization =
+                "Bearer " + token;
+
+        }
 
 
         const response =
@@ -931,18 +414,8 @@ class="back-btn"
 
             console.error(
                 "LosOja bills request error:",
-                {
-                    status:
-                        response.status,
-
-                    statusText:
-                        response.statusText,
-
-                    data:
-                        data
-                }
+                data
             );
-
 
             throw new Error(
                 data?.message ||
@@ -958,114 +431,11 @@ class="back-btn"
     }
 
 
-    /* =====================================================
-       PROCESSING DISPLAY
-    ===================================================== */
-
-    function startProcessing(
-        boxId,
-        timeId
-    ) {
-
-        const box =
-            document.getElementById(
-                boxId
-            );
-
-
-        const timeElement =
-            document.getElementById(
-                timeId
-            );
-
-
-        if (box) {
-
-            box.classList.add(
-                "active"
-            );
-
-        }
-
-
-        let seconds =
-            0;
-
-
-        if (timeElement) {
-
-            timeElement.textContent =
-                "Please keep this page open.";
-
-        }
-
-
-        const interval =
-            setInterval(
-                function () {
-
-                    seconds++;
-
-
-                    if (timeElement) {
-
-                        timeElement.textContent =
-                            "Processing for " +
-                            seconds +
-                            " second" +
-                            (
-                                seconds === 1
-                                    ? ""
-                                    : "s"
-                            ) +
-                            ". Please keep this page open.";
-
-                    }
-
-                },
-                1000
-            );
-
-
-        return interval;
-
-    }
-
-
-    function stopProcessing(
-        boxId,
-        interval
-    ) {
-
-        if (interval) {
-
-            clearInterval(
-                interval
-            );
-
-        }
-
-
-        const box =
-            document.getElementById(
-                boxId
-            );
-
-
-        if (box) {
-
-            box.classList.remove(
-                "active"
-            );
-
-        }
-
-    }
-
-
-    /* =====================================================
+    /*
+    =========================================================
        TAB SWITCHING
-    ===================================================== */
+    =========================================================
+    */
 
     const tabButtons =
         document.querySelectorAll(
@@ -1085,6 +455,24 @@ class="back-btn"
             button.addEventListener(
                 "click",
                 function () {
+
+                    /*
+                    Do not allow switching services
+                    while a payment is being processed.
+                    */
+
+                    if (
+                        isPaymentLocked()
+                    ) {
+
+                        alert(
+                            "A bill payment is currently being processed. Please wait for the transaction result."
+                        );
+
+                        return;
+
+                    }
+
 
                     const tab =
                         button.dataset.tab;
@@ -1138,18 +526,16 @@ class="back-btn"
     );
 
 
-    /* =====================================================
-       PAY BILL FUNCTION
-    ===================================================== */
+    /*
+    =========================================================
+       REAL AIRTIME
+    =========================================================
+    */
 
     const PAY_BILL_FUNCTION_URL =
         SUPABASE_URL +
         "/functions/v1/pay-bill";
 
-
-    /* =====================================================
-       REAL AIRTIME FUNCTION
-    ===================================================== */
 
     async function runRealAirtimePayment(
         network,
@@ -1248,15 +634,338 @@ class="back-btn"
     }
 
 
-    /* =====================================================
-       REAL DATA FUNCTION
-    ===================================================== */
+    /*
+    =========================================================
+       AIRTIME FORM
+    =========================================================
+    */
+
+    const airtimeForm =
+        document.getElementById(
+            "airtimeForm"
+        );
+
+
+    if (airtimeForm) {
+
+        airtimeForm.addEventListener(
+            "submit",
+            async function (event) {
+
+                event.preventDefault();
+
+
+                /*
+                HARD DUPLICATE PROTECTION
+                */
+
+                if (
+                    !lockPayment(
+                        "airtime"
+                    )
+                ) {
+
+                    alert(
+                        "A payment is already being processed. Please wait."
+                    );
+
+                    return;
+
+                }
+
+
+                const network =
+                    document.getElementById(
+                        "airtimeNetwork"
+                    )?.value
+                    .trim()
+                    .toLowerCase();
+
+
+                const phone =
+                    document.getElementById(
+                        "airtimePhone"
+                    )?.value
+                    .trim();
+
+
+                const amount =
+                    Number(
+                        document.getElementById(
+                            "airtimeAmount"
+                        )?.value
+                    );
+
+
+                if (!network) {
+
+                    unlockPayment();
+
+                    alert(
+                        "Please select a network."
+                    );
+
+                    return;
+
+                }
+
+
+                if (
+                    !/^[0-9]{11}$/.test(
+                        phone
+                    )
+                ) {
+
+                    unlockPayment();
+
+                    alert(
+                        "Enter a valid 11-digit Nigerian phone number."
+                    );
+
+                    return;
+
+                }
+
+
+                if (
+                    !Number.isFinite(
+                        amount
+                    ) ||
+                    amount < 50
+                ) {
+
+                    unlockPayment();
+
+                    alert(
+                        "Airtime amount must be at least ₦50."
+                    );
+
+                    return;
+
+                }
+
+
+                if (
+                    amount > 100000
+                ) {
+
+                    unlockPayment();
+
+                    alert(
+                        "Airtime amount cannot exceed ₦100,000 in sandbox."
+                    );
+
+                    return;
+
+                }
+
+
+                setProcessingState(
+                    airtimeForm,
+                    "Processing Airtime..."
+                );
+
+
+                const processingInterval =
+                    startProcessingTimer(
+                        "airtimeProcessing",
+                        "airtimeProcessingTime"
+                    );
+
+
+                try {
+
+                    const result =
+                        await runRealAirtimePayment(
+                            network,
+                            phone,
+                            amount
+                        );
+
+
+                    if (
+                        result?.status ===
+                        "successful"
+                    ) {
+
+                        stopProcessingTimer(
+                            "airtimeProcessing",
+                            processingInterval
+                        );
+
+
+                        alert(
+                            "Airtime purchase successful.\n\n" +
+                            "Network: " +
+                            network.toUpperCase() +
+                            "\n" +
+                            "Amount: ₦" +
+                            Number(
+                                amount
+                            ).toLocaleString(
+                                "en-NG"
+                            )
+                        );
+
+
+                        airtimeForm.reset();
+
+
+                        restoreFormState(
+                            airtimeForm,
+                            "Buy Airtime"
+                        );
+
+
+                        unlockPayment();
+
+
+                        /*
+                        History refresh happens AFTER
+                        the transaction result is shown.
+                        It cannot delay the success message.
+                        */
+
+                        loadBillHistory();
+
+                        return;
+
+                    }
+
+
+                    if (
+                        result?.status ===
+                        "pending"
+                    ) {
+
+                        stopProcessingTimer(
+                            "airtimeProcessing",
+                            processingInterval
+                        );
+
+
+                        /*
+                        IMPORTANT:
+                        Keep the payment locked.
+
+                        The provider may already have
+                        received the transaction.
+                        */
+
+                        if (airtimeForm) {
+
+                            const button =
+                                airtimeForm.querySelector(
+                                    ".pay-btn"
+                                );
+
+                            if (button) {
+
+                                button.textContent =
+                                    "Transaction Pending — Do Not Retry";
+
+                            }
+
+                        }
+
+
+                        alert(
+                            "Your Airtime transaction is still being processed.\n\n" +
+                            "Do not submit the payment again. Check Bill History shortly."
+                        );
+
+
+                        loadBillHistory();
+
+                        return;
+
+                    }
+
+
+                    stopProcessingTimer(
+                        "airtimeProcessing",
+                        processingInterval
+                    );
+
+
+                    alert(
+                        result?.message ||
+                        "Airtime payment could not be completed."
+                    );
+
+
+                    restoreFormState(
+                        airtimeForm,
+                        "Buy Airtime"
+                    );
+
+
+                    unlockPayment();
+
+
+                } catch (error) {
+
+                    console.error(
+                        "LosOja Airtime error:",
+                        error
+                    );
+
+
+                    stopProcessingTimer(
+                        "airtimeProcessing",
+                        processingInterval
+                    );
+
+
+                    /*
+                    A network error does NOT mean
+                    the payment was never received.
+
+                    Therefore we DO NOT automatically
+                    unlock and retry.
+                    */
+
+                    const button =
+                        airtimeForm.querySelector(
+                            ".pay-btn"
+                        );
+
+
+                    if (button) {
+
+                        button.textContent =
+                            "Request Sent — Check History";
+
+                    }
+
+
+                    alert(
+                        "We could not confirm the Airtime result.\n\n" +
+                        "The request may already have been received. " +
+                        "Please check Bill History before trying again."
+                    );
+
+
+                    loadBillHistory();
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /*
+    =========================================================
+       REAL DATA
+    =========================================================
+    */
 
     async function runRealDataPayment(
         network,
         phone,
-        amount,
-        variationCode
+        amount
     ) {
 
         const token =
@@ -1267,15 +976,6 @@ class="back-btn"
 
             throw new Error(
                 "Please log in to buy Data."
-            );
-
-        }
-
-
-        if (!variationCode) {
-
-            throw new Error(
-                "Please select a Data plan."
             );
 
         }
@@ -1314,10 +1014,7 @@ class="back-btn"
                                 phone,
 
                             amount:
-                                Number(amount),
-
-                            variation_code:
-                                variationCode
+                                Number(amount)
 
                         })
 
@@ -1362,9 +1059,293 @@ class="back-btn"
     }
 
 
-    /* =====================================================
-       TEST BILL FUNCTION
-    ===================================================== */
+    /*
+    =========================================================
+       DATA FORM
+    =========================================================
+    */
+
+    const dataForm =
+        document.getElementById(
+            "dataForm"
+        );
+
+
+    if (dataForm) {
+
+        dataForm.addEventListener(
+            "submit",
+            async function (event) {
+
+                event.preventDefault();
+
+
+                if (
+                    !lockPayment(
+                        "data"
+                    )
+                ) {
+
+                    alert(
+                        "A payment is already being processed. Please wait."
+                    );
+
+                    return;
+
+                }
+
+
+                const network =
+                    document.getElementById(
+                        "dataNetwork"
+                    )?.value
+                    .trim()
+                    .toLowerCase();
+
+
+                const phone =
+                    document.getElementById(
+                        "dataPhone"
+                    )?.value
+                    .trim();
+
+
+                const plan =
+                    document.getElementById(
+                        "dataPlan"
+                    )?.value;
+
+
+                const planAmounts = {
+
+                    small:
+                        100,
+
+                    medium:
+                        500,
+
+                    large:
+                        1000
+
+                };
+
+
+                const amount =
+                    planAmounts[
+                        plan
+                    ];
+
+
+                if (
+                    !network ||
+                    !phone ||
+                    !amount
+                ) {
+
+                    unlockPayment();
+
+                    alert(
+                        "Please complete the Data form."
+                    );
+
+                    return;
+
+                }
+
+
+                if (
+                    !/^[0-9]{11}$/.test(
+                        phone
+                    )
+                ) {
+
+                    unlockPayment();
+
+                    alert(
+                        "Enter a valid 11-digit Nigerian phone number."
+                    );
+
+                    return;
+
+                }
+
+
+                setProcessingState(
+                    dataForm,
+                    "Processing Data..."
+                );
+
+
+                const processingInterval =
+                    startProcessingTimer(
+                        "dataProcessing",
+                        "dataProcessingTime"
+                    );
+
+
+                try {
+
+                    const result =
+                        await runRealDataPayment(
+                            network,
+                            phone,
+                            amount
+                        );
+
+
+                    if (
+                        result?.status ===
+                        "successful"
+                    ) {
+
+                        stopProcessingTimer(
+                            "dataProcessing",
+                            processingInterval
+                        );
+
+
+                        alert(
+                            "Data purchase successful.\n\n" +
+                            "Network: " +
+                            network.toUpperCase() +
+                            "\n" +
+                            "Amount: ₦" +
+                            Number(
+                                amount
+                            ).toLocaleString(
+                                "en-NG"
+                            )
+                        );
+
+
+                        dataForm.reset();
+
+
+                        restoreFormState(
+                            dataForm,
+                            "Buy Data"
+                        );
+
+
+                        unlockPayment();
+
+
+                        loadBillHistory();
+
+                        return;
+
+                    }
+
+
+                    if (
+                        result?.status ===
+                        "pending"
+                    ) {
+
+                        stopProcessingTimer(
+                            "dataProcessing",
+                            processingInterval
+                        );
+
+
+                        const button =
+                            dataForm.querySelector(
+                                ".pay-btn"
+                            );
+
+
+                        if (button) {
+
+                            button.textContent =
+                                "Transaction Pending — Do Not Retry";
+
+                        }
+
+
+                        alert(
+                            "Your Data transaction is still being processed.\n\n" +
+                            "Do not submit the payment again. Check Bill History shortly."
+                        );
+
+
+                        loadBillHistory();
+
+                        return;
+
+                    }
+
+
+                    stopProcessingTimer(
+                        "dataProcessing",
+                        processingInterval
+                    );
+
+
+                    alert(
+                        result?.message ||
+                        "Data payment could not be completed."
+                    );
+
+
+                    restoreFormState(
+                        dataForm,
+                        "Buy Data"
+                    );
+
+
+                    unlockPayment();
+
+
+                } catch (error) {
+
+                    console.error(
+                        "LosOja Data error:",
+                        error
+                    );
+
+
+                    stopProcessingTimer(
+                        "dataProcessing",
+                        processingInterval
+                    );
+
+
+                    const button =
+                        dataForm.querySelector(
+                            ".pay-btn"
+                        );
+
+
+                    if (button) {
+
+                        button.textContent =
+                            "Request Sent — Check History";
+
+                    }
+
+
+                    alert(
+                        "We could not confirm the Data result.\n\n" +
+                        "The request may already have been received. " +
+                        "Please check Bill History before trying again."
+                    );
+
+
+                    loadBillHistory();
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /*
+    =========================================================
+       TEST ELECTRICITY
+    =========================================================
+    */
 
     const TEST_BILL_FUNCTION_URL =
         SUPABASE_URL +
@@ -1383,7 +1364,8 @@ class="back-btn"
                 const session =
                     await window.ensureValidSupabaseSession();
 
-                return session?.access_token || null;
+                return session?.access_token ||
+                    null;
 
             }
 
@@ -1464,10 +1446,12 @@ class="back-btn"
                                 customerIdentifier,
 
                             network:
-                                options.network || "",
+                                options.network ||
+                                "",
 
                             provider:
-                                options.provider || "",
+                                options.provider ||
+                                "",
 
                             amount:
                                 Number(amount),
@@ -1530,418 +1514,11 @@ class="back-btn"
     }
 
 
-    /* =====================================================
-       REAL AIRTIME
-    ===================================================== */
-
-    const airtimeForm =
-        document.getElementById(
-            "airtimeForm"
-        );
-
-
-    if (airtimeForm) {
-
-        airtimeForm.addEventListener(
-            "submit",
-            async function (event) {
-
-                event.preventDefault();
-
-
-                const network =
-                    document.getElementById(
-                        "airtimeNetwork"
-                    )?.value
-                    .trim()
-                    .toLowerCase();
-
-
-                const phone =
-                    document.getElementById(
-                        "airtimePhone"
-                    )?.value
-                    .trim();
-
-
-                const amount =
-                    Number(
-                        document.getElementById(
-                            "airtimeAmount"
-                        )?.value
-                    );
-
-
-                if (!network) {
-
-                    alert(
-                        "Please select a network."
-                    );
-
-                    return;
-
-                }
-
-
-                if (
-                    !/^[0-9]{11}$/.test(phone)
-                ) {
-
-                    alert(
-                        "Enter a valid 11-digit Nigerian phone number."
-                    );
-
-                    return;
-
-                }
-
-
-                if (
-                    !Number.isFinite(amount) ||
-                    amount < 50
-                ) {
-
-                    alert(
-                        "Airtime amount must be at least ₦50."
-                    );
-
-                    return;
-
-                }
-
-
-                if (amount > 100000) {
-
-                    alert(
-                        "Airtime amount cannot exceed ₦100,000 in sandbox."
-                    );
-
-                    return;
-
-                }
-
-
-                const button =
-                    airtimeForm.querySelector(
-                        ".pay-btn"
-                    );
-
-
-                let processingInterval =
-                    null;
-
-
-                if (button) {
-
-                    button.disabled =
-                        true;
-
-                    button.textContent =
-                        "Processing Airtime...";
-
-                }
-
-
-                processingInterval =
-                    startProcessing(
-                        "airtimeProcessing",
-                        "airtimeProcessingTime"
-                    );
-
-
-                try {
-
-                    const result =
-                        await runRealAirtimePayment(
-                            network,
-                            phone,
-                            amount
-                        );
-
-
-                    if (
-                        result?.status ===
-                        "successful"
-                    ) {
-
-                        alert(
-                            "Airtime purchase successful.\n\n" +
-                            "Network: " +
-                            network.toUpperCase() +
-                            "\n" +
-                            "Amount: ₦" +
-                            Number(amount).toLocaleString(
-                                "en-NG"
-                            )
-                        );
-
-                    } else if (
-                        result?.status ===
-                        "pending"
-                    ) {
-
-                        alert(
-                            "Airtime transaction is still being processed.\n\n" +
-                            "Please check your Bill History shortly."
-                        );
-
-                    } else {
-
-                        alert(
-                            result?.message ||
-                            "Airtime payment could not be completed."
-                        );
-
-                    }
-
-
-                    airtimeForm.reset();
-
-                    await loadBillHistory();
-
-                } catch (error) {
-
-                    console.error(
-                        "LosOja Airtime error:",
-                        error
-                    );
-
-
-                    alert(
-                        error.message ||
-                        "Airtime payment failed."
-                    );
-
-                } finally {
-
-                    stopProcessing(
-                        "airtimeProcessing",
-                        processingInterval
-                    );
-
-
-                    if (button) {
-
-                        button.disabled =
-                            false;
-
-                        button.textContent =
-                            "Buy Airtime";
-
-                    }
-
-                }
-
-            }
-        );
-
-    }
-
-
-    /* =====================================================
-       REAL DATA
-    ===================================================== */
-
-    const dataForm =
-        document.getElementById(
-            "dataForm"
-        );
-
-
-    if (dataForm) {
-
-        dataForm.addEventListener(
-            "submit",
-            async function (event) {
-
-                event.preventDefault();
-
-
-                const network =
-                    document.getElementById(
-                        "dataNetwork"
-                    )?.value
-                    .trim()
-                    .toLowerCase();
-
-
-                const phone =
-                    document.getElementById(
-                        "dataPhone"
-                    )?.value
-                    .trim();
-
-
-                const planSelect =
-                    document.getElementById(
-                        "dataPlan"
-                    );
-
-
-                const variationCode =
-                    planSelect?.value;
-
-
-                const selectedOption =
-                    planSelect?.selectedOptions?.[0];
-
-
-                const amount =
-                    Number(
-                        selectedOption?.dataset?.amount
-                    );
-
-
-                if (
-                    !network ||
-                    !phone ||
-                    !amount ||
-                    !variationCode
-                ) {
-
-                    alert(
-                        "Please complete the Data form."
-                    );
-
-                    return;
-
-                }
-
-
-                if (
-                    !/^[0-9]{11}$/.test(phone)
-                ) {
-
-                    alert(
-                        "Enter a valid 11-digit Nigerian phone number."
-                    );
-
-                    return;
-
-                }
-
-
-                const button =
-                    dataForm.querySelector(
-                        ".pay-btn"
-                    );
-
-
-                let processingInterval =
-                    null;
-
-
-                if (button) {
-
-                    button.disabled =
-                        true;
-
-                    button.textContent =
-                        "Processing Data...";
-
-                }
-
-
-                processingInterval =
-                    startProcessing(
-                        "dataProcessing",
-                        "dataProcessingTime"
-                    );
-
-
-                try {
-
-                    const result =
-                        await runRealDataPayment(
-                            network,
-                            phone,
-                            amount,
-                            variationCode
-                        );
-
-
-                    if (
-                        result?.status ===
-                        "successful"
-                    ) {
-
-                        alert(
-                            "Data purchase successful.\n\n" +
-                            "Network: " +
-                            network.toUpperCase() +
-                            "\n" +
-                            "Amount: ₦" +
-                            Number(amount).toLocaleString(
-                                "en-NG"
-                            )
-                        );
-
-                    } else if (
-                        result?.status ===
-                        "pending"
-                    ) {
-
-                        alert(
-                            "Data transaction is still being processed.\n\n" +
-                            "Please check your Bill History shortly."
-                        );
-
-                    } else {
-
-                        alert(
-                            result?.message ||
-                            "Data payment could not be completed."
-                        );
-
-                    }
-
-
-                    dataForm.reset();
-
-                    await loadBillHistory();
-
-                } catch (error) {
-
-                    console.error(
-                        "LosOja Data error:",
-                        error
-                    );
-
-
-                    alert(
-                        error.message ||
-                        "Data payment failed."
-                    );
-
-                } finally {
-
-                    stopProcessing(
-                        "dataProcessing",
-                        processingInterval
-                    );
-
-
-                    if (button) {
-
-                        button.disabled =
-                            false;
-
-                        button.textContent =
-                            "Buy Data";
-
-                    }
-
-                }
-
-            }
-        );
-
-    }
-
-
-    /* =====================================================
-       TEST ELECTRICITY
-    ===================================================== */
+    /*
+    =========================================================
+       ELECTRICITY FORM
+    =========================================================
+    */
 
     const electricityForm =
         document.getElementById(
@@ -1956,6 +1533,21 @@ class="back-btn"
             async function (event) {
 
                 event.preventDefault();
+
+
+                if (
+                    !lockPayment(
+                        "electricity"
+                    )
+                ) {
+
+                    alert(
+                        "A payment is already being processed. Please wait."
+                    );
+
+                    return;
+
+                }
 
 
                 const provider =
@@ -1995,6 +1587,8 @@ class="back-btn"
                     amount <= 0
                 ) {
 
+                    unlockPayment();
+
                     alert(
                         "Please complete the Electricity form."
                     );
@@ -2004,25 +1598,14 @@ class="back-btn"
                 }
 
 
-                const button =
-                    electricityForm.querySelector(
-                        ".pay-btn"
-                    );
-
-
-                if (button) {
-
-                    button.disabled =
-                        true;
-
-                    button.textContent =
-                        "Testing...";
-
-                }
+                setProcessingState(
+                    electricityForm,
+                    "Testing..."
+                );
 
 
                 const processingInterval =
-                    startProcessing(
+                    startProcessingTimer(
                         "electricityProcessing",
                         null
                     );
@@ -2042,6 +1625,12 @@ class="back-btn"
                         );
 
 
+                    stopProcessingTimer(
+                        "electricityProcessing",
+                        processingInterval
+                    );
+
+
                     alert(
                         "TEST Electricity payment successful.\n\n" +
                         "Amount: ₦" +
@@ -2055,7 +1644,18 @@ class="back-btn"
 
                     electricityForm.reset();
 
-                    await loadBillHistory();
+
+                    restoreFormState(
+                        electricityForm,
+                        "Test Electricity"
+                    );
+
+
+                    unlockPayment();
+
+
+                    loadBillHistory();
+
 
                 } catch (error) {
 
@@ -2065,28 +1665,36 @@ class="back-btn"
                     );
 
 
-                    alert(
-                        error.message ||
-                        "Test Electricity payment failed."
-                    );
-
-                } finally {
-
-                    stopProcessing(
+                    stopProcessingTimer(
                         "electricityProcessing",
                         processingInterval
                     );
 
 
+                    /*
+                    Electricity is currently internal test
+                    functionality, but we still avoid retrying
+                    automatically if the request is uncertain.
+                    */
+
+                    const button =
+                        electricityForm.querySelector(
+                            ".pay-btn"
+                        );
+
+
                     if (button) {
 
-                        button.disabled =
-                            false;
-
                         button.textContent =
-                            "Test Electricity";
+                            "Request Sent — Check History";
 
                     }
+
+
+                    alert(
+                        "We could not confirm the test payment result.\n\n" +
+                        "Please check Bill History before trying again."
+                    );
 
                 }
 
@@ -2096,9 +1704,11 @@ class="back-btn"
     }
 
 
-    /* =====================================================
+    /*
+    =========================================================
        FORMAT SERVICE TYPE
-    ===================================================== */
+    =========================================================
+    */
 
     function formatServiceType(type) {
 
@@ -2139,9 +1749,11 @@ class="back-btn"
     }
 
 
-    /* =====================================================
+    /*
+    =========================================================
        FORMAT STATUS
-    ===================================================== */
+    =========================================================
+    */
 
     function formatStatus(status) {
 
@@ -2173,9 +1785,11 @@ class="back-btn"
     }
 
 
-    /* =====================================================
+    /*
+    =========================================================
        FORMAT DATE
-    ===================================================== */
+    =========================================================
+    */
 
     function formatDate(value) {
 
@@ -2203,9 +1817,11 @@ class="back-btn"
     }
 
 
-    /* =====================================================
+    /*
+    =========================================================
        ESCAPE HTML
-    ===================================================== */
+    =========================================================
+    */
 
     function escapeHTML(value) {
 
@@ -2244,9 +1860,11 @@ class="back-btn"
     }
 
 
-    /* =====================================================
+    /*
+    =========================================================
        LOAD BILL HISTORY
-    ===================================================== */
+    =========================================================
+    */
 
     async function loadBillHistory() {
 
@@ -2448,9 +2066,11 @@ class="back-btn"
     }
 
 
-    /* =====================================================
+    /*
+    =========================================================
        INITIALIZE
-    ===================================================== */
+    =========================================================
+    */
 
     document.addEventListener(
         "DOMContentLoaded",
@@ -2463,13 +2083,9 @@ class="back-btn"
 
 
     console.log(
-        "LosOja bills page loaded"
+        "LosOja bills page loaded — duplicate payment protection active"
     );
 
 })();
 
 </script>
-
-</body>
-
-</html>
