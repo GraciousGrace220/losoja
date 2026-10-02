@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
@@ -103,29 +102,112 @@
         color: #087a3e;
     }
 
+    /* =====================================================
+       CONVERSATION INBOX
+    ===================================================== */
+
     .conversation-card {
         background: white;
         border: 1px solid #e5e7eb;
-        border-radius: 12px;
+        border-radius: 14px;
 
-        padding: 14px;
+        padding: 15px;
         margin-bottom: 10px;
 
         cursor: pointer;
+
+        transition:
+            border-color .15s ease,
+            box-shadow .15s ease,
+            transform .15s ease;
     }
 
     .conversation-card:hover {
         border-color: #087a3e;
+
+        box-shadow:
+            0 4px 14px rgba(0,0,0,.06);
+
+        transform: translateY(-1px);
+    }
+
+    .conversation-top {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+
+        gap: 12px;
+
+        margin-bottom: 7px;
     }
 
     .conversation-title {
         font-weight: 700;
-        margin-bottom: 5px;
+        color: #111827;
+
+        font-size: 16px;
+
+        word-break: break-word;
     }
 
     .conversation-time {
         color: #6b7280;
+        font-size: 12px;
+
+        white-space: nowrap;
+    }
+
+    .conversation-preview {
+        color: #6b7280;
+
+        font-size: 14px;
+
+        line-height: 1.4;
+
+        margin-bottom: 10px;
+
+        overflow: hidden;
+
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+
+    .conversation-bottom {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 10px;
+    }
+
+    .conversation-participant {
+        color: #087a3e;
+
         font-size: 13px;
+        font-weight: 600;
+    }
+
+    .open-chat-button {
+        border: none;
+
+        background: #087a3e;
+        color: white;
+
+        border-radius: 8px;
+
+        padding: 8px 12px;
+
+        font-size: 13px;
+        font-weight: 700;
+
+        cursor: pointer;
+
+        flex-shrink: 0;
+    }
+
+    .open-chat-button:hover {
+        background: #055c2e;
     }
 
     .chat-header {
@@ -138,9 +220,40 @@
         border: 1px solid #e5e7eb;
     }
 
+    .chat-header-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 10px;
+    }
+
     .chat-user {
         font-weight: 700;
         font-size: 17px;
+    }
+
+    .back-to-chats {
+        border: 1px solid #d1d5db;
+
+        background: white;
+        color: #087a3e;
+
+        border-radius: 8px;
+
+        padding: 7px 10px;
+
+        font-size: 13px;
+        font-weight: 700;
+
+        cursor: pointer;
+
+        flex-shrink: 0;
+    }
+
+    .back-to-chats:hover {
+        border-color: #087a3e;
+        background: #eef8f2;
     }
 
     .listing-info {
@@ -549,6 +662,19 @@
             width: 44px;
         }
 
+        .conversation-top {
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .conversation-time {
+            white-space: normal;
+        }
+
+        .chat-header-top {
+            align-items: flex-start;
+        }
+
     }
 
 </style>
@@ -611,11 +737,23 @@
 
 <div class="chat-header">
 
-    <div
-        id="chatUser"
-        class="chat-user"
-    >
-        Chat
+    <div class="chat-header-top">
+
+        <div
+            id="chatUser"
+            class="chat-user"
+        >
+            Chat
+        </div>
+
+        <button
+            id="backToChatsButton"
+            class="back-to-chats"
+            type="button"
+        >
+            Chats
+        </button>
+
     </div>
 
     <div
@@ -753,8 +891,6 @@
 
 </div>
 
-<!-- Selected image indicator -->
-
 <div
     id="selectedImage"
     class="selected-image"
@@ -823,10 +959,6 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
     "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
 
-
-/* =========================================================
-   CHAT IMAGE SETTINGS
-========================================================= */
 
 const CHAT_IMAGE_BUCKET =
     "chat-images";
@@ -1094,11 +1226,6 @@ async function uploadChatImage(file) {
             : Date.now().toString();
 
 
-    /*
-       The storage policy expects the
-       first folder to be the user's ID.
-    */
-
     const filePath =
         currentUser.id +
         "/" +
@@ -1181,11 +1308,6 @@ async function uploadChatImage(file) {
         );
     }
 
-
-    /*
-       The chat-images bucket is public,
-       so we can use its public URL.
-    */
 
     return (
         SUPABASE_URL +
@@ -1270,7 +1392,6 @@ async function loadEscrowChatContext() {
 function renderEscrowDetails() {
 
     if (!currentEscrow) {
-
         return;
     }
 
@@ -1282,7 +1403,6 @@ function renderEscrowDetails() {
 
 
     if (!details) {
-
         return;
     }
 
@@ -1397,8 +1517,8 @@ async function findOrCreateConversation() {
 
 
     if (
-        currentOtherUserId ===
-        currentUser.id
+        String(currentOtherUserId) ===
+        String(currentUser.id)
     ) {
 
         throw new Error(
@@ -1409,10 +1529,6 @@ async function findOrCreateConversation() {
 
     let query;
 
-
-    /*
-       OJA CHAT
-    */
 
     if (currentOjaListingId) {
 
@@ -1453,10 +1569,6 @@ async function findOrCreateConversation() {
             ")";
 
 
-    /*
-       BARTER CHAT
-    */
-
     } else if (currentListingId) {
 
         query =
@@ -1495,10 +1607,6 @@ async function findOrCreateConversation() {
 
             ")";
 
-
-    /*
-       NORMAL CHAT
-    */
 
     } else {
 
@@ -1603,7 +1711,6 @@ async function findOrCreateConversation() {
 async function loadMessages() {
 
     if (!currentConversationId) {
-
         return;
     }
 
@@ -1646,7 +1753,6 @@ function renderMessages(messages) {
 
 
     if (!container) {
-
         return;
     }
 
@@ -1676,8 +1782,8 @@ function renderMessages(messages) {
             .map(message => {
 
                 const mine =
-                    message.sender_id ===
-                    currentUser.id;
+                    String(message.sender_id) ===
+                    String(currentUser.id);
 
 
                 const time =
@@ -1702,11 +1808,6 @@ function renderMessages(messages) {
                 const hasImage =
                     !!message.image_url;
 
-
-                /*
-                   Don't display our internal
-                   photo placeholder as normal text.
-                */
 
                 const actualText =
                     message.message &&
@@ -1886,7 +1987,6 @@ async function sendMessage() {
 
 
     if (!input) {
-
         return;
     }
 
@@ -1899,16 +1999,10 @@ async function sendMessage() {
         imageInput?.files?.[0] || null;
 
 
-    /*
-       User must send either text
-       or an image.
-    */
-
     if (
         !cleanMessage &&
         !selectedFile
     ) {
-
         return;
     }
 
@@ -1945,11 +2039,6 @@ async function sendMessage() {
             null;
 
 
-        /*
-           Upload the picture first
-           if one was selected.
-        */
-
         if (selectedFile) {
 
             imageUrl =
@@ -1958,13 +2047,6 @@ async function sendMessage() {
                 );
         }
 
-
-        /*
-           The database may require
-           message text, so use a small
-           internal placeholder for
-           photo-only messages.
-        */
 
         const message = {
 
@@ -2006,11 +2088,6 @@ async function sendMessage() {
 
 
         updateSelectedImage();
-
-
-        console.log(
-            "LosOja message saved."
-        );
 
 
         await loadMessages();
@@ -2436,6 +2513,103 @@ async function loadOjaListing(
 
 
 /* =========================================================
+   LOAD LAST MESSAGE FOR INBOX
+========================================================= */
+
+async function loadLastMessage(
+    conversationId
+) {
+
+    try {
+
+        const messages =
+            await supabaseRequest(
+
+                "/rest/v1/messages" +
+
+                "?select=message,image_url,created_at" +
+
+                "&conversation_id=eq." +
+
+                encodeURIComponent(
+                    conversationId
+                ) +
+
+                "&order=created_at.desc" +
+
+                "&limit=1"
+            );
+
+
+        if (
+            Array.isArray(messages) &&
+            messages[0]
+        ) {
+
+            return messages[0];
+        }
+
+
+    } catch (error) {
+
+        console.warn(
+            "Could not load last message:",
+            error
+        );
+    }
+
+
+    return null;
+}
+
+
+/* =========================================================
+   FORMAT INBOX TIME
+========================================================= */
+
+function formatConversationTime(
+    value
+) {
+
+    if (!value) {
+        return "";
+    }
+
+
+    const date =
+        new Date(value);
+
+
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
+
+        return "";
+    }
+
+
+    return date.toLocaleString(
+        [],
+        {
+            month:
+                "short",
+
+            day:
+                "numeric",
+
+            hour:
+                "2-digit",
+
+            minute:
+                "2-digit"
+        }
+    );
+}
+
+
+/* =========================================================
    LOAD CONVERSATIONS
 ========================================================= */
 
@@ -2473,7 +2647,7 @@ async function loadConversations() {
         );
 
 
-    renderConversationList(
+    await renderConversationList(
         Array.isArray(
             conversations
         )
@@ -2518,7 +2692,18 @@ async function renderConversationList(
     }
 
 
-    container.innerHTML = "";
+    container.innerHTML = `
+
+        <div class="status">
+
+            <strong>Your Chats</strong><br>
+
+            Open any conversation below to read
+            messages and reply.
+
+        </div>
+
+    `;
 
 
     for (
@@ -2528,8 +2713,10 @@ async function renderConversationList(
 
         const otherUserId =
 
-            conversation.user_one_id ===
-            currentUser.id
+            String(
+                conversation.user_one_id
+            ) ===
+            String(currentUser.id)
 
                 ? conversation.user_two_id
 
@@ -2575,16 +2762,12 @@ async function renderConversationList(
             } catch (error) {
 
                 console.warn(
-                    "Could not load listing:",
+                    "Could not load barter listing:",
                     error
                 );
             }
         }
 
-
-        /*
-           Oja conversation title.
-        */
 
         if (
             conversation.oja_listing_id
@@ -2628,6 +2811,51 @@ async function renderConversationList(
         }
 
 
+        /*
+           Load the newest message so the inbox
+           behaves more like a real messaging app.
+        */
+
+        const lastMessage =
+            await loadLastMessage(
+                conversation.id
+            );
+
+
+        let preview =
+            "No messages yet.";
+
+
+        if (lastMessage) {
+
+            if (
+                lastMessage.image_url &&
+                (
+                    !lastMessage.message ||
+                    lastMessage.message ===
+                        "📷 Photo"
+                )
+            ) {
+
+                preview =
+                    "📷 Photo";
+
+            } else {
+
+                preview =
+                    lastMessage.message ||
+                    "📷 Photo";
+            }
+        }
+
+
+        const lastTime =
+            lastMessage?.created_at ||
+            conversation.updated_at ||
+            conversation.created_at ||
+            "";
+
+
         const card =
             document.createElement(
                 "div"
@@ -2640,23 +2868,54 @@ async function renderConversationList(
 
         card.innerHTML = `
 
-            <div
-                class="conversation-title"
-            >
+            <div class="conversation-top">
 
-                ${
-                    escapeHTML(
+                <div
+                    class="conversation-title"
+                >
+                    ${escapeHTML(
                         listingTitle
-                    )
-                }
+                    )}
+                </div>
+
+                <div
+                    class="conversation-time"
+                >
+                    ${escapeHTML(
+                        formatConversationTime(
+                            lastTime
+                        )
+                    )}
+                </div>
 
             </div>
 
+
             <div
-                class="conversation-time"
+                class="conversation-preview"
+            >
+                ${escapeHTML(
+                    preview
+                )}
+            </div>
+
+
+            <div
+                class="conversation-bottom"
             >
 
-                Open chat
+                <div
+                    class="conversation-participant"
+                >
+                    Chat participant
+                </div>
+
+                <button
+                    type="button"
+                    class="open-chat-button"
+                >
+                    Open & Reply
+                </button>
 
             </div>
 
@@ -2790,7 +3049,8 @@ async function openSpecificChat() {
 
 
     /*
-       NORMAL CHAT
+       NO SPECIFIC CHAT:
+       SHOW INBOX.
     */
 
     if (!currentOtherUserId) {
@@ -2801,9 +3061,19 @@ async function openSpecificChat() {
     }
 
 
+    /*
+       IMPORTANT:
+       This prevents creating a new conversation
+       with yourself.
+
+       It does NOT prevent a business owner
+       from opening an existing customer chat
+       from the inbox.
+    */
+
     if (
-        currentOtherUserId ===
-        currentUser.id
+        String(currentOtherUserId) ===
+        String(currentUser.id)
     ) {
 
         showError(
@@ -2946,6 +3216,105 @@ async function openSpecificChat() {
 
 
 /* =========================================================
+   BACK TO CHAT INBOX
+========================================================= */
+
+const backToChatsButton =
+    document.getElementById(
+        "backToChatsButton"
+    );
+
+
+if (backToChatsButton) {
+
+    backToChatsButton.addEventListener(
+        "click",
+        () => {
+
+            if (messagePolling) {
+
+                clearInterval(
+                    messagePolling
+                );
+
+                messagePolling =
+                    null;
+            }
+
+
+            currentConversationId =
+                null;
+
+            currentOtherUserId =
+                null;
+
+            currentListingId =
+                null;
+
+            currentEscrowId =
+                null;
+
+            currentEscrow =
+                null;
+
+            currentOjaListingId =
+                null;
+
+            currentOjaListing =
+                null;
+
+            currentOjaImages =
+                [];
+
+
+            document.getElementById(
+                "chatSection"
+            ).style.display =
+                "none";
+
+
+            document.getElementById(
+                "conversationList"
+            ).style.display =
+                "block";
+
+
+            document.getElementById(
+                "ojaDetails"
+            ).style.display =
+                "none";
+
+
+            document.getElementById(
+                "escrowDetails"
+            ).style.display =
+                "none";
+
+
+            clearError();
+
+
+            loadConversations()
+                .catch(error => {
+
+                    console.error(
+                        "Could not reload chats:",
+                        error
+                    );
+
+                    showError(
+                        error.message ||
+                        "Chats could not be loaded."
+                    );
+
+                });
+
+        }
+    );
+}
+
+
+/* =========================================================
    AUTH INITIALIZATION
 ========================================================= */
 
@@ -3039,9 +3408,15 @@ async function initializeChat() {
    FORM
 ========================================================= */
 
-document
-    .getElementById("chatForm")
-    .addEventListener(
+const chatForm =
+    document.getElementById(
+        "chatForm"
+    );
+
+
+if (chatForm) {
+
+    chatForm.addEventListener(
         "submit",
         event => {
 
@@ -3051,6 +3426,7 @@ document
 
         }
     );
+}
 
 
 /* =========================================================
