@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 
 <html lang="en">
@@ -258,10 +259,6 @@
 
 <main class="container">
 
-<!-- =========================================
-     BILL SERVICES
-========================================== -->
-
 <section class="card">
 
     <h2>Pay Bills</h2>
@@ -303,9 +300,7 @@
     </div>
 
 
-    <!-- =====================================
-         AIRTIME
-    ====================================== -->
+    <!-- AIRTIME -->
 
     <form
         id="airtimeForm"
@@ -425,9 +420,7 @@
     </form>
 
 
-    <!-- =====================================
-         DATA
-    ====================================== -->
+    <!-- DATA -->
 
     <form
         id="dataForm"
@@ -538,9 +531,7 @@
     </form>
 
 
-    <!-- =====================================
-         ELECTRICITY
-    ====================================== -->
+    <!-- ELECTRICITY -->
 
     <form
         id="electricityForm"
@@ -665,9 +656,7 @@
 </section>
 
 
-<!-- =========================================
-     BILL HISTORY
-========================================== -->
+<!-- BILL HISTORY -->
 
 <section class="card">
 
@@ -689,9 +678,7 @@
 </main>
 
 
-<!-- =========================================
-     LOSOJA AUTH
-========================================== -->
+<!-- LOSOJA AUTH -->
 
 <script src="js/auth.js"></script>
 
@@ -702,61 +689,85 @@
     "use strict";
 
 
-const SUPABASE_URL =
-    "https://ycxshwgeebskdozmornh.supabase.co";
+    /* =====================================================
+       SUPABASE
+    ===================================================== */
+
+    const SUPABASE_URL =
+        "https://ycxshwgeebskdozmornh.supabase.co";
 
 
-const SUPABASE_KEY =
-    "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
+    /*
+       IMPORTANT:
+       This must match the current Publishable key
+       used by LosOja auth.js.
+    */
 
+    const SUPABASE_KEY =
+        "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
 
 
     /* =====================================================
        ACCESS TOKEN
     ===================================================== */
 
-   async function getAccessToken() {
+    async function getAccessToken() {
 
-    try {
+        try {
 
-        const saved =
-            localStorage.getItem("losoja_supabase_session");
+            const saved =
+                localStorage.getItem(
+                    "losoja_supabase_session"
+                );
 
-        if (!saved) {
+
+            if (!saved) {
+
+                return null;
+
+            }
+
+
+            const session =
+                JSON.parse(saved);
+
+
+            if (
+                session &&
+                session.access_token
+            ) {
+
+                return session.access_token;
+
+            }
+
+
+            if (
+                session &&
+                session.session &&
+                session.session.access_token
+            ) {
+
+                return session.session.access_token;
+
+            }
+
+
             return null;
+
+        } catch (error) {
+
+            console.error(
+                "LosOja: failed to read session",
+                error
+            );
+
+            return null;
+
         }
-
-        const session = JSON.parse(saved);
-
-        if (
-            session &&
-            session.access_token
-        ) {
-            return session.access_token;
-        }
-
-        if (
-            session &&
-            session.session &&
-            session.session.access_token
-        ) {
-            return session.session.access_token;
-        }
-
-        return null;
-
-    } catch (error) {
-
-        console.error(
-            "LosOja: failed to read session",
-            error
-        );
-
-        return null;
 
     }
 
-}
 
     /* =====================================================
        BILL HISTORY REQUEST
@@ -768,6 +779,15 @@ const SUPABASE_KEY =
             await getAccessToken();
 
 
+        if (!token) {
+
+            throw new Error(
+                "Please log in to view bill history."
+            );
+
+        }
+
+
         const headers = {
 
             "apikey":
@@ -777,17 +797,12 @@ const SUPABASE_KEY =
                 "application/json",
 
             "Accept":
-                "application/json"
+                "application/json",
+
+            "Authorization":
+                "Bearer " + token
 
         };
-
-
-        if (token) {
-
-            headers.Authorization =
-                "Bearer " + token;
-
-        }
 
 
         const response =
@@ -828,8 +843,18 @@ const SUPABASE_KEY =
 
             console.error(
                 "LosOja bills request error:",
-                data
+                {
+                    status:
+                        response.status,
+
+                    statusText:
+                        response.statusText,
+
+                    data:
+                        data
+                }
             );
+
 
             throw new Error(
                 data?.message ||
