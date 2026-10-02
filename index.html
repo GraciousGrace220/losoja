@@ -1,819 +1,609 @@
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
 
-    <meta charset="UTF-8">
+```
+<meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
 
-    <title>LosOja - Find What You Need Across Nigeria</title>
+<title>LosOja - Find What You Need Across Nigeria</title>
 
-    <meta
-        name="description"
-        content="LosOja helps you find trusted Nigerian businesses, services, products, property, transportation and more."
-    >
+<meta
+    name="description"
+    content="LosOja helps you find trusted Nigerian businesses, services, products, property, transportation and more."
+>
 
-    <meta name="theme-color" content="#087a3e">
+<meta name="theme-color" content="#087a3e">
 
-    <!-- =====================================================
-         LOSOJA FAVICON / APP ICON
-    ====================================================== -->
+<!-- =====================================================
+     LOSOJA FAVICON / APP ICON
+====================================================== -->
 
-    <link
-        rel="icon"
-        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23087a3e'/%3E%3Ctext x='50' y='68' font-size='55' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'%3EL%3C/text%3E%3C/svg%3E"
-    >
+<link
+    rel="icon"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23087a3e'/%3E%3Ctext x='50' y='68' font-size='55' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'%3EL%3C/text%3E%3C/svg%3E"
+>
 
-    <!-- =====================================================
-         STYLES
-    ====================================================== -->
+<!-- =====================================================
+     STYLES
+====================================================== -->
 
-    <style>
+<style>
 
-        :root {
-            --green: #087a3e;
-            --green-dark: #055c2e;
-            --green-light: #eef8f2;
-            --white: #ffffff;
-            --black: #111827;
-            --gray: #6b7280;
-            --border: #e5e7eb;
-            --accent: #ffb703;
+    :root {
+        --green: #087a3e;
+        --green-dark: #055c2e;
+        --green-light: #eef8f2;
+        --white: #ffffff;
+        --black: #111827;
+        --gray: #6b7280;
+        --border: #e5e7eb;
+        --accent: #ffb703;
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        font-family:
+            Arial,
+            Helvetica,
+            sans-serif;
+
+        background: var(--green-light);
+        color: var(--black);
+
+        min-height: 100vh;
+    }
+
+
+    /* =================================================
+       LOSOJA LOGO SYSTEM
+    ================================================== */
+
+    .losoja-logo {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+
+        text-decoration: none;
+
+        color: var(--green);
+
+        font-weight: 800;
+        font-size: 26px;
+    }
+
+    .logo-mark {
+        width: 46px;
+        height: 46px;
+
+        border-radius: 13px;
+
+        background:
+            linear-gradient(
+                135deg,
+                var(--green),
+                var(--green-dark)
+            );
+
+        color: white;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        font-size: 27px;
+        font-weight: 900;
+
+        box-shadow:
+            0 7px 18px rgba(8, 122, 62, 0.20);
+    }
+
+    .logo-text {
+        letter-spacing: -0.7px;
+    }
+
+
+    /* =================================================
+       HEADER
+    ================================================== */
+
+    header {
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+
+        background:
+            rgba(255, 255, 255, 0.96);
+
+        backdrop-filter:
+            blur(12px);
+
+        border-bottom:
+            1px solid var(--border);
+    }
+
+    .header-inner {
+        max-width: 1200px;
+
+        margin: auto;
+
+        min-height: 70px;
+
+        padding: 10px 20px;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        gap: 20px;
+    }
+
+
+    /* =================================================
+       NAVIGATION
+    ================================================== */
+
+    nav {
+        display: flex;
+
+        align-items: center;
+
+        gap: 20px;
+    }
+
+    nav a {
+        text-decoration: none;
+
+        color: var(--black);
+
+        font-weight: 600;
+
+        font-size: 14px;
+    }
+
+    nav a:hover {
+        color: var(--green);
+    }
+
+    .login-button {
+        border: none;
+
+        background: var(--green);
+
+        color: white;
+
+        padding: 11px 18px;
+
+        border-radius: 9px;
+
+        font-weight: 700;
+
+        cursor: pointer;
+    }
+
+    .login-button:hover {
+        background: var(--green-dark);
+    }
+
+
+    /* =================================================
+       HERO
+    ================================================== */
+
+    .hero {
+        position: relative;
+
+        overflow: hidden;
+
+        min-height: 620px;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        padding: 70px 20px;
+
+        background:
+            radial-gradient(
+                circle at 15% 20%,
+                rgba(8, 122, 62, 0.13),
+                transparent 30%
+            ),
+            radial-gradient(
+                circle at 85% 70%,
+                rgba(255, 183, 3, 0.10),
+                transparent 25%
+            ),
+            var(--green-light);
+    }
+
+
+    /* =================================================
+       LARGE BACKGROUND LOGO
+    ================================================== */
+
+    .hero-logo-bg {
+        position: absolute;
+
+        width: 500px;
+        height: 500px;
+
+        border-radius: 50%;
+
+        background:
+            rgba(8, 122, 62, 0.045);
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        right: -160px;
+
+        top: 30px;
+
+        pointer-events: none;
+    }
+
+    .hero-logo-bg .logo-mark {
+        width: 170px;
+        height: 170px;
+
+        border-radius: 45px;
+
+        font-size: 100px;
+
+        opacity: 0.13;
+
+        box-shadow: none;
+    }
+
+
+    /* =================================================
+       HOME LOGO
+    ================================================== */
+
+    .hero-content {
+        position: relative;
+
+        z-index: 2;
+
+        width: 100%;
+
+        max-width: 850px;
+
+        text-align: center;
+    }
+
+    .hero-logo {
+        display: flex;
+
+        justify-content: center;
+
+        margin-bottom: 28px;
+    }
+
+    .hero-logo .logo-mark {
+        width: 86px;
+        height: 86px;
+
+        border-radius: 25px;
+
+        font-size: 50px;
+
+        box-shadow:
+            0 12px 30px
+            rgba(8, 122, 62, 0.25);
+    }
+
+
+    /* =================================================
+       HERO TEXT
+    ================================================== */
+
+    .hero h1 {
+        font-size:
+            clamp(38px, 7vw, 70px);
+
+        line-height: 1.03;
+
+        letter-spacing: -2px;
+
+        margin-bottom: 20px;
+    }
+
+    .hero h1 span {
+        color: var(--green);
+    }
+
+    .hero p {
+        max-width: 650px;
+
+        margin: auto;
+
+        color: var(--gray);
+
+        font-size: 18px;
+
+        line-height: 1.65;
+    }
+
+
+    /* =================================================
+       SEARCH
+    ================================================== */
+
+    .search-box {
+        max-width: 720px;
+
+        margin: 32px auto 0;
+
+        background: white;
+
+        padding: 8px;
+
+        border-radius: 14px;
+
+        display: flex;
+
+        gap: 8px;
+
+        box-shadow:
+            0 12px 35px
+            rgba(0, 0, 0, 0.08);
+
+        border:
+            1px solid var(--border);
+    }
+
+    .search-box input {
+        flex: 1;
+
+        border: none;
+
+        outline: none;
+
+        padding: 15px;
+
+        font-size: 16px;
+    }
+
+    .search-box button {
+        border: none;
+
+        background: var(--green);
+
+        color: white;
+
+        padding: 0 24px;
+
+        border-radius: 9px;
+
+        font-weight: 700;
+
+        cursor: pointer;
+    }
+
+    .search-box button:hover {
+        background: var(--green-dark);
+    }
+
+
+    /* =================================================
+       CATEGORIES
+    ================================================== */
+
+    .categories {
+        padding: 70px 20px;
+
+        background: white;
+    }
+
+    .section-container {
+        max-width: 1100px;
+
+        margin: auto;
+    }
+
+    .section-title {
+        text-align: center;
+
+        margin-bottom: 35px;
+    }
+
+    .section-title h2 {
+        font-size: 32px;
+
+        margin-bottom: 10px;
+    }
+
+    .section-title p {
+        color: var(--gray);
+    }
+
+    .category-grid {
+        display: grid;
+
+        grid-template-columns:
+            repeat(
+                auto-fit,
+                minmax(130px, 1fr)
+            );
+
+        gap: 15px;
+    }
+
+    .category {
+        background:
+            var(--green-light);
+
+        border:
+            1px solid #dceee4;
+
+        border-radius: 14px;
+
+        padding: 25px 12px;
+
+        text-align: center;
+
+        cursor: pointer;
+
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+    .category:hover {
+        transform:
+            translateY(-4px);
+
+        box-shadow:
+            0 10px 25px
+            rgba(0, 0, 0, 0.07);
+    }
+
+    .category-icon {
+        font-size: 30px;
+
+        margin-bottom: 10px;
+    }
+
+    .category strong {
+        font-size: 14px;
+    }
+
+
+    /* =================================================
+       FOOTER
+    ================================================== */
+
+    footer {
+        background:
+            var(--green-dark);
+
+        color: white;
+
+        padding: 35px 20px;
+
+        text-align: center;
+    }
+
+    footer .losoja-logo {
+        color: white;
+
+        justify-content: center;
+
+        margin-bottom: 12px;
+    }
+
+    footer p {
+        opacity: 0.8;
+
+        font-size: 14px;
+    }
+
+
+    /* =================================================
+       MOBILE
+    ================================================== */
+
+    @media (max-width: 700px) {
+
+        .header-inner {
+            min-height: 62px;
+
+            padding:
+                8px 14px;
         }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family:
-                Arial,
-                Helvetica,
-                sans-serif;
-
-            background: var(--green-light);
-            color: var(--black);
-
-            min-height: 100vh;
-        }
-
-
-        /* =================================================
-           LOSOJA LOGO SYSTEM
-        ================================================== */
 
         .losoja-logo {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-
-            text-decoration: none;
-
-            color: var(--green);
-
-            font-weight: 800;
-            font-size: 26px;
+            font-size: 21px;
         }
 
         .logo-mark {
-            width: 46px;
-            height: 46px;
+            width: 38px;
+            height: 38px;
 
-            border-radius: 13px;
+            border-radius: 10px;
 
-            background:
-                linear-gradient(
-                    135deg,
-                    var(--green),
-                    var(--green-dark)
-                );
-
-            color: white;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            font-size: 27px;
-            font-weight: 900;
-
-            box-shadow:
-                0 7px 18px rgba(8, 122, 62, 0.20);
+            font-size: 23px;
         }
-
-        .logo-text {
-            letter-spacing: -0.7px;
-        }
-
-
-        /* =================================================
-           HEADER
-        ================================================== */
-
-        header {
-            position: sticky;
-
-            top: 0;
-
-            z-index: 1000;
-
-            background:
-                rgba(255, 255, 255, 0.96);
-
-            backdrop-filter:
-                blur(12px);
-
-            border-bottom:
-                1px solid var(--border);
-        }
-
-        .header-inner {
-            max-width: 1200px;
-
-            margin: auto;
-
-            min-height: 70px;
-
-            padding: 10px 20px;
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: space-between;
-
-            gap: 20px;
-        }
-
-
-        /* =================================================
-           NAVIGATION
-        ================================================== */
 
         nav {
-            display: flex;
-
-            align-items: center;
-
-            gap: 20px;
+            gap: 8px;
         }
 
         nav a {
-            text-decoration: none;
-
-            color: var(--black);
-
-            font-weight: 600;
-
-            font-size: 14px;
-        }
-
-        nav a:hover {
-            color: var(--green);
+            display: none;
         }
 
         .login-button {
-            border: none;
-
-            background: var(--green);
-
-            color: white;
-
-            padding: 11px 18px;
-
-            border-radius: 9px;
-
-            font-weight: 700;
-
-            cursor: pointer;
+            padding:
+                9px 13px;
         }
-
-        .login-button:hover {
-            background: var(--green-dark);
-        }
-
-
-        /* =================================================
-           HERO
-        ================================================== */
 
         .hero {
-            position: relative;
+            min-height: 570px;
 
-            overflow: hidden;
-
-            min-height: 620px;
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            padding: 70px 20px;
-
-            background:
-                radial-gradient(
-                    circle at 15% 20%,
-                    rgba(8, 122, 62, 0.13),
-                    transparent 30%
-                ),
-                radial-gradient(
-                    circle at 85% 70%,
-                    rgba(255, 183, 3, 0.10),
-                    transparent 25%
-                ),
-                var(--green-light);
-        }
-
-
-        /* =================================================
-           LARGE BACKGROUND LOGO
-        ================================================== */
-
-        .hero-logo-bg {
-            position: absolute;
-
-            width: 500px;
-            height: 500px;
-
-            border-radius: 50%;
-
-            background:
-                rgba(8, 122, 62, 0.045);
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            right: -160px;
-
-            top: 30px;
-
-            pointer-events: none;
-        }
-
-        .hero-logo-bg .logo-mark {
-            width: 170px;
-            height: 170px;
-
-            border-radius: 45px;
-
-            font-size: 100px;
-
-            opacity: 0.13;
-
-            box-shadow: none;
-        }
-
-
-        /* =================================================
-           HOME LOGO
-        ================================================== */
-
-        .hero-content {
-            position: relative;
-
-            z-index: 2;
-
-            width: 100%;
-
-            max-width: 850px;
-
-            text-align: center;
-        }
-
-        .hero-logo {
-            display: flex;
-
-            justify-content: center;
-
-            margin-bottom: 28px;
+            padding:
+                55px 16px;
         }
 
         .hero-logo .logo-mark {
-            width: 86px;
-            height: 86px;
+            width: 70px;
+            height: 70px;
 
-            border-radius: 25px;
+            font-size: 40px;
 
-            font-size: 50px;
-
-            box-shadow:
-                0 12px 30px
-                rgba(8, 122, 62, 0.25);
+            border-radius: 21px;
         }
-
-
-        /* =================================================
-           HERO TEXT
-        ================================================== */
 
         .hero h1 {
-            font-size:
-                clamp(38px, 7vw, 70px);
+            font-size: 43px;
 
-            line-height: 1.03;
-
-            letter-spacing: -2px;
-
-            margin-bottom: 20px;
-        }
-
-        .hero h1 span {
-            color: var(--green);
+            letter-spacing: -1.5px;
         }
 
         .hero p {
-            max-width: 650px;
-
-            margin: auto;
-
-            color: var(--gray);
-
-            font-size: 18px;
-
-            line-height: 1.65;
-        }
-
-
-        /* =================================================
-           SEARCH
-        ================================================== */
-
-        .search-box {
-            max-width: 720px;
-
-            margin: 32px auto 0;
-
-            background: white;
-
-            padding: 8px;
-
-            border-radius: 14px;
-
-            display: flex;
-
-            gap: 8px;
-
-            box-shadow:
-                0 12px 35px
-                rgba(0, 0, 0, 0.08);
-
-            border:
-                1px solid var(--border);
-        }
-
-        .search-box input {
-            flex: 1;
-
-            border: none;
-
-            outline: none;
-
-            padding: 15px;
-
             font-size: 16px;
         }
 
+        .search-box {
+            flex-direction: column;
+        }
+
         .search-box button {
-            border: none;
-
-            background: var(--green);
-
-            color: white;
-
-            padding: 0 24px;
-
-            border-radius: 9px;
-
-            font-weight: 700;
-
-            cursor: pointer;
-        }
-
-        .search-box button:hover {
-            background: var(--green-dark);
-        }
-
-
-        /* =================================================
-           CATEGORIES
-        ================================================== */
-
-        .categories {
-            padding: 70px 20px;
-
-            background: white;
-        }
-
-        .section-container {
-            max-width: 1100px;
-
-            margin: auto;
-        }
-
-        .section-title {
-            text-align: center;
-
-            margin-bottom: 35px;
-        }
-
-        .section-title h2 {
-            font-size: 32px;
-
-            margin-bottom: 10px;
-        }
-
-        .section-title p {
-            color: var(--gray);
+            min-height: 48px;
         }
 
         .category-grid {
-            display: grid;
-
             grid-template-columns:
-                repeat(
-                    auto-fit,
-                    minmax(130px, 1fr)
-                );
-
-            gap: 15px;
+                repeat(2, 1fr);
         }
+    }
 
-        .category {
-            background:
-                var(--green-light);
-
-            border:
-                1px solid #dceee4;
-
-            border-radius: 14px;
-
-            padding: 25px 12px;
-
-            text-align: center;
-
-            cursor: pointer;
-
-            transition:
-                transform 0.2s ease,
-                box-shadow 0.2s ease;
-        }
-
-        .category:hover {
-            transform:
-                translateY(-4px);
-
-            box-shadow:
-                0 10px 25px
-                rgba(0, 0, 0, 0.07);
-        }
-
-        .category-icon {
-            font-size: 30px;
-
-            margin-bottom: 10px;
-        }
-
-        .category strong {
-            font-size: 14px;
-        }
-
-
-        /* =================================================
-           LOGIN / SIGNUP MODAL
-        ================================================== */
-
-        .auth-overlay {
-            position: fixed;
-
-            inset: 0;
-
-            background:
-                rgba(0, 0, 0, 0.55);
-
-            display: none;
-
-            align-items: center;
-
-            justify-content: center;
-
-            padding: 20px;
-
-            z-index: 5000;
-        }
-
-        .auth-overlay.active {
-            display: flex;
-        }
-
-        .auth-card {
-            width: 100%;
-
-            max-width: 430px;
-
-            background: white;
-
-            border-radius: 20px;
-
-            padding: 32px;
-
-            position: relative;
-
-            box-shadow:
-                0 25px 70px
-                rgba(0, 0, 0, 0.25);
-        }
-
-
-        /* =================================================
-           AUTH LOGO
-        ================================================== */
-
-        .auth-logo {
-            display: flex;
-
-            flex-direction: column;
-
-            align-items: center;
-
-            text-align: center;
-
-            margin-bottom: 25px;
-        }
-
-        .auth-logo .logo-mark {
-            width: 78px;
-            height: 78px;
-
-            border-radius: 23px;
-
-            font-size: 44px;
-
-            margin-bottom: 12px;
-
-            box-shadow:
-                0 12px 28px
-                rgba(8, 122, 62, 0.23);
-        }
-
-        .auth-logo strong {
-            color: var(--green);
-
-            font-size: 28px;
-
-            letter-spacing: -0.8px;
-        }
-
-        .auth-logo span {
-            color: var(--gray);
-
-            font-size: 13px;
-
-            margin-top: 5px;
-        }
-
-
-        /* =================================================
-           CLOSE AUTH
-        ================================================== */
-
-        .close-auth {
-            position: absolute;
-
-            top: 15px;
-
-            right: 18px;
-
-            border: none;
-
-            background: transparent;
-
-            font-size: 28px;
-
-            cursor: pointer;
-
-            color: var(--gray);
-        }
-
-
-        /* =================================================
-           AUTH FORM
-        ================================================== */
-
-        .auth-card h2 {
-            text-align: center;
-
-            margin-bottom: 20px;
-        }
-
-        .auth-form {
-            display: flex;
-
-            flex-direction: column;
-
-            gap: 14px;
-        }
-
-        .auth-form input {
-            width: 100%;
-
-            padding: 14px;
-
-            border:
-                1px solid var(--border);
-
-            border-radius: 9px;
-
-            outline: none;
-
-            font-size: 15px;
-        }
-
-        .auth-form input:focus {
-            border-color: var(--green);
-        }
-
-        .auth-submit {
-            border: none;
-
-            background: var(--green);
-
-            color: white;
-
-            padding: 14px;
-
-            border-radius: 9px;
-
-            font-weight: 700;
-
-            cursor: pointer;
-        }
-
-        .auth-submit:hover {
-            background: var(--green-dark);
-        }
-
-        .auth-switch {
-            text-align: center;
-
-            margin-top: 18px;
-
-            color: var(--gray);
-
-            font-size: 14px;
-        }
-
-        .auth-switch button {
-            border: none;
-
-            background: none;
-
-            color: var(--green);
-
-            font-weight: 700;
-
-            cursor: pointer;
-        }
-
-
-        /* =================================================
-           FOOTER
-        ================================================== */
-
-        footer {
-            background:
-                var(--green-dark);
-
-            color: white;
-
-            padding: 35px 20px;
-
-            text-align: center;
-        }
-
-        footer .losoja-logo {
-            color: white;
-
-            justify-content: center;
-
-            margin-bottom: 12px;
-        }
-
-        footer p {
-            opacity: 0.8;
-
-            font-size: 14px;
-        }
-
-
-        /* =================================================
-           MOBILE
-        ================================================== */
-
-        @media (max-width: 700px) {
-
-            .header-inner {
-                min-height: 62px;
-
-                padding:
-                    8px 14px;
-            }
-
-            .losoja-logo {
-                font-size: 21px;
-            }
-
-            .logo-mark {
-                width: 38px;
-                height: 38px;
-
-                border-radius: 10px;
-
-                font-size: 23px;
-            }
-
-            nav {
-                gap: 8px;
-            }
-
-            nav a {
-                display: none;
-            }
-
-            .login-button {
-                padding:
-                    9px 13px;
-            }
-
-            .hero {
-                min-height: 570px;
-
-                padding:
-                    55px 16px;
-            }
-
-            .hero-logo .logo-mark {
-                width: 70px;
-                height: 70px;
-
-                font-size: 40px;
-
-                border-radius: 21px;
-            }
-
-            .hero h1 {
-                font-size: 43px;
-
-                letter-spacing: -1.5px;
-            }
-
-            .hero p {
-                font-size: 16px;
-            }
-
-            .search-box {
-                flex-direction: column;
-            }
-
-            .search-box button {
-                min-height: 48px;
-            }
-
-            .category-grid {
-                grid-template-columns:
-                    repeat(2, 1fr);
-            }
-
-            .auth-card {
-                padding:
-                    25px 20px;
-            }
-
-            .auth-logo .logo-mark {
-                width: 68px;
-                height: 68px;
-
-                font-size: 38px;
-            }
-        }
-
-    </style>
+</style>
+```
 
 </head>
 
-
 <body>
-
 
 <!-- =====================================================
      HEADER
@@ -821,401 +611,13 @@
 
 <header>
 
-    <div class="header-inner">
-
-        <a
-            href="index.html"
-            class="losoja-logo"
-            aria-label="LosOja home"
-        >
-
-            <div
-                class="logo-mark"
-                aria-hidden="true"
-            >
-                L
-            </div>
-
-            <span class="logo-text">
-                LosOja
-            </span>
-
-        </a>
-
-
-        <nav>
-
-            <a href="#categories">
-                Categories
-            </a>
-
-            <a href="property.html">
-                Property
-            </a>
-
-            <a href="mobility.html">
-                Mobility
-            </a>
-
-            <a href="barter.html">
-                Barter
-            </a>
-
-            <button
-                class="login-button"
-                onclick="openLogin()"
-            >
-                Sign In
-            </button>
-
-        </nav>
-
-    </div>
-
-</header>
-
-
-<!-- =====================================================
-     HERO / HOME SCREEN
-====================================================== -->
-
-<main>
-
-    <section class="hero">
-
-        <!-- Decorative LosOja background logo -->
-
-        <div
-            class="hero-logo-bg"
-            aria-hidden="true"
-        >
-
-            <div class="logo-mark">
-                L
-            </div>
-
-        </div>
-
-
-        <div class="hero-content">
-
-            <!-- =================================================
-                 LOSOJA HOME / APP LOGO
-            ================================================== -->
-
-            <div
-                class="hero-logo"
-                aria-label="LosOja"
-            >
-
-                <div class="logo-mark">
-                    L
-                </div>
-
-            </div>
-
-
-            <h1>
-
-                Find What You Need
-
-                <span>
-                    Across Nigeria
-                </span>
-
-            </h1>
-
-
-            <p>
-
-                Discover trusted Nigerian businesses,
-                services, products, property, transportation
-                and more — all in one place.
-
-            </p>
-
-
-            <!-- Search -->
-
-            <div class="search-box">
-
-                <input
-                    type="search"
-                    id="homeSearch"
-                    placeholder="What are you looking for?"
-                    aria-label="Search LosOja"
-                >
-
-                <button
-                    type="button"
-                    onclick="performSearch()"
-                >
-                    Search
-                </button>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- =================================================
-         CATEGORIES
-    ================================================== -->
-
-    <section
-        class="categories"
-        id="categories"
-    >
-
-        <div class="section-container">
-
-            <div class="section-title">
-
-                <h2>
-                    Explore LosOja
-                </h2>
-
-                <p>
-                    Find businesses, products and services near you.
-                </p>
-
-            </div>
-
-
-            <div class="category-grid">
-
-                <div
-                    class="category"
-                    onclick="goCategory('Food')"
-                >
-                    <div class="category-icon">
-                        🍔
-                    </div>
-
-                    <strong>
-                        Food
-                    </strong>
-                </div>
-
-
-                <div
-                    class="category"
-                    onclick="goCategory('Fashion')"
-                >
-                    <div class="category-icon">
-                        👕
-                    </div>
-
-                    <strong>
-                        Fashion
-                    </strong>
-                </div>
-
-
-                <div
-                    class="category"
-                    onclick="goCategory('Phones')"
-                >
-                    <div class="category-icon">
-                        📱
-                    </div>
-
-                    <strong>
-                        Phones
-                    </strong>
-                </div>
-
-
-                <div
-                    class="category"
-                    onclick="goCategory('Vehicles')"
-                >
-                    <div class="category-icon">
-                        🚗
-                    </div>
-
-                    <strong>
-                        Vehicles
-                    </strong>
-                </div>
-
-
-                <div
-                    class="category"
-                    onclick="goCategory('Property')"
-                >
-                    <div class="category-icon">
-                        🏠
-                    </div>
-
-                    <strong>
-                        Property
-                    </strong>
-                </div>
-
-
-                <div
-                    class="category"
-                    onclick="goCategory('Services')"
-                >
-                    <div class="category-icon">
-                        🛠️
-                    </div>
-
-                    <strong>
-                        Services
-                    </strong>
-                </div>
-
-
-                <div
-                    class="category"
-                    onclick="goCategory('Beauty')"
-                >
-                    <div class="category-icon">
-                        ✨
-                    </div>
-
-                    <strong>
-                        Beauty
-                    </strong>
-                </div>
-
-
-                <div
-                    class="category"
-                    onclick="goCategory('Technology')"
-                >
-                    <div class="category-icon">
-                        💻
-                    </div>
-
-                    <strong>
-                        Technology
-                    </strong>
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-</main>
-
-
-<!-- =====================================================
-     AUTH MODAL
-====================================================== -->
-
-<div
-    class="auth-overlay"
-    id="authOverlay"
->
-
-    <div class="auth-card">
-
-        <button
-            class="close-auth"
-            onclick="closeAuth()"
-            aria-label="Close"
-        >
-            ×
-        </button>
-
-
-        <!-- =================================================
-             LOSOJA SIGN IN / SIGN UP LOGO
-        ================================================== -->
-
-        <div class="auth-logo">
-
-            <div
-                class="logo-mark"
-                aria-hidden="true"
-            >
-                L
-            </div>
-
-            <strong>
-                LosOja
-            </strong>
-
-            <span>
-                Your Nigerian marketplace
-            </span>
-
-        </div>
-
-
-        <h2 id="authTitle">
-            Welcome Back
-        </h2>
-
-
-        <form
-            class="auth-form"
-            id="authForm"
-            onsubmit="handleAuth(event)"
-        >
-
-            <input
-                type="email"
-                id="authEmail"
-                placeholder="Email address"
-                required
-            >
-
-            <input
-                type="password"
-                id="authPassword"
-                placeholder="Password"
-                minlength="6"
-                required
-            >
-
-            <button
-                type="submit"
-                class="auth-submit"
-            >
-                Sign In
-            </button>
-
-        </form>
-
-
-        <div class="auth-switch">
-
-            <span id="authSwitchText">
-                Don't have an account?
-            </span>
-
-            <button
-                type="button"
-                onclick="toggleAuthMode()"
-                id="authSwitchButton"
-            >
-                Sign Up
-            </button>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-<!-- =====================================================
-     FOOTER
-====================================================== -->
-
-<footer>
+```
+<div class="header-inner">
 
     <a
         href="index.html"
         class="losoja-logo"
+        aria-label="LosOja home"
     >
 
         <div
@@ -1225,166 +627,313 @@
             L
         </div>
 
-        <span>
+        <span class="logo-text">
             LosOja
         </span>
 
     </a>
 
-    <p>
-        Find what you need across Nigeria.
-    </p>
+
+    <nav>
+
+        <a href="#categories">
+            Categories
+        </a>
+
+        <a href="property.html">
+            Property
+        </a>
+
+        <a href="mobility.html">
+            Mobility
+        </a>
+
+        <a href="barter.html">
+            Barter
+        </a>
+
+        <button
+            class="login-button"
+            onclick="openLogin()"
+        >
+            Sign In
+        </button>
+
+    </nav>
+
+</div>
+```
+
+</header>
+
+<!-- =====================================================
+     HERO / HOME SCREEN
+====================================================== -->
+
+<main>
+
+```
+<section class="hero">
+
+    <div
+        class="hero-logo-bg"
+        aria-hidden="true"
+    >
+
+        <div class="logo-mark">
+            L
+        </div>
+
+    </div>
+
+
+    <div class="hero-content">
+
+        <div
+            class="hero-logo"
+            aria-label="LosOja"
+        >
+
+            <div class="logo-mark">
+                L
+            </div>
+
+        </div>
+
+
+        <h1>
+
+            Find What You Need
+
+            <span>
+                Across Nigeria
+            </span>
+
+        </h1>
+
+
+        <p>
+
+            Discover trusted Nigerian businesses,
+            services, products, property, transportation
+            and more — all in one place.
+
+        </p>
+
+
+        <div class="search-box">
+
+            <input
+                type="search"
+                id="homeSearch"
+                placeholder="What are you looking for?"
+                aria-label="Search LosOja"
+            >
+
+            <button
+                type="button"
+                onclick="performSearch()"
+            >
+                Search
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =================================================
+     CATEGORIES
+================================================== -->
+
+<section
+    class="categories"
+    id="categories"
+>
+
+    <div class="section-container">
+
+        <div class="section-title">
+
+            <h2>
+                Explore LosOja
+            </h2>
+
+            <p>
+                Find businesses, products and services near you.
+            </p>
+
+        </div>
+
+
+        <div class="category-grid">
+
+            <div
+                class="category"
+                onclick="goCategory('Food')"
+            >
+                <div class="category-icon">
+                    🍔
+                </div>
+
+                <strong>
+                    Food
+                </strong>
+            </div>
+
+
+            <div
+                class="category"
+                onclick="goCategory('Fashion')"
+            >
+                <div class="category-icon">
+                    👕
+                </div>
+
+                <strong>
+                    Fashion
+                </strong>
+            </div>
+
+
+            <div
+                class="category"
+                onclick="goCategory('Phones')"
+            >
+                <div class="category-icon">
+                    📱
+                </div>
+
+                <strong>
+                    Phones
+                </strong>
+            </div>
+
+
+            <div
+                class="category"
+                onclick="goCategory('Vehicles')"
+            >
+                <div class="category-icon">
+                    🚗
+                </div>
+
+                <strong>
+                    Vehicles
+                </strong>
+            </div>
+
+
+            <div
+                class="category"
+                onclick="goCategory('Property')"
+            >
+                <div class="category-icon">
+                    🏠
+                </div>
+
+                <strong>
+                    Property
+                </strong>
+            </div>
+
+
+            <div
+                class="category"
+                onclick="goCategory('Services')"
+            >
+                <div class="category-icon">
+                    🛠️
+                </div>
+
+                <strong>
+                    Services
+                </strong>
+            </div>
+
+
+            <div
+                class="category"
+                onclick="goCategory('Beauty')"
+            >
+                <div class="category-icon">
+                    ✨
+                </div>
+
+                <strong>
+                    Beauty
+                </strong>
+            </div>
+
+
+            <div
+                class="category"
+                onclick="goCategory('Technology')"
+            >
+                <div class="category-icon">
+                    💻
+                </div>
+
+                <strong>
+                    Technology
+                </strong>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+```
+
+</main>
+
+<!-- =====================================================
+     FOOTER
+====================================================== -->
+
+<footer>
+
+```
+<a
+    href="index.html"
+    class="losoja-logo"
+>
+
+    <div
+        class="logo-mark"
+        aria-hidden="true"
+    >
+        L
+    </div>
+
+    <span>
+        LosOja
+    </span>
+
+</a>
+
+<p>
+    Find what you need across Nigeria.
+</p>
+```
 
 </footer>
 
-
 <!-- =====================================================
-     BASIC PAGE FUNCTIONS
+     HOME PAGE FUNCTIONS
 ====================================================== -->
 
 <script>
 
-    let authMode = "login";
-
-
-    function openLogin() {
-
-        authMode = "login";
-
-        updateAuthModal();
-
-        document
-            .getElementById("authOverlay")
-            .classList
-            .add("active");
-    }
-
-
-    function openSignup() {
-
-        authMode = "signup";
-
-        updateAuthModal();
-
-        document
-            .getElementById("authOverlay")
-            .classList
-            .add("active");
-    }
-
-
-    function closeAuth() {
-
-        document
-            .getElementById("authOverlay")
-            .classList
-            .remove("active");
-    }
-
-
-    function toggleAuthMode() {
-
-        authMode =
-            authMode === "login"
-                ? "signup"
-                : "login";
-
-        updateAuthModal();
-    }
-
-
-    function updateAuthModal() {
-
-        const title =
-            document.getElementById("authTitle");
-
-        const submit =
-            document.querySelector(".auth-submit");
-
-        const switchText =
-            document.getElementById("authSwitchText");
-
-        const switchButton =
-            document.getElementById("authSwitchButton");
-
-
-        if (authMode === "signup") {
-
-            title.textContent =
-                "Create Your Account";
-
-            submit.textContent =
-                "Sign Up";
-
-            switchText.textContent =
-                "Already have an account?";
-
-            switchButton.textContent =
-                "Sign In";
-
-        } else {
-
-            title.textContent =
-                "Welcome Back";
-
-            submit.textContent =
-                "Sign In";
-
-            switchText.textContent =
-                "Don't have an account?";
-
-            switchButton.textContent =
-                "Sign Up";
-        }
-    }
-
-
-    function handleAuth(event) {
-
-        event.preventDefault();
-
-        /*
-         * Your existing auth.js handles the real
-         * Supabase authentication.
-         *
-         * This prevents this page from interfering
-         * with the existing authentication system.
-         */
-
-        if (
-            typeof window.openSignup === "function" &&
-            authMode === "signup"
-        ) {
-
-            window.openSignup();
-
-            return;
-        }
-
-
-        if (
-            typeof window.openLogin === "function" &&
-            authMode === "login"
-        ) {
-
-            closeAuth();
-
-            window.openLogin();
-
-            return;
-        }
-
-
-        alert(
-            "LosOja authentication is being connected."
-        );
-    }
-
-
     function performSearch() {
 
         const input =
-            document.getElementById("homeSearch");
+            document.getElementById(
+                "homeSearch"
+            );
 
         const query =
             input.value.trim();
@@ -1395,94 +944,79 @@
             input.focus();
 
             return;
+
         }
 
-
-        /*
-         * If the existing LosOja search function
-         * is available, use it.
-         */
 
         if (
-            typeof window.searchBusinesses === "function"
+            typeof window.searchBusinesses ===
+            "function"
         ) {
 
-            window.searchBusinesses(query);
+            window.searchBusinesses(
+                query
+            );
 
             return;
+
         }
 
-
-        /*
-         * Otherwise send the user to the business
-         * marketplace/search page.
-         */
 
         window.location.href =
             "businesses.html?search=" +
-            encodeURIComponent(query);
+            encodeURIComponent(
+                query
+            );
+
     }
 
 
     function goCategory(category) {
 
         if (
-            typeof window.filterByCategory === "function"
+            typeof window.filterByCategory ===
+            "function"
         ) {
 
-            window.filterByCategory(category);
+            window.filterByCategory(
+                category
+            );
 
             return;
+
         }
 
 
         window.location.href =
             "businesses.html?category=" +
-            encodeURIComponent(category);
+            encodeURIComponent(
+                category
+            );
+
     }
 
-
-    /*
-     * Allow Enter to search.
-     */
 
     document
         .getElementById("homeSearch")
         .addEventListener(
             "keydown",
-            function(event) {
+            function (event) {
 
-                if (event.key === "Enter") {
+                if (
+                    event.key ===
+                    "Enter"
+                ) {
 
                     event.preventDefault();
 
                     performSearch();
+
                 }
-            }
-        );
 
-
-    /*
-     * Close modal when clicking outside it.
-     */
-
-    document
-        .getElementById("authOverlay")
-        .addEventListener(
-            "click",
-            function(event) {
-
-                if (
-                    event.target === this
-                ) {
-
-                    closeAuth();
-                }
             }
         );
 
 </script>
-
 
 <!-- =====================================================
      EXISTING LOSOJA JAVASCRIPT
@@ -1493,7 +1027,6 @@
 <script src="businesses.js"></script>
 
 <script src="app.js"></script>
-
 
 </body>
 
