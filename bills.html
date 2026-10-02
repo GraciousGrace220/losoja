@@ -1,3 +1,725 @@
+html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>LosOja Bills</title>
+
+    <meta
+        name="description"
+        content="Pay Airtime, Data and test Electricity bills with your LosOja wallet."
+    >
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+            background: #f4f7f5;
+            color: #111827;
+        }
+
+        header {
+            background: #087a3e;
+            color: white;
+            padding: 18px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .header-inner {
+            max-width: 900px;
+            margin: auto;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .back-link {
+            color: white;
+            text-decoration: none;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .header-title {
+            font-size: 21px;
+            font-weight: bold;
+        }
+
+        main {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .intro {
+            margin-bottom: 18px;
+        }
+
+        .intro h1 {
+            margin: 0 0 7px;
+            font-size: 27px;
+        }
+
+        .intro p {
+            margin: 0;
+            color: #6b7280;
+            line-height: 1.5;
+        }
+
+        .notice {
+            background: #eef8f2;
+            border-left: 4px solid #087a3e;
+            padding: 14px;
+            border-radius: 8px;
+            margin: 18px 0;
+            line-height: 1.5;
+        }
+
+        .tabs {
+            display: grid;
+            grid-template-columns:
+                repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 18px;
+        }
+
+        .tab-btn {
+            border: 1px solid #d1d5db;
+            background: white;
+            color: #374151;
+            padding: 13px 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .tab-btn.active {
+            background: #087a3e;
+            color: white;
+            border-color: #087a3e;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow:
+                0 2px 10px
+                rgba(0, 0, 0, 0.06);
+        }
+
+        .bill-form {
+            display: none;
+        }
+
+        .bill-form.active {
+            display: block;
+        }
+
+        .card h2 {
+            margin-top: 0;
+            margin-bottom: 8px;
+        }
+
+        .form-note {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 18px;
+            line-height: 1.5;
+        }
+
+        label {
+            display: block;
+            margin: 14px 0 7px;
+            font-weight: bold;
+            color: #374151;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 16px;
+            background: white;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #087a3e;
+        }
+
+        .pay-btn {
+            width: 100%;
+            margin-top: 18px;
+            padding: 14px;
+            border: 0;
+            border-radius: 8px;
+            background: #087a3e;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .pay-btn:hover {
+            background: #055c2e;
+        }
+
+        .pay-btn:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+        }
+
+        .processing {
+            display: none;
+            margin-top: 15px;
+            padding: 13px;
+            border-radius: 8px;
+            background: #fff7e6;
+            border: 1px solid #ffd88a;
+            color: #7a5200;
+            line-height: 1.5;
+        }
+
+        .processing.active {
+            display: block;
+        }
+
+        .history-item {
+            border-bottom: 1px solid #e5e7eb;
+            padding: 15px 0;
+        }
+
+        .history-item:last-child {
+            border-bottom: 0;
+        }
+
+        .history-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .history-type {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .history-date {
+            color: #6b7280;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        .empty,
+        .error {
+            padding: 20px;
+            text-align: center;
+            color: #6b7280;
+        }
+
+        .error {
+            color: #b91c1c;
+        }
+
+        @media (max-width: 600px) {
+
+            main {
+                padding: 15px;
+            }
+
+            .tabs {
+                grid-template-columns: 1fr;
+            }
+
+            .history-row {
+                flex-direction: column;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+    <header>
+
+        <div class="header-inner">
+
+            <a
+                href="balance.html"
+                class="back-link"
+            >
+                ←
+            </a>
+
+            <div class="header-title">
+                LosOja Bills
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <main>
+
+        <div class="intro">
+
+            <h1>
+                Pay Bills
+            </h1>
+
+            <p>
+                Use your LosOja wallet to pay for
+                Airtime and Data. Electricity is
+                currently available in test mode.
+            </p>
+
+        </div>
+
+
+        <div class="notice">
+
+            <strong>
+                Current availability
+            </strong>
+
+            <br>
+
+            Airtime and Data use VTpass
+            Sandbox test mode.
+
+            <br>
+
+            Electricity is currently
+            for internal testing only.
+
+        </div>
+
+
+        <div class="tabs">
+
+            <button
+                type="button"
+                class="tab-btn active"
+                data-tab="airtime"
+            >
+                Airtime
+            </button>
+
+            <button
+                type="button"
+                class="tab-btn"
+                data-tab="data"
+            >
+                Data
+            </button>
+
+            <button
+                type="button"
+                class="tab-btn"
+                data-tab="electricity"
+            >
+                Electricity
+            </button>
+
+        </div>
+
+
+        <!-- AIRTIME -->
+
+        <form
+            id="airtimeForm"
+            class="card bill-form active"
+        >
+
+            <h2>
+                Buy Airtime
+            </h2>
+
+            <div class="form-note">
+                Airtime purchases currently use
+                VTpass Sandbox.
+            </div>
+
+
+            <label for="airtimeNetwork">
+                Network
+            </label>
+
+            <select
+                id="airtimeNetwork"
+                required
+            >
+
+                <option value="">
+                    Select network
+                </option>
+
+                <option value="mtn">
+                    MTN
+                </option>
+
+                <option value="airtel">
+                    Airtel
+                </option>
+
+                <option value="glo">
+                    Glo
+                </option>
+
+                <option value="9mobile">
+                    9mobile
+                </option>
+
+            </select>
+
+
+            <label for="airtimePhone">
+                Phone Number
+            </label>
+
+            <input
+                id="airtimePhone"
+                type="tel"
+                inputmode="numeric"
+                maxlength="11"
+                placeholder="08011111111"
+                required
+            >
+
+
+            <label for="airtimeAmount">
+                Amount
+            </label>
+
+            <input
+                id="airtimeAmount"
+                type="number"
+                min="50"
+                max="100000"
+                step="1"
+                placeholder="100"
+                required
+            >
+
+
+            <button
+                type="submit"
+                class="pay-btn"
+            >
+                Buy Airtime
+            </button>
+
+
+            <div
+                id="airtimeProcessing"
+                class="processing"
+            >
+
+                <div
+                    id="airtimeProcessingTime"
+                >
+                    Your transaction is being
+                    processed. Please do not click
+                    the payment button again.
+                </div>
+
+            </div>
+
+        </form>
+
+
+        <!-- DATA -->
+
+        <form
+            id="dataForm"
+            class="card bill-form"
+        >
+
+            <h2>
+                Buy Data
+            </h2>
+
+            <div class="form-note">
+                Data purchases currently use
+                VTpass Sandbox.
+            </div>
+
+
+            <label for="dataNetwork">
+                Network
+            </label>
+
+            <select
+                id="dataNetwork"
+                required
+            >
+
+                <option value="">
+                    Select network
+                </option>
+
+                <option value="mtn">
+                    MTN
+                </option>
+
+                <option value="airtel">
+                    Airtel
+                </option>
+
+                <option value="glo">
+                    Glo
+                </option>
+
+                <option value="9mobile">
+                    9mobile
+                </option>
+
+            </select>
+
+
+            <label for="dataPhone">
+                Phone Number
+            </label>
+
+            <input
+                id="dataPhone"
+                type="tel"
+                inputmode="numeric"
+                maxlength="11"
+                placeholder="08011111111"
+                required
+            >
+
+
+            <label for="dataPlan">
+                Data Plan
+            </label>
+
+            <select
+                id="dataPlan"
+                required
+            >
+
+                <option value="">
+                    Select plan
+                </option>
+
+                <option value="small">
+                    Test Plan — ₦100
+                </option>
+
+                <option value="medium">
+                    Test Plan — ₦500
+                </option>
+
+                <option value="large">
+                    Test Plan — ₦1,000
+                </option>
+
+            </select>
+
+
+            <button
+                type="submit"
+                class="pay-btn"
+            >
+                Buy Data
+            </button>
+
+
+            <div
+                id="dataProcessing"
+                class="processing"
+            >
+
+                <div
+                    id="dataProcessingTime"
+                >
+                    Your transaction is being
+                    processed. Please do not click
+                    the payment button again.
+                </div>
+
+            </div>
+
+        </form>
+
+
+        <!-- ELECTRICITY -->
+
+        <form
+            id="electricityForm"
+            class="card bill-form"
+        >
+
+            <h2>
+                Electricity
+            </h2>
+
+            <div class="form-note">
+                Electricity is currently available
+                as an internal test only.
+            </div>
+
+
+            <label for="electricityProvider">
+                Electricity Provider
+            </label>
+
+            <select
+                id="electricityProvider"
+                required
+            >
+
+                <option value="">
+                    Select provider
+                </option>
+
+                <option value="ikeja">
+                    Ikeja Electric
+                </option>
+
+                <option value="eko">
+                    Eko Electricity
+                </option>
+
+                <option value="ibedc">
+                    IBEDC
+                </option>
+
+                <option value="aedc">
+                    AEDC
+                </option>
+
+            </select>
+
+
+            <label for="electricityType">
+                Meter Type
+            </label>
+
+            <select
+                id="electricityType"
+                required
+            >
+
+                <option value="">
+                    Select meter type
+                </option>
+
+                <option value="prepaid">
+                    Prepaid
+                </option>
+
+                <option value="postpaid">
+                    Postpaid
+                </option>
+
+            </select>
+
+
+            <label for="meterNumber">
+                Meter Number
+            </label>
+
+            <input
+                id="meterNumber"
+                type="text"
+                placeholder="Enter meter number"
+                required
+            >
+
+
+            <label for="electricityAmount">
+                Amount
+            </label>
+
+            <input
+                id="electricityAmount"
+                type="number"
+                min="1"
+                step="1"
+                placeholder="1000"
+                required
+            >
+
+
+            <button
+                type="submit"
+                class="pay-btn"
+            >
+                Test Electricity
+            </button>
+
+
+            <div
+                id="electricityProcessing"
+                class="processing"
+            >
+
+                <div>
+                    Your test transaction is being
+                    processed. Please do not click
+                    the button again.
+                </div>
+
+            </div>
+
+        </form>
+
+
+        <!-- BILL HISTORY -->
+
+        <section class="card">
+
+            <h2>
+                Bill History
+            </h2>
+
+            <div
+                id="billHistory"
+            >
+
+                <div class="empty">
+                    Loading bill history...
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
 <script>
 
 (function () {
@@ -12,17 +734,6 @@
     const SUPABASE_KEY =
         "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
 
-
-    /*
-    =========================================================
-       PAYMENT SAFETY LOCK
-
-       Prevents accidental duplicate submissions.
-
-       IMPORTANT:
-       We never automatically retry a bill payment.
-    =========================================================
-    */
 
     let paymentInProgress = false;
 
@@ -61,12 +772,6 @@
 
     }
 
-
-    /*
-    =========================================================
-       BUTTON STATE
-    =========================================================
-    */
 
     function setProcessingState(
         form,
@@ -152,12 +857,6 @@
 
     }
 
-
-    /*
-    =========================================================
-       PROCESSING MESSAGE
-    =========================================================
-    */
 
     function showProcessingMessage(
         boxId,
@@ -306,12 +1005,6 @@
     }
 
 
-    /*
-    =========================================================
-       ACCESS TOKEN
-    =========================================================
-    */
-
     async function getAccessToken() {
 
         try {
@@ -340,12 +1033,6 @@
 
     }
 
-
-    /*
-    =========================================================
-       BILL HISTORY REQUEST
-    =========================================================
-    */
 
     async function billRequest(endpoint) {
 
@@ -430,12 +1117,6 @@
     }
 
 
-    /*
-    =========================================================
-       TAB SWITCHING
-    =========================================================
-    */
-
     const tabButtons =
         document.querySelectorAll(
             ".tab-btn"
@@ -454,11 +1135,6 @@
             button.addEventListener(
                 "click",
                 function () {
-
-                    /*
-                    Do not allow switching services
-                    while a payment is being processed.
-                    */
 
                     if (
                         isPaymentLocked()
@@ -524,12 +1200,6 @@
         }
     );
 
-
-    /*
-    =========================================================
-       REAL AIRTIME
-    =========================================================
-    */
 
     const PAY_BILL_FUNCTION_URL =
         SUPABASE_URL +
@@ -633,12 +1303,6 @@
     }
 
 
-    /*
-    =========================================================
-       AIRTIME FORM
-    =========================================================
-    */
-
     const airtimeForm =
         document.getElementById(
             "airtimeForm"
@@ -653,10 +1317,6 @@
 
                 event.preventDefault();
 
-
-                /*
-                HARD DUPLICATE PROTECTION
-                */
 
                 if (
                     !lockPayment(
@@ -819,12 +1479,6 @@
                         unlockPayment();
 
 
-                        /*
-                        History refresh happens AFTER
-                        the transaction result is shown.
-                        It cannot delay the success message.
-                        */
-
                         loadBillHistory();
 
                         return;
@@ -843,27 +1497,16 @@
                         );
 
 
-                        /*
-                        IMPORTANT:
-                        Keep the payment locked.
+                        const button =
+                            airtimeForm.querySelector(
+                                ".pay-btn"
+                            );
 
-                        The provider may already have
-                        received the transaction.
-                        */
 
-                        if (airtimeForm) {
+                        if (button) {
 
-                            const button =
-                                airtimeForm.querySelector(
-                                    ".pay-btn"
-                                );
-
-                            if (button) {
-
-                                button.textContent =
-                                    "Transaction Pending — Do Not Retry";
-
-                            }
+                            button.textContent =
+                                "Transaction Pending — Do Not Retry";
 
                         }
 
@@ -916,14 +1559,6 @@
                     );
 
 
-                    /*
-                    A network error does NOT mean
-                    the payment was never received.
-
-                    Therefore we DO NOT automatically
-                    unlock and retry.
-                    */
-
                     const button =
                         airtimeForm.querySelector(
                             ".pay-btn"
@@ -954,12 +1589,6 @@
 
     }
 
-
-    /*
-    =========================================================
-       REAL DATA
-    =========================================================
-    */
 
     async function runRealDataPayment(
         network,
@@ -1057,12 +1686,6 @@
 
     }
 
-
-    /*
-    =========================================================
-       DATA FORM
-    =========================================================
-    */
 
     const dataForm =
         document.getElementById(
@@ -1340,12 +1963,6 @@
     }
 
 
-    /*
-    =========================================================
-       TEST ELECTRICITY
-    =========================================================
-    */
-
     const TEST_BILL_FUNCTION_URL =
         SUPABASE_URL +
         "/functions/v1/test-bill-payment";
@@ -1513,12 +2130,6 @@
     }
 
 
-    /*
-    =========================================================
-       ELECTRICITY FORM
-    =========================================================
-    */
-
     const electricityForm =
         document.getElementById(
             "electricityForm"
@@ -1670,12 +2281,6 @@
                     );
 
 
-                    /*
-                    Electricity is currently internal test
-                    functionality, but we still avoid retrying
-                    automatically if the request is uncertain.
-                    */
-
                     const button =
                         electricityForm.querySelector(
                             ".pay-btn"
@@ -1702,12 +2307,6 @@
 
     }
 
-
-    /*
-    =========================================================
-       FORMAT SERVICE TYPE
-    =========================================================
-    */
 
     function formatServiceType(type) {
 
@@ -1748,12 +2347,6 @@
     }
 
 
-    /*
-    =========================================================
-       FORMAT STATUS
-    =========================================================
-    */
-
     function formatStatus(status) {
 
         const names = {
@@ -1784,12 +2377,6 @@
     }
 
 
-    /*
-    =========================================================
-       FORMAT DATE
-    =========================================================
-    */
-
     function formatDate(value) {
 
         if (!value) {
@@ -1815,12 +2402,6 @@
 
     }
 
-
-    /*
-    =========================================================
-       ESCAPE HTML
-    =========================================================
-    */
 
     function escapeHTML(value) {
 
@@ -1858,12 +2439,6 @@
 
     }
 
-
-    /*
-    =========================================================
-       LOAD BILL HISTORY
-    =========================================================
-    */
 
     async function loadBillHistory() {
 
@@ -2065,12 +2640,6 @@
     }
 
 
-    /*
-    =========================================================
-       INITIALIZE
-    =========================================================
-    */
-
     document.addEventListener(
         "DOMContentLoaded",
         function () {
@@ -2088,3 +2657,7 @@
 })();
 
 </script>
+
+</body>
+
+</html>
