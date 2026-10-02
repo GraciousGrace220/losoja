@@ -3803,308 +3803,500 @@ if (category === "Trade by Barter") {
 
 
     /* =====================================================
-       BUSINESS DETAILS
-    ===================================================== */
+   BUSINESS DETAILS
+===================================================== */
 
-    window.showBusinessDetails =
-        function (business) {
+window.showBusinessDetails =
+    function (business) {
 
-            console.log(
-                "LosOja: Opening business details:",
-                business
+        console.log(
+            "LosOja: Opening business details:",
+            business
+        );
+
+        if (!business) {
+
+            console.warn(
+                "LosOja: No business supplied."
             );
 
+            return;
 
-            if (!business) {
+        }
 
-                console.warn(
-                    "LosOja: No business supplied."
-                );
 
-                return;
-
-            }
-
-
-            const modal =
-                document.getElementById(
-                    "businessDetailsModal"
-                );
-
-
-            if (!modal) {
-
-                console.error(
-                    "LosOja: businessDetailsModal not found."
-                );
-
-                return;
-
-            }
-
-
-            const image =
-                document.getElementById(
-                    "businessDetailsImage"
-                );
-
-
-            const name =
-                document.getElementById(
-                    "businessDetailsName"
-                );
-
-
-            const category =
-                document.getElementById(
-                    "businessDetailsCategory"
-                );
-
-
-            const location =
-                document.getElementById(
-                    "businessDetailsLocation"
-                );
-
-
-            const phone =
-                document.getElementById(
-                    "businessDetailsPhone"
-                );
-
-
-            const description =
-                document.getElementById(
-                    "businessDetailsDescription"
-                );
-
-
-            const rating =
-                document.getElementById(
-                    "businessDetailsRating"
-                );
-
-
-            if (image) {
-
-                if (business.image_url) {
-
-                    image.src =
-                        business.image_url;
-
-                    image.style.display =
-                        "block";
-
-                } else {
-
-                    image.removeAttribute(
-                        "src"
-                    );
-
-                    image.style.display =
-                        "none";
-
-                }
-
-            }
-
-
-            if (name) {
-
-                name.textContent =
-                    business.name ||
-                    "Business";
-
-            }
-
-
-            if (category) {
-
-                category.textContent =
-                    "Category: " +
-                    (
-                        business.category ||
-                        "Not specified"
-                    );
-
-            }
-
-
-            if (location) {
-
-                location.textContent =
-                    "Location: " +
-                    (
-                        business.location ||
-                        "Nigeria"
-                    );
-
-            }
-
-
-            if (phone) {
-
-                phone.textContent =
-                    business.phone
-                        ? "Phone: " +
-                          business.phone
-                        : "Phone: Not provided";
-
-            }
-
-
-            if (description) {
-
-                description.textContent =
-                    business.description ||
-                    "No description provided.";
-
-            }
-
-
-            if (rating) {
-
-                rating.textContent =
-                    business.rating
-                        ? "Rating: " +
-                          business.rating
-                        : "No rating yet";
-
-            }
-
-            /* =================================================
-               BUSINESS CHAT
-            ================================================= */
-
-            const chatButton =
-                document.getElementById(
-                    "businessChatBtn"
-                );
-
-            if (chatButton) {
-
-                chatButton.onclick =
-                    async function () {
-
-                        try {
-
-                            if (
-                                !business.user_id
-                            ) {
-
-                                App.showToast(
-                                    "This business does not have a registered owner yet.",
-                                    "error"
-                                );
-
-                                return;
-                            }
-
-
-                            if (
-                                typeof window.getCurrentUser !==
-                                "function"
-                            ) {
-
-                                App.showToast(
-                                    "Please login before starting a chat.",
-                                    "error"
-                                );
-
-                                return;
-                            }
-
-
-                            const currentUser =
-                                await window.getCurrentUser();
-
-
-                            if (!currentUser) {
-
-                                if (
-                                    typeof window.openLogin ===
-                                    "function"
-                                ) {
-
-                                    window.openLogin();
-
-                                } else {
-
-                                    window.location.href =
-                                        "index.html";
-
-                                }
-
-                                return;
-                            }
-
-
-                            if (
-                                String(
-                                    currentUser.id
-                                ) ===
-                                String(
-                                    business.user_id
-                                )
-                            ) {
-
-                                App.showToast(
-                                    "You cannot chat with yourself.",
-                                    "error"
-                                );
-
-                                return;
-                            }
-
-
-                            window.location.href =
-                                "chat.html?user=" +
-                                encodeURIComponent(
-                                    business.user_id
-                                );
-
-                        } catch (error) {
-
-                            console.error(
-                                "LosOja business chat error:",
-                                error
-                            );
-
-                            App.showToast(
-                                "Could not open chat right now.",
-                                "error"
-                            );
-
-                        }
-
-                    };
-
-            }
-            App.openModal(
+        const modal =
+            document.getElementById(
                 "businessDetailsModal"
             );
 
-        };
+
+        if (!modal) {
+
+            console.error(
+                "LosOja: businessDetailsModal not found."
+            );
+
+            return;
+
+        }
 
 
-    /* =====================================================
-       START APPLICATION
-    ===================================================== */
+        /* =================================================
+           BUSINESS DETAILS CONTENT
+        ================================================= */
 
-    if (
-        document.readyState ===
-        "loading"
-    ) {
+        const content =
+            document.getElementById(
+                "businessDetailsContent"
+            );
 
-        document.addEventListener(
-            "DOMContentLoaded",
-            () => App.init()
+
+        if (content) {
+
+            const escapeHTML =
+                function (value) {
+
+                    const div =
+                        document.createElement(
+                            "div"
+                        );
+
+                    div.textContent =
+                        value == null
+                            ? ""
+                            : String(value);
+
+                    return div.innerHTML;
+
+                };
+
+
+            const businessName =
+                escapeHTML(
+                    business.name ||
+                    "Business"
+                );
+
+
+            const businessCategory =
+                escapeHTML(
+                    business.category ||
+                    "Not specified"
+                );
+
+
+            const businessLocation =
+                escapeHTML(
+                    business.location ||
+                    "Nigeria"
+                );
+
+
+            const businessPhone =
+                escapeHTML(
+                    business.phone ||
+                    "Not provided"
+                );
+
+
+            const businessDescription =
+                escapeHTML(
+                    business.description ||
+                    "No description provided."
+                );
+
+
+            const businessRating =
+                business.rating
+                    ? escapeHTML(
+                        business.rating
+                    )
+                    : "No rating yet";
+
+
+            const businessImage =
+                business.image_url ||
+                business.image ||
+                "";
+
+
+            content.innerHTML = `
+
+                ${
+                    businessImage
+                        ? `
+                            <div
+                                style="
+                                    width:100%;
+                                    margin-bottom:1rem;
+                                "
+                            >
+
+                                <img
+                                    src="${escapeHTML(
+                                        businessImage
+                                    )}"
+                                    alt="${businessName}"
+                                    style="
+                                        width:100%;
+                                        max-height:280px;
+                                        object-fit:cover;
+                                        border-radius:12px;
+                                        display:block;
+                                    "
+                                    onerror="
+                                        this.style.display='none';
+                                    "
+                                >
+
+                            </div>
+                        `
+                        : ""
+                }
+
+
+                <h2
+                    style="
+                        margin-bottom:0.5rem;
+                    "
+                >
+                    ${businessName}
+                </h2>
+
+
+                <p
+                    style="
+                        margin:0.35rem 0;
+                    "
+                >
+                    <strong>Category:</strong>
+                    ${businessCategory}
+                </p>
+
+
+                <p
+                    style="
+                        margin:0.35rem 0;
+                    "
+                >
+                    <strong>Location:</strong>
+                    ${businessLocation}
+                </p>
+
+
+                <p
+                    style="
+                        margin:0.35rem 0;
+                    "
+                >
+                    <strong>Phone:</strong>
+                    ${businessPhone}
+                </p>
+
+
+                <p
+                    style="
+                        margin:0.35rem 0;
+                    "
+                >
+                    <strong>Rating:</strong>
+                    ${businessRating}
+                </p>
+
+
+                <div
+                    style="
+                        margin-top:1rem;
+                    "
+                >
+
+                    <strong>
+                        About this business
+                    </strong>
+
+                    <p
+                        style="
+                            margin-top:0.4rem;
+                            line-height:1.6;
+                        "
+                    >
+                        ${businessDescription}
+                    </p>
+
+                </div>
+
+
+                <div
+                    style="
+                        display:flex;
+                        flex-wrap:wrap;
+                        gap:0.75rem;
+                        margin-top:1.25rem;
+                    "
+                >
+
+                    <button
+                        type="button"
+                        id="businessChatBtn"
+                        class="btn btn-primary"
+                    >
+                        Chat with Business
+                    </button>
+
+
+                    <button
+                        type="button"
+                        id="businessEscrowBtn"
+                        class="btn btn-secondary"
+                    >
+                        Create Escrow
+                    </button>
+
+                </div>
+
+            `;
+
+        }
+
+
+        /* =================================================
+           BUSINESS CHAT
+        ================================================= */
+
+        const chatButton =
+            document.getElementById(
+                "businessChatBtn"
+            );
+
+
+        if (chatButton) {
+
+            chatButton.onclick =
+                async function () {
+
+                    try {
+
+                        if (
+                            !business.user_id
+                        ) {
+
+                            App.showToast(
+                                "This business does not have a registered owner yet.",
+                                "error"
+                            );
+
+                            return;
+
+                        }
+
+
+                        if (
+                            typeof window.getCurrentUser !==
+                            "function"
+                        ) {
+
+                            App.showToast(
+                                "Please login before starting a chat.",
+                                "error"
+                            );
+
+                            return;
+
+                        }
+
+
+                        const currentUser =
+                            await window.getCurrentUser();
+
+
+                        if (!currentUser) {
+
+                            if (
+                                typeof window.openLogin ===
+                                "function"
+                            ) {
+
+                                window.openLogin();
+
+                            } else {
+
+                                window.location.href =
+                                    "index.html";
+
+                            }
+
+                            return;
+
+                        }
+
+
+                        if (
+                            String(
+                                currentUser.id
+                            ) ===
+                            String(
+                                business.user_id
+                            )
+                        ) {
+
+                            App.showToast(
+                                "You cannot chat with yourself.",
+                                "error"
+                            );
+
+                            return;
+
+                        }
+
+
+                        window.location.href =
+                            "chat.html?user=" +
+                            encodeURIComponent(
+                                business.user_id
+                            );
+
+                    } catch (error) {
+
+                        console.error(
+                            "LosOja business chat error:",
+                            error
+                        );
+
+
+                        App.showToast(
+                            "Could not open chat right now.",
+                            "error"
+                        );
+
+                    }
+
+                };
+
+        }
+
+
+        /* =================================================
+           CREATE ESCROW BUTTON
+        ================================================= */
+
+        const escrowButton =
+            document.getElementById(
+                "businessEscrowBtn"
+            );
+
+
+        if (escrowButton) {
+
+            escrowButton.onclick =
+                async function () {
+
+                    try {
+
+                        if (
+                            !business.user_id
+                        ) {
+
+                            App.showToast(
+                                "This business does not have a registered owner yet.",
+                                "error"
+                            );
+
+                            return;
+
+                        }
+
+
+                        if (
+                            typeof window.getCurrentUser !==
+                            "function"
+                        ) {
+
+                            App.showToast(
+                                "Please login before creating escrow.",
+                                "error"
+                            );
+
+                            return;
+
+                        }
+
+
+                        const currentUser =
+                            await window.getCurrentUser();
+
+
+                        if (!currentUser) {
+
+                            if (
+                                typeof window.openLogin ===
+                                "function"
+                            ) {
+
+                                window.openLogin();
+
+                            }
+
+                            return;
+
+                        }
+
+
+                        if (
+                            String(
+                                currentUser.id
+                            ) ===
+                            String(
+                                business.user_id
+                            )
+                        ) {
+
+                            App.showToast(
+                                "You cannot create escrow with yourself.",
+                                "error"
+                            );
+
+                            return;
+
+                        }
+
+
+                        /*
+                         * Keep the existing escrow system.
+                         * For now, send the user to the existing
+                         * balance/escrow area rather than creating
+                         * a second escrow system here.
+                         */
+
+                        window.location.href =
+                            "balance.html";
+
+                    } catch (error) {
+
+                        console.error(
+                            "LosOja business escrow error:",
+                            error
+                        );
+
+
+                        App.showToast(
+                            "Could not open escrow right now.",
+                            "error"
+                        );
+
+                    }
+
+                };
+
+        }
+
+
+        /* =================================================
+           OPEN BUSINESS DETAILS MODAL
+        ================================================= */
+
+        App.openModal(
+            "businessDetailsModal"
         );
 
-    } else {
-
-        App.init();
-
-    }
-
-})();
+    };
