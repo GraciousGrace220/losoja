@@ -14,668 +14,680 @@
 
 <style>
 
-    * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-    }
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
-    body {
-        font-family:
-            Arial,
-            Helvetica,
-            sans-serif;
+body {
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
 
-        background: #f4f7f5;
-        color: #111827;
-        min-height: 100vh;
-    }
+    background: #f4f7f5;
+    color: #111827;
+    min-height: 100vh;
+}
 
-    header {
-        background: #087a3e;
-        color: white;
-        padding: 14px 16px;
+header {
+    background: #087a3e;
+    color: white;
+    padding: 14px 16px;
 
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
-        position: sticky;
-        top: 0;
-        z-index: 10;
-    }
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
 
-    .header-left {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
 
-    .back-button {
-        border: none;
-        background: transparent;
-        color: white;
+.back-button {
+    border: none;
+    background: transparent;
+    color: white;
 
-        font-size: 30px;
-        line-height: 1;
+    font-size: 30px;
+    line-height: 1;
 
-        cursor: pointer;
-        padding: 0 5px;
-    }
+    cursor: pointer;
+    padding: 0 5px;
+}
 
-    .header-title {
-        font-size: 20px;
-        font-weight: 700;
-    }
+.header-title {
+    font-size: 20px;
+    font-weight: 700;
+}
 
-    .login-button {
-        border: 1px solid rgba(255,255,255,.7);
-        background: transparent;
-        color: white;
+.login-button {
+    border: 1px solid rgba(255,255,255,.7);
+    background: transparent;
+    color: white;
 
-        padding: 7px 12px;
-        border-radius: 8px;
+    padding: 7px 12px;
+    border-radius: 8px;
 
-        cursor: pointer;
-        font-weight: 600;
-    }
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.page {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 16px;
+}
+
+.status {
+    background: white;
+    border-radius: 12px;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+    border: 1px solid #e5e7eb;
+}
+
+.status strong {
+    color: #087a3e;
+}
+
+/* =====================================================
+   BUSINESS INBOX
+===================================================== */
+
+.business-inbox-header {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 12px;
+}
+
+.business-inbox-title {
+    color: #087a3e;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.business-inbox-subtitle {
+    color: #6b7280;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* =====================================================
+   CONVERSATION INBOX
+===================================================== */
+
+.conversation-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+
+    padding: 15px;
+    margin-bottom: 10px;
+
+    cursor: pointer;
+
+    transition:
+        border-color .15s ease,
+        box-shadow .15s ease,
+        transform .15s ease;
+}
+
+.conversation-card:hover {
+    border-color: #087a3e;
+
+    box-shadow:
+        0 4px 14px rgba(0,0,0,.06);
+
+    transform: translateY(-1px);
+}
+
+.conversation-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    gap: 12px;
+    margin-bottom: 7px;
+}
+
+.conversation-title {
+    font-weight: 700;
+    color: #111827;
+    font-size: 16px;
+    word-break: break-word;
+}
+
+.conversation-time {
+    color: #6b7280;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.conversation-preview {
+    color: #6b7280;
+    font-size: 14px;
+    line-height: 1.4;
+    margin-bottom: 10px;
+
+    overflow: hidden;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.conversation-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 10px;
+}
+
+.conversation-participant {
+    color: #087a3e;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.open-chat-button {
+    border: none;
+
+    background: #087a3e;
+    color: white;
+
+    border-radius: 8px;
+
+    padding: 8px 12px;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    flex-shrink: 0;
+}
+
+.open-chat-button:hover {
+    background: #055c2e;
+}
+
+/* =====================================================
+   CHAT HEADER
+===================================================== */
+
+.chat-header {
+    background: white;
+    border-radius: 12px;
+
+    padding: 14px;
+    margin-bottom: 12px;
+
+    border: 1px solid #e5e7eb;
+}
+
+.chat-header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 10px;
+}
+
+.chat-user {
+    font-weight: 700;
+    font-size: 17px;
+}
+
+.back-to-chats {
+    border: 1px solid #d1d5db;
+
+    background: white;
+    color: #087a3e;
+
+    border-radius: 8px;
+
+    padding: 7px 10px;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    flex-shrink: 0;
+}
+
+.back-to-chats:hover {
+    border-color: #087a3e;
+    background: #eef8f2;
+}
+
+.listing-info {
+    color: #6b7280;
+    font-size: 14px;
+    margin-top: 4px;
+}
+
+/* =====================================================
+   OJA ITEM DETAILS
+===================================================== */
+
+.oja-details {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+
+    padding: 14px;
+    margin-bottom: 12px;
+}
+
+.oja-image-gallery {
+    display: grid;
+    grid-template-columns:
+        repeat(auto-fit, minmax(110px, 1fr));
+
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.oja-image-gallery img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+
+    object-fit: cover;
+
+    border-radius: 9px;
+
+    border: 1px solid #e5e7eb;
+}
+
+.oja-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.oja-price {
+    color: #087a3e;
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.oja-location {
+    color: #6b7280;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.oja-description {
+    color: #374151;
+    font-size: 14px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+}
+
+.buy-escrow-button {
+    width: 100%;
+
+    border: none;
+    border-radius: 9px;
+
+    background: #087a3e;
+    color: white;
+
+    padding: 12px;
+
+    margin-top: 14px;
+
+    font-weight: 700;
+    cursor: pointer;
+}
+
+/* =====================================================
+   ESCROW
+===================================================== */
+
+.escrow-details {
+    display: none;
+
+    background: white;
+    border: 1px solid #dfe7e2;
+    border-left: 4px solid #087a3e;
+
+    border-radius: 12px;
+
+    padding: 15px;
+
+    margin-bottom: 12px;
+}
+
+.escrow-details-title {
+    font-size: 16px;
+    font-weight: 700;
+
+    color: #087a3e;
+
+    margin-bottom: 12px;
+}
+
+.escrow-detail-row {
+    margin-bottom: 10px;
+}
+
+.escrow-detail-row:last-child {
+    margin-bottom: 0;
+}
+
+.escrow-detail-label {
+    display: block;
+
+    color: #6b7280;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    margin-bottom: 3px;
+
+    text-transform: uppercase;
+}
+
+.escrow-detail-value {
+    color: #111827;
+
+    font-size: 14px;
+
+    line-height: 1.5;
+
+    word-break: break-word;
+}
+
+.escrow-amount {
+    font-weight: 700;
+    color: #087a3e;
+    font-size: 16px;
+}
+
+.escrow-status {
+    display: inline-block;
+
+    background: #eef8f2;
+    color: #087a3e;
+
+    padding: 4px 9px;
+
+    border-radius: 20px;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    text-transform: capitalize;
+}
+
+.escrow-dispute {
+    background: #fff7ed;
+    color: #9a3412;
+
+    border-radius: 8px;
+
+    padding: 10px;
+
+    margin-top: 10px;
+
+    font-size: 13px;
+
+    line-height: 1.5;
+}
+
+/* =====================================================
+   MESSAGES
+===================================================== */
+
+.messages {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+
+    padding: 14px;
+
+    min-height: 350px;
+    max-height: 55vh;
+
+    overflow-y: auto;
+
+    margin-bottom: 12px;
+}
+
+.message-row {
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.message-row.mine {
+    justify-content: flex-end;
+}
+
+.message-bubble {
+    max-width: 80%;
+
+    background: #eef2f0;
+
+    border-radius: 14px;
+    padding: 10px 12px;
+
+    word-break: break-word;
+}
+
+.message-row.mine .message-bubble {
+    background: #087a3e;
+    color: white;
+}
+
+.message-image {
+    display: block;
+
+    width: 100%;
+    max-width: 300px;
+    max-height: 300px;
+
+    object-fit: cover;
+
+    border-radius: 10px;
+
+    cursor: pointer;
+
+    margin-bottom: 6px;
+}
+
+.message-text {
+    white-space: pre-wrap;
+    line-height: 1.4;
+}
+
+.message-time {
+    font-size: 11px;
+    opacity: .7;
+    margin-top: 4px;
+}
+
+.empty-message {
+    text-align: center;
+    color: #6b7280;
+    padding: 60px 15px;
+}
+
+/* =====================================================
+   CHAT FORM
+===================================================== */
+
+.chat-form {
+    display: flex;
+    gap: 8px;
+
+    background: white;
+
+    padding: 10px;
+
+    border-radius: 12px;
+
+    border: 1px solid #e5e7eb;
+}
+
+.message-input {
+    flex: 1;
+
+    min-width: 0;
+
+    border: 1px solid #d1d5db;
+
+    border-radius: 9px;
+
+    padding: 11px 12px;
+
+    font-size: 15px;
+
+    outline: none;
+}
+
+.message-input:focus {
+    border-color: #087a3e;
+}
+
+.image-button {
+    width: 48px;
+    flex-shrink: 0;
+
+    border: none;
+
+    border-radius: 9px;
+
+    background: #eef8f2;
+    color: #087a3e;
+
+    font-size: 20px;
+
+    cursor: pointer;
+}
+
+.image-button:hover {
+    background: #dff2e7;
+}
+
+.image-button:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+}
+
+.send-button {
+    width: 48px;
+    flex-shrink: 0;
+
+    border: none;
+
+    border-radius: 9px;
+
+    background: #087a3e;
+    color: white;
+
+    font-size: 20px;
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+.send-button:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+}
+
+.selected-image {
+    display: none;
+
+    background: #eef8f2;
+    color: #087a3e;
+
+    border-radius: 8px;
+
+    padding: 7px 10px;
+
+    margin-bottom: 8px;
+
+    font-size: 13px;
+}
+
+.error {
+    display: none;
+
+    background: #fee2e2;
+    color: #991b1b;
+
+    border-radius: 10px;
+
+    padding: 12px;
+
+    margin-bottom: 12px;
+}
+
+.loading {
+    text-align: center;
+    color: #6b7280;
+    padding: 30px;
+}
+
+@media (max-width: 600px) {
 
     .page {
-        width: 100%;
-        max-width: 900px;
-        margin: 0 auto;
-
-        padding: 16px;
-    }
-
-    .status {
-        background: white;
-        border-radius: 12px;
-        padding: 12px 14px;
-
-        margin-bottom: 12px;
-
-        border: 1px solid #e5e7eb;
-    }
-
-    .status strong {
-        color: #087a3e;
-    }
-
-    /* =====================================================
-       CONVERSATION INBOX
-    ===================================================== */
-
-    .conversation-card {
-        background: white;
-        border: 1px solid #e5e7eb;
-        border-radius: 14px;
-
-        padding: 15px;
-        margin-bottom: 10px;
-
-        cursor: pointer;
-
-        transition:
-            border-color .15s ease,
-            box-shadow .15s ease,
-            transform .15s ease;
-    }
-
-    .conversation-card:hover {
-        border-color: #087a3e;
-
-        box-shadow:
-            0 4px 14px rgba(0,0,0,.06);
-
-        transform: translateY(-1px);
-    }
-
-    .conversation-top {
-        display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
-
-        gap: 12px;
-
-        margin-bottom: 7px;
-    }
-
-    .conversation-title {
-        font-weight: 700;
-        color: #111827;
-
-        font-size: 16px;
-
-        word-break: break-word;
-    }
-
-    .conversation-time {
-        color: #6b7280;
-        font-size: 12px;
-
-        white-space: nowrap;
-    }
-
-    .conversation-preview {
-        color: #6b7280;
-
-        font-size: 14px;
-
-        line-height: 1.4;
-
-        margin-bottom: 10px;
-
-        overflow: hidden;
-
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-    }
-
-    .conversation-bottom {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-
-        gap: 10px;
-    }
-
-    .conversation-participant {
-        color: #087a3e;
-
-        font-size: 13px;
-        font-weight: 600;
-    }
-
-    .open-chat-button {
-        border: none;
-
-        background: #087a3e;
-        color: white;
-
-        border-radius: 8px;
-
-        padding: 8px 12px;
-
-        font-size: 13px;
-        font-weight: 700;
-
-        cursor: pointer;
-
-        flex-shrink: 0;
-    }
-
-    .open-chat-button:hover {
-        background: #055c2e;
-    }
-
-    .chat-header {
-        background: white;
-        border-radius: 12px;
-
-        padding: 14px;
-        margin-bottom: 12px;
-
-        border: 1px solid #e5e7eb;
-    }
-
-    .chat-header-top {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-
-        gap: 10px;
-    }
-
-    .chat-user {
-        font-weight: 700;
-        font-size: 17px;
-    }
-
-    .back-to-chats {
-        border: 1px solid #d1d5db;
-
-        background: white;
-        color: #087a3e;
-
-        border-radius: 8px;
-
-        padding: 7px 10px;
-
-        font-size: 13px;
-        font-weight: 700;
-
-        cursor: pointer;
-
-        flex-shrink: 0;
-    }
-
-    .back-to-chats:hover {
-        border-color: #087a3e;
-        background: #eef8f2;
-    }
-
-    .listing-info {
-        color: #6b7280;
-        font-size: 14px;
-        margin-top: 4px;
-    }
-
-    /* =====================================================
-       OJA ITEM DETAILS
-    ===================================================== */
-
-    .oja-details {
-        background: white;
-        border: 1px solid #e5e7eb;
-        border-radius: 12px;
-
-        padding: 14px;
-        margin-bottom: 12px;
-    }
-
-    .oja-image-gallery {
-        display: grid;
-        grid-template-columns:
-            repeat(auto-fit, minmax(110px, 1fr));
-
-        gap: 8px;
-
-        margin-bottom: 12px;
-    }
-
-    .oja-image-gallery img {
-        width: 100%;
-        aspect-ratio: 1 / 1;
-
-        object-fit: cover;
-
-        border-radius: 9px;
-
-        border: 1px solid #e5e7eb;
-    }
-
-    .oja-title {
-        font-size: 18px;
-        font-weight: 700;
-
-        margin-bottom: 6px;
-    }
-
-    .oja-price {
-        color: #087a3e;
-        font-size: 17px;
-        font-weight: 700;
-
-        margin-bottom: 5px;
-    }
-
-    .oja-location {
-        color: #6b7280;
-        font-size: 14px;
-
-        margin-bottom: 8px;
-    }
-
-    .oja-description {
-        color: #374151;
-        font-size: 14px;
-
-        line-height: 1.5;
-
-        white-space: pre-wrap;
-    }
-
-    .buy-escrow-button {
-        width: 100%;
-
-        border: none;
-        border-radius: 9px;
-
-        background: #087a3e;
-        color: white;
-
-        padding: 12px;
-
-        margin-top: 14px;
-
-        font-weight: 700;
-        cursor: pointer;
-    }
-
-    /* =====================================================
-       ESCROW PURCHASE DETAILS
-    ===================================================== */
-
-    .escrow-details {
-        display: none;
-
-        background: white;
-        border: 1px solid #dfe7e2;
-        border-left: 4px solid #087a3e;
-
-        border-radius: 12px;
-
-        padding: 15px;
-
-        margin-bottom: 12px;
-    }
-
-    .escrow-details-title {
-        font-size: 16px;
-        font-weight: 700;
-
-        color: #087a3e;
-
-        margin-bottom: 12px;
-    }
-
-    .escrow-detail-row {
-        margin-bottom: 10px;
-    }
-
-    .escrow-detail-row:last-child {
-        margin-bottom: 0;
-    }
-
-    .escrow-detail-label {
-        display: block;
-
-        color: #6b7280;
-
-        font-size: 12px;
-        font-weight: 600;
-
-        margin-bottom: 3px;
-
-        text-transform: uppercase;
-    }
-
-    .escrow-detail-value {
-        color: #111827;
-
-        font-size: 14px;
-
-        line-height: 1.5;
-
-        word-break: break-word;
-    }
-
-    .escrow-amount {
-        font-weight: 700;
-        color: #087a3e;
-        font-size: 16px;
-    }
-
-    .escrow-status {
-        display: inline-block;
-
-        background: #eef8f2;
-        color: #087a3e;
-
-        padding: 4px 9px;
-
-        border-radius: 20px;
-
-        font-size: 12px;
-        font-weight: 700;
-
-        text-transform: capitalize;
-    }
-
-    .escrow-dispute {
-        background: #fff7ed;
-        color: #9a3412;
-
-        border-radius: 8px;
-
         padding: 10px;
-
-        margin-top: 10px;
-
-        font-size: 13px;
-
-        line-height: 1.5;
     }
-
-    /* =====================================================
-       MESSAGES
-    ===================================================== */
 
     .messages {
-        background: white;
-        border: 1px solid #e5e7eb;
-        border-radius: 12px;
-
-        padding: 14px;
-
-        min-height: 350px;
-        max-height: 55vh;
-
-        overflow-y: auto;
-
-        margin-bottom: 12px;
-    }
-
-    .message-row {
-        display: flex;
-        margin-bottom: 10px;
-    }
-
-    .message-row.mine {
-        justify-content: flex-end;
+        max-height: 60vh;
     }
 
     .message-bubble {
-        max-width: 80%;
-
-        background: #eef2f0;
-
-        border-radius: 14px;
-        padding: 10px 12px;
-
-        word-break: break-word;
-    }
-
-    .message-row.mine .message-bubble {
-        background: #087a3e;
-        color: white;
+        max-width: 88%;
     }
 
     .message-image {
-        display: block;
-
-        width: 100%;
-        max-width: 300px;
-        max-height: 300px;
-
-        object-fit: cover;
-
-        border-radius: 10px;
-
-        cursor: pointer;
-
-        margin-bottom: 6px;
+        max-width: 240px;
+        max-height: 240px;
     }
-
-    .message-text {
-        white-space: pre-wrap;
-        line-height: 1.4;
-    }
-
-    .message-time {
-        font-size: 11px;
-        opacity: .7;
-        margin-top: 4px;
-    }
-
-    .empty-message {
-        text-align: center;
-        color: #6b7280;
-        padding: 60px 15px;
-    }
-
-    /* =====================================================
-       CHAT FORM
-    ===================================================== */
 
     .chat-form {
-        display: flex;
-        gap: 8px;
-
-        background: white;
-
-        padding: 10px;
-
-        border-radius: 12px;
-
-        border: 1px solid #e5e7eb;
+        gap: 6px;
     }
 
-    .message-input {
-        flex: 1;
-
-        min-width: 0;
-
-        border: 1px solid #d1d5db;
-
-        border-radius: 9px;
-
-        padding: 11px 12px;
-
-        font-size: 15px;
-
-        outline: none;
-    }
-
-    .message-input:focus {
-        border-color: #087a3e;
-    }
-
-    .image-button {
-        width: 48px;
-        flex-shrink: 0;
-
-        border: none;
-
-        border-radius: 9px;
-
-        background: #eef8f2;
-        color: #087a3e;
-
-        font-size: 20px;
-
-        cursor: pointer;
-    }
-
-    .image-button:hover {
-        background: #dff2e7;
-    }
-
-    .image-button:disabled {
-        opacity: .6;
-        cursor: not-allowed;
-    }
-
+    .image-button,
     .send-button {
-        width: 48px;
-        flex-shrink: 0;
-
-        border: none;
-
-        border-radius: 9px;
-
-        background: #087a3e;
-        color: white;
-
-        font-size: 20px;
-        font-weight: 700;
-
-        cursor: pointer;
+        width: 44px;
     }
 
-    .send-button:disabled {
-        opacity: .6;
-        cursor: not-allowed;
+    .conversation-top {
+        flex-direction: column;
+        gap: 4px;
     }
 
-    .selected-image {
-        display: none;
-
-        background: #eef8f2;
-        color: #087a3e;
-
-        border-radius: 8px;
-
-        padding: 7px 10px;
-
-        margin-bottom: 8px;
-
-        font-size: 13px;
+    .conversation-time {
+        white-space: normal;
     }
 
-    .error {
-        display: none;
-
-        background: #fee2e2;
-        color: #991b1b;
-
-        border-radius: 10px;
-
-        padding: 12px;
-
-        margin-bottom: 12px;
+    .chat-header-top {
+        align-items: flex-start;
     }
 
-    .loading {
-        text-align: center;
-        color: #6b7280;
-        padding: 30px;
-    }
-
-    @media (max-width: 600px) {
-
-        .page {
-            padding: 10px;
-        }
-
-        .messages {
-            max-height: 60vh;
-        }
-
-        .message-bubble {
-            max-width: 88%;
-        }
-
-        .message-image {
-            max-width: 240px;
-            max-height: 240px;
-        }
-
-        .chat-form {
-            gap: 6px;
-        }
-
-        .image-button,
-        .send-button {
-            width: 44px;
-        }
-
-        .conversation-top {
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .conversation-time {
-            white-space: normal;
-        }
-
-        .chat-header-top {
-            align-items: flex-start;
-        }
-
-    }
+}
 
 </style>
 
@@ -759,14 +771,9 @@
     <div
         id="listingInfo"
         class="listing-info"
-    >
-    </div>
+    ></div>
 
 </div>
-
-<!-- =====================================================
-     OJA ITEM DETAILS
-===================================================== -->
 
 <div
     id="ojaDetails"
@@ -813,10 +820,6 @@
     </button>
 
 </div>
-
-<!-- =====================================================
-     ESCROW PURCHASE DETAILS
-===================================================== -->
 
 <div
     id="escrowDetails"
@@ -895,10 +898,6 @@
     id="selectedImage"
     class="selected-image"
 ></div>
-
-<!-- =====================================================
-     CHAT FORM
-===================================================== -->
 
 <form
     id="chatForm"
@@ -980,6 +979,10 @@ let currentConversationId = null;
 let currentOtherUserId = null;
 
 let currentListingId = null;
+
+let currentBusinessId = null;
+
+let currentBusiness = null;
 
 let currentEscrowId = null;
 
@@ -1147,6 +1150,64 @@ async function supabaseRequest(
 
 
     return data;
+}
+
+
+/* =========================================================
+   LOAD BUSINESS
+========================================================= */
+
+async function loadBusiness(
+    businessId
+) {
+
+    if (!businessId) {
+        return null;
+    }
+
+
+    try {
+
+        const businesses =
+            await supabaseRequest(
+
+                "/rest/v1/businesses" +
+
+                "?select=id,name,category,location,user_id" +
+
+                "&id=eq." +
+
+                encodeURIComponent(
+                    businessId
+                )
+            );
+
+
+        if (
+            !Array.isArray(businesses) ||
+            !businesses[0]
+        ) {
+
+            return null;
+        }
+
+
+        currentBusiness =
+            businesses[0];
+
+
+        return currentBusiness;
+
+
+    } catch (error) {
+
+        console.error(
+            "LosOja business load failed:",
+            error
+        );
+
+        return null;
+    }
 }
 
 
@@ -1326,16 +1387,19 @@ async function uploadChatImage(file) {
 async function loadEscrowChatContext() {
 
     if (!currentEscrowId) {
-
         return false;
     }
 
 
     const escrow =
         await supabaseRequest(
+
             "/rest/v1/escrow_transactions" +
+
             "?select=id,buyer_id,seller_id,amount,currency,status,description,dispute_reason" +
+
             "&id=eq." +
+
             encodeURIComponent(
                 currentEscrowId
             )
@@ -1530,10 +1594,56 @@ async function findOrCreateConversation() {
     let query;
 
 
-    if (currentOjaListingId) {
+    /*
+       BUSINESS CHAT
+    */
+
+    if (currentBusinessId) {
 
         query =
             "/rest/v1/conversations" +
+
+            "?select=*" +
+
+            "&business_id=eq." +
+
+            encodeURIComponent(
+                currentBusinessId
+            ) +
+
+            "&or=(" +
+
+            "and(user_one_id.eq." +
+            encodeURIComponent(
+                currentUser.id
+            ) +
+
+            ",user_two_id.eq." +
+            encodeURIComponent(
+                currentOtherUserId
+            ) +
+            ")," +
+
+            "and(user_one_id.eq." +
+            encodeURIComponent(
+                currentOtherUserId
+            ) +
+
+            ",user_two_id.eq." +
+            encodeURIComponent(
+                currentUser.id
+            ) +
+
+            ")" +
+
+            ")";
+
+
+    } else if (currentOjaListingId) {
+
+        query =
+            "/rest/v1/conversations" +
+
             "?select=*" +
 
             "&oja_listing_id=eq." +
@@ -1573,6 +1683,7 @@ async function findOrCreateConversation() {
 
         query =
             "/rest/v1/conversations" +
+
             "?select=*" +
 
             "&barter_listing_id=eq." +
@@ -1612,6 +1723,7 @@ async function findOrCreateConversation() {
 
         query =
             "/rest/v1/conversations" +
+
             "?select=*" +
 
             "&or=(" +
@@ -1625,6 +1737,7 @@ async function findOrCreateConversation() {
             encodeURIComponent(
                 currentOtherUserId
             ) +
+
             ")," +
 
             "and(user_one_id.eq." +
@@ -1670,14 +1783,19 @@ async function findOrCreateConversation() {
             currentListingId || null,
 
         oja_listing_id:
-            currentOjaListingId || null
+            currentOjaListingId || null,
+
+        business_id:
+            currentBusinessId || null
 
     };
 
 
     const created =
         await supabaseRequest(
+
             "/rest/v1/conversations",
+
             {
                 method: "POST",
 
@@ -1832,12 +1950,6 @@ function renderMessages(messages) {
                             )}"
                             alt="Chat picture"
                             loading="lazy"
-                            onclick="window.open(
-                                '${escapeHTML(
-                                    message.image_url
-                                )}',
-                                '_blank'
-                            )"
                         >
 
                     `;
@@ -2067,7 +2179,9 @@ async function sendMessage() {
 
 
         await supabaseRequest(
+
             "/rest/v1/messages",
+
             {
                 method: "POST",
 
@@ -2125,7 +2239,7 @@ async function sendMessage() {
 
 
 /* =========================================================
-   IMAGE SELECTION DISPLAY
+   IMAGE SELECTION
 ========================================================= */
 
 function updateSelectedImage() {
@@ -2438,9 +2552,11 @@ async function loadOjaListing(
                 "/rest/v1/oja_listings" +
 
                 "?select=" +
+
                 "id,user_id,title,description,category,price,currency,location,status,created_at" +
 
                 "&id=eq." +
+
                 encodeURIComponent(
                     listingId
                 )
@@ -2472,6 +2588,7 @@ async function loadOjaListing(
                 "?select=id,image_url,sort_order" +
 
                 "&listing_id=eq." +
+
                 encodeURIComponent(
                     listingId
                 ) +
@@ -2513,7 +2630,7 @@ async function loadOjaListing(
 
 
 /* =========================================================
-   LOAD LAST MESSAGE FOR INBOX
+   LOAD LAST MESSAGE
 ========================================================= */
 
 async function loadLastMessage(
@@ -2564,7 +2681,7 @@ async function loadLastMessage(
 
 
 /* =========================================================
-   FORMAT INBOX TIME
+   FORMAT TIME
 ========================================================= */
 
 function formatConversationTime(
@@ -2620,12 +2737,53 @@ async function loadConversations() {
     }
 
 
-    const conversations =
-        await supabaseRequest(
+    let path =
+        "/rest/v1/conversations" +
 
+        "?select=*" +
+
+        "&or=(" +
+
+        "user_one_id.eq." +
+        encodeURIComponent(
+            currentUser.id
+        ) +
+
+        "," +
+
+        "user_two_id.eq." +
+        encodeURIComponent(
+            currentUser.id
+        ) +
+
+        ")" +
+
+        "&order=updated_at.desc";
+
+
+    /*
+       BUSINESS-SPECIFIC INBOX
+
+       When a business owner opens:
+
+       chat.html?business=<BUSINESS_ID>
+
+       only conversations belonging
+       to that business are shown.
+    */
+
+    if (currentBusinessId) {
+
+        path =
             "/rest/v1/conversations" +
 
             "?select=*" +
+
+            "&business_id=eq." +
+
+            encodeURIComponent(
+                currentBusinessId
+            ) +
 
             "&or=(" +
 
@@ -2643,7 +2801,13 @@ async function loadConversations() {
 
             ")" +
 
-            "&order=updated_at.desc"
+            "&order=updated_at.desc";
+    }
+
+
+    const conversations =
+        await supabaseRequest(
+            path
         );
 
 
@@ -2676,34 +2840,88 @@ async function renderConversationList(
     }
 
 
-    if (!conversations.length) {
+    container.innerHTML = "";
+
+
+    if (currentBusinessId) {
+
+        const businessName =
+            currentBusiness?.name ||
+            "Business";
+
 
         container.innerHTML = `
 
-            <div class="status">
+            <div class="business-inbox-header">
 
-                You do not have any chats yet.
+                <div class="business-inbox-title">
+
+                    Customer Messages
+
+                </div>
+
+                <div class="business-inbox-subtitle">
+
+                    Messages from customers about
+
+                    <strong>
+                        ${escapeHTML(
+                            businessName
+                        )}
+                    </strong>
+
+                    will appear here.
+
+                </div>
 
             </div>
 
         `;
 
-        return;
+    } else {
+
+        container.innerHTML = `
+
+            <div class="status">
+
+                <strong>Your Chats</strong><br>
+
+                Open any conversation below to read
+                messages and reply.
+
+            </div>
+
+        `;
     }
 
 
-    container.innerHTML = `
+    if (!conversations.length) {
 
-        <div class="status">
+        const empty =
+            document.createElement(
+                "div"
+            );
 
-            <strong>Your Chats</strong><br>
 
-            Open any conversation below to read
-            messages and reply.
+        empty.className =
+            "status";
 
-        </div>
 
-    `;
+        empty.textContent =
+            currentBusinessId
+
+                ? "No customers have contacted this business yet."
+
+                : "You do not have any chats yet.";
+
+
+        container.appendChild(
+            empty
+        );
+
+
+        return;
+    }
 
 
     for (
@@ -2727,7 +2945,52 @@ async function renderConversationList(
             "General chat";
 
 
+        /*
+           BUSINESS CHAT
+        */
+
         if (
+            conversation.business_id
+        ) {
+
+            try {
+
+                const business =
+                    await supabaseRequest(
+
+                        "/rest/v1/businesses" +
+
+                        "?select=name" +
+
+                        "&id=eq." +
+
+                        encodeURIComponent(
+                            conversation.business_id
+                        )
+                    );
+
+
+                if (
+                    Array.isArray(business) &&
+                    business[0]
+                ) {
+
+                    listingTitle =
+                        business[0].name ||
+                        "Business";
+                }
+
+
+            } catch (error) {
+
+                console.warn(
+                    "Could not load business:",
+                    error
+                );
+            }
+
+
+        } else if (
             conversation.barter_listing_id
         ) {
 
@@ -2766,10 +3029,9 @@ async function renderConversationList(
                     error
                 );
             }
-        }
 
 
-        if (
+        } else if (
             conversation.oja_listing_id
         ) {
 
@@ -2810,11 +3072,6 @@ async function renderConversationList(
             }
         }
 
-
-        /*
-           Load the newest message so the inbox
-           behaves more like a real messaging app.
-        */
 
         const lastMessage =
             await loadLastMessage(
@@ -2907,8 +3164,15 @@ async function renderConversationList(
                 <div
                     class="conversation-participant"
                 >
-                    Chat participant
+
+                    ${
+                        currentBusinessId
+                            ? "Customer message"
+                            : "Chat participant"
+                    }
+
                 </div>
+
 
                 <button
                     type="button"
@@ -2926,38 +3190,53 @@ async function renderConversationList(
             "click",
             () => {
 
-                const url =
+                let url =
                     "chat.html" +
 
                     "?user=" +
 
                     encodeURIComponent(
                         otherUserId
-                    ) +
-
-                    (
-                        conversation.barter_listing_id
-
-                            ? "&listing=" +
-
-                              encodeURIComponent(
-                                  conversation.barter_listing_id
-                              )
-
-                            : ""
-                    ) +
-
-                    (
-                        conversation.oja_listing_id
-
-                            ? "&oja_listing=" +
-
-                              encodeURIComponent(
-                                  conversation.oja_listing_id
-                              )
-
-                            : ""
                     );
+
+
+                if (
+                    conversation.business_id
+                ) {
+
+                    url +=
+                        "&business=" +
+
+                        encodeURIComponent(
+                            conversation.business_id
+                        );
+                }
+
+
+                if (
+                    conversation.barter_listing_id
+                ) {
+
+                    url +=
+                        "&listing=" +
+
+                        encodeURIComponent(
+                            conversation.barter_listing_id
+                        );
+                }
+
+
+                if (
+                    conversation.oja_listing_id
+                ) {
+
+                    url +=
+                        "&oja_listing=" +
+
+                        encodeURIComponent(
+                            conversation.oja_listing_id
+                        );
+                }
 
 
                 window.location.href =
@@ -2993,12 +3272,80 @@ async function openSpecificChat() {
         params.get("listing");
 
 
+    currentBusinessId =
+        params.get("business");
+
+
     currentOjaListingId =
         params.get("oja_listing");
 
 
     currentEscrowId =
         params.get("escrow");
+
+
+    /*
+       BUSINESS CONTEXT
+    */
+
+    if (currentBusinessId) {
+
+        await loadBusiness(
+            currentBusinessId
+        );
+
+
+        /*
+           If there is no user parameter,
+           this is the business owner's
+           customer inbox.
+        */
+
+        if (!currentOtherUserId) {
+
+            if (
+                !currentBusiness ||
+                !currentBusiness.user_id
+            ) {
+
+                throw new Error(
+                    "Business owner information could not be found."
+                );
+            }
+
+
+            if (
+                String(
+                    currentBusiness.user_id
+                ) !==
+                String(
+                    currentUser.id
+                )
+            ) {
+
+                throw new Error(
+                    "You are not the owner of this business."
+                );
+            }
+
+
+            document.getElementById(
+                "chatSection"
+            ).style.display =
+                "none";
+
+
+            document.getElementById(
+                "conversationList"
+            ).style.display =
+                "block";
+
+
+            await loadConversations();
+
+            return;
+        }
+    }
 
 
     /*
@@ -3049,8 +3396,8 @@ async function openSpecificChat() {
 
 
     /*
-       NO SPECIFIC CHAT:
-       SHOW INBOX.
+       NO SPECIFIC CHAT
+       SHOW INBOX
     */
 
     if (!currentOtherUserId) {
@@ -3062,13 +3409,14 @@ async function openSpecificChat() {
 
 
     /*
-       IMPORTANT:
-       This prevents creating a new conversation
-       with yourself.
+       A BUSINESS OWNER DOES NOT
+       CHAT WITH THEIR OWN ACCOUNT.
 
-       It does NOT prevent a business owner
-       from opening an existing customer chat
-       from the inbox.
+       Instead, their business listing
+       opens Customer Messages.
+
+       Existing customer conversations
+       are opened normally.
     */
 
     if (
@@ -3076,8 +3424,29 @@ async function openSpecificChat() {
         String(currentUser.id)
     ) {
 
+        if (
+            currentBusinessId &&
+            currentBusiness &&
+            String(
+                currentBusiness.user_id
+            ) ===
+            String(
+                currentUser.id
+            )
+        ) {
+
+            window.location.href =
+                "chat.html?business=" +
+                encodeURIComponent(
+                    currentBusinessId
+                );
+
+            return;
+        }
+
+
         showError(
-            "You cannot open a chat with yourself."
+            "This chat is not available."
         );
 
         return;
@@ -3097,10 +3466,43 @@ async function openSpecificChat() {
 
 
     /*
+       BUSINESS CHAT HEADER
+    */
+
+    if (
+        currentBusinessId &&
+        currentBusiness
+    ) {
+
+        document.getElementById(
+            "chatUser"
+        ).textContent =
+            "Chat with " +
+            (
+                currentBusiness.name ||
+                "Business"
+            );
+
+
+        document.getElementById(
+            "listingInfo"
+        ).textContent =
+            (
+                currentBusiness.category
+                    ? currentBusiness.category +
+                      " • "
+                    : ""
+            ) +
+            (
+                currentBusiness.location ||
+                ""
+            );
+
+    /*
        ESCROW TITLE
     */
 
-    if (currentEscrowId) {
+    } else if (currentEscrowId) {
 
         const isBuyer =
             currentUser.id ===
@@ -3251,6 +3653,12 @@ if (backToChatsButton) {
             currentListingId =
                 null;
 
+            currentBusinessId =
+                null;
+
+            currentBusiness =
+                null;
+
             currentEscrowId =
                 null;
 
@@ -3267,48 +3675,12 @@ if (backToChatsButton) {
                 [];
 
 
-            document.getElementById(
-                "chatSection"
-            ).style.display =
-                "none";
+            /*
+               Return to normal chat inbox.
+            */
 
-
-            document.getElementById(
-                "conversationList"
-            ).style.display =
-                "block";
-
-
-            document.getElementById(
-                "ojaDetails"
-            ).style.display =
-                "none";
-
-
-            document.getElementById(
-                "escrowDetails"
-            ).style.display =
-                "none";
-
-
-            clearError();
-
-
-            loadConversations()
-                .catch(error => {
-
-                    console.error(
-                        "Could not reload chats:",
-                        error
-                    );
-
-                    showError(
-                        error.message ||
-                        "Chats could not be loaded."
-                    );
-
-                });
-
+            window.location.href =
+                "chat.html";
         }
     );
 }
