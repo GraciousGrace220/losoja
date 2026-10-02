@@ -864,10 +864,42 @@
                 form.reset();
 
 
-                showStatus(
-                    "Application submitted successfully. Your profile is now pending review.",
-                    true
-                );
+               showStatus(
+    "Application submitted successfully. Your profile is now pending review.",
+    true
+);
+
+const dashboardButton =
+    document.createElement("button");
+
+dashboardButton.type = "button";
+dashboardButton.textContent =
+    "Go to Provider Dashboard";
+
+dashboardButton.style.width = "100%";
+dashboardButton.style.border = "0";
+dashboardButton.style.background = "#087a3e";
+dashboardButton.style.color = "white";
+dashboardButton.style.padding = "14px";
+dashboardButton.style.borderRadius = "10px";
+dashboardButton.style.fontSize = "16px";
+dashboardButton.style.fontWeight = "700";
+dashboardButton.style.cursor = "pointer";
+dashboardButton.style.marginTop = "12px";
+
+dashboardButton.addEventListener(
+    "click",
+    function () {
+
+        window.location.href =
+            "mobility-provider.html";
+
+    }
+);
+
+statusMessage.appendChild(
+    dashboardButton
+);
 
 
                 console.log(
