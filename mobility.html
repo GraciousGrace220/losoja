@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 
@@ -715,10 +716,6 @@ button {
 </section>
 
 
-<!-- =====================================================
-     LOCATION
-====================================================== -->
-
 <section class="location-box">
 
     <h2>
@@ -823,10 +820,6 @@ button {
 </section>
 
 
-<!-- =====================================================
-     MAP
-====================================================== -->
-
 <section class="map-card">
 
     <div id="mobilityMap"></div>
@@ -838,10 +831,6 @@ button {
 
 </section>
 
-
-<!-- =====================================================
-     ROUTE SUMMARY
-====================================================== -->
 
 <div
     id="routeSummary"
@@ -872,10 +861,6 @@ button {
 
 </div>
 
-
-<!-- =====================================================
-     RIDE TYPES
-====================================================== -->
 
 <section class="section">
 
@@ -975,10 +960,6 @@ button {
 </section>
 
 
-<!-- =====================================================
-     NEARBY DRIVERS
-====================================================== -->
-
 <section class="section">
 
     <h2>
@@ -1008,10 +989,6 @@ button {
 </section>
 
 
-<!-- =====================================================
-     MY REQUEST
-====================================================== -->
-
 <section class="section">
 
     <h2>
@@ -1029,10 +1006,6 @@ button {
 
 </section>
 
-
-<!-- =====================================================
-     PROVIDER CTA
-====================================================== -->
 
 <section class="provider-cta">
 
@@ -1060,10 +1033,6 @@ button {
 
 </div>
 
-
-<!-- =========================================================
-     RIDE REQUEST MODAL
-========================================================== -->
 
 <div
     id="rideRequestModal"
@@ -1184,12 +1153,6 @@ const SUPABASE_KEY =
 const NEARBY_RADIUS_KM =
     10;
 
-
-/*
- * OSRM is used only to calculate the road route.
- *
- * We are not replacing your Supabase system.
- */
 const ROUTING_URL =
     "https://router.project-osrm.org/route/v1/driving/";
 
@@ -1618,16 +1581,6 @@ async function calculateAndDrawRoute() {
 
     try {
 
-        /*
-         * OSRM expects:
-         *
-         * longitude,latitude
-         *
-         * not:
-         *
-         * latitude,longitude
-         */
-
         const start =
             pickupCoordinates.longitude +
             "," +
@@ -1777,12 +1730,6 @@ function drawRoute(
         );
 
 
-    /*
-     * Fit the map around the route,
-     * while leaving enough padding
-     * for the markers.
-     */
-
     const bounds =
         routeLayer.getBounds();
 
@@ -1803,42 +1750,12 @@ function drawRoute(
 
 
     /*
-     * Bring the pickup and destination
-     * markers back above the route.
+     * Do not call bringToFront() here.
+     * The current Leaflet marker objects
+     * do not expose that method in this
+     * setup. Leaflet manages the marker
+     * layer automatically.
      */
-
-    if (
-        pickupMarker
-    ) {
-
-        pickupMarker.bringToFront();
-
-    }
-
-
-    if (
-        destinationMarker
-    ) {
-
-        destinationMarker.bringToFront();
-
-    }
-
-
-    /*
-     * Driver markers should also remain
-     * visible above the route.
-     */
-
-    driverMarkers.forEach(
-        function (
-            marker
-        ) {
-
-            marker.bringToFront();
-
-        }
-    );
 
 }
 
@@ -2312,12 +2229,6 @@ async function setPickupLocationFromCoordinates(
 
     await loadNearbyDrivers();
 
-
-    /*
-     * If destination was already selected,
-     * redraw the road route using the new
-     * pickup position.
-     */
 
     if (
         destinationCoordinates
@@ -2876,11 +2787,6 @@ async function selectDestination(
     destinationMarker.openPopup();
 
 
-    /*
-     * If pickup is already known,
-     * calculate the real road route.
-     */
-
     if (
         pickupCoordinates
     ) {
@@ -3222,22 +3128,6 @@ function renderDrivers(
             driverMarkers.push(
                 marker
             );
-
-        }
-    );
-
-
-    /*
-     * Keep driver markers above the
-     * newly drawn route.
-     */
-
-    driverMarkers.forEach(
-        function (
-            marker
-        ) {
-
-            marker.bringToFront();
 
         }
     );
@@ -4226,3 +4116,4 @@ initializeMobility();
 </body>
 
 </html>
+```
