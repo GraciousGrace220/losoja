@@ -2249,6 +2249,7 @@ async function setPickupLocationFromCoordinates(
 
 /* =========================================================
    CURRENT LOCATION
+   IMPROVED GPS RELIABILITY
 ========================================================= */
 
 function useCurrentLocation() {
@@ -2276,124 +2277,309 @@ function useCurrentLocation() {
 
 
     gpsCoordinates.textContent =
-        "Waiting for fresh GPS coordinates...";
+        "Searching for an accurate GPS location...";
 
 
-    navigator.geolocation.getCurrentPosition(
+    let bestPosition =
+        null;
 
-        async function (
-            position
+
+    let watchId =
+        null;
+
+
+    let finished =
+        false;
+
+
+    const MAX_ACCEPTABLE_ACCURACY_METERS =
+        500;
+
+
+    const MAX_WAIT_TIME =
+        30000;
+
+
+    function finishWithPosition(
+        position
+    ) {
+
+        if (
+            finished
         ) {
 
-            const latitude =
-                position.coords.latitude;
+            return;
+
+        }
 
 
-            const longitude =
-                position.coords.longitude;
+        finished =
+            true;
 
 
-            const accuracy =
-                position.coords.accuracy;
+        if (
+            watchId !== null
+        ) {
+
+            navigator.geolocation.clearWatch(
+                watchId
+            );
+
+        }
+
+
+        const latitude =
+            Number(
+                position.coords.latitude
+            );
+
+
+        const longitude =
+            Number(
+                position.coords.longitude
+            );
+
+
+        const accuracy =
+            Number(
+                position.coords.accuracy
+            );
+
+
+        if (
+            !Number.isFinite(
+                latitude
+            ) ||
+            !Number.isFinite(
+                longitude
+            ) ||
+            !Number.isFinite(
+                accuracy
+            )
+        ) {
+
+            pickupInput.value =
+                "";
 
 
             gpsCoordinates.textContent =
-                "Latitude: " +
-                latitude.toFixed(6) +
+                "Invalid GPS coordinates received. Please try again.";
 
-                " | Longitude: " +
-                longitude.toFixed(6) +
 
-                " | Accuracy: approximately " +
-                Math.round(
+            return;
+
+        }
+
+
+        gpsCoordinates.textContent =
+            "Latitude: " +
+            latitude.toFixed(6) +
+
+            " | Longitude: " +
+            longitude.toFixed(6) +
+
+            " | Accuracy: approximately " +
+            Math.round(
+                accuracy
+            ) +
+            " m";
+
+
+        console.log(
+            "LOSOJA GPS LOCATION ACCEPTED:",
+            {
+                latitude:
+                    latitude,
+
+                longitude:
+                    longitude,
+
+                accuracy:
                     accuracy
+            }
+        );
+
+
+        setPickupLocationFromCoordinates(
+            latitude,
+            longitude
+        );
+
+    }
+
+
+    function handlePosition(
+        position
+    ) {
+
+        if (
+            finished
+        ) {
+
+            return;
+
+        }
+
+
+        const accuracy =
+            Number(
+                position.coords.accuracy
+            );
+
+
+        if (
+            !Number.isFinite(
+                accuracy
+            )
+        ) {
+
+            return;
+
+        }
+
+
+        console.log(
+            "LosOja GPS reading:",
+            {
+                latitude:
+                    position.coords.latitude,
+
+                longitude:
+                    position.coords.longitude,
+
+                accuracy:
+                    accuracy
+            }
+        );
+
+
+        /*
+           Keep the most accurate reading received.
+        */
+
+        if (
+            !bestPosition ||
+            accuracy <
+            Number(
+                bestPosition.coords.accuracy
+            )
+        ) {
+
+            bestPosition =
+                position;
+
+        }
+
+
+        gpsCoordinates.textContent =
+            "Searching... Best accuracy: approximately " +
+            Math.round(
+                bestPosition.coords.accuracy
+            ) +
+            " m";
+
+
+        /*
+           Accept a reasonably accurate reading.
+        */
+
+        if (
+            accuracy <=
+            MAX_ACCEPTABLE_ACCURACY_METERS
+        ) {
+
+            finishWithPosition(
+                position
+            );
+
+        }
+
+    }
+
+
+    function handleError(
+        error
+    ) {
+
+        console.error(
+            "Geolocation error:",
+            error
+        );
+
+
+        if (
+            finished
+        ) {
+
+            return;
+
+        }
+
+
+        if (
+            bestPosition &&
+            Number.isFinite(
+                bestPosition.coords.accuracy
+            )
+        ) {
+
+            gpsCoordinates.textContent =
+                "Best available accuracy: approximately " +
+                Math.round(
+                    bestPosition.coords.accuracy
                 ) +
                 " m";
 
-
-            console.log(
-                "LOSOJA ACTUAL GPS LOCATION:",
-                {
-                    latitude:
-                        latitude,
-
-                    longitude:
-                        longitude,
-
-                    accuracy:
-                        accuracy
-                }
-            );
+        }
 
 
-            await setPickupLocationFromCoordinates(
-                latitude,
-                longitude
-            );
-
-        },
-
-
-        function (
-            error
+        if (
+            error.code ===
+            error.PERMISSION_DENIED
         ) {
 
-            console.error(
-                "Geolocation error:",
-                error
-            );
+            finished =
+                true;
 
 
-            gpsStatus.classList.add(
-                "active"
-            );
+            if (
+                watchId !== null
+            ) {
+
+                navigator.geolocation.clearWatch(
+                    watchId
+                );
+
+            }
 
 
             gpsCoordinates.textContent =
-                "GPS could not be obtained. Please allow location access.";
+                "Location permission was denied.";
 
 
             pickupInput.value =
                 "";
 
 
-            if (
-                error.code ===
-                error.PERMISSION_DENIED
-            ) {
+            alert(
+                "Location permission was denied. Please allow location access for LosOja in your browser."
+            );
 
-                alert(
-                    "Location permission was denied. Please allow location access for LosOja in your browser."
-                );
+        }
 
-            } else if (
-                error.code ===
-                error.POSITION_UNAVAILABLE
-            ) {
+    }
 
-                alert(
-                    "Your device could not determine your current location. Please try again."
-                );
 
-            } else if (
-                error.code ===
-                error.TIMEOUT
-            ) {
+    /*
+       First attempt:
+       fresh high-accuracy reading.
+    */
 
-                alert(
-                    "Getting your location took too long. Please try again."
-                );
+    navigator.geolocation.getCurrentPosition(
 
-            } else {
+        handlePosition,
 
-                alert(
-                    "We could not get your current location. Please try again."
-                );
-
-            }
-
-        },
-
+        handleError,
 
         {
             enableHighAccuracy:
@@ -2403,9 +2589,151 @@ function useCurrentLocation() {
                 0,
 
             timeout:
-                20000
+                15000
         }
 
+    );
+
+
+    /*
+       Continue watching for a better reading.
+       This helps when the first result comes
+       from Wi-Fi or IP-based positioning.
+    */
+
+    watchId =
+        navigator.geolocation.watchPosition(
+
+            handlePosition,
+
+            handleError,
+
+            {
+                enableHighAccuracy:
+                    true,
+
+                maximumAge:
+                    0,
+
+                timeout:
+                    15000
+            }
+
+        );
+
+
+    /*
+       Give the browser up to 30 seconds to
+       improve the location.
+    */
+
+    setTimeout(
+        function () {
+
+            if (
+                finished
+            ) {
+
+                return;
+
+            }
+
+
+            if (
+                bestPosition
+            ) {
+
+                const accuracy =
+                    Number(
+                        bestPosition.coords.accuracy
+                    );
+
+
+                /*
+                   Use the best reading if it
+                   meets our reliability limit.
+                */
+
+                if (
+                    accuracy <=
+                    MAX_ACCEPTABLE_ACCURACY_METERS
+                ) {
+
+                    finishWithPosition(
+                        bestPosition
+                    );
+
+                    return;
+
+                }
+
+
+                finished =
+                    true;
+
+
+                if (
+                    watchId !== null
+                ) {
+
+                    navigator.geolocation.clearWatch(
+                        watchId
+                    );
+
+                }
+
+
+                gpsCoordinates.textContent =
+                    "Location found, but accuracy is too low (" +
+                    Math.round(
+                        accuracy
+                    ) +
+                    " m). Please enable device location/GPS and try again.";
+
+
+                pickupInput.value =
+                    "";
+
+
+                alert(
+                    "LosOja found your location, but the accuracy is too low for reliable nearby-driver matching. Please enable your device's location/GPS and try again."
+                );
+
+
+                return;
+
+            }
+
+
+            finished =
+                true;
+
+
+            if (
+                watchId !== null
+            ) {
+
+                navigator.geolocation.clearWatch(
+                    watchId
+                );
+
+            }
+
+
+            gpsCoordinates.textContent =
+                "Could not obtain an accurate GPS location.";
+
+
+            pickupInput.value =
+                "";
+
+
+            alert(
+                "LosOja could not get an accurate GPS location. Please check your browser/device location settings and try again."
+            );
+
+        },
+        MAX_WAIT_TIME
     );
 
 }
@@ -2832,9 +3160,6 @@ function clearDestinationResults() {
 
 /* =========================================================
    NEARBY DRIVERS
-   IMPORTANT:
-   The selected service is now included directly
-   in the Supabase query.
 ========================================================= */
 
 async function loadNearbyDrivers() {
