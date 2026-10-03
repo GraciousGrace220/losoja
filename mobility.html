@@ -17,10 +17,16 @@
 
     <meta
         name="description"
-        content="LosOja Mobility - Find transportation options across Nigeria."
+        content="LosOja Mobility - Find nearby transportation across Nigeria."
     >
 
     <title>Mobility - LosOja</title>
+
+    <!-- Leaflet Map -->
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    >
 
     <style>
 
@@ -36,193 +42,441 @@
             color: #111827;
         }
 
+        button,
+        input,
+        textarea {
+            font-family: inherit;
+        }
+
         .page {
             min-height: 100vh;
         }
 
+
+        /* =========================================================
+           HEADER
+        ========================================================= */
+
         .header {
             background: #087a3e;
             color: white;
-            padding: 18px 20px;
+            padding: 15px 18px;
+            position: sticky;
+            top: 0;
+            z-index: 5000;
         }
 
         .header-inner {
-            max-width: 900px;
+            max-width: 1100px;
             margin: auto;
             display: flex;
             align-items: center;
             justify-content: space-between;
+            gap: 15px;
         }
 
         .logo {
             font-size: 24px;
-            font-weight: 800;
+            font-weight: 900;
+            letter-spacing: -.5px;
+        }
+
+        .header-subtitle {
+            font-size: 12px;
+            opacity: .85;
+            margin-top: 2px;
         }
 
         .back-button {
-            border: 1px solid rgba(255,255,255,.6);
+            border: 1px solid rgba(255,255,255,.65);
             background: transparent;
             color: white;
             padding: 9px 14px;
             border-radius: 10px;
             cursor: pointer;
             font-size: 14px;
-        }
-
-        .main {
-            max-width: 900px;
-            margin: auto;
-            padding: 30px 20px 100px;
-        }
-
-        .hero {
-            background: white;
-            border-radius: 20px;
-            padding: 30px 22px;
-            text-align: center;
-            box-shadow: 0 8px 25px rgba(0,0,0,.06);
-            margin-bottom: 24px;
-        }
-
-        .hero-icon {
-            font-size: 52px;
-            margin-bottom: 12px;
-        }
-
-        h1 {
-            color: #087a3e;
-            margin-bottom: 10px;
-        }
-
-        .hero p {
-            color: #6b7280;
-            line-height: 1.6;
-        }
-
-        .provider-button {
-            display: inline-block;
-            margin-top: 20px;
-            border: 0;
-            background: #087a3e;
-            color: white;
-            padding: 13px 20px;
-            border-radius: 10px;
-            font-weight: 700;
-            cursor: pointer;
-            text-decoration: none;
-        }
-
-        .provider-button:hover {
-            background: #055c2e;
-        }
-
-        .ride-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 18px;
-        }
-
-        .ride-card {
-            background: white;
-            border: 1px solid #e5e7eb;
-            border-radius: 18px;
-            padding: 25px 20px;
-            text-align: center;
-            box-shadow: 0 6px 20px rgba(0,0,0,.05);
-        }
-
-        .ride-icon {
-            font-size: 48px;
-            margin-bottom: 12px;
-        }
-
-        .ride-card h2 {
-            color: #087a3e;
-            margin-bottom: 8px;
-        }
-
-        .ride-card p {
-            color: #6b7280;
-            line-height: 1.5;
-            margin-bottom: 18px;
-        }
-
-        .ride-button {
-            width: 100%;
-            border: 0;
-            background: #087a3e;
-            color: white;
-            padding: 13px;
-            border-radius: 10px;
-            font-weight: 700;
-            cursor: pointer;
-        }
-
-        .ride-button:hover {
-            background: #055c2e;
-        }
-
-        .ride-button:disabled {
-            opacity: .7;
-            cursor: not-allowed;
-        }
-
-        .verified-badge {
-            display: inline-block;
-            margin-bottom: 12px;
-            padding: 5px 9px;
-            border-radius: 999px;
-            background: #eef8f2;
-            color: #087a3e;
-            font-size: 12px;
             font-weight: 700;
         }
 
-        .notice {
-            margin-top: 24px;
-            background: #eef8f2;
-            border: 1px solid #cde8d7;
-            border-radius: 16px;
-            padding: 18px;
-            text-align: center;
-            color: #055c2e;
-            line-height: 1.5;
+        .back-button:hover {
+            background: rgba(255,255,255,.1);
         }
 
 
         /* =========================================================
-           MY RIDE REQUEST
+           MAIN
         ========================================================= */
 
-        .my-request-section {
-            margin-top: 24px;
+        .main {
+            max-width: 1100px;
+            margin: auto;
+            padding: 18px 15px 90px;
         }
+
+
+        /* =========================================================
+           RIDE SEARCH PANEL
+        ========================================================= */
+
+        .ride-panel {
+            background: white;
+            border-radius: 22px;
+            box-shadow: 0 8px 30px rgba(0,0,0,.08);
+            overflow: hidden;
+            margin-bottom: 18px;
+        }
+
+        .ride-panel-header {
+            padding: 20px 20px 15px;
+        }
+
+        .ride-panel-header h1 {
+            color: #087a3e;
+            font-size: 26px;
+            margin-bottom: 5px;
+        }
+
+        .ride-panel-header p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+
+        /* =========================================================
+           LOCATION SEARCH
+        ========================================================= */
+
+        .location-box {
+            padding: 0 20px 18px;
+        }
+
+        .location-row {
+            display: flex;
+            align-items: stretch;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .location-dot {
+            width: 13px;
+            min-width: 13px;
+            height: 13px;
+            border-radius: 50%;
+            background: #087a3e;
+            margin-top: 15px;
+        }
+
+        .location-dot.destination {
+            background: #ffb703;
+            border-radius: 3px;
+        }
+
+        .location-input-wrap {
+            flex: 1;
+            position: relative;
+        }
+
+        .location-input {
+            width: 100%;
+            padding: 13px 45px 13px 14px;
+            border: 1px solid #d1d5db;
+            border-radius: 12px;
+            font-size: 15px;
+            background: white;
+        }
+
+        .location-input:focus {
+            outline: 2px solid #087a3e;
+            border-color: #087a3e;
+        }
+
+        .location-action {
+            position: absolute;
+            right: 7px;
+            top: 7px;
+            border: 0;
+            background: #eef8f2;
+            color: #087a3e;
+            width: 34px;
+            height: 34px;
+            border-radius: 9px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .location-action:hover {
+            background: #dcefe4;
+        }
+
+        .location-divider {
+            height: 16px;
+            width: 1px;
+            background: #d1d5db;
+            margin-left: 6px;
+        }
+
+        .location-hint {
+            font-size: 12px;
+            color: #6b7280;
+            margin: 5px 0 0 23px;
+        }
+
+
+        /* =========================================================
+           MAP
+        ========================================================= */
+
+        .map-wrapper {
+            position: relative;
+            height: 390px;
+            background: #e5e7eb;
+        }
+
+        #mobilityMap {
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .map-top-badge {
+            position: absolute;
+            z-index: 1000;
+            top: 12px;
+            left: 12px;
+            background: white;
+            border-radius: 999px;
+            padding: 9px 13px;
+            box-shadow: 0 4px 15px rgba(0,0,0,.15);
+            font-size: 12px;
+            font-weight: 800;
+            color: #087a3e;
+        }
+
+        .map-location-button {
+            position: absolute;
+            z-index: 1000;
+            right: 12px;
+            bottom: 15px;
+            border: 0;
+            background: white;
+            color: #087a3e;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            box-shadow: 0 4px 15px rgba(0,0,0,.18);
+            cursor: pointer;
+            font-size: 19px;
+        }
+
+        .map-location-button:hover {
+            background: #eef8f2;
+        }
+
+
+        /* =========================================================
+           RIDE TYPES
+        ========================================================= */
+
+        .ride-types {
+            padding: 18px 20px 5px;
+        }
+
+        .section-title {
+            font-size: 17px;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .ride-type-row {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 12px;
+        }
+
+        .ride-type {
+            min-width: 110px;
+            flex: 1;
+            border: 2px solid #e5e7eb;
+            background: white;
+            border-radius: 14px;
+            padding: 12px 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: .15s ease;
+        }
+
+        .ride-type:hover {
+            border-color: #087a3e;
+        }
+
+        .ride-type.active {
+            border-color: #087a3e;
+            background: #eef8f2;
+        }
+
+        .ride-type-icon {
+            font-size: 29px;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .ride-type-name {
+            font-size: 13px;
+            font-weight: 800;
+            color: #111827;
+        }
+
+        .ride-type-status {
+            font-size: 10px;
+            color: #6b7280;
+            margin-top: 3px;
+        }
+
+
+        /* =========================================================
+           REQUEST BUTTON
+        ========================================================= */
+
+        .request-area {
+            padding: 10px 20px 20px;
+        }
+
+        .request-main-button {
+            width: 100%;
+            border: 0;
+            background: #087a3e;
+            color: white;
+            padding: 15px;
+            border-radius: 13px;
+            font-size: 16px;
+            font-weight: 900;
+            cursor: pointer;
+        }
+
+        .request-main-button:hover {
+            background: #055c2e;
+        }
+
+        .request-main-button:disabled {
+            opacity: .6;
+            cursor: not-allowed;
+        }
+
+        .request-helper {
+            text-align: center;
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 9px;
+        }
+
+
+        /* =========================================================
+           NEARBY DRIVERS
+        ========================================================= */
+
+        .nearby-section {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 18px;
+            box-shadow: 0 6px 22px rgba(0,0,0,.05);
+        }
+
+        .nearby-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .nearby-count {
+            background: #eef8f2;
+            color: #087a3e;
+            padding: 6px 9px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .driver-list {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .driver-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 13px;
+        }
+
+        .driver-icon {
+            font-size: 28px;
+            margin-bottom: 7px;
+        }
+
+        .driver-name {
+            font-weight: 800;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .driver-service {
+            color: #6b7280;
+            font-size: 12px;
+        }
+
+        .driver-status {
+            display: inline-block;
+            margin-top: 8px;
+            color: #087a3e;
+            background: #eef8f2;
+            padding: 4px 7px;
+            border-radius: 999px;
+            font-size: 10px;
+            font-weight: 800;
+        }
+
+        .driver-empty {
+            grid-column: 1 / -1;
+            color: #6b7280;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+
+        /* =========================================================
+           MY REQUEST
+        ========================================================= */
 
         .my-request-card {
             background: white;
             border: 1px solid #e5e7eb;
-            border-radius: 18px;
-            padding: 22px;
+            border-radius: 20px;
+            padding: 20px;
             box-shadow: 0 6px 20px rgba(0,0,0,.05);
+            margin-bottom: 18px;
         }
 
         .my-request-title {
             color: #087a3e;
-            font-size: 22px;
-            font-weight: 800;
-            margin-bottom: 16px;
+            font-size: 20px;
+            font-weight: 900;
+            margin-bottom: 15px;
         }
 
         .request-empty {
             color: #6b7280;
             line-height: 1.6;
+            font-size: 14px;
         }
 
         .request-service-name {
             font-size: 18px;
-            font-weight: 800;
-            color: #111827;
-            margin-bottom: 12px;
+            font-weight: 900;
+            margin-bottom: 10px;
         }
 
         .request-status-badge {
@@ -231,19 +485,15 @@
             border-radius: 999px;
             background: #fff7ed;
             color: #9a3412;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 800;
-            margin-bottom: 18px;
+            margin-bottom: 15px;
         }
 
-        .request-status-badge.accepted {
-            background: #eef8f2;
-            color: #087a3e;
-        }
-
+        .request-status-badge.accepted,
         .request-status-badge.completed {
             background: #eef8f2;
-            color: #055c2e;
+            color: #087a3e;
         }
 
         .request-status-badge.cancelled,
@@ -253,36 +503,32 @@
         }
 
         .request-detail {
-            padding: 12px 0;
+            padding: 11px 0;
             border-bottom: 1px solid #f0f0f0;
-        }
-
-        .request-detail:last-child {
-            border-bottom: 0;
         }
 
         .request-detail-label {
             display: block;
-            font-size: 12px;
+            font-size: 11px;
             color: #6b7280;
             margin-bottom: 4px;
-            font-weight: 700;
+            font-weight: 800;
         }
 
         .request-detail-value {
-            color: #111827;
             line-height: 1.5;
+            font-size: 14px;
         }
 
         .request-refresh {
-            margin-top: 16px;
+            margin-top: 15px;
             border: 1px solid #087a3e;
             background: white;
             color: #087a3e;
-            padding: 10px 14px;
+            padding: 9px 13px;
             border-radius: 10px;
             cursor: pointer;
-            font-weight: 700;
+            font-weight: 800;
         }
 
         .request-refresh:hover {
@@ -291,7 +537,39 @@
 
 
         /* =========================================================
-           REQUEST MODAL
+           PROVIDER
+        ========================================================= */
+
+        .provider-card {
+            background: #eef8f2;
+            border: 1px solid #cde8d7;
+            border-radius: 18px;
+            padding: 18px;
+            margin-bottom: 18px;
+            text-align: center;
+        }
+
+        .provider-card p {
+            color: #055c2e;
+            font-size: 13px;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+
+        .provider-button {
+            display: inline-block;
+            background: #087a3e;
+            color: white;
+            padding: 11px 16px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+
+        /* =========================================================
+           MODAL
         ========================================================= */
 
         .modal {
@@ -300,7 +578,7 @@
             inset: 0;
             z-index: 9999;
             background: rgba(0,0,0,.55);
-            padding: 20px;
+            padding: 15px;
             overflow-y: auto;
         }
 
@@ -315,7 +593,7 @@
             max-width: 520px;
             background: white;
             border-radius: 20px;
-            padding: 25px 22px;
+            padding: 22px;
             box-shadow: 0 15px 45px rgba(0,0,0,.2);
         }
 
@@ -324,11 +602,12 @@
             align-items: center;
             justify-content: space-between;
             gap: 15px;
-            margin-bottom: 20px;
+            margin-bottom: 18px;
         }
 
         .modal-header h2 {
             color: #087a3e;
+            font-size: 21px;
         }
 
         .close-button {
@@ -348,17 +627,18 @@
             padding: 12px;
             border-radius: 10px;
             margin-bottom: 18px;
-            font-weight: 700;
+            font-weight: 800;
         }
 
         .form-group {
-            margin-bottom: 17px;
+            margin-bottom: 16px;
         }
 
         .form-group label {
             display: block;
-            font-weight: 700;
+            font-weight: 800;
             margin-bottom: 7px;
+            font-size: 14px;
         }
 
         .form-group input,
@@ -368,18 +648,11 @@
             border: 1px solid #d1d5db;
             border-radius: 10px;
             font-size: 15px;
-            font-family: inherit;
         }
 
         .form-group textarea {
-            min-height: 90px;
+            min-height: 80px;
             resize: vertical;
-        }
-
-        .form-group input:focus,
-        .form-group textarea:focus {
-            outline: 2px solid #087a3e;
-            border-color: #087a3e;
         }
 
         .request-submit {
@@ -390,25 +663,22 @@
             padding: 14px;
             border-radius: 10px;
             font-size: 16px;
-            font-weight: 700;
+            font-weight: 800;
             cursor: pointer;
         }
 
-        .request-submit:hover {
-            background: #055c2e;
-        }
-
         .request-submit:disabled {
-            opacity: .7;
+            opacity: .6;
             cursor: not-allowed;
         }
 
         .request-status {
             display: none;
-            margin-top: 15px;
-            padding: 13px;
+            margin-top: 14px;
+            padding: 12px;
             border-radius: 10px;
             line-height: 1.5;
+            font-size: 13px;
         }
 
         .request-status.success {
@@ -424,26 +694,62 @@
         }
 
 
-        @media (max-width: 600px) {
+        /* =========================================================
+           RESPONSIVE
+        ========================================================= */
+
+        @media (max-width: 700px) {
 
             .main {
-                padding: 20px 15px 80px;
+                padding: 12px 10px 80px;
             }
 
-            .ride-grid {
+            .map-wrapper {
+                height: 330px;
+            }
+
+            .driver-list {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .ride-panel-header h1 {
+                font-size: 23px;
+            }
+
+            .ride-type {
+                min-width: 96px;
+            }
+
+        }
+
+        @media (max-width: 430px) {
+
+            .header {
+                padding: 13px 14px;
+            }
+
+            .logo {
+                font-size: 21px;
+            }
+
+            .header-subtitle {
+                display: none;
+            }
+
+            .map-wrapper {
+                height: 300px;
+            }
+
+            .driver-list {
                 grid-template-columns: 1fr;
             }
 
-            .hero {
-                padding: 25px 18px;
-            }
-
-            .modal {
-                padding: 12px;
-            }
-
-            .modal-card {
-                padding: 22px 17px;
+            .location-box,
+            .ride-types,
+            .request-area,
+            .ride-panel-header {
+                padding-left: 14px;
+                padding-right: 14px;
             }
 
         }
@@ -464,8 +770,16 @@
 
         <div class="header-inner">
 
-            <div class="logo">
-                LosOja
+            <div>
+
+                <div class="logo">
+                    LosOja
+                </div>
+
+                <div class="header-subtitle">
+                    Mobility
+                </div>
+
             </div>
 
             <button
@@ -481,26 +795,333 @@
     </header>
 
 
-    <!-- MAIN -->
-
     <main class="main">
 
 
-        <!-- HERO -->
+        <!-- =====================================================
+             MAIN RIDE PANEL
+        ====================================================== -->
 
-        <section class="hero">
+        <section class="ride-panel">
 
-            <div class="hero-icon">
-                🚕
+
+            <div class="ride-panel-header">
+
+                <h1>
+                    Where are you going?
+                </h1>
+
+                <p>
+                    Find a nearby LosOja driver and request your ride.
+                </p>
+
             </div>
 
-            <h1>
-                Mobility
-            </h1>
+
+            <!-- LOCATIONS -->
+
+            <div class="location-box">
+
+
+                <div class="location-row">
+
+                    <div class="location-dot"></div>
+
+                    <div class="location-input-wrap">
+
+                        <input
+                            type="text"
+                            id="pickupLocation"
+                            class="location-input"
+                            placeholder="Pickup location"
+                            autocomplete="street-address"
+                        >
+
+                        <button
+                            type="button"
+                            class="location-action"
+                            id="useLocationButton"
+                            title="Use my current location"
+                        >
+                            📍
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div class="location-row">
+
+                    <div class="location-dot destination"></div>
+
+                    <div class="location-input-wrap">
+
+                        <input
+                            type="text"
+                            id="destinationLocation"
+                            class="location-input"
+                            placeholder="Where to?"
+                            autocomplete="street-address"
+                        >
+
+                        <button
+                            type="button"
+                            class="location-action"
+                            id="searchDestinationButton"
+                            title="Search destination"
+                        >
+                            🔎
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div class="location-hint" id="locationHint">
+                    Choose your pickup and destination on the map.
+                </div>
+
+            </div>
+
+
+            <!-- MAP -->
+
+            <div class="map-wrapper">
+
+                <div class="map-top-badge">
+                    🟢 Nearby LosOja drivers
+                </div>
+
+                <div id="mobilityMap"></div>
+
+                <button
+                    type="button"
+                    class="map-location-button"
+                    id="mapLocationButton"
+                    title="Center on my location"
+                >
+                    📍
+                </button>
+
+            </div>
+
+
+            <!-- RIDE TYPES -->
+
+            <div class="ride-types">
+
+                <div class="section-title">
+                    Choose your ride
+                </div>
+
+                <div class="ride-type-row">
+
+
+                    <button
+                        type="button"
+                        class="ride-type active"
+                        data-service="cab"
+                        data-service-name="Cab"
+                    >
+
+                        <span class="ride-type-icon">
+                            🚕
+                        </span>
+
+                        <span class="ride-type-name">
+                            Cab
+                        </span>
+
+                        <span class="ride-type-status">
+                            Nearby cars
+                        </span>
+
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="ride-type"
+                        data-service="tricycle"
+                        data-service-name="Tricycle (Keke)"
+                    >
+
+                        <span class="ride-type-icon">
+                            🛺
+                        </span>
+
+                        <span class="ride-type-name">
+                            Keke
+                        </span>
+
+                        <span class="ride-type-status">
+                            Local rides
+                        </span>
+
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="ride-type"
+                        data-service="bike"
+                        data-service-name="Bike"
+                    >
+
+                        <span class="ride-type-icon">
+                            🏍️
+                        </span>
+
+                        <span class="ride-type-name">
+                            Bike
+                        </span>
+
+                        <span class="ride-type-status">
+                            Quick rides
+                        </span>
+
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="ride-type"
+                        data-service="dispatch"
+                        data-service-name="Dispatch Rider"
+                    >
+
+                        <span class="ride-type-icon">
+                            🛵
+                        </span>
+
+                        <span class="ride-type-name">
+                            Dispatch
+                        </span>
+
+                        <span class="ride-type-status">
+                            Packages
+                        </span>
+
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="ride-type"
+                        data-service="truck"
+                        data-service-name="Rent a Truck"
+                    >
+
+                        <span class="ride-type-icon">
+                            🚚
+                        </span>
+
+                        <span class="ride-type-name">
+                            Truck
+                        </span>
+
+                        <span class="ride-type-status">
+                            Moving goods
+                        </span>
+
+                    </button>
+
+
+                </div>
+
+            </div>
+
+
+            <!-- REQUEST -->
+
+            <div class="request-area">
+
+                <button
+                    type="button"
+                    class="request-main-button"
+                    id="requestRideButton"
+                >
+                    Request Cab
+                </button>
+
+                <div class="request-helper">
+                    Verified and available providers only.
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+        <!-- =====================================================
+             NEARBY DRIVERS
+        ====================================================== -->
+
+        <section class="nearby-section">
+
+            <div class="nearby-header">
+
+                <div class="section-title">
+                    Nearby Drivers
+                </div>
+
+                <div
+                    class="nearby-count"
+                    id="nearbyDriverCount"
+                >
+                    Searching...
+                </div>
+
+            </div>
+
+
+            <div
+                class="driver-list"
+                id="driverList"
+            >
+
+                <div class="driver-empty">
+                    Searching for verified available drivers...
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             MY REQUEST
+        ====================================================== -->
+
+        <section class="my-request-card">
+
+            <div class="my-request-title">
+                My Ride Request
+            </div>
+
+            <div id="myRequestContent">
+
+                <div class="request-empty">
+                    Loading your latest ride request...
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================================
+             PROVIDER
+        ====================================================== -->
+
+        <section class="provider-card">
 
             <p>
-                Choose a transportation option
-                for your journey.
+                Have a vehicle or provide transportation services?
+                Join LosOja as a verified mobility provider.
             </p>
 
             <a
@@ -513,204 +1134,14 @@
         </section>
 
 
-        <!-- RIDE OPTIONS -->
-
-        <section class="ride-grid">
-
-
-            <!-- CAB -->
-
-            <div class="ride-card">
-
-                <div class="ride-icon">
-                    🚕
-                </div>
-
-                <h2>
-                    Cab
-                </h2>
-
-                <p>
-                    Request a cab for convenient
-                    transportation.
-                </p>
-
-                <button
-                    class="ride-button"
-                    type="button"
-                    data-service="cab"
-                    data-service-name="Cab"
-                >
-                    Request Cab
-                </button>
-
-            </div>
-
-
-            <!-- TRICYCLE -->
-
-            <div class="ride-card">
-
-                <div class="ride-icon">
-                    🛺
-                </div>
-
-                <h2>
-                    Tricycle (Keke)
-                </h2>
-
-                <p>
-                    Request a tricycle for
-                    convenient local transportation.
-                </p>
-
-                <button
-                    class="ride-button"
-                    type="button"
-                    data-service="tricycle"
-                    data-service-name="Tricycle (Keke)"
-                >
-                    Request Tricycle
-                </button>
-
-            </div>
-
-
-            <!-- BIKE -->
-
-            <div class="ride-card">
-
-                <div class="ride-icon">
-                    🏍️
-                </div>
-
-                <h2>
-                    Bike
-                </h2>
-
-                <p>
-                    Find a bike rider for
-                    convenient local transportation.
-                </p>
-
-                <button
-                    class="ride-button"
-                    type="button"
-                    data-service="bike"
-                    data-service-name="Bike"
-                >
-                    Request Bike
-                </button>
-
-            </div>
-
-
-            <!-- DISPATCH -->
-
-            <div class="ride-card">
-
-                <div class="ride-icon">
-                    🛵
-                </div>
-
-                <div class="verified-badge">
-                    ✓ Verified Riders Only
-                </div>
-
-                <h2>
-                    Dispatch Rider
-                </h2>
-
-                <p>
-                    Send packages and goods with
-                    verified dispatch riders.
-                </p>
-
-                <button
-                    class="ride-button"
-                    type="button"
-                    data-service="dispatch"
-                    data-service-name="Dispatch Rider"
-                >
-                    Request Dispatch
-                </button>
-
-            </div>
-
-
-            <!-- TRUCK -->
-
-            <div class="ride-card">
-
-                <div class="ride-icon">
-                    🚚
-                </div>
-
-                <h2>
-                    Rent a Truck
-                </h2>
-
-                <p>
-                    Find a truck for moving goods,
-                    equipment and larger items.
-                </p>
-
-                <button
-                    class="ride-button"
-                    type="button"
-                    data-service="truck"
-                    data-service-name="Rent a Truck"
-                >
-                    Find a Truck
-                </button>
-
-            </div>
-
-
-        </section>
-
-
-        <!-- =====================================================
-             MY RIDE REQUEST
-        ====================================================== -->
-
-        <section class="my-request-section">
-
-            <div class="my-request-card">
-
-                <div class="my-request-title">
-                    My Ride Request
-                </div>
-
-                <div id="myRequestContent">
-
-                    <div class="request-empty">
-                        Loading your latest ride request...
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- NOTICE -->
-
-        <div class="notice">
-
-            🔐 Verified providers are required
-            before a driver can receive customer requests.
-
-        </div>
-
-
     </main>
 
 </div>
 
 
-<!-- REQUEST MODAL -->
+<!-- =========================================================
+     REQUEST MODAL
+========================================================= -->
 
 <div
     class="modal"
@@ -726,7 +1157,7 @@
         <div class="modal-header">
 
             <h2 id="rideRequestTitle">
-                Request Mobility
+                Request Cab
             </h2>
 
             <button
@@ -745,7 +1176,7 @@
             class="request-service"
             id="requestService"
         >
-            Service
+            🚕 Cab
         </div>
 
 
@@ -754,13 +1185,13 @@
 
             <div class="form-group">
 
-                <label for="pickupLocation">
+                <label for="modalPickupLocation">
                     Pickup Location
                 </label>
 
                 <input
                     type="text"
-                    id="pickupLocation"
+                    id="modalPickupLocation"
                     required
                     placeholder="Where should we pick you up?"
                     autocomplete="street-address"
@@ -771,15 +1202,16 @@
 
             <div class="form-group">
 
-                <label for="destinationLocation">
+                <label for="modalDestinationLocation">
                     Destination
                 </label>
 
                 <input
                     type="text"
-                    id="destinationLocation"
+                    id="modalDestinationLocation"
                     required
                     placeholder="Where are you going?"
+                    autocomplete="street-address"
                 >
 
             </div>
@@ -804,7 +1236,7 @@
                 class="request-submit"
                 id="submitMobilityRequest"
             >
-                Submit Request
+                Request Ride
             </button>
 
 
@@ -821,9 +1253,20 @@
 </div>
 
 
-<!-- LOSOJA AUTHENTICATION -->
+<!-- =========================================================
+     LOSOJA AUTH
+========================================================= -->
 
 <script src="js/auth.js?v=3"></script>
+
+
+<!-- =========================================================
+     LEAFLET
+========================================================= -->
+
+<script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+></script>
 
 
 <script>
@@ -833,57 +1276,110 @@
     "use strict";
 
 
-    /*
-     * SUPABASE
-     */
+    /* =========================================================
+       SUPABASE
+    ========================================================= */
 
     const SUPABASE_URL =
         "https://ycxshwgeebskdozmornh.supabase.co";
-
 
     const SUPABASE_KEY =
         "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
 
 
-    /*
-     * ELEMENTS
-     */
+    /* =========================================================
+       ELEMENTS
+    ========================================================= */
+
+    const pickupInput =
+        document.getElementById(
+            "pickupLocation"
+        );
+
+    const destinationInput =
+        document.getElementById(
+            "destinationLocation"
+        );
+
+    const modalPickupInput =
+        document.getElementById(
+            "modalPickupLocation"
+        );
+
+    const modalDestinationInput =
+        document.getElementById(
+            "modalDestinationLocation"
+        );
+
+    const requestRideButton =
+        document.getElementById(
+            "requestRideButton"
+        );
+
+    const useLocationButton =
+        document.getElementById(
+            "useLocationButton"
+        );
+
+    const mapLocationButton =
+        document.getElementById(
+            "mapLocationButton"
+        );
+
+    const searchDestinationButton =
+        document.getElementById(
+            "searchDestinationButton"
+        );
+
+    const locationHint =
+        document.getElementById(
+            "locationHint"
+        );
+
+    const driverList =
+        document.getElementById(
+            "driverList"
+        );
+
+    const nearbyDriverCount =
+        document.getElementById(
+            "nearbyDriverCount"
+        );
+
+    const myRequestContent =
+        document.getElementById(
+            "myRequestContent"
+        );
 
     const modal =
         document.getElementById(
             "rideRequestModal"
         );
 
-
     const serviceDisplay =
         document.getElementById(
             "requestService"
         );
-
 
     const form =
         document.getElementById(
             "mobilityRequestForm"
         );
 
-
     const submitButton =
         document.getElementById(
             "submitMobilityRequest"
         );
-
 
     const statusMessage =
         document.getElementById(
             "requestStatus"
         );
 
-
     const closeButton =
         document.getElementById(
             "closeRideRequestButton"
         );
-
 
     const backButton =
         document.getElementById(
@@ -891,50 +1387,1540 @@
         );
 
 
-    const rideButtons =
-        document.querySelectorAll(
-            ".ride-button"
+    /* =========================================================
+       STATE
+    ========================================================= */
+
+    let selectedServiceType =
+        "cab";
+
+    let selectedServiceName =
+        "Cab";
+
+    let pickupCoordinates =
+        null;
+
+    let destinationCoordinates =
+        null;
+
+    let latestRequestId =
+        null;
+
+    let requestPolling =
+        null;
+
+    let driverPolling =
+        null;
+
+    let map =
+        null;
+
+    let pickupMarker =
+        null;
+
+    let destinationMarker =
+        null;
+
+    let driverMarkers = [];
+
+
+    /* =========================================================
+       INITIALIZE MAP
+    ========================================================= */
+
+    function initializeMap() {
+
+        if (
+            typeof L === "undefined"
+        ) {
+
+            console.error(
+                "LosOja: Leaflet failed to load."
+            );
+
+            locationHint.textContent =
+                "Map could not load. You can still enter locations manually.";
+
+            return;
+
+        }
+
+
+        /*
+         * Default Nigeria/Lagos view
+         */
+
+        map =
+            L.map(
+                "mobilityMap"
+            ).setView(
+                [6.5244, 3.3792],
+                12
+            );
+
+
+        L.tileLayer(
+            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            {
+                maxZoom: 19,
+                attribution:
+                    "&copy; OpenStreetMap contributors"
+            }
+        ).addTo(map);
+
+
+        map.on(
+            "click",
+            function (event) {
+
+                setPickupLocationFromCoordinates(
+                    event.latlng.lat,
+                    event.latlng.lng
+                );
+
+            }
         );
 
 
-    const myRequestContent =
-        document.getElementById(
-            "myRequestContent"
+        console.log(
+            "LosOja Mobility map loaded."
         );
-
-
-    let selectedServiceType = "";
-
-    let latestRequestId = null;
-
-    let requestPolling = null;
-
-
-    /*
-     * CHECK PAGE ELEMENTS
-     */
-
-    if (
-        !modal ||
-        !serviceDisplay ||
-        !form ||
-        !submitButton ||
-        !statusMessage ||
-        !myRequestContent
-    ) {
-
-        console.error(
-            "LosOja Mobility: required page elements are missing."
-        );
-
-        return;
 
     }
 
 
-    /*
-     * STATUS MESSAGE
-     */
+    /* =========================================================
+       ICONS
+    ========================================================= */
+
+    function createDriverIcon(
+        serviceType
+    ) {
+
+        let emoji =
+            "🚕";
+
+
+        if (
+            serviceType === "tricycle"
+        ) {
+
+            emoji = "🛺";
+
+        } else if (
+            serviceType === "bike"
+        ) {
+
+            emoji = "🏍️";
+
+        } else if (
+            serviceType === "dispatch"
+        ) {
+
+            emoji = "🛵";
+
+        } else if (
+            serviceType === "truck"
+        ) {
+
+            emoji = "🚚";
+
+        }
+
+
+        return L.divIcon({
+
+            className:
+                "losoja-driver-marker",
+
+            html:
+                `
+                <div style="
+                    width:38px;
+                    height:38px;
+                    border-radius:50%;
+                    background:#087a3e;
+                    border:3px solid white;
+                    box-shadow:0 3px 12px rgba(0,0,0,.3);
+                    display:flex;
+                    align-items:center;
+                    justify-content:center;
+                    font-size:20px;
+                ">
+                    ${emoji}
+                </div>
+                `,
+
+            iconSize:
+                [38, 38],
+
+            iconAnchor:
+                [19, 19]
+
+        });
+
+    }
+
+
+    /* =========================================================
+       SET PICKUP FROM COORDINATES
+    ========================================================= */
+
+    async function setPickupLocationFromCoordinates(
+        latitude,
+        longitude
+    ) {
+
+        pickupCoordinates = {
+
+            latitude:
+                latitude,
+
+            longitude:
+                longitude
+
+        };
+
+
+        if (pickupMarker) {
+
+            map.removeLayer(
+                pickupMarker
+            );
+
+        }
+
+
+        pickupMarker =
+            L.marker(
+                [
+                    latitude,
+                    longitude
+                ]
+            )
+            .addTo(map)
+            .bindPopup(
+                "Pickup location"
+            )
+            .openPopup();
+
+
+        map.setView(
+            [
+                latitude,
+                longitude
+            ],
+            15
+        );
+
+
+        pickupInput.value =
+            "Selected pickup location";
+
+
+        locationHint.textContent =
+            "Pickup location selected. Searching nearby drivers...";
+
+
+        /*
+         * Reverse geocode the location
+         */
+
+        try {
+
+            const response =
+                await fetch(
+                    "https://nominatim.openstreetmap.org/reverse" +
+                    "?format=json" +
+                    "&lat=" +
+                    encodeURIComponent(latitude) +
+                    "&lon=" +
+                    encodeURIComponent(longitude)
+                );
+
+
+            if (
+                response.ok
+            ) {
+
+                const data =
+                    await response.json();
+
+
+                if (
+                    data.display_name
+                ) {
+
+                    pickupInput.value =
+                        data.display_name;
+
+                }
+
+            }
+
+        } catch (error) {
+
+            console.warn(
+                "LosOja reverse geocoding failed.",
+                error
+            );
+
+        }
+
+
+        loadNearbyDrivers();
+
+    }
+
+
+    /* =========================================================
+       CURRENT LOCATION
+    ========================================================= */
+
+    function useCurrentLocation() {
+
+        if (
+            !navigator.geolocation
+        ) {
+
+            locationHint.textContent =
+                "Location services are not available in this browser.";
+
+            return;
+
+        }
+
+
+        locationHint.textContent =
+            "Finding your location...";
+
+
+        navigator.geolocation.getCurrentPosition(
+
+            async function (position) {
+
+                await setPickupLocationFromCoordinates(
+
+                    position.coords.latitude,
+
+                    position.coords.longitude
+
+                );
+
+            },
+
+            function (error) {
+
+                console.error(
+                    "LosOja geolocation error:",
+                    error
+                );
+
+                locationHint.textContent =
+                    "Unable to access your location. Please enter it manually.";
+
+            },
+
+            {
+
+                enableHighAccuracy:
+                    true,
+
+                timeout:
+                    10000,
+
+                maximumAge:
+                    30000
+
+            }
+
+        );
+
+    }
+
+
+    /* =========================================================
+       GEOCODE DESTINATION
+    ========================================================= */
+
+    async function searchDestination() {
+
+        const query =
+            destinationInput.value.trim();
+
+
+        if (
+            !query
+        ) {
+
+            locationHint.textContent =
+                "Enter a destination first.";
+
+            return;
+
+        }
+
+
+        locationHint.textContent =
+            "Searching destination...";
+
+
+        try {
+
+            const response =
+                await fetch(
+
+                    "https://nominatim.openstreetmap.org/search" +
+                    "?format=json" +
+                    "&limit=1" +
+                    "&countrycodes=ng" +
+                    "&q=" +
+                    encodeURIComponent(query)
+
+                );
+
+
+            if (
+                !response.ok
+            ) {
+
+                throw new Error(
+                    "Destination search failed."
+                );
+
+            }
+
+
+            const results =
+                await response.json();
+
+
+            if (
+                !Array.isArray(results) ||
+                results.length === 0
+            ) {
+
+                locationHint.textContent =
+                    "Destination not found. Try a more specific address.";
+
+                return;
+
+            }
+
+
+            const result =
+                results[0];
+
+
+            const latitude =
+                parseFloat(
+                    result.lat
+                );
+
+            const longitude =
+                parseFloat(
+                    result.lon
+                );
+
+
+            destinationCoordinates = {
+
+                latitude:
+                    latitude,
+
+                longitude:
+                    longitude
+
+            };
+
+
+            destinationInput.value =
+                result.display_name;
+
+
+            if (destinationMarker) {
+
+                map.removeLayer(
+                    destinationMarker
+                );
+
+            }
+
+
+            destinationMarker =
+                L.marker(
+                    [
+                        latitude,
+                        longitude
+                    ]
+                )
+                .addTo(map)
+                .bindPopup(
+                    "Destination"
+                );
+
+
+            /*
+             * Fit both locations when possible
+             */
+
+            if (
+                pickupCoordinates
+            ) {
+
+                const bounds =
+                    L.latLngBounds(
+
+                        [
+                            pickupCoordinates.latitude,
+                            pickupCoordinates.longitude
+                        ],
+
+                        [
+                            latitude,
+                            longitude
+                        ]
+
+                    );
+
+
+                map.fitBounds(
+                    bounds,
+                    {
+                        padding:
+                            [35, 35]
+                    }
+                );
+
+            } else {
+
+                map.setView(
+                    [
+                        latitude,
+                        longitude
+                    ],
+                    14
+                );
+
+            }
+
+
+            locationHint.textContent =
+                "Destination selected.";
+
+        } catch (error) {
+
+            console.error(
+                "LosOja destination search error:",
+                error
+            );
+
+            locationHint.textContent =
+                "Destination search failed. Please try again.";
+
+        }
+
+    }
+
+
+    /* =========================================================
+       GET AUTH
+    ========================================================= */
+
+    async function getLoggedInUser() {
+
+        let user =
+            null;
+
+        let accessToken =
+            null;
+
+
+        try {
+
+            if (
+                window.ensureValidSupabaseSession &&
+                typeof window.ensureValidSupabaseSession ===
+                    "function"
+            ) {
+
+                const session =
+                    await window.ensureValidSupabaseSession();
+
+
+                if (
+                    session &&
+                    session.user
+                ) {
+
+                    user =
+                        session.user;
+
+                }
+
+            }
+
+        } catch (error) {
+
+            console.warn(
+                "LosOja session check failed.",
+                error
+            );
+
+        }
+
+
+        try {
+
+            if (
+                window.getCurrentUser &&
+                typeof window.getCurrentUser ===
+                    "function"
+            ) {
+
+                if (!user) {
+
+                    user =
+                        await window.getCurrentUser();
+
+                }
+
+            }
+
+        } catch (error) {
+
+            console.warn(
+                "LosOja getCurrentUser failed.",
+                error
+            );
+
+        }
+
+
+        try {
+
+            if (
+                window.getSupabaseAccessToken &&
+                typeof window.getSupabaseAccessToken ===
+                    "function"
+            ) {
+
+                accessToken =
+                    await window.getSupabaseAccessToken();
+
+            }
+
+        } catch (error) {
+
+            console.warn(
+                "LosOja access token lookup failed.",
+                error
+            );
+
+        }
+
+
+        /*
+         * Local session fallback
+         */
+
+        if (
+            !accessToken
+        ) {
+
+            try {
+
+                const rawSession =
+                    localStorage.getItem(
+                        "losoja_supabase_session"
+                    );
+
+
+                if (rawSession) {
+
+                    const session =
+                        JSON.parse(
+                            rawSession
+                        );
+
+
+                    accessToken =
+                        session.access_token ||
+                        session.accessToken ||
+                        null;
+
+
+                    if (
+                        !user &&
+                        session.user
+                    ) {
+
+                        user =
+                            session.user;
+
+                    }
+
+                }
+
+            } catch (error) {
+
+                console.warn(
+                    "LosOja local session fallback failed.",
+                    error
+                );
+
+            }
+
+        }
+
+
+        /*
+         * Direct Supabase lookup
+         */
+
+        if (
+            !user &&
+            accessToken
+        ) {
+
+            try {
+
+                const response =
+                    await fetch(
+
+                        SUPABASE_URL +
+                        "/auth/v1/user",
+
+                        {
+
+                            method:
+                                "GET",
+
+                            headers: {
+
+                                "apikey":
+                                    SUPABASE_KEY,
+
+                                "Authorization":
+                                    "Bearer " +
+                                    accessToken
+
+                            }
+
+                        }
+
+                    );
+
+
+                if (
+                    response.ok
+                ) {
+
+                    user =
+                        await response.json();
+
+                }
+
+            } catch (error) {
+
+                console.warn(
+                    "LosOja direct user lookup failed.",
+                    error
+                );
+
+            }
+
+        }
+
+
+        return {
+
+            user:
+                user,
+
+            accessToken:
+                accessToken
+
+        };
+
+    }
+
+
+    /* =========================================================
+       LOAD NEARBY DRIVERS
+    ========================================================= */
+
+    async function loadNearbyDrivers() {
+
+        const auth =
+            await getLoggedInUser();
+
+
+        const accessToken =
+            auth.accessToken;
+
+
+        if (
+            !accessToken
+        ) {
+
+            driverList.innerHTML =
+                `
+                <div class="driver-empty">
+                    Please log in to see available LosOja drivers.
+                </div>
+                `;
+
+            nearbyDriverCount.textContent =
+                "Login required";
+
+            return;
+
+        }
+
+
+        try {
+
+            /*
+             * Only verified + available drivers.
+             *
+             * We fetch coordinates too.
+             */
+
+            const url =
+                SUPABASE_URL +
+                "/rest/v1/mobility_drivers" +
+                "?verification_status=eq.verified" +
+                "&is_available=eq.true" +
+                "&select=id,user_id,service_type,full_name,vehicle_name,vehicle_plate,location,latitude,longitude";
+
+
+            const response =
+                await fetch(
+
+                    url,
+
+                    {
+
+                        method:
+                            "GET",
+
+                        headers: {
+
+                            "apikey":
+                                SUPABASE_KEY,
+
+                            "Authorization":
+                                "Bearer " +
+                                accessToken
+
+                        }
+
+                    }
+
+                );
+
+
+            const responseText =
+                await response.text();
+
+
+            if (
+                !response.ok
+            ) {
+
+                console.error(
+                    "LosOja nearby driver error:",
+                    response.status,
+                    responseText
+                );
+
+                driverList.innerHTML =
+                    `
+                    <div class="driver-empty">
+                        Unable to load nearby drivers right now.
+                    </div>
+                    `;
+
+                nearbyDriverCount.textContent =
+                    "Unavailable";
+
+                return;
+
+            }
+
+
+            let drivers =
+                [];
+
+
+            try {
+
+                drivers =
+                    JSON.parse(
+                        responseText
+                    );
+
+            } catch (error) {
+
+                drivers =
+                    [];
+
+            }
+
+
+            if (
+                !Array.isArray(drivers)
+            ) {
+
+                drivers =
+                    [];
+
+            }
+
+
+            /*
+             * Filter by selected service.
+             */
+
+            const matchingDrivers =
+                drivers.filter(
+
+                    function (driver) {
+
+                        return (
+                            driver.service_type ===
+                            selectedServiceType
+                        );
+
+                    }
+
+                );
+
+
+            renderDrivers(
+                matchingDrivers
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "LosOja nearby drivers failed:",
+                error
+            );
+
+            driverList.innerHTML =
+                `
+                <div class="driver-empty">
+                    Unable to load nearby drivers.
+                </div>
+                `;
+
+            nearbyDriverCount.textContent =
+                "Unavailable";
+
+        }
+
+    }
+
+
+    /* =========================================================
+       RENDER DRIVERS
+    ========================================================= */
+
+    function renderDrivers(
+        drivers
+    ) {
+
+        /*
+         * Remove old markers.
+         */
+
+        driverMarkers.forEach(
+
+            function (marker) {
+
+                if (
+                    map &&
+                    map.hasLayer(marker)
+                ) {
+
+                    map.removeLayer(
+                        marker
+                    );
+
+                }
+
+            }
+
+        );
+
+
+        driverMarkers =
+            [];
+
+
+        nearbyDriverCount.textContent =
+            drivers.length +
+            (
+                drivers.length === 1
+                    ? " driver"
+                    : " drivers"
+            );
+
+
+        if (
+            drivers.length === 0
+        ) {
+
+            driverList.innerHTML =
+                `
+                <div class="driver-empty">
+                    No verified available ${escapeHtml(selectedServiceName.toLowerCase())}
+                    providers are currently available.
+                    Try another ride type or check again shortly.
+                </div>
+                `;
+
+            return;
+
+        }
+
+
+        driverList.innerHTML =
+            drivers
+                .map(
+
+                    function (driver) {
+
+                        return renderDriverCard(
+                            driver
+                        );
+
+                    }
+
+                )
+                .join("");
+
+
+        /*
+         * Add map markers for drivers
+         * who have coordinates.
+         */
+
+        drivers.forEach(
+
+            function (driver) {
+
+                const latitude =
+                    parseFloat(
+                        driver.latitude
+                    );
+
+                const longitude =
+                    parseFloat(
+                        driver.longitude
+                    );
+
+
+                if (
+                    Number.isFinite(latitude) &&
+                    Number.isFinite(longitude) &&
+                    map
+                ) {
+
+                    const marker =
+                        L.marker(
+
+                            [
+                                latitude,
+                                longitude
+                            ],
+
+                            {
+                                icon:
+                                    createDriverIcon(
+                                        driver.service_type
+                                    )
+                            }
+
+                        )
+                        .addTo(map);
+
+
+                    marker.bindPopup(
+
+                        `
+                        <strong>
+                            ${escapeHtml(
+                                driver.full_name ||
+                                "LosOja Driver"
+                            )}
+                        </strong>
+                        <br>
+                        ${escapeHtml(
+                            serviceDisplayName(
+                                driver.service_type
+                            )
+                        )}
+                        <br>
+                        <span style="color:#087a3e;">
+                            ✓ Verified & Available
+                        </span>
+                        `
+
+                    );
+
+
+                    driverMarkers.push(
+                        marker
+                    );
+
+                }
+
+            }
+
+        );
+
+    }
+
+
+    /* =========================================================
+       DRIVER CARD
+    ========================================================= */
+
+    function renderDriverCard(
+        driver
+    ) {
+
+        return `
+
+            <div class="driver-card">
+
+                <div class="driver-icon">
+                    ${serviceIcon(
+                        driver.service_type
+                    )}
+                </div>
+
+                <div class="driver-name">
+                    ${escapeHtml(
+                        driver.full_name ||
+                        "LosOja Driver"
+                    )}
+                </div>
+
+                <div class="driver-service">
+                    ${escapeHtml(
+                        serviceDisplayName(
+                            driver.service_type
+                        )
+                    )}
+                </div>
+
+                <div class="driver-status">
+                    ✓ Available
+                </div>
+
+            </div>
+
+        `;
+
+    }
+
+
+    /* =========================================================
+       SERVICE HELPERS
+    ========================================================= */
+
+    function serviceDisplayName(
+        serviceType
+    ) {
+
+        const names = {
+
+            cab:
+                "Cab",
+
+            tricycle:
+                "Tricycle (Keke)",
+
+            bike:
+                "Bike",
+
+            dispatch:
+                "Dispatch Rider",
+
+            truck:
+                "Rent a Truck"
+
+        };
+
+
+        return (
+            names[serviceType] ||
+            "Mobility Provider"
+        );
+
+    }
+
+
+    function serviceIcon(
+        serviceType
+    ) {
+
+        const icons = {
+
+            cab:
+                "🚕",
+
+            tricycle:
+                "🛺",
+
+            bike:
+                "🏍️",
+
+            dispatch:
+                "🛵",
+
+            truck:
+                "🚚"
+
+        };
+
+
+        return (
+            icons[serviceType] ||
+            "🚕"
+        );
+
+    }
+
+
+    /* =========================================================
+       ESCAPE HTML
+    ========================================================= */
+
+    function escapeHtml(
+        value
+    ) {
+
+        return String(
+            value ?? ""
+        )
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+    }
+
+
+    /* =========================================================
+       SELECT RIDE TYPE
+    ========================================================= */
+
+    document
+        .querySelectorAll(
+            ".ride-type"
+        )
+        .forEach(
+
+            function (button) {
+
+                button.addEventListener(
+
+                    "click",
+
+                    function () {
+
+                        document
+                            .querySelectorAll(
+                                ".ride-type"
+                            )
+                            .forEach(
+
+                                function (item) {
+
+                                    item.classList.remove(
+                                        "active"
+                                    );
+
+                                }
+
+                            );
+
+
+                        button.classList.add(
+                            "active"
+                        );
+
+
+                        selectedServiceType =
+                            button.dataset.service;
+
+
+                        selectedServiceName =
+                            button.dataset.serviceName;
+
+
+                        requestRideButton.textContent =
+                            "Request " +
+                            selectedServiceName;
+
+
+                        loadNearbyDrivers();
+
+                    }
+
+                );
+
+            }
+
+        );
+
+
+    /* =========================================================
+       REQUEST BUTTON
+    ========================================================= */
+
+    requestRideButton.addEventListener(
+
+        "click",
+
+        function () {
+
+            const pickup =
+                pickupInput.value.trim();
+
+
+            const destination =
+                destinationInput.value.trim();
+
+
+            if (
+                !pickup
+            ) {
+
+                locationHint.textContent =
+                    "Please choose or enter your pickup location.";
+
+                pickupInput.focus();
+
+                return;
+
+            }
+
+
+            if (
+                !destination
+            ) {
+
+                locationHint.textContent =
+                    "Please enter your destination.";
+
+                destinationInput.focus();
+
+                return;
+
+            }
+
+
+            openRideRequest();
+
+        }
+
+    );
+
+
+    /* =========================================================
+       OPEN MODAL
+    ========================================================= */
+
+    function openRideRequest() {
+
+        serviceDisplay.textContent =
+            serviceIcon(
+                selectedServiceType
+            ) +
+            " " +
+            selectedServiceName;
+
+
+        document.getElementById(
+            "rideRequestTitle"
+        ).textContent =
+            "Request " +
+            selectedServiceName;
+
+
+        modalPickupInput.value =
+            pickupInput.value;
+
+
+        modalDestinationInput.value =
+            destinationInput.value;
+
+
+        statusMessage.textContent =
+            "";
+
+        statusMessage.className =
+            "request-status";
+
+
+        modal.classList.add(
+            "show"
+        );
+
+    }
+
+
+    /* =========================================================
+       CLOSE MODAL
+    ========================================================= */
+
+    function closeRideRequest() {
+
+        modal.classList.remove(
+            "show"
+        );
+
+        statusMessage.textContent =
+            "";
+
+        statusMessage.className =
+            "request-status";
+
+    }
+
+
+    closeButton.addEventListener(
+        "click",
+        closeRideRequest
+    );
+
+
+    modal.addEventListener(
+
+        "click",
+
+        function (event) {
+
+            if (
+                event.target === modal
+            ) {
+
+                closeRideRequest();
+
+            }
+
+        }
+
+    );
+
+
+    document.addEventListener(
+
+        "keydown",
+
+        function (event) {
+
+            if (
+                event.key === "Escape" &&
+                modal.classList.contains("show")
+            ) {
+
+                closeRideRequest();
+
+            }
+
+        }
+
+    );
+
+
+    /* =========================================================
+       LOCATION BUTTONS
+    ========================================================= */
+
+    useLocationButton.addEventListener(
+        "click",
+        useCurrentLocation
+    );
+
+
+    mapLocationButton.addEventListener(
+        "click",
+        useCurrentLocation
+    );
+
+
+    searchDestinationButton.addEventListener(
+        "click",
+        searchDestination
+    );
+
+
+    destinationInput.addEventListener(
+
+        "keydown",
+
+        function (event) {
+
+            if (
+                event.key === "Enter"
+            ) {
+
+                event.preventDefault();
+
+                searchDestination();
+
+            }
+
+        }
+
+    );
+
+
+    /* =========================================================
+       BACK
+    ========================================================= */
+
+    backButton.addEventListener(
+
+        "click",
+
+        function () {
+
+            window.location.href =
+                "index.html";
+
+        }
+
+    );
+
+
+    /* =========================================================
+       STATUS
+    ========================================================= */
 
     function showStatus(
         message,
@@ -955,285 +2941,164 @@
     }
 
 
-    function clearStatus() {
+    /* =========================================================
+       SUBMIT MOBILITY REQUEST
+    ========================================================= */
 
-        statusMessage.textContent =
-            "";
+    form.addEventListener(
 
-        statusMessage.className =
-            "request-status";
+        "submit",
 
-    }
+        async function (event) {
 
-
-    /*
-     * OPEN REQUEST MODAL
-     */
-
-    function openRideRequest(
-        serviceType,
-        serviceName
-    ) {
-
-        selectedServiceType =
-            serviceType;
+            event.preventDefault();
 
 
-        serviceDisplay.textContent =
-            "🚕 " + serviceName;
+            const pickupLocation =
+                modalPickupInput.value.trim();
 
 
-        document.getElementById(
-            "rideRequestTitle"
-        ).textContent =
-            "Request " + serviceName;
+            const destinationLocation =
+                modalDestinationInput.value.trim();
 
 
-        clearStatus();
+            const notes =
+                document
+                    .getElementById(
+                        "requestNotes"
+                    )
+                    .value
+                    .trim();
 
-
-        form.reset();
-
-
-        selectedServiceType =
-            serviceType;
-
-
-        modal.classList.add(
-            "show"
-        );
-
-
-        const pickupInput =
-            document.getElementById(
-                "pickupLocation"
-            );
-
-
-        if (pickupInput) {
-
-            setTimeout(
-                function () {
-
-                    pickupInput.focus();
-
-                },
-                100
-            );
-
-        }
-
-    }
-
-
-    /*
-     * CLOSE REQUEST MODAL
-     */
-
-    function closeRideRequest() {
-
-        modal.classList.remove(
-            "show"
-        );
-
-        clearStatus();
-
-    }
-
-
-    /*
-     * CONNECT RIDE BUTTONS
-     */
-
-    rideButtons.forEach(
-        function (button) {
-
-            button.addEventListener(
-                "click",
-                function () {
-
-                    const serviceType =
-                        button.dataset.service;
-
-
-                    const serviceName =
-                        button.dataset.serviceName;
-
-
-                    if (
-                        !serviceType ||
-                        !serviceName
-                    ) {
-
-                        console.error(
-                            "LosOja Mobility: service information missing."
-                        );
-
-                        return;
-
-                    }
-
-
-                    openRideRequest(
-                        serviceType,
-                        serviceName
-                    );
-
-                }
-            );
-
-        }
-    );
-
-
-    /*
-     * CLOSE BUTTON
-     */
-
-    closeButton.addEventListener(
-        "click",
-        closeRideRequest
-    );
-
-
-    /*
-     * CLICK OUTSIDE MODAL
-     */
-
-    modal.addEventListener(
-        "click",
-        function (event) {
 
             if (
-                event.target === modal
+                !pickupLocation ||
+                !destinationLocation
             ) {
 
-                closeRideRequest();
+                showStatus(
+                    "Please enter your pickup location and destination.",
+                    false
+                );
+
+                return;
 
             }
 
-        }
-    );
+
+            const auth =
+                await getLoggedInUser();
 
 
-    /*
-     * ESCAPE KEY
-     */
+            const user =
+                auth.user;
 
-    document.addEventListener(
-        "keydown",
-        function (event) {
+
+            const accessToken =
+                auth.accessToken;
+
 
             if (
-                event.key === "Escape" &&
-                modal.classList.contains("show")
+                !user ||
+                !user.id
             ) {
 
-                closeRideRequest();
+                showStatus(
+                    "Please log in before requesting a ride.",
+                    false
+                );
+
+                return;
 
             }
 
-        }
-    );
-
-
-    /*
-     * BACK BUTTON
-     */
-
-    backButton.addEventListener(
-        "click",
-        function () {
-
-            window.location.href =
-                "index.html";
-
-        }
-    );
-
-
-    /*
-     * GET LOGGED-IN USER
-     */
-
-    async function getLoggedInUser() {
-
-        let user = null;
-
-        let accessToken = null;
-
-
-        /*
-         * Existing LosOja auth
-         */
-
-        try {
 
             if (
-                window.getCurrentUser &&
-                typeof window.getCurrentUser ===
-                    "function"
+                !accessToken
             ) {
 
-                user =
-                    await window.getCurrentUser();
+                showStatus(
+                    "Your login session has expired. Please log in again.",
+                    false
+                );
+
+                return;
 
             }
 
-        } catch (error) {
 
-            console.warn(
-                "LosOja: getCurrentUser failed.",
-                error
-            );
-
-        }
+            submitButton.disabled =
+                true;
 
 
-        /*
-         * Access token
-         */
+            submitButton.textContent =
+                "Requesting...";
 
-        try {
-
-            if (
-                window.getSupabaseAccessToken &&
-                typeof window.getSupabaseAccessToken ===
-                    "function"
-            ) {
-
-                accessToken =
-                    await window.getSupabaseAccessToken();
-
-            }
-
-        } catch (error) {
-
-            console.warn(
-                "LosOja: access token lookup failed.",
-                error
-            );
-
-        }
-
-
-        /*
-         * Direct Supabase user lookup
-         */
-
-        if (
-            !user &&
-            accessToken
-        ) {
 
             try {
 
+                const requestData = {
+
+                    user_id:
+                        user.id,
+
+                    driver_id:
+                        null,
+
+                    service_type:
+                        selectedServiceType,
+
+                    pickup_location:
+                        pickupLocation,
+
+                    pickup_latitude:
+                        pickupCoordinates
+                            ? pickupCoordinates.latitude
+                            : null,
+
+                    pickup_longitude:
+                        pickupCoordinates
+                            ? pickupCoordinates.longitude
+                            : null,
+
+                    destination_location:
+                        destinationLocation,
+
+                    destination_latitude:
+                        destinationCoordinates
+                            ? destinationCoordinates.latitude
+                            : null,
+
+                    destination_longitude:
+                        destinationCoordinates
+                            ? destinationCoordinates.longitude
+                            : null,
+
+                    status:
+                        "requested",
+
+                    notes:
+                        notes || null
+
+                };
+
+
+                console.log(
+                    "LosOja: submitting mobility request",
+                    requestData
+                );
+
+
                 const response =
                     await fetch(
+
                         SUPABASE_URL +
-                        "/auth/v1/user",
+                        "/rest/v1/mobility_requests",
+
                         {
-                            method: "GET",
+
+                            method:
+                                "POST",
 
                             headers: {
 
@@ -1242,46 +3107,155 @@
 
                                 "Authorization":
                                     "Bearer " +
-                                    accessToken
+                                    accessToken,
 
-                            }
+                                "Content-Type":
+                                    "application/json",
+
+                                "Prefer":
+                                    "return=representation"
+
+                            },
+
+                            body:
+                                JSON.stringify(
+                                    requestData
+                                )
 
                         }
+
                     );
 
 
+                const responseText =
+                    await response.text();
+
+
                 if (
-                    response.ok
+                    !response.ok
                 ) {
 
-                    user =
-                        await response.json();
+                    console.error(
+                        "LosOja mobility request error:",
+                        response.status,
+                        responseText
+                    );
+
+
+                    let message =
+                        "Unable to submit your ride request.";
+
+
+                    try {
+
+                        const errorData =
+                            JSON.parse(
+                                responseText
+                            );
+
+
+                        message =
+                            errorData.message ||
+                            errorData.error_description ||
+                            errorData.hint ||
+                            message;
+
+                    } catch (error) {
+
+                        if (
+                            responseText
+                        ) {
+
+                            message =
+                                responseText;
+
+                        }
+
+                    }
+
+
+                    showStatus(
+                        message,
+                        false
+                    );
+
+                    return;
 
                 }
 
+
+                console.log(
+                    "LosOja: mobility request created successfully."
+                );
+
+
+                showStatus(
+                    "Ride request submitted. We are looking for a verified available provider.",
+                    true
+                );
+
+
+                form.reset();
+
+
+                /*
+                 * Update main screen.
+                 */
+
+                pickupInput.value =
+                    pickupLocation;
+
+                destinationInput.value =
+                    destinationLocation;
+
+
+                await loadLatestRequest();
+
+
+                setTimeout(
+
+                    function () {
+
+                        closeRideRequest();
+
+                    },
+
+                    1800
+
+                );
+
+
             } catch (error) {
 
-                console.warn(
-                    "LosOja: Supabase user lookup failed.",
+                console.error(
+                    "LosOja mobility request failed:",
                     error
                 );
+
+
+                showStatus(
+                    "Something went wrong. Please try again.",
+                    false
+                );
+
+            } finally {
+
+                submitButton.disabled =
+                    false;
+
+                submitButton.textContent =
+                    "Request Ride";
 
             }
 
         }
 
-
-        return {
-            user: user,
-            accessToken: accessToken
-        };
-
-    }
+    );
 
 
-    /*
-     * GET REQUEST STATUS
-     */
+    /* =========================================================
+       STATUS LABEL
+    ========================================================= */
 
     function statusLabel(
         status
@@ -1315,248 +3289,16 @@
 
         return (
             labels[status] ||
-            status
+            status ||
+            "Unknown"
         );
 
     }
 
 
-    /*
-     * RENDER REQUEST
-     */
-
-    function renderRequest(
-        request
-    ) {
-
-        if (!request) {
-
-            myRequestContent.innerHTML =
-                `
-                <div class="request-empty">
-                    You don't have an active ride request.
-                </div>
-                `;
-
-            return;
-
-        }
-
-
-        latestRequestId =
-            request.id;
-
-
-        const status =
-            String(
-                request.status || ""
-            ).toLowerCase();
-
-
-        let badgeClass =
-            "request-status-badge";
-
-
-        if (
-            status === "accepted"
-        ) {
-
-            badgeClass +=
-                " accepted";
-
-        }
-
-
-        if (
-            status === "completed"
-        ) {
-
-            badgeClass +=
-                " completed";
-
-        }
-
-
-        if (
-            status === "cancelled" ||
-            status === "rejected"
-        ) {
-
-            badgeClass +=
-                " cancelled";
-
-        }
-
-
-        let serviceName =
-            request.service_type || "Mobility";
-
-
-        if (
-            request.service_type ===
-            "tricycle"
-        ) {
-
-            serviceName =
-                "Tricycle (Keke)";
-
-        } else if (
-            request.service_type ===
-            "cab"
-        ) {
-
-            serviceName =
-                "Cab";
-
-        } else if (
-            request.service_type ===
-            "bike"
-        ) {
-
-            serviceName =
-                "Bike";
-
-        } else if (
-            request.service_type ===
-            "dispatch"
-        ) {
-
-            serviceName =
-                "Dispatch Rider";
-
-        } else if (
-            request.service_type ===
-            "truck"
-        ) {
-
-            serviceName =
-                "Rent a Truck";
-
-        }
-
-
-        myRequestContent.innerHTML =
-            `
-            <div class="request-service-name">
-                🚕 ${escapeHtml(serviceName)}
-            </div>
-
-            <div class="${badgeClass}">
-                ${escapeHtml(
-                    statusLabel(status)
-                )}
-            </div>
-
-            <div class="request-detail">
-
-                <span class="request-detail-label">
-                    Pickup
-                </span>
-
-                <div class="request-detail-value">
-                    ${escapeHtml(
-                        request.pickup_location ||
-                        "Not provided"
-                    )}
-                </div>
-
-            </div>
-
-            <div class="request-detail">
-
-                <span class="request-detail-label">
-                    Destination
-                </span>
-
-                <div class="request-detail-value">
-                    ${escapeHtml(
-                        request.destination_location ||
-                        "Not provided"
-                    )}
-                </div>
-
-            </div>
-
-            <div class="request-detail">
-
-                <span class="request-detail-label">
-                    Request Status
-                </span>
-
-                <div class="request-detail-value">
-                    ${escapeHtml(
-                        statusLabel(status)
-                    )}
-                </div>
-
-            </div>
-
-            <button
-                type="button"
-                class="request-refresh"
-                id="refreshRequestButton"
-            >
-                Refresh Status
-            </button>
-            `;
-
-
-        const refreshButton =
-            document.getElementById(
-                "refreshRequestButton"
-            );
-
-
-        if (refreshButton) {
-
-            refreshButton.addEventListener(
-                "click",
-                loadLatestRequest
-            );
-
-        }
-
-    }
-
-
-    /*
-     * ESCAPE HTML
-     */
-
-    function escapeHtml(
-        value
-    ) {
-
-        return String(
-            value ?? ""
-        )
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-        .replace(
-            /</g,
-            "&lt;"
-        )
-        .replace(
-            />/g,
-            "&gt;"
-        )
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-        .replace(
-            /'/g,
-            "&#039;"
-        );
-
-    }
-
-
-    /*
-     * LOAD LATEST CUSTOMER REQUEST
-     */
+    /* =========================================================
+       LOAD LATEST REQUEST
+    ========================================================= */
 
     async function loadLatestRequest() {
 
@@ -1605,9 +3347,13 @@
 
             const response =
                 await fetch(
+
                     url,
+
                     {
-                        method: "GET",
+
+                        method:
+                            "GET",
 
                         headers: {
 
@@ -1621,6 +3367,7 @@
                         }
 
                     }
+
                 );
 
 
@@ -1633,43 +3380,20 @@
             ) {
 
                 console.error(
-                    "LosOja mobility request status error:",
+                    "LosOja request status error:",
                     response.status,
                     responseText
                 );
-
-                myRequestContent.innerHTML =
-                    `
-                    <div class="request-empty">
-                        Unable to load your ride request.
-                    </div>
-                    `;
 
                 return;
 
             }
 
 
-            let requests = [];
-
-
-            try {
-
-                requests =
-                    JSON.parse(
-                        responseText
-                    );
-
-            } catch (
-                parseError
-            ) {
-
-                console.error(
-                    "LosOja request JSON error:",
-                    parseError
+            const requests =
+                JSON.parse(
+                    responseText
                 );
-
-            }
 
 
             if (
@@ -1677,9 +3401,12 @@
                 requests.length === 0
             ) {
 
-                renderRequest(
-                    null
-                );
+                myRequestContent.innerHTML =
+                    `
+                    <div class="request-empty">
+                        You don't have a ride request yet.
+                    </div>
+                    `;
 
                 return;
 
@@ -1694,26 +3421,168 @@
         } catch (error) {
 
             console.error(
-                "LosOja: failed to load mobility request.",
+                "LosOja failed to load latest request:",
                 error
             );
-
-
-            myRequestContent.innerHTML =
-                `
-                <div class="request-empty">
-                    Unable to load your ride request.
-                </div>
-                `;
 
         }
 
     }
 
 
-    /*
-     * START REQUEST POLLING
-     */
+    /* =========================================================
+       RENDER REQUEST
+    ========================================================= */
+
+    function renderRequest(
+        request
+    ) {
+
+        latestRequestId =
+            request.id;
+
+
+        const status =
+            String(
+                request.status || ""
+            ).toLowerCase();
+
+
+        let badgeClass =
+            "request-status-badge";
+
+
+        if (
+            status === "accepted"
+        ) {
+
+            badgeClass +=
+                " accepted";
+
+        }
+
+
+        if (
+            status === "completed"
+        ) {
+
+            badgeClass +=
+                " completed";
+
+        }
+
+
+        if (
+            status === "cancelled" ||
+            status === "rejected"
+        ) {
+
+            badgeClass +=
+                " cancelled";
+
+        }
+
+
+        const serviceName =
+            serviceDisplayName(
+                request.service_type
+            );
+
+
+        myRequestContent.innerHTML =
+            `
+
+            <div class="request-service-name">
+                ${serviceIcon(
+                    request.service_type
+                )}
+                ${escapeHtml(serviceName)}
+            </div>
+
+            <div class="${badgeClass}">
+                ${escapeHtml(
+                    statusLabel(status)
+                )}
+            </div>
+
+            <div class="request-detail">
+
+                <span class="request-detail-label">
+                    Pickup
+                </span>
+
+                <div class="request-detail-value">
+                    ${escapeHtml(
+                        request.pickup_location ||
+                        "Not provided"
+                    )}
+                </div>
+
+            </div>
+
+            <div class="request-detail">
+
+                <span class="request-detail-label">
+                    Destination
+                </span>
+
+                <div class="request-detail-value">
+                    ${escapeHtml(
+                        request.destination_location ||
+                        "Not provided"
+                    )}
+                </div>
+
+            </div>
+
+            <div class="request-detail">
+
+                <span class="request-detail-label">
+                    Status
+                </span>
+
+                <div class="request-detail-value">
+                    ${escapeHtml(
+                        statusLabel(status)
+                    )}
+                </div>
+
+            </div>
+
+            <button
+                type="button"
+                class="request-refresh"
+                id="refreshRequestButton"
+            >
+                Refresh Status
+            </button>
+
+            `;
+
+
+        const refreshButton =
+            document.getElementById(
+                "refreshRequestButton"
+            );
+
+
+        if (
+            refreshButton
+        ) {
+
+            refreshButton.addEventListener(
+                "click",
+                loadLatestRequest
+            );
+
+        }
+
+    }
+
+
+    /* =========================================================
+       POLLING
+    ========================================================= */
 
     function startRequestPolling() {
 
@@ -1730,387 +3599,58 @@
 
         requestPolling =
             setInterval(
-                function () {
 
-                    loadLatestRequest();
+                loadLatestRequest,
 
-                },
                 10000
+
             );
 
     }
 
 
-    /*
-     * SUBMIT MOBILITY REQUEST
-     */
-
-    form.addEventListener(
-        "submit",
-        async function (event) {
-
-            event.preventDefault();
-
-
-            clearStatus();
-
-
-            const pickupLocation =
-                document
-                    .getElementById(
-                        "pickupLocation"
-                    )
-                    .value
-                    .trim();
-
-
-            const destinationLocation =
-                document
-                    .getElementById(
-                        "destinationLocation"
-                    )
-                    .value
-                    .trim();
-
-
-            const notes =
-                document
-                    .getElementById(
-                        "requestNotes"
-                    )
-                    .value
-                    .trim();
-
-
-            /*
-             * Validate service
-             */
-
-            if (
-                !selectedServiceType
-            ) {
-
-                showStatus(
-                    "Please select a mobility service.",
-                    false
-                );
-
-                return;
-
-            }
-
-
-            /*
-             * Validate locations
-             */
-
-            if (
-                !pickupLocation ||
-                !destinationLocation
-            ) {
-
-                showStatus(
-                    "Please enter your pickup location and destination.",
-                    false
-                );
-
-                return;
-
-            }
-
-
-            /*
-             * Authentication
-             */
-
-            const auth =
-                await getLoggedInUser();
-
-
-            const user =
-                auth.user;
-
-
-            const accessToken =
-                auth.accessToken;
-
-
-            if (
-                !user ||
-                !user.id
-            ) {
-
-                showStatus(
-                    "Please log in before requesting a ride.",
-                    false
-                );
-
-                return;
-
-            }
-
-
-            if (!accessToken) {
-
-                showStatus(
-                    "Your login session has expired. Please log in again.",
-                    false
-                );
-
-                return;
-
-            }
-
-
-            submitButton.disabled =
-                true;
-
-
-            submitButton.textContent =
-                "Submitting...";
-
-
-            try {
-
-                const requestData = {
-
-                    user_id:
-                        user.id,
-
-                    driver_id:
-                        null,
-
-                    service_type:
-                        selectedServiceType,
-
-                    pickup_location:
-                        pickupLocation,
-
-                    pickup_latitude:
-                        null,
-
-                    pickup_longitude:
-                        null,
-
-                    destination_location:
-                        destinationLocation,
-
-                    destination_latitude:
-                        null,
-
-                    destination_longitude:
-                        null,
-
-                    status:
-                        "requested",
-
-                    notes:
-                        notes || null
-
-                };
-
-
-                console.log(
-                    "LosOja: submitting mobility request",
-                    requestData
-                );
-
-
-                const response =
-                    await fetch(
-                        SUPABASE_URL +
-                        "/rest/v1/mobility_requests",
-                        {
-                            method: "POST",
-
-                            headers: {
-
-                                "apikey":
-                                    SUPABASE_KEY,
-
-                                "Authorization":
-                                    "Bearer " +
-                                    accessToken,
-
-                                "Content-Type":
-                                    "application/json",
-
-                                "Prefer":
-                                    "return=representation"
-
-                            },
-
-                            body:
-                                JSON.stringify(
-                                    requestData
-                                )
-
-                        }
-                    );
-
-
-                const responseText =
-                    await response.text();
-
-
-                if (
-                    !response.ok
-                ) {
-
-                    console.error(
-                        "LosOja mobility request error:",
-                        response.status,
-                        responseText
-                    );
-
-
-                    let errorMessage =
-                        "Unable to submit your request.";
-
-
-                    try {
-
-                        const errorData =
-                            JSON.parse(
-                                responseText
-                            );
-
-
-                        if (
-                            errorData.message
-                        ) {
-
-                            errorMessage =
-                                errorData.message;
-
-                        } else if (
-                            errorData.error_description
-                        ) {
-
-                            errorMessage =
-                                errorData.error_description;
-
-                        } else if (
-                            errorData.hint
-                        ) {
-
-                            errorMessage =
-                                errorData.hint;
-
-                        }
-
-                    } catch (
-                        parseError
-                    ) {
-
-                        if (
-                            responseText
-                        ) {
-
-                            errorMessage =
-                                responseText;
-
-                        }
-
-                    }
-
-
-                    showStatus(
-                        errorMessage,
-                        false
-                    );
-
-
-                    return;
-
-                }
-
-
-                console.log(
-                    "LosOja: mobility request created successfully."
-                );
-
-
-                showStatus(
-                    "Request submitted successfully. We will look for a verified available provider.",
-                    true
-                );
-
-
-                form.reset();
-
-
-                /*
-                 * Immediately load the request
-                 */
-
-                await loadLatestRequest();
-
-
-                /*
-                 * Close modal
-                 */
-
-                setTimeout(
-                    function () {
-
-                        closeRideRequest();
-
-                    },
-                    1800
-                );
-
-
-            } catch (error) {
-
-                console.error(
-                    "LosOja mobility request failed:",
-                    error
-                );
-
-
-                showStatus(
-                    "Something went wrong. Please try again.",
-                    false
-                );
-
-
-            } finally {
-
-                submitButton.disabled =
-                    false;
-
-
-                submitButton.textContent =
-                    "Submit Request";
-
-            }
+    function startDriverPolling() {
+
+        if (
+            driverPolling
+        ) {
+
+            clearInterval(
+                driverPolling
+            );
 
         }
-    );
 
 
-    /*
-     * INITIAL LOAD
-     */
+        driverPolling =
+            setInterval(
+
+                loadNearbyDrivers,
+
+                15000
+
+            );
+
+    }
+
+
+    /* =========================================================
+       INITIALIZE
+    ========================================================= */
+
+    initializeMap();
 
     loadLatestRequest();
 
-
-    /*
-     * CHECK FOR STATUS CHANGES
-     * EVERY 10 SECONDS
-     */
+    loadNearbyDrivers();
 
     startRequestPolling();
 
+    startDriverPolling();
 
-    /*
-     * SUCCESSFUL LOAD
-     */
 
     console.log(
-        "LosOja Mobility request system loaded."
+        "LosOja Mobility Bolt-inspired ride screen loaded."
     );
 
 
