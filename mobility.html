@@ -672,7 +672,6 @@ button {
 
 <div class="page">
 
-
 <header class="header">
 
     <div>
@@ -686,7 +685,6 @@ button {
         </div>
 
     </div>
-
 
     <button
         class="back-btn"
@@ -1124,15 +1122,31 @@ button {
 
 <script src="js/auth.js?v=3"></script>
 
-
-<script
-    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 
 <script>
 
 "use strict";
+
+
+/* =========================================================
+   LEAFLET COMPATIBILITY SAFETY
+   Prevents old bringToFront() calls from crashing the page.
+========================================================= */
+
+if (
+    window.L &&
+    L.Marker &&
+    typeof L.Marker.prototype.bringToFront !== "function"
+) {
+
+    L.Marker.prototype.bringToFront =
+        function () {
+            return this;
+        };
+
+}
 
 
 /* =========================================================
@@ -1711,6 +1725,9 @@ function drawRoute(
         L.geoJSON(
             geometry,
             {
+                pane:
+                    "overlayPane",
+
                 style: {
 
                     color:
@@ -1747,15 +1764,6 @@ function drawRoute(
         );
 
     }
-
-
-    /*
-     * Do not call bringToFront() here.
-     * The current Leaflet marker objects
-     * do not expose that method in this
-     * setup. Leaflet manages the marker
-     * layer automatically.
-     */
 
 }
 
@@ -2991,9 +2999,18 @@ function clearDriverMarkers() {
             marker
         ) {
 
-            mobilityMap.removeLayer(
-                marker
-            );
+            if (
+                marker &&
+                mobilityMap.hasLayer(
+                    marker
+                )
+            ) {
+
+                mobilityMap.removeLayer(
+                    marker
+                );
+
+            }
 
         }
     );
