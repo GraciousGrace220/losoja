@@ -1,1147 +1,1040 @@
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
 
-    <meta charset="UTF-8">
+```
+<meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
 
-    <meta
-        name="theme-color"
-        content="#087a3e"
-    >
+<meta
+    name="theme-color"
+    content="#087a3e"
+>
 
-    <meta
-        name="description"
-        content="LosOja Mobility - Find nearby transportation across Nigeria."
-    >
+<meta
+    name="description"
+    content="LosOja Mobility - Find nearby transportation across Nigeria."
+>
 
-    <title>Mobility - LosOja</title>
+<title>Mobility - LosOja</title>
 
-    <!-- Leaflet Map -->
-    <link
-        rel="stylesheet"
-        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    >
+<link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+>
 
-    <style>
+<style>
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
 
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            background: #f5faf7;
-            color: #111827;
-        }
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+        background: #f5faf7;
+        color: #111827;
+    }
 
-        button,
-        input,
-        textarea {
-            font-family: inherit;
-        }
+    button,
+    input,
+    textarea {
+        font-family: inherit;
+    }
 
-        .page {
-            min-height: 100vh;
-        }
+    .page {
+        min-height: 100vh;
+    }
 
+    .header {
+        background: #087a3e;
+        color: white;
+        padding: 15px 18px;
+        position: sticky;
+        top: 0;
+        z-index: 5000;
+    }
 
-        /* =========================================================
-           HEADER
-        ========================================================= */
+    .header-inner {
+        max-width: 1100px;
+        margin: auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+    }
 
-        .header {
-            background: #087a3e;
-            color: white;
-            padding: 15px 18px;
-            position: sticky;
-            top: 0;
-            z-index: 5000;
-        }
+    .logo {
+        font-size: 24px;
+        font-weight: 900;
+        letter-spacing: -.5px;
+    }
 
-        .header-inner {
-            max-width: 1100px;
-            margin: auto;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 15px;
-        }
+    .header-subtitle {
+        font-size: 12px;
+        opacity: .85;
+        margin-top: 2px;
+    }
 
-        .logo {
-            font-size: 24px;
-            font-weight: 900;
-            letter-spacing: -.5px;
-        }
+    .back-button {
+        border: 1px solid rgba(255,255,255,.65);
+        background: transparent;
+        color: white;
+        padding: 9px 14px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 700;
+    }
 
-        .header-subtitle {
-            font-size: 12px;
-            opacity: .85;
-            margin-top: 2px;
-        }
+    .back-button:hover {
+        background: rgba(255,255,255,.1);
+    }
 
-        .back-button {
-            border: 1px solid rgba(255,255,255,.65);
-            background: transparent;
-            color: white;
-            padding: 9px 14px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 700;
-        }
+    .main {
+        max-width: 1100px;
+        margin: auto;
+        padding: 18px 15px 90px;
+    }
 
-        .back-button:hover {
-            background: rgba(255,255,255,.1);
-        }
+    .ride-panel {
+        background: white;
+        border-radius: 22px;
+        box-shadow: 0 8px 30px rgba(0,0,0,.08);
+        overflow: hidden;
+        margin-bottom: 18px;
+    }
 
+    .ride-panel-header {
+        padding: 20px 20px 15px;
+    }
 
-        /* =========================================================
-           MAIN
-        ========================================================= */
+    .ride-panel-header h1 {
+        color: #087a3e;
+        font-size: 26px;
+        margin-bottom: 5px;
+    }
+
+    .ride-panel-header p {
+        color: #6b7280;
+        font-size: 14px;
+    }
+
+    .location-box {
+        padding: 0 20px 18px;
+    }
+
+    .location-row {
+        display: flex;
+        align-items: stretch;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+
+    .location-dot {
+        width: 13px;
+        min-width: 13px;
+        height: 13px;
+        border-radius: 50%;
+        background: #087a3e;
+        margin-top: 15px;
+    }
+
+    .location-dot.destination {
+        background: #ffb703;
+        border-radius: 3px;
+    }
+
+    .location-input-wrap {
+        flex: 1;
+        position: relative;
+    }
+
+    .location-input {
+        width: 100%;
+        padding: 13px 45px 13px 14px;
+        border: 1px solid #d1d5db;
+        border-radius: 12px;
+        font-size: 15px;
+        background: white;
+    }
+
+    .location-input:focus {
+        outline: 2px solid #087a3e;
+        border-color: #087a3e;
+    }
+
+    .location-action {
+        position: absolute;
+        right: 7px;
+        top: 7px;
+        border: 0;
+        background: #eef8f2;
+        color: #087a3e;
+        width: 34px;
+        height: 34px;
+        border-radius: 9px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+    .location-action:hover {
+        background: #dcefe4;
+    }
+
+    .location-hint {
+        font-size: 12px;
+        color: #6b7280;
+        margin: 5px 0 0 23px;
+    }
+
+    .map-wrapper {
+        position: relative;
+        height: 390px;
+        background: #e5e7eb;
+    }
+
+    #mobilityMap {
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+    }
+
+    .map-top-badge {
+        position: absolute;
+        z-index: 1000;
+        top: 12px;
+        left: 12px;
+        background: white;
+        border-radius: 999px;
+        padding: 9px 13px;
+        box-shadow: 0 4px 15px rgba(0,0,0,.15);
+        font-size: 12px;
+        font-weight: 800;
+        color: #087a3e;
+    }
+
+    .map-location-button {
+        position: absolute;
+        z-index: 1000;
+        right: 12px;
+        bottom: 15px;
+        border: 0;
+        background: white;
+        color: #087a3e;
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        box-shadow: 0 4px 15px rgba(0,0,0,.18);
+        cursor: pointer;
+        font-size: 19px;
+    }
+
+    .map-location-button:hover {
+        background: #eef8f2;
+    }
+
+    .ride-types {
+        padding: 18px 20px 5px;
+    }
+
+    .section-title {
+        font-size: 17px;
+        font-weight: 800;
+        margin-bottom: 12px;
+    }
+
+    .ride-type-row {
+        display: flex;
+        gap: 10px;
+        overflow-x: auto;
+        padding-bottom: 12px;
+    }
+
+    .ride-type {
+        min-width: 110px;
+        flex: 1;
+        border: 2px solid #e5e7eb;
+        background: white;
+        border-radius: 14px;
+        padding: 12px 8px;
+        cursor: pointer;
+        text-align: center;
+        transition: .15s ease;
+    }
+
+    .ride-type:hover {
+        border-color: #087a3e;
+    }
+
+    .ride-type.active {
+        border-color: #087a3e;
+        background: #eef8f2;
+    }
+
+    .ride-type-icon {
+        font-size: 29px;
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .ride-type-name {
+        font-size: 13px;
+        font-weight: 800;
+        color: #111827;
+    }
+
+    .ride-type-status {
+        font-size: 10px;
+        color: #6b7280;
+        margin-top: 3px;
+    }
+
+    .request-area {
+        padding: 10px 20px 20px;
+    }
+
+    .request-main-button {
+        width: 100%;
+        border: 0;
+        background: #087a3e;
+        color: white;
+        padding: 15px;
+        border-radius: 13px;
+        font-size: 16px;
+        font-weight: 900;
+        cursor: pointer;
+    }
+
+    .request-main-button:hover {
+        background: #055c2e;
+    }
+
+    .request-main-button:disabled {
+        opacity: .6;
+        cursor: not-allowed;
+    }
+
+    .request-helper {
+        text-align: center;
+        font-size: 12px;
+        color: #6b7280;
+        margin-top: 9px;
+    }
+
+    .nearby-section {
+        background: white;
+        border-radius: 20px;
+        padding: 20px;
+        margin-bottom: 18px;
+        box-shadow: 0 6px 22px rgba(0,0,0,.05);
+    }
+
+    .nearby-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 14px;
+    }
+
+    .nearby-count {
+        background: #eef8f2;
+        color: #087a3e;
+        padding: 6px 9px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .driver-list {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+    }
+
+    .driver-card {
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        padding: 13px;
+    }
+
+    .driver-icon {
+        font-size: 28px;
+        margin-bottom: 7px;
+    }
+
+    .driver-name {
+        font-weight: 800;
+        font-size: 14px;
+        margin-bottom: 4px;
+    }
+
+    .driver-service {
+        color: #6b7280;
+        font-size: 12px;
+    }
+
+    .driver-distance {
+        display: inline-block;
+        margin-top: 8px;
+        color: #055c2e;
+        background: #eef8f2;
+        padding: 4px 7px;
+        border-radius: 999px;
+        font-size: 10px;
+        font-weight: 800;
+    }
+
+    .driver-status {
+        display: inline-block;
+        margin-top: 6px;
+        color: #087a3e;
+        background: #eef8f2;
+        padding: 4px 7px;
+        border-radius: 999px;
+        font-size: 10px;
+        font-weight: 800;
+    }
+
+    .driver-empty {
+        grid-column: 1 / -1;
+        color: #6b7280;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .my-request-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 20px;
+        padding: 20px;
+        box-shadow: 0 6px 20px rgba(0,0,0,.05);
+        margin-bottom: 18px;
+    }
+
+    .my-request-title {
+        color: #087a3e;
+        font-size: 20px;
+        font-weight: 900;
+        margin-bottom: 15px;
+    }
+
+    .request-empty {
+        color: #6b7280;
+        line-height: 1.6;
+        font-size: 14px;
+    }
+
+    .request-service-name {
+        font-size: 18px;
+        font-weight: 900;
+        margin-bottom: 10px;
+    }
+
+    .request-status-badge {
+        display: inline-block;
+        padding: 7px 12px;
+        border-radius: 999px;
+        background: #fff7ed;
+        color: #9a3412;
+        font-size: 12px;
+        font-weight: 800;
+        margin-bottom: 15px;
+    }
+
+    .request-status-badge.accepted,
+    .request-status-badge.completed {
+        background: #eef8f2;
+        color: #087a3e;
+    }
+
+    .request-status-badge.cancelled,
+    .request-status-badge.rejected {
+        background: #fff1f2;
+        color: #9f1239;
+    }
+
+    .request-detail {
+        padding: 11px 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .request-detail-label {
+        display: block;
+        font-size: 11px;
+        color: #6b7280;
+        margin-bottom: 4px;
+        font-weight: 800;
+    }
+
+    .request-detail-value {
+        line-height: 1.5;
+        font-size: 14px;
+    }
+
+    .request-refresh {
+        margin-top: 15px;
+        border: 1px solid #087a3e;
+        background: white;
+        color: #087a3e;
+        padding: 9px 13px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 800;
+    }
+
+    .request-refresh:hover {
+        background: #eef8f2;
+    }
+
+    .provider-card {
+        background: #eef8f2;
+        border: 1px solid #cde8d7;
+        border-radius: 18px;
+        padding: 18px;
+        margin-bottom: 18px;
+        text-align: center;
+    }
+
+    .provider-card p {
+        color: #055c2e;
+        font-size: 13px;
+        line-height: 1.5;
+        margin-bottom: 12px;
+    }
+
+    .provider-button {
+        display: inline-block;
+        background: #087a3e;
+        color: white;
+        padding: 11px 16px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 800;
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        background: rgba(0,0,0,.55);
+        padding: 15px;
+        overflow-y: auto;
+    }
+
+    .modal.show {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal-card {
+        width: 100%;
+        max-width: 520px;
+        background: white;
+        border-radius: 20px;
+        padding: 22px;
+        box-shadow: 0 15px 45px rgba(0,0,0,.2);
+    }
+
+    .modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        margin-bottom: 18px;
+    }
+
+    .modal-header h2 {
+        color: #087a3e;
+        font-size: 21px;
+    }
+
+    .close-button {
+        border: 0;
+        background: #f3f4f6;
+        color: #374151;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 20px;
+    }
+
+    .request-service {
+        background: #eef8f2;
+        color: #055c2e;
+        padding: 12px;
+        border-radius: 10px;
+        margin-bottom: 18px;
+        font-weight: 800;
+    }
+
+    .form-group {
+        margin-bottom: 16px;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: 800;
+        margin-bottom: 7px;
+        font-size: 14px;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        width: 100%;
+        padding: 13px;
+        border: 1px solid #d1d5db;
+        border-radius: 10px;
+        font-size: 15px;
+    }
+
+    .form-group textarea {
+        min-height: 80px;
+        resize: vertical;
+    }
+
+    .request-submit {
+        width: 100%;
+        border: 0;
+        background: #087a3e;
+        color: white;
+        padding: 14px;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 800;
+        cursor: pointer;
+    }
+
+    .request-submit:disabled {
+        opacity: .6;
+        cursor: not-allowed;
+    }
+
+    .request-status {
+        display: none;
+        margin-top: 14px;
+        padding: 12px;
+        border-radius: 10px;
+        line-height: 1.5;
+        font-size: 13px;
+    }
+
+    .request-status.success {
+        display: block;
+        background: #eef8f2;
+        color: #055c2e;
+    }
+
+    .request-status.error {
+        display: block;
+        background: #fff1f2;
+        color: #9f1239;
+    }
+
+    @media (max-width: 700px) {
 
         .main {
-            max-width: 1100px;
-            margin: auto;
-            padding: 18px 15px 90px;
+            padding: 12px 10px 80px;
         }
-
-
-        /* =========================================================
-           RIDE SEARCH PANEL
-        ========================================================= */
-
-        .ride-panel {
-            background: white;
-            border-radius: 22px;
-            box-shadow: 0 8px 30px rgba(0,0,0,.08);
-            overflow: hidden;
-            margin-bottom: 18px;
-        }
-
-        .ride-panel-header {
-            padding: 20px 20px 15px;
-        }
-
-        .ride-panel-header h1 {
-            color: #087a3e;
-            font-size: 26px;
-            margin-bottom: 5px;
-        }
-
-        .ride-panel-header p {
-            color: #6b7280;
-            font-size: 14px;
-        }
-
-
-        /* =========================================================
-           LOCATION SEARCH
-        ========================================================= */
-
-        .location-box {
-            padding: 0 20px 18px;
-        }
-
-        .location-row {
-            display: flex;
-            align-items: stretch;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-
-        .location-dot {
-            width: 13px;
-            min-width: 13px;
-            height: 13px;
-            border-radius: 50%;
-            background: #087a3e;
-            margin-top: 15px;
-        }
-
-        .location-dot.destination {
-            background: #ffb703;
-            border-radius: 3px;
-        }
-
-        .location-input-wrap {
-            flex: 1;
-            position: relative;
-        }
-
-        .location-input {
-            width: 100%;
-            padding: 13px 45px 13px 14px;
-            border: 1px solid #d1d5db;
-            border-radius: 12px;
-            font-size: 15px;
-            background: white;
-        }
-
-        .location-input:focus {
-            outline: 2px solid #087a3e;
-            border-color: #087a3e;
-        }
-
-        .location-action {
-            position: absolute;
-            right: 7px;
-            top: 7px;
-            border: 0;
-            background: #eef8f2;
-            color: #087a3e;
-            width: 34px;
-            height: 34px;
-            border-radius: 9px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        .location-action:hover {
-            background: #dcefe4;
-        }
-
-        .location-divider {
-            height: 16px;
-            width: 1px;
-            background: #d1d5db;
-            margin-left: 6px;
-        }
-
-        .location-hint {
-            font-size: 12px;
-            color: #6b7280;
-            margin: 5px 0 0 23px;
-        }
-
-
-        /* =========================================================
-           MAP
-        ========================================================= */
 
         .map-wrapper {
-            position: relative;
-            height: 390px;
-            background: #e5e7eb;
-        }
-
-        #mobilityMap {
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-        }
-
-        .map-top-badge {
-            position: absolute;
-            z-index: 1000;
-            top: 12px;
-            left: 12px;
-            background: white;
-            border-radius: 999px;
-            padding: 9px 13px;
-            box-shadow: 0 4px 15px rgba(0,0,0,.15);
-            font-size: 12px;
-            font-weight: 800;
-            color: #087a3e;
-        }
-
-        .map-location-button {
-            position: absolute;
-            z-index: 1000;
-            right: 12px;
-            bottom: 15px;
-            border: 0;
-            background: white;
-            color: #087a3e;
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            box-shadow: 0 4px 15px rgba(0,0,0,.18);
-            cursor: pointer;
-            font-size: 19px;
-        }
-
-        .map-location-button:hover {
-            background: #eef8f2;
-        }
-
-
-        /* =========================================================
-           RIDE TYPES
-        ========================================================= */
-
-        .ride-types {
-            padding: 18px 20px 5px;
-        }
-
-        .section-title {
-            font-size: 17px;
-            font-weight: 800;
-            margin-bottom: 12px;
-        }
-
-        .ride-type-row {
-            display: flex;
-            gap: 10px;
-            overflow-x: auto;
-            padding-bottom: 12px;
-        }
-
-        .ride-type {
-            min-width: 110px;
-            flex: 1;
-            border: 2px solid #e5e7eb;
-            background: white;
-            border-radius: 14px;
-            padding: 12px 8px;
-            cursor: pointer;
-            text-align: center;
-            transition: .15s ease;
-        }
-
-        .ride-type:hover {
-            border-color: #087a3e;
-        }
-
-        .ride-type.active {
-            border-color: #087a3e;
-            background: #eef8f2;
-        }
-
-        .ride-type-icon {
-            font-size: 29px;
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        .ride-type-name {
-            font-size: 13px;
-            font-weight: 800;
-            color: #111827;
-        }
-
-        .ride-type-status {
-            font-size: 10px;
-            color: #6b7280;
-            margin-top: 3px;
-        }
-
-
-        /* =========================================================
-           REQUEST BUTTON
-        ========================================================= */
-
-        .request-area {
-            padding: 10px 20px 20px;
-        }
-
-        .request-main-button {
-            width: 100%;
-            border: 0;
-            background: #087a3e;
-            color: white;
-            padding: 15px;
-            border-radius: 13px;
-            font-size: 16px;
-            font-weight: 900;
-            cursor: pointer;
-        }
-
-        .request-main-button:hover {
-            background: #055c2e;
-        }
-
-        .request-main-button:disabled {
-            opacity: .6;
-            cursor: not-allowed;
-        }
-
-        .request-helper {
-            text-align: center;
-            font-size: 12px;
-            color: #6b7280;
-            margin-top: 9px;
-        }
-
-
-        /* =========================================================
-           NEARBY DRIVERS
-        ========================================================= */
-
-        .nearby-section {
-            background: white;
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 18px;
-            box-shadow: 0 6px 22px rgba(0,0,0,.05);
-        }
-
-        .nearby-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 14px;
-        }
-
-        .nearby-count {
-            background: #eef8f2;
-            color: #087a3e;
-            padding: 6px 9px;
-            border-radius: 999px;
-            font-size: 11px;
-            font-weight: 800;
+            height: 330px;
         }
 
         .driver-list {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
+            grid-template-columns: 1fr 1fr;
         }
 
-        .driver-card {
-            border: 1px solid #e5e7eb;
-            border-radius: 14px;
-            padding: 13px;
+        .ride-panel-header h1 {
+            font-size: 23px;
         }
 
-        .driver-icon {
-            font-size: 28px;
-            margin-bottom: 7px;
+        .ride-type {
+            min-width: 96px;
         }
 
-        .driver-name {
-            font-weight: 800;
-            font-size: 14px;
-            margin-bottom: 4px;
+    }
+
+    @media (max-width: 430px) {
+
+        .header {
+            padding: 13px 14px;
         }
 
-        .driver-service {
-            color: #6b7280;
-            font-size: 12px;
-        }
-
-        .driver-status {
-            display: inline-block;
-            margin-top: 8px;
-            color: #087a3e;
-            background: #eef8f2;
-            padding: 4px 7px;
-            border-radius: 999px;
-            font-size: 10px;
-            font-weight: 800;
-        }
-
-        .driver-empty {
-            grid-column: 1 / -1;
-            color: #6b7280;
-            font-size: 14px;
-            line-height: 1.6;
-        }
-
-
-        /* =========================================================
-           MY REQUEST
-        ========================================================= */
-
-        .my-request-card {
-            background: white;
-            border: 1px solid #e5e7eb;
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 6px 20px rgba(0,0,0,.05);
-            margin-bottom: 18px;
-        }
-
-        .my-request-title {
-            color: #087a3e;
-            font-size: 20px;
-            font-weight: 900;
-            margin-bottom: 15px;
-        }
-
-        .request-empty {
-            color: #6b7280;
-            line-height: 1.6;
-            font-size: 14px;
-        }
-
-        .request-service-name {
-            font-size: 18px;
-            font-weight: 900;
-            margin-bottom: 10px;
-        }
-
-        .request-status-badge {
-            display: inline-block;
-            padding: 7px 12px;
-            border-radius: 999px;
-            background: #fff7ed;
-            color: #9a3412;
-            font-size: 12px;
-            font-weight: 800;
-            margin-bottom: 15px;
-        }
-
-        .request-status-badge.accepted,
-        .request-status-badge.completed {
-            background: #eef8f2;
-            color: #087a3e;
-        }
-
-        .request-status-badge.cancelled,
-        .request-status-badge.rejected {
-            background: #fff1f2;
-            color: #9f1239;
-        }
-
-        .request-detail {
-            padding: 11px 0;
-            border-bottom: 1px solid #f0f0f0;
-        }
-
-        .request-detail-label {
-            display: block;
-            font-size: 11px;
-            color: #6b7280;
-            margin-bottom: 4px;
-            font-weight: 800;
-        }
-
-        .request-detail-value {
-            line-height: 1.5;
-            font-size: 14px;
-        }
-
-        .request-refresh {
-            margin-top: 15px;
-            border: 1px solid #087a3e;
-            background: white;
-            color: #087a3e;
-            padding: 9px 13px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 800;
-        }
-
-        .request-refresh:hover {
-            background: #eef8f2;
-        }
-
-
-        /* =========================================================
-           PROVIDER
-        ========================================================= */
-
-        .provider-card {
-            background: #eef8f2;
-            border: 1px solid #cde8d7;
-            border-radius: 18px;
-            padding: 18px;
-            margin-bottom: 18px;
-            text-align: center;
-        }
-
-        .provider-card p {
-            color: #055c2e;
-            font-size: 13px;
-            line-height: 1.5;
-            margin-bottom: 12px;
-        }
-
-        .provider-button {
-            display: inline-block;
-            background: #087a3e;
-            color: white;
-            padding: 11px 16px;
-            border-radius: 10px;
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: 800;
-        }
-
-
-        /* =========================================================
-           MODAL
-        ========================================================= */
-
-        .modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            z-index: 9999;
-            background: rgba(0,0,0,.55);
-            padding: 15px;
-            overflow-y: auto;
-        }
-
-        .modal.show {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-card {
-            width: 100%;
-            max-width: 520px;
-            background: white;
-            border-radius: 20px;
-            padding: 22px;
-            box-shadow: 0 15px 45px rgba(0,0,0,.2);
-        }
-
-        .modal-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 15px;
-            margin-bottom: 18px;
-        }
-
-        .modal-header h2 {
-            color: #087a3e;
+        .logo {
             font-size: 21px;
         }
 
-        .close-button {
-            border: 0;
-            background: #f3f4f6;
-            color: #374151;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 20px;
-        }
-
-        .request-service {
-            background: #eef8f2;
-            color: #055c2e;
-            padding: 12px;
-            border-radius: 10px;
-            margin-bottom: 18px;
-            font-weight: 800;
-        }
-
-        .form-group {
-            margin-bottom: 16px;
-        }
-
-        .form-group label {
-            display: block;
-            font-weight: 800;
-            margin-bottom: 7px;
-            font-size: 14px;
-        }
-
-        .form-group input,
-        .form-group textarea {
-            width: 100%;
-            padding: 13px;
-            border: 1px solid #d1d5db;
-            border-radius: 10px;
-            font-size: 15px;
-        }
-
-        .form-group textarea {
-            min-height: 80px;
-            resize: vertical;
-        }
-
-        .request-submit {
-            width: 100%;
-            border: 0;
-            background: #087a3e;
-            color: white;
-            padding: 14px;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 800;
-            cursor: pointer;
-        }
-
-        .request-submit:disabled {
-            opacity: .6;
-            cursor: not-allowed;
-        }
-
-        .request-status {
+        .header-subtitle {
             display: none;
-            margin-top: 14px;
-            padding: 12px;
-            border-radius: 10px;
-            line-height: 1.5;
-            font-size: 13px;
         }
 
-        .request-status.success {
-            display: block;
-            background: #eef8f2;
-            color: #055c2e;
+        .map-wrapper {
+            height: 300px;
         }
 
-        .request-status.error {
-            display: block;
-            background: #fff1f2;
-            color: #9f1239;
+        .driver-list {
+            grid-template-columns: 1fr;
         }
 
-
-        /* =========================================================
-           RESPONSIVE
-        ========================================================= */
-
-        @media (max-width: 700px) {
-
-            .main {
-                padding: 12px 10px 80px;
-            }
-
-            .map-wrapper {
-                height: 330px;
-            }
-
-            .driver-list {
-                grid-template-columns: 1fr 1fr;
-            }
-
-            .ride-panel-header h1 {
-                font-size: 23px;
-            }
-
-            .ride-type {
-                min-width: 96px;
-            }
-
+        .location-box,
+        .ride-types,
+        .request-area,
+        .ride-panel-header {
+            padding-left: 14px;
+            padding-right: 14px;
         }
 
-        @media (max-width: 430px) {
+    }
 
-            .header {
-                padding: 13px 14px;
-            }
-
-            .logo {
-                font-size: 21px;
-            }
-
-            .header-subtitle {
-                display: none;
-            }
-
-            .map-wrapper {
-                height: 300px;
-            }
-
-            .driver-list {
-                grid-template-columns: 1fr;
-            }
-
-            .location-box,
-            .ride-types,
-            .request-area,
-            .ride-panel-header {
-                padding-left: 14px;
-                padding-right: 14px;
-            }
-
-        }
-
-    </style>
+</style>
+```
 
 </head>
-
 
 <body>
 
 <div class="page">
 
+```
+<header class="header">
 
-    <!-- HEADER -->
+    <div class="header-inner">
 
-    <header class="header">
+        <div>
 
-        <div class="header-inner">
+            <div class="logo">
+                LosOja
+            </div>
 
-            <div>
+            <div class="header-subtitle">
+                Mobility
+            </div>
 
-                <div class="logo">
-                    LosOja
-                </div>
+        </div>
 
-                <div class="header-subtitle">
-                    Mobility
+        <button
+            class="back-button"
+            type="button"
+            id="backButton"
+        >
+            ← Back
+        </button>
+
+    </div>
+
+</header>
+
+<main class="main">
+
+    <section class="ride-panel">
+
+        <div class="ride-panel-header">
+
+            <h1>
+                Where are you going?
+            </h1>
+
+            <p>
+                Find a nearby LosOja driver and request your ride.
+            </p>
+
+        </div>
+
+        <div class="location-box">
+
+            <div class="location-row">
+
+                <div class="location-dot"></div>
+
+                <div class="location-input-wrap">
+
+                    <input
+                        type="text"
+                        id="pickupLocation"
+                        class="location-input"
+                        placeholder="Pickup location"
+                        autocomplete="street-address"
+                    >
+
+                    <button
+                        type="button"
+                        class="location-action"
+                        id="useLocationButton"
+                        title="Use my current location"
+                    >
+                        📍
+                    </button>
+
                 </div>
 
             </div>
 
+            <div class="location-row">
+
+                <div class="location-dot destination"></div>
+
+                <div class="location-input-wrap">
+
+                    <input
+                        type="text"
+                        id="destinationLocation"
+                        class="location-input"
+                        placeholder="Where to?"
+                        autocomplete="street-address"
+                    >
+
+                    <button
+                        type="button"
+                        class="location-action"
+                        id="searchDestinationButton"
+                        title="Search destination"
+                    >
+                        🔎
+                    </button>
+
+                </div>
+
+            </div>
+
+            <div class="location-hint" id="locationHint">
+                Choose your pickup location to find nearby drivers.
+            </div>
+
+        </div>
+
+        <div class="map-wrapper">
+
+            <div class="map-top-badge">
+                🟢 Drivers within 10 km
+            </div>
+
+            <div id="mobilityMap"></div>
+
             <button
-                class="back-button"
                 type="button"
-                id="backButton"
+                class="map-location-button"
+                id="mapLocationButton"
+                title="Center on my location"
             >
-                ← Back
+                📍
             </button>
 
         </div>
 
-    </header>
+        <div class="ride-types">
 
-
-    <main class="main">
-
-
-        <!-- =====================================================
-             MAIN RIDE PANEL
-        ====================================================== -->
-
-        <section class="ride-panel">
-
-
-            <div class="ride-panel-header">
-
-                <h1>
-                    Where are you going?
-                </h1>
-
-                <p>
-                    Find a nearby LosOja driver and request your ride.
-                </p>
-
+            <div class="section-title">
+                Choose your ride
             </div>
 
-
-            <!-- LOCATIONS -->
-
-            <div class="location-box">
-
-
-                <div class="location-row">
-
-                    <div class="location-dot"></div>
-
-                    <div class="location-input-wrap">
-
-                        <input
-                            type="text"
-                            id="pickupLocation"
-                            class="location-input"
-                            placeholder="Pickup location"
-                            autocomplete="street-address"
-                        >
-
-                        <button
-                            type="button"
-                            class="location-action"
-                            id="useLocationButton"
-                            title="Use my current location"
-                        >
-                            📍
-                        </button>
-
-                    </div>
-
-                </div>
-
-
-                <div class="location-row">
-
-                    <div class="location-dot destination"></div>
-
-                    <div class="location-input-wrap">
-
-                        <input
-                            type="text"
-                            id="destinationLocation"
-                            class="location-input"
-                            placeholder="Where to?"
-                            autocomplete="street-address"
-                        >
-
-                        <button
-                            type="button"
-                            class="location-action"
-                            id="searchDestinationButton"
-                            title="Search destination"
-                        >
-                            🔎
-                        </button>
-
-                    </div>
-
-                </div>
-
-
-                <div class="location-hint" id="locationHint">
-                    Choose your pickup and destination on the map.
-                </div>
-
-            </div>
-
-
-            <!-- MAP -->
-
-            <div class="map-wrapper">
-
-                <div class="map-top-badge">
-                    🟢 Nearby LosOja drivers
-                </div>
-
-                <div id="mobilityMap"></div>
+            <div class="ride-type-row">
 
                 <button
                     type="button"
-                    class="map-location-button"
-                    id="mapLocationButton"
-                    title="Center on my location"
+                    class="ride-type active"
+                    data-service="cab"
+                    data-service-name="Cab"
                 >
-                    📍
+
+                    <span class="ride-type-icon">
+                        🚕
+                    </span>
+
+                    <span class="ride-type-name">
+                        Cab
+                    </span>
+
+                    <span class="ride-type-status">
+                        Nearby cars
+                    </span>
+
+                </button>
+
+                <button
+                    type="button"
+                    class="ride-type"
+                    data-service="tricycle"
+                    data-service-name="Tricycle (Keke)"
+                >
+
+                    <span class="ride-type-icon">
+                        🛺
+                    </span>
+
+                    <span class="ride-type-name">
+                        Keke
+                    </span>
+
+                    <span class="ride-type-status">
+                        Local rides
+                    </span>
+
+                </button>
+
+                <button
+                    type="button"
+                    class="ride-type"
+                    data-service="bike"
+                    data-service-name="Bike"
+                >
+
+                    <span class="ride-type-icon">
+                        🏍️
+                    </span>
+
+                    <span class="ride-type-name">
+                        Bike
+                    </span>
+
+                    <span class="ride-type-status">
+                        Quick rides
+                    </span>
+
+                </button>
+
+                <button
+                    type="button"
+                    class="ride-type"
+                    data-service="dispatch"
+                    data-service-name="Dispatch Rider"
+                >
+
+                    <span class="ride-type-icon">
+                        🛵
+                    </span>
+
+                    <span class="ride-type-name">
+                        Dispatch
+                    </span>
+
+                    <span class="ride-type-status">
+                        Packages
+                    </span>
+
+                </button>
+
+                <button
+                    type="button"
+                    class="ride-type"
+                    data-service="truck"
+                    data-service-name="Rent a Truck"
+                >
+
+                    <span class="ride-type-icon">
+                        🚚
+                    </span>
+
+                    <span class="ride-type-name">
+                        Truck
+                    </span>
+
+                    <span class="ride-type-status">
+                        Moving goods
+                    </span>
+
                 </button>
 
             </div>
 
+        </div>
 
-            <!-- RIDE TYPES -->
+        <div class="request-area">
 
-            <div class="ride-types">
+            <button
+                type="button"
+                class="request-main-button"
+                id="requestRideButton"
+            >
+                Request Cab
+            </button>
 
-                <div class="section-title">
-                    Choose your ride
-                </div>
-
-                <div class="ride-type-row">
-
-
-                    <button
-                        type="button"
-                        class="ride-type active"
-                        data-service="cab"
-                        data-service-name="Cab"
-                    >
-
-                        <span class="ride-type-icon">
-                            🚕
-                        </span>
-
-                        <span class="ride-type-name">
-                            Cab
-                        </span>
-
-                        <span class="ride-type-status">
-                            Nearby cars
-                        </span>
-
-                    </button>
-
-
-                    <button
-                        type="button"
-                        class="ride-type"
-                        data-service="tricycle"
-                        data-service-name="Tricycle (Keke)"
-                    >
-
-                        <span class="ride-type-icon">
-                            🛺
-                        </span>
-
-                        <span class="ride-type-name">
-                            Keke
-                        </span>
-
-                        <span class="ride-type-status">
-                            Local rides
-                        </span>
-
-                    </button>
-
-
-                    <button
-                        type="button"
-                        class="ride-type"
-                        data-service="bike"
-                        data-service-name="Bike"
-                    >
-
-                        <span class="ride-type-icon">
-                            🏍️
-                        </span>
-
-                        <span class="ride-type-name">
-                            Bike
-                        </span>
-
-                        <span class="ride-type-status">
-                            Quick rides
-                        </span>
-
-                    </button>
-
-
-                    <button
-                        type="button"
-                        class="ride-type"
-                        data-service="dispatch"
-                        data-service-name="Dispatch Rider"
-                    >
-
-                        <span class="ride-type-icon">
-                            🛵
-                        </span>
-
-                        <span class="ride-type-name">
-                            Dispatch
-                        </span>
-
-                        <span class="ride-type-status">
-                            Packages
-                        </span>
-
-                    </button>
-
-
-                    <button
-                        type="button"
-                        class="ride-type"
-                        data-service="truck"
-                        data-service-name="Rent a Truck"
-                    >
-
-                        <span class="ride-type-icon">
-                            🚚
-                        </span>
-
-                        <span class="ride-type-name">
-                            Truck
-                        </span>
-
-                        <span class="ride-type-status">
-                            Moving goods
-                        </span>
-
-                    </button>
-
-
-                </div>
-
+            <div class="request-helper">
+                Verified and available providers within 10 km.
             </div>
 
+        </div>
 
-            <!-- REQUEST -->
+    </section>
 
-            <div class="request-area">
+    <section class="nearby-section">
 
-                <button
-                    type="button"
-                    class="request-main-button"
-                    id="requestRideButton"
-                >
-                    Request Cab
-                </button>
+        <div class="nearby-header">
 
-                <div class="request-helper">
-                    Verified and available providers only.
-                </div>
-
+            <div class="section-title">
+                Nearby Drivers
             </div>
-
-
-        </section>
-
-
-        <!-- =====================================================
-             NEARBY DRIVERS
-        ====================================================== -->
-
-        <section class="nearby-section">
-
-            <div class="nearby-header">
-
-                <div class="section-title">
-                    Nearby Drivers
-                </div>
-
-                <div
-                    class="nearby-count"
-                    id="nearbyDriverCount"
-                >
-                    Searching...
-                </div>
-
-            </div>
-
 
             <div
-                class="driver-list"
-                id="driverList"
+                class="nearby-count"
+                id="nearbyDriverCount"
             >
-
-                <div class="driver-empty">
-                    Searching for verified available drivers...
-                </div>
-
+                Set pickup location
             </div>
 
-        </section>
+        </div>
 
+        <div
+            class="driver-list"
+            id="driverList"
+        >
 
-        <!-- =====================================================
-             MY REQUEST
-        ====================================================== -->
-
-        <section class="my-request-card">
-
-            <div class="my-request-title">
-                My Ride Request
+            <div class="driver-empty">
+                Choose your pickup location to find verified available drivers near you.
             </div>
 
-            <div id="myRequestContent">
+        </div>
 
-                <div class="request-empty">
-                    Loading your latest ride request...
-                </div>
+    </section>
 
+    <section class="my-request-card">
+
+        <div class="my-request-title">
+            My Ride Request
+        </div>
+
+        <div id="myRequestContent">
+
+            <div class="request-empty">
+                Loading your latest ride request...
             </div>
 
-        </section>
+        </div>
 
+    </section>
 
-        <!-- =====================================================
-             PROVIDER
-        ====================================================== -->
+    <section class="provider-card">
 
-        <section class="provider-card">
+        <p>
+            Have a vehicle or provide transportation services?
+            Join LosOja as a verified mobility provider.
+        </p>
 
-            <p>
-                Have a vehicle or provide transportation services?
-                Join LosOja as a verified mobility provider.
-            </p>
+        <a
+            href="mobility-driver.html"
+            class="provider-button"
+        >
+            Become a Mobility Provider
+        </a>
 
-            <a
-                href="mobility-driver.html"
-                class="provider-button"
-            >
-                Become a Mobility Provider
-            </a>
+    </section>
 
-        </section>
-
-
-    </main>
+</main>
+```
 
 </div>
-
-
-<!-- =========================================================
-     REQUEST MODAL
-========================================================= -->
 
 <div
     class="modal"
@@ -1151,123 +1044,105 @@
     aria-labelledby="rideRequestTitle"
 >
 
-    <div class="modal-card">
+```
+<div class="modal-card">
 
+    <div class="modal-header">
 
-        <div class="modal-header">
+        <h2 id="rideRequestTitle">
+            Request Cab
+        </h2>
 
-            <h2 id="rideRequestTitle">
-                Request Cab
-            </h2>
-
-            <button
-                type="button"
-                class="close-button"
-                id="closeRideRequestButton"
-                aria-label="Close"
-            >
-                ×
-            </button>
-
-        </div>
-
-
-        <div
-            class="request-service"
-            id="requestService"
+        <button
+            type="button"
+            class="close-button"
+            id="closeRideRequestButton"
+            aria-label="Close"
         >
-            🚕 Cab
-        </div>
-
-
-        <form id="mobilityRequestForm">
-
-
-            <div class="form-group">
-
-                <label for="modalPickupLocation">
-                    Pickup Location
-                </label>
-
-                <input
-                    type="text"
-                    id="modalPickupLocation"
-                    required
-                    placeholder="Where should we pick you up?"
-                    autocomplete="street-address"
-                >
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label for="modalDestinationLocation">
-                    Destination
-                </label>
-
-                <input
-                    type="text"
-                    id="modalDestinationLocation"
-                    required
-                    placeholder="Where are you going?"
-                    autocomplete="street-address"
-                >
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label for="requestNotes">
-                    Notes
-                </label>
-
-                <textarea
-                    id="requestNotes"
-                    placeholder="Anything the driver should know?"
-                ></textarea>
-
-            </div>
-
-
-            <button
-                type="submit"
-                class="request-submit"
-                id="submitMobilityRequest"
-            >
-                Request Ride
-            </button>
-
-
-        </form>
-
-
-        <div
-            id="requestStatus"
-            class="request-status"
-        ></div>
+            ×
+        </button>
 
     </div>
 
+    <div
+        class="request-service"
+        id="requestService"
+    >
+        🚕 Cab
+    </div>
+
+    <form id="mobilityRequestForm">
+
+        <div class="form-group">
+
+            <label for="modalPickupLocation">
+                Pickup Location
+            </label>
+
+            <input
+                type="text"
+                id="modalPickupLocation"
+                required
+                placeholder="Where should we pick you up?"
+                autocomplete="street-address"
+            >
+
+        </div>
+
+        <div class="form-group">
+
+            <label for="modalDestinationLocation">
+                Destination
+            </label>
+
+            <input
+                type="text"
+                id="modalDestinationLocation"
+                required
+                placeholder="Where are you going?"
+                autocomplete="street-address"
+            >
+
+        </div>
+
+        <div class="form-group">
+
+            <label for="requestNotes">
+                Notes
+            </label>
+
+            <textarea
+                id="requestNotes"
+                placeholder="Anything the driver should know?"
+            ></textarea>
+
+        </div>
+
+        <button
+            type="submit"
+            class="request-submit"
+            id="submitMobilityRequest"
+        >
+            Request Ride
+        </button>
+
+    </form>
+
+    <div
+        id="requestStatus"
+        class="request-status"
+    ></div>
+
+</div>
+```
+
 </div>
 
-
-<!-- =========================================================
-     LOSOJA AUTH
-========================================================= -->
-
 <script src="js/auth.js?v=3"></script>
-
-
-<!-- =========================================================
-     LEAFLET
-========================================================= -->
 
 <script
     src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
 ></script>
-
 
 <script>
 
@@ -1285,6 +1160,20 @@
 
     const SUPABASE_KEY =
         "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
+
+
+    /* =========================================================
+       NEARBY MATCHING SETTINGS
+    ========================================================= */
+
+    /*
+     * Maximum distance between the customer pickup point
+     * and provider location.
+     *
+     * 10 km is the current LosOja matching radius.
+     */
+
+    const NEARBY_RADIUS_KM = 10;
 
 
     /* =========================================================
@@ -1445,11 +1334,6 @@
 
         }
 
-
-        /*
-         * Default Nigeria/Lagos view
-         */
-
         map =
             L.map(
                 "mobilityMap"
@@ -1457,7 +1341,6 @@
                 [6.5244, 3.3792],
                 12
             );
-
 
         L.tileLayer(
             "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -1467,7 +1350,6 @@
                     "&copy; OpenStreetMap contributors"
             }
         ).addTo(map);
-
 
         map.on(
             "click",
@@ -1480,7 +1362,6 @@
 
             }
         );
-
 
         console.log(
             "LosOja Mobility map loaded."
@@ -1499,7 +1380,6 @@
 
         let emoji =
             "🚕";
-
 
         if (
             serviceType === "tricycle"
@@ -1526,7 +1406,6 @@
             emoji = "🚚";
 
         }
-
 
         return L.divIcon({
 
@@ -1563,6 +1442,129 @@
 
 
     /* =========================================================
+       DISTANCE CALCULATION
+    ========================================================= */
+
+    function calculateDistanceKm(
+        latitude1,
+        longitude1,
+        latitude2,
+        longitude2
+    ) {
+
+        const earthRadiusKm =
+            6371;
+
+        const lat1 =
+            Number(latitude1);
+
+        const lon1 =
+            Number(longitude1);
+
+        const lat2 =
+            Number(latitude2);
+
+        const lon2 =
+            Number(longitude2);
+
+        if (
+            !Number.isFinite(lat1) ||
+            !Number.isFinite(lon1) ||
+            !Number.isFinite(lat2) ||
+            !Number.isFinite(lon2)
+        ) {
+
+            return null;
+
+        }
+
+        const differenceLatitude =
+            (lat2 - lat1) *
+            Math.PI /
+            180;
+
+        const differenceLongitude =
+            (lon2 - lon1) *
+            Math.PI /
+            180;
+
+        const a =
+            Math.sin(
+                differenceLatitude / 2
+            ) *
+            Math.sin(
+                differenceLatitude / 2
+            ) +
+            Math.cos(
+                lat1 *
+                Math.PI /
+                180
+            ) *
+            Math.cos(
+                lat2 *
+                Math.PI /
+                180
+            ) *
+            Math.sin(
+                differenceLongitude / 2
+            ) *
+            Math.sin(
+                differenceLongitude / 2
+            );
+
+        const c =
+            2 *
+            Math.atan2(
+                Math.sqrt(a),
+                Math.sqrt(1 - a)
+            );
+
+        return (
+            earthRadiusKm *
+            c
+        );
+
+    }
+
+
+    /* =========================================================
+       FORMAT DISTANCE
+    ========================================================= */
+
+    function formatDistance(
+        distanceKm
+    ) {
+
+        if (
+            !Number.isFinite(distanceKm)
+        ) {
+
+            return "Distance unavailable";
+
+        }
+
+        if (
+            distanceKm < 1
+        ) {
+
+            return (
+                Math.round(
+                    distanceKm * 1000
+                ) +
+                " m away"
+            );
+
+        }
+
+        return (
+            distanceKm.toFixed(1) +
+            " km away"
+        );
+
+    }
+
+
+    /* =========================================================
        SET PICKUP FROM COORDINATES
     ========================================================= */
 
@@ -1574,13 +1576,12 @@
         pickupCoordinates = {
 
             latitude:
-                latitude,
+                Number(latitude),
 
             longitude:
-                longitude
+                Number(longitude)
 
         };
-
 
         if (pickupMarker) {
 
@@ -1589,7 +1590,6 @@
             );
 
         }
-
 
         pickupMarker =
             L.marker(
@@ -1604,7 +1604,6 @@
             )
             .openPopup();
 
-
         map.setView(
             [
                 latitude,
@@ -1613,17 +1612,24 @@
             15
         );
 
-
         pickupInput.value =
             "Selected pickup location";
-
 
         locationHint.textContent =
             "Pickup location selected. Searching nearby drivers...";
 
 
         /*
-         * Reverse geocode the location
+         * Immediately search using the coordinates.
+         * This means the driver matching does not have to
+         * wait for reverse geocoding.
+         */
+
+        loadNearbyDrivers();
+
+
+        /*
+         * Reverse geocode the location.
          */
 
         try {
@@ -1638,14 +1644,12 @@
                     encodeURIComponent(longitude)
                 );
 
-
             if (
                 response.ok
             ) {
 
                 const data =
                     await response.json();
-
 
                 if (
                     data.display_name
@@ -1667,9 +1671,6 @@
 
         }
 
-
-        loadNearbyDrivers();
-
     }
 
 
@@ -1690,10 +1691,8 @@
 
         }
 
-
         locationHint.textContent =
             "Finding your location...";
-
 
         navigator.geolocation.getCurrentPosition(
 
@@ -1748,7 +1747,6 @@
         const query =
             destinationInput.value.trim();
 
-
         if (
             !query
         ) {
@@ -1760,10 +1758,8 @@
 
         }
 
-
         locationHint.textContent =
             "Searching destination...";
-
 
         try {
 
@@ -1779,7 +1775,6 @@
 
                 );
 
-
             if (
                 !response.ok
             ) {
@@ -1790,10 +1785,8 @@
 
             }
 
-
             const results =
                 await response.json();
-
 
             if (
                 !Array.isArray(results) ||
@@ -1807,10 +1800,8 @@
 
             }
 
-
             const result =
                 results[0];
-
 
             const latitude =
                 parseFloat(
@@ -1822,7 +1813,6 @@
                     result.lon
                 );
 
-
             destinationCoordinates = {
 
                 latitude:
@@ -1833,10 +1823,8 @@
 
             };
 
-
             destinationInput.value =
                 result.display_name;
-
 
             if (destinationMarker) {
 
@@ -1845,7 +1833,6 @@
                 );
 
             }
-
 
             destinationMarker =
                 L.marker(
@@ -1858,11 +1845,6 @@
                 .bindPopup(
                     "Destination"
                 );
-
-
-            /*
-             * Fit both locations when possible
-             */
 
             if (
                 pickupCoordinates
@@ -1883,7 +1865,6 @@
 
                     );
 
-
                 map.fitBounds(
                     bounds,
                     {
@@ -1903,7 +1884,6 @@
                 );
 
             }
-
 
             locationHint.textContent =
                 "Destination selected.";
@@ -1935,7 +1915,6 @@
         let accessToken =
             null;
 
-
         try {
 
             if (
@@ -1946,7 +1925,6 @@
 
                 const session =
                     await window.ensureValidSupabaseSession();
-
 
                 if (
                     session &&
@@ -1968,7 +1946,6 @@
             );
 
         }
-
 
         try {
 
@@ -1996,7 +1973,6 @@
 
         }
 
-
         try {
 
             if (
@@ -2019,11 +1995,6 @@
 
         }
 
-
-        /*
-         * Local session fallback
-         */
-
         if (
             !accessToken
         ) {
@@ -2035,7 +2006,6 @@
                         "losoja_supabase_session"
                     );
 
-
                 if (rawSession) {
 
                     const session =
@@ -2043,12 +2013,10 @@
                             rawSession
                         );
 
-
                     accessToken =
                         session.access_token ||
                         session.accessToken ||
                         null;
-
 
                     if (
                         !user &&
@@ -2072,11 +2040,6 @@
             }
 
         }
-
-
-        /*
-         * Direct Supabase lookup
-         */
 
         if (
             !user &&
@@ -2111,7 +2074,6 @@
 
                     );
 
-
                 if (
                     response.ok
                 ) {
@@ -2132,7 +2094,6 @@
 
         }
 
-
         return {
 
             user:
@@ -2152,9 +2113,48 @@
 
     async function loadNearbyDrivers() {
 
+        /*
+         * Real nearby matching requires a customer pickup
+         * coordinate.
+         */
+
+        if (
+            !pickupCoordinates ||
+            !Number.isFinite(
+                Number(
+                    pickupCoordinates.latitude
+                )
+            ) ||
+            !Number.isFinite(
+                Number(
+                    pickupCoordinates.longitude
+                )
+            )
+        ) {
+
+            clearDriverMarkers();
+
+            nearbyDriverCount.textContent =
+                "Set pickup location";
+
+            driverList.innerHTML =
+                `
+                <div class="driver-empty">
+                    Choose your pickup location to find verified available
+                    ${escapeHtml(
+                        selectedServiceName.toLowerCase()
+                    )}
+                    providers within ${NEARBY_RADIUS_KM} km.
+                </div>
+                `;
+
+            return;
+
+        }
+
+
         const auth =
             await getLoggedInUser();
-
 
         const accessToken =
             auth.accessToken;
@@ -2164,10 +2164,12 @@
             !accessToken
         ) {
 
+            clearDriverMarkers();
+
             driverList.innerHTML =
                 `
                 <div class="driver-empty">
-                    Please log in to see available LosOja drivers.
+                    Please log in to see available LosOja drivers near you.
                 </div>
                 `;
 
@@ -2182,9 +2184,10 @@
         try {
 
             /*
-             * Only verified + available drivers.
+             * Fetch only verified + available providers.
              *
-             * We fetch coordinates too.
+             * Distance is calculated locally using the customer's
+             * pickup coordinates and each provider's GPS coordinates.
              */
 
             const url =
@@ -2193,7 +2196,6 @@
                 "?verification_status=eq.verified" +
                 "&is_available=eq.true" +
                 "&select=id,user_id,service_type,full_name,vehicle_name,vehicle_plate,location,latitude,longitude";
-
 
             const response =
                 await fetch(
@@ -2220,10 +2222,8 @@
 
                 );
 
-
             const responseText =
                 await response.text();
-
 
             if (
                 !response.ok
@@ -2249,10 +2249,8 @@
 
             }
 
-
             let drivers =
                 [];
-
 
             try {
 
@@ -2268,7 +2266,6 @@
 
             }
 
-
             if (
                 !Array.isArray(drivers)
             ) {
@@ -2280,10 +2277,10 @@
 
 
             /*
-             * Filter by selected service.
+             * Match the selected service first.
              */
 
-            const matchingDrivers =
+            const matchingServiceDrivers =
                 drivers.filter(
 
                     function (driver) {
@@ -2298,8 +2295,103 @@
                 );
 
 
+            /*
+             * Calculate real distance for every provider.
+             *
+             * Providers without GPS coordinates cannot be
+             * considered nearby.
+             */
+
+            const nearbyDrivers =
+                matchingServiceDrivers
+
+                    .map(
+
+                        function (driver) {
+
+                            const latitude =
+                                parseFloat(
+                                    driver.latitude
+                                );
+
+                            const longitude =
+                                parseFloat(
+                                    driver.longitude
+                                );
+
+                            const distanceKm =
+                                calculateDistanceKm(
+
+                                    pickupCoordinates.latitude,
+
+                                    pickupCoordinates.longitude,
+
+                                    latitude,
+
+                                    longitude
+
+                                );
+
+                            return {
+
+                                ...driver,
+
+                                distanceKm:
+                                    distanceKm
+
+                            };
+
+                        }
+
+                    )
+
+                    .filter(
+
+                        function (driver) {
+
+                            return (
+                                Number.isFinite(
+                                    driver.distanceKm
+                                ) &&
+                                driver.distanceKm <=
+                                    NEARBY_RADIUS_KM
+                            );
+
+                        }
+
+                    )
+
+                    .sort(
+
+                        function (driverA, driverB) {
+
+                            return (
+                                driverA.distanceKm -
+                                driverB.distanceKm
+                            );
+
+                        }
+
+                    );
+
+
+            console.log(
+                "LosOja nearby matching:",
+                {
+                    pickup:
+                        pickupCoordinates,
+                    radiusKm:
+                        NEARBY_RADIUS_KM,
+                    service:
+                        selectedServiceType,
+                    matchingDrivers:
+                        nearbyDrivers
+                }
+            );
+
+
             renderDrivers(
-                matchingDrivers
+                nearbyDrivers
             );
 
 
@@ -2326,16 +2418,10 @@
 
 
     /* =========================================================
-       RENDER DRIVERS
+       CLEAR DRIVER MARKERS
     ========================================================= */
 
-    function renderDrivers(
-        drivers
-    ) {
-
-        /*
-         * Remove old markers.
-         */
+    function clearDriverMarkers() {
 
         driverMarkers.forEach(
 
@@ -2356,9 +2442,21 @@
 
         );
 
-
         driverMarkers =
             [];
+
+    }
+
+
+    /* =========================================================
+       RENDER DRIVERS
+    ========================================================= */
+
+    function renderDrivers(
+        drivers
+    ) {
+
+        clearDriverMarkers();
 
 
         nearbyDriverCount.textContent =
@@ -2377,15 +2475,31 @@
             driverList.innerHTML =
                 `
                 <div class="driver-empty">
-                    No verified available ${escapeHtml(selectedServiceName.toLowerCase())}
-                    providers are currently available.
+                    No verified available
+                    ${escapeHtml(
+                        selectedServiceName.toLowerCase()
+                    )}
+                    providers are within
+                    ${NEARBY_RADIUS_KM} km of your pickup location.
                     Try another ride type or check again shortly.
                 </div>
                 `;
 
+            locationHint.textContent =
+                "No verified available drivers were found within 10 km of your pickup.";
+
             return;
 
         }
+
+
+        locationHint.textContent =
+            drivers.length +
+            (
+                drivers.length === 1
+                    ? " nearby driver found."
+                    : " nearby drivers found."
+            );
 
 
         driverList.innerHTML =
@@ -2405,8 +2519,8 @@
 
 
         /*
-         * Add map markers for drivers
-         * who have coordinates.
+         * Add only the matched nearby drivers
+         * to the map.
          */
 
         drivers.forEach(
@@ -2422,7 +2536,6 @@
                     parseFloat(
                         driver.longitude
                     );
-
 
                 if (
                     Number.isFinite(latitude) &&
@@ -2464,6 +2577,14 @@
                                 driver.service_type
                             )
                         )}
+                        <br>
+                        <strong>
+                            ${escapeHtml(
+                                formatDistance(
+                                    driver.distanceKm
+                                )
+                            )}
+                        </strong>
                         <br>
                         <span style="color:#087a3e;">
                             ✓ Verified & Available
@@ -2519,6 +2640,14 @@
                     )}
                 </div>
 
+                <div class="driver-distance">
+                    📍 ${escapeHtml(
+                        formatDistance(
+                            driver.distanceKm
+                        )
+                    )}
+                </div>
+
                 <div class="driver-status">
                     ✓ Available
                 </div>
@@ -2557,7 +2686,6 @@
 
         };
 
-
         return (
             names[serviceType] ||
             "Mobility Provider"
@@ -2588,7 +2716,6 @@
                 "🚚"
 
         };
-
 
         return (
             icons[serviceType] ||
@@ -2709,7 +2836,6 @@
 
             const pickup =
                 pickupInput.value.trim();
-
 
             const destination =
                 destinationInput.value.trim();
@@ -3198,10 +3324,6 @@
                 form.reset();
 
 
-                /*
-                 * Update main screen.
-                 */
-
                 pickupInput.value =
                     pickupLocation;
 
@@ -3642,6 +3764,11 @@
 
     loadLatestRequest();
 
+    /*
+     * Do not search for "nearby" drivers until the
+     * customer has a real pickup coordinate.
+     */
+
     loadNearbyDrivers();
 
     startRequestPolling();
@@ -3650,14 +3777,15 @@
 
 
     console.log(
-        "LosOja Mobility Bolt-inspired ride screen loaded."
+        "LosOja Mobility nearby-driver matching loaded. Radius:",
+        NEARBY_RADIUS_KM,
+        "km"
     );
 
 
 })();
 
 </script>
-
 
 </body>
 
