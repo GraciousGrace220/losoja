@@ -215,6 +215,63 @@
             cursor: not-allowed;
         }
 
+        .location-box {
+            margin-top: 18px;
+            padding: 16px;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            background: #fafafa;
+        }
+
+        .location-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .location-title {
+            font-weight: 800;
+        }
+
+        .location-status {
+            font-size: 13px;
+            color: var(--gray);
+            margin-bottom: 12px;
+        }
+
+        .location-status.active {
+            color: var(--green-dark);
+            font-weight: 700;
+        }
+
+        .location-button {
+            border: 0;
+            border-radius: 9px;
+            padding: 10px 14px;
+            background: var(--green);
+            color: white;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .location-button:hover {
+            background: var(--green-dark);
+        }
+
+        .location-button:disabled {
+            opacity: .5;
+            cursor: not-allowed;
+        }
+
+        .coordinates {
+            margin-top: 10px;
+            font-size: 12px;
+            color: var(--gray);
+            word-break: break-word;
+        }
+
         .message {
             padding: 13px;
             border-radius: 10px;
@@ -354,6 +411,11 @@
             .page-title h1 {
                 font-size: 24px;
             }
+
+            .location-header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
         }
     </style>
 </head>
@@ -492,6 +554,40 @@
 
         </div>
 
+
+        <div class="location-box">
+
+            <div class="location-header">
+
+                <div class="location-title">
+                    📍 Provider Location
+                </div>
+
+                <button
+                    type="button"
+                    class="location-button"
+                    id="shareLocationButton"
+                >
+                    Share My Location
+                </button>
+
+            </div>
+
+            <div
+                id="locationStatus"
+                class="location-status"
+            >
+                Your location has not been shared yet.
+            </div>
+
+            <div
+                id="coordinates"
+                class="coordinates hidden"
+            ></div>
+
+        </div>
+
+
         <div
             id="availabilityMessage"
             class="message"
@@ -547,6 +643,8 @@
 
     let currentUser = null;
     let providerProfile = null;
+
+    let locationWatchId = null;
 
 
     const serviceNames = {
@@ -979,6 +1077,8 @@
                 );
 
 
+            updateLocationUI();
+
             loading.classList.add("hidden");
 
             content.classList.remove("hidden");
@@ -987,6 +1087,14 @@
             updateAvailabilityUI();
 
             await loadRequests();
+
+
+            if (
+                providerProfile.is_available &&
+                providerProfile.verification_status === "verified"
+            ) {
+                startLocationTracking();
+            }
 
         } catch (error) {
 
@@ -1047,6 +1155,8 @@
 
             toggle.classList.remove("active");
 
+            stopLocationTracking();
+
             return;
         }
 
@@ -1061,6 +1171,8 @@
             description.textContent =
                 "You'll receive matching customer requests.";
 
+            startLocationTracking();
+
         } else {
 
             toggle.classList.remove("active");
@@ -1070,7 +1182,382 @@
 
             description.textContent =
                 "You won't receive new customer requests.";
+
+            stopLocationTracking();
         }
+    }
+
+
+    function updateLocationUI() {
+
+        const status =
+            document.getElementById(
+                "locationStatus"
+            );
+
+        const coordinates =
+            document.getElementById(
+                "coordinates"
+            );
+
+
+        if (
+            providerProfile &&
+            providerProfile.latitude !== null &&
+            providerProfile.longitude !== null
+        ) {
+
+            status.textContent =
+                "Your current location is saved and can be used for nearby ride matching.";
+
+            status.classList.add("active");
+
+
+            coordinates.textContent =
+                "Latitude: " +
+                Number(
+                    providerProfile.latitude
+                ).toFixed(6) +
+                " | Longitude: " +
+                Number(
+                    providerProfile.longitude
+                ).toFixed(6);
+
+            coordinates.classList.remove("hidden");
+
+            return;
+        }
+
+
+        status.textContent =
+            "Your location has not been shared yet.";
+
+        status.classList.remove("active");
+
+        coordinates.textContent = "";
+
+        coordinates.classList.add("hidden");
+    }
+
+
+    async function saveProviderLocation(
+        latitude,
+        longitude
+    ) {
+
+        if (!providerProfile) {
+            return false;
+        }
+
+
+        try {
+
+            const requestHeaders =
+                await headers(true);
+
+
+            const response =
+                await fetch(
+                    SUPABASE_URL +
+                    "/rest/v1/mobility_drivers" +
+                    "?id=eq." +
+                    encodeURIComponent(
+                        providerProfile.id
+                    ),
+                    {
+                        method: "PATCH",
+
+                        headers:
+                            requestHeaders,
+
+                        body: JSON.stringify({
+                            latitude:
+                                latitude,
+
+                            longitude:
+                                longitude,
+
+                            updated_at:
+                                new Date()
+                                    .toISOString()
+                        })
+                    }
+                );
+
+
+            if (!response.ok) {
+
+                const errorText =
+                    await response.text();
+
+                throw new Error(
+                    errorText ||
+                    "Location update failed."
+                );
+            }
+
+
+            providerProfile.latitude =
+                latitude;
+
+            providerProfile.longitude =
+                longitude;
+
+
+            updateLocationUI();
+
+
+            return true;
+
+        } catch (error) {
+
+            console.error(
+                "LosOja: location save error:",
+                error
+            );
+
+            return false;
+        }
+    }
+
+
+    function handleLocationSuccess(position) {
+
+        const latitude =
+            position.coords.latitude;
+
+        const longitude =
+            position.coords.longitude;
+
+
+        saveProviderLocation(
+            latitude,
+            longitude
+        );
+    }
+
+
+    function handleLocationError(error) {
+
+        console.warn(
+            "LosOja: location error:",
+            error
+        );
+
+
+        const status =
+            document.getElementById(
+                "locationStatus"
+            );
+
+
+        if (!status) {
+            return;
+        }
+
+
+        if (error.code === 1) {
+
+            status.textContent =
+                "Location permission was denied. Please allow location access in your browser.";
+
+        } else if (error.code === 2) {
+
+            status.textContent =
+                "Your location could not be determined. Please try again.";
+
+        } else if (error.code === 3) {
+
+            status.textContent =
+                "Location request timed out. Please try again.";
+
+        } else {
+
+            status.textContent =
+                "Unable to get your location.";
+        }
+
+        status.classList.remove("active");
+    }
+
+
+    function startLocationTracking() {
+
+        if (!providerProfile) {
+            return;
+        }
+
+
+        if (
+            providerProfile.verification_status !==
+            "verified"
+        ) {
+            return;
+        }
+
+
+        if (!providerProfile.is_available) {
+            return;
+        }
+
+
+        if (
+            !navigator.geolocation
+        ) {
+
+            const status =
+                document.getElementById(
+                    "locationStatus"
+                );
+
+            status.textContent =
+                "Geolocation is not supported by this browser.";
+
+            return;
+        }
+
+
+        if (
+            locationWatchId !== null
+        ) {
+            return;
+        }
+
+
+        const status =
+            document.getElementById(
+                "locationStatus"
+            );
+
+
+        status.textContent =
+            "Getting your current location...";
+
+
+        locationWatchId =
+            navigator.geolocation.watchPosition(
+                handleLocationSuccess,
+                handleLocationError,
+                {
+                    enableHighAccuracy: true,
+                    maximumAge: 10000,
+                    timeout: 15000
+                }
+            );
+    }
+
+
+    function stopLocationTracking() {
+
+        if (
+            locationWatchId !== null
+        ) {
+
+            navigator.geolocation.clearWatch(
+                locationWatchId
+            );
+
+            locationWatchId = null;
+        }
+    }
+
+
+    function shareLocationNow() {
+
+        if (!providerProfile) {
+            return;
+        }
+
+
+        if (
+            providerProfile.verification_status !==
+            "verified"
+        ) {
+
+            alert(
+                "Your provider account must be verified first."
+            );
+
+            return;
+        }
+
+
+        if (
+            !navigator.geolocation
+        ) {
+
+            alert(
+                "Your browser does not support location services."
+            );
+
+            return;
+        }
+
+
+        const button =
+            document.getElementById(
+                "shareLocationButton"
+            );
+
+
+        button.disabled = true;
+
+        button.textContent =
+            "Getting Location...";
+
+
+        navigator.geolocation.getCurrentPosition(
+            async function (position) {
+
+                const saved =
+                    await saveProviderLocation(
+                        position.coords.latitude,
+                        position.coords.longitude
+                    );
+
+
+                button.disabled = false;
+
+                button.textContent =
+                    "Update My Location";
+
+
+                if (saved) {
+
+                    const status =
+                        document.getElementById(
+                            "locationStatus"
+                        );
+
+                    status.textContent =
+                        "Location saved successfully.";
+
+                    status.classList.add("active");
+                } else {
+
+                    alert(
+                        "Could not save your location. Please try again."
+                    );
+                }
+
+            },
+            function (error) {
+
+                button.disabled = false;
+
+                button.textContent =
+                    "Share My Location";
+
+
+                handleLocationError(error);
+
+            },
+            {
+                enableHighAccuracy: true,
+                maximumAge: 5000,
+                timeout: 15000
+            }
+        );
     }
 
 
@@ -1110,6 +1597,21 @@
 
 
         try {
+
+            if (
+                newValue &&
+                navigator.geolocation
+            ) {
+
+                const locationStatus =
+                    document.getElementById(
+                        "locationStatus"
+                    );
+
+                locationStatus.textContent =
+                    "Getting your location before going available...";
+            }
+
 
             const requestHeaders =
                 await headers(true);
@@ -1422,6 +1924,7 @@
             providerProfile.verification_status !==
             "verified"
         ) {
+
             alert(
                 "Your provider account must be verified."
             );
@@ -1431,6 +1934,7 @@
 
 
         if (!providerProfile.is_available) {
+
             alert(
                 "You must be available to accept requests."
             );
@@ -1553,6 +2057,14 @@
 
 
     document
+        .getElementById("shareLocationButton")
+        .addEventListener(
+            "click",
+            shareLocationNow
+        );
+
+
+    document
         .getElementById("backButton")
         .addEventListener(
             "click",
@@ -1562,6 +2074,14 @@
                     "mobility.html";
             }
         );
+
+
+    window.addEventListener(
+        "beforeunload",
+        function () {
+            stopLocationTracking();
+        }
+    );
 
 
     console.log(
