@@ -1,3 +1,4 @@
+javascript
 /* =========================================================
    LosOja - Main Application JavaScript
    js/app.js
@@ -16,6 +17,7 @@
    - Notifications
    - Notification button
    - Notification sound
+   - Account button
    - Back-to-top button
    - Toast notifications
 ========================================================= */
@@ -71,6 +73,8 @@
             this.bindMobilityButtons();
 
             this.bindNotificationButton();
+
+            this.bindAccountButton();
 
             this.createBackButton();
 
@@ -502,123 +506,126 @@
            SEARCH
         ================================================= */
 
-       bindSearch() {
+        bindSearch() {
 
-    const searchInput =
-        document.getElementById(
-            "businessSearch"
-        ) ||
-        document.getElementById(
-            "searchInput"
-        );
-
-    const searchButton =
-        document.getElementById(
-            "searchButton"
-        );
-
-    if (!searchInput) {
-        console.warn(
-            "LosOja: Search input not found."
-        );
-        return;
-    }
-
-
-    const performSearch = () => {
-
-        const search =
-            searchInput.value.trim();
-
-        const locationInput =
-            document.getElementById(
-                "locationInput"
-            );
-
-        const location =
-            locationInput
-                ? locationInput.value.trim()
-                : "";
-
-
-        if (
-            typeof window.searchBusinesses ===
-            "function"
-        ) {
-
-            window.searchBusinesses(
-                search,
-                location
-            );
-
-
-            const businesses =
+            const searchInput =
                 document.getElementById(
-                    "businesses"
+                    "businessSearch"
+                ) ||
+                document.getElementById(
+                    "searchInput"
                 );
 
-            if (businesses) {
+            const searchButton =
+                document.getElementById(
+                    "searchButton"
+                );
 
-                setTimeout(
-                    () => {
+            if (!searchInput) {
 
-                        businesses.scrollIntoView({
-                            behavior: "smooth",
-                            block: "start"
-                        });
+                console.warn(
+                    "LosOja: Search input not found."
+                );
 
-                    },
-                    50
+                return;
+
+            }
+
+
+            const performSearch = () => {
+
+                const search =
+                    searchInput.value.trim();
+
+                const locationInput =
+                    document.getElementById(
+                        "locationInput"
+                    );
+
+                const location =
+                    locationInput
+                        ? locationInput.value.trim()
+                        : "";
+
+
+                if (
+                    typeof window.searchBusinesses ===
+                    "function"
+                ) {
+
+                    window.searchBusinesses(
+                        search,
+                        location
+                    );
+
+
+                    const businesses =
+                        document.getElementById(
+                            "businesses"
+                        );
+
+                    if (businesses) {
+
+                        setTimeout(
+                            () => {
+
+                                businesses.scrollIntoView({
+                                    behavior: "smooth",
+                                    block: "start"
+                                });
+
+                            },
+                            50
+                        );
+
+                    }
+
+                } else {
+
+                    this.showToast(
+                        "Search is still loading. Please try again.",
+                        "info"
+                    );
+
+                }
+
+            };
+
+
+            if (searchButton) {
+
+                searchButton.addEventListener(
+                    "click",
+                    event => {
+
+                        event.preventDefault();
+
+                        performSearch();
+
+                    }
                 );
 
             }
 
-        } else {
 
-            this.showToast(
-                "Search is still loading. Please try again.",
-                "info"
+            searchInput.addEventListener(
+                "keydown",
+                event => {
+
+                    if (
+                        event.key === "Enter"
+                    ) {
+
+                        event.preventDefault();
+
+                        performSearch();
+
+                    }
+
+                }
             );
 
-        }
-
-    };
-
-
-    if (searchButton) {
-
-        searchButton.addEventListener(
-            "click",
-            event => {
-
-                event.preventDefault();
-
-                performSearch();
-
-            }
-        );
-
-    }
-
-
-    searchInput.addEventListener(
-        "keydown",
-        event => {
-
-            if (
-                event.key === "Enter"
-            ) {
-
-                event.preventDefault();
-
-                performSearch();
-
-            }
-
-        }
-    );
-
-},
+        },
 
 
         /* =================================================
@@ -627,10 +634,10 @@
 
         bindLocationButton() {
 
-           const locationBtn =
-    document.getElementById(
-        "locationButton"
-    );
+            const locationBtn =
+                document.getElementById(
+                    "locationButton"
+                );
 
             if (!locationBtn) {
                 return;
@@ -912,10 +919,19 @@
                             if (!category) {
                                 return;
                             }
-if (category === "Trade by Barter") {
-    window.location.href = "barter.html";
-    return;
-}
+
+                            if (
+                                category ===
+                                "Trade by Barter"
+                            ) {
+
+                                window.location.href =
+                                    "barter.html";
+
+                                return;
+
+                            }
+
 
                             document
                                 .querySelectorAll(
@@ -2488,6 +2504,81 @@ if (category === "Trade by Barter") {
 
 
         /* =================================================
+           ACCOUNT BUTTON
+        ================================================= */
+
+        bindAccountButton() {
+
+            const accountButtons =
+                document.querySelectorAll(
+                    '#accountBtn, .account-btn, .nav-account, [data-action="account"], [data-nav="account"]'
+                );
+
+
+            if (!accountButtons.length) {
+
+                console.warn(
+                    "LosOja: Account button not found."
+                );
+
+                return;
+
+            }
+
+
+            accountButtons.forEach(button => {
+
+                if (
+                    button.dataset
+                        .losojaAccountReady ===
+                    "true"
+                ) {
+
+                    return;
+
+                }
+
+
+                button.dataset
+                    .losojaAccountReady =
+                    "true";
+
+
+                button.addEventListener(
+                    "click",
+                    event => {
+
+                        event.preventDefault();
+
+                        console.log(
+                            "LosOja: Account button clicked."
+                        );
+
+
+                        if (
+                            typeof window.openAccount ===
+                            "function"
+                        ) {
+
+                            window.openAccount();
+
+                        } else {
+
+                            console.error(
+                                "LosOja: openAccount function is not available."
+                            );
+
+                        }
+
+                    }
+                );
+
+            });
+
+        },
+
+
+        /* =================================================
            NOTIFICATION SOUND
         ================================================= */
 
@@ -3125,10 +3216,9 @@ if (category === "Trade by Barter") {
                         .join("");
 
 
-              
-               /* =================================================
-                  NOTIFICATION CLICK ACTIONS
-               ================================================= */
+                /* =================================================
+                   NOTIFICATION CLICK ACTIONS
+                ================================================= */
 
                 list
                     .querySelectorAll(
@@ -3489,6 +3579,8 @@ if (category === "Trade by Barter") {
             }
 
         },
+
+
         /* =================================================
            BACK TO TOP
         ================================================= */
@@ -3803,522 +3895,514 @@ if (category === "Trade by Barter") {
 
 
     /* =====================================================
-   BUSINESS DETAILS
-===================================================== */
+       BUSINESS DETAILS
+    ===================================================== */
 
-window.showBusinessDetails =
-    function (business) {
+    window.showBusinessDetails =
+        function (business) {
 
-        console.log(
-            "LosOja: Opening business details:",
-            business
-        );
-
-        if (!business) {
-
-            console.warn(
-                "LosOja: No business supplied."
+            console.log(
+                "LosOja: Opening business details:",
+                business
             );
 
-            return;
+            if (!business) {
 
-        }
+                console.warn(
+                    "LosOja: No business supplied."
+                );
 
+                return;
 
-        const modal =
-            document.getElementById(
-                "businessDetailsModal"
-            );
-
-
-        if (!modal) {
-
-            console.error(
-                "LosOja: businessDetailsModal not found."
-            );
-
-            return;
-
-        }
+            }
 
 
-        /* =================================================
-           BUSINESS DETAILS CONTENT
-        ================================================= */
-
-        const content =
-            document.getElementById(
-                "businessDetailsContent"
-            );
-
-
-        if (content) {
-
-            const escapeHTML =
-                function (value) {
-
-                    const div =
-                        document.createElement(
-                            "div"
-                        );
-
-                    div.textContent =
-                        value == null
-                            ? ""
-                            : String(value);
-
-                    return div.innerHTML;
-
-                };
-
-
-            const businessName =
-                escapeHTML(
-                    business.name ||
-                    "Business"
+            const modal =
+                document.getElementById(
+                    "businessDetailsModal"
                 );
 
 
-            const businessCategory =
-                escapeHTML(
-                    business.category ||
-                    "Not specified"
+            if (!modal) {
+
+                console.error(
+                    "LosOja: businessDetailsModal not found."
+                );
+
+                return;
+
+            }
+
+
+            /* =================================================
+               BUSINESS DETAILS CONTENT
+            ================================================= */
+
+            const content =
+                document.getElementById(
+                    "businessDetailsContent"
                 );
 
 
-            const businessLocation =
-                escapeHTML(
-                    business.location ||
-                    "Nigeria"
-                );
+            if (content) {
+
+                const escapeHTML =
+                    function (value) {
+
+                        const div =
+                            document.createElement(
+                                "div"
+                            );
+
+                        div.textContent =
+                            value == null
+                                ? ""
+                                : String(value);
+
+                        return div.innerHTML;
+
+                    };
 
 
-            const businessPhone =
-                escapeHTML(
-                    business.phone ||
-                    "Not provided"
-                );
+                const businessName =
+                    escapeHTML(
+                        business.name ||
+                        "Business"
+                    );
 
 
-            const businessDescription =
-                escapeHTML(
-                    business.description ||
-                    "No description provided."
-                );
+                const businessCategory =
+                    escapeHTML(
+                        business.category ||
+                        "Not specified"
+                    );
 
 
-            const businessRating =
-                business.rating
-                    ? escapeHTML(
-                        business.rating
-                    )
-                    : "No rating yet";
+                const businessLocation =
+                    escapeHTML(
+                        business.location ||
+                        "Nigeria"
+                    );
 
 
-            const businessImage =
-                business.image_url ||
-                business.image ||
-                "";
+                const businessPhone =
+                    escapeHTML(
+                        business.phone ||
+                        "Not provided"
+                    );
 
 
-            content.innerHTML = `
+                const businessDescription =
+                    escapeHTML(
+                        business.description ||
+                        "No description provided."
+                    );
 
-                ${
-                    businessImage
-                        ? `
-                            <div
-                                style="
-                                    width:100%;
-                                    margin-bottom:1rem;
-                                "
-                            >
 
-                                <img
-                                    src="${escapeHTML(
-                                        businessImage
-                                    )}"
-                                    alt="${businessName}"
+                const businessRating =
+                    business.rating
+                        ? escapeHTML(
+                            business.rating
+                        )
+                        : "No rating yet";
+
+
+                const businessImage =
+                    business.image_url ||
+                    business.image ||
+                    "";
+
+
+                content.innerHTML = `
+
+                    ${
+                        businessImage
+                            ? `
+                                <div
                                     style="
                                         width:100%;
-                                        max-height:280px;
-                                        object-fit:cover;
-                                        border-radius:12px;
-                                        display:block;
-                                    "
-                                    onerror="
-                                        this.style.display='none';
+                                        margin-bottom:1rem;
                                     "
                                 >
 
-                            </div>
-                        `
-                        : ""
-                }
+                                    <img
+                                        src="${escapeHTML(
+                                            businessImage
+                                        )}"
+                                        alt="${businessName}"
+                                        style="
+                                            width:100%;
+                                            max-height:280px;
+                                            object-fit:cover;
+                                            border-radius:12px;
+                                            display:block;
+                                        "
+                                        onerror="
+                                            this.style.display='none';
+                                        "
+                                    >
+
+                                </div>
+                            `
+                            : ""
+                    }
 
 
-                <h2
-                    style="
-                        margin-bottom:0.5rem;
-                    "
-                >
-                    ${businessName}
-                </h2>
+                    <h2
+                        style="
+                            margin-bottom:0.5rem;
+                        "
+                    >
+                        ${businessName}
+                    </h2>
 
-
-                <p
-                    style="
-                        margin:0.35rem 0;
-                    "
-                >
-                    <strong>Category:</strong>
-                    ${businessCategory}
-                </p>
-
-
-                <p
-                    style="
-                        margin:0.35rem 0;
-                    "
-                >
-                    <strong>Location:</strong>
-                    ${businessLocation}
-                </p>
-
-
-                <p
-                    style="
-                        margin:0.35rem 0;
-                    "
-                >
-                    <strong>Phone:</strong>
-                    ${businessPhone}
-                </p>
-
-
-                <p
-                    style="
-                        margin:0.35rem 0;
-                    "
-                >
-                    <strong>Rating:</strong>
-                    ${businessRating}
-                </p>
-
-
-                <div
-                    style="
-                        margin-top:1rem;
-                    "
-                >
-
-                    <strong>
-                        About this business
-                    </strong>
 
                     <p
                         style="
-                            margin-top:0.4rem;
-                            line-height:1.6;
+                            margin:0.35rem 0;
                         "
                     >
-                        ${businessDescription}
+                        <strong>Category:</strong>
+                        ${businessCategory}
                     </p>
 
-                </div>
 
-
-                <div
-                    style="
-                        display:flex;
-                        flex-wrap:wrap;
-                        gap:0.75rem;
-                        margin-top:1.25rem;
-                    "
-                >
-
-                    <button
-                        type="button"
-                        id="businessChatBtn"
-                        class="btn btn-primary"
+                    <p
+                        style="
+                            margin:0.35rem 0;
+                        "
                     >
-                        Chat with Business
-                    </button>
+                        <strong>Location:</strong>
+                        ${businessLocation}
+                    </p>
 
 
-                    <button
-                        type="button"
-                        id="businessEscrowBtn"
-                        class="btn btn-secondary"
+                    <p
+                        style="
+                            margin:0.35rem 0;
+                        "
                     >
-                        Create Escrow
-                    </button>
-
-                </div>
-
-            `;
-
-        }
+                        <strong>Phone:</strong>
+                        ${businessPhone}
+                    </p>
 
 
-        /* =================================================
-           BUSINESS CHAT
-        ================================================= */
-
-        const chatButton =
-            document.getElementById(
-                "businessChatBtn"
-            );
-
-
-        if (chatButton) {
-
-            chatButton.onclick =
-                async function () {
-
-                    try {
-
-                        if (
-                            !business.user_id
-                        ) {
-
-                            App.showToast(
-                                "This business does not have a registered owner yet.",
-                                "error"
-                            );
-
-                            return;
-
-                        }
+                    <p
+                        style="
+                            margin:0.35rem 0;
+                        "
+                    >
+                        <strong>Rating:</strong>
+                        ${businessRating}
+                    </p>
 
 
-                        if (
-                            typeof window.getCurrentUser !==
-                            "function"
-                        ) {
+                    <div
+                        style="
+                            margin-top:1rem;
+                        "
+                    >
 
-                            App.showToast(
-                                "Please login before starting a chat.",
-                                "error"
-                            );
+                        <strong>
+                            About this business
+                        </strong>
 
-                            return;
+                        <p
+                            style="
+                                margin-top:0.4rem;
+                                line-height:1.6;
+                            "
+                        >
+                            ${businessDescription}
+                        </p>
 
-                        }
+                    </div>
 
 
-                        const currentUser =
-                            await window.getCurrentUser();
+                    <div
+                        style="
+                            display:flex;
+                            flex-wrap:wrap;
+                            gap:0.75rem;
+                            margin-top:1.25rem;
+                        "
+                    >
+
+                        <button
+                            type="button"
+                            id="businessChatBtn"
+                            class="btn btn-primary"
+                        >
+                            Chat with Business
+                        </button>
 
 
-                        if (!currentUser) {
+                        <button
+                            type="button"
+                            id="businessEscrowBtn"
+                            class="btn btn-secondary"
+                        >
+                            Create Escrow
+                        </button>
+
+                    </div>
+
+                `;
+
+            }
+
+
+            /* =================================================
+               BUSINESS CHAT
+            ================================================= */
+
+            const chatButton =
+                document.getElementById(
+                    "businessChatBtn"
+                );
+
+
+            if (chatButton) {
+
+                chatButton.onclick =
+                    async function () {
+
+                        try {
 
                             if (
-                                typeof window.openLogin ===
-                                "function"
+                                !business.user_id
                             ) {
 
-                                window.openLogin();
+                                App.showToast(
+                                    "This business does not have a registered owner yet.",
+                                    "error"
+                                );
 
-                            } else {
-
-                                window.location.href =
-                                    "index.html";
+                                return;
 
                             }
 
-                            return;
-
-                        }
-
-
-                        if (
-                            String(
-                                currentUser.id
-                            ) ===
-                            String(
-                                business.user_id
-                            )
-                        ) {
-
-                            App.showToast(
-                                "You cannot chat with yourself.",
-                                "error"
-                            );
-
-                            return;
-
-                        }
-
-
-                        window.location.href =
-                            "chat.html?user=" +
-                            encodeURIComponent(
-                                business.user_id
-                            );
-
-                    } catch (error) {
-
-                        console.error(
-                            "LosOja business chat error:",
-                            error
-                        );
-
-
-                        App.showToast(
-                            "Could not open chat right now.",
-                            "error"
-                        );
-
-                    }
-
-                };
-
-        }
-
-
-        /* =================================================
-           CREATE ESCROW BUTTON
-        ================================================= */
-
-        const escrowButton =
-            document.getElementById(
-                "businessEscrowBtn"
-            );
-
-
-        if (escrowButton) {
-
-            escrowButton.onclick =
-                async function () {
-
-                    try {
-
-                        if (
-                            !business.user_id
-                        ) {
-
-                            App.showToast(
-                                "This business does not have a registered owner yet.",
-                                "error"
-                            );
-
-                            return;
-
-                        }
-
-
-                        if (
-                            typeof window.getCurrentUser !==
-                            "function"
-                        ) {
-
-                            App.showToast(
-                                "Please login before creating escrow.",
-                                "error"
-                            );
-
-                            return;
-
-                        }
-
-
-                        const currentUser =
-                            await window.getCurrentUser();
-
-
-                        if (!currentUser) {
 
                             if (
-                                typeof window.openLogin ===
+                                typeof window.getCurrentUser !==
                                 "function"
                             ) {
 
-                                window.openLogin();
+                                App.showToast(
+                                    "Please login before starting a chat.",
+                                    "error"
+                                );
+
+                                return;
 
                             }
 
-                            return;
 
-                        }
+                            const currentUser =
+                                await window.getCurrentUser();
 
 
-                        if (
-                            String(
-                                currentUser.id
-                            ) ===
-                            String(
-                                business.user_id
-                            )
-                        ) {
+                            if (!currentUser) {
+
+                                if (
+                                    typeof window.openLogin ===
+                                    "function"
+                                ) {
+
+                                    window.openLogin();
+
+                                } else {
+
+                                    window.location.href =
+                                        "index.html";
+
+                                }
+
+                                return;
+
+                            }
+
+
+                            if (
+                                String(
+                                    currentUser.id
+                                ) ===
+                                String(
+                                    business.user_id
+                                )
+                            ) {
+
+                                App.showToast(
+                                    "You cannot chat with yourself.",
+                                    "error"
+                                );
+
+                                return;
+
+                            }
+
+
+                            window.location.href =
+                                "chat.html?user=" +
+                                encodeURIComponent(
+                                    business.user_id
+                                );
+
+                        } catch (error) {
+
+                            console.error(
+                                "LosOja business chat error:",
+                                error
+                            );
+
 
                             App.showToast(
-                                "You cannot create escrow with yourself.",
+                                "Could not open chat right now.",
                                 "error"
                             );
 
-                            return;
+                        }
+
+                    };
+
+            }
+
+
+            /* =================================================
+               CREATE ESCROW BUTTON
+            ================================================= */
+
+            const escrowButton =
+                document.getElementById(
+                    "businessEscrowBtn"
+                );
+
+
+            if (escrowButton) {
+
+                escrowButton.onclick =
+                    async function () {
+
+                        try {
+
+                            if (
+                                !business.user_id
+                            ) {
+
+                                App.showToast(
+                                    "This business does not have a registered owner yet.",
+                                    "error"
+                                );
+
+                                return;
+
+                            }
+
+
+                            if (
+                                typeof window.getCurrentUser !==
+                                "function"
+                            ) {
+
+                                App.showToast(
+                                    "Please login before creating escrow.",
+                                    "error"
+                                );
+
+                                return;
+
+                            }
+
+
+                            const currentUser =
+                                await window.getCurrentUser();
+
+
+                            if (!currentUser) {
+
+                                if (
+                                    typeof window.openLogin ===
+                                    "function"
+                                ) {
+
+                                    window.openLogin();
+
+                                }
+
+                                return;
+
+                            }
+
+
+                            if (
+                                String(
+                                    currentUser.id
+                                ) ===
+                                String(
+                                    business.user_id
+                                )
+                            ) {
+
+                                App.showToast(
+                                    "You cannot create escrow with yourself.",
+                                    "error"
+                                );
+
+                                return;
+
+                            }
+
+
+                            /*
+                             * Keep the existing escrow system.
+                             * For now, send the user to the existing
+                             * balance/escrow area rather than creating
+                             * a second escrow system here.
+                             */
+
+                            window.location.href =
+                                "balance.html";
+
+                        } catch (error) {
+
+                            console.error(
+                                "LosOja business escrow error:",
+                                error
+                            );
+
+
+                            App.showToast(
+                                "Could not open escrow right now.",
+                                "error"
+                            );
 
                         }
 
+                    };
 
-                        /*
-                         * Keep the existing escrow system.
-                         * For now, send the user to the existing
-                         * balance/escrow area rather than creating
-                         * a second escrow system here.
-                         */
+            }
 
-                        window.location.href =
-                            "balance.html";
-
-                    } catch (error) {
-
-                        console.error(
-                            "LosOja business escrow error:",
-                            error
-                        );
+        };
 
 
-                        App.showToast(
-                            "Could not open escrow right now.",
-                            "error"
-                        );
+    /* =====================================================
+       START APPLICATION
+    ===================================================== */
 
-                    }
+    if (
+        document.readyState ===
+        "loading"
+    ) {
 
-                };
+        document.addEventListener(
+            "DOMContentLoaded",
+            () => App.init()
+        );
 
-        }
+    } else {
 
-    /* =================================================
-       OPEN BUSINESS DETAILS MODAL
-    ================================================= */
+        App.init();
 
-    App.openModal(
-        "businessDetailsModal"
-    );
-
-};
-
-
-/* =====================================================
-   START APPLICATION
-===================================================== */
-
-if (
-    document.readyState ===
-    "loading"
-) {
-
-    document.addEventListener(
-        "DOMContentLoaded",
-        () => App.init()
-    );
-
-} else {
-
-    App.init();
-
-}
+    }
 
 })();
