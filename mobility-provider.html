@@ -387,8 +387,6 @@
     </div>
 
 
-    <!-- PROVIDER PROFILE -->
-
     <section class="card">
 
         <h2>My Provider Profile</h2>
@@ -408,83 +406,48 @@
             <div class="profile-grid">
 
                 <div class="info-box">
-                    <span class="info-label">
-                        Name
-                    </span>
-
+                    <span class="info-label">Name</span>
                     <span
                         class="info-value"
                         id="providerName"
-                    >
-                        —
-                    </span>
+                    >—</span>
                 </div>
 
-
                 <div class="info-box">
-                    <span class="info-label">
-                        Service
-                    </span>
-
+                    <span class="info-label">Service</span>
                     <span
                         class="info-value"
                         id="providerService"
-                    >
-                        —
-                    </span>
+                    >—</span>
                 </div>
 
-
                 <div class="info-box">
-                    <span class="info-label">
-                        Phone
-                    </span>
-
+                    <span class="info-label">Phone</span>
                     <span
                         class="info-value"
                         id="providerPhone"
-                    >
-                        —
-                    </span>
+                    >—</span>
                 </div>
 
-
                 <div class="info-box">
-                    <span class="info-label">
-                        Vehicle
-                    </span>
-
+                    <span class="info-label">Vehicle</span>
                     <span
                         class="info-value"
                         id="providerVehicle"
-                    >
-                        —
-                    </span>
+                    >—</span>
                 </div>
 
-
                 <div class="info-box">
-                    <span class="info-label">
-                        Plate
-                    </span>
-
+                    <span class="info-label">Plate</span>
                     <span
                         class="info-value"
                         id="providerPlate"
-                    >
-                        —
-                    </span>
+                    >—</span>
                 </div>
 
-
                 <div class="info-box">
-                    <span class="info-label">
-                        Verification
-                    </span>
-
-                    <span id="providerVerification">
-                        —
-                    </span>
+                    <span class="info-label">Verification</span>
+                    <span id="providerVerification">—</span>
                 </div>
 
             </div>
@@ -498,8 +461,6 @@
 
     </section>
 
-
-    <!-- AVAILABILITY -->
 
     <section class="card">
 
@@ -518,7 +479,6 @@
                 </span>
 
             </div>
-
 
             <button
                 type="button"
@@ -539,8 +499,6 @@
 
     </section>
 
-
-    <!-- REQUESTS -->
 
     <section class="card">
 
@@ -600,65 +558,120 @@
     };
 
 
-   async function getToken() {
+    async function getToken() {
 
-    try {
-
-        if (
-            window.getSupabaseAccessToken &&
-            typeof window.getSupabaseAccessToken === "function"
-        ) {
-            const token =
-                await window.getSupabaseAccessToken();
-
-            if (token) {
-                return token;
-            }
-        }
-
-    } catch (error) {
-
-        console.warn(
-            "LosOja: token helper failed.",
-            error
-        );
-    }
-
-
-    try {
-
-        const savedSession =
-            localStorage.getItem(
-                "losoja_supabase_session"
-            );
-
-        if (savedSession) {
-
-            const session =
-                JSON.parse(savedSession);
+        try {
 
             if (
-                session &&
-                session.access_token
+                window.ensureValidSupabaseSession &&
+                typeof window.ensureValidSupabaseSession === "function"
             ) {
-                return session.access_token;
+
+                const session =
+                    await window.ensureValidSupabaseSession();
+
+                if (
+                    session &&
+                    session.access_token
+                ) {
+                    return session.access_token;
+                }
             }
+
+        } catch (error) {
+
+            console.warn(
+                "LosOja: session helper failed.",
+                error
+            );
         }
 
-    } catch (error) {
 
-        console.warn(
-            "LosOja: saved session check failed.",
-            error
-        );
+        try {
+
+            if (
+                window.getSupabaseAccessToken &&
+                typeof window.getSupabaseAccessToken === "function"
+            ) {
+
+                const token =
+                    await window.getSupabaseAccessToken();
+
+                if (token) {
+                    return token;
+                }
+            }
+
+        } catch (error) {
+
+            console.warn(
+                "LosOja: token helper failed.",
+                error
+            );
+        }
+
+
+        try {
+
+            const savedSession =
+                localStorage.getItem(
+                    "losoja_supabase_session"
+                );
+
+            if (savedSession) {
+
+                const session =
+                    JSON.parse(savedSession);
+
+                if (
+                    session &&
+                    session.access_token
+                ) {
+                    return session.access_token;
+                }
+            }
+
+        } catch (error) {
+
+            console.warn(
+                "LosOja: saved session check failed.",
+                error
+            );
+        }
+
+
+        return null;
     }
-
-
-    return null;
-}
 
 
     async function getLoggedInUser() {
+
+        try {
+
+            if (
+                window.ensureValidSupabaseSession &&
+                typeof window.ensureValidSupabaseSession === "function"
+            ) {
+
+                const session =
+                    await window.ensureValidSupabaseSession();
+
+                if (
+                    session &&
+                    session.user
+                ) {
+                    return session.user;
+                }
+            }
+
+        } catch (error) {
+
+            console.warn(
+                "LosOja: session user check failed.",
+                error
+            );
+        }
+
 
         try {
 
@@ -684,44 +697,73 @@
         }
 
 
-const token = await getToken();
+        const token =
+            await getToken();
+
+
         if (!token) {
             return null;
         }
 
 
-        const response = await fetch(
-            SUPABASE_URL +
-            "/auth/v1/user",
-            {
-                headers: {
-                    "apikey": SUPABASE_KEY,
-                    "Authorization": "Bearer " + token
-                }
+        try {
+
+            const response =
+                await fetch(
+                    SUPABASE_URL +
+                    "/auth/v1/user",
+                    {
+                        headers: {
+                            "apikey":
+                                SUPABASE_KEY,
+
+                            "Authorization":
+                                "Bearer " + token
+                        }
+                    }
+                );
+
+
+            if (!response.ok) {
+                return null;
             }
-        );
 
 
-        if (!response.ok) {
+            return await response.json();
+
+        } catch (error) {
+
+            console.warn(
+                "LosOja: user request failed.",
+                error
+            );
+
             return null;
         }
-
-
-        return await response.json();
     }
 
 
-async function headers(includeContentType) {
-const token = await getToken();
+    async function headers(includeContentType) {
+
+        const token =
+            await getToken();
+
+
         const result = {
-            "apikey": SUPABASE_KEY,
-            "Authorization": "Bearer " + token
+            "apikey":
+                SUPABASE_KEY,
+
+            "Authorization":
+                "Bearer " + token
         };
 
+
         if (includeContentType) {
+
             result["Content-Type"] =
                 "application/json";
         }
+
 
         return result;
     }
@@ -733,7 +775,9 @@ const token = await getToken();
             return;
         }
 
-        element.textContent = message;
+        element.textContent =
+            message;
+
         element.classList.add("show");
     }
 
@@ -745,6 +789,7 @@ const token = await getToken();
         }
 
         element.textContent = "";
+
         element.classList.remove("show");
     }
 
@@ -833,6 +878,10 @@ const token = await getToken();
             }
 
 
+            const requestHeaders =
+                await headers(false);
+
+
             const response =
                 await fetch(
                     SUPABASE_URL +
@@ -846,7 +895,7 @@ const token = await getToken();
                     "&limit=1",
                     {
                         headers:
-                            headers(false)
+                            requestHeaders
                     }
                 );
 
@@ -984,7 +1033,8 @@ const token = await getToken();
             "verified";
 
 
-        toggle.disabled = !verified;
+        toggle.disabled =
+            !verified;
 
 
         if (!verified) {
@@ -1061,6 +1111,10 @@ const token = await getToken();
 
         try {
 
+            const requestHeaders =
+                await headers(true);
+
+
             const response =
                 await fetch(
                     SUPABASE_URL +
@@ -1073,11 +1127,12 @@ const token = await getToken();
                         method: "PATCH",
 
                         headers:
-                            headers(true),
+                            requestHeaders,
 
                         body: JSON.stringify({
                             is_available:
                                 newValue,
+
                             updated_at:
                                 new Date()
                                     .toISOString()
@@ -1103,6 +1158,7 @@ const token = await getToken();
 
 
             updateAvailabilityUI();
+
 
             showMessage(
                 message,
@@ -1174,6 +1230,10 @@ const token = await getToken();
 
         try {
 
+            const requestHeaders =
+                await headers(false);
+
+
             const response =
                 await fetch(
                     SUPABASE_URL +
@@ -1188,7 +1248,7 @@ const token = await getToken();
                     "&order=created_at.desc",
                     {
                         headers:
-                            headers(false)
+                            requestHeaders
                     }
                 );
 
@@ -1392,6 +1452,14 @@ const token = await getToken();
 
         try {
 
+            const requestHeaders =
+                await headers(true);
+
+
+            requestHeaders["Prefer"] =
+                "return=representation";
+
+
             const response =
                 await fetch(
                     SUPABASE_URL +
@@ -1405,11 +1473,8 @@ const token = await getToken();
                     {
                         method: "PATCH",
 
-                        headers: {
-                            ...headers(true),
-                            "Prefer":
-                                "return=representation"
-                        },
+                        headers:
+                            requestHeaders,
 
                         body: JSON.stringify({
                             driver_id:
