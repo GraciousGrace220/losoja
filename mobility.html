@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
 <meta charset="UTF-8">
@@ -19,7 +20,7 @@
 <link
     rel="stylesheet"
     href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
->
+/>
 
 <style>
 
@@ -49,6 +50,7 @@ button {
     min-height: 100vh;
     padding-bottom: 40px;
 }
+
 
 /* =========================================================
    HEADER
@@ -87,6 +89,7 @@ button {
     font-weight: 700;
 }
 
+
 /* =========================================================
    MAIN
 ========================================================= */
@@ -115,6 +118,7 @@ button {
     color: #6b7280;
     line-height: 1.5;
 }
+
 
 /* =========================================================
    LOCATION SEARCH
@@ -192,8 +196,9 @@ button {
     background: #055c2e;
 }
 
+
 /* =========================================================
-   GPS LOCATION STATUS
+   GPS STATUS
 ========================================================= */
 
 .gps-status {
@@ -223,8 +228,9 @@ button {
     word-break: break-word;
 }
 
+
 /* =========================================================
-   DESTINATION SEARCH RESULTS
+   DESTINATION RESULTS
 ========================================================= */
 
 .destination-results {
@@ -281,6 +287,7 @@ button {
     font-size: 13px;
 }
 
+
 /* =========================================================
    MAP
 ========================================================= */
@@ -303,6 +310,43 @@ button {
     color: #6b7280;
     font-size: 12px;
 }
+
+
+/* =========================================================
+   ROUTE SUMMARY
+========================================================= */
+
+.route-summary {
+    display: none;
+    background: #eef8f2;
+    border: 1px solid #cce8d7;
+    border-radius: 14px;
+    padding: 13px 14px;
+    margin-bottom: 15px;
+}
+
+.route-summary.active {
+    display: block;
+}
+
+.route-summary-title {
+    color: #055c2e;
+    font-weight: 800;
+    margin-bottom: 6px;
+}
+
+.route-summary-details {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    color: #374151;
+    font-size: 13px;
+}
+
+.route-summary-item {
+    font-weight: 700;
+}
+
 
 /* =========================================================
    RIDE TYPES
@@ -352,6 +396,7 @@ button {
     font-size: 11px;
     font-weight: 800;
 }
+
 
 /* =========================================================
    DRIVER LIST
@@ -423,6 +468,7 @@ button {
     line-height: 1.5;
 }
 
+
 /* =========================================================
    REQUEST STATUS
 ========================================================= */
@@ -446,6 +492,7 @@ button {
     font-size: 13px;
     line-height: 1.7;
 }
+
 
 /* =========================================================
    PROVIDER CTA
@@ -478,6 +525,7 @@ button {
     border-radius: 11px;
     font-weight: 800;
 }
+
 
 /* =========================================================
    MODAL
@@ -577,6 +625,7 @@ button {
     color: #b91c1c;
 }
 
+
 /* =========================================================
    MOBILE
 ========================================================= */
@@ -617,16 +666,26 @@ button {
 
 </head>
 
+
 <body>
 
 <div class="page">
 
+
 <header class="header">
 
     <div>
-        <div class="logo">LosOja</div>
-        <div class="header-title">Mobility</div>
+
+        <div class="logo">
+            LosOja
+        </div>
+
+        <div class="header-title">
+            Mobility
+        </div>
+
     </div>
+
 
     <button
         class="back-btn"
@@ -641,261 +700,361 @@ button {
 
 <main class="container">
 
-    <section class="hero">
 
-        <h1>Where are you going?</h1>
+<section class="hero">
 
-        <p>
-            Find nearby verified mobility providers for Cab,
-            Keke, Bike, Dispatch and Rent a Truck.
-        </p>
+    <h1>
+        Where are you going?
+    </h1>
 
-    </section>
+    <p>
+        Find nearby verified mobility providers for Cab,
+        Keke, Bike, Dispatch and Rent a Truck.
+    </p>
+
+</section>
 
 
-    <!-- =====================================================
-         LOCATION SEARCH
-    ====================================================== -->
+<!-- =====================================================
+     LOCATION
+====================================================== -->
 
-    <section class="location-box">
+<section class="location-box">
 
-        <h2>Your trip</h2>
+    <h2>
+        Your trip
+    </h2>
 
-        <div class="location-field">
 
-            <label for="pickupLocation">
-                Pickup location
-            </label>
+    <div class="location-field">
 
-            <div class="location-input-wrap">
+        <label for="pickupLocation">
+            Pickup location
+        </label>
 
-                <input
-                    type="text"
-                    id="pickupLocation"
-                    class="location-input"
-                    placeholder="Where should we pick you up?"
-                    autocomplete="off"
-                >
 
-            </div>
+        <div class="location-input-wrap">
 
-            <div class="location-actions">
+            <input
+                type="text"
+                id="pickupLocation"
+                class="location-input"
+                placeholder="Where should we pick you up?"
+                autocomplete="off"
+            >
 
-                <button
-                    type="button"
-                    class="secondary-btn"
-                    id="useCurrentLocationButton"
-                >
-                    📍 Use my location
-                </button>
+        </div>
 
+
+        <div class="location-actions">
+
+            <button
+                type="button"
+                class="secondary-btn"
+                id="useCurrentLocationButton"
+            >
+                📍 Use my location
+            </button>
+
+        </div>
+
+
+        <div
+            id="gpsStatus"
+            class="gps-status"
+        >
+
+            <div class="gps-status-title">
+                📍 GPS location received
             </div>
 
             <div
-                id="gpsStatus"
-                class="gps-status"
+                id="gpsCoordinates"
+                class="gps-coordinates"
             >
-
-                <div class="gps-status-title">
-                    📍 GPS location received
-                </div>
-
-                <div
-                    id="gpsCoordinates"
-                    class="gps-coordinates"
-                >
-                    Waiting for GPS...
-                </div>
-
+                Waiting for GPS...
             </div>
 
         </div>
 
+    </div>
 
-        <div class="location-field">
 
-            <label for="destinationLocation">
-                Destination
-            </label>
+    <div class="location-field">
 
-            <div class="location-input-wrap">
+        <label for="destinationLocation">
+            Destination
+        </label>
 
-                <input
-                    type="text"
-                    id="destinationLocation"
-                    class="location-input"
-                    placeholder="Search any location in Nigeria..."
-                    autocomplete="off"
-                >
 
-                <div
-                    id="destinationResults"
-                    class="destination-results"
-                ></div>
+        <div class="location-input-wrap">
 
-            </div>
+            <input
+                type="text"
+                id="destinationLocation"
+                class="location-input"
+                placeholder="Search any location in Nigeria..."
+                autocomplete="off"
+            >
 
-            <div class="location-actions">
 
-                <button
-                    type="button"
-                    class="primary-btn"
-                    id="searchDestinationButton"
-                >
-                    Search destination
-                </button>
-
-            </div>
+            <div
+                id="destinationResults"
+                class="destination-results"
+            ></div>
 
         </div>
 
-    </section>
 
-
-    <!-- =====================================================
-         MAP
-    ====================================================== -->
-
-    <section class="map-card">
-
-        <div id="mobilityMap"></div>
-
-        <div class="map-note">
-            Tap the map to set your pickup location.
-        </div>
-
-    </section>
-
-
-    <!-- =====================================================
-         RIDE TYPES
-    ====================================================== -->
-
-    <section class="section">
-
-        <h2>Choose a ride</h2>
-
-        <div class="ride-types">
+        <div class="location-actions">
 
             <button
                 type="button"
-                class="ride-type active"
-                data-service="cab"
+                class="primary-btn"
+                id="searchDestinationButton"
             >
-                <span class="ride-icon">🚕</span>
-                <span class="ride-name">Cab</span>
-            </button>
-
-            <button
-                type="button"
-                class="ride-type"
-                data-service="tricycle"
-            >
-                <span class="ride-icon">🛺</span>
-                <span class="ride-name">Keke</span>
-            </button>
-
-            <button
-                type="button"
-                class="ride-type"
-                data-service="bike"
-            >
-                <span class="ride-icon">🏍️</span>
-                <span class="ride-name">Bike</span>
-            </button>
-
-            <button
-                type="button"
-                class="ride-type"
-                data-service="dispatch"
-            >
-                <span class="ride-icon">📦</span>
-                <span class="ride-name">Dispatch</span>
-            </button>
-
-            <button
-                type="button"
-                class="ride-type"
-                data-service="truck"
-            >
-                <span class="ride-icon">🚚</span>
-                <span class="ride-name">Truck</span>
+                Search destination
             </button>
 
         </div>
 
-    </section>
+    </div>
+
+</section>
 
 
-    <!-- =====================================================
-         NEARBY DRIVERS
-    ====================================================== -->
+<!-- =====================================================
+     MAP
+====================================================== -->
 
-    <section class="section">
+<section class="map-card">
 
-        <h2>Nearby Drivers</h2>
+    <div id="mobilityMap"></div>
+
+    <div class="map-note">
+        Tap the map to set your pickup location.
+        Select a destination to calculate the road route.
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     ROUTE SUMMARY
+====================================================== -->
+
+<div
+    id="routeSummary"
+    class="route-summary"
+>
+
+    <div class="route-summary-title">
+        🛣️ Your route
+    </div>
+
+    <div class="route-summary-details">
 
         <div
-            id="driverCount"
-            class="driver-count"
+            id="routeDistance"
+            class="route-summary-item"
         >
-            Checking nearby drivers...
+            Distance: —
         </div>
 
         <div
-            id="driversList"
-            class="drivers-list"
+            id="routeDuration"
+            class="route-summary-item"
         >
-
-            <div class="empty-state">
-                Set your pickup location to find nearby drivers.
-            </div>
-
+            Estimated time: —
         </div>
 
-    </section>
+    </div>
+
+</div>
 
 
-    <!-- =====================================================
-         MY REQUEST
-    ====================================================== -->
+<!-- =====================================================
+     RIDE TYPES
+====================================================== -->
 
-    <section class="section">
+<section class="section">
 
-        <h2>My Ride Request</h2>
+    <h2>
+        Choose a ride
+    </h2>
 
-        <div id="latestRequestContainer">
 
-            <div class="empty-state">
-                You don't have an active ride request.
-            </div>
+    <div class="ride-types">
 
+        <button
+            type="button"
+            class="ride-type active"
+            data-service="cab"
+        >
+
+            <span class="ride-icon">
+                🚕
+            </span>
+
+            <span class="ride-name">
+                Cab
+            </span>
+
+        </button>
+
+
+        <button
+            type="button"
+            class="ride-type"
+            data-service="tricycle"
+        >
+
+            <span class="ride-icon">
+                🛺
+            </span>
+
+            <span class="ride-name">
+                Keke
+            </span>
+
+        </button>
+
+
+        <button
+            type="button"
+            class="ride-type"
+            data-service="bike"
+        >
+
+            <span class="ride-icon">
+                🏍️
+            </span>
+
+            <span class="ride-name">
+                Bike
+            </span>
+
+        </button>
+
+
+        <button
+            type="button"
+            class="ride-type"
+            data-service="dispatch"
+        >
+
+            <span class="ride-icon">
+                📦
+            </span>
+
+            <span class="ride-name">
+                Dispatch
+            </span>
+
+        </button>
+
+
+        <button
+            type="button"
+            class="ride-type"
+            data-service="truck"
+        >
+
+            <span class="ride-icon">
+                🚚
+            </span>
+
+            <span class="ride-name">
+                Truck
+            </span>
+
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     NEARBY DRIVERS
+====================================================== -->
+
+<section class="section">
+
+    <h2>
+        Nearby Drivers
+    </h2>
+
+
+    <div
+        id="driverCount"
+        class="driver-count"
+    >
+        Checking nearby drivers...
+    </div>
+
+
+    <div
+        id="driversList"
+        class="drivers-list"
+    >
+
+        <div class="empty-state">
+            Set your pickup location to find nearby drivers.
         </div>
 
-    </section>
+    </div>
+
+</section>
 
 
-    <!-- =====================================================
-         PROVIDER CTA
-    ====================================================== -->
+<!-- =====================================================
+     MY REQUEST
+====================================================== -->
 
-    <section class="provider-cta">
+<section class="section">
 
-        <h2>Want to earn with LosOja?</h2>
+    <h2>
+        My Ride Request
+    </h2>
 
-        <p>
-            Register as a mobility provider and receive ride
-            requests from customers near you.
-        </p>
 
-        <a
-            href="mobility-driver.html"
-            class="provider-btn"
-        >
-            Become a Provider
-        </a>
+    <div id="latestRequestContainer">
 
-    </section>
+        <div class="empty-state">
+            You don't have an active ride request.
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     PROVIDER CTA
+====================================================== -->
+
+<section class="provider-cta">
+
+    <h2>
+        Want to earn with LosOja?
+    </h2>
+
+    <p>
+        Register as a mobility provider and receive ride
+        requests from customers near you.
+    </p>
+
+
+    <a
+        href="mobility-driver.html"
+        class="provider-btn"
+    >
+        Become a Provider
+    </a>
+
+</section>
+
 
 </main>
 
@@ -915,7 +1074,10 @@ button {
 
         <div class="modal-header">
 
-            <h2>Request Ride</h2>
+            <h2>
+                Request Ride
+            </h2>
+
 
             <button
                 type="button"
@@ -926,6 +1088,7 @@ button {
             </button>
 
         </div>
+
 
         <div class="form-group">
 
@@ -941,6 +1104,7 @@ button {
 
         </div>
 
+
         <div class="form-group">
 
             <label>
@@ -955,6 +1119,7 @@ button {
 
         </div>
 
+
         <div class="form-group">
 
             <label for="rideNotes">
@@ -968,6 +1133,7 @@ button {
 
         </div>
 
+
         <button
             type="button"
             class="submit-btn"
@@ -975,6 +1141,7 @@ button {
         >
             Request Ride
         </button>
+
 
         <div
             id="rideRequestMessage"
@@ -987,6 +1154,7 @@ button {
 
 
 <script src="js/auth.js?v=3"></script>
+
 
 <script
     src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
@@ -1013,29 +1181,55 @@ const SUPABASE_KEY =
    SETTINGS
 ========================================================= */
 
-const NEARBY_RADIUS_KM = 10;
+const NEARBY_RADIUS_KM =
+    10;
+
+
+/*
+ * OSRM is used only to calculate the road route.
+ *
+ * We are not replacing your Supabase system.
+ */
+const ROUTING_URL =
+    "https://router.project-osrm.org/route/v1/driving/";
 
 
 /* =========================================================
    STATE
 ========================================================= */
 
-let selectedServiceType = "cab";
+let selectedServiceType =
+    "cab";
 
-let pickupCoordinates = null;
-let destinationCoordinates = null;
+let pickupCoordinates =
+    null;
 
-let latestRequestId = null;
+let destinationCoordinates =
+    null;
 
-let requestPollingTimer = null;
-let driverPollingTimer = null;
+let latestRequestId =
+    null;
 
-let mobilityMap = null;
+let requestPollingTimer =
+    null;
 
-let pickupMarker = null;
-let destinationMarker = null;
+let driverPollingTimer =
+    null;
 
-let driverMarkers = [];
+let mobilityMap =
+    null;
+
+let pickupMarker =
+    null;
+
+let destinationMarker =
+    null;
+
+let routeLayer =
+    null;
+
+let driverMarkers =
+    [];
 
 
 /* =========================================================
@@ -1043,43 +1237,84 @@ let driverMarkers = [];
 ========================================================= */
 
 const pickupInput =
-    document.getElementById("pickupLocation");
+    document.getElementById(
+        "pickupLocation"
+    );
 
 const destinationInput =
-    document.getElementById("destinationLocation");
+    document.getElementById(
+        "destinationLocation"
+    );
 
 const destinationResults =
-    document.getElementById("destinationResults");
+    document.getElementById(
+        "destinationResults"
+    );
 
 const driversList =
-    document.getElementById("driversList");
+    document.getElementById(
+        "driversList"
+    );
 
 const driverCount =
-    document.getElementById("driverCount");
+    document.getElementById(
+        "driverCount"
+    );
 
 const latestRequestContainer =
-    document.getElementById("latestRequestContainer");
+    document.getElementById(
+        "latestRequestContainer"
+    );
 
 const rideRequestModal =
-    document.getElementById("rideRequestModal");
+    document.getElementById(
+        "rideRequestModal"
+    );
 
 const modalPickupLocation =
-    document.getElementById("modalPickupLocation");
+    document.getElementById(
+        "modalPickupLocation"
+    );
 
 const modalDestinationLocation =
-    document.getElementById("modalDestinationLocation");
+    document.getElementById(
+        "modalDestinationLocation"
+    );
 
 const rideNotes =
-    document.getElementById("rideNotes");
+    document.getElementById(
+        "rideNotes"
+    );
 
 const rideRequestMessage =
-    document.getElementById("rideRequestMessage");
+    document.getElementById(
+        "rideRequestMessage"
+    );
 
 const gpsStatus =
-    document.getElementById("gpsStatus");
+    document.getElementById(
+        "gpsStatus"
+    );
 
 const gpsCoordinates =
-    document.getElementById("gpsCoordinates");
+    document.getElementById(
+        "gpsCoordinates"
+    );
+
+const routeSummary =
+    document.getElementById(
+        "routeSummary"
+    );
+
+const routeDistance =
+    document.getElementById(
+        "routeDistance"
+    );
+
+const routeDuration =
+    document.getElementById(
+        "routeDuration"
+    );
 
 
 /* =========================================================
@@ -1091,7 +1326,8 @@ async function getLoggedInUser() {
     try {
 
         if (
-            typeof window.getCurrentUser === "function"
+            typeof window.getCurrentUser ===
+            "function"
         ) {
 
             const user =
@@ -1151,10 +1387,12 @@ async function getLoggedInUser() {
                 "losoja_supabase_session"
             );
 
+
         if (raw) {
 
             const session =
                 JSON.parse(raw);
+
 
             if (
                 session &&
@@ -1183,7 +1421,7 @@ async function getLoggedInUser() {
 
 
 /* =========================================================
-   SUPABASE REQUEST HELPER
+   SUPABASE REQUEST
 ========================================================= */
 
 async function supabaseRequest(
@@ -1193,7 +1431,8 @@ async function supabaseRequest(
 
     const headers = {
 
-        "apikey": SUPABASE_KEY,
+        "apikey":
+            SUPABASE_KEY,
 
         "Content-Type":
             "application/json",
@@ -1211,10 +1450,12 @@ async function supabaseRequest(
                 ? await window.getSupabaseAccessToken()
                 : null;
 
+
         if (token) {
 
             headers.Authorization =
-                "Bearer " + token;
+                "Bearer " +
+                token;
 
         }
 
@@ -1230,7 +1471,8 @@ async function supabaseRequest(
 
     const response =
         await fetch(
-            SUPABASE_URL + endpoint,
+            SUPABASE_URL +
+            endpoint,
             {
                 ...options,
                 headers
@@ -1240,6 +1482,7 @@ async function supabaseRequest(
 
     const text =
         await response.text();
+
 
     let data = null;
 
@@ -1253,7 +1496,8 @@ async function supabaseRequest(
 
     } catch {
 
-        data = text;
+        data =
+            text;
 
     }
 
@@ -1262,20 +1506,28 @@ async function supabaseRequest(
 
         const error =
             new Error(
-                typeof data === "string"
+
+                typeof data ===
+                "string"
+
                     ? data
+
                     : (
                         data?.message ||
                         data?.error ||
                         "Supabase request failed"
                     )
+
             );
+
 
         error.status =
             response.status;
 
+
         error.data =
             data;
+
 
         throw error;
 
@@ -1294,21 +1546,28 @@ async function supabaseRequest(
 function initializeMap() {
 
     mobilityMap =
-        L.map("mobilityMap")
-            .setView(
-                [6.5244, 3.3792],
-                11
-            );
+        L.map(
+            "mobilityMap"
+        )
+        .setView(
+            [6.5244, 3.3792],
+            11
+        );
 
 
     L.tileLayer(
         "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
         {
-            maxZoom: 19,
+            maxZoom:
+                19,
+
             attribution:
                 "&copy; OpenStreetMap contributors"
         }
-    ).addTo(mobilityMap);
+    )
+    .addTo(
+        mobilityMap
+    );
 
 
     mobilityMap.on(
@@ -1327,6 +1586,388 @@ function initializeMap() {
 
 
 /* =========================================================
+   ROUTE
+========================================================= */
+
+async function calculateAndDrawRoute() {
+
+    if (
+        !pickupCoordinates ||
+        !destinationCoordinates
+    ) {
+
+        clearRoute();
+
+        return;
+
+    }
+
+
+    routeSummary.classList.add(
+        "active"
+    );
+
+
+    routeDistance.textContent =
+        "Distance: calculating...";
+
+
+    routeDuration.textContent =
+        "Estimated time: calculating...";
+
+
+    try {
+
+        /*
+         * OSRM expects:
+         *
+         * longitude,latitude
+         *
+         * not:
+         *
+         * latitude,longitude
+         */
+
+        const start =
+            pickupCoordinates.longitude +
+            "," +
+            pickupCoordinates.latitude;
+
+
+        const end =
+            destinationCoordinates.longitude +
+            "," +
+            destinationCoordinates.latitude;
+
+
+        const url =
+            ROUTING_URL +
+            start +
+            ";" +
+            end +
+            "?overview=full" +
+            "&geometries=geojson" +
+            "&steps=true";
+
+
+        const response =
+            await fetch(
+                url
+            );
+
+
+        if (
+            !response.ok
+        ) {
+
+            throw new Error(
+                "Routing service failed"
+            );
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            data.code !==
+            "Ok" ||
+            !data.routes ||
+            !data.routes.length
+        ) {
+
+            throw new Error(
+                "No road route found"
+            );
+
+        }
+
+
+        const route =
+            data.routes[0];
+
+
+        drawRoute(
+            route.geometry
+        );
+
+
+        const distanceKm =
+            route.distance /
+            1000;
+
+
+        const durationMinutes =
+            route.duration /
+            60;
+
+
+        routeDistance.textContent =
+            "Distance: " +
+            formatRouteDistance(
+                distanceKm
+            );
+
+
+        routeDuration.textContent =
+            "Estimated time: " +
+            formatRouteDuration(
+                durationMinutes
+            );
+
+
+    } catch (error) {
+
+        console.error(
+            "Route calculation failed:",
+            error
+        );
+
+
+        routeDistance.textContent =
+            "Distance: unavailable";
+
+
+        routeDuration.textContent =
+            "Estimated time: unavailable";
+
+
+        routeSummary.classList.add(
+            "active"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   DRAW ROUTE
+========================================================= */
+
+function drawRoute(
+    geometry
+) {
+
+    clearRoute();
+
+
+    routeLayer =
+        L.geoJSON(
+            geometry,
+            {
+                style: {
+
+                    color:
+                        "#087a3e",
+
+                    weight:
+                        6,
+
+                    opacity:
+                        0.85
+
+                }
+            }
+        )
+        .addTo(
+            mobilityMap
+        );
+
+
+    /*
+     * Fit the map around the route,
+     * while leaving enough padding
+     * for the markers.
+     */
+
+    const bounds =
+        routeLayer.getBounds();
+
+
+    if (
+        bounds.isValid()
+    ) {
+
+        mobilityMap.fitBounds(
+            bounds,
+            {
+                padding:
+                    [40, 40]
+            }
+        );
+
+    }
+
+
+    /*
+     * Bring the pickup and destination
+     * markers back above the route.
+     */
+
+    if (
+        pickupMarker
+    ) {
+
+        pickupMarker.bringToFront();
+
+    }
+
+
+    if (
+        destinationMarker
+    ) {
+
+        destinationMarker.bringToFront();
+
+    }
+
+
+    /*
+     * Driver markers should also remain
+     * visible above the route.
+     */
+
+    driverMarkers.forEach(
+        function (
+            marker
+        ) {
+
+            marker.bringToFront();
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   CLEAR ROUTE
+========================================================= */
+
+function clearRoute() {
+
+    if (
+        routeLayer
+    ) {
+
+        mobilityMap.removeLayer(
+            routeLayer
+        );
+
+        routeLayer =
+            null;
+
+    }
+
+
+    routeSummary.classList.remove(
+        "active"
+    );
+
+
+    routeDistance.textContent =
+        "Distance: —";
+
+
+    routeDuration.textContent =
+        "Estimated time: —";
+
+}
+
+
+/* =========================================================
+   ROUTE DISTANCE
+========================================================= */
+
+function formatRouteDistance(
+    distanceKm
+) {
+
+    if (
+        distanceKm < 1
+    ) {
+
+        return Math.round(
+            distanceKm * 1000
+        ) +
+        " m";
+
+    }
+
+
+    return distanceKm.toFixed(1) +
+        " km";
+
+}
+
+
+/* =========================================================
+   ROUTE TIME
+========================================================= */
+
+function formatRouteDuration(
+    minutes
+) {
+
+    if (
+        minutes < 1
+    ) {
+
+        return "less than 1 min";
+
+    }
+
+
+    if (
+        minutes < 60
+    ) {
+
+        return Math.round(
+            minutes
+        ) +
+        " min";
+
+    }
+
+
+    const hours =
+        Math.floor(
+            minutes / 60
+        );
+
+
+    const remaining =
+        Math.round(
+            minutes % 60
+        );
+
+
+    if (
+        remaining === 0
+    ) {
+
+        return (
+            hours +
+            " hr"
+        );
+
+    }
+
+
+    return (
+        hours +
+        " hr " +
+        remaining +
+        " min"
+    );
+
+}
+
+
+/* =========================================================
    DRIVER ICON
 ========================================================= */
 
@@ -1334,7 +1975,8 @@ function createDriverIcon(
     serviceType
 ) {
 
-    let icon = "🚕";
+    let icon =
+        "🚕";
 
 
     if (
@@ -1342,7 +1984,8 @@ function createDriverIcon(
         "tricycle"
     ) {
 
-        icon = "🛺";
+        icon =
+            "🛺";
 
     }
 
@@ -1352,7 +1995,8 @@ function createDriverIcon(
         "bike"
     ) {
 
-        icon = "🏍️";
+        icon =
+            "🏍️";
 
     }
 
@@ -1362,7 +2006,8 @@ function createDriverIcon(
         "dispatch"
     ) {
 
-        icon = "📦";
+        icon =
+            "📦";
 
     }
 
@@ -1372,14 +2017,16 @@ function createDriverIcon(
         "truck"
     ) {
 
-        icon = "🚚";
+        icon =
+            "🚚";
 
     }
 
 
     return L.divIcon({
 
-        className: "",
+        className:
+            "",
 
         html:
             `<div style="
@@ -1395,9 +2042,11 @@ function createDriverIcon(
                 font-size:19px;
             ">${icon}</div>`,
 
-        iconSize: [38, 38],
+        iconSize:
+            [38,38],
 
-        iconAnchor: [19, 19]
+        iconAnchor:
+            [19,19]
 
     });
 
@@ -1415,22 +2064,35 @@ function calculateDistanceKm(
     lon2
 ) {
 
-    const earthRadius = 6371;
+    const earthRadius =
+        6371;
 
 
     const dLat =
-        (lat2 - lat1) *
-        Math.PI / 180;
+        (
+            lat2 -
+            lat1
+        ) *
+        Math.PI /
+        180;
 
 
     const dLon =
-        (lon2 - lon1) *
-        Math.PI / 180;
+        (
+            lon2 -
+            lon1
+        ) *
+        Math.PI /
+        180;
 
 
     const a =
-        Math.sin(dLat / 2) *
-        Math.sin(dLat / 2) +
+        Math.sin(
+            dLat / 2
+        ) *
+        Math.sin(
+            dLat / 2
+        ) +
 
         Math.cos(
             lat1 *
@@ -1444,8 +2106,12 @@ function calculateDistanceKm(
             180
         ) *
 
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
+        Math.sin(
+            dLon / 2
+        ) *
+        Math.sin(
+            dLon / 2
+        );
 
 
     const c =
@@ -1456,13 +2122,16 @@ function calculateDistanceKm(
         );
 
 
-    return earthRadius * c;
+    return (
+        earthRadius *
+        c
+    );
 
 }
 
 
 /* =========================================================
-   FORMAT DISTANCE
+   FORMAT DRIVER DISTANCE
 ========================================================= */
 
 function formatDistance(
@@ -1475,13 +2144,16 @@ function formatDistance(
 
         return Math.round(
             distanceKm * 1000
-        ) + " m away";
+        ) +
+        " m away";
 
     }
 
 
-    return distanceKm.toFixed(1) +
-        " km away";
+    return (
+        distanceKm.toFixed(1)
+    ) +
+    " km away";
 
 }
 
@@ -1496,15 +2168,24 @@ async function setPickupLocationFromCoordinates(
 ) {
 
     latitude =
-        Number(latitude);
+        Number(
+            latitude
+        );
+
 
     longitude =
-        Number(longitude);
+        Number(
+            longitude
+        );
 
 
     if (
-        !Number.isFinite(latitude) ||
-        !Number.isFinite(longitude)
+        !Number.isFinite(
+            latitude
+        ) ||
+        !Number.isFinite(
+            longitude
+        )
     ) {
 
         return;
@@ -1514,14 +2195,18 @@ async function setPickupLocationFromCoordinates(
 
     pickupCoordinates = {
 
-        latitude,
+        latitude:
+            latitude,
 
-        longitude
+        longitude:
+            longitude
 
     };
 
 
-    if (pickupMarker) {
+    if (
+        pickupMarker
+    ) {
 
         mobilityMap.removeLayer(
             pickupMarker
@@ -1531,13 +2216,17 @@ async function setPickupLocationFromCoordinates(
 
 
     pickupMarker =
-        L.marker([
-            latitude,
-            longitude
-        ])
-        .addTo(mobilityMap)
+        L.marker(
+            [
+                latitude,
+                longitude
+            ]
+        )
+        .addTo(
+            mobilityMap
+        )
         .bindPopup(
-            "Pickup location"
+            "📍 Pickup location"
         );
 
 
@@ -1561,15 +2250,19 @@ async function setPickupLocationFromCoordinates(
 
         const url =
             "https://nominatim.openstreetmap.org/reverse" +
+
             "?format=jsonv2" +
+
             "&lat=" +
             encodeURIComponent(
                 latitude
             ) +
+
             "&lon=" +
             encodeURIComponent(
                 longitude
             ) +
+
             "&addressdetails=1";
 
 
@@ -1578,8 +2271,10 @@ async function setPickupLocationFromCoordinates(
                 url,
                 {
                     headers: {
+
                         "Accept":
                             "application/json"
+
                     }
                 }
             );
@@ -1591,6 +2286,7 @@ async function setPickupLocationFromCoordinates(
 
         pickupInput.value =
             data.display_name ||
+
             (
                 latitude.toFixed(6) +
                 ", " +
@@ -1615,6 +2311,21 @@ async function setPickupLocationFromCoordinates(
 
 
     await loadNearbyDrivers();
+
+
+    /*
+     * If destination was already selected,
+     * redraw the road route using the new
+     * pickup position.
+     */
+
+    if (
+        destinationCoordinates
+    ) {
+
+        await calculateAndDrawRoute();
+
+    }
 
 }
 
@@ -1660,22 +2371,22 @@ function useCurrentLocation() {
             const latitude =
                 position.coords.latitude;
 
+
             const longitude =
                 position.coords.longitude;
+
 
             const accuracy =
                 position.coords.accuracy;
 
 
-            /*
-             * Display the actual coordinates
-             * returned by the browser.
-             */
             gpsCoordinates.textContent =
                 "Latitude: " +
                 latitude.toFixed(6) +
+
                 " | Longitude: " +
                 longitude.toFixed(6) +
+
                 " | Accuracy: approximately " +
                 Math.round(
                     accuracy
@@ -1686,22 +2397,25 @@ function useCurrentLocation() {
             console.log(
                 "LOSOJA ACTUAL GPS LOCATION:",
                 {
-                    latitude,
-                    longitude,
-                    accuracy
+                    latitude:
+                        latitude,
+
+                    longitude:
+                        longitude,
+
+                    accuracy:
+                        accuracy
                 }
             );
 
 
             await setPickupLocationFromCoordinates(
-
                 latitude,
-
                 longitude
-
             );
 
         },
+
 
         function (
             error
@@ -1719,8 +2433,7 @@ function useCurrentLocation() {
 
 
             gpsCoordinates.textContent =
-                "GPS could not be obtained. " +
-                "Please allow location access in your browser.";
+                "GPS could not be obtained. Please allow location access.";
 
 
             pickupInput.value =
@@ -1764,21 +2477,16 @@ function useCurrentLocation() {
 
         },
 
+
         {
             enableHighAccuracy:
                 true,
 
-            /*
-             * Force a fresh location
-             * rather than intentionally
-             * using an old cached position.
-             */
             maximumAge:
                 0,
 
             timeout:
                 20000
-
         }
 
     );
@@ -1800,9 +2508,11 @@ async function searchDestination() {
 
         clearDestinationResults();
 
+
         alert(
             "Please enter a destination."
         );
+
 
         return;
 
@@ -1872,6 +2582,7 @@ async function searchDestination() {
                 </div>
                 `;
 
+
             return;
 
         }
@@ -1882,9 +2593,7 @@ async function searchDestination() {
         );
 
 
-    } catch (
-        error
-    ) {
+    } catch (error) {
 
         console.error(
             "Destination search error:",
@@ -1905,7 +2614,7 @@ async function searchDestination() {
 
 
 /* =========================================================
-   NOMINATIM SEARCH
+   NOMINATIM
 ========================================================= */
 
 async function fetchNominatimResults(
@@ -1914,11 +2623,17 @@ async function fetchNominatimResults(
 
     const url =
         "https://nominatim.openstreetmap.org/search" +
+
         "?format=jsonv2" +
+
         "&limit=10" +
+
         "&countrycodes=ng" +
+
         "&addressdetails=1" +
+
         "&namedetails=1" +
+
         "&q=" +
         encodeURIComponent(
             query
@@ -1930,8 +2645,10 @@ async function fetchNominatimResults(
             url,
             {
                 headers: {
+
                     "Accept":
                         "application/json"
+
                 }
             }
         );
@@ -1954,7 +2671,7 @@ async function fetchNominatimResults(
 
 
 /* =========================================================
-   RENDER DESTINATION RESULTS
+   DESTINATION RESULTS
 ========================================================= */
 
 function renderDestinationResults(
@@ -2079,7 +2796,7 @@ function getDestinationTitle(
    SELECT DESTINATION
 ========================================================= */
 
-function selectDestination(
+async function selectDestination(
     result
 ) {
 
@@ -2087,6 +2804,7 @@ function selectDestination(
         Number(
             result.lat
         );
+
 
     const longitude =
         Number(
@@ -2110,9 +2828,11 @@ function selectDestination(
 
     destinationCoordinates = {
 
-        latitude,
+        latitude:
+            latitude,
 
-        longitude
+        longitude:
+            longitude
 
     };
 
@@ -2139,53 +2859,40 @@ function selectDestination(
 
 
     destinationMarker =
-        L.marker([
-            latitude,
-            longitude
-        ])
-        .addTo(mobilityMap)
+        L.marker(
+            [
+                latitude,
+                longitude
+            ]
+        )
+        .addTo(
+            mobilityMap
+        )
         .bindPopup(
-            "Destination"
+            "🏁 Destination"
         );
 
 
     destinationMarker.openPopup();
 
 
+    /*
+     * If pickup is already known,
+     * calculate the real road route.
+     */
+
     if (
         pickupCoordinates
     ) {
 
-        const bounds =
-            L.latLngBounds([
-
-                [
-                    pickupCoordinates.latitude,
-                    pickupCoordinates.longitude
-                ],
-
-                [
-                    destinationCoordinates.latitude,
-                    destinationCoordinates.longitude
-                ]
-
-            ]);
-
-
-        mobilityMap.fitBounds(
-            bounds,
-            {
-                padding:
-                    [40, 40]
-            }
-        );
+        await calculateAndDrawRoute();
 
     } else {
 
         mobilityMap.setView(
             [
-                destinationCoordinates.latitude,
-                destinationCoordinates.longitude
+                latitude,
+                longitude
             ],
             15
         );
@@ -2203,6 +2910,7 @@ function clearDestinationResults() {
 
     destinationResults.innerHTML =
         "";
+
 
     destinationResults.style.display =
         "none";
@@ -2279,8 +2987,11 @@ async function loadNearbyDrivers() {
 
 
                         if (
-                            driver.latitude === null ||
-                            driver.longitude === null
+                            driver.latitude ===
+                            null ||
+
+                            driver.longitude ===
+                            null
                         ) {
 
                             return false;
@@ -2338,9 +3049,7 @@ async function loadNearbyDrivers() {
         );
 
 
-    } catch (
-        error
-    ) {
+    } catch (error) {
 
         console.error(
             "Could not load nearby drivers:",
@@ -2403,14 +3112,20 @@ function renderDrivers(
 
     driverCount.textContent =
         drivers.length +
+
         " driver" +
+
         (
-            drivers.length === 1
+            drivers.length ===
+            1
                 ? ""
                 : "s"
         ) +
+
         " within " +
+
         NEARBY_RADIUS_KM +
+
         " km";
 
 
@@ -2465,6 +3180,7 @@ function renderDrivers(
                         Number(
                             driver.latitude
                         ),
+
                         Number(
                             driver.longitude
                         )
@@ -2506,6 +3222,22 @@ function renderDrivers(
             driverMarkers.push(
                 marker
             );
+
+        }
+    );
+
+
+    /*
+     * Keep driver markers above the
+     * newly drawn route.
+     */
+
+    driverMarkers.forEach(
+        function (
+            marker
+        ) {
+
+            marker.bringToFront();
 
         }
     );
@@ -2564,6 +3296,7 @@ function renderDriverCard(
 
         </div>
 
+
         <div class="driver-details">
 
             Vehicle:
@@ -2589,6 +3322,7 @@ function renderDriverCard(
             )}
 
         </div>
+
 
         <button
             type="button"
@@ -2749,7 +3483,7 @@ document
 
 
 /* =========================================================
-   OPEN REQUEST MODAL
+   OPEN RIDE REQUEST MODAL
 ========================================================= */
 
 function openRideRequestModal() {
@@ -2810,7 +3544,7 @@ function openRideRequestModal() {
 
 
 /* =========================================================
-   CLOSE REQUEST MODAL
+   CLOSE RIDE MODAL
 ========================================================= */
 
 function closeRideRequestModal() {
@@ -2823,7 +3557,7 @@ function closeRideRequestModal() {
 
 
 /* =========================================================
-   SUBMIT MOBILITY REQUEST
+   SUBMIT RIDE REQUEST
 ========================================================= */
 
 async function submitMobilityRequest() {
@@ -2990,9 +3724,7 @@ async function submitMobilityRequest() {
         startRequestPolling();
 
 
-    } catch (
-        error
-    ) {
+    } catch (error) {
 
         console.error(
             "Ride request failed:",
@@ -3157,9 +3889,7 @@ async function loadLatestRequest() {
         );
 
 
-    } catch (
-        error
-    ) {
+    } catch (error) {
 
         console.error(
             "Could not load latest request:",
@@ -3203,6 +3933,7 @@ function renderRequest(
                     )
                 )}
             </div>
+
 
             <div class="request-details">
 
@@ -3390,6 +4121,9 @@ destinationInput.addEventListener(
 
         clearDestinationResults();
 
+
+        clearRoute();
+
     }
 );
 
@@ -3490,4 +4224,5 @@ initializeMobility();
 </script>
 
 </body>
+
 </html>
