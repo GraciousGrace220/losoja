@@ -600,26 +600,62 @@
     };
 
 
-    function getToken() {
+   async function getToken() {
 
-        try {
+    try {
 
-            if (
-                window.getSupabaseAccessToken &&
-                typeof window.getSupabaseAccessToken === "function"
-            ) {
-                return window.getSupabaseAccessToken();
+        if (
+            window.getSupabaseAccessToken &&
+            typeof window.getSupabaseAccessToken === "function"
+        ) {
+            const token =
+                await window.getSupabaseAccessToken();
+
+            if (token) {
+                return token;
             }
-
-        } catch (error) {
-            console.warn(
-                "LosOja: token helper failed.",
-                error
-            );
         }
 
-        return null;
+    } catch (error) {
+
+        console.warn(
+            "LosOja: token helper failed.",
+            error
+        );
     }
+
+
+    try {
+
+        const savedSession =
+            localStorage.getItem(
+                "losoja_supabase_session"
+            );
+
+        if (savedSession) {
+
+            const session =
+                JSON.parse(savedSession);
+
+            if (
+                session &&
+                session.access_token
+            ) {
+                return session.access_token;
+            }
+        }
+
+    } catch (error) {
+
+        console.warn(
+            "LosOja: saved session check failed.",
+            error
+        );
+    }
+
+
+    return null;
+}
 
 
     async function getLoggedInUser() {
@@ -648,8 +684,7 @@
         }
 
 
-        const token = getToken();
-
+const token = await getToken();
         if (!token) {
             return null;
         }
@@ -676,10 +711,8 @@
     }
 
 
-    function headers(includeContentType) {
-
-        const token = getToken();
-
+async function headers(includeContentType) {
+const token = await getToken();
         const result = {
             "apikey": SUPABASE_KEY,
             "Authorization": "Bearer " + token
