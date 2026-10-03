@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 
@@ -1132,7 +1131,6 @@ button {
 
 /* =========================================================
    LEAFLET COMPATIBILITY SAFETY
-   Prevents old bringToFront() calls from crashing the page.
 ========================================================= */
 
 if (
@@ -2834,6 +2832,9 @@ function clearDestinationResults() {
 
 /* =========================================================
    NEARBY DRIVERS
+   IMPORTANT:
+   The selected service is now included directly
+   in the Supabase query.
 ========================================================= */
 
 async function loadNearbyDrivers() {
@@ -2863,22 +2864,39 @@ async function loadNearbyDrivers() {
 
 
     driverCount.textContent =
-        "Finding nearby drivers...";
+        "Finding nearby " +
+        serviceTypeLabel(
+            selectedServiceType
+        ) +
+        " providers...";
 
 
     try {
 
+        const endpoint =
+            "/rest/v1/mobility_drivers" +
+
+            "?verification_status=eq.verified" +
+
+            "&is_available=eq.true" +
+
+            "&service_type=eq." +
+            encodeURIComponent(
+                selectedServiceType
+            ) +
+
+            "&select=id,user_id,service_type,full_name,vehicle_name,vehicle_plate,location,latitude,longitude";
+
+
+        console.log(
+            "LosOja mobility provider search:",
+            selectedServiceType
+        );
+
+
         const drivers =
             await supabaseRequest(
-
-                "/rest/v1/mobility_drivers" +
-
-                "?verification_status=eq.verified" +
-
-                "&is_available=eq.true" +
-
-                "&select=id,user_id,service_type,full_name,vehicle_name,vehicle_plate,location,latitude,longitude"
-
+                endpoint
             );
 
 
@@ -2889,16 +2907,6 @@ async function loadNearbyDrivers() {
                     function (
                         driver
                     ) {
-
-                        if (
-                            driver.service_type !==
-                            selectedServiceType
-                        ) {
-
-                            return false;
-
-                        }
-
 
                         if (
                             driver.latitude ===
@@ -2913,6 +2921,32 @@ async function loadNearbyDrivers() {
                         }
 
 
+                        const latitude =
+                            Number(
+                                driver.latitude
+                            );
+
+
+                        const longitude =
+                            Number(
+                                driver.longitude
+                            );
+
+
+                        if (
+                            !Number.isFinite(
+                                latitude
+                            ) ||
+                            !Number.isFinite(
+                                longitude
+                            )
+                        ) {
+
+                            return false;
+
+                        }
+
+
                         const distance =
                             calculateDistanceKm(
 
@@ -2920,13 +2954,9 @@ async function loadNearbyDrivers() {
 
                                 pickupCoordinates.longitude,
 
-                                Number(
-                                    driver.latitude
-                                ),
+                                latitude,
 
-                                Number(
-                                    driver.longitude
-                                )
+                                longitude
 
                             );
 
@@ -3036,7 +3066,13 @@ function renderDrivers(
     driverCount.textContent =
         drivers.length +
 
-        " driver" +
+        " " +
+
+        serviceTypeLabel(
+            selectedServiceType
+        ) +
+
+        " provider" +
 
         (
             drivers.length ===
@@ -4035,27 +4071,6 @@ destinationInput.addEventListener(
 );
 
 
-destinationInput.addEventListener(
-    "keydown",
-    function (
-        event
-    ) {
-
-        if (
-            event.key ===
-            "Enter"
-        ) {
-
-            event.preventDefault();
-
-            searchDestination();
-
-        }
-
-    }
-);
-
-
 /* =========================================================
    CLOSE SEARCH RESULTS
 ========================================================= */
@@ -4133,4 +4148,3 @@ initializeMobility();
 </body>
 
 </html>
-```
