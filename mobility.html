@@ -189,7 +189,110 @@
             line-height: 1.5;
         }
 
-        /* REQUEST MODAL */
+
+        /* =========================================================
+           MY RIDE REQUEST
+        ========================================================= */
+
+        .my-request-section {
+            margin-top: 24px;
+        }
+
+        .my-request-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 18px;
+            padding: 22px;
+            box-shadow: 0 6px 20px rgba(0,0,0,.05);
+        }
+
+        .my-request-title {
+            color: #087a3e;
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+
+        .request-empty {
+            color: #6b7280;
+            line-height: 1.6;
+        }
+
+        .request-service-name {
+            font-size: 18px;
+            font-weight: 800;
+            color: #111827;
+            margin-bottom: 12px;
+        }
+
+        .request-status-badge {
+            display: inline-block;
+            padding: 7px 12px;
+            border-radius: 999px;
+            background: #fff7ed;
+            color: #9a3412;
+            font-size: 13px;
+            font-weight: 800;
+            margin-bottom: 18px;
+        }
+
+        .request-status-badge.accepted {
+            background: #eef8f2;
+            color: #087a3e;
+        }
+
+        .request-status-badge.completed {
+            background: #eef8f2;
+            color: #055c2e;
+        }
+
+        .request-status-badge.cancelled,
+        .request-status-badge.rejected {
+            background: #fff1f2;
+            color: #9f1239;
+        }
+
+        .request-detail {
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .request-detail:last-child {
+            border-bottom: 0;
+        }
+
+        .request-detail-label {
+            display: block;
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 4px;
+            font-weight: 700;
+        }
+
+        .request-detail-value {
+            color: #111827;
+            line-height: 1.5;
+        }
+
+        .request-refresh {
+            margin-top: 16px;
+            border: 1px solid #087a3e;
+            background: white;
+            color: #087a3e;
+            padding: 10px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .request-refresh:hover {
+            background: #eef8f2;
+        }
+
+
+        /* =========================================================
+           REQUEST MODAL
+        ========================================================= */
 
         .modal {
             display: none;
@@ -320,6 +423,7 @@
             color: #9f1239;
         }
 
+
         @media (max-width: 600px) {
 
             .main {
@@ -398,7 +502,6 @@
                 Choose a transportation option
                 for your journey.
             </p>
-
 
             <a
                 href="mobility-driver.html"
@@ -563,6 +666,31 @@
 
             </div>
 
+
+        </section>
+
+
+        <!-- =====================================================
+             MY RIDE REQUEST
+        ====================================================== -->
+
+        <section class="my-request-section">
+
+            <div class="my-request-card">
+
+                <div class="my-request-title">
+                    My Ride Request
+                </div>
+
+                <div id="myRequestContent">
+
+                    <div class="request-empty">
+                        Loading your latest ride request...
+                    </div>
+
+                </div>
+
+            </div>
 
         </section>
 
@@ -769,7 +897,17 @@
         );
 
 
+    const myRequestContent =
+        document.getElementById(
+            "myRequestContent"
+        );
+
+
     let selectedServiceType = "";
+
+    let latestRequestId = null;
+
+    let requestPolling = null;
 
 
     /*
@@ -781,7 +919,8 @@
         !serviceDisplay ||
         !form ||
         !submitButton ||
-        !statusMessage
+        !statusMessage ||
+        !myRequestContent
     ) {
 
         console.error(
@@ -856,11 +995,6 @@
         form.reset();
 
 
-        /*
-         * Restore selected service
-         * after form.reset()
-         */
-
         selectedServiceType =
             serviceType;
 
@@ -908,9 +1042,7 @@
 
 
     /*
-     * CONNECT ALL RIDE BUTTONS
-     *
-     * No inline onclick is used.
+     * CONNECT RIDE BUTTONS
      */
 
     rideButtons.forEach(
@@ -1028,9 +1160,11 @@
 
         let user = null;
 
+        let accessToken = null;
+
 
         /*
-         * First use existing LosOja auth
+         * Existing LosOja auth
          */
 
         try {
@@ -1057,11 +1191,8 @@
 
 
         /*
-         * Get access token
+         * Access token
          */
-
-        let accessToken = null;
-
 
         try {
 
@@ -1087,8 +1218,7 @@
 
 
         /*
-         * If auth.js did not return user,
-         * ask Supabase directly.
+         * Direct Supabase user lookup
          */
 
         if (
@@ -1145,6 +1275,468 @@
             user: user,
             accessToken: accessToken
         };
+
+    }
+
+
+    /*
+     * GET REQUEST STATUS
+     */
+
+    function statusLabel(
+        status
+    ) {
+
+        const labels = {
+
+            requested:
+                "Waiting for a provider",
+
+            accepted:
+                "Provider accepted your request",
+
+            arrived:
+                "Provider has arrived",
+
+            in_progress:
+                "Trip in progress",
+
+            completed:
+                "Trip completed",
+
+            cancelled:
+                "Request cancelled",
+
+            rejected:
+                "Request rejected"
+
+        };
+
+
+        return (
+            labels[status] ||
+            status
+        );
+
+    }
+
+
+    /*
+     * RENDER REQUEST
+     */
+
+    function renderRequest(
+        request
+    ) {
+
+        if (!request) {
+
+            myRequestContent.innerHTML =
+                `
+                <div class="request-empty">
+                    You don't have an active ride request.
+                </div>
+                `;
+
+            return;
+
+        }
+
+
+        latestRequestId =
+            request.id;
+
+
+        const status =
+            String(
+                request.status || ""
+            ).toLowerCase();
+
+
+        let badgeClass =
+            "request-status-badge";
+
+
+        if (
+            status === "accepted"
+        ) {
+
+            badgeClass +=
+                " accepted";
+
+        }
+
+
+        if (
+            status === "completed"
+        ) {
+
+            badgeClass +=
+                " completed";
+
+        }
+
+
+        if (
+            status === "cancelled" ||
+            status === "rejected"
+        ) {
+
+            badgeClass +=
+                " cancelled";
+
+        }
+
+
+        let serviceName =
+            request.service_type || "Mobility";
+
+
+        if (
+            request.service_type ===
+            "tricycle"
+        ) {
+
+            serviceName =
+                "Tricycle (Keke)";
+
+        } else if (
+            request.service_type ===
+            "cab"
+        ) {
+
+            serviceName =
+                "Cab";
+
+        } else if (
+            request.service_type ===
+            "bike"
+        ) {
+
+            serviceName =
+                "Bike";
+
+        } else if (
+            request.service_type ===
+            "dispatch"
+        ) {
+
+            serviceName =
+                "Dispatch Rider";
+
+        } else if (
+            request.service_type ===
+            "truck"
+        ) {
+
+            serviceName =
+                "Rent a Truck";
+
+        }
+
+
+        myRequestContent.innerHTML =
+            `
+            <div class="request-service-name">
+                🚕 ${escapeHtml(serviceName)}
+            </div>
+
+            <div class="${badgeClass}">
+                ${escapeHtml(
+                    statusLabel(status)
+                )}
+            </div>
+
+            <div class="request-detail">
+
+                <span class="request-detail-label">
+                    Pickup
+                </span>
+
+                <div class="request-detail-value">
+                    ${escapeHtml(
+                        request.pickup_location ||
+                        "Not provided"
+                    )}
+                </div>
+
+            </div>
+
+            <div class="request-detail">
+
+                <span class="request-detail-label">
+                    Destination
+                </span>
+
+                <div class="request-detail-value">
+                    ${escapeHtml(
+                        request.destination_location ||
+                        "Not provided"
+                    )}
+                </div>
+
+            </div>
+
+            <div class="request-detail">
+
+                <span class="request-detail-label">
+                    Request Status
+                </span>
+
+                <div class="request-detail-value">
+                    ${escapeHtml(
+                        statusLabel(status)
+                    )}
+                </div>
+
+            </div>
+
+            <button
+                type="button"
+                class="request-refresh"
+                id="refreshRequestButton"
+            >
+                Refresh Status
+            </button>
+            `;
+
+
+        const refreshButton =
+            document.getElementById(
+                "refreshRequestButton"
+            );
+
+
+        if (refreshButton) {
+
+            refreshButton.addEventListener(
+                "click",
+                loadLatestRequest
+            );
+
+        }
+
+    }
+
+
+    /*
+     * ESCAPE HTML
+     */
+
+    function escapeHtml(
+        value
+    ) {
+
+        return String(
+            value ?? ""
+        )
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+    }
+
+
+    /*
+     * LOAD LATEST CUSTOMER REQUEST
+     */
+
+    async function loadLatestRequest() {
+
+        const auth =
+            await getLoggedInUser();
+
+
+        const user =
+            auth.user;
+
+
+        const accessToken =
+            auth.accessToken;
+
+
+        if (
+            !user ||
+            !user.id ||
+            !accessToken
+        ) {
+
+            myRequestContent.innerHTML =
+                `
+                <div class="request-empty">
+                    Please log in to view your ride requests.
+                </div>
+                `;
+
+            return;
+
+        }
+
+
+        try {
+
+            const url =
+                SUPABASE_URL +
+                "/rest/v1/mobility_requests" +
+                "?user_id=eq." +
+                encodeURIComponent(
+                    user.id
+                ) +
+                "&order=created_at.desc" +
+                "&limit=1";
+
+
+            const response =
+                await fetch(
+                    url,
+                    {
+                        method: "GET",
+
+                        headers: {
+
+                            "apikey":
+                                SUPABASE_KEY,
+
+                            "Authorization":
+                                "Bearer " +
+                                accessToken
+
+                        }
+
+                    }
+                );
+
+
+            const responseText =
+                await response.text();
+
+
+            if (
+                !response.ok
+            ) {
+
+                console.error(
+                    "LosOja mobility request status error:",
+                    response.status,
+                    responseText
+                );
+
+                myRequestContent.innerHTML =
+                    `
+                    <div class="request-empty">
+                        Unable to load your ride request.
+                    </div>
+                    `;
+
+                return;
+
+            }
+
+
+            let requests = [];
+
+
+            try {
+
+                requests =
+                    JSON.parse(
+                        responseText
+                    );
+
+            } catch (
+                parseError
+            ) {
+
+                console.error(
+                    "LosOja request JSON error:",
+                    parseError
+                );
+
+            }
+
+
+            if (
+                !Array.isArray(requests) ||
+                requests.length === 0
+            ) {
+
+                renderRequest(
+                    null
+                );
+
+                return;
+
+            }
+
+
+            renderRequest(
+                requests[0]
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "LosOja: failed to load mobility request.",
+                error
+            );
+
+
+            myRequestContent.innerHTML =
+                `
+                <div class="request-empty">
+                    Unable to load your ride request.
+                </div>
+                `;
+
+        }
+
+    }
+
+
+    /*
+     * START REQUEST POLLING
+     */
+
+    function startRequestPolling() {
+
+        if (
+            requestPolling
+        ) {
+
+            clearInterval(
+                requestPolling
+            );
+
+        }
+
+
+        requestPolling =
+            setInterval(
+                function () {
+
+                    loadLatestRequest();
+
+                },
+                10000
+            );
 
     }
 
@@ -1228,7 +1820,7 @@
 
 
             /*
-             * Get authentication
+             * Authentication
              */
 
             const auth =
@@ -1242,10 +1834,6 @@
             const accessToken =
                 auth.accessToken;
 
-
-            /*
-             * Require login
-             */
 
             if (
                 !user ||
@@ -1262,10 +1850,6 @@
             }
 
 
-            /*
-             * Require access token
-             */
-
             if (!accessToken) {
 
                 showStatus(
@@ -1278,10 +1862,6 @@
             }
 
 
-            /*
-             * Disable button
-             */
-
             submitButton.disabled =
                 true;
 
@@ -1291,11 +1871,6 @@
 
 
             try {
-
-
-                /*
-                 * Request data
-                 */
 
                 const requestData = {
 
@@ -1341,10 +1916,6 @@
                 );
 
 
-                /*
-                 * Send request to Supabase
-                 */
-
                 const response =
                     await fetch(
                         SUPABASE_URL +
@@ -1381,10 +1952,6 @@
                 const responseText =
                     await response.text();
 
-
-                /*
-                 * Handle Supabase error
-                 */
 
                 if (
                     !response.ok
@@ -1459,10 +2026,6 @@
                 }
 
 
-                /*
-                 * Success
-                 */
-
                 console.log(
                     "LosOja: mobility request created successfully."
                 );
@@ -1478,7 +2041,14 @@
 
 
                 /*
-                 * Close after success
+                 * Immediately load the request
+                 */
+
+                await loadLatestRequest();
+
+
+                /*
+                 * Close modal
                  */
 
                 setTimeout(
@@ -1521,7 +2091,22 @@
 
 
     /*
-     * SUCCESSFUL LOAD MESSAGE
+     * INITIAL LOAD
+     */
+
+    loadLatestRequest();
+
+
+    /*
+     * CHECK FOR STATUS CHANGES
+     * EVERY 10 SECONDS
+     */
+
+    startRequestPolling();
+
+
+    /*
+     * SUCCESSFUL LOAD
      */
 
     console.log(
