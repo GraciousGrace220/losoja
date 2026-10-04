@@ -4250,6 +4250,39 @@ window.showBusinessDetails = async function (business) {
 
         </div>
     `;
+       /* ---------------------------------------------------
+       VIEW BUSINESS IMAGE DETAILS
+    --------------------------------------------------- */
+
+    const viewImageButton =
+        document.getElementById(
+            "viewBusinessImageBtn"
+        );
+
+    if (viewImageButton) {
+
+        viewImageButton.onclick =
+            function (event) {
+
+                event.preventDefault();
+                event.stopPropagation();
+
+                if (!businessImage) {
+
+                    App.showToast(
+                        "No business image is available.",
+                        "info"
+                    );
+
+                    return;
+                }
+
+                window.open(
+                    businessImage,
+                    "_blank"
+                );
+            };
+    }
 
     /* ---------------------------------------------------
        OPEN MODAL
