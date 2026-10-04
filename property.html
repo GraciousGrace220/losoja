@@ -1,24 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>LosOja Properties</title>
 
-<meta
-    name="description"
-    content="Find houses, apartments, land and commercial properties on LosOja."
->
+<meta name="description"
+      content="Find houses, apartments, land and commercial properties on LosOja.">
 
 <style>
-
 :root{
     --green:#087a3e;
     --green-dark:#055c2e;
@@ -27,7 +18,7 @@
     --text:#17221b;
     --muted:#68756e;
     --border:#e4e9e5;
-    --white:#ffffff;
+    --white:#fff;
     --danger:#c62828;
 }
 
@@ -42,10 +33,7 @@ body{
     color:var(--text);
 }
 
-button,
-input,
-select,
-textarea{
+button,input,select,textarea{
     font:inherit;
 }
 
@@ -53,15 +41,13 @@ button{
     cursor:pointer;
 }
 
-/* =========================================================
-   HEADER
-========================================================= */
+/* HEADER */
 
 .topbar{
     position:sticky;
     top:0;
     z-index:1000;
-    background:white;
+    background:#fff;
     border-bottom:1px solid var(--border);
     display:flex;
     align-items:center;
@@ -94,25 +80,22 @@ button{
 
 .post-btn{
     background:var(--green);
-    color:white;
+    color:#fff;
 }
 
 .post-btn:hover{
     background:var(--green-dark);
 }
 
-/* =========================================================
-   HERO
-========================================================= */
+/* HERO */
 
 .hero{
     padding:45px 20px;
-    color:white;
-    background:
-        linear-gradient(
-            rgba(8,122,62,.95),
-            rgba(5,92,46,.95)
-        );
+    color:#fff;
+    background:linear-gradient(
+        rgba(8,122,62,.95),
+        rgba(5,92,46,.95)
+    );
 }
 
 .hero-inner{
@@ -131,9 +114,7 @@ button{
     line-height:1.6;
 }
 
-/* =========================================================
-   SEARCH / FILTERS
-========================================================= */
+/* SEARCH */
 
 .controls{
     max-width:1200px;
@@ -147,7 +128,7 @@ button{
     border:1px solid var(--border);
     border-radius:12px;
     outline:none;
-    background:white;
+    background:#fff;
     margin-bottom:15px;
 }
 
@@ -163,7 +144,7 @@ button{
 
 .filter-btn{
     border:1px solid var(--border);
-    background:white;
+    background:#fff;
     border-radius:999px;
     padding:9px 14px;
     font-weight:600;
@@ -171,13 +152,11 @@ button{
 
 .filter-btn.active{
     background:var(--green);
-    color:white;
+    color:#fff;
     border-color:var(--green);
 }
 
-/* =========================================================
-   PAGE
-========================================================= */
+/* PAGE */
 
 .page{
     max-width:1200px;
@@ -201,34 +180,30 @@ button{
     font-size:14px;
 }
 
-/* =========================================================
-   PROPERTY GRID
-========================================================= */
+/* GRID */
 
 .property-grid{
     display:grid;
-    grid-template-columns:
-        repeat(auto-fill,minmax(280px,1fr));
+    grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
     gap:20px;
 }
 
 .property-card{
-    background:white;
+    background:#fff;
     border:1px solid var(--border);
     border-radius:18px;
     overflow:hidden;
     box-shadow:0 4px 15px rgba(0,0,0,.04);
 }
 
-/* =========================================================
-   CARD GALLERY
-========================================================= */
+/* CARD GALLERY */
 
 .card-gallery{
     position:relative;
     height:235px;
     background:#e9eeeb;
     overflow:hidden;
+    touch-action:pan-y;
 }
 
 .card-image{
@@ -253,7 +228,7 @@ button{
     top:12px;
     right:12px;
     background:rgba(0,0,0,.7);
-    color:white;
+    color:#fff;
     padding:6px 9px;
     border-radius:8px;
     font-size:12px;
@@ -270,9 +245,9 @@ button{
     border:0;
     border-radius:50%;
     background:rgba(0,0,0,.6);
-    color:white;
+    color:#fff;
     font-size:25px;
-    z-index:5;
+    z-index:6;
 }
 
 .gallery-prev{
@@ -287,10 +262,10 @@ button{
     position:absolute;
     left:12px;
     top:12px;
-    z-index:6;
+    z-index:7;
     padding:6px 10px;
     border-radius:8px;
-    color:white;
+    color:#fff;
     font-size:11px;
     font-weight:800;
 }
@@ -307,36 +282,40 @@ button{
     background:#7a4b00;
 }
 
-/* =========================================================
-   THUMBNAILS
-========================================================= */
+/* THUMBNAILS */
 
 .thumbnail-strip{
     display:flex;
-    gap:6px;
+    gap:7px;
     padding:8px;
     overflow-x:auto;
     background:#fafbfa;
     border-bottom:1px solid var(--border);
+    scrollbar-width:thin;
 }
 
 .thumbnail{
-    width:54px;
-    height:42px;
+    width:58px;
+    height:44px;
     flex:0 0 auto;
     object-fit:cover;
-    border-radius:6px;
-    border:2px solid transparent;
+    border-radius:7px;
+    border:3px solid transparent;
     cursor:pointer;
+    display:block;
+    background:#ddd;
+    transition:.15s ease;
+}
+
+.thumbnail:hover{
+    transform:scale(1.04);
 }
 
 .thumbnail.active{
     border-color:var(--green);
 }
 
-/* =========================================================
-   CARD CONTENT
-========================================================= */
+/* CARD CONTENT */
 
 .card-content{
     padding:16px;
@@ -411,7 +390,7 @@ button{
 
 .view-btn{
     background:var(--green);
-    color:white;
+    color:#fff;
 }
 
 .contact-btn{
@@ -425,9 +404,7 @@ button{
     cursor:not-allowed;
 }
 
-/* =========================================================
-   REACTIONS
-========================================================= */
+/* REACTIONS */
 
 .reactions{
     display:flex;
@@ -437,14 +414,12 @@ button{
 
 .reaction-btn{
     border:1px solid var(--border);
-    background:white;
+    background:#fff;
     border-radius:8px;
     padding:6px 10px;
 }
 
-/* =========================================================
-   OWNER CONTROLS
-========================================================= */
+/* OWNER */
 
 .owner-controls{
     margin-top:13px;
@@ -493,22 +468,18 @@ button{
     color:var(--danger);
 }
 
-/* =========================================================
-   MESSAGE
-========================================================= */
+/* MESSAGE */
 
 .message{
     text-align:center;
     padding:55px 20px;
     color:var(--muted);
-    background:white;
+    background:#fff;
     border:1px solid var(--border);
     border-radius:15px;
 }
 
-/* =========================================================
-   MODALS
-========================================================= */
+/* MODALS */
 
 .modal{
     position:fixed;
@@ -529,7 +500,7 @@ button{
     width:min(900px,100%);
     max-height:92vh;
     overflow-y:auto;
-    background:white;
+    background:#fff;
     border-radius:18px;
 }
 
@@ -537,7 +508,7 @@ button{
     position:sticky;
     top:0;
     z-index:10;
-    background:white;
+    background:#fff;
     display:flex;
     align-items:center;
     justify-content:space-between;
@@ -562,15 +533,14 @@ button{
     padding:20px;
 }
 
-/* =========================================================
-   DETAIL GALLERY
-========================================================= */
+/* DETAIL GALLERY */
 
 .detail-gallery{
     position:relative;
     background:#111;
     border-radius:14px;
     overflow:hidden;
+    touch-action:pan-y;
 }
 
 .detail-main-image{
@@ -579,6 +549,8 @@ button{
     object-fit:contain;
     display:block;
     background:#111;
+    user-select:none;
+    -webkit-user-drag:none;
 }
 
 .detail-counter{
@@ -586,12 +558,12 @@ button{
     right:12px;
     top:12px;
     background:rgba(0,0,0,.7);
-    color:white;
+    color:#fff;
     padding:7px 10px;
     border-radius:8px;
     font-size:12px;
     font-weight:700;
-    z-index:5;
+    z-index:8;
 }
 
 .detail-thumbnails{
@@ -607,13 +579,19 @@ button{
     height:52px;
     object-fit:cover;
     flex:0 0 auto;
-    border:2px solid transparent;
-    border-radius:6px;
+    border:3px solid transparent;
+    border-radius:7px;
     cursor:pointer;
+    display:block;
+    transition:.15s ease;
+}
+
+.detail-thumb:hover{
+    transform:scale(1.04);
 }
 
 .detail-thumb.active{
-    border-color:white;
+    border-color:#fff;
 }
 
 .detail-arrow{
@@ -625,9 +603,9 @@ button{
     border:0;
     border-radius:50%;
     background:rgba(0,0,0,.6);
-    color:white;
+    color:#fff;
     font-size:25px;
-    z-index:5;
+    z-index:9;
 }
 
 .detail-prev{
@@ -671,9 +649,7 @@ button{
     border-top:1px solid var(--border);
 }
 
-/* =========================================================
-   FORM
-========================================================= */
+/* FORM */
 
 .form-grid{
     display:grid;
@@ -704,7 +680,7 @@ button{
     border-radius:10px;
     padding:12px;
     outline:none;
-    background:white;
+    background:#fff;
 }
 
 .form-group input:focus,
@@ -718,9 +694,7 @@ button{
     resize:vertical;
 }
 
-/* =========================================================
-   IMPROVED PHOTO PICKER
-========================================================= */
+/* PHOTO PICKER */
 
 .photo-upload-box{
     border:2px dashed #b9c9bf;
@@ -755,7 +729,7 @@ button{
     border-radius:10px;
     padding:11px 16px;
     background:var(--green);
-    color:white;
+    color:#fff;
     font-weight:800;
 }
 
@@ -763,7 +737,7 @@ button{
     border:1px solid #ddd;
     border-radius:10px;
     padding:11px 16px;
-    background:white;
+    background:#fff;
     color:#555;
     font-weight:700;
 }
@@ -776,8 +750,7 @@ button{
 
 .photo-preview{
     display:grid;
-    grid-template-columns:
-        repeat(auto-fill,minmax(120px,1fr));
+    grid-template-columns:repeat(auto-fill,minmax(120px,1fr));
     gap:10px;
     margin-top:15px;
     text-align:left;
@@ -803,7 +776,7 @@ button{
     left:7px;
     top:7px;
     background:rgba(0,0,0,.7);
-    color:white;
+    color:#fff;
     padding:4px 7px;
     border-radius:6px;
     font-size:11px;
@@ -819,7 +792,7 @@ button{
     border:0;
     border-radius:50%;
     background:rgba(198,40,40,.9);
-    color:white;
+    color:#fff;
     font-weight:900;
     font-size:16px;
 }
@@ -834,7 +807,7 @@ button{
 .submit-btn{
     border:0;
     background:var(--green);
-    color:white;
+    color:#fff;
     border-radius:10px;
     padding:13px 18px;
     font-weight:800;
@@ -845,15 +818,11 @@ button{
     cursor:not-allowed;
 }
 
-/* Hide the actual file input */
-
 #propertyPhotos{
     display:none;
 }
 
-/* =========================================================
-   TOAST
-========================================================= */
+/* TOAST */
 
 .toast{
     position:fixed;
@@ -862,7 +831,7 @@ button{
     transform:translateX(-50%) translateY(100px);
     z-index:5000;
     background:#17221b;
-    color:white;
+    color:#fff;
     padding:12px 17px;
     border-radius:10px;
     opacity:0;
@@ -877,9 +846,7 @@ button{
     transform:translateX(-50%) translateY(0);
 }
 
-/* =========================================================
-   MOBILE
-========================================================= */
+/* MOBILE */
 
 @media(max-width:700px){
 
@@ -922,36 +889,23 @@ button{
     .detail-main-image{
         height:45vh;
     }
-
 }
-
 </style>
-
 </head>
-
 
 <body>
 
-
 <header class="topbar">
 
-    <div class="logo">
-        LosOja
-    </div>
+    <div class="logo">LosOja</div>
 
     <div class="topbar-actions">
 
-        <button
-            class="back-btn"
-            onclick="goBack()"
-        >
+        <button class="back-btn" onclick="goBack()">
             ← Back
         </button>
 
-        <button
-            class="post-btn"
-            onclick="openPostModal()"
-        >
+        <button class="post-btn" onclick="openPostModal()">
             + Post Property
         </button>
 
@@ -959,14 +913,11 @@ button{
 
 </header>
 
-
 <section class="hero">
 
     <div class="hero-inner">
 
-        <h1>
-            Find Your Next Property
-        </h1>
+        <h1>Find Your Next Property</h1>
 
         <p>
             Browse houses, apartments, land and commercial
@@ -976,7 +927,6 @@ button{
     </div>
 
 </section>
-
 
 <div class="controls">
 
@@ -990,73 +940,53 @@ button{
 
     <div class="filters">
 
-        <button
-            class="filter-btn active"
-            onclick="setFilter('all',this)"
-        >
+        <button class="filter-btn active"
+                onclick="setFilter('all',this)">
             All
         </button>
 
-        <button
-            class="filter-btn"
-            onclick="setFilter('available',this)"
-        >
+        <button class="filter-btn"
+                onclick="setFilter('available',this)">
             Available
         </button>
 
-        <button
-            class="filter-btn"
-            onclick="setFilter('sale',this)"
-        >
+        <button class="filter-btn"
+                onclick="setFilter('sale',this)">
             For Sale
         </button>
 
-        <button
-            class="filter-btn"
-            onclick="setFilter('rent',this)"
-        >
+        <button class="filter-btn"
+                onclick="setFilter('rent',this)">
             For Rent
         </button>
 
-        <button
-            class="filter-btn"
-            onclick="setFilter('sold',this)"
-        >
+        <button class="filter-btn"
+                onclick="setFilter('sold',this)">
             Sold
         </button>
 
-        <button
-            class="filter-btn"
-            onclick="setFilter('rented',this)"
-        >
+        <button class="filter-btn"
+                onclick="setFilter('rented',this)">
             Rented
         </button>
 
-        <button
-            class="filter-btn"
-            onclick="setFilter('house',this)"
-        >
+        <button class="filter-btn"
+                onclick="setFilter('house',this)">
             Houses
         </button>
 
-        <button
-            class="filter-btn"
-            onclick="setFilter('apartment',this)"
-        >
+        <button class="filter-btn"
+                onclick="setFilter('apartment',this)">
             Apartments
         </button>
 
-        <button
-            class="filter-btn"
-            onclick="setFilter('land',this)"
-        >
+        <button class="filter-btn"
+                onclick="setFilter('land',this)">
             Land
         </button>
 
-        <button
-            class="filter-btn"
-            onclick="setFilter('commercial',this)"
-        >
+        <button class="filter-btn"
+                onclick="setFilter('commercial',this)">
             Commercial
         </button>
 
@@ -1064,112 +994,81 @@ button{
 
 </div>
 
-
 <main class="page">
 
     <div class="section-heading">
 
-        <h2>
-            Properties
-        </h2>
+        <h2>Properties</h2>
 
-        <span
-            id="propertyCount"
-            class="property-count"
-        >
+        <span id="propertyCount"
+              class="property-count">
             Loading...
         </span>
 
     </div>
 
-    <div
-        id="propertyGrid"
-        class="property-grid"
-    ></div>
+    <div id="propertyGrid"
+         class="property-grid">
+    </div>
 
 </main>
 
+<!-- DETAIL MODAL -->
 
-<!-- =======================================================
-     PROPERTY DETAIL MODAL
-======================================================= -->
-
-<div
-    id="detailModal"
-    class="modal"
-    onclick="closeModalOutside(event,'detailModal')"
->
+<div id="detailModal"
+     class="modal"
+     onclick="closeModalOutside(event,'detailModal')">
 
     <div class="modal-card">
 
         <div class="modal-header">
 
-            <h2>
-                Property Details
-            </h2>
+            <h2>Property Details</h2>
 
-            <button
-                class="close-btn"
-                onclick="closeModal('detailModal')"
-            >
+            <button class="close-btn"
+                    onclick="closeModal('detailModal')">
                 ×
             </button>
 
         </div>
 
-        <div
-            id="detailBody"
-            class="modal-body"
-        ></div>
+        <div id="detailBody"
+             class="modal-body">
+        </div>
 
     </div>
 
 </div>
 
+<!-- POST MODAL -->
 
-<!-- =======================================================
-     POST PROPERTY MODAL
-======================================================= -->
-
-<div
-    id="postModal"
-    class="modal"
-    onclick="closeModalOutside(event,'postModal')"
->
+<div id="postModal"
+     class="modal"
+     onclick="closeModalOutside(event,'postModal')">
 
     <div class="modal-card">
 
         <div class="modal-header">
 
-            <h2>
-                Post Property
-            </h2>
+            <h2>Post Property</h2>
 
-            <button
-                class="close-btn"
-                onclick="closeModal('postModal')"
-            >
+            <button class="close-btn"
+                    onclick="closeModal('postModal')">
                 ×
             </button>
 
         </div>
 
-
         <div class="modal-body">
 
-            <form
-                id="propertyForm"
-                onsubmit="publishProperty(event)"
-            >
+            <form id="propertyForm"
+                  onsubmit="publishProperty(event)">
 
                 <div class="form-grid">
 
-
                     <div class="form-group">
 
-                        <label>
-                            Property Title
-                        </label>
+                        <label>Property Title</label>
 
                         <input
                             id="propertyTitle"
@@ -1179,17 +1078,11 @@ button{
 
                     </div>
 
-
                     <div class="form-group">
 
-                        <label>
-                            Property Type
-                        </label>
+                        <label>Property Type</label>
 
-                        <select
-                            id="propertyCategory"
-                            required
-                        >
+                        <select id="propertyCategory" required>
 
                             <option value="">
                                 Select type
@@ -1215,17 +1108,11 @@ button{
 
                     </div>
 
-
                     <div class="form-group">
 
-                        <label>
-                            Listing Type
-                        </label>
+                        <label>Listing Type</label>
 
-                        <select
-                            id="listingType"
-                            required
-                        >
+                        <select id="listingType" required>
 
                             <option value="sale">
                                 For Sale
@@ -1239,12 +1126,9 @@ button{
 
                     </div>
 
-
                     <div class="form-group">
 
-                        <label>
-                            Price (₦)
-                        </label>
+                        <label>Price (₦)</label>
 
                         <input
                             id="propertyPrice"
@@ -1256,12 +1140,9 @@ button{
 
                     </div>
 
-
                     <div class="form-group full">
 
-                        <label>
-                            Location
-                        </label>
+                        <label>Location</label>
 
                         <input
                             id="propertyLocation"
@@ -1271,12 +1152,9 @@ button{
 
                     </div>
 
-
                     <div class="form-group full">
 
-                        <label>
-                            Description
-                        </label>
+                        <label>Description</label>
 
                         <textarea
                             id="propertyDescription"
@@ -1285,17 +1163,9 @@ button{
 
                     </div>
 
-
-                    <!-- =================================================
-                         IMPROVED PHOTO SELECTOR
-                    ================================================== -->
-
                     <div class="form-group full">
 
-                        <label>
-                            Property Photos
-                        </label>
-
+                        <label>Property Photos</label>
 
                         <div class="photo-upload-box">
 
@@ -1303,55 +1173,42 @@ button{
                                 Add Property Photos
                             </div>
 
-
                             <div class="photo-upload-note">
-
                                 Add as many photos as you need.
                                 You can add more photos after selecting
                                 the first ones.
-
                             </div>
-
 
                             <div class="photo-buttons">
 
                                 <button
                                     type="button"
                                     class="photo-add-btn"
-                                    onclick="openPhotoPicker()"
-                                >
+                                    onclick="openPhotoPicker()">
                                     📷 Add Photos
                                 </button>
-
 
                                 <button
                                     type="button"
                                     id="clearPhotosBtn"
                                     class="photo-clear-btn"
                                     onclick="clearSelectedPhotos()"
-                                    style="display:none;"
-                                >
+                                    style="display:none;">
                                     Clear All
                                 </button>
 
                             </div>
 
-
-                            <div
-                                id="photoCount"
-                                class="photo-count"
-                            >
+                            <div id="photoCount"
+                                 class="photo-count">
                                 No photos selected
                             </div>
 
-
-                            <div
-                                id="photoPreview"
-                                class="photo-preview"
-                            ></div>
+                            <div id="photoPreview"
+                                 class="photo-preview">
+                            </div>
 
                         </div>
-
 
                         <input
                             id="propertyPhotos"
@@ -1360,24 +1217,19 @@ button{
                             multiple
                         >
 
-
                         <div class="form-note">
-
                             Maximum 5MB per photo.
                             JPG, PNG, WEBP and GIF are supported.
-
                         </div>
 
                     </div>
-
 
                     <div class="form-group full">
 
                         <button
                             id="publishBtn"
                             class="submit-btn"
-                            type="submit"
-                        >
+                            type="submit">
                             Publish Property
                         </button>
 
@@ -1393,20 +1245,14 @@ button{
 
 </div>
 
-
-<div
-    id="toast"
-    class="toast"
-></div>
-
+<div id="toast"
+     class="toast">
+</div>
 
 <script src="auth.js"></script>
 
-
 <script>
-
 "use strict";
-
 
 /* =========================================================
    CONFIG
@@ -1427,24 +1273,11 @@ const PROPERTY_BUCKET =
 ========================================================= */
 
 let allProperties = [];
-
 let currentFilter = "all";
-
 let currentUserId = "";
-
 let cardImageIndexes = {};
-
 let detailPropertyId = null;
-
 let detailImageIndex = 0;
-
-
-/*
- * IMPORTANT:
- * Selected property photos are stored here.
- * This lets the user click "Add Photos" multiple times.
- */
-
 let selectedPropertyPhotos = [];
 
 
@@ -1478,7 +1311,6 @@ async function getAuthDetails(){
             const session =
                 await window.getSupabaseSession();
 
-
             if(session && session.user){
 
                 return {
@@ -1499,7 +1331,6 @@ async function getAuthDetails(){
 
     }
 
-
     return {
         user:null,
         token:null
@@ -1509,7 +1340,7 @@ async function getAuthDetails(){
 
 
 /* =========================================================
-   ESCAPE HTML
+   ESCAPE
 ========================================================= */
 
 function escapeHtml(value){
@@ -1544,21 +1375,13 @@ function formatPropertyType(value){
             .trim()
             .toLowerCase();
 
-
     const labels = {
-
         house:"House",
-
         apartment:"Apartment",
-
         land:"Land",
-
         commercial:"Commercial",
-
         property:"Property"
-
     };
-
 
     return labels[type] ||
         (
@@ -1578,13 +1401,9 @@ function formatListingType(value){
             .trim()
             .toLowerCase();
 
-
-    if(type.includes("rent")){
-        return "For Rent";
-    }
-
-
-    return "For Sale";
+    return type.includes("rent")
+        ? "For Rent"
+        : "For Sale";
 
 }
 
@@ -1596,16 +1415,13 @@ function formatStatus(value){
             .trim()
             .toLowerCase();
 
-
     if(status === "sold"){
         return "SOLD";
     }
 
-
     if(status === "rented"){
         return "RENTED";
     }
-
 
     return "AVAILABLE";
 
@@ -1618,16 +1434,13 @@ function statusClass(value){
         String(value || "available")
             .toLowerCase();
 
-
     if(status === "sold"){
         return "status-sold";
     }
 
-
     if(status === "rented"){
         return "status-rented";
     }
-
 
     return "status-available";
 
@@ -1643,24 +1456,15 @@ function showToast(message){
     const toast =
         document.getElementById("toast");
 
-
-    toast.textContent =
-        message;
-
+    toast.textContent = message;
 
     toast.classList.add("show");
 
-
-    clearTimeout(
-        window.losojaToastTimer
-    );
-
+    clearTimeout(window.losojaToastTimer);
 
     window.losojaToastTimer =
         setTimeout(
-            () => {
-                toast.classList.remove("show");
-            },
+            () => toast.classList.remove("show"),
             3000
         );
 
@@ -1682,8 +1486,7 @@ function goBack(){
 
     }else{
 
-        window.location.href =
-            "index.html";
+        window.location.href = "index.html";
 
     }
 
@@ -1699,13 +1502,11 @@ function openModal(id){
     const modal =
         document.getElementById(id);
 
-
     if(modal){
 
         modal.classList.add("show");
 
-        document.body.style.overflow =
-            "hidden";
+        document.body.style.overflow = "hidden";
 
     }
 
@@ -1717,13 +1518,11 @@ function closeModal(id){
     const modal =
         document.getElementById(id);
 
-
     if(modal){
 
         modal.classList.remove("show");
 
-        document.body.style.overflow =
-            "";
+        document.body.style.overflow = "";
 
     }
 
@@ -1749,7 +1548,7 @@ function openPostModal(){
 
 
 /* =========================================================
-   IMPROVED PHOTO PICKER
+   PHOTO PICKER
 ========================================================= */
 
 function openPhotoPicker(){
@@ -1760,11 +1559,6 @@ function openPhotoPicker(){
 
 }
 
-
-/*
- * When the file picker opens again,
- * new photos are ADDED to the existing selection.
- */
 
 document
     .getElementById("propertyPhotos")
@@ -1777,24 +1571,17 @@ document
 function handlePhotoSelection(event){
 
     const files =
-        Array.from(
-            event.target.files || []
-        );
-
+        Array.from(event.target.files || []);
 
     if(!files.length){
         return;
     }
 
-
     let addedCount = 0;
-
 
     files.forEach(file => {
 
-        if(
-            !file.type.startsWith("image/")
-        ){
+        if(!file.type.startsWith("image/")){
 
             showToast(
                 file.name +
@@ -1802,14 +1589,9 @@ function handlePhotoSelection(event){
             );
 
             return;
-
         }
 
-
-        if(
-            file.size >
-            5 * 1024 * 1024
-        ){
+        if(file.size > 5 * 1024 * 1024){
 
             showToast(
                 file.name +
@@ -1817,14 +1599,7 @@ function handlePhotoSelection(event){
             );
 
             return;
-
         }
-
-
-        /*
-         * Prevent the exact same file from
-         * being added twice in the same form.
-         */
 
         const alreadyAdded =
             selectedPropertyPhotos.some(
@@ -1834,11 +1609,9 @@ function handlePhotoSelection(event){
                     existing.lastModified === file.lastModified
             );
 
-
         if(alreadyAdded){
             return;
         }
-
 
         selectedPropertyPhotos.push(file);
 
@@ -1846,27 +1619,16 @@ function handlePhotoSelection(event){
 
     });
 
-
-    /*
-     * Reset the input so the same file can
-     * be selected again later if needed.
-     */
-
     event.target.value = "";
 
-
     renderPhotoPreviews();
-
 
     if(addedCount){
 
         showToast(
-            addedCount +
-            (
-                addedCount === 1
-                    ? " photo added."
-                    : " photos added."
-            )
+            addedCount === 1
+                ? "1 photo added."
+                : addedCount + " photos added."
         );
 
     }
@@ -1877,90 +1639,66 @@ function handlePhotoSelection(event){
 function renderPhotoPreviews(){
 
     const preview =
-        document.getElementById(
-            "photoPreview"
-        );
-
+        document.getElementById("photoPreview");
 
     const count =
-        document.getElementById(
-            "photoCount"
-        );
-
+        document.getElementById("photoCount");
 
     const clearBtn =
-        document.getElementById(
-            "clearPhotosBtn"
-        );
-
+        document.getElementById("clearPhotosBtn");
 
     count.textContent =
         selectedPropertyPhotos.length
             ? selectedPropertyPhotos.length +
               (
-                selectedPropertyPhotos.length === 1
-                    ? " photo selected"
-                    : " photos selected"
+                  selectedPropertyPhotos.length === 1
+                      ? " photo selected"
+                      : " photos selected"
               )
             : "No photos selected";
-
 
     clearBtn.style.display =
         selectedPropertyPhotos.length
             ? "inline-block"
             : "none";
 
-
     preview.innerHTML = "";
-
 
     selectedPropertyPhotos.forEach(
         (file,index) => {
 
-            const reader =
-                new FileReader();
+            const reader = new FileReader();
 
+            reader.onload = function(){
 
-            reader.onload =
-                function(){
+                const item =
+                    document.createElement("div");
 
-                    const item =
-                        document.createElement(
-                            "div"
-                        );
+                item.className =
+                    "photo-preview-item";
 
+                item.innerHTML = `
+                    <img
+                        src="${reader.result}"
+                        alt="Property photo ${index + 1}"
+                    >
 
-                    item.className =
-                        "photo-preview-item";
+                    <div class="photo-number">
+                        Photo ${index + 1}
+                    </div>
 
+                    <button
+                        type="button"
+                        class="remove-photo-btn"
+                        onclick="removeSelectedPhoto(${index})"
+                        aria-label="Remove photo">
+                        ×
+                    </button>
+                `;
 
-                    item.innerHTML = `
+                preview.appendChild(item);
 
-                        <img
-                            src="${reader.result}"
-                            alt="Property photo ${index + 1}"
-                        >
-
-                        <div class="photo-number">
-                            Photo ${index + 1}
-                        </div>
-
-                        <button
-                            type="button"
-                            class="remove-photo-btn"
-                            onclick="removeSelectedPhoto(${index})"
-                            aria-label="Remove photo"
-                        >
-                            ×
-                        </button>
-
-                    `;
-
-
-                    preview.appendChild(item);
-
-                };
-
+            };
 
             reader.readAsDataURL(file);
 
@@ -1976,17 +1714,10 @@ function removeSelectedPhoto(index){
         index < 0 ||
         index >= selectedPropertyPhotos.length
     ){
-
         return;
-
     }
 
-
-    selectedPropertyPhotos.splice(
-        index,
-        1
-    );
-
+    selectedPropertyPhotos.splice(index,1);
 
     renderPhotoPreviews();
 
@@ -1997,11 +1728,9 @@ function clearSelectedPhotos(){
 
     selectedPropertyPhotos = [];
 
-
-    document
-        .getElementById("propertyPhotos")
-        .value = "";
-
+    document.getElementById(
+        "propertyPhotos"
+    ).value = "";
 
     renderPhotoPreviews();
 
@@ -2015,10 +1744,7 @@ function clearSelectedPhotos(){
 async function loadProperties(){
 
     const grid =
-        document.getElementById(
-            "propertyGrid"
-        );
-
+        document.getElementById("propertyGrid");
 
     grid.innerHTML = `
         <div class="message">
@@ -2026,16 +1752,13 @@ async function loadProperties(){
         </div>
     `;
 
-
     try{
 
         const auth =
             await getAuthDetails();
 
-
         currentUserId =
             auth.user?.id || "";
-
 
         const response =
             await fetch(
@@ -2048,7 +1771,6 @@ async function loadProperties(){
                 }
             );
 
-
         if(!response.ok){
 
             throw new Error(
@@ -2057,25 +1779,16 @@ async function loadProperties(){
 
         }
 
-
         allProperties =
             await response.json();
 
-
-        if(
-            !Array.isArray(allProperties)
-        ){
-
+        if(!Array.isArray(allProperties)){
             allProperties = [];
-
         }
-
 
         await loadPropertyImages();
 
-
         renderProperties();
-
 
     }catch(error){
 
@@ -2084,19 +1797,12 @@ async function loadProperties(){
             error
         );
 
-
         grid.innerHTML = `
-
             <div class="message">
-
                 Unable to load properties.
-
                 <br><br>
-
                 ${escapeHtml(error.message)}
-
             </div>
-
         `;
 
     }
@@ -2105,19 +1811,14 @@ async function loadProperties(){
 
 
 /* =========================================================
-   LOAD ALL PROPERTY IMAGES
+   LOAD PROPERTY IMAGES
 ========================================================= */
 
 async function loadPropertyImages(){
 
     allProperties.forEach(
-        property => {
-
-            property._images = [];
-
-        }
+        property => property._images = []
     );
-
 
     try{
 
@@ -2132,7 +1833,6 @@ async function loadPropertyImages(){
                 }
             );
 
-
         if(!response.ok){
 
             console.error(
@@ -2144,84 +1844,51 @@ async function loadPropertyImages(){
 
         }
 
-
         const images =
             await response.json();
 
-
-        console.log(
-            "LosOja property images loaded:",
-            images.length
-        );
-
-
         const imageMap = {};
 
+        images.forEach(image => {
 
-        images.forEach(
-            image => {
-
-                if(!image.property_id){
-                    return;
-                }
-
-
-                if(
-                    !imageMap[image.property_id]
-                ){
-
-                    imageMap[image.property_id] =
-                        [];
-
-                }
-
-
-                imageMap[
-                    image.property_id
-                ].push({
-
-                    image_url:
-                        image.image_url,
-
-                    sort_order:
-                        Number(
-                            image.sort_order || 0
-                        )
-
-                });
-
+            if(!image.property_id){
+                return;
             }
-        );
 
+            if(!imageMap[image.property_id]){
+                imageMap[image.property_id] = [];
+            }
 
-        Object.keys(imageMap)
-            .forEach(propertyId => {
-
-                imageMap[propertyId].sort(
-                    (a,b) =>
-                        a.sort_order -
-                        b.sort_order
-                );
-
+            imageMap[image.property_id].push({
+                image_url:image.image_url,
+                sort_order:Number(
+                    image.sort_order || 0
+                )
             });
 
+        });
 
-        allProperties.forEach(
-            property => {
+        Object.keys(imageMap).forEach(propertyId => {
 
-                property._images =
-                    imageMap[property.id] ||
-                    [];
+            imageMap[propertyId].sort(
+                (a,b) =>
+                    a.sort_order -
+                    b.sort_order
+            );
 
-            }
-        );
+        });
 
+        allProperties.forEach(property => {
+
+            property._images =
+                imageMap[property.id] || [];
+
+        });
 
         console.log(
-            "LosOja property image map:",
-            imageMap
+            "LosOja property images:",
+            images.length
         );
-
 
     }catch(error){
 
@@ -2239,65 +1906,42 @@ async function loadPropertyImages(){
    FILTERS
 ========================================================= */
 
-function setFilter(
-    filter,
-    button
-){
+function setFilter(filter,button){
 
-    currentFilter =
-        filter;
-
+    currentFilter = filter;
 
     document
         .querySelectorAll(".filter-btn")
         .forEach(
-            btn =>
-                btn.classList.remove(
-                    "active"
-                )
+            btn => btn.classList.remove("active")
         );
-
 
     if(button){
-
-        button.classList.add(
-            "active"
-        );
-
+        button.classList.add("active");
     }
-
 
     applyFilters();
 
 }
 
 
-function propertyMatchesFilter(
-    property
-){
+function propertyMatchesFilter(property){
 
-    const filter =
-        currentFilter;
-
+    const filter = currentFilter;
 
     if(filter === "all"){
         return true;
     }
 
-
     const status =
         String(
-            property.status ||
-            "available"
+            property.status || "available"
         ).toLowerCase();
-
 
     const listing =
         String(
-            property.listing_type ||
-            ""
+            property.listing_type || ""
         ).toLowerCase();
-
 
     const type =
         String(
@@ -2306,45 +1950,32 @@ function propertyMatchesFilter(
             ""
         ).toLowerCase();
 
-
     if(filter === "available"){
         return status === "available";
     }
-
 
     if(filter === "sold"){
         return status === "sold";
     }
 
-
     if(filter === "rented"){
         return status === "rented";
     }
-
 
     if(filter === "sale"){
         return listing.includes("sale");
     }
 
-
     if(filter === "rent"){
         return listing.includes("rent");
     }
 
-
     if(
-        [
-            "house",
-            "apartment",
-            "land",
-            "commercial"
-        ].includes(filter)
+        ["house","apartment","land","commercial"]
+            .includes(filter)
     ){
-
         return type === filter;
-
     }
-
 
     return true;
 
@@ -2355,97 +1986,59 @@ function applyFilters(){
 
     const search =
         document
-            .getElementById(
-                "searchInput"
-            )
+            .getElementById("searchInput")
             .value
             .trim()
             .toLowerCase();
 
-
     const filtered =
-        allProperties.filter(
-            property => {
+        allProperties.filter(property => {
 
-                if(
-                    !propertyMatchesFilter(
-                        property
-                    )
-                ){
-
-                    return false;
-
-                }
-
-
-                if(!search){
-                    return true;
-                }
-
-
-                const searchable = [
-
-                    property.title,
-
-                    property.location,
-
-                    property.description,
-
-                    property.property_type,
-
-                    property.category,
-
-                    property.listing_type,
-
-                    property.status
-
-                ]
-                .filter(Boolean)
-                .join(" ")
-                .toLowerCase();
-
-
-                return searchable.includes(
-                    search
-                );
-
+            if(!propertyMatchesFilter(property)){
+                return false;
             }
-        );
 
+            if(!search){
+                return true;
+            }
 
-    renderProperties(
-        filtered
-    );
+            const searchable = [
+                property.title,
+                property.location,
+                property.description,
+                property.property_type,
+                property.category,
+                property.listing_type,
+                property.status
+            ]
+            .filter(Boolean)
+            .join(" ")
+            .toLowerCase();
+
+            return searchable.includes(search);
+
+        });
+
+    renderProperties(filtered);
 
 }
 
 
 /* =========================================================
-   RENDER PROPERTIES
+   RENDER
 ========================================================= */
 
-function renderProperties(
-    properties
-){
+function renderProperties(properties){
 
     const grid =
-        document.getElementById(
-            "propertyGrid"
-        );
-
+        document.getElementById("propertyGrid");
 
     const count =
-        document.getElementById(
-            "propertyCount"
-        );
-
+        document.getElementById("propertyCount");
 
     const list =
         properties ||
-        allProperties.filter(
-            propertyMatchesFilter
-        );
-
+        allProperties.filter(propertyMatchesFilter);
 
     count.textContent =
         list.length +
@@ -2455,41 +2048,23 @@ function renderProperties(
                 : " properties"
         );
 
-
     if(!list.length){
 
         grid.innerHTML = `
-
             <div class="message">
-
                 No properties found.
-
             </div>
-
         `;
 
         return;
-
     }
 
-
     grid.innerHTML =
-        list
-            .map(
-                createPropertyCard
-            )
-            .join("");
+        list.map(createPropertyCard).join("");
 
-
-    list.forEach(
-        property => {
-
-            setupCardSwipe(
-                property.id
-            );
-
-        }
-    );
+    list.forEach(property => {
+        setupCardSwipe(property.id);
+    });
 
 }
 
@@ -2498,190 +2073,137 @@ function renderProperties(
    PROPERTY CARD
 ========================================================= */
 
-function createPropertyCard(
-    property
-){
+function createPropertyCard(property){
 
     const images =
-        Array.isArray(
-            property._images
-        )
+        Array.isArray(property._images)
             ? property._images
             : [];
 
-
     if(
-        typeof cardImageIndexes[
-            property.id
-        ] !== "number"
+        typeof cardImageIndexes[property.id] !==
+        "number"
     ){
-
-        cardImageIndexes[
-            property.id
-        ] = 0;
-
+        cardImageIndexes[property.id] = 0;
     }
-
 
     let imageIndex =
-        cardImageIndexes[
-            property.id
-        ];
+        cardImageIndexes[property.id];
 
-
-    if(
-        imageIndex >= images.length
-    ){
-
+    if(imageIndex >= images.length){
         imageIndex = 0;
-
-        cardImageIndexes[
-            property.id
-        ] = 0;
-
+        cardImageIndexes[property.id] = 0;
     }
-
 
     const currentImage =
         images[imageIndex];
 
-
     const status =
         String(
-            property.status ||
-            "available"
+            property.status || "available"
         ).toLowerCase();
-
 
     const isOwner =
         !!currentUserId &&
-        property.user_id ===
-        currentUserId;
-
+        property.user_id === currentUserId;
 
     const type =
         property.property_type ||
         property.category ||
         "property";
 
-
-    const imageCount =
-        images.length;
-
+    const imageCount = images.length;
 
     const title =
-        property.title ||
-        "Property";
-
+        property.title || "Property";
 
     const location =
         property.location ||
         "Location not provided";
 
-
     const description =
         property.description ||
         "No description provided.";
 
-
     let galleryHtml;
 
-
-    if(
-        currentImage &&
-        currentImage.image_url
-    ){
+    if(currentImage && currentImage.image_url){
 
         galleryHtml = `
-
             <img
                 id="card-image-${property.id}"
                 class="card-image"
-                src="${escapeHtml(
-                    currentImage.image_url
-                )}"
+                src="${escapeHtml(currentImage.image_url)}"
                 alt="${escapeHtml(title)}"
                 draggable="false"
             >
-
         `;
 
     }else{
 
         galleryHtml = `
-
             <div class="no-photo">
                 No photos
             </div>
-
         `;
 
     }
 
-
     const arrows =
         imageCount > 1
             ? `
-
                 <button
+                    type="button"
                     class="gallery-arrow gallery-prev"
-                    onclick="changeCardImage(event,'${property.id}',-1)"
-                >
+                    onclick="changeCardImage(event,'${property.id}',-1)">
                     ‹
                 </button>
 
                 <button
+                    type="button"
                     class="gallery-arrow gallery-next"
-                    onclick="changeCardImage(event,'${property.id}',1)"
-                >
+                    onclick="changeCardImage(event,'${property.id}',1)">
                     ›
                 </button>
-
             `
             : "";
 
+    /*
+     * IMPORTANT:
+     * Thumbnails are real buttons/images with their own
+     * click handlers. Clicking one immediately changes
+     * the main image and active border.
+     */
 
     const thumbnails =
         imageCount > 1
             ? `
-
                 <div class="thumbnail-strip">
 
-                    ${images.map(
-                        (
-                            image,
-                            index
-                        ) => `
-
-                            <img
-                                class="thumbnail ${
-                                    index === imageIndex
-                                        ? "active"
-                                        : ""
-                                }"
-                                src="${escapeHtml(
-                                    image.image_url
-                                )}"
-                                alt="Property photo ${index + 1}"
-                                onclick="setCardImage(event,'${property.id}',${index})"
-                            >
-
-                        `
-                    ).join("")}
+                    ${images.map((image,index) => `
+                        <img
+                            class="thumbnail ${
+                                index === imageIndex
+                                    ? "active"
+                                    : ""
+                            }"
+                            src="${escapeHtml(image.image_url)}"
+                            alt="Property photo ${index + 1}"
+                            data-property-id="${escapeHtml(property.id)}"
+                            data-image-index="${index}"
+                            onclick="setCardImage(event,'${property.id}',${index})"
+                        >
+                    `).join("")}
 
                 </div>
-
             `
             : "";
 
-
     let ownerControls = "";
-
 
     if(isOwner){
 
         ownerControls = `
-
             <div class="owner-controls">
 
                 <div class="owner-title">
@@ -2695,82 +2217,64 @@ function createPropertyCard(
                             ? `
                                 <button
                                     class="owner-btn owner-available"
-                                    onclick="updatePropertyStatus('${property.id}','available')"
-                                >
+                                    onclick="updatePropertyStatus('${property.id}','available')">
                                     Mark Available
                                 </button>
                             `
                             : ""
                     }
 
-
                     ${
                         status !== "sold"
                             ? `
                                 <button
                                     class="owner-btn owner-sold"
-                                    onclick="updatePropertyStatus('${property.id}','sold')"
-                                >
+                                    onclick="updatePropertyStatus('${property.id}','sold')">
                                     Mark Sold
                                 </button>
                             `
                             : ""
                     }
 
-
                     ${
                         status !== "rented"
                             ? `
                                 <button
                                     class="owner-btn owner-rented"
-                                    onclick="updatePropertyStatus('${property.id}','rented')"
-                                >
+                                    onclick="updatePropertyStatus('${property.id}','rented')">
                                     Mark Rented
                                 </button>
                             `
                             : ""
                     }
 
-
                     <button
                         class="owner-btn owner-delete"
-                        onclick="deleteProperty('${property.id}')"
-                    >
+                        onclick="deleteProperty('${property.id}')">
                         Delete Property
                     </button>
 
                 </div>
 
             </div>
-
         `;
 
     }
 
-
     return `
-
         <article
             class="property-card"
-            data-property-id="${escapeHtml(
-                property.id
-            )}"
-        >
+            data-property-id="${escapeHtml(property.id)}">
 
             <div
                 class="card-gallery"
-                id="gallery-${property.id}"
-            >
+                id="gallery-${property.id}">
 
-                <div
-                    class="status-badge ${statusClass(status)}"
-                >
+                <div class="status-badge ${statusClass(status)}">
                     ${formatStatus(status)}
                 </div>
 
-
                 ${galleryHtml}
-
 
                 ${
                     imageCount
@@ -2782,14 +2286,11 @@ function createPropertyCard(
                         : ""
                 }
 
-
                 ${arrows}
 
             </div>
 
-
             ${thumbnails}
-
 
             <div class="card-content">
 
@@ -2805,60 +2306,49 @@ function createPropertyCard(
 
                     <span class="type-badge">
                         ${escapeHtml(
-                            formatPropertyType(
-                                type
-                            )
+                            formatPropertyType(type)
                         )}
                     </span>
 
                 </div>
 
-
                 <h3>
                     ${escapeHtml(title)}
                 </h3>
-
 
                 <div class="location">
                     📍 ${escapeHtml(location)}
                 </div>
 
-
                 <div class="price">
                     ${formatMoney(property.price)}
                 </div>
-
 
                 <div class="description">
                     ${escapeHtml(description)}
                 </div>
 
-
                 <div class="card-actions">
 
                     <button
                         class="action-btn view-btn"
-                        onclick="openProperty('${property.id}')"
-                    >
+                        onclick="openProperty('${property.id}')">
                         View Property
                     </button>
-
 
                     ${
                         status === "available"
                             ? `
                                 <button
                                     class="action-btn contact-btn"
-                                    onclick="contactProperty('${property.id}')"
-                                >
+                                    onclick="contactProperty('${property.id}')">
                                     Contact
                                 </button>
                             `
                             : `
                                 <button
                                     class="action-btn unavailable-btn"
-                                    disabled
-                                >
+                                    disabled>
                                     ${formatStatus(status)}
                                 </button>
                             `
@@ -2866,36 +2356,27 @@ function createPropertyCard(
 
                 </div>
 
-
                 <div class="reactions">
 
                     <button
                         class="reaction-btn"
-                        onclick="reactToProperty('${property.id}','like')"
-                    >
-                        👍 ${Number(
-                            property.like_count || 0
-                        )}
+                        onclick="reactToProperty('${property.id}','like')">
+                        👍 ${Number(property.like_count || 0)}
                     </button>
 
                     <button
                         class="reaction-btn"
-                        onclick="reactToProperty('${property.id}','dislike')"
-                    >
-                        👎 ${Number(
-                            property.dislike_count || 0
-                        )}
+                        onclick="reactToProperty('${property.id}','dislike')">
+                        👎 ${Number(property.dislike_count || 0)}
                     </button>
 
                 </div>
-
 
                 ${ownerControls}
 
             </div>
 
         </article>
-
     `;
 
 }
@@ -2912,64 +2393,51 @@ function changeCardImage(
 ){
 
     if(event){
+        event.preventDefault();
         event.stopPropagation();
     }
 
-
     const property =
         allProperties.find(
-            item =>
-                item.id ===
-                propertyId
+            item => item.id === propertyId
         );
-
 
     if(!property){
         return;
     }
 
-
     const images =
         property._images || [];
-
 
     if(images.length <= 1){
         return;
     }
 
-
     let index =
         Number(
-            cardImageIndexes[
-                propertyId
-            ] || 0
+            cardImageIndexes[propertyId] || 0
         );
 
-
     index += direction;
-
 
     if(index < 0){
         index = images.length - 1;
     }
 
-
     if(index >= images.length){
         index = 0;
     }
 
+    cardImageIndexes[propertyId] = index;
 
-    cardImageIndexes[
-        propertyId
-    ] = index;
-
-
-    updateCardImage(
-        property
-    );
+    updateCardImage(property);
 
 }
 
+
+/*
+ * FIXED THUMBNAIL FUNCTION
+ */
 
 function setCardImage(
     event,
@@ -2978,91 +2446,82 @@ function setCardImage(
 ){
 
     if(event){
+        event.preventDefault();
         event.stopPropagation();
     }
 
-
     const property =
         allProperties.find(
-            item =>
-                item.id ===
-                propertyId
+            item => item.id === propertyId
         );
-
 
     if(!property){
         return;
     }
 
+    const images =
+        property._images || [];
 
     if(
-        !property._images ||
-        !property._images[index]
+        !images[index] ||
+        !images[index].image_url
     ){
-
         return;
-
     }
 
+    cardImageIndexes[propertyId] =
+        Number(index);
 
-    cardImageIndexes[
-        propertyId
-    ] = index;
-
-
-    updateCardImage(
-        property
-    );
+    updateCardImage(property);
 
 }
 
 
-function updateCardImage(
-    property
-){
+function updateCardImage(property){
 
     const images =
         property._images || [];
-
 
     if(!images.length){
         return;
     }
 
-
     let index =
         Number(
-            cardImageIndexes[
-                property.id
-            ] || 0
+            cardImageIndexes[property.id] || 0
         );
 
+    if(index < 0){
+        index = 0;
+    }
 
-    const image =
-        images[index];
+    if(index >= images.length){
+        index = images.length - 1;
+    }
 
+    cardImageIndexes[property.id] = index;
+
+    const image = images[index];
 
     const imageElement =
         document.getElementById(
-            "card-image-" +
-            property.id
+            "card-image-" + property.id
         );
-
 
     if(imageElement){
 
         imageElement.src =
             image.image_url;
 
-    }
+        imageElement.alt =
+            `${property.title || "Property"} - Photo ${index + 1}`;
 
+    }
 
     const gallery =
         document.getElementById(
-            "gallery-" +
-            property.id
+            "gallery-" + property.id
         );
-
 
     if(gallery){
 
@@ -3070,7 +2529,6 @@ function updateCardImage(
             gallery.querySelector(
                 ".photo-counter"
             );
-
 
         if(counter){
 
@@ -3081,31 +2539,21 @@ function updateCardImage(
 
     }
 
-
     const card =
         document.querySelector(
-            `[data-property-id="${CSS.escape(
-                property.id
-            )}"]`
+            `[data-property-id="${CSS.escape(property.id)}"]`
         );
-
 
     if(card){
 
         card
-            .querySelectorAll(
-                ".thumbnail"
-            )
+            .querySelectorAll(".thumbnail")
             .forEach(
-                (
-                    thumbnail,
-                    thumbnailIndex
-                ) => {
+                (thumbnail,thumbnailIndex) => {
 
                     thumbnail.classList.toggle(
                         "active",
-                        thumbnailIndex ===
-                        index
+                        thumbnailIndex === index
                     );
 
                 }
@@ -3120,49 +2568,33 @@ function updateCardImage(
    CARD SWIPE
 ========================================================= */
 
-function setupCardSwipe(
-    propertyId
-){
+function setupCardSwipe(propertyId){
 
     const gallery =
         document.getElementById(
-            "gallery-" +
-            propertyId
+            "gallery-" + propertyId
         );
-
 
     if(!gallery){
         return;
     }
 
-
     if(
-        gallery.dataset.swipeReady ===
-        "yes"
+        gallery.dataset.swipeReady === "yes"
     ){
-
         return;
-
     }
 
-
-    gallery.dataset.swipeReady =
-        "yes";
-
+    gallery.dataset.swipeReady = "yes";
 
     let startX = null;
-
 
     gallery.addEventListener(
         "pointerdown",
         event => {
-
-            startX =
-                event.clientX;
-
+            startX = event.clientX;
         }
     );
-
 
     gallery.addEventListener(
         "pointerup",
@@ -3172,31 +2604,19 @@ function setupCardSwipe(
                 return;
             }
 
-
             const difference =
-                event.clientX -
-                startX;
-
+                event.clientX - startX;
 
             startX = null;
 
-
-            if(
-                Math.abs(difference) <
-                45
-            ){
-
+            if(Math.abs(difference) < 45){
                 return;
-
             }
-
 
             changeCardImage(
                 event,
                 propertyId,
-                difference < 0
-                    ? 1
-                    : -1
+                difference < 0 ? 1 : -1
             );
 
         }
@@ -3209,204 +2629,137 @@ function setupCardSwipe(
    PROPERTY DETAILS
 ========================================================= */
 
-function openProperty(
-    propertyId
-){
+function openProperty(propertyId){
 
     const property =
         allProperties.find(
-            item =>
-                item.id ===
-                propertyId
+            item => item.id === propertyId
         );
-
 
     if(!property){
         return;
     }
 
+    detailPropertyId = propertyId;
+    detailImageIndex = 0;
 
-    detailPropertyId =
-        propertyId;
+    renderPropertyDetail(property);
 
+    openModal("detailModal");
 
-    detailImageIndex =
-        0;
-
-
-    renderPropertyDetail(
-        property
-    );
-
-
-    openModal(
-        "detailModal"
-    );
-
-
-    setupDetailSwipe(
-        property
-    );
+    setupDetailSwipe(property);
 
 }
 
 
-function renderPropertyDetail(
-    property
-){
+function renderPropertyDetail(property){
 
     const images =
         property._images || [];
 
-
     if(
-        detailImageIndex >=
-        images.length
+        detailImageIndex >= images.length
     ){
-
         detailImageIndex = 0;
-
     }
 
-
     const currentImage =
-        images[
-            detailImageIndex
-        ];
-
+        images[detailImageIndex];
 
     const status =
         String(
-            property.status ||
-            "available"
+            property.status || "available"
         ).toLowerCase();
-
 
     const isOwner =
         !!currentUserId &&
-        property.user_id ===
-        currentUserId;
-
+        property.user_id === currentUserId;
 
     let gallery;
-
 
     if(currentImage){
 
         gallery = `
-
             <div
                 class="detail-gallery"
-                id="detailGallery"
-            >
+                id="detailGallery">
 
                 <img
                     id="detailMainImage"
                     class="detail-main-image"
-                    src="${escapeHtml(
-                        currentImage.image_url
-                    )}"
-                    alt="${escapeHtml(
-                        property.title ||
-                        "Property"
-                    )}"
+                    src="${escapeHtml(currentImage.image_url)}"
+                    alt="${escapeHtml(property.title || "Property")}"
                     draggable="false"
                 >
 
-
                 <div class="detail-counter">
-
-                    ${detailImageIndex + 1}
-                    /
-                    ${images.length}
-
+                    ${detailImageIndex + 1} / ${images.length}
                 </div>
-
 
                 ${
                     images.length > 1
                         ? `
-
                             <button
+                                type="button"
                                 class="detail-arrow detail-prev"
-                                onclick="changeDetailImage(-1)"
-                            >
+                                onclick="changeDetailImage(-1)">
                                 ‹
                             </button>
 
                             <button
+                                type="button"
                                 class="detail-arrow detail-next"
-                                onclick="changeDetailImage(1)"
-                            >
+                                onclick="changeDetailImage(1)">
                                 ›
                             </button>
-
                         `
                         : ""
                 }
 
-
                 ${
                     images.length > 1
                         ? `
-
                             <div class="detail-thumbnails">
 
                                 ${images.map(
-                                    (
-                                        image,
-                                        index
-                                    ) => `
-
+                                    (image,index) => `
                                         <img
                                             class="detail-thumb ${
-                                                index ===
-                                                detailImageIndex
+                                                index === detailImageIndex
                                                     ? "active"
                                                     : ""
                                             }"
-                                            src="${escapeHtml(
-                                                image.image_url
-                                            )}"
-                                            alt="Photo ${
-                                                index + 1
-                                            }"
-                                            onclick="setDetailImage(${index})"
+                                            src="${escapeHtml(image.image_url)}"
+                                            alt="Photo ${index + 1}"
+                                            data-detail-index="${index}"
+                                            onclick="setDetailImage(event,${index})"
                                         >
-
                                     `
                                 ).join("")}
 
                             </div>
-
                         `
                         : ""
                 }
 
             </div>
-
         `;
 
     }else{
 
         gallery = `
-
             <div class="message">
                 No property photos available.
             </div>
-
         `;
 
     }
 
-
     let ownerControls = "";
-
 
     if(isOwner){
 
         ownerControls = `
-
             <div class="detail-owner-controls">
 
                 <strong>
@@ -3415,73 +2768,62 @@ function renderPropertyDetail(
 
                 <div
                     class="owner-buttons"
-                    style="margin-top:10px;"
-                >
+                    style="margin-top:10px;">
 
                     ${
                         status !== "available"
                             ? `
                                 <button
                                     class="owner-btn owner-available"
-                                    onclick="updatePropertyStatus('${property.id}','available')"
-                                >
+                                    onclick="updatePropertyStatus('${property.id}','available')">
                                     Mark Available
                                 </button>
                             `
                             : ""
                     }
 
-
                     ${
                         status !== "sold"
                             ? `
                                 <button
                                     class="owner-btn owner-sold"
-                                    onclick="updatePropertyStatus('${property.id}','sold')"
-                                >
+                                    onclick="updatePropertyStatus('${property.id}','sold')">
                                     Mark Sold
                                 </button>
                             `
                             : ""
                     }
 
-
                     ${
                         status !== "rented"
                             ? `
                                 <button
                                     class="owner-btn owner-rented"
-                                    onclick="updatePropertyStatus('${property.id}','rented')"
-                                >
+                                    onclick="updatePropertyStatus('${property.id}','rented')">
                                     Mark Rented
                                 </button>
                             `
                             : ""
                     }
 
-
                     <button
                         class="owner-btn owner-delete"
-                        onclick="deleteProperty('${property.id}')"
-                    >
+                        onclick="deleteProperty('${property.id}')">
                         Delete Property
                     </button>
 
                 </div>
 
             </div>
-
         `;
 
     }
-
 
     document.getElementById(
         "detailBody"
     ).innerHTML = `
 
         ${gallery}
-
 
         <div class="detail-info">
 
@@ -3509,21 +2851,17 @@ function renderPropertyDetail(
                     style="
                         position:static;
                         display:inline-block;
-                    "
-                >
+                    ">
                     ${formatStatus(status)}
                 </span>
 
             </div>
 
-
             <h2>
                 ${escapeHtml(
-                    property.title ||
-                    "Property"
+                    property.title || "Property"
                 )}
             </h2>
-
 
             <div class="location">
                 📍
@@ -3533,13 +2871,9 @@ function renderPropertyDetail(
                 )}
             </div>
 
-
             <div class="detail-price">
-                ${formatMoney(
-                    property.price
-                )}
+                ${formatMoney(property.price)}
             </div>
-
 
             <p class="detail-description">
                 ${escapeHtml(
@@ -3548,7 +2882,6 @@ function renderPropertyDetail(
                 )}
             </p>
 
-
             <div class="detail-actions">
 
                 ${
@@ -3556,16 +2889,14 @@ function renderPropertyDetail(
                         ? `
                             <button
                                 class="action-btn contact-btn"
-                                onclick="contactProperty('${property.id}')"
-                            >
+                                onclick="contactProperty('${property.id}')">
                                 Contact Seller
                             </button>
                         `
                         : `
                             <button
                                 class="action-btn unavailable-btn"
-                                disabled
-                            >
+                                disabled>
                                 ${formatStatus(status)}
                             </button>
                         `
@@ -3573,119 +2904,91 @@ function renderPropertyDetail(
 
             </div>
 
-
             ${ownerControls}
 
         </div>
-
     `;
 
 }
 
 
 /* =========================================================
-   DETAIL IMAGE CONTROLS
+   DETAIL THUMBNAILS
 ========================================================= */
 
-function changeDetailImage(
-    direction
-){
+function changeDetailImage(direction){
 
     const property =
         allProperties.find(
-            item =>
-                item.id ===
-                detailPropertyId
+            item => item.id === detailPropertyId
         );
-
 
     if(!property){
         return;
     }
 
-
     const images =
         property._images || [];
-
 
     if(images.length <= 1){
         return;
     }
 
-
-    detailImageIndex +=
-        direction;
-
+    detailImageIndex += direction;
 
     if(detailImageIndex < 0){
-
-        detailImageIndex =
-            images.length - 1;
-
+        detailImageIndex = images.length - 1;
     }
 
-
-    if(
-        detailImageIndex >=
-        images.length
-    ){
-
+    if(detailImageIndex >= images.length){
         detailImageIndex = 0;
-
     }
 
+    renderPropertyDetail(property);
 
-    renderPropertyDetail(
-        property
-    );
-
-
-    setupDetailSwipe(
-        property
-    );
+    setupDetailSwipe(property);
 
 }
 
 
-function setDetailImage(
-    index
-){
+/*
+ * FIXED DETAIL THUMBNAIL FUNCTION
+ */
+
+function setDetailImage(event,index){
+
+    if(event){
+
+        event.preventDefault();
+        event.stopPropagation();
+
+    }
 
     const property =
         allProperties.find(
-            item =>
-                item.id ===
-                detailPropertyId
+            item => item.id === detailPropertyId
         );
-
 
     if(!property){
         return;
     }
 
+    const images =
+        property._images || [];
 
     if(
-        !property._images ||
-        !property._images[index]
+        !images[index] ||
+        !images[index].image_url
     ){
-
         return;
-
     }
 
-
     detailImageIndex =
-        index;
+        Number(index);
 
+    renderPropertyDetail(property);
 
-    renderPropertyDetail(
-        property
-    );
-
-
-    setupDetailSwipe(
-        property
-    );
+    setupDetailSwipe(property);
 
 }
 
@@ -3694,48 +2997,31 @@ function setDetailImage(
    DETAIL SWIPE
 ========================================================= */
 
-function setupDetailSwipe(
-    property
-){
+function setupDetailSwipe(property){
 
     const gallery =
-        document.getElementById(
-            "detailGallery"
-        );
-
+        document.getElementById("detailGallery");
 
     if(!gallery){
         return;
     }
 
-
     if(
-        gallery.dataset.swipeReady ===
-        "yes"
+        gallery.dataset.swipeReady === "yes"
     ){
-
         return;
-
     }
 
-
-    gallery.dataset.swipeReady =
-        "yes";
-
+    gallery.dataset.swipeReady = "yes";
 
     let startX = null;
-
 
     gallery.addEventListener(
         "pointerdown",
         event => {
-
-            startX =
-                event.clientX;
-
+            startX = event.clientX;
         }
     );
-
 
     gallery.addEventListener(
         "pointerup",
@@ -3745,29 +3031,17 @@ function setupDetailSwipe(
                 return;
             }
 
-
             const difference =
-                event.clientX -
-                startX;
-
+                event.clientX - startX;
 
             startX = null;
 
-
-            if(
-                Math.abs(difference) <
-                45
-            ){
-
+            if(Math.abs(difference) < 45){
                 return;
-
             }
 
-
             changeDetailImage(
-                difference < 0
-                    ? 1
-                    : -1
+                difference < 0 ? 1 : -1
             );
 
         }
@@ -3780,29 +3054,21 @@ function setupDetailSwipe(
    CONTACT
 ========================================================= */
 
-function contactProperty(
-    propertyId
-){
+function contactProperty(propertyId){
 
     const property =
         allProperties.find(
-            item =>
-                item.id ===
-                propertyId
+            item => item.id === propertyId
         );
-
 
     if(!property){
         return;
     }
 
-
     if(
         String(
-            property.status ||
-            "available"
-        ).toLowerCase() !==
-        "available"
+            property.status || "available"
+        ).toLowerCase() !== "available"
     ){
 
         showToast(
@@ -3810,9 +3076,7 @@ function contactProperty(
         );
 
         return;
-
     }
-
 
     showToast(
         "Contact messaging will be available here."
@@ -3833,7 +3097,6 @@ async function reactToProperty(
     const auth =
         await getAuthDetails();
 
-
     if(!auth.user){
 
         showToast(
@@ -3841,9 +3104,7 @@ async function reactToProperty(
         );
 
         return;
-
     }
-
 
     try{
 
@@ -3853,24 +3114,18 @@ async function reactToProperty(
                 "/rest/v1/property_reactions" +
                 "?select=id,reaction" +
                 "&property_id=eq." +
-                encodeURIComponent(
-                    propertyId
-                ) +
+                encodeURIComponent(propertyId) +
                 "&user_id=eq." +
-                encodeURIComponent(
-                    auth.user.id
-                ),
+                encodeURIComponent(auth.user.id),
                 {
                     headers:{
-                        "apikey":
-                            SUPABASE_KEY,
+                        "apikey":SUPABASE_KEY,
                         "Authorization":
                             "Bearer " +
                             auth.token
                     }
                 }
             );
-
 
         if(!existingResponse.ok){
 
@@ -3880,16 +3135,13 @@ async function reactToProperty(
 
         }
 
-
         const existing =
             await existingResponse.json();
-
 
         if(existing.length){
 
             if(
-                existing[0].reaction ===
-                reaction
+                existing[0].reaction === reaction
             ){
 
                 showToast(
@@ -3897,9 +3149,7 @@ async function reactToProperty(
                 );
 
                 return;
-
             }
-
 
             const updateResponse =
                 await fetch(
@@ -3912,22 +3162,18 @@ async function reactToProperty(
                     {
                         method:"PATCH",
                         headers:{
-                            "apikey":
-                                SUPABASE_KEY,
+                            "apikey":SUPABASE_KEY,
                             "Authorization":
                                 "Bearer " +
                                 auth.token,
                             "Content-Type":
                                 "application/json"
                         },
-                        body:
-                            JSON.stringify({
-                                reaction:
-                                    reaction
-                            })
+                        body:JSON.stringify({
+                            reaction:reaction
+                        })
                     }
                 );
-
 
             if(!updateResponse.ok){
 
@@ -3946,30 +3192,25 @@ async function reactToProperty(
                     {
                         method:"POST",
                         headers:{
-                            "apikey":
-                                SUPABASE_KEY,
+                            "apikey":SUPABASE_KEY,
                             "Authorization":
                                 "Bearer " +
                                 auth.token,
                             "Content-Type":
                                 "application/json"
                         },
-                        body:
-                            JSON.stringify({
+                        body:JSON.stringify({
 
-                                property_id:
-                                    propertyId,
+                            property_id:propertyId,
 
-                                user_id:
-                                    auth.user.id,
+                            user_id:
+                                auth.user.id,
 
-                                reaction:
-                                    reaction
+                            reaction:reaction
 
-                            })
+                        })
                     }
                 );
-
 
             if(!insertResponse.ok){
 
@@ -3981,9 +3222,7 @@ async function reactToProperty(
 
         }
 
-
         await loadProperties();
-
 
         showToast(
             reaction === "like"
@@ -3991,14 +3230,12 @@ async function reactToProperty(
                 : "👎 Vote saved."
         );
 
-
     }catch(error){
 
         console.error(
             "Reaction error:",
             error
         );
-
 
         showToast(
             "Could not save your vote."
@@ -4010,7 +3247,7 @@ async function reactToProperty(
 
 
 /* =========================================================
-   UPDATE PROPERTY STATUS
+   UPDATE STATUS
 ========================================================= */
 
 async function updatePropertyStatus(
@@ -4021,7 +3258,6 @@ async function updatePropertyStatus(
     const auth =
         await getAuthDetails();
 
-
     if(!auth.user){
 
         showToast(
@@ -4029,22 +3265,16 @@ async function updatePropertyStatus(
         );
 
         return;
-
     }
-
 
     const property =
         allProperties.find(
-            item =>
-                item.id ===
-                propertyId
+            item => item.id === propertyId
         );
-
 
     if(!property){
         return;
     }
-
 
     if(
         property.user_id !==
@@ -4056,9 +3286,7 @@ async function updatePropertyStatus(
         );
 
         return;
-
     }
-
 
     const allowed = [
         "available",
@@ -4066,17 +3294,9 @@ async function updatePropertyStatus(
         "rented"
     ];
 
-
-    if(
-        !allowed.includes(
-            newStatus
-        )
-    ){
-
+    if(!allowed.includes(newStatus)){
         return;
-
     }
-
 
     try{
 
@@ -4085,18 +3305,13 @@ async function updatePropertyStatus(
                 SUPABASE_URL +
                 "/rest/v1/property_listings" +
                 "?id=eq." +
-                encodeURIComponent(
-                    propertyId
-                ) +
+                encodeURIComponent(propertyId) +
                 "&user_id=eq." +
-                encodeURIComponent(
-                    auth.user.id
-                ),
+                encodeURIComponent(auth.user.id),
                 {
                     method:"PATCH",
                     headers:{
-                        "apikey":
-                            SUPABASE_KEY,
+                        "apikey":SUPABASE_KEY,
                         "Authorization":
                             "Bearer " +
                             auth.token,
@@ -4105,14 +3320,11 @@ async function updatePropertyStatus(
                         "Prefer":
                             "return=minimal"
                     },
-                    body:
-                        JSON.stringify({
-                            status:
-                                newStatus
-                        })
+                    body:JSON.stringify({
+                        status:newStatus
+                    })
                 }
             );
-
 
         if(!response.ok){
 
@@ -4122,10 +3334,7 @@ async function updatePropertyStatus(
 
         }
 
-
-        property.status =
-            newStatus;
-
+        property.status = newStatus;
 
         showToast(
             newStatus === "available"
@@ -4135,25 +3344,15 @@ async function updatePropertyStatus(
                     : "Property marked RENTED."
         );
 
+        if(detailPropertyId === propertyId){
 
-        if(
-            detailPropertyId ===
-            propertyId
-        ){
+            renderPropertyDetail(property);
 
-            renderPropertyDetail(
-                property
-            );
-
-            setupDetailSwipe(
-                property
-            );
+            setupDetailSwipe(property);
 
         }
 
-
         applyFilters();
-
 
     }catch(error){
 
@@ -4161,7 +3360,6 @@ async function updatePropertyStatus(
             "Status update error:",
             error
         );
-
 
         showToast(
             "Could not update property status."
@@ -4173,16 +3371,13 @@ async function updatePropertyStatus(
 
 
 /* =========================================================
-   DELETE PROPERTY
+   DELETE
 ========================================================= */
 
-async function deleteProperty(
-    propertyId
-){
+async function deleteProperty(propertyId){
 
     const auth =
         await getAuthDetails();
-
 
     if(!auth.user){
 
@@ -4191,22 +3386,16 @@ async function deleteProperty(
         );
 
         return;
-
     }
-
 
     const property =
         allProperties.find(
-            item =>
-                item.id ===
-                propertyId
+            item => item.id === propertyId
         );
-
 
     if(!property){
         return;
     }
-
 
     if(
         property.user_id !==
@@ -4218,20 +3407,15 @@ async function deleteProperty(
         );
 
         return;
-
     }
-
 
     if(
         !window.confirm(
             "Delete this property permanently?"
         )
     ){
-
         return;
-
     }
-
 
     try{
 
@@ -4240,18 +3424,13 @@ async function deleteProperty(
                 SUPABASE_URL +
                 "/rest/v1/property_listings" +
                 "?id=eq." +
-                encodeURIComponent(
-                    propertyId
-                ) +
+                encodeURIComponent(propertyId) +
                 "&user_id=eq." +
-                encodeURIComponent(
-                    auth.user.id
-                ),
+                encodeURIComponent(auth.user.id),
                 {
                     method:"DELETE",
                     headers:{
-                        "apikey":
-                            SUPABASE_KEY,
+                        "apikey":SUPABASE_KEY,
                         "Authorization":
                             "Bearer " +
                             auth.token,
@@ -4261,7 +3440,6 @@ async function deleteProperty(
                 }
             );
 
-
         if(!response.ok){
 
             throw new Error(
@@ -4270,42 +3448,26 @@ async function deleteProperty(
 
         }
 
-
         allProperties =
             allProperties.filter(
-                item =>
-                    item.id !==
-                    propertyId
+                item => item.id !== propertyId
             );
 
+        delete cardImageIndexes[propertyId];
 
-        delete cardImageIndexes[
-            propertyId
-        ];
+        if(detailPropertyId === propertyId){
 
+            detailPropertyId = null;
 
-        if(
-            detailPropertyId ===
-            propertyId
-        ){
-
-            detailPropertyId =
-                null;
-
-            closeModal(
-                "detailModal"
-            );
+            closeModal("detailModal");
 
         }
 
-
         renderProperties();
-
 
         showToast(
             "Property deleted."
         );
-
 
     }catch(error){
 
@@ -4313,7 +3475,6 @@ async function deleteProperty(
             "Delete property error:",
             error
         );
-
 
         showToast(
             "Could not delete property."
@@ -4328,32 +3489,20 @@ async function deleteProperty(
    PUBLISH PROPERTY
 ========================================================= */
 
-async function publishProperty(
-    event
-){
+async function publishProperty(event){
 
     event.preventDefault();
 
-
     const publishBtn =
-        document.getElementById(
-            "publishBtn"
-        );
+        document.getElementById("publishBtn");
 
-
-    publishBtn.disabled =
-        true;
-
-
-    publishBtn.textContent =
-        "Publishing...";
-
+    publishBtn.disabled = true;
+    publishBtn.textContent = "Publishing...";
 
     try{
 
         const auth =
             await getAuthDetails();
-
 
         if(!auth.user){
 
@@ -4363,81 +3512,43 @@ async function publishProperty(
 
         }
 
-
-        if(!auth.user.id){
-
-            throw new Error(
-                "Your account ID could not be found. Please log in again."
-            );
-
-        }
-
-
         const title =
-            document
-                .getElementById(
-                    "propertyTitle"
-                )
-                .value
-                .trim();
-
+            document.getElementById(
+                "propertyTitle"
+            ).value.trim();
 
         const category =
-            document
-                .getElementById(
-                    "propertyCategory"
-                )
-                .value;
-
+            document.getElementById(
+                "propertyCategory"
+            ).value;
 
         const listingType =
-            document
-                .getElementById(
-                    "listingType"
-                )
-                .value;
-
+            document.getElementById(
+                "listingType"
+            ).value;
 
         const price =
             Number(
-                document
-                    .getElementById(
-                        "propertyPrice"
-                    )
-                    .value
+                document.getElementById(
+                    "propertyPrice"
+                ).value
             );
 
-
         const location =
-            document
-                .getElementById(
-                    "propertyLocation"
-                )
-                .value
-                .trim();
-
+            document.getElementById(
+                "propertyLocation"
+            ).value.trim();
 
         const description =
-            document
-                .getElementById(
-                    "propertyDescription"
-                )
-                .value
-                .trim();
-
-
-        /*
-         * Copy the selected files.
-         */
+            document.getElementById(
+                "propertyDescription"
+            ).value.trim();
 
         const files =
             [...selectedPropertyPhotos];
 
 
-        /*
-         * STEP 1
-         * Create property.
-         */
+        /* CREATE PROPERTY */
 
         const propertyResponse =
             await fetch(
@@ -4446,8 +3557,7 @@ async function publishProperty(
                 {
                     method:"POST",
                     headers:{
-                        "apikey":
-                            SUPABASE_KEY,
+                        "apikey":SUPABASE_KEY,
                         "Authorization":
                             "Bearer " +
                             auth.token,
@@ -4456,37 +3566,30 @@ async function publishProperty(
                         "Prefer":
                             "return=representation"
                     },
-                    body:
-                        JSON.stringify({
+                    body:JSON.stringify({
 
-                            user_id:
-                                auth.user.id,
+                        user_id:
+                            auth.user.id,
 
-                            title:
-                                title,
+                        title:title,
 
-                            property_type:
-                                category,
+                        property_type:
+                            category,
 
-                            listing_type:
-                                listingType,
+                        listing_type:
+                            listingType,
 
-                            price:
-                                price,
+                        price:price,
 
-                            location:
-                                location,
+                        location:location,
 
-                            description:
-                                description,
+                        description:description,
 
-                            status:
-                                "available"
+                        status:"available"
 
-                        })
+                    })
                 }
             );
-
 
         if(!propertyResponse.ok){
 
@@ -4496,16 +3599,13 @@ async function publishProperty(
 
         }
 
-
         const created =
             await propertyResponse.json();
-
 
         const property =
             Array.isArray(created)
                 ? created[0]
                 : created;
-
 
         if(
             !property ||
@@ -4519,13 +3619,9 @@ async function publishProperty(
         }
 
 
-        /*
-         * STEP 2
-         * Upload every selected photo.
-         */
+        /* UPLOAD PHOTOS */
 
         const uploadedImages = [];
-
 
         for(
             let index = 0;
@@ -4533,9 +3629,7 @@ async function publishProperty(
             index++
         ){
 
-            const file =
-                files[index];
-
+            const file = files[index];
 
             const extension =
                 (
@@ -4543,9 +3637,7 @@ async function publishProperty(
                         .split(".")
                         .pop() ||
                     "jpg"
-                )
-                .toLowerCase();
-
+                ).toLowerCase();
 
             const randomId =
                 Date.now() +
@@ -4553,7 +3645,6 @@ async function publishProperty(
                 Math.random()
                     .toString(36)
                     .substring(2,10);
-
 
             const storagePath =
                 auth.user.id +
@@ -4563,7 +3654,6 @@ async function publishProperty(
                 randomId +
                 "." +
                 extension;
-
 
             const uploadResponse =
                 await fetch(
@@ -4575,20 +3665,17 @@ async function publishProperty(
                     {
                         method:"POST",
                         headers:{
-                            "apikey":
-                                SUPABASE_KEY,
+                            "apikey":SUPABASE_KEY,
                             "Authorization":
                                 "Bearer " +
                                 auth.token,
                             "Content-Type":
                                 file.type,
-                            "x-upsert":
-                                "false"
+                            "x-upsert":"false"
                         },
                         body:file
                     }
                 );
-
 
             if(!uploadResponse.ok){
 
@@ -4601,18 +3688,14 @@ async function publishProperty(
 
             }
 
-
             const encodedPath =
                 storagePath
                     .split("/")
                     .map(
                         part =>
-                            encodeURIComponent(
-                                part
-                            )
+                            encodeURIComponent(part)
                     )
                     .join("/");
-
 
             const publicUrl =
                 SUPABASE_URL +
@@ -4620,7 +3703,6 @@ async function publishProperty(
                 PROPERTY_BUCKET +
                 "/" +
                 encodedPath;
-
 
             uploadedImages.push({
 
@@ -4641,14 +3723,9 @@ async function publishProperty(
         }
 
 
-        /*
-         * STEP 3
-         * Save every photo record.
-         */
+        /* SAVE PHOTO RECORDS */
 
-        if(
-            uploadedImages.length
-        ){
+        if(uploadedImages.length){
 
             const imageResponse =
                 await fetch(
@@ -4657,8 +3734,7 @@ async function publishProperty(
                     {
                         method:"POST",
                         headers:{
-                            "apikey":
-                                SUPABASE_KEY,
+                            "apikey":SUPABASE_KEY,
                             "Authorization":
                                 "Bearer " +
                                 auth.token,
@@ -4674,14 +3750,7 @@ async function publishProperty(
                     }
                 );
 
-
             if(!imageResponse.ok){
-
-                console.error(
-                    "Photo database error:",
-                    await imageResponse.text()
-                );
-
 
                 throw new Error(
                     "Property was published, but the photo records could not be saved."
@@ -4692,28 +3761,17 @@ async function publishProperty(
         }
 
 
-        /*
-         * Reset everything.
-         */
+        /* RESET */
 
         document
-            .getElementById(
-                "propertyForm"
-            )
+            .getElementById("propertyForm")
             .reset();
 
-
-        selectedPropertyPhotos =
-            [];
-
+        selectedPropertyPhotos = [];
 
         renderPhotoPreviews();
 
-
-        closeModal(
-            "postModal"
-        );
-
+        closeModal("postModal");
 
         showToast(
             files.length
@@ -4721,13 +3779,7 @@ async function publishProperty(
                 : "Property published successfully."
         );
 
-
-        /*
-         * Reload properties and ALL photos.
-         */
-
         await loadProperties();
-
 
     }catch(error){
 
@@ -4736,21 +3788,15 @@ async function publishProperty(
             error
         );
 
-
         showToast(
             error.message ||
             "Could not publish property."
         );
 
-
     }finally{
 
-        publishBtn.disabled =
-            false;
-
-
-        publishBtn.textContent =
-            "Publish Property";
+        publishBtn.disabled = false;
+        publishBtn.textContent = "Publish Property";
 
     }
 
