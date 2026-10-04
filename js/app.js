@@ -5462,3 +5462,4 @@ window.showBusinessDetails = async function (business) {
     }
 
 };
+console.log("LosOja: app.js reached the end.");
