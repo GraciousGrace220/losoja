@@ -4263,175 +4263,252 @@ window.showBusinessDetails = async function (business) {
         "modal-open"
     );
 
-    /* ---------------------------------------------------
-       CHAT WITH BUSINESS
-    --------------------------------------------------- */
+   /* ---------------------------------------------------
+   CHAT WITH BUSINESS
+--------------------------------------------------- */
 
-    const chatButton =
-        document.getElementById(
-            "businessChatBtn"
-        );
+const chatButton =
+    document.getElementById(
+        "businessChatBtn"
+    );
 
-    if (chatButton) {
+if (chatButton) {
 
-        chatButton.onclick =
-            async function () {
+    chatButton.addEventListener(
+        "click",
+        async function (event) {
 
-                console.log(
-                    "LosOja: Chat with Business clicked."
-                );
+            event.preventDefault();
+            event.stopPropagation();
 
-                try {
+            console.log(
+                "LosOja: Chat with Business clicked.",
+                business
+            );
 
-                    if (!business.user_id) {
+            try {
 
-                        App.showToast(
-                            "This business does not have a registered owner yet.",
-                            "error"
-                        );
+                /* -----------------------------------------
+                   MAKE SURE BUSINESS OWNER EXISTS
+                ----------------------------------------- */
 
-                        return;
-                    }
+                if (!business.user_id) {
 
-                    if (
-                        typeof window.getCurrentUser !==
-                        "function"
-                    ) {
+                    console.error(
+                        "LosOja: Business owner ID missing.",
+                        business
+                    );
 
-                        App.showToast(
-                            "Please login before starting a chat.",
-                            "error"
-                        );
+                    App.showToast(
+                        "This business is not connected to an owner yet.",
+                        "error"
+                    );
 
-                        return;
-                    }
+                    return;
+                }
 
-                    const currentUser =
-                        await window.getCurrentUser();
+                /* -----------------------------------------
+                   CHECK LOGIN
+                ----------------------------------------- */
 
-                    if (!currentUser) {
+                let currentUser = null;
 
-                        if (
-                            typeof window.openLogin ===
-                            "function"
-                        ) {
-
-                            window.openLogin();
-
-                        } else {
-
-                            const loginModal =
-                                document.getElementById(
-                                    "loginModal"
-                                );
-
-                            if (loginModal) {
-
-                                App.openModal(
-                                    loginModal
-                                );
-                            }
-                        }
-
-                        return;
-                    }
-
-                    if (
-                        String(currentUser.id) ===
-                        String(business.user_id)
-                    ) {
-
-                        App.showToast(
-                            "This is your business.",
-                            "info"
-                        );
-
-                        return;
-                    }
-
-                    /* Save business chat context */
+                if (
+                    typeof window.getCurrentUser ===
+                    "function"
+                ) {
 
                     try {
 
-                        sessionStorage.setItem(
-                            "losoja_chat_business",
-                            JSON.stringify({
+                        currentUser =
+                            await window.getCurrentUser();
 
-                                business_id:
-                                    business.id || "",
-
-                                business_name:
-                                    business.name || "",
-
-                                business_owner_id:
-                                    business.user_id || "",
-
-                                business_location:
-                                    business.location || "",
-
-                                business_category:
-                                    business.category || ""
-
-                            })
-                        );
-
-                    } catch (storageError) {
+                    } catch (authError) {
 
                         console.warn(
-                            "LosOja: Chat context could not be saved.",
-                            storageError
+                            "LosOja: Could not check login state.",
+                            authError
                         );
                     }
+                }
 
-                    const ownerId =
-                        encodeURIComponent(
-                            String(
-                                business.user_id
-                            )
-                        );
+                /* -----------------------------------------
+                   NOT LOGGED IN
+                ----------------------------------------- */
 
-                    let chatUrl =
-                        "chat.html?user=" +
-                        ownerId;
-
-                    if (business.id) {
-
-                        chatUrl +=
-                            "&business=" +
-                            encodeURIComponent(
-                                String(
-                                    business.id
-                                )
-                            );
-                    }
+                if (!currentUser) {
 
                     console.log(
-                        "LosOja: Opening:",
-                        chatUrl
+                        "LosOja: User is not logged in."
                     );
+
+                    if (
+                        typeof window.openLogin ===
+                        "function"
+                    ) {
+
+                        window.openLogin();
+
+                    } else {
+
+                        const loginModal =
+                            document.getElementById(
+                                "loginModal"
+                            );
+
+                        if (loginModal) {
+
+                            App.openModal(
+                                loginModal
+                            );
+
+                        } else {
+
+                            App.showToast(
+                                "Please login before starting a chat.",
+                                "error"
+                            );
+                        }
+                    }
+
+                    return;
+                }
+
+                /* -----------------------------------------
+                   PREVENT OWNER SELF-CHAT
+                ----------------------------------------- */
+
+                if (
+                    currentUser.id &&
+                    String(currentUser.id) ===
+                    String(business.user_id)
+                ) {
+
+                    App.showToast(
+                        "This is your business.",
+                        "info"
+                    );
+
+                    return;
+                }
+
+                /* -----------------------------------------
+                   SAVE BUSINESS CHAT INFORMATION
+                ----------------------------------------- */
+
+                const chatBusiness = {
+
+                    business_id:
+                        business.id || "",
+
+                    business_name:
+                        business.name || "",
+
+                    business_owner_id:
+                        business.user_id || "",
+
+                    business_location:
+                        business.location || "",
+
+                    business_category:
+                        business.category || ""
+
+                };
+
+                try {
+
+                    sessionStorage.setItem(
+                        "losoja_chat_business",
+                        JSON.stringify(
+                            chatBusiness
+                        )
+                    );
+
+                } catch (storageError) {
+
+                    console.warn(
+                        "LosOja: Could not save chat business.",
+                        storageError
+                    );
+                }
+
+                /* -----------------------------------------
+                   BUILD CHAT URL
+                ----------------------------------------- */
+
+                const ownerId =
+                    encodeURIComponent(
+                        String(
+                            business.user_id
+                        )
+                    );
+
+                const businessId =
+                    business.id
+                        ? encodeURIComponent(
+                            String(
+                                business.id
+                            )
+                        )
+                        : "";
+
+                let chatUrl =
+                    "chat.html?user=" +
+                    ownerId;
+
+                if (businessId) {
+
+                    chatUrl +=
+                        "&business=" +
+                        businessId;
+                }
+
+                console.log(
+                    "LosOja: Navigating to business chat:",
+                    chatUrl
+                );
+
+                /* -----------------------------------------
+                   CLOSE BUSINESS DETAILS
+                ----------------------------------------- */
+
+                try {
 
                     App.closeModal(
                         modal
                     );
 
-                    window.location.href =
-                        chatUrl;
+                } catch (closeError) {
 
-                } catch (error) {
-
-                    console.error(
-                        "LosOja business chat error:",
-                        error
-                    );
-
-                    App.showToast(
-                        "Could not open chat right now.",
-                        "error"
+                    console.warn(
+                        "LosOja: Could not close business details modal.",
+                        closeError
                     );
                 }
-            };
-    }
 
+                /* -----------------------------------------
+                   OPEN CHAT
+                ----------------------------------------- */
+
+                window.location.href =
+                    chatUrl;
+
+            } catch (error) {
+
+                console.error(
+                    "LosOja business chat error:",
+                    error
+                );
+
+                App.showToast(
+                    error?.message ||
+                    "Could not open chat right now.",
+                    "error"
+                );
+            }
+        }
+    );
+}
     /* ---------------------------------------------------
        CREATE ESCROW
     --------------------------------------------------- */
