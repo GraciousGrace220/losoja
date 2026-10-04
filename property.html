@@ -1,25 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
 
 <title>LosOja Properties</title>
 
-<meta name="description"
-      content="Find houses, apartments, land and commercial properties on LosOja.">
+<meta
+    name="description"
+    content="Browse houses, apartments, land and commercial properties available on LosOja."
+>
 
 <style>
+
 :root{
     --green:#087a3e;
     --green-dark:#055c2e;
     --green-light:#eef8f2;
     --accent:#ffb703;
-    --text:#17221b;
+    --text:#17251d;
     --muted:#68756e;
-    --border:#e4e9e5;
-    --white:#fff;
-    --danger:#c62828;
+    --border:#e3e9e5;
+    --white:#ffffff;
+    --danger:#d93025;
+    --shadow:0 8px 25px rgba(0,0,0,.08);
 }
 
 *{
@@ -29,11 +39,14 @@
 body{
     margin:0;
     font-family:Arial,Helvetica,sans-serif;
-    background:#f7f9f8;
+    background:#f7faf8;
     color:var(--text);
 }
 
-button,input,select,textarea{
+button,
+input,
+select,
+textarea{
     font:inherit;
 }
 
@@ -41,138 +54,149 @@ button{
     cursor:pointer;
 }
 
-/* HEADER */
+a{
+    color:inherit;
+    text-decoration:none;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
 
 .topbar{
+    background:var(--green);
+    color:white;
+    padding:14px 18px;
     position:sticky;
     top:0;
-    z-index:1000;
-    background:#fff;
-    border-bottom:1px solid var(--border);
+    z-index:100;
+    box-shadow:0 3px 12px rgba(0,0,0,.12);
+}
+
+.topbar-inner{
+    max-width:1200px;
+    margin:auto;
     display:flex;
     align-items:center;
     justify-content:space-between;
-    padding:14px 20px;
+    gap:15px;
 }
 
 .logo{
-    font-size:25px;
+    font-size:23px;
     font-weight:800;
-    color:var(--green);
-}
-
-.topbar-actions{
-    display:flex;
-    gap:9px;
-}
-
-.back-btn,
-.post-btn{
-    border:0;
-    border-radius:10px;
-    padding:10px 15px;
-    font-weight:700;
+    letter-spacing:-.5px;
 }
 
 .back-btn{
-    background:#f0f3f1;
+    border:1px solid rgba(255,255,255,.35);
+    background:rgba(255,255,255,.12);
+    color:white;
+    padding:9px 14px;
+    border-radius:10px;
+    font-weight:700;
 }
 
-.post-btn{
-    background:var(--green);
-    color:#fff;
-}
-
-.post-btn:hover{
-    background:var(--green-dark);
-}
-
-/* HERO */
+/* =========================================================
+   HERO
+========================================================= */
 
 .hero{
-    padding:45px 20px;
-    color:#fff;
-    background:linear-gradient(
-        rgba(8,122,62,.95),
-        rgba(5,92,46,.95)
-    );
-}
-
-.hero-inner{
     max-width:1200px;
     margin:auto;
+    padding:28px 18px 15px;
 }
 
 .hero h1{
-    margin:0 0 10px;
-    font-size:clamp(30px,5vw,52px);
+    margin:0 0 8px;
+    font-size:32px;
 }
 
 .hero p{
     margin:0;
-    max-width:650px;
-    line-height:1.6;
+    color:var(--muted);
+    line-height:1.5;
 }
 
-/* SEARCH */
+/* =========================================================
+   FILTERS
+========================================================= */
 
-.controls{
+.filters-wrap{
     max-width:1200px;
-    margin:25px auto 0;
-    padding:0 20px;
+    margin:auto;
+    padding:10px 18px 20px;
 }
 
-.search-box{
-    width:100%;
-    padding:15px;
+.search-row{
+    display:flex;
+    gap:10px;
+    margin-bottom:12px;
+}
+
+.search-row input{
+    flex:1;
+    min-width:0;
     border:1px solid var(--border);
     border-radius:12px;
+    padding:13px 15px;
     outline:none;
-    background:#fff;
-    margin-bottom:15px;
+    background:white;
 }
 
-.search-box:focus{
+.search-row input:focus{
     border-color:var(--green);
+    box-shadow:0 0 0 3px rgba(8,122,62,.10);
 }
 
-.filters{
+.filter-row{
     display:flex;
-    flex-wrap:wrap;
     gap:8px;
+    overflow-x:auto;
+    padding-bottom:4px;
+}
+
+.filter-row::-webkit-scrollbar{
+    height:4px;
 }
 
 .filter-btn{
+    flex:0 0 auto;
     border:1px solid var(--border);
-    background:#fff;
+    background:white;
+    color:#34423a;
+    padding:9px 13px;
     border-radius:999px;
-    padding:9px 14px;
-    font-weight:600;
+    font-weight:700;
 }
 
 .filter-btn.active{
     background:var(--green);
-    color:#fff;
+    color:white;
     border-color:var(--green);
 }
 
-/* PAGE */
+/* =========================================================
+   MAIN
+========================================================= */
 
-.page{
+.main{
     max-width:1200px;
     margin:auto;
-    padding:25px 20px 70px;
+    padding:0 18px 50px;
 }
 
-.section-heading{
+.section-title{
     display:flex;
     justify-content:space-between;
     align-items:center;
-    margin-bottom:18px;
+    gap:10px;
+    margin:10px 0 18px;
 }
 
-.section-heading h2{
+.section-title h2{
     margin:0;
+    font-size:22px;
 }
 
 .property-count{
@@ -180,195 +204,181 @@ button{
     font-size:14px;
 }
 
-/* GRID */
+/* =========================================================
+   PROPERTY GRID
+========================================================= */
 
 .property-grid{
     display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
-    gap:20px;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:18px;
 }
 
 .property-card{
-    background:#fff;
+    background:white;
     border:1px solid var(--border);
     border-radius:18px;
     overflow:hidden;
-    box-shadow:0 4px 15px rgba(0,0,0,.04);
+    box-shadow:var(--shadow);
 }
-
-/* CARD GALLERY */
 
 .card-gallery{
     position:relative;
-    height:235px;
-    background:#e9eeeb;
-    overflow:hidden;
-    touch-action:pan-y;
+    background:#eaf0ec;
 }
 
-.card-image{
-    width:100%;
-    height:100%;
-    object-fit:cover;
+.card-main-image{
     display:block;
-    user-select:none;
-    -webkit-user-drag:none;
+    width:100%;
+    height:230px;
+    object-fit:cover;
+    background:#eaf0ec;
 }
 
-.no-photo{
-    height:100%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    color:var(--muted);
-}
-
-.photo-counter{
+.image-counter{
     position:absolute;
     top:12px;
     right:12px;
-    background:rgba(0,0,0,.7);
-    color:#fff;
-    padding:6px 9px;
-    border-radius:8px;
+    background:rgba(0,0,0,.68);
+    color:white;
+    padding:5px 9px;
+    border-radius:999px;
     font-size:12px;
     font-weight:700;
-    z-index:5;
 }
 
 .gallery-arrow{
     position:absolute;
     top:50%;
     transform:translateY(-50%);
-    width:38px;
-    height:38px;
+    width:36px;
+    height:36px;
     border:0;
     border-radius:50%;
-    background:rgba(0,0,0,.6);
-    color:#fff;
-    font-size:25px;
-    z-index:6;
+    background:rgba(0,0,0,.58);
+    color:white;
+    font-size:20px;
+    z-index:3;
 }
 
-.gallery-prev{
+.gallery-arrow:hover{
+    background:rgba(0,0,0,.78);
+}
+
+.gallery-arrow.prev{
     left:10px;
 }
 
-.gallery-next{
+.gallery-arrow.next{
     right:10px;
 }
 
-.status-badge{
-    position:absolute;
-    left:12px;
-    top:12px;
-    z-index:7;
-    padding:6px 10px;
-    border-radius:8px;
-    color:#fff;
-    font-size:11px;
-    font-weight:800;
-}
+/* =========================================================
+   CARD THUMBNAILS
+========================================================= */
 
-.status-available{
-    background:var(--green);
-}
-
-.status-sold{
-    background:#b42318;
-}
-
-.status-rented{
-    background:#7a4b00;
-}
-
-/* THUMBNAILS */
-
-.thumbnail-strip{
+.card-thumbnails{
     display:flex;
     gap:7px;
-    padding:8px;
     overflow-x:auto;
-    background:#fafbfa;
-    border-bottom:1px solid var(--border);
-    scrollbar-width:thin;
+    padding:9px;
+    background:#f4f7f5;
+}
+
+.card-thumbnails::-webkit-scrollbar{
+    height:4px;
 }
 
 .thumbnail{
-    width:58px;
-    height:44px;
     flex:0 0 auto;
-    object-fit:cover;
-    border-radius:7px;
-    border:3px solid transparent;
-    cursor:pointer;
-    display:block;
+    width:54px;
+    height:45px;
+    padding:0;
+    border:2px solid transparent;
+    border-radius:8px;
+    overflow:hidden;
     background:#ddd;
-    transition:.15s ease;
+    cursor:pointer;
 }
 
 .thumbnail:hover{
-    transform:scale(1.04);
+    border-color:#7aa88d;
 }
 
 .thumbnail.active{
     border-color:var(--green);
 }
 
-/* CARD CONTENT */
+.thumbnail img{
+    width:100%;
+    height:100%;
+    display:block;
+    object-fit:cover;
+    pointer-events:none;
+}
+
+/* =========================================================
+   CARD CONTENT
+========================================================= */
 
 .card-content{
     padding:16px;
 }
 
-.card-labels{
+.property-badges{
     display:flex;
     flex-wrap:wrap;
-    gap:7px;
+    gap:6px;
     margin-bottom:9px;
 }
 
-.listing-badge,
-.type-badge{
-    padding:5px 8px;
-    border-radius:7px;
+.badge{
+    display:inline-flex;
+    align-items:center;
+    border-radius:999px;
+    padding:5px 9px;
     font-size:11px;
-    font-weight:700;
+    font-weight:800;
 }
 
-.listing-badge{
-    background:var(--green-light);
+.badge-sale{
+    background:#e8f6ed;
     color:var(--green-dark);
 }
 
-.type-badge{
-    background:#f1f3f2;
-    color:#4d5b52;
+.badge-rent{
+    background:#fff4d5;
+    color:#825f00;
+}
+
+.badge-status{
+    background:#eef1f0;
+    color:#48544e;
 }
 
 .card-content h3{
-    margin:0 0 8px;
-    font-size:20px;
+    margin:0 0 7px;
+    font-size:19px;
 }
 
 .location{
     color:var(--muted);
     font-size:14px;
-    margin-bottom:9px;
+    margin-bottom:8px;
 }
 
 .price{
-    color:var(--green);
-    font-size:21px;
+    color:var(--green-dark);
+    font-size:20px;
     font-weight:800;
     margin-bottom:10px;
 }
 
 .description{
-    color:#536057;
+    color:#56625b;
+    line-height:1.45;
     font-size:14px;
-    line-height:1.5;
-    margin-bottom:15px;
+    margin-bottom:14px;
     display:-webkit-box;
     -webkit-line-clamp:3;
     -webkit-box-orient:vertical;
@@ -377,284 +387,278 @@ button{
 
 .card-actions{
     display:flex;
-    flex-wrap:wrap;
     gap:8px;
 }
 
-.action-btn{
+.primary-btn,
+.secondary-btn,
+.danger-btn{
     border:0;
-    border-radius:9px;
-    padding:10px 12px;
-    font-weight:700;
+    border-radius:10px;
+    padding:10px 13px;
+    font-weight:800;
 }
 
-.view-btn{
+.primary-btn{
     background:var(--green);
-    color:#fff;
+    color:white;
+    flex:1;
 }
 
-.contact-btn{
-    background:#edf3ef;
+.primary-btn:hover{
+    background:var(--green-dark);
+}
+
+.secondary-btn{
+    background:var(--green-light);
     color:var(--green-dark);
 }
 
-.unavailable-btn{
-    background:#eee;
-    color:#777;
-    cursor:not-allowed;
-}
-
-/* REACTIONS */
-
-.reactions{
-    display:flex;
-    gap:7px;
-    margin-top:12px;
-}
-
-.reaction-btn{
-    border:1px solid var(--border);
-    background:#fff;
-    border-radius:8px;
-    padding:6px 10px;
-}
-
-/* OWNER */
-
-.owner-controls{
-    margin-top:13px;
-    padding-top:13px;
-    border-top:1px solid var(--border);
-}
-
-.owner-title{
-    color:var(--muted);
-    font-size:12px;
-    font-weight:700;
-    margin-bottom:8px;
-}
-
-.owner-buttons{
-    display:flex;
-    flex-wrap:wrap;
-    gap:7px;
-}
-
-.owner-btn{
-    border:0;
-    border-radius:8px;
-    padding:8px 10px;
-    font-size:12px;
-    font-weight:700;
-}
-
-.owner-available{
-    background:#e8f5ed;
-    color:var(--green-dark);
-}
-
-.owner-sold{
-    background:#fdeaea;
-    color:#a11b1b;
-}
-
-.owner-rented{
-    background:#fff3d9;
-    color:#7a4b00;
-}
-
-.owner-delete{
-    background:#f5eeee;
+.danger-btn{
+    background:#fff0ef;
     color:var(--danger);
 }
 
-/* MESSAGE */
+/* =========================================================
+   EMPTY / LOADING / ERROR
+========================================================= */
 
-.message{
+.center-message{
     text-align:center;
     padding:55px 20px;
-    color:var(--muted);
-    background:#fff;
+    background:white;
     border:1px solid var(--border);
-    border-radius:15px;
+    border-radius:16px;
+    color:var(--muted);
 }
 
-/* MODALS */
+.error-message{
+    color:var(--danger);
+}
+
+.retry-btn{
+    margin-top:12px;
+    border:0;
+    background:var(--green);
+    color:white;
+    padding:10px 16px;
+    border-radius:10px;
+    font-weight:700;
+}
+
+/* =========================================================
+   MODAL
+========================================================= */
 
 .modal{
+    display:none;
     position:fixed;
     inset:0;
     background:rgba(0,0,0,.62);
-    z-index:3000;
-    display:none;
-    align-items:center;
-    justify-content:center;
+    z-index:500;
     padding:20px;
+    overflow-y:auto;
 }
 
 .modal.show{
     display:flex;
+    align-items:center;
+    justify-content:center;
 }
 
-.modal-card{
-    width:min(900px,100%);
+.modal-box{
+    width:min(950px,100%);
     max-height:92vh;
     overflow-y:auto;
-    background:#fff;
-    border-radius:18px;
+    background:white;
+    border-radius:20px;
+    position:relative;
+    box-shadow:0 20px 60px rgba(0,0,0,.3);
 }
 
-.modal-header{
-    position:sticky;
-    top:0;
-    z-index:10;
-    background:#fff;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:16px 20px;
-    border-bottom:1px solid var(--border);
-}
-
-.modal-header h2{
-    margin:0;
-}
-
-.close-btn{
-    width:36px;
-    height:36px;
+.modal-close{
+    position:absolute;
+    right:14px;
+    top:14px;
+    z-index:20;
+    width:38px;
+    height:38px;
     border:0;
     border-radius:50%;
-    background:#eef1ef;
-    font-size:20px;
+    background:rgba(0,0,0,.65);
+    color:white;
+    font-size:22px;
 }
 
-.modal-body{
-    padding:20px;
+.modal-content{
+    padding:22px;
 }
 
-/* DETAIL GALLERY */
+.modal-title{
+    margin:0 0 8px;
+    font-size:27px;
+}
 
-.detail-gallery{
+.modal-meta{
+    color:var(--muted);
+    margin-bottom:15px;
+}
+
+.detail-main{
     position:relative;
-    background:#111;
+    background:#eaf0ec;
     border-radius:14px;
     overflow:hidden;
-    touch-action:pan-y;
 }
 
-.detail-main-image{
+.detail-main img{
     width:100%;
-    height:min(60vh,520px);
+    height:min(520px,60vh);
     object-fit:contain;
     display:block;
-    background:#111;
-    user-select:none;
-    -webkit-user-drag:none;
+    background:#eaf0ec;
 }
 
 .detail-counter{
     position:absolute;
     right:12px;
     top:12px;
-    background:rgba(0,0,0,.7);
-    color:#fff;
-    padding:7px 10px;
-    border-radius:8px;
+    background:rgba(0,0,0,.68);
+    color:white;
+    padding:6px 10px;
+    border-radius:999px;
     font-size:12px;
     font-weight:700;
-    z-index:8;
 }
 
 .detail-thumbnails{
     display:flex;
-    gap:7px;
-    padding:10px;
-    background:#171717;
+    gap:8px;
     overflow-x:auto;
+    padding:10px 0;
 }
 
-.detail-thumb{
-    width:70px;
-    height:52px;
-    object-fit:cover;
-    flex:0 0 auto;
-    border:3px solid transparent;
-    border-radius:7px;
-    cursor:pointer;
-    display:block;
-    transition:.15s ease;
-}
-
-.detail-thumb:hover{
-    transform:scale(1.04);
-}
-
-.detail-thumb.active{
-    border-color:#fff;
-}
-
-.detail-arrow{
-    position:absolute;
-    top:50%;
-    transform:translateY(-50%);
-    width:44px;
-    height:44px;
-    border:0;
-    border-radius:50%;
-    background:rgba(0,0,0,.6);
-    color:#fff;
-    font-size:25px;
-    z-index:9;
-}
-
-.detail-prev{
-    left:12px;
-}
-
-.detail-next{
-    right:12px;
-}
-
-.detail-info{
-    padding-top:20px;
-}
-
-.detail-info h2{
-    margin:0 0 10px;
-}
-
-.detail-price{
-    color:var(--green);
-    font-size:25px;
-    font-weight:800;
-    margin:10px 0;
+.detail-thumbnails .thumbnail{
+    width:72px;
+    height:58px;
 }
 
 .detail-description{
-    color:#536057;
-    line-height:1.7;
+    color:#4f5c54;
+    line-height:1.6;
+    white-space:pre-wrap;
 }
 
 .detail-actions{
     display:flex;
-    gap:9px;
     flex-wrap:wrap;
-    margin-top:20px;
+    gap:9px;
+    margin-top:18px;
 }
 
-.detail-owner-controls{
-    margin-top:20px;
-    padding-top:18px;
-    border-top:1px solid var(--border);
+.reaction-group{
+    display:flex;
+    gap:8px;
 }
 
-/* FORM */
+.reaction-btn{
+    border:1px solid var(--border);
+    background:white;
+    padding:9px 13px;
+    border-radius:10px;
+    font-weight:800;
+}
+
+.reaction-btn.selected{
+    border-color:var(--green);
+    background:var(--green-light);
+    color:var(--green-dark);
+}
+
+/* =========================================================
+   FULLSCREEN IMAGE VIEWER
+========================================================= */
+
+.viewer{
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:1000;
+    background:rgba(0,0,0,.94);
+    align-items:center;
+    justify-content:center;
+}
+
+.viewer.show{
+    display:flex;
+}
+
+.viewer img{
+    max-width:94vw;
+    max-height:90vh;
+    object-fit:contain;
+}
+
+.viewer-close{
+    position:absolute;
+    right:20px;
+    top:18px;
+    width:42px;
+    height:42px;
+    border:0;
+    border-radius:50%;
+    background:rgba(255,255,255,.15);
+    color:white;
+    font-size:25px;
+}
+
+.viewer-arrow{
+    position:absolute;
+    top:50%;
+    transform:translateY(-50%);
+    width:46px;
+    height:46px;
+    border:0;
+    border-radius:50%;
+    background:rgba(255,255,255,.16);
+    color:white;
+    font-size:25px;
+}
+
+.viewer-arrow.prev{
+    left:18px;
+}
+
+.viewer-arrow.next{
+    right:18px;
+}
+
+/* =========================================================
+   POST PROPERTY
+========================================================= */
+
+.post-section{
+    max-width:1200px;
+    margin:0 auto 40px;
+    padding:0 18px;
+}
+
+.post-card{
+    background:white;
+    border:1px solid var(--border);
+    border-radius:18px;
+    padding:20px;
+    box-shadow:var(--shadow);
+}
+
+.post-card h2{
+    margin-top:0;
+}
 
 .form-grid{
     display:grid;
     grid-template-columns:repeat(2,minmax(0,1fr));
-    gap:14px;
+    gap:13px;
 }
 
 .form-group{
@@ -664,7 +668,7 @@ button{
 }
 
 .form-group.full{
-    grid-column:1/-1;
+    grid-column:1 / -1;
 }
 
 .form-group label{
@@ -675,12 +679,16 @@ button{
 .form-group input,
 .form-group select,
 .form-group textarea{
-    width:100%;
     border:1px solid var(--border);
     border-radius:10px;
     padding:12px;
     outline:none;
-    background:#fff;
+    background:white;
+}
+
+.form-group textarea{
+    min-height:110px;
+    resize:vertical;
 }
 
 .form-group input:focus,
@@ -689,127 +697,39 @@ button{
     border-color:var(--green);
 }
 
-.form-group textarea{
-    min-height:120px;
-    resize:vertical;
-}
-
-/* PHOTO PICKER */
-
-.photo-upload-box{
-    border:2px dashed #b9c9bf;
-    border-radius:14px;
-    padding:20px;
-    background:#f8fbf9;
-    text-align:center;
-}
-
-.photo-upload-title{
-    font-size:17px;
-    font-weight:800;
-    margin-bottom:6px;
-}
-
-.photo-upload-note{
-    color:var(--muted);
-    font-size:13px;
-    line-height:1.5;
-    margin-bottom:15px;
-}
-
-.photo-buttons{
-    display:flex;
-    justify-content:center;
-    gap:9px;
-    flex-wrap:wrap;
-}
-
-.photo-add-btn{
-    border:0;
-    border-radius:10px;
-    padding:11px 16px;
-    background:var(--green);
-    color:#fff;
-    font-weight:800;
-}
-
-.photo-clear-btn{
-    border:1px solid #ddd;
-    border-radius:10px;
-    padding:11px 16px;
-    background:#fff;
-    color:#555;
-    font-weight:700;
-}
-
-.photo-count{
-    margin-top:14px;
-    font-weight:800;
-    color:var(--green-dark);
-}
-
 .photo-preview{
-    display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(120px,1fr));
-    gap:10px;
-    margin-top:15px;
-    text-align:left;
+    display:flex;
+    flex-wrap:wrap;
+    gap:9px;
+    margin-top:8px;
 }
 
-.photo-preview-item{
-    position:relative;
-    height:115px;
-    border-radius:10px;
+.preview-item{
+    width:90px;
+    height:75px;
+    border-radius:9px;
     overflow:hidden;
-    background:#eee;
+    border:1px solid var(--border);
 }
 
-.photo-preview-item img{
+.preview-item img{
     width:100%;
     height:100%;
     object-fit:cover;
-    display:block;
 }
 
-.photo-number{
-    position:absolute;
-    left:7px;
-    top:7px;
-    background:rgba(0,0,0,.7);
-    color:#fff;
-    padding:4px 7px;
-    border-radius:6px;
-    font-size:11px;
-    font-weight:700;
-}
-
-.remove-photo-btn{
-    position:absolute;
-    right:7px;
-    top:7px;
-    width:28px;
-    height:28px;
-    border:0;
-    border-radius:50%;
-    background:rgba(198,40,40,.9);
-    color:#fff;
-    font-weight:900;
-    font-size:16px;
-}
-
-.form-note{
-    color:var(--muted);
-    font-size:12px;
-    line-height:1.5;
-    margin-top:8px;
+.submit-row{
+    margin-top:16px;
+    display:flex;
+    justify-content:flex-end;
 }
 
 .submit-btn{
     border:0;
     background:var(--green);
-    color:#fff;
+    color:white;
+    padding:12px 20px;
     border-radius:10px;
-    padding:13px 18px;
     font-weight:800;
 }
 
@@ -818,22 +738,20 @@ button{
     cursor:not-allowed;
 }
 
-#propertyPhotos{
-    display:none;
-}
-
-/* TOAST */
+/* =========================================================
+   TOAST
+========================================================= */
 
 .toast{
     position:fixed;
-    bottom:25px;
     left:50%;
-    transform:translateX(-50%) translateY(100px);
-    z-index:5000;
-    background:#17221b;
-    color:#fff;
-    padding:12px 17px;
-    border-radius:10px;
+    bottom:25px;
+    transform:translateX(-50%) translateY(20px);
+    background:#17251d;
+    color:white;
+    padding:12px 18px;
+    border-radius:12px;
+    z-index:1500;
     opacity:0;
     pointer-events:none;
     transition:.25s ease;
@@ -846,36 +764,30 @@ button{
     transform:translateX(-50%) translateY(0);
 }
 
-/* MOBILE */
+/* =========================================================
+   MOBILE
+========================================================= */
 
-@media(max-width:700px){
+@media(max-width:850px){
 
-    .topbar{
-        padding:12px 14px;
+    .property-grid{
+        grid-template-columns:repeat(2,minmax(0,1fr));
     }
 
-    .logo{
-        font-size:22px;
-    }
+}
 
-    .back-btn,
-    .post-btn{
-        padding:8px 10px;
-        font-size:13px;
-    }
+@media(max-width:620px){
 
-    .hero{
-        padding:35px 18px;
-    }
-
-    .controls,
-    .page{
-        padding-left:14px;
-        padding-right:14px;
+    .hero h1{
+        font-size:26px;
     }
 
     .property-grid{
         grid-template-columns:1fr;
+    }
+
+    .card-main-image{
+        height:240px;
     }
 
     .form-grid{
@@ -886,376 +798,472 @@ button{
         grid-column:auto;
     }
 
-    .detail-main-image{
-        height:45vh;
+    .search-row{
+        flex-direction:column;
     }
+
+    .modal{
+        padding:8px;
+    }
+
+    .modal-box{
+        max-height:96vh;
+        border-radius:16px;
+    }
+
+    .modal-content{
+        padding:16px;
+    }
+
+    .detail-main img{
+        height:50vh;
+    }
+
 }
+
 </style>
+
 </head>
 
 <body>
 
 <header class="topbar">
 
-    <div class="logo">LosOja</div>
+    <div class="topbar-inner">
 
-    <div class="topbar-actions">
+        <div class="logo">
+            LosOja
+        </div>
 
-        <button class="back-btn" onclick="goBack()">
+        <a
+            href="index.html"
+            class="back-btn"
+        >
             ← Back
-        </button>
-
-        <button class="post-btn" onclick="openPostModal()">
-            + Post Property
-        </button>
+        </a>
 
     </div>
 
 </header>
 
+
 <section class="hero">
 
-    <div class="hero-inner">
+    <h1>
+        Find Your Next Property
+    </h1>
 
-        <h1>Find Your Next Property</h1>
-
-        <p>
-            Browse houses, apartments, land and commercial
-            properties available on LosOja.
-        </p>
-
-    </div>
+    <p>
+        Browse houses, apartments, land and commercial properties available on LosOja.
+    </p>
 
 </section>
 
-<div class="controls">
 
-    <input
-        id="searchInput"
-        class="search-box"
-        type="search"
-        placeholder="Search properties, locations, houses..."
-        oninput="applyFilters()"
-    >
+<section class="filters-wrap">
 
-    <div class="filters">
+    <div class="search-row">
 
-        <button class="filter-btn active"
-                onclick="setFilter('all',this)">
+        <input
+            id="searchInput"
+            type="search"
+            placeholder="Search by title, location or property type..."
+            autocomplete="off"
+        >
+
+    </div>
+
+
+    <div class="filter-row">
+
+        <button
+            type="button"
+            class="filter-btn active"
+            data-filter="all"
+        >
             All
         </button>
 
-        <button class="filter-btn"
-                onclick="setFilter('available',this)">
+        <button
+            type="button"
+            class="filter-btn"
+            data-filter="available"
+        >
             Available
         </button>
 
-        <button class="filter-btn"
-                onclick="setFilter('sale',this)">
+        <button
+            type="button"
+            class="filter-btn"
+            data-filter="for sale"
+        >
             For Sale
         </button>
 
-        <button class="filter-btn"
-                onclick="setFilter('rent',this)">
+        <button
+            type="button"
+            class="filter-btn"
+            data-filter="for rent"
+        >
             For Rent
         </button>
 
-        <button class="filter-btn"
-                onclick="setFilter('sold',this)">
+        <button
+            type="button"
+            class="filter-btn"
+            data-filter="sold"
+        >
             Sold
         </button>
 
-        <button class="filter-btn"
-                onclick="setFilter('rented',this)">
+        <button
+            type="button"
+            class="filter-btn"
+            data-filter="rented"
+        >
             Rented
         </button>
 
-        <button class="filter-btn"
-                onclick="setFilter('house',this)">
+        <button
+            type="button"
+            class="filter-btn"
+            data-filter="house"
+        >
             Houses
         </button>
 
-        <button class="filter-btn"
-                onclick="setFilter('apartment',this)">
+        <button
+            type="button"
+            class="filter-btn"
+            data-filter="apartment"
+        >
             Apartments
         </button>
 
-        <button class="filter-btn"
-                onclick="setFilter('land',this)">
+        <button
+            type="button"
+            class="filter-btn"
+            data-filter="land"
+        >
             Land
         </button>
 
-        <button class="filter-btn"
-                onclick="setFilter('commercial',this)">
+        <button
+            type="button"
+            class="filter-btn"
+            data-filter="commercial"
+        >
             Commercial
         </button>
 
     </div>
 
-</div>
+</section>
 
-<main class="page">
 
-    <div class="section-heading">
+<main class="main">
 
-        <h2>Properties</h2>
+    <div class="section-title">
 
-        <span id="propertyCount"
-              class="property-count">
+        <h2>
+            Properties
+        </h2>
+
+        <span
+            id="propertyCount"
+            class="property-count"
+        >
             Loading...
         </span>
 
     </div>
 
-    <div id="propertyGrid"
-         class="property-grid">
-    </div>
+
+    <div
+        id="propertyGrid"
+        class="property-grid"
+    ></div>
 
 </main>
 
-<!-- DETAIL MODAL -->
 
-<div id="detailModal"
-     class="modal"
-     onclick="closeModalOutside(event,'detailModal')">
+<section class="post-section">
 
-    <div class="modal-card">
+    <div class="post-card">
 
-        <div class="modal-header">
+        <h2>
+            Post a Property
+        </h2>
 
-            <h2>Property Details</h2>
+        <p class="location">
+            List your property on LosOja.
+        </p>
 
-            <button class="close-btn"
-                    onclick="closeModal('detailModal')">
-                ×
-            </button>
 
-        </div>
+        <form id="propertyForm">
 
-        <div id="detailBody"
-             class="modal-body">
-        </div>
+            <div class="form-grid">
 
-    </div>
+                <div class="form-group">
 
-</div>
+                    <label for="propertyTitle">
+                        Property Title
+                    </label>
 
-<!-- POST MODAL -->
-
-<div id="postModal"
-     class="modal"
-     onclick="closeModalOutside(event,'postModal')">
-
-    <div class="modal-card">
-
-        <div class="modal-header">
-
-            <h2>Post Property</h2>
-
-            <button class="close-btn"
-                    onclick="closeModal('postModal')">
-                ×
-            </button>
-
-        </div>
-
-        <div class="modal-body">
-
-            <form id="propertyForm"
-                  onsubmit="publishProperty(event)">
-
-                <div class="form-grid">
-
-                    <div class="form-group">
-
-                        <label>Property Title</label>
-
-                        <input
-                            id="propertyTitle"
-                            required
-                            placeholder="e.g. 3 Bedroom Duplex"
-                        >
-
-                    </div>
-
-                    <div class="form-group">
-
-                        <label>Property Type</label>
-
-                        <select id="propertyCategory" required>
-
-                            <option value="">
-                                Select type
-                            </option>
-
-                            <option value="house">
-                                House
-                            </option>
-
-                            <option value="apartment">
-                                Apartment
-                            </option>
-
-                            <option value="land">
-                                Land
-                            </option>
-
-                            <option value="commercial">
-                                Commercial
-                            </option>
-
-                        </select>
-
-                    </div>
-
-                    <div class="form-group">
-
-                        <label>Listing Type</label>
-
-                        <select id="listingType" required>
-
-                            <option value="sale">
-                                For Sale
-                            </option>
-
-                            <option value="rent">
-                                For Rent
-                            </option>
-
-                        </select>
-
-                    </div>
-
-                    <div class="form-group">
-
-                        <label>Price (₦)</label>
-
-                        <input
-                            id="propertyPrice"
-                            type="number"
-                            min="0"
-                            required
-                            placeholder="250000"
-                        >
-
-                    </div>
-
-                    <div class="form-group full">
-
-                        <label>Location</label>
-
-                        <input
-                            id="propertyLocation"
-                            required
-                            placeholder="e.g. Ikeja, Lagos"
-                        >
-
-                    </div>
-
-                    <div class="form-group full">
-
-                        <label>Description</label>
-
-                        <textarea
-                            id="propertyDescription"
-                            placeholder="Describe the property..."
-                        ></textarea>
-
-                    </div>
-
-                    <div class="form-group full">
-
-                        <label>Property Photos</label>
-
-                        <div class="photo-upload-box">
-
-                            <div class="photo-upload-title">
-                                Add Property Photos
-                            </div>
-
-                            <div class="photo-upload-note">
-                                Add as many photos as you need.
-                                You can add more photos after selecting
-                                the first ones.
-                            </div>
-
-                            <div class="photo-buttons">
-
-                                <button
-                                    type="button"
-                                    class="photo-add-btn"
-                                    onclick="openPhotoPicker()">
-                                    📷 Add Photos
-                                </button>
-
-                                <button
-                                    type="button"
-                                    id="clearPhotosBtn"
-                                    class="photo-clear-btn"
-                                    onclick="clearSelectedPhotos()"
-                                    style="display:none;">
-                                    Clear All
-                                </button>
-
-                            </div>
-
-                            <div id="photoCount"
-                                 class="photo-count">
-                                No photos selected
-                            </div>
-
-                            <div id="photoPreview"
-                                 class="photo-preview">
-                            </div>
-
-                        </div>
-
-                        <input
-                            id="propertyPhotos"
-                            type="file"
-                            accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
-                            multiple
-                        >
-
-                        <div class="form-note">
-                            Maximum 5MB per photo.
-                            JPG, PNG, WEBP and GIF are supported.
-                        </div>
-
-                    </div>
-
-                    <div class="form-group full">
-
-                        <button
-                            id="publishBtn"
-                            class="submit-btn"
-                            type="submit">
-                            Publish Property
-                        </button>
-
-                    </div>
+                    <input
+                        id="propertyTitle"
+                        required
+                        placeholder="e.g. 3 Bedroom House"
+                    >
 
                 </div>
 
-            </form>
 
-        </div>
+                <div class="form-group">
+
+                    <label for="propertyType">
+                        Property Type
+                    </label>
+
+                    <select
+                        id="propertyType"
+                        required
+                    >
+
+                        <option value="">
+                            Select type
+                        </option>
+
+                        <option value="house">
+                            House
+                        </option>
+
+                        <option value="apartment">
+                            Apartment
+                        </option>
+
+                        <option value="land">
+                            Land
+                        </option>
+
+                        <option value="commercial">
+                            Commercial
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="listingType">
+                        Listing Type
+                    </label>
+
+                    <select
+                        id="listingType"
+                        required
+                    >
+
+                        <option value="">
+                            Select listing type
+                        </option>
+
+                        <option value="For Sale">
+                            For Sale
+                        </option>
+
+                        <option value="For Rent">
+                            For Rent
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="propertyPrice">
+                        Price
+                    </label>
+
+                    <input
+                        id="propertyPrice"
+                        type="number"
+                        min="0"
+                        step="1"
+                        required
+                        placeholder="250000"
+                    >
+
+                </div>
+
+
+                <div class="form-group full">
+
+                    <label for="propertyLocation">
+                        Location
+                    </label>
+
+                    <input
+                        id="propertyLocation"
+                        required
+                        placeholder="e.g. Lekki, Lagos"
+                    >
+
+                </div>
+
+
+                <div class="form-group full">
+
+                    <label for="propertyDescription">
+                        Description
+                    </label>
+
+                    <textarea
+                        id="propertyDescription"
+                        placeholder="Describe the property..."
+                    ></textarea>
+
+                </div>
+
+
+                <div class="form-group full">
+
+                    <label for="propertyImages">
+                        Property Photos
+                    </label>
+
+                    <input
+                        id="propertyImages"
+                        type="file"
+                        accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
+                        multiple
+                    >
+
+                    <div
+                        id="photoPreview"
+                        class="photo-preview"
+                    ></div>
+
+                </div>
+
+            </div>
+
+
+            <div class="submit-row">
+
+                <button
+                    id="submitPropertyBtn"
+                    type="submit"
+                    class="submit-btn"
+                >
+                    Publish Property
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     PROPERTY DETAIL MODAL
+========================================================= -->
+
+<div
+    id="detailModal"
+    class="modal"
+>
+
+    <div class="modal-box">
+
+        <button
+            type="button"
+            class="modal-close"
+            onclick="closeDetailModal()"
+            aria-label="Close"
+        >
+            ×
+        </button>
+
+        <div
+            id="detailContent"
+            class="modal-content"
+        ></div>
 
     </div>
 
 </div>
 
-<div id="toast"
-     class="toast">
+
+<!-- =========================================================
+     FULLSCREEN IMAGE VIEWER
+========================================================= -->
+
+<div
+    id="imageViewer"
+    class="viewer"
+>
+
+    <button
+        type="button"
+        class="viewer-close"
+        onclick="closeImageViewer()"
+        aria-label="Close image"
+    >
+        ×
+    </button>
+
+    <button
+        type="button"
+        class="viewer-arrow prev"
+        onclick="viewerPrevious()"
+        aria-label="Previous image"
+    >
+        ‹
+    </button>
+
+    <img
+        id="viewerImage"
+        src=""
+        alt="Property photo"
+    >
+
+    <button
+        type="button"
+        class="viewer-arrow next"
+        onclick="viewerNext()"
+        aria-label="Next image"
+    >
+        ›
+    </button>
+
 </div>
+
+
+<div
+    id="toast"
+    class="toast"
+></div>
+
 
 <script src="auth.js"></script>
 
+
 <script>
+
 "use strict";
 
+
 /* =========================================================
-   CONFIG
+   SUPABASE CONFIG
+   IMPORTANT: ONLY ONE URL AND ONE KEY
 ========================================================= */
 
 const SUPABASE_URL =
@@ -1273,24 +1281,86 @@ const PROPERTY_BUCKET =
 ========================================================= */
 
 let allProperties = [];
+
+let filteredProperties = [];
+
 let currentFilter = "all";
-let currentUserId = "";
-let cardImageIndexes = {};
-let detailPropertyId = null;
-let detailImageIndex = 0;
-let selectedPropertyPhotos = [];
+
+let currentDetailProperty = null;
+
+let currentDetailImageIndex = 0;
+
+let currentViewerImages = [];
+
+let currentViewerIndex = 0;
 
 
 /* =========================================================
-   HEADERS
+   SUPABASE HEADERS
 ========================================================= */
 
 function publicHeaders(){
 
     return {
-        "apikey":SUPABASE_KEY,
-        "Content-Type":"application/json"
+
+        "apikey": SUPABASE_KEY,
+
+        "Authorization":
+            "Bearer " + SUPABASE_KEY,
+
+        "Content-Type":
+            "application/json"
+
     };
+
+}
+
+
+function authHeaders(){
+
+    const token =
+        typeof window.getSupabaseAccessToken === "function"
+            ? window.getSupabaseAccessToken()
+            : null;
+
+    return {
+
+        "apikey": SUPABASE_KEY,
+
+        "Authorization":
+            "Bearer " + (token || SUPABASE_KEY),
+
+        "Content-Type":
+            "application/json"
+
+    };
+
+}
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+let toastTimer = null;
+
+function showToast(message){
+
+    const toast =
+        document.getElementById("toast");
+
+    toast.textContent = message;
+
+    toast.classList.add("show");
+
+    clearTimeout(toastTimer);
+
+    toastTimer =
+        setTimeout(() => {
+
+            toast.classList.remove("show");
+
+        }, 3200);
 
 }
 
@@ -1299,71 +1369,51 @@ function publicHeaders(){
    AUTH
 ========================================================= */
 
-async function getAuthDetails(){
+async function getAuthenticatedUser(){
 
     try{
 
         if(
-            typeof window.getSupabaseSession ===
-            "function"
+            typeof window.getCurrentUser === "function"
         ){
 
-            const session =
-                await window.getSupabaseSession();
+            const user =
+                await window.getCurrentUser();
 
-            if(session && session.user){
-
-                return {
-                    user:session.user,
-                    token:session.access_token
-                };
-
-            }
+            if(user) return user;
 
         }
 
     }catch(error){
 
         console.warn(
-            "Auth session check failed:",
+            "Could not get current user:",
             error
         );
 
     }
 
-    return {
-        user:null,
-        token:null
-    };
+    return null;
 
 }
 
 
 /* =========================================================
-   ESCAPE
-========================================================= */
-
-function escapeHtml(value){
-
-    return String(value ?? "")
-        .replace(/&/g,"&amp;")
-        .replace(/</g,"&lt;")
-        .replace(/>/g,"&gt;")
-        .replace(/"/g,"&quot;")
-        .replace(/'/g,"&#039;");
-
-}
-
-
-/* =========================================================
-   FORMATTING
+   FORMATTERS
 ========================================================= */
 
 function formatMoney(value){
 
+    const amount =
+        Number(value || 0);
+
     return "₦" +
-        Number(value || 0)
-            .toLocaleString("en-NG");
+        amount.toLocaleString(
+            "en-NG",
+            {
+                maximumFractionDigits:2
+            }
+        );
 
 }
 
@@ -1376,11 +1426,17 @@ function formatPropertyType(value){
             .toLowerCase();
 
     const labels = {
+
         house:"House",
+
         apartment:"Apartment",
+
         land:"Land",
+
         commercial:"Commercial",
+
         property:"Property"
+
     };
 
     return labels[type] ||
@@ -1401,9 +1457,13 @@ function formatListingType(value){
             .trim()
             .toLowerCase();
 
-    return type.includes("rent")
-        ? "For Rent"
-        : "For Sale";
+    if(type.includes("rent")){
+
+        return "For Rent";
+
+    }
+
+    return "For Sale";
 
 }
 
@@ -1416,323 +1476,133 @@ function formatStatus(value){
             .toLowerCase();
 
     if(status === "sold"){
-        return "SOLD";
+
+        return "Sold";
+
     }
 
     if(status === "rented"){
-        return "RENTED";
+
+        return "Rented";
+
     }
 
-    return "AVAILABLE";
-
-}
-
-
-function statusClass(value){
-
-    const status =
-        String(value || "available")
-            .toLowerCase();
-
-    if(status === "sold"){
-        return "status-sold";
-    }
-
-    if(status === "rented"){
-        return "status-rented";
-    }
-
-    return "status-available";
+    return "Available";
 
 }
 
 
 /* =========================================================
-   TOAST
+   ESCAPE HTML
 ========================================================= */
 
-function showToast(message){
+function escapeHtml(value){
 
-    const toast =
-        document.getElementById("toast");
-
-    toast.textContent = message;
-
-    toast.classList.add("show");
-
-    clearTimeout(window.losojaToastTimer);
-
-    window.losojaToastTimer =
-        setTimeout(
-            () => toast.classList.remove("show"),
-            3000
-        );
+    return String(value ?? "")
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
 
 }
 
 
 /* =========================================================
-   NAVIGATION
+   IMAGE HELPERS
 ========================================================= */
 
-function goBack(){
+function placeholderImage(){
 
-    if(
-        document.referrer &&
-        document.referrer.includes(location.hostname)
-    ){
-
-        history.back();
-
-    }else{
-
-        window.location.href = "index.html";
-
-    }
-
-}
-
-
-/* =========================================================
-   MODALS
-========================================================= */
-
-function openModal(id){
-
-    const modal =
-        document.getElementById(id);
-
-    if(modal){
-
-        modal.classList.add("show");
-
-        document.body.style.overflow = "hidden";
-
-    }
+    return "data:image/svg+xml;charset=UTF-8," +
+        encodeURIComponent(`
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 width="800"
+                 height="500"
+                 viewBox="0 0 800 500">
+                <rect width="800" height="500" fill="#eaf0ec"/>
+                <text
+                    x="400"
+                    y="250"
+                    text-anchor="middle"
+                    dominant-baseline="middle"
+                    font-family="Arial"
+                    font-size="34"
+                    fill="#68756e">
+                    LosOja Property
+                </text>
+            </svg>
+        `);
 
 }
 
 
-function closeModal(id){
+function getPropertyImages(property){
 
-    const modal =
-        document.getElementById(id);
+    const images =
+        Array.isArray(property._images)
+            ? property._images
+            : [];
 
-    if(modal){
+    const valid =
+        images
+            .map(item => {
 
-        modal.classList.remove("show");
+                if(typeof item === "string"){
 
-        document.body.style.overflow = "";
+                    return {
+                        image_url:item,
+                        sort_order:0
+                    };
 
-    }
+                }
 
-}
+                return item;
 
-
-function closeModalOutside(event,id){
-
-    if(event.target.id === id){
-
-        closeModal(id);
-
-    }
-
-}
-
-
-function openPostModal(){
-
-    openModal("postModal");
-
-}
-
-
-/* =========================================================
-   PHOTO PICKER
-========================================================= */
-
-function openPhotoPicker(){
-
-    document
-        .getElementById("propertyPhotos")
-        .click();
-
-}
-
-
-document
-    .getElementById("propertyPhotos")
-    .addEventListener(
-        "change",
-        handlePhotoSelection
-    );
-
-
-function handlePhotoSelection(event){
-
-    const files =
-        Array.from(event.target.files || []);
-
-    if(!files.length){
-        return;
-    }
-
-    let addedCount = 0;
-
-    files.forEach(file => {
-
-        if(!file.type.startsWith("image/")){
-
-            showToast(
-                file.name +
-                " is not a supported image."
+            })
+            .filter(item =>
+                item &&
+                item.image_url
+            )
+            .sort(
+                (a,b) =>
+                    Number(a.sort_order || 0) -
+                    Number(b.sort_order || 0)
             );
 
-            return;
-        }
+    if(valid.length){
 
-        if(file.size > 5 * 1024 * 1024){
-
-            showToast(
-                file.name +
-                " is larger than 5MB."
-            );
-
-            return;
-        }
-
-        const alreadyAdded =
-            selectedPropertyPhotos.some(
-                existing =>
-                    existing.name === file.name &&
-                    existing.size === file.size &&
-                    existing.lastModified === file.lastModified
-            );
-
-        if(alreadyAdded){
-            return;
-        }
-
-        selectedPropertyPhotos.push(file);
-
-        addedCount++;
-
-    });
-
-    event.target.value = "";
-
-    renderPhotoPreviews();
-
-    if(addedCount){
-
-        showToast(
-            addedCount === 1
-                ? "1 photo added."
-                : addedCount + " photos added."
-        );
+        return valid;
 
     }
 
-}
+    if(property.image_url){
 
+        return [
 
-function renderPhotoPreviews(){
+            {
+                image_url:
+                    property.image_url,
 
-    const preview =
-        document.getElementById("photoPreview");
+                sort_order:0
 
-    const count =
-        document.getElementById("photoCount");
+            }
 
-    const clearBtn =
-        document.getElementById("clearPhotosBtn");
+        ];
 
-    count.textContent =
-        selectedPropertyPhotos.length
-            ? selectedPropertyPhotos.length +
-              (
-                  selectedPropertyPhotos.length === 1
-                      ? " photo selected"
-                      : " photos selected"
-              )
-            : "No photos selected";
-
-    clearBtn.style.display =
-        selectedPropertyPhotos.length
-            ? "inline-block"
-            : "none";
-
-    preview.innerHTML = "";
-
-    selectedPropertyPhotos.forEach(
-        (file,index) => {
-
-            const reader = new FileReader();
-
-            reader.onload = function(){
-
-                const item =
-                    document.createElement("div");
-
-                item.className =
-                    "photo-preview-item";
-
-                item.innerHTML = `
-                    <img
-                        src="${reader.result}"
-                        alt="Property photo ${index + 1}"
-                    >
-
-                    <div class="photo-number">
-                        Photo ${index + 1}
-                    </div>
-
-                    <button
-                        type="button"
-                        class="remove-photo-btn"
-                        onclick="removeSelectedPhoto(${index})"
-                        aria-label="Remove photo">
-                        ×
-                    </button>
-                `;
-
-                preview.appendChild(item);
-
-            };
-
-            reader.readAsDataURL(file);
-
-        }
-    );
-
-}
-
-
-function removeSelectedPhoto(index){
-
-    if(
-        index < 0 ||
-        index >= selectedPropertyPhotos.length
-    ){
-        return;
     }
 
-    selectedPropertyPhotos.splice(index,1);
+    return [
 
-    renderPhotoPreviews();
+        {
+            image_url:
+                placeholderImage(),
 
-}
+            sort_order:0
 
+        }
 
-function clearSelectedPhotos(){
-
-    selectedPropertyPhotos = [];
-
-    document.getElementById(
-        "propertyPhotos"
-    ).value = "";
-
-    renderPhotoPreviews();
+    ];
 
 }
 
@@ -1744,51 +1614,77 @@ function clearSelectedPhotos(){
 async function loadProperties(){
 
     const grid =
-        document.getElementById("propertyGrid");
+        document.getElementById(
+            "propertyGrid"
+        );
 
     grid.innerHTML = `
-        <div class="message">
+        <div class="center-message">
             Loading properties...
         </div>
     `;
 
     try{
 
-        const auth =
-            await getAuthDetails();
-
-        currentUserId =
-            auth.user?.id || "";
+        const url =
+            SUPABASE_URL +
+            "/rest/v1/property_listings" +
+            "?select=*" +
+            "&order=created_at.desc";
 
         const response =
             await fetch(
-                SUPABASE_URL +
-                "/rest/v1/property_listings" +
-                "?select=*" +
-                "&order=created_at.desc",
+                url,
                 {
+                    method:"GET",
                     headers:publicHeaders()
                 }
             );
 
-        if(!response.ok){
+        const text =
+            await response.text();
+
+        let data;
+
+        try{
+
+            data =
+                text
+                    ? JSON.parse(text)
+                    : [];
+
+        }catch(error){
 
             throw new Error(
-                await response.text()
+                "Supabase returned an invalid response."
             );
 
         }
 
-        allProperties =
-            await response.json();
 
-        if(!Array.isArray(allProperties)){
-            allProperties = [];
+        if(!response.ok){
+
+            const message =
+                data?.message ||
+                data?.hint ||
+                "Unable to load properties.";
+
+            throw new Error(message);
+
         }
+
+
+        allProperties =
+            Array.isArray(data)
+                ? data
+                : [];
+
 
         await loadPropertyImages();
 
-        renderProperties();
+
+        applyFilters();
+
 
     }catch(error){
 
@@ -1798,12 +1694,30 @@ async function loadProperties(){
         );
 
         grid.innerHTML = `
-            <div class="message">
-                Unable to load properties.
+            <div class="center-message error-message">
+                <strong>
+                    Unable to load properties.
+                </strong>
+
                 <br><br>
+
                 ${escapeHtml(error.message)}
+
+                <br>
+
+                <button
+                    type="button"
+                    class="retry-btn"
+                    onclick="loadProperties()"
+                >
+                    Try Again
+                </button>
             </div>
         `;
+
+        document.getElementById(
+            "propertyCount"
+        ).textContent = "Unable to load";
 
     }
 
@@ -1811,62 +1725,91 @@ async function loadProperties(){
 
 
 /* =========================================================
-   LOAD PROPERTY IMAGES
+   LOAD ALL PROPERTY IMAGES
 ========================================================= */
 
 async function loadPropertyImages(){
 
-    allProperties.forEach(
-        property => property._images = []
-    );
+    allProperties.forEach(property => {
+
+        property._images = [];
+
+    });
+
+
+    if(!allProperties.length){
+
+        return;
+
+    }
+
 
     try{
 
         const response =
             await fetch(
+
                 SUPABASE_URL +
                 "/rest/v1/property_images" +
                 "?select=property_id,image_url,sort_order" +
                 "&order=property_id.asc,sort_order.asc",
+
                 {
+                    method:"GET",
                     headers:publicHeaders()
                 }
+
             );
+
 
         if(!response.ok){
 
-            console.error(
-                "Property image request failed:",
-                await response.text()
+            console.warn(
+                "Could not load property images."
             );
 
             return;
 
         }
 
+
         const images =
             await response.json();
 
+
         const imageMap = {};
+
 
         images.forEach(image => {
 
             if(!image.property_id){
+
                 return;
+
             }
+
 
             if(!imageMap[image.property_id]){
+
                 imageMap[image.property_id] = [];
+
             }
 
+
             imageMap[image.property_id].push({
-                image_url:image.image_url,
-                sort_order:Number(
-                    image.sort_order || 0
-                )
+
+                image_url:
+                    image.image_url,
+
+                sort_order:
+                    Number(
+                        image.sort_order || 0
+                    )
+
             });
 
         });
+
 
         Object.keys(imageMap).forEach(propertyId => {
 
@@ -1878,6 +1821,7 @@ async function loadPropertyImages(){
 
         });
 
+
         allProperties.forEach(property => {
 
             property._images =
@@ -1885,14 +1829,10 @@ async function loadPropertyImages(){
 
         });
 
-        console.log(
-            "LosOja property images:",
-            images.length
-        );
 
     }catch(error){
 
-        console.error(
+        console.warn(
             "Property image loading error:",
             error
         );
@@ -1903,168 +1843,180 @@ async function loadPropertyImages(){
 
 
 /* =========================================================
-   FILTERS
+   FILTERING
 ========================================================= */
-
-function setFilter(filter,button){
-
-    currentFilter = filter;
-
-    document
-        .querySelectorAll(".filter-btn")
-        .forEach(
-            btn => btn.classList.remove("active")
-        );
-
-    if(button){
-        button.classList.add("active");
-    }
-
-    applyFilters();
-
-}
-
-
-function propertyMatchesFilter(property){
-
-    const filter = currentFilter;
-
-    if(filter === "all"){
-        return true;
-    }
-
-    const status =
-        String(
-            property.status || "available"
-        ).toLowerCase();
-
-    const listing =
-        String(
-            property.listing_type || ""
-        ).toLowerCase();
-
-    const type =
-        String(
-            property.property_type ||
-            property.category ||
-            ""
-        ).toLowerCase();
-
-    if(filter === "available"){
-        return status === "available";
-    }
-
-    if(filter === "sold"){
-        return status === "sold";
-    }
-
-    if(filter === "rented"){
-        return status === "rented";
-    }
-
-    if(filter === "sale"){
-        return listing.includes("sale");
-    }
-
-    if(filter === "rent"){
-        return listing.includes("rent");
-    }
-
-    if(
-        ["house","apartment","land","commercial"]
-            .includes(filter)
-    ){
-        return type === filter;
-    }
-
-    return true;
-
-}
-
 
 function applyFilters(){
 
     const search =
-        document
-            .getElementById("searchInput")
-            .value
-            .trim()
-            .toLowerCase();
+        document.getElementById(
+            "searchInput"
+        ).value
+        .trim()
+        .toLowerCase();
 
-    const filtered =
+
+    filteredProperties =
         allProperties.filter(property => {
 
-            if(!propertyMatchesFilter(property)){
-                return false;
+            const title =
+                String(
+                    property.title ||
+                    property.name ||
+                    ""
+                ).toLowerCase();
+
+            const location =
+                String(
+                    property.location ||
+                    ""
+                ).toLowerCase();
+
+            const type =
+                String(
+                    property.property_type ||
+                    ""
+                ).toLowerCase();
+
+            const listing =
+                formatListingType(
+                    property.listing_type ||
+                    property.transaction_type ||
+                    property.type
+                ).toLowerCase();
+
+            const status =
+                String(
+                    property.status ||
+                    "available"
+                ).toLowerCase();
+
+
+            const matchesSearch =
+                !search ||
+                title.includes(search) ||
+                location.includes(search) ||
+                type.includes(search) ||
+                listing.includes(search);
+
+
+            let matchesFilter = true;
+
+
+            if(currentFilter !== "all"){
+
+                if(
+                    currentFilter ===
+                    "for sale"
+                ){
+
+                    matchesFilter =
+                        listing === "for sale";
+
+                }else if(
+                    currentFilter ===
+                    "for rent"
+                ){
+
+                    matchesFilter =
+                        listing === "for rent";
+
+                }else if(
+                    currentFilter ===
+                    "available"
+                ){
+
+                    matchesFilter =
+                        status === "available";
+
+                }else if(
+                    currentFilter ===
+                    "sold"
+                ){
+
+                    matchesFilter =
+                        status === "sold";
+
+                }else if(
+                    currentFilter ===
+                    "rented"
+                ){
+
+                    matchesFilter =
+                        status === "rented";
+
+                }else{
+
+                    matchesFilter =
+                        type === currentFilter;
+
+                }
+
             }
 
-            if(!search){
-                return true;
-            }
 
-            const searchable = [
-                property.title,
-                property.location,
-                property.description,
-                property.property_type,
-                property.category,
-                property.listing_type,
-                property.status
-            ]
-            .filter(Boolean)
-            .join(" ")
-            .toLowerCase();
-
-            return searchable.includes(search);
+            return (
+                matchesSearch &&
+                matchesFilter
+            );
 
         });
 
-    renderProperties(filtered);
+
+    renderProperties();
 
 }
 
 
 /* =========================================================
-   RENDER
+   RENDER PROPERTIES
 ========================================================= */
 
-function renderProperties(properties){
+function renderProperties(){
 
     const grid =
-        document.getElementById("propertyGrid");
+        document.getElementById(
+            "propertyGrid"
+        );
 
     const count =
-        document.getElementById("propertyCount");
+        document.getElementById(
+            "propertyCount"
+        );
 
-    const list =
-        properties ||
-        allProperties.filter(propertyMatchesFilter);
 
     count.textContent =
-        list.length +
+        filteredProperties.length +
         (
-            list.length === 1
+            filteredProperties.length === 1
                 ? " property"
                 : " properties"
         );
 
-    if(!list.length){
+
+    if(!filteredProperties.length){
 
         grid.innerHTML = `
-            <div class="message">
+            <div class="center-message">
                 No properties found.
             </div>
         `;
 
         return;
+
     }
 
-    grid.innerHTML =
-        list.map(createPropertyCard).join("");
 
-    list.forEach(property => {
-        setupCardSwipe(property.id);
-    });
+    grid.innerHTML =
+        filteredProperties
+            .map(
+                (property,index) =>
+                    renderPropertyCard(
+                        property,
+                        index
+                    )
+            )
+            .join("");
 
 }
 
@@ -2073,310 +2025,216 @@ function renderProperties(properties){
    PROPERTY CARD
 ========================================================= */
 
-function createPropertyCard(property){
+function renderPropertyCard(
+    property,
+    index
+){
 
     const images =
-        Array.isArray(property._images)
-            ? property._images
-            : [];
+        getPropertyImages(
+            property
+        );
 
-    if(
-        typeof cardImageIndexes[property.id] !==
-        "number"
-    ){
-        cardImageIndexes[property.id] = 0;
-    }
-
-    let imageIndex =
-        cardImageIndexes[property.id];
-
-    if(imageIndex >= images.length){
-        imageIndex = 0;
-        cardImageIndexes[property.id] = 0;
-    }
-
-    const currentImage =
-        images[imageIndex];
-
-    const status =
-        String(
-            property.status || "available"
-        ).toLowerCase();
-
-    const isOwner =
-        !!currentUserId &&
-        property.user_id === currentUserId;
-
-    const type =
-        property.property_type ||
-        property.category ||
-        "property";
-
-    const imageCount = images.length;
 
     const title =
-        property.title || "Property";
+        property.title ||
+        property.name ||
+        "Property";
+
 
     const location =
         property.location ||
         "Location not provided";
 
+
+    const listing =
+        formatListingType(
+            property.listing_type ||
+            property.transaction_type ||
+            property.type
+        );
+
+
+    const type =
+        formatPropertyType(
+            property.property_type
+        );
+
+
+    const status =
+        formatStatus(
+            property.status
+        );
+
+
     const description =
         property.description ||
         "No description provided.";
 
-    let galleryHtml;
 
-    if(currentImage && currentImage.image_url){
+    const firstImage =
+        images[0].image_url;
 
-        galleryHtml = `
-            <img
-                id="card-image-${property.id}"
-                class="card-image"
-                src="${escapeHtml(currentImage.image_url)}"
-                alt="${escapeHtml(title)}"
-                draggable="false"
-            >
-        `;
 
-    }else{
+    const statusClass =
+        status.toLowerCase() === "available"
+            ? "badge-status"
+            : "badge-status";
 
-        galleryHtml = `
-            <div class="no-photo">
-                No photos
-            </div>
-        `;
-
-    }
-
-    const arrows =
-        imageCount > 1
-            ? `
-                <button
-                    type="button"
-                    class="gallery-arrow gallery-prev"
-                    onclick="changeCardImage(event,'${property.id}',-1)">
-                    ‹
-                </button>
-
-                <button
-                    type="button"
-                    class="gallery-arrow gallery-next"
-                    onclick="changeCardImage(event,'${property.id}',1)">
-                    ›
-                </button>
-            `
-            : "";
-
-    /*
-     * IMPORTANT:
-     * Thumbnails are real buttons/images with their own
-     * click handlers. Clicking one immediately changes
-     * the main image and active border.
-     */
-
-    const thumbnails =
-        imageCount > 1
-            ? `
-                <div class="thumbnail-strip">
-
-                    ${images.map((image,index) => `
-                        <img
-                            class="thumbnail ${
-                                index === imageIndex
-                                    ? "active"
-                                    : ""
-                            }"
-                            src="${escapeHtml(image.image_url)}"
-                            alt="Property photo ${index + 1}"
-                            data-property-id="${escapeHtml(property.id)}"
-                            data-image-index="${index}"
-                            onclick="setCardImage(event,'${property.id}',${index})"
-                        >
-                    `).join("")}
-
-                </div>
-            `
-            : "";
-
-    let ownerControls = "";
-
-    if(isOwner){
-
-        ownerControls = `
-            <div class="owner-controls">
-
-                <div class="owner-title">
-                    Your Property Controls
-                </div>
-
-                <div class="owner-buttons">
-
-                    ${
-                        status !== "available"
-                            ? `
-                                <button
-                                    class="owner-btn owner-available"
-                                    onclick="updatePropertyStatus('${property.id}','available')">
-                                    Mark Available
-                                </button>
-                            `
-                            : ""
-                    }
-
-                    ${
-                        status !== "sold"
-                            ? `
-                                <button
-                                    class="owner-btn owner-sold"
-                                    onclick="updatePropertyStatus('${property.id}','sold')">
-                                    Mark Sold
-                                </button>
-                            `
-                            : ""
-                    }
-
-                    ${
-                        status !== "rented"
-                            ? `
-                                <button
-                                    class="owner-btn owner-rented"
-                                    onclick="updatePropertyStatus('${property.id}','rented')">
-                                    Mark Rented
-                                </button>
-                            `
-                            : ""
-                    }
-
-                    <button
-                        class="owner-btn owner-delete"
-                        onclick="deleteProperty('${property.id}')">
-                        Delete Property
-                    </button>
-
-                </div>
-
-            </div>
-        `;
-
-    }
 
     return `
+
         <article
             class="property-card"
-            data-property-id="${escapeHtml(property.id)}">
+            data-property-index="${index}"
+        >
 
-            <div
-                class="card-gallery"
-                id="gallery-${property.id}">
+            <div class="card-gallery">
 
-                <div class="status-badge ${statusClass(status)}">
-                    ${formatStatus(status)}
-                </div>
+                <img
+                    id="card-main-${index}"
+                    class="card-main-image"
+                    src="${escapeHtml(firstImage)}"
+                    alt="${escapeHtml(title)}"
+                    loading="lazy"
+                    onclick="openImageViewerForProperty(${index},0)"
+                    onerror="this.src=placeholderImage()"
+                >
 
-                ${galleryHtml}
+                <span
+                    id="card-counter-${index}"
+                    class="image-counter"
+                >
+                    1 / ${images.length}
+                </span>
+
 
                 ${
-                    imageCount
+                    images.length > 1
                         ? `
-                            <div class="photo-counter">
-                                ${imageIndex + 1} / ${imageCount}
-                            </div>
+
+                            <button
+                                type="button"
+                                class="gallery-arrow prev"
+                                onclick="event.stopPropagation(); changeCardImage(${index},-1)"
+                                aria-label="Previous property photo"
+                            >
+                                ‹
+                            </button>
+
+                            <button
+                                type="button"
+                                class="gallery-arrow next"
+                                onclick="event.stopPropagation(); changeCardImage(${index},1)"
+                                aria-label="Next property photo"
+                            >
+                                ›
+                            </button>
+
                         `
                         : ""
                 }
 
-                ${arrows}
-
             </div>
 
-            ${thumbnails}
+
+            ${
+                images.length > 1
+                    ? `
+
+                        <div
+                            id="card-thumbnails-${index}"
+                            class="card-thumbnails"
+                        >
+
+                            ${
+                                images
+                                    .map(
+                                        (image,imageIndex) => `
+
+                                            <button
+                                                type="button"
+                                                class="thumbnail ${
+                                                    imageIndex === 0
+                                                        ? "active"
+                                                        : ""
+                                                }"
+                                                onclick="event.stopPropagation(); setCardImage(${index},${imageIndex})"
+                                                aria-label="View property photo ${imageIndex + 1}"
+                                            >
+
+                                                <img
+                                                    src="${escapeHtml(image.image_url)}"
+                                                    alt="Property thumbnail ${imageIndex + 1}"
+                                                    loading="lazy"
+                                                    onerror="this.src=placeholderImage()"
+                                                >
+
+                                            </button>
+
+                                        `
+                                    )
+                                    .join("")
+                            }
+
+                        </div>
+
+                    `
+                    : ""
+            }
+
 
             <div class="card-content">
 
-                <div class="card-labels">
+                <div class="property-badges">
 
-                    <span class="listing-badge">
-                        ${escapeHtml(
-                            formatListingType(
-                                property.listing_type
-                            )
-                        )}
+                    <span class="badge badge-sale">
+                        ${escapeHtml(listing)}
                     </span>
 
-                    <span class="type-badge">
-                        ${escapeHtml(
-                            formatPropertyType(type)
-                        )}
+                    <span class="badge badge-status">
+                        ${escapeHtml(status)}
                     </span>
 
                 </div>
+
 
                 <h3>
                     ${escapeHtml(title)}
                 </h3>
 
+
                 <div class="location">
                     📍 ${escapeHtml(location)}
                 </div>
+
 
                 <div class="price">
                     ${formatMoney(property.price)}
                 </div>
 
+
                 <div class="description">
                     ${escapeHtml(description)}
                 </div>
 
+
                 <div class="card-actions">
 
                     <button
-                        class="action-btn view-btn"
-                        onclick="openProperty('${property.id}')">
+                        type="button"
+                        class="primary-btn"
+                        onclick="openDetailModal(${index})"
+                    >
                         View Property
                     </button>
 
-                    ${
-                        status === "available"
-                            ? `
-                                <button
-                                    class="action-btn contact-btn"
-                                    onclick="contactProperty('${property.id}')">
-                                    Contact
-                                </button>
-                            `
-                            : `
-                                <button
-                                    class="action-btn unavailable-btn"
-                                    disabled>
-                                    ${formatStatus(status)}
-                                </button>
-                            `
-                    }
-
                 </div>
-
-                <div class="reactions">
-
-                    <button
-                        class="reaction-btn"
-                        onclick="reactToProperty('${property.id}','like')">
-                        👍 ${Number(property.like_count || 0)}
-                    </button>
-
-                    <button
-                        class="reaction-btn"
-                        onclick="reactToProperty('${property.id}','dislike')">
-                        👎 ${Number(property.dislike_count || 0)}
-                    </button>
-
-                </div>
-
-                ${ownerControls}
 
             </div>
 
         </article>
+
     `;
 
 }
@@ -2386,666 +2244,780 @@ function createPropertyCard(property){
    CARD IMAGE CONTROLS
 ========================================================= */
 
+function setCardImage(
+    propertyIndex,
+    imageIndex
+){
+
+    const property =
+        filteredProperties[propertyIndex];
+
+    if(!property){
+
+        return;
+
+    }
+
+
+    const images =
+        getPropertyImages(
+            property
+        );
+
+
+    if(
+        imageIndex < 0 ||
+        imageIndex >= images.length
+    ){
+
+        return;
+
+    }
+
+
+    const main =
+        document.getElementById(
+            "card-main-" +
+            propertyIndex
+        );
+
+
+    const counter =
+        document.getElementById(
+            "card-counter-" +
+            propertyIndex
+        );
+
+
+    const thumbnails =
+        document.querySelectorAll(
+            "#card-thumbnails-" +
+            propertyIndex +
+            " .thumbnail"
+        );
+
+
+    if(main){
+
+        main.src =
+            images[imageIndex].image_url;
+
+        main.onerror =
+            function(){
+
+                this.src =
+                    placeholderImage();
+
+            };
+
+    }
+
+
+    if(counter){
+
+        counter.textContent =
+            (
+                imageIndex + 1
+            ) +
+            " / " +
+            images.length;
+
+    }
+
+
+    thumbnails.forEach(
+        (thumbnail,index) => {
+
+            thumbnail.classList.toggle(
+                "active",
+                index === imageIndex
+            );
+
+        }
+    );
+
+}
+
+
 function changeCardImage(
-    event,
-    propertyId,
+    propertyIndex,
     direction
 ){
 
-    if(event){
-        event.preventDefault();
-        event.stopPropagation();
-    }
-
     const property =
-        allProperties.find(
-            item => item.id === propertyId
-        );
+        filteredProperties[propertyIndex];
 
     if(!property){
+
         return;
+
     }
+
 
     const images =
-        property._images || [];
-
-    if(images.length <= 1){
-        return;
-    }
-
-    let index =
-        Number(
-            cardImageIndexes[propertyId] || 0
+        getPropertyImages(
+            property
         );
 
-    index += direction;
 
-    if(index < 0){
-        index = images.length - 1;
-    }
-
-    if(index >= images.length){
-        index = 0;
-    }
-
-    cardImageIndexes[propertyId] = index;
-
-    updateCardImage(property);
-
-}
-
-
-/*
- * FIXED THUMBNAIL FUNCTION
- */
-
-function setCardImage(
-    event,
-    propertyId,
-    index
-){
-
-    if(event){
-        event.preventDefault();
-        event.stopPropagation();
-    }
-
-    const property =
-        allProperties.find(
-            item => item.id === propertyId
-        );
-
-    if(!property){
-        return;
-    }
-
-    const images =
-        property._images || [];
-
-    if(
-        !images[index] ||
-        !images[index].image_url
-    ){
-        return;
-    }
-
-    cardImageIndexes[propertyId] =
-        Number(index);
-
-    updateCardImage(property);
-
-}
-
-
-function updateCardImage(property){
-
-    const images =
-        property._images || [];
-
-    if(!images.length){
-        return;
-    }
-
-    let index =
-        Number(
-            cardImageIndexes[property.id] || 0
-        );
-
-    if(index < 0){
-        index = 0;
-    }
-
-    if(index >= images.length){
-        index = images.length - 1;
-    }
-
-    cardImageIndexes[property.id] = index;
-
-    const image = images[index];
-
-    const imageElement =
+    const main =
         document.getElementById(
-            "card-image-" + property.id
+            "card-main-" +
+            propertyIndex
         );
 
-    if(imageElement){
 
-        imageElement.src =
-            image.image_url;
+    let currentIndex = 0;
 
-        imageElement.alt =
-            `${property.title || "Property"} - Photo ${index + 1}`;
 
-    }
+    if(main){
 
-    const gallery =
-        document.getElementById(
-            "gallery-" + property.id
-        );
+        const currentSrc =
+            main.getAttribute("src");
 
-    if(gallery){
 
-        const counter =
-            gallery.querySelector(
-                ".photo-counter"
+        const foundIndex =
+            images.findIndex(
+                image =>
+                    image.image_url ===
+                    currentSrc
             );
 
-        if(counter){
 
-            counter.textContent =
-                `${index + 1} / ${images.length}`;
+        if(foundIndex >= 0){
+
+            currentIndex =
+                foundIndex;
 
         }
 
     }
 
-    const card =
-        document.querySelector(
-            `[data-property-id="${CSS.escape(property.id)}"]`
-        );
 
-    if(card){
+    let nextIndex =
+        currentIndex + direction;
 
-        card
-            .querySelectorAll(".thumbnail")
-            .forEach(
-                (thumbnail,thumbnailIndex) => {
 
-                    thumbnail.classList.toggle(
-                        "active",
-                        thumbnailIndex === index
-                    );
+    if(nextIndex < 0){
 
-                }
-            );
+        nextIndex =
+            images.length - 1;
 
     }
 
-}
 
+    if(nextIndex >= images.length){
 
-/* =========================================================
-   CARD SWIPE
-========================================================= */
+        nextIndex = 0;
 
-function setupCardSwipe(propertyId){
-
-    const gallery =
-        document.getElementById(
-            "gallery-" + propertyId
-        );
-
-    if(!gallery){
-        return;
     }
 
-    if(
-        gallery.dataset.swipeReady === "yes"
-    ){
-        return;
-    }
 
-    gallery.dataset.swipeReady = "yes";
-
-    let startX = null;
-
-    gallery.addEventListener(
-        "pointerdown",
-        event => {
-            startX = event.clientX;
-        }
-    );
-
-    gallery.addEventListener(
-        "pointerup",
-        event => {
-
-            if(startX === null){
-                return;
-            }
-
-            const difference =
-                event.clientX - startX;
-
-            startX = null;
-
-            if(Math.abs(difference) < 45){
-                return;
-            }
-
-            changeCardImage(
-                event,
-                propertyId,
-                difference < 0 ? 1 : -1
-            );
-
-        }
+    setCardImage(
+        propertyIndex,
+        nextIndex
     );
 
 }
 
 
 /* =========================================================
-   PROPERTY DETAILS
+   DETAIL MODAL
 ========================================================= */
 
-function openProperty(propertyId){
+function openDetailModal(index){
 
     const property =
-        allProperties.find(
-            item => item.id === propertyId
-        );
+        filteredProperties[index];
 
     if(!property){
+
         return;
+
     }
 
-    detailPropertyId = propertyId;
-    detailImageIndex = 0;
 
-    renderPropertyDetail(property);
+    currentDetailProperty =
+        property;
 
-    openModal("detailModal");
+    currentDetailImageIndex = 0;
 
-    setupDetailSwipe(property);
+
+    renderDetailModal();
 
 }
 
 
-function renderPropertyDetail(property){
+function renderDetailModal(){
 
-    const images =
-        property._images || [];
+    const property =
+        currentDetailProperty;
 
-    if(
-        detailImageIndex >= images.length
-    ){
-        detailImageIndex = 0;
+    if(!property){
+
+        return;
+
     }
 
-    const currentImage =
-        images[detailImageIndex];
+
+    const images =
+        getPropertyImages(
+            property
+        );
+
+
+    const title =
+        property.title ||
+        property.name ||
+        "Property";
+
+
+    const listing =
+        formatListingType(
+            property.listing_type ||
+            property.transaction_type ||
+            property.type
+        );
+
 
     const status =
-        String(
-            property.status || "available"
-        ).toLowerCase();
+        formatStatus(
+            property.status
+        );
 
-    const isOwner =
-        !!currentUserId &&
-        property.user_id === currentUserId;
 
-    let gallery;
+    const location =
+        property.location ||
+        "Location not provided";
 
-    if(currentImage){
 
-        gallery = `
-            <div
-                class="detail-gallery"
-                id="detailGallery">
+    const description =
+        property.description ||
+        "No description provided.";
 
-                <img
-                    id="detailMainImage"
-                    class="detail-main-image"
-                    src="${escapeHtml(currentImage.image_url)}"
-                    alt="${escapeHtml(property.title || "Property")}"
-                    draggable="false"
-                >
 
-                <div class="detail-counter">
-                    ${detailImageIndex + 1} / ${images.length}
-                </div>
+    const detailContent =
+        document.getElementById(
+            "detailContent"
+        );
 
-                ${
-                    images.length > 1
-                        ? `
-                            <button
-                                type="button"
-                                class="detail-arrow detail-prev"
-                                onclick="changeDetailImage(-1)">
-                                ‹
-                            </button>
 
-                            <button
-                                type="button"
-                                class="detail-arrow detail-next"
-                                onclick="changeDetailImage(1)">
-                                ›
-                            </button>
-                        `
-                        : ""
-                }
+    detailContent.innerHTML = `
 
-                ${
-                    images.length > 1
-                        ? `
-                            <div class="detail-thumbnails">
+        <h2 class="modal-title">
+            ${escapeHtml(title)}
+        </h2>
 
-                                ${images.map(
-                                    (image,index) => `
-                                        <img
-                                            class="detail-thumb ${
-                                                index === detailImageIndex
+
+        <div class="modal-meta">
+
+            ${escapeHtml(
+                formatPropertyType(
+                    property.property_type
+                )
+            )}
+
+            ·
+
+            ${escapeHtml(listing)}
+
+            ·
+
+            ${escapeHtml(status)}
+
+            ·
+
+            📍 ${escapeHtml(location)}
+
+        </div>
+
+
+        <div class="detail-main">
+
+            <img
+                id="detailMainImage"
+                src="${escapeHtml(images[0].image_url)}"
+                alt="${escapeHtml(title)}"
+                onclick="openImageViewerForDetail(0)"
+                onerror="this.src=placeholderImage()"
+            >
+
+            <span
+                id="detailCounter"
+                class="detail-counter"
+            >
+                1 / ${images.length}
+            </span>
+
+        </div>
+
+
+        ${
+            images.length > 1
+                ? `
+
+                    <div class="detail-thumbnails">
+
+                        ${
+                            images
+                                .map(
+                                    (image,imageIndex) => `
+
+                                        <button
+                                            type="button"
+                                            class="thumbnail ${
+                                                imageIndex === 0
                                                     ? "active"
                                                     : ""
                                             }"
-                                            src="${escapeHtml(image.image_url)}"
-                                            alt="Photo ${index + 1}"
-                                            data-detail-index="${index}"
-                                            onclick="setDetailImage(event,${index})"
+                                            onclick="setDetailImage(${imageIndex})"
+                                            aria-label="View property photo ${imageIndex + 1}"
                                         >
+
+                                            <img
+                                                src="${escapeHtml(image.image_url)}"
+                                                alt="Property photo ${imageIndex + 1}"
+                                                loading="lazy"
+                                                onerror="this.src=placeholderImage()"
+                                            >
+
+                                        </button>
+
                                     `
-                                ).join("")}
+                                )
+                                .join("")
+                        }
 
-                            </div>
-                        `
-                        : ""
-                }
+                    </div>
 
-            </div>
-        `;
+                `
+                : ""
+        }
 
-    }else{
 
-        gallery = `
-            <div class="message">
-                No property photos available.
-            </div>
-        `;
+        <div class="price">
+            ${formatMoney(property.price)}
+        </div>
 
-    }
 
-    let ownerControls = "";
+        <div class="detail-description">
+            ${escapeHtml(description)}
+        </div>
 
-    if(isOwner){
 
-        ownerControls = `
-            <div class="detail-owner-controls">
+        <div class="detail-actions">
 
-                <strong>
-                    Your Property Controls
-                </strong>
+            <button
+                type="button"
+                class="primary-btn"
+                onclick="contactProperty()"
+            >
+                Contact
+            </button>
 
-                <div
-                    class="owner-buttons"
-                    style="margin-top:10px;">
 
-                    ${
-                        status !== "available"
-                            ? `
-                                <button
-                                    class="owner-btn owner-available"
-                                    onclick="updatePropertyStatus('${property.id}','available')">
-                                    Mark Available
-                                </button>
-                            `
-                            : ""
-                    }
+            <div class="reaction-group">
 
-                    ${
-                        status !== "sold"
-                            ? `
-                                <button
-                                    class="owner-btn owner-sold"
-                                    onclick="updatePropertyStatus('${property.id}','sold')">
-                                    Mark Sold
-                                </button>
-                            `
-                            : ""
-                    }
+                <button
+                    id="likeBtn"
+                    type="button"
+                    class="reaction-btn"
+                    onclick="reactToProperty('like')"
+                >
+                    👍 Like
+                </button>
 
-                    ${
-                        status !== "rented"
-                            ? `
-                                <button
-                                    class="owner-btn owner-rented"
-                                    onclick="updatePropertyStatus('${property.id}','rented')">
-                                    Mark Rented
-                                </button>
-                            `
-                            : ""
-                    }
 
-                    <button
-                        class="owner-btn owner-delete"
-                        onclick="deleteProperty('${property.id}')">
-                        Delete Property
-                    </button>
-
-                </div>
+                <button
+                    id="dislikeBtn"
+                    type="button"
+                    class="reaction-btn"
+                    onclick="reactToProperty('dislike')"
+                >
+                    👎 Dislike
+                </button>
 
             </div>
-        `;
-
-    }
-
-    document.getElementById(
-        "detailBody"
-    ).innerHTML = `
-
-        ${gallery}
-
-        <div class="detail-info">
-
-            <div class="card-labels">
-
-                <span class="listing-badge">
-                    ${escapeHtml(
-                        formatListingType(
-                            property.listing_type
-                        )
-                    )}
-                </span>
-
-                <span class="type-badge">
-                    ${escapeHtml(
-                        formatPropertyType(
-                            property.property_type ||
-                            property.category
-                        )
-                    )}
-                </span>
-
-                <span
-                    class="status-badge ${statusClass(status)}"
-                    style="
-                        position:static;
-                        display:inline-block;
-                    ">
-                    ${formatStatus(status)}
-                </span>
-
-            </div>
-
-            <h2>
-                ${escapeHtml(
-                    property.title || "Property"
-                )}
-            </h2>
-
-            <div class="location">
-                📍
-                ${escapeHtml(
-                    property.location ||
-                    "Location not provided"
-                )}
-            </div>
-
-            <div class="detail-price">
-                ${formatMoney(property.price)}
-            </div>
-
-            <p class="detail-description">
-                ${escapeHtml(
-                    property.description ||
-                    "No description provided."
-                )}
-            </p>
-
-            <div class="detail-actions">
-
-                ${
-                    status === "available"
-                        ? `
-                            <button
-                                class="action-btn contact-btn"
-                                onclick="contactProperty('${property.id}')">
-                                Contact Seller
-                            </button>
-                        `
-                        : `
-                            <button
-                                class="action-btn unavailable-btn"
-                                disabled>
-                                ${formatStatus(status)}
-                            </button>
-                        `
-                }
-
-            </div>
-
-            ${ownerControls}
 
         </div>
+
+
+        ${renderOwnerActions(property)}
+
+    `;
+
+
+    document
+        .getElementById("detailModal")
+        .classList.add("show");
+
+
+    document.body.style.overflow =
+        "hidden";
+
+
+    loadCurrentReaction();
+
+}
+
+
+function renderOwnerActions(property){
+
+    return `
+
+        <div
+            id="ownerActions"
+            style="
+                display:none;
+                margin-top:20px;
+                padding-top:18px;
+                border-top:1px solid #e3e9e5;
+            "
+        >
+
+            <strong>
+                Your Property
+            </strong>
+
+            <div
+                style="
+                    display:flex;
+                    gap:8px;
+                    flex-wrap:wrap;
+                    margin-top:10px;
+                "
+            >
+
+                <button
+                    type="button"
+                    class="secondary-btn"
+                    onclick="markPropertyStatus('available')"
+                >
+                    Mark Available
+                </button>
+
+                <button
+                    type="button"
+                    class="secondary-btn"
+                    onclick="markPropertyStatus('sold')"
+                >
+                    Mark Sold
+                </button>
+
+                <button
+                    type="button"
+                    class="secondary-btn"
+                    onclick="markPropertyStatus('rented')"
+                >
+                    Mark Rented
+                </button>
+
+                <button
+                    type="button"
+                    class="danger-btn"
+                    onclick="deleteCurrentProperty()"
+                >
+                    Delete Property
+                </button>
+
+            </div>
+
+        </div>
+
     `;
 
 }
 
 
-/* =========================================================
-   DETAIL THUMBNAILS
-========================================================= */
+function closeDetailModal(){
 
-function changeDetailImage(direction){
+    document
+        .getElementById("detailModal")
+        .classList.remove("show");
 
-    const property =
-        allProperties.find(
-            item => item.id === detailPropertyId
-        );
+    document.body.style.overflow =
+        "";
 
-    if(!property){
-        return;
-    }
-
-    const images =
-        property._images || [];
-
-    if(images.length <= 1){
-        return;
-    }
-
-    detailImageIndex += direction;
-
-    if(detailImageIndex < 0){
-        detailImageIndex = images.length - 1;
-    }
-
-    if(detailImageIndex >= images.length){
-        detailImageIndex = 0;
-    }
-
-    renderPropertyDetail(property);
-
-    setupDetailSwipe(property);
-
-}
-
-
-/*
- * FIXED DETAIL THUMBNAIL FUNCTION
- */
-
-function setDetailImage(event,index){
-
-    if(event){
-
-        event.preventDefault();
-        event.stopPropagation();
-
-    }
-
-    const property =
-        allProperties.find(
-            item => item.id === detailPropertyId
-        );
-
-    if(!property){
-        return;
-    }
-
-    const images =
-        property._images || [];
-
-    if(
-        !images[index] ||
-        !images[index].image_url
-    ){
-        return;
-    }
-
-    detailImageIndex =
-        Number(index);
-
-    renderPropertyDetail(property);
-
-    setupDetailSwipe(property);
+    currentDetailProperty =
+        null;
 
 }
 
 
 /* =========================================================
-   DETAIL SWIPE
+   DETAIL IMAGE CONTROLS
 ========================================================= */
 
-function setupDetailSwipe(property){
+function setDetailImage(index){
 
-    const gallery =
-        document.getElementById("detailGallery");
+    if(!currentDetailProperty){
 
-    if(!gallery){
         return;
+
     }
+
+
+    const images =
+        getPropertyImages(
+            currentDetailProperty
+        );
+
 
     if(
-        gallery.dataset.swipeReady === "yes"
+        index < 0 ||
+        index >= images.length
     ){
+
         return;
+
     }
 
-    gallery.dataset.swipeReady = "yes";
 
-    let startX = null;
+    currentDetailImageIndex =
+        index;
 
-    gallery.addEventListener(
-        "pointerdown",
-        event => {
-            startX = event.clientX;
-        }
-    );
 
-    gallery.addEventListener(
-        "pointerup",
-        event => {
+    const main =
+        document.getElementById(
+            "detailMainImage"
+        );
 
-            if(startX === null){
-                return;
+
+    const counter =
+        document.getElementById(
+            "detailCounter"
+        );
+
+
+    if(main){
+
+        main.src =
+            images[index].image_url;
+
+        main.onerror =
+            function(){
+
+                this.src =
+                    placeholderImage();
+
+            };
+
+    }
+
+
+    if(counter){
+
+        counter.textContent =
+            (
+                index + 1
+            ) +
+            " / " +
+            images.length;
+
+    }
+
+
+    document
+        .querySelectorAll(
+            ".detail-thumbnails .thumbnail"
+        )
+        .forEach(
+            (thumbnail,thumbIndex) => {
+
+                thumbnail.classList.toggle(
+                    "active",
+                    thumbIndex === index
+                );
+
             }
+        );
 
-            const difference =
-                event.clientX - startX;
+}
 
-            startX = null;
 
-            if(Math.abs(difference) < 45){
-                return;
-            }
+function openImageViewerForProperty(
+    index,
+    imageIndex
+){
 
-            changeDetailImage(
-                difference < 0 ? 1 : -1
-            );
+    const property =
+        filteredProperties[index];
 
-        }
-    );
+    if(!property){
+
+        return;
+
+    }
+
+
+    currentViewerImages =
+        getPropertyImages(
+            property
+        ).map(
+            image =>
+                image.image_url
+        );
+
+
+    currentViewerIndex =
+        imageIndex;
+
+
+    showViewer();
+
+}
+
+
+function openImageViewerForDetail(
+    imageIndex
+){
+
+    if(!currentDetailProperty){
+
+        return;
+
+    }
+
+
+    currentViewerImages =
+        getPropertyImages(
+            currentDetailProperty
+        ).map(
+            image =>
+                image.image_url
+        );
+
+
+    currentViewerIndex =
+        imageIndex;
+
+
+    showViewer();
+
+}
+
+
+function showViewer(){
+
+    const viewer =
+        document.getElementById(
+            "imageViewer"
+        );
+
+    const image =
+        document.getElementById(
+            "viewerImage"
+        );
+
+
+    if(
+        !currentViewerImages.length
+    ){
+
+        return;
+
+    }
+
+
+    image.src =
+        currentViewerImages[
+            currentViewerIndex
+        ];
+
+
+    image.onerror =
+        function(){
+
+            this.src =
+                placeholderImage();
+
+        };
+
+
+    viewer.classList.add("show");
+
+}
+
+
+function closeImageViewer(){
+
+    document
+        .getElementById(
+            "imageViewer"
+        )
+        .classList.remove("show");
+
+}
+
+
+function viewerPrevious(){
+
+    if(
+        !currentViewerImages.length
+    ){
+
+        return;
+
+    }
+
+
+    currentViewerIndex--;
+
+    if(
+        currentViewerIndex < 0
+    ){
+
+        currentViewerIndex =
+            currentViewerImages.length - 1;
+
+    }
+
+
+    updateViewerImage();
+
+}
+
+
+function viewerNext(){
+
+    if(
+        !currentViewerImages.length
+    ){
+
+        return;
+
+    }
+
+
+    currentViewerIndex++;
+
+    if(
+        currentViewerIndex >=
+        currentViewerImages.length
+    ){
+
+        currentViewerIndex = 0;
+
+    }
+
+
+    updateViewerImage();
+
+}
+
+
+function updateViewerImage(){
+
+    const image =
+        document.getElementById(
+            "viewerImage"
+        );
+
+
+    image.src =
+        currentViewerImages[
+            currentViewerIndex
+        ];
 
 }
 
@@ -3054,181 +3026,289 @@ function setupDetailSwipe(property){
    CONTACT
 ========================================================= */
 
-function contactProperty(propertyId){
+async function contactProperty(){
 
-    const property =
-        allProperties.find(
-            item => item.id === propertyId
-        );
+    const user =
+        await getAuthenticatedUser();
 
-    if(!property){
-        return;
-    }
 
-    if(
-        String(
-            property.status || "available"
-        ).toLowerCase() !== "available"
-    ){
+    if(!user){
 
         showToast(
-            "This property is no longer available."
+            "Please log in to contact the property owner."
         );
 
         return;
+
     }
 
+
     showToast(
-        "Contact messaging will be available here."
+        "Property contact messaging will be connected to LosOja chat."
     );
 
 }
 
 
 /* =========================================================
-   REACTIONS
+   PROPERTY REACTIONS
 ========================================================= */
 
+async function loadCurrentReaction(){
+
+    if(!currentDetailProperty){
+
+        return;
+
+    }
+
+
+    const user =
+        await getAuthenticatedUser();
+
+
+    const likeBtn =
+        document.getElementById(
+            "likeBtn"
+        );
+
+    const dislikeBtn =
+        document.getElementById(
+            "dislikeBtn"
+        );
+
+
+    const ownerActions =
+        document.getElementById(
+            "ownerActions"
+        );
+
+
+    if(!user){
+
+        if(ownerActions){
+
+            ownerActions.style.display =
+                "none";
+
+        }
+
+        return;
+
+    }
+
+
+    if(
+        currentDetailProperty.user_id &&
+        currentDetailProperty.user_id ===
+        user.id
+    ){
+
+        if(ownerActions){
+
+            ownerActions.style.display =
+                "block";
+
+        }
+
+    }
+
+
+    try{
+
+        const response =
+            await fetch(
+
+                SUPABASE_URL +
+                "/rest/v1/property_reactions" +
+                "?select=reaction" +
+                "&property_id=eq." +
+                encodeURIComponent(
+                    currentDetailProperty.id
+                ) +
+                "&user_id=eq." +
+                encodeURIComponent(
+                    user.id
+                ) +
+                "&limit=1",
+
+                {
+                    method:"GET",
+                    headers:authHeaders()
+                }
+
+            );
+
+
+        if(!response.ok){
+
+            return;
+
+        }
+
+
+        const rows =
+            await response.json();
+
+
+        if(!rows.length){
+
+            return;
+
+        }
+
+
+        const reaction =
+            rows[0].reaction;
+
+
+        if(
+            reaction === "like" &&
+            likeBtn
+        ){
+
+            likeBtn.classList.add(
+                "selected"
+            );
+
+        }
+
+
+        if(
+            reaction === "dislike" &&
+            dislikeBtn
+        ){
+
+            dislikeBtn.classList.add(
+                "selected"
+            );
+
+        }
+
+    }catch(error){
+
+        console.warn(
+            "Could not load reaction:",
+            error
+        );
+
+    }
+
+}
+
+
 async function reactToProperty(
-    propertyId,
     reaction
 ){
 
-    const auth =
-        await getAuthDetails();
+    if(!currentDetailProperty){
 
-    if(!auth.user){
+        return;
+
+    }
+
+
+    const user =
+        await getAuthenticatedUser();
+
+
+    if(!user){
 
         showToast(
             "Please log in to react to a property."
         );
 
         return;
+
     }
+
 
     try{
 
-        const existingResponse =
+        const response =
             await fetch(
+
                 SUPABASE_URL +
                 "/rest/v1/property_reactions" +
-                "?select=id,reaction" +
-                "&property_id=eq." +
-                encodeURIComponent(propertyId) +
-                "&user_id=eq." +
-                encodeURIComponent(auth.user.id),
+                "?on_conflict=property_id,user_id",
+
                 {
+                    method:"POST",
+
                     headers:{
-                        "apikey":SUPABASE_KEY,
-                        "Authorization":
-                            "Bearer " +
-                            auth.token
-                    }
+                        ...authHeaders(),
+                        "Prefer":
+                            "resolution=merge-duplicates,return=minimal"
+                    },
+
+                    body:JSON.stringify({
+
+                        property_id:
+                            currentDetailProperty.id,
+
+                        user_id:
+                            user.id,
+
+                        reaction:
+                            reaction
+
+                    })
+
                 }
+
             );
 
-        if(!existingResponse.ok){
+
+        if(!response.ok){
+
+            const text =
+                await response.text();
 
             throw new Error(
-                await existingResponse.text()
+                text ||
+                "Could not save reaction."
             );
 
         }
 
-        const existing =
-            await existingResponse.json();
 
-        if(existing.length){
+        const likeBtn =
+            document.getElementById(
+                "likeBtn"
+            );
 
-            if(
-                existing[0].reaction === reaction
-            ){
+        const dislikeBtn =
+            document.getElementById(
+                "dislikeBtn"
+            );
 
-                showToast(
-                    "You already voted on this property."
-                );
 
-                return;
-            }
+        if(likeBtn){
 
-            const updateResponse =
-                await fetch(
-                    SUPABASE_URL +
-                    "/rest/v1/property_reactions" +
-                    "?id=eq." +
-                    encodeURIComponent(
-                        existing[0].id
-                    ),
-                    {
-                        method:"PATCH",
-                        headers:{
-                            "apikey":SUPABASE_KEY,
-                            "Authorization":
-                                "Bearer " +
-                                auth.token,
-                            "Content-Type":
-                                "application/json"
-                        },
-                        body:JSON.stringify({
-                            reaction:reaction
-                        })
-                    }
-                );
-
-            if(!updateResponse.ok){
-
-                throw new Error(
-                    await updateResponse.text()
-                );
-
-            }
-
-        }else{
-
-            const insertResponse =
-                await fetch(
-                    SUPABASE_URL +
-                    "/rest/v1/property_reactions",
-                    {
-                        method:"POST",
-                        headers:{
-                            "apikey":SUPABASE_KEY,
-                            "Authorization":
-                                "Bearer " +
-                                auth.token,
-                            "Content-Type":
-                                "application/json"
-                        },
-                        body:JSON.stringify({
-
-                            property_id:propertyId,
-
-                            user_id:
-                                auth.user.id,
-
-                            reaction:reaction
-
-                        })
-                    }
-                );
-
-            if(!insertResponse.ok){
-
-                throw new Error(
-                    await insertResponse.text()
-                );
-
-            }
+            likeBtn.classList.toggle(
+                "selected",
+                reaction === "like"
+            );
 
         }
 
-        await loadProperties();
+
+        if(dislikeBtn){
+
+            dislikeBtn.classList.toggle(
+                "selected",
+                reaction === "dislike"
+            );
+
+        }
+
 
         showToast(
             reaction === "like"
-                ? "👍 Vote saved."
-                : "👎 Vote saved."
+                ? "You liked this property."
+                : "You disliked this property."
         );
+
 
     }catch(error){
 
@@ -3238,7 +3318,7 @@ async function reactToProperty(
         );
 
         showToast(
-            "Could not save your vote."
+            "Unable to save your reaction."
         );
 
     }
@@ -3247,112 +3327,137 @@ async function reactToProperty(
 
 
 /* =========================================================
-   UPDATE STATUS
+   OWNER STATUS
 ========================================================= */
 
-async function updatePropertyStatus(
-    propertyId,
-    newStatus
+async function markPropertyStatus(
+    status
 ){
 
-    const auth =
-        await getAuthDetails();
+    if(!currentDetailProperty){
 
-    if(!auth.user){
+        return;
+
+    }
+
+
+    const user =
+        await getAuthenticatedUser();
+
+
+    if(!user){
 
         showToast(
-            "Please log in again."
+            "Please log in first."
         );
 
         return;
+
     }
 
-    const property =
-        allProperties.find(
-            item => item.id === propertyId
-        );
-
-    if(!property){
-        return;
-    }
 
     if(
-        property.user_id !==
-        auth.user.id
+        currentDetailProperty.user_id !==
+        user.id
     ){
 
         showToast(
-            "Only the property owner can change its status."
+            "Only the property owner can change this status."
         );
 
         return;
+
     }
 
-    const allowed = [
-        "available",
-        "sold",
-        "rented"
-    ];
-
-    if(!allowed.includes(newStatus)){
-        return;
-    }
 
     try{
 
         const response =
             await fetch(
+
                 SUPABASE_URL +
                 "/rest/v1/property_listings" +
                 "?id=eq." +
-                encodeURIComponent(propertyId) +
-                "&user_id=eq." +
-                encodeURIComponent(auth.user.id),
+                encodeURIComponent(
+                    currentDetailProperty.id
+                ),
+
                 {
                     method:"PATCH",
+
                     headers:{
-                        "apikey":SUPABASE_KEY,
-                        "Authorization":
-                            "Bearer " +
-                            auth.token,
-                        "Content-Type":
-                            "application/json",
+                        ...authHeaders(),
                         "Prefer":
-                            "return=minimal"
+                            "return=representation"
                     },
+
                     body:JSON.stringify({
-                        status:newStatus
+                        status:status
                     })
+
                 }
+
             );
+
 
         if(!response.ok){
 
+            const text =
+                await response.text();
+
             throw new Error(
-                await response.text()
+                text ||
+                "Could not update property."
             );
 
         }
 
-        property.status = newStatus;
 
-        showToast(
-            newStatus === "available"
-                ? "Property marked available."
-                : newStatus === "sold"
-                    ? "Property marked SOLD."
-                    : "Property marked RENTED."
-        );
+        const updated =
+            await response.json();
 
-        if(detailPropertyId === propertyId){
 
-            renderPropertyDetail(property);
+        if(
+            Array.isArray(updated) &&
+            updated[0]
+        ){
 
-            setupDetailSwipe(property);
+            currentDetailProperty =
+                updated[0];
+
+        }else{
+
+            currentDetailProperty.status =
+                status;
 
         }
 
+
+        const index =
+            allProperties.findIndex(
+                property =>
+                    property.id ===
+                    currentDetailProperty.id
+            );
+
+
+        if(index >= 0){
+
+            allProperties[index] =
+                currentDetailProperty;
+
+        }
+
+
+        showToast(
+            "Property status updated."
+        );
+
+
+        renderDetailModal();
+
         applyFilters();
+
 
     }catch(error){
 
@@ -3362,7 +3467,7 @@ async function updatePropertyStatus(
         );
 
         showToast(
-            "Could not update property status."
+            "Unable to update property. Check the property owner permissions."
         );
 
     }
@@ -3371,103 +3476,115 @@ async function updatePropertyStatus(
 
 
 /* =========================================================
-   DELETE
+   DELETE PROPERTY
 ========================================================= */
 
-async function deleteProperty(propertyId){
+async function deleteCurrentProperty(){
 
-    const auth =
-        await getAuthDetails();
+    if(!currentDetailProperty){
 
-    if(!auth.user){
+        return;
+
+    }
+
+
+    const user =
+        await getAuthenticatedUser();
+
+
+    if(!user){
 
         showToast(
-            "Please log in again."
+            "Please log in first."
         );
 
         return;
+
     }
 
-    const property =
-        allProperties.find(
-            item => item.id === propertyId
-        );
-
-    if(!property){
-        return;
-    }
 
     if(
-        property.user_id !==
-        auth.user.id
+        currentDetailProperty.user_id !==
+        user.id
     ){
 
         showToast(
-            "Only the property owner can delete it."
+            "Only the property owner can delete this property."
         );
 
         return;
+
     }
 
-    if(
-        !window.confirm(
-            "Delete this property permanently?"
-        )
-    ){
+
+    const confirmed =
+        window.confirm(
+            "Delete this property from LosOja?"
+        );
+
+
+    if(!confirmed){
+
         return;
+
     }
+
 
     try{
 
         const response =
             await fetch(
+
                 SUPABASE_URL +
                 "/rest/v1/property_listings" +
                 "?id=eq." +
-                encodeURIComponent(propertyId) +
-                "&user_id=eq." +
-                encodeURIComponent(auth.user.id),
+                encodeURIComponent(
+                    currentDetailProperty.id
+                ),
+
                 {
                     method:"DELETE",
+
                     headers:{
-                        "apikey":SUPABASE_KEY,
-                        "Authorization":
-                            "Bearer " +
-                            auth.token,
+                        ...authHeaders(),
                         "Prefer":
                             "return=minimal"
                     }
+
                 }
+
             );
+
 
         if(!response.ok){
 
+            const text =
+                await response.text();
+
             throw new Error(
-                await response.text()
+                text ||
+                "Could not delete property."
             );
 
         }
+
 
         allProperties =
             allProperties.filter(
-                item => item.id !== propertyId
+                property =>
+                    property.id !==
+                    currentDetailProperty.id
             );
 
-        delete cardImageIndexes[propertyId];
 
-        if(detailPropertyId === propertyId){
+        closeDetailModal();
 
-            detailPropertyId = null;
-
-            closeModal("detailModal");
-
-        }
-
-        renderProperties();
+        applyFilters();
 
         showToast(
             "Property deleted."
         );
+
 
     }catch(error){
 
@@ -3477,10 +3594,198 @@ async function deleteProperty(propertyId){
         );
 
         showToast(
-            "Could not delete property."
+            "Unable to delete property."
         );
 
     }
+
+}
+
+
+/* =========================================================
+   PHOTO PREVIEW
+========================================================= */
+
+document
+    .getElementById("propertyImages")
+    .addEventListener(
+        "change",
+        function(){
+
+            const preview =
+                document.getElementById(
+                    "photoPreview"
+                );
+
+
+            preview.innerHTML = "";
+
+
+            const files =
+                Array.from(
+                    this.files || []
+                );
+
+
+            files.forEach(file => {
+
+                if(
+                    !file.type.startsWith(
+                        "image/"
+                    )
+                ){
+
+                    return;
+
+                }
+
+
+                const url =
+                    URL.createObjectURL(
+                        file
+                    );
+
+
+                const item =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                item.className =
+                    "preview-item";
+
+
+                const image =
+                    document.createElement(
+                        "img"
+                    );
+
+
+                image.src = url;
+
+                image.alt =
+                    "Property photo preview";
+
+
+                item.appendChild(
+                    image
+                );
+
+
+                preview.appendChild(
+                    item
+                );
+
+            });
+
+        }
+    );
+
+
+/* =========================================================
+   UPLOAD PROPERTY IMAGE
+========================================================= */
+
+async function uploadPropertyImage(
+    file,
+    propertyId,
+    userId,
+    index
+){
+
+    const extension =
+        (
+            file.name.split(".").pop() ||
+            "jpg"
+        ).toLowerCase();
+
+
+    const filePath =
+        "properties/" +
+        propertyId +
+        "_" +
+        Date.now() +
+        "_" +
+        index +
+        "." +
+        extension;
+
+
+    const uploadResponse =
+        await fetch(
+
+            SUPABASE_URL +
+            "/storage/v1/object/" +
+            PROPERTY_BUCKET +
+            "/" +
+            filePath,
+
+            {
+                method:"POST",
+
+                headers:{
+                    "apikey":
+                        SUPABASE_KEY,
+
+                    "Authorization":
+                        "Bearer " +
+                        (
+                            window.getSupabaseAccessToken
+                                ? window.getSupabaseAccessToken()
+                                : SUPABASE_KEY
+                        ),
+
+                    "Content-Type":
+                        file.type,
+
+                    "x-upsert":
+                        "false"
+                },
+
+                body:file
+
+            }
+
+        );
+
+
+    if(!uploadResponse.ok){
+
+        const text =
+            await uploadResponse.text();
+
+        throw new Error(
+            text ||
+            "Image upload failed."
+        );
+
+    }
+
+
+    const publicUrl =
+        SUPABASE_URL +
+        "/storage/v1/object/public/" +
+        PROPERTY_BUCKET +
+        "/" +
+        filePath;
+
+
+    return {
+
+        property_id:
+            propertyId,
+
+        user_id:
+            userId,
+
+        image_url:
+            publicUrl,
+
+        sort_order:
+            index
+
+    };
 
 }
 
@@ -3489,336 +3794,538 @@ async function deleteProperty(propertyId){
    PUBLISH PROPERTY
 ========================================================= */
 
-async function publishProperty(event){
+document
+    .getElementById("propertyForm")
+    .addEventListener(
+        "submit",
+        async function(event){
 
-    event.preventDefault();
+            event.preventDefault();
 
-    const publishBtn =
-        document.getElementById("publishBtn");
 
-    publishBtn.disabled = true;
-    publishBtn.textContent = "Publishing...";
+            const user =
+                await getAuthenticatedUser();
 
-    try{
 
-        const auth =
-            await getAuthDetails();
+            if(!user){
 
-        if(!auth.user){
+                showToast(
+                    "Please log in before posting a property."
+                );
 
-            throw new Error(
-                "Please log in before posting a property."
-            );
+                return;
 
-        }
+            }
 
-        const title =
-            document.getElementById(
-                "propertyTitle"
-            ).value.trim();
 
-        const category =
-            document.getElementById(
-                "propertyCategory"
-            ).value;
-
-        const listingType =
-            document.getElementById(
-                "listingType"
-            ).value;
-
-        const price =
-            Number(
+            const submitButton =
                 document.getElementById(
-                    "propertyPrice"
-                ).value
-            );
-
-        const location =
-            document.getElementById(
-                "propertyLocation"
-            ).value.trim();
-
-        const description =
-            document.getElementById(
-                "propertyDescription"
-            ).value.trim();
-
-        const files =
-            [...selectedPropertyPhotos];
-
-
-        /* CREATE PROPERTY */
-
-        const propertyResponse =
-            await fetch(
-                SUPABASE_URL +
-                "/rest/v1/property_listings",
-                {
-                    method:"POST",
-                    headers:{
-                        "apikey":SUPABASE_KEY,
-                        "Authorization":
-                            "Bearer " +
-                            auth.token,
-                        "Content-Type":
-                            "application/json",
-                        "Prefer":
-                            "return=representation"
-                    },
-                    body:JSON.stringify({
-
-                        user_id:
-                            auth.user.id,
-
-                        title:title,
-
-                        property_type:
-                            category,
-
-                        listing_type:
-                            listingType,
-
-                        price:price,
-
-                        location:location,
-
-                        description:description,
-
-                        status:"available"
-
-                    })
-                }
-            );
-
-        if(!propertyResponse.ok){
-
-            throw new Error(
-                await propertyResponse.text()
-            );
-
-        }
-
-        const created =
-            await propertyResponse.json();
-
-        const property =
-            Array.isArray(created)
-                ? created[0]
-                : created;
-
-        if(
-            !property ||
-            !property.id
-        ){
-
-            throw new Error(
-                "Property was created but its ID was not returned."
-            );
-
-        }
-
-
-        /* UPLOAD PHOTOS */
-
-        const uploadedImages = [];
-
-        for(
-            let index = 0;
-            index < files.length;
-            index++
-        ){
-
-            const file = files[index];
-
-            const extension =
-                (
-                    file.name
-                        .split(".")
-                        .pop() ||
-                    "jpg"
-                ).toLowerCase();
-
-            const randomId =
-                Date.now() +
-                "-" +
-                Math.random()
-                    .toString(36)
-                    .substring(2,10);
-
-            const storagePath =
-                auth.user.id +
-                "/" +
-                property.id +
-                "/" +
-                randomId +
-                "." +
-                extension;
-
-            const uploadResponse =
-                await fetch(
-                    SUPABASE_URL +
-                    "/storage/v1/object/" +
-                    PROPERTY_BUCKET +
-                    "/" +
-                    storagePath,
-                    {
-                        method:"POST",
-                        headers:{
-                            "apikey":SUPABASE_KEY,
-                            "Authorization":
-                                "Bearer " +
-                                auth.token,
-                            "Content-Type":
-                                file.type,
-                            "x-upsert":"false"
-                        },
-                        body:file
-                    }
+                    "submitPropertyBtn"
                 );
 
-            if(!uploadResponse.ok){
 
-                throw new Error(
-                    "Could not upload " +
-                    file.name +
-                    ": " +
-                    await uploadResponse.text()
-                );
+            submitButton.disabled =
+                true;
 
-            }
-
-            const encodedPath =
-                storagePath
-                    .split("/")
-                    .map(
-                        part =>
-                            encodeURIComponent(part)
-                    )
-                    .join("/");
-
-            const publicUrl =
-                SUPABASE_URL +
-                "/storage/v1/object/public/" +
-                PROPERTY_BUCKET +
-                "/" +
-                encodedPath;
-
-            uploadedImages.push({
-
-                property_id:
-                    property.id,
-
-                user_id:
-                    auth.user.id,
-
-                image_url:
-                    publicUrl,
-
-                sort_order:
-                    index
-
-            });
-
-        }
+            submitButton.textContent =
+                "Publishing...";
 
 
-        /* SAVE PHOTO RECORDS */
+            try{
 
-        if(uploadedImages.length){
+                const title =
+                    document
+                        .getElementById(
+                            "propertyTitle"
+                        )
+                        .value
+                        .trim();
 
-            const imageResponse =
-                await fetch(
-                    SUPABASE_URL +
-                    "/rest/v1/property_images",
-                    {
-                        method:"POST",
-                        headers:{
-                            "apikey":SUPABASE_KEY,
-                            "Authorization":
-                                "Bearer " +
-                                auth.token,
-                            "Content-Type":
-                                "application/json",
-                            "Prefer":
-                                "return=minimal"
-                        },
-                        body:
-                            JSON.stringify(
-                                uploadedImages
+
+                const propertyType =
+                    document
+                        .getElementById(
+                            "propertyType"
+                        )
+                        .value;
+
+
+                const listingType =
+                    document
+                        .getElementById(
+                            "listingType"
+                        )
+                        .value;
+
+
+                const price =
+                    Number(
+                        document
+                            .getElementById(
+                                "propertyPrice"
                             )
+                            .value
+                    );
+
+
+                const location =
+                    document
+                        .getElementById(
+                            "propertyLocation"
+                        )
+                        .value
+                        .trim();
+
+
+                const description =
+                    document
+                        .getElementById(
+                            "propertyDescription"
+                        )
+                        .value
+                        .trim();
+
+
+                const imageInput =
+                    document.getElementById(
+                        "propertyImages"
+                    );
+
+
+                const files =
+                    Array.from(
+                        imageInput.files || []
+                    );
+
+
+                if(
+                    files.length > 10
+                ){
+
+                    throw new Error(
+                        "You can upload up to 10 property photos."
+                    );
+
+                }
+
+
+                for(const file of files){
+
+                    if(
+                        file.size >
+                        5 * 1024 * 1024
+                    ){
+
+                        throw new Error(
+                            file.name +
+                            " is larger than 5MB."
+                        );
+
                     }
+
+                }
+
+
+                const propertyPayload = {
+
+                    user_id:
+                        user.id,
+
+                    title:
+                        title,
+
+                    property_type:
+                        propertyType,
+
+                    listing_type:
+                        listingType,
+
+                    location:
+                        location,
+
+                    price:
+                        price,
+
+                    description:
+                        description,
+
+                    status:
+                        "available"
+
+                };
+
+
+                const propertyResponse =
+                    await fetch(
+
+                        SUPABASE_URL +
+                        "/rest/v1/property_listings",
+
+                        {
+                            method:"POST",
+
+                            headers:{
+                                ...authHeaders(),
+                                "Prefer":
+                                    "return=representation"
+                            },
+
+                            body:
+                                JSON.stringify(
+                                    propertyPayload
+                                )
+
+                        }
+
+                    );
+
+
+                const propertyText =
+                    await propertyResponse.text();
+
+
+                let propertyData;
+
+
+                try{
+
+                    propertyData =
+                        propertyText
+                            ? JSON.parse(
+                                propertyText
+                            )
+                            : [];
+
+                }catch(error){
+
+                    propertyData = [];
+
+                }
+
+
+                if(
+                    !propertyResponse.ok
+                ){
+
+                    throw new Error(
+                        propertyData?.message ||
+                        propertyData?.hint ||
+                        propertyText ||
+                        "Could not create property."
+                    );
+
+                }
+
+
+                const property =
+                    Array.isArray(
+                        propertyData
+                    )
+                        ? propertyData[0]
+                        : propertyData;
+
+
+                if(
+                    !property ||
+                    !property.id
+                ){
+
+                    throw new Error(
+                        "Property was created but its ID was not returned."
+                    );
+
+                }
+
+
+                /* -----------------------------------------
+                   UPLOAD PHOTOS
+                ----------------------------------------- */
+
+                if(files.length){
+
+                    submitButton.textContent =
+                        "Uploading photos...";
+
+
+                    const uploadedImages = [];
+
+
+                    for(
+                        let index = 0;
+                        index < files.length;
+                        index++
+                    ){
+
+                        const imageRow =
+                            await uploadPropertyImage(
+                                files[index],
+                                property.id,
+                                user.id,
+                                index
+                            );
+
+
+                        uploadedImages.push(
+                            imageRow
+                        );
+
+                    }
+
+
+                    if(
+                        uploadedImages.length
+                    ){
+
+                        const imageResponse =
+                            await fetch(
+
+                                SUPABASE_URL +
+                                "/rest/v1/property_images",
+
+                                {
+                                    method:"POST",
+
+                                    headers:{
+                                        ...authHeaders(),
+                                        "Prefer":
+                                            "return=minimal"
+                                    },
+
+                                    body:
+                                        JSON.stringify(
+                                            uploadedImages
+                                        )
+
+                                }
+
+                            );
+
+
+                        if(
+                            !imageResponse.ok
+                        ){
+
+                            const imageError =
+                                await imageResponse.text();
+
+
+                            console.error(
+                                "Property image database error:",
+                                imageError
+                            );
+
+                            showToast(
+                                "Property posted, but some photo records could not be saved."
+                            );
+
+                        }
+
+                    }
+
+                }
+
+
+                showToast(
+                    "Property published successfully."
                 );
 
-            if(!imageResponse.ok){
 
-                throw new Error(
-                    "Property was published, but the photo records could not be saved."
+                document
+                    .getElementById(
+                        "propertyForm"
+                    )
+                    .reset();
+
+
+                document
+                    .getElementById(
+                        "photoPreview"
+                    )
+                    .innerHTML = "";
+
+
+                await loadProperties();
+
+
+                window.scrollTo({
+                    top:0,
+                    behavior:"smooth"
+                });
+
+
+            }catch(error){
+
+                console.error(
+                    "Publish property error:",
+                    error
                 );
+
+                showToast(
+                    error.message ||
+                    "Unable to publish property."
+                );
+
+            }finally{
+
+                submitButton.disabled =
+                    false;
+
+                submitButton.textContent =
+                    "Publish Property";
 
             }
 
         }
-
-
-        /* RESET */
-
-        document
-            .getElementById("propertyForm")
-            .reset();
-
-        selectedPropertyPhotos = [];
-
-        renderPhotoPreviews();
-
-        closeModal("postModal");
-
-        showToast(
-            files.length
-                ? "Property and photos published successfully."
-                : "Property published successfully."
-        );
-
-        await loadProperties();
-
-    }catch(error){
-
-        console.error(
-            "Publish property error:",
-            error
-        );
-
-        showToast(
-            error.message ||
-            "Could not publish property."
-        );
-
-    }finally{
-
-        publishBtn.disabled = false;
-        publishBtn.textContent = "Publish Property";
-
-    }
-
-}
+    );
 
 
 /* =========================================================
-   INITIALIZE
+   FILTER BUTTONS
+========================================================= */
+
+document
+    .querySelectorAll(
+        ".filter-btn"
+    )
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            function(){
+
+                document
+                    .querySelectorAll(
+                        ".filter-btn"
+                    )
+                    .forEach(
+                        item =>
+                            item.classList.remove(
+                                "active"
+                            )
+                    );
+
+
+                this.classList.add(
+                    "active"
+                );
+
+
+                currentFilter =
+                    this.dataset.filter ||
+                    "all";
+
+
+                applyFilters();
+
+            }
+        );
+
+    });
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+document
+    .getElementById("searchInput")
+    .addEventListener(
+        "input",
+        applyFilters
+    );
+
+
+/* =========================================================
+   MODAL CLICK OUTSIDE
+========================================================= */
+
+document
+    .getElementById("detailModal")
+    .addEventListener(
+        "click",
+        function(event){
+
+            if(
+                event.target === this
+            ){
+
+                closeDetailModal();
+
+            }
+
+        }
+    );
+
+
+document
+    .getElementById("imageViewer")
+    .addEventListener(
+        "click",
+        function(event){
+
+            if(
+                event.target === this
+            ){
+
+                closeImageViewer();
+
+            }
+
+        }
+    );
+
+
+/* =========================================================
+   KEYBOARD CONTROLS
 ========================================================= */
 
 document.addEventListener(
-    "DOMContentLoaded",
-    () => {
+    "keydown",
+    function(event){
 
-        renderPhotoPreviews();
+        if(event.key === "Escape"){
 
-        loadProperties();
+            closeDetailModal();
+
+            closeImageViewer();
+
+        }
+
+
+        if(
+            document
+                .getElementById(
+                    "imageViewer"
+                )
+                .classList.contains("show")
+        ){
+
+            if(event.key === "ArrowLeft"){
+
+                viewerPrevious();
+
+            }
+
+            if(event.key === "ArrowRight"){
+
+                viewerNext();
+
+            }
+
+        }
 
     }
 );
 
+
+/* =========================================================
+   START
+========================================================= */
+
+loadProperties();
+
 </script>
 
 </body>
+
 </html>
