@@ -1132,30 +1132,7 @@ document.body.classList.add(
     "modal-open"
 );
 
-
-/* ---------------------------------------------------
-   CLOSE BUSINESS DETAILS
---------------------------------------------------- */
-
-const closeBusinessDetailsButton =
-    modal.querySelector(
-        '[data-close="businessDetailsModal"]'
-    );
-
-if (closeBusinessDetailsButton) {
-
-    closeBusinessDetailsButton.onclick =
-        function (event) {
-
-            event.preventDefault();
-            event.stopPropagation();
-
-            App.closeModal(modal);
-        };
-}
-
-}
-
+    }           
             document
                 .querySelectorAll(
                     "#addBusinessBtn, .add-business-btn, .nav-add-button, #plusBtn, .plus-btn, .floating-add-btn, [data-action='add-business']"
@@ -4524,10 +4501,10 @@ window.showBusinessDetails = async function (business) {
                         "LosOja: Navigating to business chat:",
                         chatUrl
                     );
-
-                    /* -------------------------------------
+                   
+  /* -------------------------------------
                        CLOSE BUSINESS DETAILS
-                    ------------------------------------- */
+        ------------------------------------- */
 
                     try {
 
