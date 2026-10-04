@@ -1057,166 +1057,20 @@
 
         bindBusinessButtons() {
 
-            document.addEventListener(
-                "click",
-                function (event) {
+            /*
+             * Business cards are already handled by
+             * businesses.js using:
+             *
+             * onclick="openBusiness('${id}')"
+             *
+             * Do not add another document click handler here.
+             * This keeps the existing business-card functionality
+             * untouched.
+             */
 
-                    const button =
-                        event.target.closest(
-                            "[data-business-id]"
-                        );
-
-                    if (!button) {
-                        return;
-                    }
-
-                    /*
-                    -------------------------------------------------
-                    Ignore buttons/links inside the business card.
-                    -------------------------------------------------
-                    */
-
-                    if (
-                        event.target.closest(
-                            "button, a, input, select, textarea"
-                        )
-                    ) {
-                        return;
-                    }
-
-                    const businessId =
-                        button.getAttribute(
-                            "data-business-id"
-                        );
-
-                    if (!businessId) {
-                        console.warn(
-                            "LosOja: Business ID not found."
-                        );
-                        return;
-                    }
-
-                    /*
-                    -------------------------------------------------
-                    Find the complete business object.
-                    -------------------------------------------------
-                    */
-
-                    let business = null;
-
-                    if (
-                        Array.isArray(
-                            window.losojaBusinesses
-                        )
-                    ) {
-
-                        business =
-                            window.losojaBusinesses.find(
-                                item =>
-                                    String(item.id) ===
-                                    String(businessId)
-                            );
-                    }
-
-                    /*
-                    -------------------------------------------------
-                    Fallback business information from card.
-                    -------------------------------------------------
-                    */
-
-                    if (!business) {
-
-                        business = {
-
-                            id: businessId,
-
-                            name:
-                                button.dataset.name ||
-                                button.querySelector(
-                                    ".business-name, h3, h2"
-                                )?.textContent?.trim() ||
-                                "Business",
-
-                            category:
-                                button.dataset.category ||
-                                "",
-
-                            location:
-                                button.dataset.location ||
-                                "",
-
-                            phone:
-                                button.dataset.phone ||
-                                "",
-
-                            description:
-                                button.dataset.description ||
-                                "",
-
-                            user_id:
-                                button.dataset.userId ||
-                                "",
-
-                            image:
-                                button.dataset.image ||
-                                ""
-
-                        };
-                    }
-
-                    /*
-                    =================================================
-                    OPEN BUSINESS DETAILS
-                    =================================================
-                    */
-
-                    event.preventDefault();
-                    event.stopPropagation();
-
-                    if (
-                        typeof window.showBusinessDetails ===
-                        "function"
-                    ) {
-
-                        window.showBusinessDetails(
-                            business
-                        );
-
-                        return;
-                    }
-
-                    /*
-                    -------------------------------------------------
-                    Fallback to existing businesses.js function.
-                    -------------------------------------------------
-                    */
-
-                    if (
-                        typeof window.openBusiness ===
-                        "function"
-                    ) {
-
-                        window.openBusiness(
-                            business
-                        );
-
-                        return;
-                    }
-
-                    console.error(
-                        "LosOja: Business details function is not available."
-                    );
-
-                }
-            );
+            return;
 
         },
-
-
-        /* =================================================
-           ADD BUSINESS
-        ================================================= */
-
 
         /* =================================================
            ADD BUSINESS
