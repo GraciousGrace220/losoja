@@ -634,13 +634,9 @@ window.getCurrentUser =
         const token =
             getAccessToken();
 
-
         if (!token) {
-
             return null;
-
         }
-
 
         try {
 
@@ -658,22 +654,6 @@ window.getCurrentUser =
             return null;
 
         }
-
-    };
-
-
-window.getSupabaseSession =
-    function () {
-
-        return getSession();
-
-    };
-
-
-window.getSupabaseAccessToken =
-    function () {
-
-        return getAccessToken();
 
     };
 
