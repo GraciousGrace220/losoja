@@ -269,7 +269,7 @@
            MODAL CLOSE BUTTONS
         ================================================= */
 
-        bindModalClosers() {
+               bindModalClosers() {
 
             document.addEventListener(
                 "click",
@@ -277,7 +277,7 @@
 
                     const closeButton =
                         event.target.closest(
-                            ".modal-close"
+                            ".modal-close, .close-modal"
                         );
 
                     if (closeButton) {
@@ -287,7 +287,9 @@
                                 ".modal-overlay, .modal"
                             );
 
-                        this.closeModal(modal);
+                        if (modal) {
+                            this.closeModal(modal);
+                        }
 
                         return;
                     }
@@ -327,8 +329,6 @@
             );
 
         },
-
-
         /* =================================================
            MOBILE MENU
         ================================================= */
@@ -3893,7 +3893,7 @@
     };
 
 
-    /* =====================================================
+       /* =====================================================
        BUSINESS DETAILS
     ===================================================== */
 
@@ -3904,6 +3904,7 @@
                 "LosOja: Opening business details:",
                 business
             );
+
 
             if (!business) {
 
@@ -3933,189 +3934,235 @@
             }
 
 
-            /* =================================================
-               BUSINESS DETAILS CONTENT
-            ================================================= */
-
             const content =
                 document.getElementById(
                     "businessDetailsContent"
                 );
 
 
-            if (content) {
+            if (!content) {
 
-                const escapeHTML =
-                    function (value) {
+                console.error(
+                    "LosOja: businessDetailsContent not found."
+                );
 
-                        const div =
-                            document.createElement(
-                                "div"
-                            );
+                return;
 
-                        div.textContent =
-                            value == null
-                                ? ""
-                                : String(value);
-
-                        return div.innerHTML;
-
-                    };
+            }
 
 
-                const businessName =
-                    escapeHTML(
-                        business.name ||
-                        "Business"
-                    );
+            /* =================================================
+               HELPERS
+            ================================================= */
+
+            const escapeHTML =
+                function (value) {
+
+                    const div =
+                        document.createElement(
+                            "div"
+                        );
+
+                    div.textContent =
+                        value == null
+                            ? ""
+                            : String(value);
+
+                    return div.innerHTML;
+
+                };
 
 
-                const businessCategory =
-                    escapeHTML(
-                        business.category ||
-                        "Not specified"
-                    );
+            const businessName =
+                escapeHTML(
+                    business.name ||
+                    "Business"
+                );
 
 
-                const businessLocation =
-                    escapeHTML(
-                        business.location ||
-                        "Nigeria"
-                    );
+            const businessCategory =
+                escapeHTML(
+                    business.category ||
+                    "Not specified"
+                );
 
 
-                const businessPhone =
-                    escapeHTML(
-                        business.phone ||
-                        "Not provided"
-                    );
+            const businessLocation =
+                escapeHTML(
+                    business.location ||
+                    "Nigeria"
+                );
 
 
-                const businessDescription =
-                    escapeHTML(
-                        business.description ||
-                        "No description provided."
-                    );
+            const businessPhone =
+                escapeHTML(
+                    business.phone ||
+                    "Not provided"
+                );
 
 
-                const businessRating =
-                    business.rating
-                        ? escapeHTML(
-                            business.rating
-                        )
-                        : "No rating yet";
+            const businessDescription =
+                escapeHTML(
+                    business.description ||
+                    "No description provided."
+                );
 
 
-                const businessImage =
-                    business.image_url ||
-                    business.image ||
-                    "";
+            const businessRating =
+                business.rating
+                    ? escapeHTML(
+                        business.rating
+                    )
+                    : "No rating yet";
 
 
-                content.innerHTML = `
+            const businessImage =
+                business.image_url ||
+                business.image ||
+                "";
 
-                    ${
-                        businessImage
-                            ? `
-                                <div
+
+            /* =================================================
+               RENDER BUSINESS DETAILS
+            ================================================= */
+
+            content.innerHTML = `
+
+                ${
+                    businessImage
+                        ? `
+                            <div
+                                style="
+                                    width:100%;
+                                    margin-bottom:1rem;
+                                "
+                            >
+
+                                <img
+                                    src="${escapeHTML(
+                                        businessImage
+                                    )}"
+                                    alt="${businessName}"
                                     style="
                                         width:100%;
-                                        margin-bottom:1rem;
+                                        max-height:280px;
+                                        object-fit:cover;
+                                        border-radius:12px;
+                                        display:block;
+                                    "
+                                    onerror="
+                                        this.style.display='none';
                                     "
                                 >
 
-                                    <img
-                                        src="${escapeHTML(
-                                            businessImage
-                                        )}"
-                                        alt="${businessName}"
-                                        style="
-                                            width:100%;
-                                            max-height:280px;
-                                            object-fit:cover;
-                                            border-radius:12px;
-                                            display:block;
-                                        "
-                                        onerror="
-                                            this.style.display='none';
-                                        "
-                                    >
-
-                                </div>
-                            `
-                            : ""
-                    }
+                            </div>
+                        `
+                        : ""
+                }
 
 
-                    <h2
-                        style="
-                            margin-bottom:0.5rem;
-                        "
-                    >
-                        ${businessName}
-                    </h2>
+                <h2
+                    style="
+                        margin-bottom:0.5rem;
+                    "
+                >
+                    ${businessName}
+                </h2>
 
 
-                    <p
-                        style="
-                            margin:0.35rem 0;
-                        "
-                    >
-                        <strong>Category:</strong>
-                        ${businessCategory}
-                    </p>
+                <p style="margin:0.35rem 0;">
+                    <strong>Category:</strong>
+                    ${businessCategory}
+                </p>
 
 
-                    <p
-                        style="
-                            margin:0.35rem 0;
-                        "
-                    >
-                        <strong>Location:</strong>
-                        ${businessLocation}
-                    </p>
+                <p style="margin:0.35rem 0;">
+                    <strong>Location:</strong>
+                    ${businessLocation}
+                </p>
 
+
+                <p style="margin:0.35rem 0;">
+                    <strong>Phone:</strong>
+                    ${businessPhone}
+                </p>
+
+
+                <p style="margin:0.35rem 0;">
+                    <strong>Rating:</strong>
+                    ${businessRating}
+                </p>
+
+
+                <div
+                    style="
+                        margin-top:1rem;
+                    "
+                >
+
+                    <strong>
+                        About this business
+                    </strong>
 
                     <p
                         style="
-                            margin:0.35rem 0;
+                            margin-top:0.4rem;
+                            line-height:1.6;
                         "
                     >
-                        <strong>Phone:</strong>
-                        ${businessPhone}
+                        ${businessDescription}
                     </p>
 
+                </div>
 
-                    <p
+
+                <div
+                    style="
+                        display:flex;
+                        flex-wrap:wrap;
+                        gap:0.75rem;
+                        margin-top:1.25rem;
+                    "
+                >
+
+                    <button
+                        type="button"
+                        id="businessChatBtn"
+                        class="btn btn-primary"
+                    >
+                        Chat with Business
+                    </button>
+
+
+                    <button
+                        type="button"
+                        id="businessEscrowBtn"
+                        class="btn btn-secondary"
+                    >
+                        Create Escrow
+                    </button>
+
+                </div>
+
+
+                <div
+                    id="businessOwnerControls"
+                    style="
+                        display:none;
+                        margin-top:1.25rem;
+                        padding-top:1rem;
+                        border-top:1px solid #e5e7eb;
+                    "
+                >
+
+                    <strong
                         style="
-                            margin:0.35rem 0;
+                            display:block;
+                            margin-bottom:0.75rem;
                         "
                     >
-                        <strong>Rating:</strong>
-                        ${businessRating}
-                    </p>
-
-
-                    <div
-                        style="
-                            margin-top:1rem;
-                        "
-                    >
-
-                        <strong>
-                            About this business
-                        </strong>
-
-                        <p
-                            style="
-                                margin-top:0.4rem;
-                                line-height:1.6;
-                            "
-                        >
-                            ${businessDescription}
-                        </p>
-
-                    </div>
+                        Business Owner Controls
+                    </strong>
 
 
                     <div
@@ -4123,41 +4170,73 @@
                             display:flex;
                             flex-wrap:wrap;
                             gap:0.75rem;
-                            margin-top:1.25rem;
                         "
                     >
 
                         <button
                             type="button"
-                            id="businessChatBtn"
-                            class="btn btn-primary"
+                            id="businessEditBtn"
+                            class="btn btn-secondary"
                         >
-                            Chat with Business
+                            Edit Business
                         </button>
 
 
                         <button
                             type="button"
-                            id="businessEscrowBtn"
+                            id="businessDeleteBtn"
                             class="btn btn-secondary"
+                            style="
+                                border-color:#dc2626;
+                                color:#dc2626;
+                            "
                         >
-                            Create Escrow
+                            Delete Business
                         </button>
 
                     </div>
 
-                `;
+                </div>
 
-            }
-                  /* =================================================
-           OPEN BUSINESS DETAILS MODAL
-        ================================================= */
-
-        modal.classList.add("active"); 
+            `;
 
 
             /* =================================================
-               BUSINESS CHAT
+               OPEN MODAL
+            ================================================= */
+
+            modal.classList.remove(
+                "hidden"
+            );
+
+            modal.classList.add(
+                "active"
+            );
+
+            modal.style.display =
+                "flex";
+
+            modal.style.visibility =
+                "visible";
+
+            modal.style.opacity =
+                "1";
+
+            modal.style.pointerEvents =
+                "auto";
+
+            modal.setAttribute(
+                "aria-hidden",
+                "false"
+            );
+
+            document.body.classList.add(
+                "modal-open"
+            );
+
+
+            /* =================================================
+               CHAT WITH BUSINESS
             ================================================= */
 
             const chatButton =
@@ -4173,10 +4252,6 @@
 
                         try {
 
-                            /* -----------------------------------------
-                               BUSINESS OWNER CHECK
-                            ----------------------------------------- */
-
                             if (
                                 !business.user_id
                             ) {
@@ -4190,10 +4265,6 @@
 
                             }
 
-
-                            /* -----------------------------------------
-                               LOGIN CHECK
-                            ----------------------------------------- */
 
                             if (
                                 typeof window.getCurrentUser !==
@@ -4214,10 +4285,6 @@
                                 await window.getCurrentUser();
 
 
-                            /* -----------------------------------------
-                               NOT LOGGED IN
-                            ----------------------------------------- */
-
                             if (!currentUser) {
 
                                 if (
@@ -4229,8 +4296,18 @@
 
                                 } else {
 
-                                    window.location.href =
-                                        "index.html";
+                                    const loginModal =
+                                        document.getElementById(
+                                            "loginModal"
+                                        );
+
+                                    if (loginModal) {
+
+                                        App.openModal(
+                                            loginModal
+                                        );
+
+                                    }
 
                                 }
 
@@ -4238,10 +4315,6 @@
 
                             }
 
-
-                            /* -----------------------------------------
-                               PREVENT SELF CHAT
-                            ----------------------------------------- */
 
                             if (
                                 String(
@@ -4253,8 +4326,8 @@
                             ) {
 
                                 App.showToast(
-                                    "You cannot chat with yourself.",
-                                    "error"
+                                    "This is your business.",
+                                    "info"
                                 );
 
                                 return;
@@ -4262,9 +4335,9 @@
                             }
 
 
-                            /* -----------------------------------------
-                               SAVE BUSINESS CHAT CONTEXT
-                            ----------------------------------------- */
+                            /* -------------------------------------
+                               SAVE CHAT CONTEXT
+                            ------------------------------------- */
 
                             try {
 
@@ -4300,9 +4373,18 @@
                             }
 
 
-                            /* -----------------------------------------
-                               BUILD CHAT URL
-                            ----------------------------------------- */
+                            /* -------------------------------------
+                               CLOSE DETAILS MODAL
+                            ------------------------------------- */
+
+                            App.closeModal(
+                                modal
+                            );
+
+
+                            /* -------------------------------------
+                               OPEN CHAT
+                            ------------------------------------- */
 
                             const ownerId =
                                 encodeURIComponent(
@@ -4313,11 +4395,13 @@
 
 
                             const businessId =
-                                encodeURIComponent(
-                                    String(
-                                        business.id || ""
+                                business.id
+                                    ? encodeURIComponent(
+                                        String(
+                                            business.id
+                                        )
                                     )
-                                );
+                                    : "";
 
 
                             let chatUrl =
@@ -4336,24 +4420,13 @@
 
                             console.log(
                                 "LosOja: Opening business chat:",
-                                {
-                                    businessId:
-                                        business.id,
-
-                                    businessName:
-                                        business.name,
-
-                                    ownerId:
-                                        business.user_id,
-
-                                    chatUrl:
-                                        chatUrl
-                                }
+                                chatUrl
                             );
 
 
-                            window.location.href =
-                                chatUrl;
+                            window.location.assign(
+                                chatUrl
+                            );
 
 
                         } catch (error) {
@@ -4377,7 +4450,7 @@
 
 
             /* =================================================
-               CREATE ESCROW BUTTON
+               CREATE ESCROW
             ================================================= */
 
             const escrowButton =
@@ -4462,14 +4535,35 @@
 
 
                             /*
-                             * Keep the existing escrow system.
-                             * For now, send the user to the existing
-                             * balance/escrow area rather than creating
-                             * a second escrow system here.
+                             * Keep the existing LosOja escrow system.
+                             * Do not create a second escrow flow here.
                              */
+
+                            sessionStorage.setItem(
+                                "losoja_escrow_business",
+                                JSON.stringify({
+
+                                    business_id:
+                                        business.id || "",
+
+                                    business_name:
+                                        business.name || "",
+
+                                    seller_id:
+                                        business.user_id || ""
+
+                                })
+                            );
+
+
+                            App.closeModal(
+                                modal
+                            );
+
 
                             window.location.href =
                                 "balance.html";
+
 
                         } catch (error) {
 
@@ -4490,8 +4584,929 @@
 
             }
 
-        };
 
+            /* =================================================
+               CHECK BUSINESS OWNER
+            ================================================= */
+
+            const ownerControls =
+                document.getElementById(
+                    "businessOwnerControls"
+                );
+
+
+            const editButton =
+                document.getElementById(
+                    "businessEditBtn"
+                );
+
+
+            const deleteButton =
+                document.getElementById(
+                    "businessDeleteBtn"
+                );
+
+
+            const checkBusinessOwner =
+                async function () {
+
+                    if (
+                        !ownerControls ||
+                        !business.user_id ||
+                        typeof window.getCurrentUser !==
+                        "function"
+                    ) {
+
+                        return;
+
+                    }
+
+
+                    try {
+
+                        const currentUser =
+                            await window.getCurrentUser();
+
+
+                        if (
+                            currentUser &&
+                            String(
+                                currentUser.id
+                            ) ===
+                            String(
+                                business.user_id
+                            )
+                        ) {
+
+                            ownerControls.style.display =
+                                "block";
+
+                        }
+
+                    } catch (ownerError) {
+
+                        console.warn(
+                            "LosOja: Could not check business owner.",
+                            ownerError
+                        );
+
+                    }
+
+                };
+
+
+            checkBusinessOwner();
+
+
+            /* =================================================
+               EDIT BUSINESS
+            ================================================= */
+
+            if (editButton) {
+
+                editButton.onclick =
+                    async function () {
+
+                        try {
+
+                            if (
+                                typeof window.getCurrentUser !==
+                                "function"
+                            ) {
+
+                                App.showToast(
+                                    "Please login before editing your business.",
+                                    "error"
+                                );
+
+                                return;
+
+                            }
+
+
+                            const currentUser =
+                                await window.getCurrentUser();
+
+
+                            if (
+                                !currentUser ||
+                                String(
+                                    currentUser.id
+                                ) !==
+                                String(
+                                    business.user_id
+                                )
+                            ) {
+
+                                App.showToast(
+                                    "Only the business owner can edit this business.",
+                                    "error"
+                                );
+
+                                return;
+
+                            }
+
+
+                            let editModal =
+                                document.getElementById(
+                                    "editBusinessModal"
+                                );
+
+
+                            if (!editModal) {
+
+                                editModal =
+                                    document.createElement(
+                                        "div"
+                                    );
+
+                                editModal.id =
+                                    "editBusinessModal";
+
+                                editModal.className =
+                                    "modal hidden";
+
+                                editModal.setAttribute(
+                                    "aria-hidden",
+                                    "true"
+                                );
+
+
+                                editModal.innerHTML = `
+
+                                    <div
+                                        class="modal-content"
+                                        style="
+                                            max-width:600px;
+                                            width:100%;
+                                        "
+                                    >
+
+                                        <div
+                                            class="modal-header"
+                                        >
+
+                                            <h2>
+                                                Edit Business
+                                            </h2>
+
+                                            <button
+                                                type="button"
+                                                class="close-modal"
+                                                aria-label="Close"
+                                            >
+                                                ×
+                                            </button>
+
+                                        </div>
+
+
+                                        <form
+                                            id="editBusinessForm"
+                                        >
+
+                                            <div
+                                                class="form-group"
+                                            >
+
+                                                <label>
+                                                    Business Name
+                                                </label>
+
+                                                <input
+                                                    type="text"
+                                                    id="editBusinessName"
+                                                    required
+                                                >
+
+                                            </div>
+
+
+                                            <div
+                                                class="form-group"
+                                            >
+
+                                                <label>
+                                                    Category
+                                                </label>
+
+                                                <input
+                                                    type="text"
+                                                    id="editBusinessCategory"
+                                                    required
+                                                >
+
+                                            </div>
+
+
+                                            <div
+                                                class="form-group"
+                                            >
+
+                                                <label>
+                                                    Location
+                                                </label>
+
+                                                <input
+                                                    type="text"
+                                                    id="editBusinessLocation"
+                                                    required
+                                                >
+
+                                            </div>
+
+
+                                            <div
+                                                class="form-group"
+                                            >
+
+                                                <label>
+                                                    Phone
+                                                </label>
+
+                                                <input
+                                                    type="tel"
+                                                    id="editBusinessPhone"
+                                                >
+
+                                            </div>
+
+
+                                            <div
+                                                class="form-group"
+                                            >
+
+                                                <label>
+                                                    Description
+                                                </label>
+
+                                                <textarea
+                                                    id="editBusinessDescription"
+                                                    rows="5"
+                                                ></textarea>
+
+                                            </div>
+
+
+                                            <button
+                                                type="submit"
+                                                class="btn btn-primary"
+                                                id="saveBusinessEditBtn"
+                                            >
+                                                Save Changes
+                                            </button>
+
+                                        </form>
+
+                                    </div>
+
+                                `;
+
+
+                                document.body.appendChild(
+                                    editModal
+                                );
+
+
+                                const editForm =
+                                    editModal.querySelector(
+                                        "#editBusinessForm"
+                                    );
+
+
+                                if (editForm) {
+
+                                    editForm.addEventListener(
+                                        "submit",
+                                        async event => {
+
+                                            event.preventDefault();
+
+
+                                            const saveButton =
+                                                document.getElementById(
+                                                    "saveBusinessEditBtn"
+                                                );
+
+
+                                            if (saveButton) {
+
+                                                saveButton.disabled =
+                                                    true;
+
+                                                saveButton.textContent =
+                                                    "Saving...";
+
+                                            }
+
+
+                                            try {
+
+                                                const accessToken =
+                                                    typeof window.getSupabaseAccessToken ===
+                                                    "function"
+                                                        ? window.getSupabaseAccessToken()
+                                                        : null;
+
+
+                                                if (!accessToken) {
+
+                                                    throw new Error(
+                                                        "Your login session has expired. Please login again."
+                                                    );
+
+                                                }
+
+
+                                                const SUPABASE_URL =
+                                                    "https://ycxshwgeebskdozmornh.supabase.co";
+
+
+                                                const SUPABASE_KEY =
+                                                    "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
+
+
+                                                const updatedBusiness = {
+
+                                                    name:
+                                                        document.getElementById(
+                                                            "editBusinessName"
+                                                        )?.value.trim() || "",
+
+                                                    category:
+                                                        document.getElementById(
+                                                            "editBusinessCategory"
+                                                        )?.value.trim() || "",
+
+                                                    location:
+                                                        document.getElementById(
+                                                            "editBusinessLocation"
+                                                        )?.value.trim() || "",
+
+                                                    phone:
+                                                        document.getElementById(
+                                                            "editBusinessPhone"
+                                                        )?.value.trim() || "",
+
+                                                    description:
+                                                        document.getElementById(
+                                                            "editBusinessDescription"
+                                                        )?.value.trim() || ""
+
+                                                };
+
+
+                                                if (
+                                                    !updatedBusiness.name ||
+                                                    !updatedBusiness.category ||
+                                                    !updatedBusiness.location
+                                                ) {
+
+                                                    throw new Error(
+                                                        "Business name, category and location are required."
+                                                    );
+
+                                                }
+
+
+                                                const updateResponse =
+                                                    await fetch(
+                                                        SUPABASE_URL +
+                                                        "/rest/v1/businesses?id=eq." +
+                                                        encodeURIComponent(
+                                                            String(
+                                                                business.id
+                                                            )
+                                                        ) +
+                                                        "&user_id=eq." +
+                                                        encodeURIComponent(
+                                                            String(
+                                                                currentUser.id
+                                                            )
+                                                        ),
+                                                        {
+
+                                                            method:
+                                                                "PATCH",
+
+                                                            headers: {
+
+                                                                apikey:
+                                                                    SUPABASE_KEY,
+
+                                                                Authorization:
+                                                                    "Bearer " +
+                                                                    accessToken,
+
+                                                                "Content-Type":
+                                                                    "application/json",
+
+                                                                Prefer:
+                                                                    "return=representation"
+
+                                                            },
+
+                                                            body:
+                                                                JSON.stringify(
+                                                                    updatedBusiness
+                                                                )
+
+                                                        }
+                                                    );
+
+
+                                                const updateText =
+                                                    await updateResponse.text();
+
+
+                                                let updateResult =
+                                                    null;
+
+
+                                                try {
+
+                                                    updateResult =
+                                                        updateText
+                                                            ? JSON.parse(
+                                                                updateText
+                                                            )
+                                                            : null;
+
+                                                } catch (
+                                                    parseError
+                                                ) {
+
+                                                    updateResult =
+                                                        updateText;
+
+                                                }
+
+
+                                                if (
+                                                    !updateResponse.ok
+                                                ) {
+
+                                                    console.error(
+                                                        "LosOja business update error:",
+                                                        updateResult
+                                                    );
+
+                                                    throw new Error(
+                                                        updateResult?.message ||
+                                                        updateResult?.hint ||
+                                                        "Could not update this business."
+                                                    );
+
+                                                }
+
+
+                                                const updatedRows =
+                                                    Array.isArray(
+                                                        updateResult
+                                                    )
+                                                        ? updateResult
+                                                        : [];
+
+
+                                                if (
+                                                    updatedRows.length === 0
+                                                ) {
+
+                                                    throw new Error(
+                                                        "The business was not updated. Please check your account permissions."
+                                                    );
+
+                                                }
+
+
+                                                Object.assign(
+                                                    business,
+                                                    updatedRows[0]
+                                                );
+
+
+                                                App.closeModal(
+                                                    editModal
+                                                );
+
+
+                                                App.showToast(
+                                                    "Business updated successfully.",
+                                                    "success"
+                                                );
+
+
+                                                /* Refresh business list */
+
+                                                if (
+                                                    typeof window.loadBusinesses ===
+                                                    "function"
+                                                ) {
+
+                                                    await window.loadBusinesses(
+                                                        true
+                                                    );
+
+                                                }
+
+
+                                                window.showBusinessDetails(
+                                                    business
+                                                );
+
+
+                                            } catch (
+                                                updateError
+                                            ) {
+
+                                                console.error(
+                                                    "LosOja edit business error:",
+                                                    updateError
+                                                );
+
+
+                                                App.showToast(
+                                                    updateError.message ||
+                                                    "Could not update the business.",
+                                                    "error"
+                                                );
+
+                                            } finally {
+
+                                                if (saveButton) {
+
+                                                    saveButton.disabled =
+                                                        false;
+
+                                                    saveButton.textContent =
+                                                        "Save Changes";
+
+                                                }
+
+                                            }
+
+                                        }
+                                    );
+
+                                }
+
+                            }
+
+
+                            /* Fill edit form */
+
+                            document.getElementById(
+                                "editBusinessName"
+                            ).value =
+                                business.name || "";
+
+
+                            document.getElementById(
+                                "editBusinessCategory"
+                            ).value =
+                                business.category || "";
+
+
+                            document.getElementById(
+                                "editBusinessLocation"
+                            ).value =
+                                business.location || "";
+
+
+                            document.getElementById(
+                                "editBusinessPhone"
+                            ).value =
+                                business.phone || "";
+
+
+                            document.getElementById(
+                                "editBusinessDescription"
+                            ).value =
+                                business.description || "";
+
+
+                            App.openModal(
+                                editModal
+                            );
+
+
+                        } catch (editError) {
+
+                            console.error(
+                                "LosOja edit business error:",
+                                editError
+                            );
+
+
+                            App.showToast(
+                                editError.message ||
+                                "Could not open business editor.",
+                                "error"
+                            );
+
+                        }
+
+                    };
+
+            }
+
+
+            /* =================================================
+               DELETE BUSINESS
+            ================================================= */
+
+            if (deleteButton) {
+
+                deleteButton.onclick =
+                    async function () {
+
+                        try {
+
+                            if (
+                                !business.id
+                            ) {
+
+                                App.showToast(
+                                    "This business cannot be deleted because its ID is missing.",
+                                    "error"
+                                );
+
+                                return;
+
+                            }
+
+
+                            if (
+                                typeof window.getCurrentUser !==
+                                "function"
+                            ) {
+
+                                App.showToast(
+                                    "Please login before deleting your business.",
+                                    "error"
+                                );
+
+                                return;
+
+                            }
+
+
+                            const currentUser =
+                                await window.getCurrentUser();
+
+
+                            if (
+                                !currentUser ||
+                                String(
+                                    currentUser.id
+                                ) !==
+                                String(
+                                    business.user_id
+                                )
+                            ) {
+
+                                App.showToast(
+                                    "Only the business owner can delete this business.",
+                                    "error"
+                                );
+
+                                return;
+
+                            }
+
+
+                            const confirmed =
+                                window.confirm(
+                                    "Delete " +
+                                    (
+                                        business.name ||
+                                        "this business"
+                                    ) +
+                                    " permanently?"
+                                );
+
+
+                            if (!confirmed) {
+                                return;
+                            }
+
+
+                            const accessToken =
+                                typeof window.getSupabaseAccessToken ===
+                                "function"
+                                    ? window.getSupabaseAccessToken()
+                                    : null;
+
+
+                            if (!accessToken) {
+
+                                App.showToast(
+                                    "Your login session has expired. Please login again.",
+                                    "error"
+                                );
+
+                                return;
+
+                            }
+
+
+                            const SUPABASE_URL =
+                                "https://ycxshwgeebskdozmornh.supabase.co";
+
+
+                            const SUPABASE_KEY =
+                                "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
+
+
+                            deleteButton.disabled =
+                                true;
+
+                            deleteButton.textContent =
+                                "Deleting...";
+
+
+                            const deleteResponse =
+                                await fetch(
+                                    SUPABASE_URL +
+                                    "/rest/v1/businesses?id=eq." +
+                                    encodeURIComponent(
+                                        String(
+                                            business.id
+                                        )
+                                    ) +
+                                    "&user_id=eq." +
+                                    encodeURIComponent(
+                                        String(
+                                            currentUser.id
+                                        )
+                                    ),
+                                    {
+
+                                        method:
+                                            "DELETE",
+
+                                        headers: {
+
+                                            apikey:
+                                                SUPABASE_KEY,
+
+                                            Authorization:
+                                                "Bearer " +
+                                                accessToken,
+
+                                            "Content-Type":
+                                                "application/json",
+
+                                            Prefer:
+                                                "return=representation"
+
+                                        }
+
+                                    }
+                                );
+
+
+                            const deleteText =
+                                await deleteResponse.text();
+
+
+                            let deleteResult =
+                                null;
+
+
+                            try {
+
+                                deleteResult =
+                                    deleteText
+                                        ? JSON.parse(
+                                            deleteText
+                                        )
+                                        : null;
+
+                            } catch (
+                                parseError
+                            ) {
+
+                                deleteResult =
+                                    deleteText;
+
+                            }
+
+
+                            if (
+                                !deleteResponse.ok
+                            ) {
+
+                                console.error(
+                                    "LosOja business delete error:",
+                                    deleteResult
+                                );
+
+                                throw new Error(
+                                    deleteResult?.message ||
+                                    deleteResult?.hint ||
+                                    "Could not delete this business."
+                                );
+
+                            }
+
+
+                            App.closeModal(
+                                modal
+                            );
+
+
+                            App.showToast(
+                                "Business deleted successfully.",
+                                "success"
+                            );
+
+
+                            /* Remove it from local list immediately */
+
+                            if (
+                                Array.isArray(
+                                    window.losojaBusinesses
+                                )
+                            ) {
+
+                                window.losojaBusinesses =
+                                    window.losojaBusinesses.filter(
+                                        item =>
+                                            String(
+                                                item.id
+                                            ) !==
+                                            String(
+                                                business.id
+                                            )
+                                    );
+
+                            }
+
+
+                            /* Refresh database list */
+
+                            if (
+                                typeof window.loadBusinesses ===
+                                "function"
+                            ) {
+
+                                await window.loadBusinesses(
+                                    true
+                                );
+
+                            } else if (
+                                typeof window.renderBusinesses ===
+                                "function" &&
+                                Array.isArray(
+                                    window.losojaBusinesses
+                                )
+                            ) {
+
+                                window.renderBusinesses(
+                                    window.losojaBusinesses
+                                );
+
+                            }
+
+
+                        } catch (
+                            deleteError
+                        ) {
+
+                            console.error(
+                                "LosOja delete business error:",
+                                deleteError
+                            );
+
+
+                            App.showToast(
+                                deleteError.message ||
+                                "Could not delete the business.",
+                                "error"
+                            );
+
+
+                        } finally {
+
+                            if (deleteButton) {
+
+                                deleteButton.disabled =
+                                    false;
+
+                                deleteButton.textContent =
+                                    "Delete Business";
+
+                            }
+
+                        }
+
+                    };
+
+            }
+
+        };
     /* =====================================================
        START APPLICATION
     ===================================================== */
