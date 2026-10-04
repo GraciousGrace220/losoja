@@ -5339,3 +5339,21 @@ Home | Explore | + | Saved | Account
         grid-template-columns: 1fr 1fr;
     }
 }
+.chat-nav-btn {
+    position: relative;
+}
+
+.chat-unread-dot {
+    display: none;
+    position: absolute;
+    top: 8px;
+    right: 20px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #16a34a;
+}
+
+.chat-unread-dot.visible {
+    display: block;
+}
