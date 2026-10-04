@@ -1123,17 +1123,38 @@
 
                 modal.style.display = "flex";
 
-                modal.setAttribute(
-                    "aria-hidden",
-                    "false"
-                );
+              modal.setAttribute(
+    "aria-hidden",
+    "false"
+);
 
-                document.body.classList.add(
-                    "modal-open"
-                );
+document.body.classList.add(
+    "modal-open"
+);
 
-            }
 
+/* ---------------------------------------------------
+   CLOSE BUSINESS DETAILS
+--------------------------------------------------- */
+
+const closeBusinessDetailsButton =
+    modal.querySelector(
+        '[data-close="businessDetailsModal"]'
+    );
+
+if (closeBusinessDetailsButton) {
+
+    closeBusinessDetailsButton.onclick =
+        function (event) {
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            App.closeModal(modal);
+        };
+}
+
+}
 
             document
                 .querySelectorAll(
