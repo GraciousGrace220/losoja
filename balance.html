@@ -486,23 +486,90 @@ function wait(ms) {
 
 
 /* =========================================================
+   EXTRACT TOKEN FROM ANY SESSION SHAPE
+========================================================= */
+
+function extractAccessToken(value) {
+
+    if (!value) {
+        return null;
+    }
+
+
+    if (
+        typeof value === "string" &&
+        value.trim()
+    ) {
+
+        return value.trim();
+
+    }
+
+
+    return (
+
+        value?.access_token ||
+
+        value?.session?.access_token ||
+
+        value?.data?.access_token ||
+
+        value?.data?.session?.access_token ||
+
+        value?.data?.session?.session?.access_token ||
+
+        value?.session?.session?.access_token ||
+
+        null
+
+    );
+
+}
+
+
+/* =========================================================
    GET ACCESS TOKEN
 ========================================================= */
 
 async function getAccessToken() {
 
     /*
-     * First give auth.js a moment to finish
-     * restoring the existing Supabase session.
+     * auth.js is already loaded before this page script.
+     * We still retry because restoring a Supabase session
+     * can be asynchronous.
      */
+
+    const delays = [
+        0,
+        300,
+        700,
+        1200,
+        2000
+    ];
+
 
     for (
         let attempt = 0;
-        attempt < 5;
+        attempt < delays.length;
         attempt++
     ) {
 
         try {
+
+            if (
+                delays[attempt] > 0
+            ) {
+
+                await wait(
+                    delays[attempt]
+                );
+
+            }
+
+
+            /* -----------------------------------------
+               PRIMARY LOSOJA SESSION VALIDATION
+            ----------------------------------------- */
 
             if (
                 typeof window.ensureValidSupabaseSession ===
@@ -511,12 +578,36 @@ async function getAccessToken() {
 
                 try {
 
-                    await window.ensureValidSupabaseSession();
+                    const sessionResult =
+                        await window.ensureValidSupabaseSession();
+
+
+                    /*
+                     * Important:
+                     * Some versions of auth.js return
+                     * the session from this function.
+                     */
+
+                    const token =
+                        extractAccessToken(
+                            sessionResult
+                        );
+
+
+                    if (token) {
+
+                        console.log(
+                            "LosOja: valid access token recovered from session validation."
+                        );
+
+                        return token;
+
+                    }
 
                 } catch (error) {
 
                     console.warn(
-                        "LosOja: session refresh check failed:",
+                        "LosOja: session validation failed:",
                         error
                     );
 
@@ -526,7 +617,7 @@ async function getAccessToken() {
 
 
             /* -----------------------------------------
-               PRIMARY AUTH HELPER
+               LOSOJA ACCESS TOKEN HELPER
             ----------------------------------------- */
 
             if (
@@ -536,8 +627,15 @@ async function getAccessToken() {
 
                 try {
 
-                    const token =
+                    const tokenResult =
                         await window.getSupabaseAccessToken();
+
+
+                    const token =
+                        extractAccessToken(
+                            tokenResult
+                        );
+
 
                     if (token) {
 
@@ -552,7 +650,7 @@ async function getAccessToken() {
                 } catch (error) {
 
                     console.warn(
-                        "LosOja: access token helper failed:",
+                        "LosOja: getSupabaseAccessToken failed:",
                         error
                     );
 
@@ -562,12 +660,57 @@ async function getAccessToken() {
 
 
             /* -----------------------------------------
-               DIRECT SESSION FALLBACK
+               OPTIONAL SESSION HELPER
+            ----------------------------------------- */
+
+            if (
+                typeof window.getSupabaseSession ===
+                "function"
+            ) {
+
+                try {
+
+                    const sessionResult =
+                        await window.getSupabaseSession();
+
+
+                    const token =
+                        extractAccessToken(
+                            sessionResult
+                        );
+
+
+                    if (token) {
+
+                        console.log(
+                            "LosOja: access token recovered from getSupabaseSession."
+                        );
+
+                        return token;
+
+                    }
+
+                } catch (error) {
+
+                    console.warn(
+                        "LosOja: getSupabaseSession failed:",
+                        error
+                    );
+
+                }
+
+            }
+
+
+            /* -----------------------------------------
+               DIRECT LOSOJA SUPABASE CLIENT
             ----------------------------------------- */
 
             if (
                 window.losojaSupabase &&
-                window.losojaSupabase.auth
+                window.losojaSupabase.auth &&
+                typeof window.losojaSupabase.auth.getSession ===
+                "function"
             ) {
 
                 try {
@@ -575,8 +718,12 @@ async function getAccessToken() {
                     const result =
                         await window.losojaSupabase.auth.getSession();
 
+
                     const token =
-                        result?.data?.session?.access_token;
+                        extractAccessToken(
+                            result
+                        );
+
 
                     if (token) {
 
@@ -601,7 +748,7 @@ async function getAccessToken() {
 
 
             /* -----------------------------------------
-               LOCAL STORAGE FALLBACK
+               SAVED LOSOJA SESSION
             ----------------------------------------- */
 
             try {
@@ -611,6 +758,7 @@ async function getAccessToken() {
                         "losoja_supabase_session"
                     );
 
+
                 if (storedSession) {
 
                     const parsed =
@@ -618,10 +766,12 @@ async function getAccessToken() {
                             storedSession
                         );
 
+
                     const token =
-                        parsed?.access_token ||
-                        parsed?.session?.access_token ||
-                        parsed?.data?.session?.access_token;
+                        extractAccessToken(
+                            parsed
+                        );
+
 
                     if (token) {
 
@@ -644,6 +794,84 @@ async function getAccessToken() {
 
             }
 
+
+            /* -----------------------------------------
+               CHECK LOCAL STORAGE FOR SUPABASE SESSION
+            ----------------------------------------- */
+
+            try {
+
+                for (
+                    let index = 0;
+                    index < localStorage.length;
+                    index++
+                ) {
+
+                    const key =
+                        localStorage.key(index);
+
+
+                    if (
+                        !key ||
+                        !key.startsWith("sb-")
+                    ) {
+
+                        continue;
+
+                    }
+
+
+                    const raw =
+                        localStorage.getItem(key);
+
+
+                    if (!raw) {
+                        continue;
+                    }
+
+
+                    try {
+
+                        const parsed =
+                            JSON.parse(raw);
+
+
+                        const token =
+                            extractAccessToken(
+                                parsed
+                            );
+
+
+                        if (token) {
+
+                            console.log(
+                                "LosOja: access token recovered from Supabase local session."
+                            );
+
+                            return token;
+
+                        }
+
+                    } catch {
+
+                        /*
+                         * Ignore non-JSON local-storage
+                         * values.
+                         */
+
+                    }
+
+                }
+
+            } catch (error) {
+
+                console.warn(
+                    "LosOja: Supabase local-storage scan failed:",
+                    error
+                );
+
+            }
+
         } catch (error) {
 
             console.warn(
@@ -653,19 +881,13 @@ async function getAccessToken() {
 
         }
 
-
-        if (attempt < 4) {
-
-            await wait(500);
-
-        }
-
     }
 
 
     console.warn(
         "LosOja: no valid Supabase access token found."
     );
+
 
     return null;
 
@@ -681,6 +903,7 @@ async function getHeaders() {
     const token =
         await getAccessToken();
 
+
     const headers = {
 
         "Content-Type":
@@ -691,12 +914,14 @@ async function getHeaders() {
 
     };
 
+
     if (token) {
 
         headers.Authorization =
             `Bearer ${token}`;
 
     }
+
 
     return headers;
 
@@ -771,6 +996,7 @@ async function supabaseRequest(
             data
         );
 
+
         throw new Error(
             data?.message ||
             data?.error ||
@@ -839,31 +1065,10 @@ function escapeHTML(value) {
 async function getCurrentUserId() {
 
     /*
-     * Try the normal LosOja auth helper first.
+     * Try LosOja's normal current-user helper.
      */
 
     try {
-
-        if (
-            typeof window.ensureValidSupabaseSession ===
-            "function"
-        ) {
-
-            try {
-
-                await window.ensureValidSupabaseSession();
-
-            } catch (error) {
-
-                console.warn(
-                    "LosOja: session validation failed:",
-                    error
-                );
-
-            }
-
-        }
-
 
         if (
             typeof window.getCurrentUser ===
@@ -874,6 +1079,7 @@ async function getCurrentUserId() {
 
                 const user =
                     await window.getCurrentUser();
+
 
                 if (user?.id) {
 
@@ -903,21 +1109,25 @@ async function getCurrentUserId() {
 
 
     /*
-     * Try the Supabase session directly.
+     * Try the direct Supabase session.
      */
 
     try {
 
         if (
             window.losojaSupabase &&
-            window.losojaSupabase.auth
+            window.losojaSupabase.auth &&
+            typeof window.losojaSupabase.auth.getSession ===
+            "function"
         ) {
 
             const result =
                 await window.losojaSupabase.auth.getSession();
 
+
             const user =
                 result?.data?.session?.user;
+
 
             if (user?.id) {
 
@@ -938,13 +1148,16 @@ async function getCurrentUserId() {
 
 
     /*
-     * Final fallback: ask Supabase using the access token.
+     * Final fallback:
+     * get the authenticated user from Supabase
+     * using the access token.
      */
 
     try {
 
         const token =
             await getAccessToken();
+
 
         if (!token) {
 
@@ -957,13 +1170,16 @@ async function getCurrentUserId() {
         }
 
 
-        const user =
+        const response =
             await fetch(
                 `${SUPABASE_URL}/auth/v1/user`,
                 {
                     method: "GET",
 
                     headers: {
+                        "Content-Type":
+                            "application/json",
+
                         "apikey":
                             SUPABASE_KEY,
 
@@ -974,12 +1190,18 @@ async function getCurrentUserId() {
             );
 
 
-        if (!user.ok) {
+        if (!response.ok) {
+
+            const errorText =
+                await response.text();
+
 
             console.warn(
                 "LosOja: Supabase user request failed:",
-                user.status
+                response.status,
+                errorText
             );
+
 
             return null;
 
@@ -987,7 +1209,7 @@ async function getCurrentUserId() {
 
 
         const userData =
-            await user.json();
+            await response.json();
 
 
         return userData?.id || null;
@@ -998,6 +1220,7 @@ async function getCurrentUserId() {
             "LosOja: unable to get current user:",
             error
         );
+
 
         return null;
 
@@ -1041,8 +1264,10 @@ async function loadWallet() {
                 "LosOja: wallet load stopped because no authenticated user exists."
             );
 
+
             balanceElement.textContent =
                 "Please log in";
+
 
             return;
 
@@ -1059,8 +1284,10 @@ async function loadWallet() {
                 "LosOja: wallet load stopped because no access token exists."
             );
 
+
             balanceElement.textContent =
                 "Please log in again";
+
 
             return;
 
@@ -1095,8 +1322,10 @@ async function loadWallet() {
                 userId
             );
 
+
             balanceElement.textContent =
                 "₦0.00";
+
 
             return;
 
@@ -1122,8 +1351,10 @@ async function loadWallet() {
                 wallet.balance
             );
 
+
             balanceElement.textContent =
                 "Unable to load";
+
 
             return;
 
@@ -1237,6 +1468,7 @@ async function loadTransactions() {
                     Please login to view transactions.
                 </div>`;
 
+
             return;
 
         }
@@ -1257,6 +1489,7 @@ async function loadTransactions() {
                 `<div class="empty">
                     No transactions yet.
                 </div>`;
+
 
             return;
 
@@ -1385,9 +1618,11 @@ async function depositFunds() {
 
             await window.losojaDepositFunds();
 
+
             await loadWallet();
 
             await loadTransactions();
+
 
             return;
 
@@ -1452,6 +1687,7 @@ async function withdrawFunds() {
                 "Please log in before withdrawing."
             );
 
+
             return;
 
         }
@@ -1466,6 +1702,7 @@ async function withdrawFunds() {
             alert(
                 "Your login session has expired. Please log in again."
             );
+
 
             return;
 
@@ -1504,6 +1741,7 @@ async function withdrawFunds() {
                 "Please enter a valid withdrawal amount."
             );
 
+
             return;
 
         }
@@ -1516,6 +1754,7 @@ async function withdrawFunds() {
             alert(
                 "Minimum withdrawal amount is ₦100."
             );
+
 
             return;
 
@@ -1619,6 +1858,7 @@ async function withdrawFunds() {
                     "Please enter a bank name."
                 );
 
+
                 continue;
 
             }
@@ -1646,6 +1886,7 @@ async function withdrawFunds() {
                     "Try another spelling or search term."
                 );
 
+
                 continue;
 
             }
@@ -1657,6 +1898,7 @@ async function withdrawFunds() {
 
                 selectedBank =
                     matches[0];
+
 
                 break;
 
@@ -1707,6 +1949,7 @@ async function withdrawFunds() {
                     "Invalid bank selection."
                 );
 
+
                 continue;
 
             }
@@ -1749,6 +1992,7 @@ async function withdrawFunds() {
             alert(
                 "Please enter a valid 10-digit Nigerian bank account number."
             );
+
 
             return;
 
@@ -1832,9 +2076,7 @@ async function withdrawFunds() {
                 )}\n\n` +
 
                 `Bank: ${selectedBank.name}\n` +
-
                 `Account name: ${accountName}\n` +
-
                 `Account number: ${cleanAccountNumber}\n\n` +
 
                 `Continue with this withdrawal?`
@@ -1945,6 +2187,7 @@ async function withdrawFunds() {
             await loadWallet();
 
             await loadTransactions();
+
 
             return;
 
@@ -2261,6 +2504,7 @@ function openEscrowChat(
             "Unable to open escrow chat."
         );
 
+
         return;
 
     }
@@ -2306,6 +2550,7 @@ async function loadEscrowTransactions(
                     Please login to view escrow transactions.
                 </div>`;
 
+
             return;
 
         }
@@ -2326,6 +2571,7 @@ async function loadEscrowTransactions(
                 `<div class="empty">
                     No escrow transactions yet.
                 </div>`;
+
 
             return;
 
@@ -2958,6 +3204,7 @@ async function handleDisputeEscrow(
             "Please enter a dispute reason."
         );
 
+
         return;
 
     }
@@ -2970,6 +3217,7 @@ async function handleDisputeEscrow(
         alert(
             "Dispute reason must be 1000 characters or less."
         );
+
 
         return;
 
@@ -3294,11 +3542,10 @@ document.addEventListener(
 
 
         /*
-         * Give auth.js time to restore the session
-         * before loading financial data.
+         * Give auth.js time to restore the session.
          */
 
-        await wait(300);
+        await wait(500);
 
 
         await loadWallet();
