@@ -4380,7 +4380,6 @@
                             App.closeModal(
                                 modal
                             );
-                           window.losojaSelectedBusiness = null;
 
 
                             /* -------------------------------------
