@@ -2150,108 +2150,9 @@ accountButtons.forEach(
 
 
     <button
-        id="bottomSavedBtn"
-        type="button"
-    >
-
-        <span class="bottom-nav-icon">
-            ❤️
-        </span>
-
-        Saved
-
-    </button>
-
-
-    <button
-        id="bottomAccountBtn"
-        type="button"
-    >
-
-        <span class="bottom-nav-icon">
-            👤
-        </span>
-
-        Account
-
-    </button>
-
-</nav>
-<!-- =====================================================
-     BOTTOM NAVIGATION
-===================================================== -->
-
-<nav
-    class="bottom-nav"
-    id="bottomNav"
->
-
-    <!-- HOME -->
-    <a
-        href="index.html"
-        class="active"
-    >
-
-        <span class="bottom-nav-icon">
-            🏠
-        </span>
-
-        Home
-
-    </a>
-
-
-    <!-- EXPLORE -->
-    <button
-        id="bottomExploreBtn"
-        type="button"
-    >
-
-        <span class="bottom-nav-icon">
-            🔎
-        </span>
-
-        Explore
-
-    </button>
-
-
-    <!-- ADD -->
-    <button
-        id="plusBtn"
-        type="button"
-    >
-
-        <span class="bottom-nav-icon">
-            ➕
-        </span>
-
-        Add
-
-    </button>
-
-
-    <!-- SAVED -->
-    <button
-        id="bottomSavedBtn"
-        type="button"
-    >
-
-        <span class="bottom-nav-icon">
-            ❤️
-        </span>
-
-        Saved
-
-    </button>
-
-
-    <!-- CHAT -->
-    <button
         id="bottomChatBtn"
         class="chat-nav-btn"
         type="button"
-        aria-label="Chat"
     >
 
         <span class="bottom-nav-icon">
@@ -2263,13 +2164,25 @@ accountButtons.forEach(
         <span
             id="chatUnreadIndicator"
             class="chat-unread-dot"
-            aria-hidden="true"
         ></span>
 
     </button>
 
 
-    <!-- ACCOUNT -->
+    <button
+        id="bottomSavedBtn"
+        type="button"
+    >
+
+        <span class="bottom-nav-icon">
+            ❤️
+        </span>
+
+        Saved
+
+    </button>
+
+
     <button
         id="bottomAccountBtn"
         type="button"
@@ -2284,7 +2197,6 @@ accountButtons.forEach(
     </button>
 
 </nav>
-
 
 <!-- =====================================================
      SAVED ITEMS SCRIPT
@@ -2589,6 +2501,17 @@ document.addEventListener(
     document.addEventListener(
         "DOMContentLoaded",
         function () {
+            const bottomChatBtn =
+    document.getElementById("bottomChatBtn");
+
+if (bottomChatBtn) {
+    bottomChatBtn.addEventListener(
+        "click",
+        function () {
+            window.location.href = "chat.html";
+        }
+    );
+}
 
             loadWalletBalance();
 
