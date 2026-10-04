@@ -1046,7 +1046,7 @@ main {
                 class="wallet-balance"
                 id="walletBalance"
             >
-                ₦0.00
+                Loading...
             </div>
 
         </div>
@@ -2178,6 +2178,31 @@ main {
 
 
 <!-- =====================================================
+     LOSOJA CORE SCRIPTS
+
+     IMPORTANT:
+     These are loaded BEFORE the wallet script so the
+     authentication helpers are available when the wallet
+     tries to load the user's balance.
+===================================================== -->
+
+<script
+    src="js/auth.js?v=2"
+></script>
+
+
+<script
+    src="js/businesses.js?v=4"
+></script>
+
+
+<script
+    src="js/app.js?v=4"
+></script>
+
+
+
+<!-- =====================================================
      SAVED ITEMS SCRIPT
 ===================================================== -->
 
@@ -2283,12 +2308,20 @@ document.addEventListener(
         "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
 
 
+    const SESSION_KEY =
+        "losoja_supabase_session";
+
+
     const balanceElement =
-        document.getElementById("walletBalance");
+        document.getElementById(
+            "walletBalance"
+        );
 
 
     const toggleButton =
-        document.getElementById("toggleBalanceBtn");
+        document.getElementById(
+            "toggleBalanceBtn"
+        );
 
 
     let actualBalance = 0;
@@ -2296,119 +2329,833 @@ document.addEventListener(
     let balanceVisible = true;
 
 
+    /* =====================================================
+       FORMAT NAIRA
+    ===================================================== */
+
     function formatNaira(amount) {
+
+        const numericAmount =
+            Number(amount);
+
+
+        if (!Number.isFinite(numericAmount)) {
+
+            return "₦0.00";
+
+        }
+
 
         return new Intl.NumberFormat(
             "en-NG",
             {
                 style: "currency",
                 currency: "NGN",
-                minimumFractionDigits: 2
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
             }
-        ).format(amount);
+        ).format(numericAmount);
 
     }
 
 
-    async function loadWalletBalance() {
+    /* =====================================================
+       WAIT
+    ===================================================== */
+
+    function wait(ms) {
+
+        return new Promise(
+            function (resolve) {
+
+                setTimeout(
+                    resolve,
+                    ms
+                );
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       EXTRACT TOKEN FROM ANY COMMON SESSION SHAPE
+    ===================================================== */
+
+    function extractAccessToken(value) {
+
+        if (!value) {
+
+            return null;
+
+        }
+
+
+        if (typeof value === "string") {
+
+            /*
+             * Do not accept obvious JSON strings as tokens.
+             */
+
+            const trimmed =
+                value.trim();
+
+
+            if (
+                trimmed.startsWith("{") ||
+                trimmed.startsWith("[")
+            ) {
+
+                try {
+
+                    return extractAccessToken(
+                        JSON.parse(trimmed)
+                    );
+
+                } catch (error) {
+
+                    return null;
+
+                }
+
+            }
+
+
+            return trimmed || null;
+
+        }
+
+
+        if (typeof value !== "object") {
+
+            return null;
+
+        }
+
+
+        if (value.access_token) {
+
+            return value.access_token;
+
+        }
+
+
+        if (value.accessToken) {
+
+            return value.accessToken;
+
+        }
+
+
+        if (value.session) {
+
+            const token =
+                extractAccessToken(
+                    value.session
+                );
+
+
+            if (token) {
+
+                return token;
+
+            }
+
+        }
+
+
+        if (value.data) {
+
+            const token =
+                extractAccessToken(
+                    value.data
+                );
+
+
+            if (token) {
+
+                return token;
+
+            }
+
+        }
+
+
+        if (value.currentSession) {
+
+            const token =
+                extractAccessToken(
+                    value.currentSession
+                );
+
+
+            if (token) {
+
+                return token;
+
+            }
+
+        }
+
+
+        return null;
+
+    }
+
+
+    /* =====================================================
+       READ LOSOJA SESSION STORAGE
+    ===================================================== */
+
+    function readLosOjaSession() {
 
         try {
 
-            if (
-                typeof window.ensureValidSupabaseSession ===
-                "function"
+            const raw =
+                localStorage.getItem(
+                    SESSION_KEY
+                );
+
+
+            if (!raw) {
+
+                return null;
+
+            }
+
+
+            try {
+
+                return JSON.parse(raw);
+
+            } catch (error) {
+
+                return raw;
+
+            }
+
+        } catch (error) {
+
+            console.warn(
+                "LosOja: could not read session storage."
+            );
+
+            return null;
+
+        }
+
+    }
+
+
+    /* =====================================================
+       READ SUPABASE STORAGE
+    ===================================================== */
+
+    function readSupabaseStorageToken() {
+
+        try {
+
+            for (
+                let index = 0;
+                index < localStorage.length;
+                index++
             ) {
 
-                await window.ensureValidSupabaseSession();
+                const key =
+                    localStorage.key(index);
+
+
+                if (!key) {
+
+                    continue;
+
+                }
+
+
+                const lowerKey =
+                    key.toLowerCase();
+
+
+                if (
+                    !key.startsWith("sb-") &&
+                    !lowerKey.includes("supabase")
+                ) {
+
+                    continue;
+
+                }
+
+
+                const raw =
+                    localStorage.getItem(key);
+
+
+                if (!raw) {
+
+                    continue;
+
+                }
+
+
+                const token =
+                    extractAccessToken(raw);
+
+
+                if (token) {
+
+                    return token;
+
+                }
 
             }
 
+        } catch (error) {
 
-            let token = null;
+            console.warn(
+                "LosOja: Supabase storage scan failed."
+            );
+
+        }
 
 
-            if (
-                typeof window.getSupabaseAccessToken ===
-                "function"
-            ) {
+        return null;
 
-                token =
-                    await window.getSupabaseAccessToken();
+    }
+
+
+    /* =====================================================
+       GET ACCESS TOKEN
+    ===================================================== */
+
+    async function getAccessToken() {
+
+        /*
+         * auth.js is loaded BEFORE this script.
+         * Give it several opportunities to restore or
+         * refresh the current Supabase session.
+         */
+
+        for (
+            let attempt = 0;
+            attempt < 15;
+            attempt++
+        ) {
+
+            try {
+
+                if (attempt > 0) {
+
+                    await wait(400);
+
+                }
+
+
+                /* -----------------------------------------
+                   ENSURE VALID SESSION
+                ----------------------------------------- */
+
+                if (
+                    typeof window.ensureValidSupabaseSession ===
+                    "function"
+                ) {
+
+                    try {
+
+                        const result =
+                            await window.ensureValidSupabaseSession();
+
+
+                        const token =
+                            extractAccessToken(
+                                result
+                            );
+
+
+                        if (token) {
+
+                            return token;
+
+                        }
+
+                    } catch (error) {
+
+                        /*
+                         * Continue to other recovery methods.
+                         */
+
+                    }
+
+                }
+
+
+                /* -----------------------------------------
+                   DIRECT LOSOJA ACCESS TOKEN HELPER
+                ----------------------------------------- */
+
+                if (
+                    typeof window.getSupabaseAccessToken ===
+                    "function"
+                ) {
+
+                    try {
+
+                        const result =
+                            await window.getSupabaseAccessToken();
+
+
+                        const token =
+                            extractAccessToken(
+                                result
+                            );
+
+
+                        if (token) {
+
+                            return token;
+
+                        }
+
+                    } catch (error) {
+
+                        /*
+                         * Continue.
+                         */
+
+                    }
+
+                }
+
+
+                /* -----------------------------------------
+                   SESSION HELPER
+                ----------------------------------------- */
+
+                if (
+                    typeof window.getSupabaseSession ===
+                    "function"
+                ) {
+
+                    try {
+
+                        const result =
+                            await window.getSupabaseSession();
+
+
+                        const token =
+                            extractAccessToken(
+                                result
+                            );
+
+
+                        if (token) {
+
+                            return token;
+
+                        }
+
+                    } catch (error) {
+
+                        /*
+                         * Continue.
+                         */
+
+                    }
+
+                }
+
+
+                /* -----------------------------------------
+                   CURRENT SESSION HELPER
+                ----------------------------------------- */
+
+                if (
+                    typeof window.getCurrentSession ===
+                    "function"
+                ) {
+
+                    try {
+
+                        const result =
+                            await window.getCurrentSession();
+
+
+                        const token =
+                            extractAccessToken(
+                                result
+                            );
+
+
+                        if (token) {
+
+                            return token;
+
+                        }
+
+                    } catch (error) {
+
+                        /*
+                         * Continue.
+                         */
+
+                    }
+
+                }
+
+
+                /* -----------------------------------------
+                   DIRECT SUPABASE CLIENT IF PRESENT
+                ----------------------------------------- */
+
+                if (
+                    window.losojaSupabase &&
+                    window.losojaSupabase.auth &&
+                    typeof window.losojaSupabase.auth.getSession ===
+                    "function"
+                ) {
+
+                    try {
+
+                        const result =
+                            await window.losojaSupabase.auth.getSession();
+
+
+                        const token =
+                            extractAccessToken(
+                                result
+                            );
+
+
+                        if (token) {
+
+                            return token;
+
+                        }
+
+                    } catch (error) {
+
+                        /*
+                         * Continue.
+                         */
+
+                    }
+
+                }
+
+
+                /* -----------------------------------------
+                   LOSOJA LOCAL SESSION
+                ----------------------------------------- */
+
+                const localSession =
+                    readLosOjaSession();
+
+
+                const localToken =
+                    extractAccessToken(
+                        localSession
+                    );
+
+
+                if (localToken) {
+
+                    return localToken;
+
+                }
+
+
+                /* -----------------------------------------
+                   SUPABASE LOCAL STORAGE
+                ----------------------------------------- */
+
+                const storedToken =
+                    readSupabaseStorageToken();
+
+
+                if (storedToken) {
+
+                    return storedToken;
+
+                }
+
+            } catch (error) {
+
+                console.warn(
+                    "LosOja: token recovery attempt failed."
+                );
 
             }
 
-
-            let session = null;
-
-
-            if (
-                typeof window.getSupabaseSession ===
-                "function"
-            ) {
-
-                session =
-                    await window.getSupabaseSession();
-
-            }
+        }
 
 
-            let user = null;
+        return null;
+
+    }
 
 
-            if (
-                typeof window.getCurrentUser ===
-                "function"
-            ) {
+    /* =====================================================
+       GET USER FROM AUTH ENDPOINT
+    ===================================================== */
 
-                user =
-                    await window.getCurrentUser();
+    async function getUserFromAuthEndpoint(
+        token
+    ) {
 
-            }
+        if (!token) {
+
+            return null;
+
+        }
 
 
-            const userId =
-                user?.id ||
-                session?.user?.id;
-
-
-            if (!userId || !token) {
-
-                balanceElement.textContent =
-                    "₦0.00";
-
-                return;
-
-            }
-
+        try {
 
             const response =
                 await fetch(
-
                     SUPABASE_URL +
-                    "/rest/v1/wallets?user_id=eq." +
-                    encodeURIComponent(userId) +
-                    "&select=balance&limit=1",
-
+                    "/auth/v1/user",
                     {
+                        method: "GET",
+
                         headers: {
 
                             apikey:
                                 SUPABASE_KEY,
 
                             Authorization:
-                                "Bearer " + token
+                                "Bearer " + token,
+
+                            Accept:
+                                "application/json"
 
                         }
-
                     }
-
                 );
 
 
             if (!response.ok) {
 
+                return null;
+
+            }
+
+
+            const user =
+                await response.json();
+
+
+            if (
+                user &&
+                user.id
+            ) {
+
+                return user;
+
+            }
+
+        } catch (error) {
+
+            console.warn(
+                "LosOja: auth user request failed."
+            );
+
+        }
+
+
+        return null;
+
+    }
+
+
+    /* =====================================================
+       GET CURRENT USER ID
+    ===================================================== */
+
+    async function getCurrentUserId(
+        token
+    ) {
+
+        /*
+         * First use the existing LosOja helper.
+         */
+
+        if (
+            typeof window.getCurrentUser ===
+            "function"
+        ) {
+
+            try {
+
+                const result =
+                    await window.getCurrentUser();
+
+
+                const user =
+                    result?.user ||
+                    result?.data?.user ||
+                    result?.data ||
+                    result;
+
+
+                if (
+                    user &&
+                    user.id
+                ) {
+
+                    return user.id;
+
+                }
+
+            } catch (error) {
+
+                /*
+                 * Fall through to direct Supabase lookup.
+                 */
+
+            }
+
+        }
+
+
+        /*
+         * Direct Supabase lookup is the reliable fallback.
+         */
+
+        const user =
+            await getUserFromAuthEndpoint(
+                token
+            );
+
+
+        return user?.id || null;
+
+    }
+
+
+    /* =====================================================
+       LOAD WALLET BALANCE
+    ===================================================== */
+
+    async function loadWalletBalance() {
+
+        if (!balanceElement) {
+
+            return;
+
+        }
+
+
+        balanceElement.textContent =
+            "Loading...";
+
+
+        try {
+
+            /* -----------------------------------------
+               GET VALID ACCESS TOKEN
+            ----------------------------------------- */
+
+            const token =
+                await getAccessToken();
+
+
+            if (!token) {
+
+                console.warn(
+                    "LosOja: no valid Supabase access token found."
+                );
+
+
+                balanceElement.textContent =
+                    "Please log in";
+
+
+                return;
+
+            }
+
+
+            /* -----------------------------------------
+               GET CURRENT USER
+            ----------------------------------------- */
+
+            const userId =
+                await getCurrentUserId(
+                    token
+                );
+
+
+            if (!userId) {
+
+                console.warn(
+                    "LosOja: current Supabase user could not be identified."
+                );
+
+
+                balanceElement.textContent =
+                    "Please log in";
+
+
+                return;
+
+            }
+
+
+            console.log(
+                "LosOja: wallet user identified."
+            );
+
+
+            /* -----------------------------------------
+               GET WALLET
+            ----------------------------------------- */
+
+            const walletUrl =
+                SUPABASE_URL +
+                "/rest/v1/wallets?user_id=eq." +
+                encodeURIComponent(userId) +
+                "&select=balance,currency&limit=1";
+
+
+            const response =
+                await fetch(
+                    walletUrl,
+                    {
+                        method: "GET",
+
+                        headers: {
+
+                            apikey:
+                                SUPABASE_KEY,
+
+                            Authorization:
+                                "Bearer " + token,
+
+                            Accept:
+                                "application/json"
+
+                        }
+                    }
+                );
+
+
+            if (!response.ok) {
+
+                const errorText =
+                    await response.text();
+
+
+                console.error(
+                    "LosOja: wallet request failed:",
+                    response.status,
+                    errorText
+                );
+
+
                 throw new Error(
-                    "Wallet request failed"
+                    "Wallet request failed: " +
+                    response.status
                 );
 
             }
@@ -2418,37 +3165,112 @@ document.addEventListener(
                 await response.json();
 
 
-            actualBalance =
-                Number(
-                    data?.[0]?.balance || 0
+            console.log(
+                "LosOja: wallet row count:",
+                Array.isArray(data)
+                    ? data.length
+                    : 0
+            );
+
+
+            /* -----------------------------------------
+               NO WALLET ROW
+            ----------------------------------------- */
+
+            if (
+                !Array.isArray(data) ||
+                !data.length
+            ) {
+
+                actualBalance = 0;
+
+                updateBalanceDisplay();
+
+
+                console.warn(
+                    "LosOja: no wallet row found for current user."
                 );
 
 
+                return;
+
+            }
+
+
+            /* -----------------------------------------
+               READ BALANCE
+            ----------------------------------------- */
+
+            const wallet =
+                data[0];
+
+
+            const numericBalance =
+                Number(
+                    wallet.balance
+                );
+
+
+            if (
+                !Number.isFinite(
+                    numericBalance
+                )
+            ) {
+
+                actualBalance = 0;
+
+            } else {
+
+                actualBalance =
+                    numericBalance;
+
+            }
+
+
             updateBalanceDisplay();
+
+
+            console.log(
+                "LosOja: homepage wallet balance loaded."
+            );
 
         }
 
         catch (error) {
 
             console.error(
-                "Wallet balance error:",
+                "LosOja: homepage wallet balance error:",
                 error
             );
 
+
             balanceElement.textContent =
-                "₦0.00";
+                "Unable to load";
 
         }
 
     }
 
 
+    /* =====================================================
+       UPDATE BALANCE DISPLAY
+    ===================================================== */
+
     function updateBalanceDisplay() {
+
+        if (!balanceElement) {
+
+            return;
+
+        }
+
 
         if (balanceVisible) {
 
             balanceElement.textContent =
-                formatNaira(actualBalance);
+                formatNaira(
+                    actualBalance
+                );
 
         } else {
 
@@ -2460,6 +3282,10 @@ document.addEventListener(
     }
 
 
+    /* =====================================================
+       SHOW / HIDE BALANCE
+    ===================================================== */
+
     if (toggleButton) {
 
         toggleButton.addEventListener(
@@ -2469,6 +3295,7 @@ document.addEventListener(
                 balanceVisible =
                     !balanceVisible;
 
+
                 updateBalanceDisplay();
 
             }
@@ -2477,18 +3304,53 @@ document.addEventListener(
     }
 
 
-    document.addEventListener(
-        "DOMContentLoaded",
-        function () {
+    /* =====================================================
+       PAGE READY
+    ===================================================== */
 
-            loadWalletBalance();
+    function startWalletLoading() {
 
-        }
-    );
+        /*
+         * auth.js is now already loaded.
+         * Start shortly after the page becomes ready.
+         */
 
+        setTimeout(
+            function () {
+
+                loadWalletBalance();
+
+            },
+            300
+        );
+
+    }
+
+
+    if (
+        document.readyState ===
+        "loading"
+    ) {
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            startWalletLoading
+        );
+
+    } else {
+
+        startWalletLoading();
+
+    }
+
+
+    /* =====================================================
+       GLOBAL RELOAD FUNCTION
+    ===================================================== */
 
     window.loadLosOjaWalletBalance =
         loadWalletBalance;
+
 
 })();
 
@@ -2556,9 +3418,12 @@ document.addEventListener(
                     "addBusinessModal"
                 );
 
+
             if (modal) {
 
-                modal.classList.add("active");
+                modal.classList.add(
+                    "active"
+                );
 
             }
 
@@ -2618,10 +3483,12 @@ document.addEventListener(
                                     "data-close"
                                 );
 
+
                             const modal =
                                 document.getElementById(
                                     id
                                 );
+
 
                             if (modal) {
 
@@ -2639,7 +3506,9 @@ document.addEventListener(
 
 
         document
-            .querySelectorAll(".modal")
+            .querySelectorAll(
+                ".modal"
+            )
             .forEach(
                 function (modal) {
 
@@ -2648,7 +3517,8 @@ document.addEventListener(
                         function (event) {
 
                             if (
-                                event.target === modal
+                                event.target ===
+                                modal
                             ) {
 
                                 modal.classList.remove(
@@ -2883,6 +3753,7 @@ document.addEventListener(
                             '[data-category="Services"]'
                         );
 
+
                     if (category) {
 
                         category.click();
@@ -2915,6 +3786,7 @@ document.addEventListener(
                         document.getElementById(
                             "categoriesSection"
                         );
+
 
                     if (section) {
 
@@ -2951,6 +3823,7 @@ document.addEventListener(
                             ".explore-grid"
                         );
 
+
                     if (section) {
 
                         section.scrollIntoView({
@@ -2985,6 +3858,7 @@ document.addEventListener(
                         document.getElementById(
                             "savedSection"
                         );
+
 
                     if (section) {
 
@@ -3042,6 +3916,7 @@ document.addEventListener(
 
                     }
 
+
                     if (signupModal) {
 
                         signupModal.classList.add(
@@ -3069,6 +3944,7 @@ document.addEventListener(
                         );
 
                     }
+
 
                     if (loginModal) {
 
@@ -3113,7 +3989,9 @@ document.addEventListener(
                 "function"
             ) {
 
-                window.searchBusinesses(query);
+                window.searchBusinesses(
+                    query
+                );
 
             }
 
@@ -3152,7 +4030,8 @@ document.addEventListener(
                 function (event) {
 
                     if (
-                        event.key === "Enter"
+                        event.key ===
+                        "Enter"
                     ) {
 
                         performSearch();
@@ -3287,7 +4166,11 @@ document.addEventListener(
                         );
 
 
-                    if (!toast) return;
+                    if (!toast) {
+
+                        return;
+
+                    }
 
 
                     toast.textContent =
@@ -3315,31 +4198,10 @@ document.addEventListener(
 
         }
 
-
     }
 );
 
 </script>
-
-
-
-<!-- =====================================================
-     LOSOJA SCRIPTS
-===================================================== -->
-
-<script
-    src="js/businesses.js?v=4"
-></script>
-
-
-<script
-    src="js/auth.js?v=2"
-></script>
-
-
-<script
-    src="js/app.js?v=4"
-></script>
 
 
 </body>
