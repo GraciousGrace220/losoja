@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -13,64 +15,131 @@
         content="#087a3e"
     >
 
+    <meta
+        name="description"
+        content="Find homes, land, rentals and commercial property across Nigeria with LosOja."
+    >
+
     <title>Property | LosOja</title>
 
     <style>
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
 
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            background: #f5faf7;
-            color: #111827;
+        :root {
+            --green: #087a3e;
+            --green-dark: #055c2e;
+            --green-light: #eef8f2;
+            --accent: #ffb703;
+            --text: #111827;
+            --muted: #6b7280;
+            --border: #dce9e1;
+            --white: #ffffff;
+            --background: #f5faf7;
         }
 
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: var(--background);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        button,
+        input,
+        select {
+            font: inherit;
+        }
+
+        button,
+        a {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* =========================
+           HEADER
+        ========================= */
+
         .header {
-            background: #087a3e;
+            background: var(--green);
             color: white;
-            padding: 18px 20px;
+            padding: 14px 18px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
         }
 
         .header-inner {
-            max-width: 1100px;
+            max-width: 1200px;
             margin: auto;
             display: flex;
             align-items: center;
             justify-content: space-between;
+            gap: 12px;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-mark {
+            width: 40px;
+            height: 40px;
+            border-radius: 11px;
+            background: white;
+            color: var(--green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 21px;
+            font-weight: 900;
         }
 
         .logo {
-            font-size: 25px;
+            font-size: 24px;
             font-weight: 800;
         }
 
         .back-btn {
             border: none;
             background: white;
-            color: #087a3e;
-            padding: 10px 16px;
-            border-radius: 10px;
+            color: var(--green);
+            padding: 9px 14px;
+            border-radius: 9px;
             font-weight: 700;
             cursor: pointer;
         }
 
+        .back-btn:hover {
+            opacity: 0.92;
+        }
+
+        /* =========================
+           HERO
+        ========================= */
+
         .hero {
-            background: linear-gradient(
-                135deg,
-                #087a3e,
-                #055c2e
-            );
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(8, 122, 62, 0.98),
+                    rgba(5, 92, 46, 0.98)
+                );
             color: white;
-            padding: 55px 20px;
+            padding: 48px 18px 42px;
             text-align: center;
         }
 
         .hero-icon {
-            font-size: 48px;
-            margin-bottom: 12px;
+            font-size: 45px;
+            margin-bottom: 10px;
         }
 
         .hero h1 {
@@ -79,90 +148,367 @@
         }
 
         .hero p {
-            max-width: 600px;
+            max-width: 650px;
             margin: auto;
             line-height: 1.6;
-            opacity: 0.95;
+            opacity: 0.96;
         }
+
+        /* =========================
+           MAIN
+        ========================= */
 
         .content {
-            max-width: 1100px;
-            margin: 30px auto;
-            padding: 0 20px 50px;
+            max-width: 1200px;
+            margin: auto;
+            padding: 28px 18px 80px;
         }
 
-        .section-title {
-            text-align: center;
-            margin-bottom: 22px;
+        /* =========================
+           SEARCH
+        ========================= */
+
+        .search-panel {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 18px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            margin-bottom: 25px;
         }
 
-        .section-title h2 {
-            font-size: 25px;
-            margin-bottom: 8px;
+        .search-row {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 180px 150px;
+            gap: 10px;
         }
 
-        .section-title p {
-            color: #6b7280;
+        .search-box,
+        .filter-select {
+            width: 100%;
+            border: 1px solid #cfdcd4;
+            background: white;
+            border-radius: 11px;
+            padding: 13px 14px;
+            outline: none;
+            color: var(--text);
         }
+
+        .search-box:focus,
+        .filter-select:focus {
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px rgba(8, 122, 62, 0.10);
+        }
+
+        .search-btn {
+            border: none;
+            background: var(--green);
+            color: white;
+            border-radius: 11px;
+            padding: 13px 18px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .search-btn:hover {
+            background: var(--green-dark);
+        }
+
+        /* =========================
+           CATEGORY TABS
+        ========================= */
+
+        .category-scroll {
+            display: flex;
+            gap: 9px;
+            overflow-x: auto;
+            padding: 2px 0 8px;
+            margin-bottom: 28px;
+            scrollbar-width: thin;
+        }
+
+        .category-btn {
+            flex: 0 0 auto;
+            border: 1px solid var(--border);
+            background: white;
+            color: #374151;
+            padding: 10px 15px;
+            border-radius: 999px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .category-btn.active,
+        .category-btn:hover {
+            background: var(--green);
+            color: white;
+            border-color: var(--green);
+        }
+
+        /* =========================
+           SECTION HEADING
+        ========================= */
+
+        .section-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 17px;
+        }
+
+        .section-heading h2 {
+            font-size: 24px;
+        }
+
+        .listing-count {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        /* =========================
+           PROPERTY GRID
+        ========================= */
 
         .property-grid {
             display: grid;
             grid-template-columns: repeat(
-                auto-fit,
-                minmax(220px, 1fr)
+                auto-fill,
+                minmax(260px, 1fr)
             );
             gap: 18px;
         }
 
         .property-card {
             background: white;
-            border: 1px solid #dce9e1;
+            border: 1px solid var(--border);
             border-radius: 16px;
-            padding: 25px;
-            text-align: center;
+            overflow: hidden;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.18s ease, box-shadow 0.18s ease;
         }
 
-        .property-card .icon {
-            font-size: 42px;
+        .property-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        .property-image {
+            width: 100%;
+            height: 190px;
+            background: var(--green-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .property-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .image-placeholder {
+            font-size: 54px;
+        }
+
+        .listing-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: white;
+            color: var(--green);
+            border-radius: 7px;
+            padding: 6px 9px;
+            font-size: 12px;
+            font-weight: 800;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+        }
+
+        .property-body {
+            padding: 16px;
+        }
+
+        .property-type {
+            color: var(--green);
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .property-title {
+            font-size: 18px;
+            margin-bottom: 7px;
+            line-height: 1.3;
+        }
+
+        .property-location {
+            color: var(--muted);
+            font-size: 14px;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .property-price {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--green-dark);
+            margin-bottom: 13px;
+        }
+
+        .property-description {
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .property-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .view-btn,
+        .contact-btn {
+            border-radius: 9px;
+            padding: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .view-btn {
+            border: 1px solid var(--green);
+            background: white;
+            color: var(--green);
+        }
+
+        .contact-btn {
+            border: none;
+            background: var(--green);
+            color: white;
+        }
+
+        .view-btn:hover {
+            background: var(--green-light);
+        }
+
+        .contact-btn:hover {
+            background: var(--green-dark);
+        }
+
+        /* =========================
+           EMPTY STATE
+        ========================= */
+
+        .state-box {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 17px;
+            padding: 42px 20px;
+            text-align: center;
+            grid-column: 1 / -1;
+        }
+
+        .state-icon {
+            font-size: 48px;
             margin-bottom: 12px;
         }
 
-        .property-card h3 {
-            color: #087a3e;
+        .state-box h3 {
             margin-bottom: 8px;
+            font-size: 21px;
         }
 
-        .property-card p {
-            color: #6b7280;
+        .state-box p {
+            max-width: 550px;
+            margin: auto;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .loading {
+            color: var(--muted);
+        }
+
+        /* =========================
+           POST PROPERTY
+        ========================= */
+
+        .post-property {
+            margin-top: 32px;
+            background: linear-gradient(
+                135deg,
+                #eef8f2,
+                #ffffff
+            );
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .post-property h3 {
+            color: var(--green-dark);
+            margin-bottom: 7px;
+        }
+
+        .post-property p {
+            color: var(--muted);
             line-height: 1.5;
-            margin-bottom: 18px;
         }
 
-        .property-btn {
+        .post-btn {
+            flex: 0 0 auto;
             border: none;
-            background: #087a3e;
+            background: var(--green);
             color: white;
-            padding: 11px 18px;
-            border-radius: 9px;
-            font-weight: 700;
+            padding: 13px 19px;
+            border-radius: 10px;
+            font-weight: 800;
             cursor: pointer;
         }
 
+        .post-btn:hover {
+            background: var(--green-dark);
+        }
+
+        /* =========================
+           NOTICE
+        ========================= */
+
         .notice {
-            margin-top: 28px;
-            background: #eef8f2;
-            border-left: 4px solid #087a3e;
-            padding: 16px;
+            margin-top: 25px;
+            background: #fff9e8;
+            border-left: 4px solid var(--accent);
+            padding: 15px 16px;
             border-radius: 10px;
             line-height: 1.5;
+            color: #4b5563;
+            font-size: 14px;
         }
+
+        /* =========================
+           BACK HOME
+        ========================= */
 
         .home-btn {
             display: block;
             width: fit-content;
             margin: 30px auto 0;
-            background: #087a3e;
+            background: var(--green);
             color: white;
             text-decoration: none;
             padding: 13px 22px;
@@ -170,23 +516,147 @@
             font-weight: 700;
         }
 
+        .home-btn:hover {
+            background: var(--green-dark);
+        }
+
+        /* =========================
+           MODAL
+        ========================= */
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+            z-index: 2000;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-box {
+            width: min(600px, 100%);
+            max-height: 90vh;
+            overflow-y: auto;
+            background: white;
+            border-radius: 18px;
+            padding: 22px;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            right: 15px;
+            top: 12px;
+            border: none;
+            background: #f3f4f6;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .modal-box h2 {
+            margin-bottom: 15px;
+            padding-right: 40px;
+        }
+
+        .modal-content {
+            color: #4b5563;
+            line-height: 1.65;
+        }
+
+        .detail-price {
+            color: var(--green-dark);
+            font-size: 24px;
+            font-weight: 800;
+            margin: 12px 0;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 800px) {
+
+            .search-row {
+                grid-template-columns: 1fr;
+            }
+
+            .post-property {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .post-btn {
+                width: 100%;
+            }
+
+        }
+
         @media (max-width: 600px) {
+
+            .hero {
+                padding: 40px 17px;
+            }
+
             .hero h1 {
                 font-size: 28px;
             }
 
-            .hero {
-                padding: 42px 18px;
+            .content {
+                padding: 22px 14px 70px;
             }
+
+            .property-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .property-image {
+                height: 205px;
+            }
+
+            .logo {
+                font-size: 21px;
+            }
+
+            .back-btn {
+                padding: 8px 11px;
+            }
+
         }
+
     </style>
+
 </head>
 
 <body>
 
+    <!-- =========================
+         HEADER
+    ========================= -->
+
     <header class="header">
+
         <div class="header-inner">
-            <div class="logo">LosOja</div>
+
+            <div class="logo-area">
+
+                <div class="logo-mark">
+                    LO
+                </div>
+
+                <div class="logo">
+                    LosOja
+                </div>
+
+            </div>
 
             <button
                 class="back-btn"
@@ -194,112 +664,222 @@
             >
                 ← Back
             </button>
+
         </div>
+
     </header>
 
-    <section class="hero">
-        <div class="hero-icon">🏠</div>
 
-        <h1>Property</h1>
+    <!-- =========================
+         HERO
+    ========================= -->
+
+    <section class="hero">
+
+        <div class="hero-icon">
+            🏠
+        </div>
+
+        <h1>
+            Find Property on LosOja
+        </h1>
 
         <p>
-            Discover property opportunities across Nigeria.
-            Explore homes, land, rentals and commercial spaces.
+            Discover homes, land, rentals and commercial
+            spaces across Nigeria.
         </p>
+
     </section>
+
 
     <main class="content">
 
-        <div class="section-title">
-            <h2>Explore Property</h2>
-            <p>Choose what you are looking for.</p>
+
+        <!-- =========================
+             SEARCH
+        ========================= -->
+
+        <section class="search-panel">
+
+            <div class="search-row">
+
+                <input
+                    id="searchInput"
+                    class="search-box"
+                    type="search"
+                    placeholder="Search property, area or location..."
+                    autocomplete="off"
+                >
+
+                <select
+                    id="listingType"
+                    class="filter-select"
+                >
+                    <option value="all">
+                        Buy or Rent
+                    </option>
+
+                    <option value="sale">
+                        For Sale
+                    </option>
+
+                    <option value="rent">
+                        For Rent
+                    </option>
+                </select>
+
+                <button
+                    class="search-btn"
+                    onclick="applyFilters()"
+                >
+                    Search
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             CATEGORIES
+        ========================= -->
+
+        <div class="category-scroll">
+
+            <button
+                class="category-btn active"
+                data-category="all"
+                onclick="selectCategory('all', this)"
+            >
+                🏘️ All
+            </button>
+
+            <button
+                class="category-btn"
+                data-category="home"
+                onclick="selectCategory('home', this)"
+            >
+                🏡 Homes
+            </button>
+
+            <button
+                class="category-btn"
+                data-category="land"
+                onclick="selectCategory('land', this)"
+            >
+                🌳 Land
+            </button>
+
+            <button
+                class="category-btn"
+                data-category="rent"
+                onclick="selectCategory('rent', this)"
+            >
+                🔑 Rentals
+            </button>
+
+            <button
+                class="category-btn"
+                data-category="commercial"
+                onclick="selectCategory('commercial', this)"
+            >
+                🏢 Commercial
+            </button>
+
         </div>
 
-        <div class="property-grid">
 
-            <div class="property-card">
-                <div class="icon">🏡</div>
+        <!-- =========================
+             LISTINGS
+        ========================= -->
 
-                <h3>Homes</h3>
+        <section>
 
-                <p>
-                    Find houses and homes available
-                    across Nigeria.
-                </p>
+            <div class="section-heading">
 
-                <button
-                    class="property-btn"
-                    onclick="comingSoon('Homes')"
+                <div>
+                    <h2>
+                        Property Listings
+                    </h2>
+                </div>
+
+                <div
+                    id="listingCount"
+                    class="listing-count"
                 >
-                    Explore Homes
-                </button>
+                    Loading...
+                </div>
+
             </div>
 
 
-            <div class="property-card">
-                <div class="icon">🌳</div>
+            <div
+                id="propertyGrid"
+                class="property-grid"
+            >
 
-                <h3>Land</h3>
+                <div class="state-box">
 
-                <p>
-                    Discover land and plots available
-                    in different locations.
-                </p>
+                    <div class="state-icon">
+                        ⏳
+                    </div>
 
-                <button
-                    class="property-btn"
-                    onclick="comingSoon('Land')"
-                >
-                    Explore Land
-                </button>
+                    <h3>
+                        Loading properties...
+                    </h3>
+
+                    <p>
+                        LosOja is checking for available
+                        property listings.
+                    </p>
+
+                </div>
+
             </div>
 
-
-            <div class="property-card">
-                <div class="icon">🔑</div>
-
-                <h3>Rentals</h3>
-
-                <p>
-                    Find rental properties and spaces
-                    that match your needs.
-                </p>
-
-                <button
-                    class="property-btn"
-                    onclick="comingSoon('Rentals')"
-                >
-                    Explore Rentals
-                </button>
-            </div>
+        </section>
 
 
-            <div class="property-card">
-                <div class="icon">🏢</div>
+        <!-- =========================
+             POST PROPERTY
+        ========================= -->
 
-                <h3>Commercial</h3>
+        <section class="post-property">
+
+            <div>
+
+                <h3>
+                    Have a property to list?
+                </h3>
 
                 <p>
-                    Explore shops, offices and other
-                    commercial property.
+                    List your property on LosOja and let
+                    people searching in Nigeria discover it.
                 </p>
 
-                <button
-                    class="property-btn"
-                    onclick="comingSoon('Commercial Property')"
-                >
-                    Explore Commercial
-                </button>
             </div>
 
-        </div>
+            <button
+                class="post-btn"
+                onclick="postProperty()"
+            >
+                + Post Property
+            </button>
+
+        </section>
+
 
         <div class="notice">
-            🚧 <strong>Property listings are being prepared.</strong>
-            <br>
-            LosOja property search will be expanded with real
-            listings and property details.
+
+            <strong>LosOja Property</strong><br>
+
+            Property listings shown here come from the
+            LosOja property marketplace. Always verify
+            property ownership, documents and important
+            details before making a payment or agreement.
+
         </div>
+
 
         <a
             href="index.html"
@@ -310,14 +890,995 @@
 
     </main>
 
+
+    <!-- =========================
+         PROPERTY DETAIL MODAL
+    ========================= -->
+
+    <div
+        id="propertyModal"
+        class="modal"
+        onclick="closeModalOutside(event)"
+    >
+
+        <div class="modal-box">
+
+            <button
+                class="modal-close"
+                onclick="closePropertyModal()"
+            >
+                ×
+            </button>
+
+            <h2 id="modalTitle">
+                Property
+            </h2>
+
+            <div
+                id="modalContent"
+                class="modal-content"
+            ></div>
+
+        </div>
+
+    </div>
+
+
     <script>
-        function comingSoon(type) {
-            alert(
-                type +
-                " listings are coming soon to LosOja."
-            );
+
+        "use strict";
+
+
+        /* =====================================================
+           SUPABASE
+        ===================================================== */
+
+        const SUPABASE_URL =
+            "https://ycxshwgeebskdozmornh.supabase.co";
+
+        const SUPABASE_KEY =
+            "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
+
+
+        /* =====================================================
+           STATE
+        ===================================================== */
+
+        let allProperties = [];
+
+        let selectedCategory = "all";
+
+
+        /* =====================================================
+           HELPERS
+        ===================================================== */
+
+        function escapeHTML(value) {
+
+            if (value === null || value === undefined) {
+                return "";
+            }
+
+            return String(value)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
         }
+
+
+        function getValue(obj, keys, fallback = "") {
+
+            for (const key of keys) {
+
+                if (
+                    obj &&
+                    obj[key] !== undefined &&
+                    obj[key] !== null &&
+                    obj[key] !== ""
+                ) {
+                    return obj[key];
+                }
+
+            }
+
+            return fallback;
+        }
+
+
+        function formatPrice(value) {
+
+            if (
+                value === null ||
+                value === undefined ||
+                value === ""
+            ) {
+                return "Price on request";
+            }
+
+            const numeric =
+                Number(
+                    String(value)
+                        .replace(/[₦,\s]/g, "")
+                );
+
+            if (!Number.isNaN(numeric)) {
+
+                return "₦" +
+                    numeric.toLocaleString("en-NG");
+
+            }
+
+            return String(value);
+        }
+
+
+        function getImage(property) {
+
+            return getValue(
+                property,
+                [
+                    "image_url",
+                    "image",
+                    "imageUrl",
+                    "photo",
+                    "photo_url",
+                    "thumbnail",
+                    "cover_image"
+                ],
+                ""
+            );
+
+        }
+
+
+        function getTitle(property) {
+
+            return getValue(
+                property,
+                [
+                    "title",
+                    "name",
+                    "property_name",
+                    "property_title"
+                ],
+                "LosOja Property"
+            );
+
+        }
+
+
+        function getLocation(property) {
+
+            return getValue(
+                property,
+                [
+                    "location",
+                    "address",
+                    "area",
+                    "city",
+                    "state"
+                ],
+                "Nigeria"
+            );
+
+        }
+
+
+        function getCategory(property) {
+
+            return String(
+                getValue(
+                    property,
+                    [
+                        "category",
+                        "property_type",
+                        "type"
+                    ],
+                    "property"
+                )
+            ).toLowerCase();
+
+        }
+
+
+        function getListingType(property) {
+
+            return String(
+                getValue(
+                    property,
+                    [
+                        "listing_type",
+                        "transaction_type",
+                        "purpose",
+                        "status"
+                    ],
+                    ""
+                )
+            ).toLowerCase();
+
+        }
+
+
+        function getPrice(property) {
+
+            return getValue(
+                property,
+                [
+                    "price",
+                    "amount",
+                    "rent",
+                    "price_amount"
+                ],
+                ""
+            );
+
+        }
+
+
+        function getDescription(property) {
+
+            return getValue(
+                property,
+                [
+                    "description",
+                    "details",
+                    "property_description"
+                ],
+                "Property details available on LosOja."
+            );
+
+        }
+
+
+        /* =====================================================
+           LOAD PROPERTIES
+        ===================================================== */
+
+        async function loadProperties() {
+
+            const grid =
+                document.getElementById("propertyGrid");
+
+            try {
+
+                const response =
+                    await fetch(
+                        SUPABASE_URL +
+                        "/rest/v1/property_listings?select=*&order=created_at.desc",
+                        {
+                            method: "GET",
+
+                            headers: {
+                                "apikey": SUPABASE_KEY,
+                                "Authorization":
+                                    "Bearer " + SUPABASE_KEY
+                            }
+                        }
+                    );
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "Property listings request failed."
+                    );
+
+                }
+
+
+                const data =
+                    await response.json();
+
+
+                allProperties =
+                    Array.isArray(data)
+                        ? data
+                        : [];
+
+
+                renderProperties();
+
+
+            } catch (error) {
+
+                console.error(
+                    "LosOja property loading error:",
+                    error
+                );
+
+
+                allProperties = [];
+
+
+                grid.innerHTML = `
+
+                    <div class="state-box">
+
+                        <div class="state-icon">
+                            🏠
+                        </div>
+
+                        <h3>
+                            Property marketplace is getting ready
+                        </h3>
+
+                        <p>
+                            There are no property listings
+                            available right now. Please check
+                            again soon.
+                        </p>
+
+                    </div>
+
+                `;
+
+
+                document.getElementById(
+                    "listingCount"
+                ).textContent =
+                    "0 listings";
+
+            }
+
+        }
+
+
+        /* =====================================================
+           CATEGORY
+        ===================================================== */
+
+        function selectCategory(category, button) {
+
+            selectedCategory =
+                category;
+
+
+            document
+                .querySelectorAll(".category-btn")
+                .forEach(
+                    function (btn) {
+
+                        btn.classList.remove(
+                            "active"
+                        );
+
+                    }
+                );
+
+
+            if (button) {
+
+                button.classList.add(
+                    "active"
+                );
+
+            }
+
+
+            applyFilters();
+
+        }
+
+
+        /* =====================================================
+           FILTERS
+        ===================================================== */
+
+        function applyFilters() {
+
+            const search =
+                document
+                    .getElementById("searchInput")
+                    .value
+                    .trim()
+                    .toLowerCase();
+
+
+            const listingType =
+                document
+                    .getElementById("listingType")
+                    .value
+                    .toLowerCase();
+
+
+            const filtered =
+                allProperties.filter(
+                    function (property) {
+
+                        const title =
+                            getTitle(property)
+                                .toLowerCase();
+
+                        const location =
+                            getLocation(property)
+                                .toLowerCase();
+
+                        const description =
+                            getDescription(property)
+                                .toLowerCase();
+
+                        const category =
+                            getCategory(property);
+
+                        const type =
+                            getListingType(property);
+
+
+                        const searchMatch =
+                            !search ||
+                            title.includes(search) ||
+                            location.includes(search) ||
+                            description.includes(search);
+
+
+                        let categoryMatch =
+                            selectedCategory === "all";
+
+
+                        if (!categoryMatch) {
+
+                            if (
+                                selectedCategory === "home"
+                            ) {
+
+                                categoryMatch =
+                                    category.includes("home") ||
+                                    category.includes("house") ||
+                                    category.includes("apartment") ||
+                                    category.includes("flat");
+
+                            } else if (
+                                selectedCategory === "land"
+                            ) {
+
+                                categoryMatch =
+                                    category.includes("land") ||
+                                    category.includes("plot");
+
+                            } else if (
+                                selectedCategory === "rent"
+                            ) {
+
+                                categoryMatch =
+                                    type.includes("rent") ||
+                                    category.includes("rent");
+
+                            } else if (
+                                selectedCategory === "commercial"
+                            ) {
+
+                                categoryMatch =
+                                    category.includes("commercial") ||
+                                    category.includes("shop") ||
+                                    category.includes("office") ||
+                                    category.includes("warehouse");
+
+                            }
+
+                        }
+
+
+                        let typeMatch = true;
+
+
+                        if (
+                            listingType === "sale"
+                        ) {
+
+                            typeMatch =
+                                type.includes("sale") ||
+                                type.includes("buy");
+
+                        }
+
+
+                        if (
+                            listingType === "rent"
+                        ) {
+
+                            typeMatch =
+                                type.includes("rent") ||
+                                type.includes("lease");
+
+                        }
+
+
+                        return (
+                            searchMatch &&
+                            categoryMatch &&
+                            typeMatch
+                        );
+
+                    }
+                );
+
+
+            renderProperties(
+                filtered
+            );
+
+        }
+
+
+        /* =====================================================
+           RENDER
+        ===================================================== */
+
+        function renderProperties(
+            properties = allProperties
+        ) {
+
+            const grid =
+                document.getElementById(
+                    "propertyGrid"
+                );
+
+
+            const count =
+                document.getElementById(
+                    "listingCount"
+                );
+
+
+            count.textContent =
+                properties.length +
+                (
+                    properties.length === 1
+                        ? " listing"
+                        : " listings"
+                );
+
+
+            if (!properties.length) {
+
+                grid.innerHTML = `
+
+                    <div class="state-box">
+
+                        <div class="state-icon">
+                            🏠
+                        </div>
+
+                        <h3>
+                            No property listings yet
+                        </h3>
+
+                        <p>
+                            We don't have a matching
+                            property listing right now.
+                            Try another search or category.
+                        </p>
+
+                    </div>
+
+                `;
+
+                return;
+
+            }
+
+
+            grid.innerHTML =
+                properties
+                    .map(
+                        function (property) {
+
+                            return createPropertyCard(
+                                property
+                            );
+
+                        }
+                    )
+                    .join("");
+
+        }
+
+
+        /* =====================================================
+           PROPERTY CARD
+        ===================================================== */
+
+        function createPropertyCard(
+            property
+        ) {
+
+            const id =
+                getValue(
+                    property,
+                    ["id"],
+                    ""
+                );
+
+
+            const title =
+                getTitle(property);
+
+
+            const location =
+                getLocation(property);
+
+
+            const category =
+                getValue(
+                    property,
+                    [
+                        "category",
+                        "property_type",
+                        "type"
+                    ],
+                    "Property"
+                );
+
+
+            const listingType =
+                getListingType(property);
+
+
+            const price =
+                getPrice(property);
+
+
+            const description =
+                getDescription(property);
+
+
+            const image =
+                getImage(property);
+
+
+            const safeId =
+                escapeHTML(id);
+
+
+            let imageHTML =
+                `<div class="image-placeholder">🏠</div>`;
+
+
+            if (image) {
+
+                imageHTML = `
+
+                    <img
+                        src="${escapeHTML(image)}"
+                        alt="${escapeHTML(title)}"
+                        loading="lazy"
+                        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                    >
+
+                    <div
+                        class="image-placeholder"
+                        style="display:none; position:absolute; inset:0; align-items:center; justify-content:center;"
+                    >
+                        🏠
+                    </div>
+
+                `;
+
+            }
+
+
+            const badge =
+                listingType
+                    ? escapeHTML(
+                        listingType
+                    )
+                    : "Property";
+
+
+            return `
+
+                <article
+                    class="property-card"
+                    data-id="${safeId}"
+                >
+
+                    <div class="property-image">
+
+                        ${imageHTML}
+
+                        <div class="listing-badge">
+                            ${badge}
+                        </div>
+
+                    </div>
+
+
+                    <div class="property-body">
+
+                        <div class="property-type">
+                            ${escapeHTML(category)}
+                        </div>
+
+                        <h3 class="property-title">
+                            ${escapeHTML(title)}
+                        </h3>
+
+                        <div class="property-location">
+                            📍 ${escapeHTML(location)}
+                        </div>
+
+                        <div class="property-price">
+                            ${formatPrice(price)}
+                        </div>
+
+                        <p class="property-description">
+                            ${escapeHTML(description)}
+                        </p>
+
+
+                        <div class="property-actions">
+
+                            <button
+                                class="view-btn"
+                                onclick="viewProperty('${safeId}')"
+                            >
+                                View
+                            </button>
+
+                            <button
+                                class="contact-btn"
+                                onclick="contactProperty('${safeId}')"
+                            >
+                                Contact
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+            `;
+
+        }
+
+
+        /* =====================================================
+           VIEW PROPERTY
+        ===================================================== */
+
+        function viewProperty(id) {
+
+            const property =
+                allProperties.find(
+                    function (item) {
+
+                        return String(
+                            item.id
+                        ) === String(id);
+
+                    }
+                );
+
+
+            if (!property) {
+                return;
+            }
+
+
+            const title =
+                getTitle(property);
+
+
+            const location =
+                getLocation(property);
+
+
+            const price =
+                getPrice(property);
+
+
+            const description =
+                getDescription(property);
+
+
+            const category =
+                getValue(
+                    property,
+                    [
+                        "category",
+                        "property_type",
+                        "type"
+                    ],
+                    "Property"
+                );
+
+
+            const listingType =
+                getListingType(property);
+
+
+            document.getElementById(
+                "modalTitle"
+            ).textContent =
+                title;
+
+
+            document.getElementById(
+                "modalContent"
+            ).innerHTML = `
+
+                <p>
+                    <strong>Type:</strong>
+                    ${escapeHTML(category)}
+                </p>
+
+                <p>
+                    <strong>Listing:</strong>
+                    ${escapeHTML(
+                        listingType || "Property"
+                    )}
+                </p>
+
+                <p>
+                    <strong>Location:</strong>
+                    📍 ${escapeHTML(location)}
+                </p>
+
+                <div class="detail-price">
+                    ${formatPrice(price)}
+                </div>
+
+                <p>
+                    ${escapeHTML(description)}
+                </p>
+
+                <br>
+
+                <p>
+                    Contact the property owner or
+                    listing provider through LosOja
+                    for more information.
+                </p>
+
+            `;
+
+
+            document.getElementById(
+                "propertyModal"
+            ).classList.add("show");
+
+        }
+
+
+        /* =====================================================
+           CONTACT
+        ===================================================== */
+
+        function contactProperty(id) {
+
+            const property =
+                allProperties.find(
+                    function (item) {
+
+                        return String(
+                            item.id
+                        ) === String(id);
+
+                    }
+                );
+
+
+            if (!property) {
+                return;
+            }
+
+
+            /*
+                Do not expose seller emails publicly.
+
+                When LosOja chat/contact is connected,
+                this button can open the in-app conversation.
+            */
+
+
+            if (
+                typeof window.openLogin ===
+                "function"
+            ) {
+
+                window.openLogin();
+
+                return;
+
+            }
+
+
+            alert(
+                "Please log in to contact this property owner through LosOja."
+            );
+
+        }
+
+
+        /* =====================================================
+           POST PROPERTY
+        ===================================================== */
+
+        function postProperty() {
+
+            if (
+                typeof window.openLogin ===
+                "function"
+            ) {
+
+                window.openLogin();
+
+                return;
+
+            }
+
+
+            alert(
+                "Please log in to post a property on LosOja."
+            );
+
+        }
+
+
+        /* =====================================================
+           MODAL
+        ===================================================== */
+
+        function closePropertyModal() {
+
+            document
+                .getElementById(
+                    "propertyModal"
+                )
+                .classList.remove(
+                    "show"
+                );
+
+        }
+
+
+        function closeModalOutside(event) {
+
+            if (
+                event.target.id ===
+                "propertyModal"
+            ) {
+
+                closePropertyModal();
+
+            }
+
+        }
+
+
+        /* =====================================================
+           SEARCH ENTER KEY
+        ===================================================== */
+
+        document
+            .getElementById("searchInput")
+            .addEventListener(
+                "keydown",
+                function (event) {
+
+                    if (
+                        event.key === "Enter"
+                    ) {
+
+                        applyFilters();
+
+                    }
+
+                }
+            );
+
+
+        /* =====================================================
+           START
+        ===================================================== */
+
+        loadProperties();
+
     </script>
 
 </body>
+
 </html>
