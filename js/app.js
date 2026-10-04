@@ -265,40 +265,54 @@
 
         },
 
-        /* =================================================
-           MODAL CLOSE BUTTONS
-        ================================================= */
+     /* =================================================
+   MODAL CLOSE BUTTONS
+================================================= */
 
 bindModalClosers() {
 
-    document.addEventListener(
-        "click",
-        event => {
+    /* -----------------------------------------
+       CLOSE BUTTONS
+    ----------------------------------------- */
 
-            /* -----------------------------------------
-               CLOSE BUTTON / X BUTTON
-            ----------------------------------------- */
+    document
+        .querySelectorAll(
+            ".modal-close, .close-modal, [data-close]"
+        )
+        .forEach(closeButton => {
 
-            const closeButton =
-                event.target.closest(
-                    ".modal-close, .close-modal, [data-close]"
-                );
+            closeButton.addEventListener(
+                "click",
+                event => {
 
-            if (closeButton) {
+                    event.preventDefault();
+                    event.stopPropagation();
 
-                event.preventDefault();
-                event.stopPropagation();
+                    const closeTarget =
+                        closeButton.getAttribute(
+                            "data-close"
+                        );
 
-                const closeTarget =
-                    closeButton.getAttribute(
-                        "data-close"
-                    );
+                    if (closeTarget) {
 
-                if (closeTarget) {
+                        const modal =
+                            document.getElementById(
+                                closeTarget
+                            );
+
+                        if (modal) {
+
+                            this.closeModal(
+                                modal
+                            );
+
+                            return;
+                        }
+                    }
 
                     const modal =
-                        document.getElementById(
-                            closeTarget
+                        closeButton.closest(
+                            ".modal-overlay, .modal"
                         );
 
                     if (modal) {
@@ -307,29 +321,21 @@ bindModalClosers() {
                             modal
                         );
 
-                        return;
                     }
+
                 }
+            );
 
-                const modal =
-                    closeButton.closest(
-                        ".modal-overlay, .modal"
-                    );
-
-                if (modal) {
-
-                    this.closeModal(
-                        modal
-                    );
-                }
-
-                return;
-            }
+        });
 
 
-            /* -----------------------------------------
-               CLICK OUTSIDE MODAL
-            ----------------------------------------- */
+    /* -----------------------------------------
+       CLICK OUTSIDE MODAL
+    ----------------------------------------- */
+
+    document.addEventListener(
+        "click",
+        event => {
 
             const clickedModal =
                 event.target.closest(
@@ -351,9 +357,9 @@ bindModalClosers() {
     );
 
 
-    /* ---------------------------------------------
+    /* -----------------------------------------
        ESC KEY
-    --------------------------------------------- */
+    ----------------------------------------- */
 
     document.addEventListener(
         "keydown",
