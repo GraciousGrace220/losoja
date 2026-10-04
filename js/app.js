@@ -4290,60 +4290,111 @@ window.showBusinessDetails = async function (business) {
 
         </div>
     `;
-       /* ---------------------------------------------------
-       VIEW BUSINESS IMAGE DETAILS
-    --------------------------------------------------- */
+     /* ---------------------------------------------------
+   VIEW BUSINESS IMAGE DETAILS
+--------------------------------------------------- */
 
-    const viewImageButton =
-        document.getElementById(
-            "viewBusinessImageBtn"
-        );
+const viewImageButton =
+    document.getElementById(
+        "viewBusinessImageBtn"
+    );
 
-    if (viewImageButton) {
+if (viewImageButton) {
 
-        viewImageButton.onclick =
-            function (event) {
+    viewImageButton.onclick =
+        function (event) {
 
-                event.preventDefault();
-                event.stopPropagation();
+            event.preventDefault();
+            event.stopPropagation();
 
-                if (!businessImage) {
+            if (!businessImage) {
 
-                    App.showToast(
-                        "No business image is available.",
-                        "info"
-                    );
-
-                    return;
-                }
-
-                window.open(
-                    businessImage,
-                    "_blank"
+                App.showToast(
+                    "No business image is available.",
+                    "info"
                 );
-            };
-    }
 
-    /* ---------------------------------------------------
-       OPEN MODAL
-    --------------------------------------------------- */
+                return;
+            }
 
-    modal.classList.remove("hidden");
-    modal.classList.add("active");
+            const imageViewer =
+                document.getElementById(
+                    "businessImageViewer"
+                );
 
-    modal.style.display = "flex";
-    modal.style.visibility = "visible";
-    modal.style.opacity = "1";
-    modal.style.pointerEvents = "auto";
+            const imageViewerModal =
+                document.getElementById(
+                    "businessImageViewerModal"
+                );
 
-    modal.setAttribute(
-        "aria-hidden",
-        "false"
-    );
+            if (
+                !imageViewer ||
+                !imageViewerModal
+            ) {
 
-    document.body.classList.add(
-        "modal-open"
-    );
+                App.showToast(
+                    "Image viewer is unavailable.",
+                    "error"
+                );
+
+                return;
+            }
+
+            imageViewer.src =
+                businessImage;
+
+            imageViewerModal.classList.remove(
+                "hidden"
+            );
+
+            imageViewerModal.classList.add(
+                "active"
+            );
+
+            imageViewerModal.style.display =
+                "flex";
+
+            imageViewerModal.style.visibility =
+                "visible";
+
+            imageViewerModal.style.opacity =
+                "1";
+
+            imageViewerModal.style.pointerEvents =
+                "auto";
+
+            imageViewerModal.setAttribute(
+                "aria-hidden",
+                "false"
+            );
+
+                      document.body.classList.add(
+                "modal-open"
+            );
+
+        };
+}
+
+/* ---------------------------------------------------
+   OPEN MODAL
+--------------------------------------------------- */
+
+modal.classList.remove("hidden");
+modal.classList.add("active");
+
+modal.style.display = "flex";
+modal.style.visibility = "visible";
+modal.style.opacity = "1";
+modal.style.pointerEvents = "auto";
+
+modal.setAttribute(
+    "aria-hidden",
+    "false"
+);
+
+document.body.classList.add(
+    "modal-open"
+);
 
     /* ===================================================
        CHAT WITH BUSINESS
