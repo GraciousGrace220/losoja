@@ -265,77 +265,70 @@
 
         },
 
-     /* =================================================
+    /* =================================================
    MODAL CLOSE BUTTONS
 ================================================= */
 
 bindModalClosers() {
 
     /* -----------------------------------------
-       CLOSE BUTTONS
-    ----------------------------------------- */
-
-    document
-        .querySelectorAll(
-            ".modal-close, .close-modal, [data-close]"
-        )
-        .forEach(closeButton => {
-
-            closeButton.addEventListener(
-                "click",
-                event => {
-
-                    event.preventDefault();
-                    event.stopPropagation();
-
-                    const closeTarget =
-                        closeButton.getAttribute(
-                            "data-close"
-                        );
-
-                    if (closeTarget) {
-
-                        const modal =
-                            document.getElementById(
-                                closeTarget
-                            );
-
-                        if (modal) {
-
-                            this.closeModal(
-                                modal
-                            );
-
-                            return;
-                        }
-                    }
-
-                    const modal =
-                        closeButton.closest(
-                            ".modal-overlay, .modal"
-                        );
-
-                    if (modal) {
-
-                        this.closeModal(
-                            modal
-                        );
-
-                    }
-
-                }
-            );
-
-        });
-
-
-    /* -----------------------------------------
-       CLICK OUTSIDE MODAL
+       ONE GLOBAL CLICK HANDLER
+       Handles ALL current and future modal
+       close buttons.
     ----------------------------------------- */
 
     document.addEventListener(
         "click",
         event => {
+
+            const closeButton =
+                event.target.closest(
+                    ".modal-close, .close-modal, [data-close]"
+                );
+
+            if (closeButton) {
+
+                event.preventDefault();
+                event.stopPropagation();
+
+                const closeTarget =
+                    closeButton.getAttribute(
+                        "data-close"
+                    );
+
+                let modal = null;
+
+                if (closeTarget) {
+
+                    modal =
+                        document.getElementById(
+                            closeTarget
+                        );
+
+                }
+
+                if (!modal) {
+
+                    modal =
+                        closeButton.closest(
+                            ".modal-overlay, .modal"
+                        );
+
+                }
+
+                if (modal) {
+
+                    this.closeModal(modal);
+
+                }
+
+                return;
+            }
+
+
+            /* -----------------------------------------
+               CLICK OUTSIDE MODAL
+            ----------------------------------------- */
 
             const clickedModal =
                 event.target.closest(
@@ -375,7 +368,6 @@ bindModalClosers() {
     );
 
 },
-
           
         /* =================================================
            MOBILE MENU
