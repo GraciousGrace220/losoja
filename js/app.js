@@ -269,66 +269,108 @@
            MODAL CLOSE BUTTONS
         ================================================= */
 
-               bindModalClosers() {
+bindModalClosers() {
 
-            document.addEventListener(
-                "click",
-                event => {
+    document.addEventListener(
+        "click",
+        event => {
 
-                    const closeButton =
-                        event.target.closest(
-                            ".modal-close, .close-modal"
+            /* -----------------------------------------
+               CLOSE BUTTON / X BUTTON
+            ----------------------------------------- */
+
+            const closeButton =
+                event.target.closest(
+                    ".modal-close, .close-modal, [data-close]"
+                );
+
+            if (closeButton) {
+
+                event.preventDefault();
+                event.stopPropagation();
+
+                const closeTarget =
+                    closeButton.getAttribute(
+                        "data-close"
+                    );
+
+                if (closeTarget) {
+
+                    const modal =
+                        document.getElementById(
+                            closeTarget
                         );
 
-                    if (closeButton) {
+                    if (modal) {
 
-                        const modal =
-                            closeButton.closest(
-                                ".modal-overlay, .modal"
-                            );
-
-                        if (modal) {
-                            this.closeModal(modal);
-                        }
+                        this.closeModal(
+                            modal
+                        );
 
                         return;
                     }
-
-
-                    const clickedModal =
-                        event.target.closest(
-                            ".modal-overlay, .modal"
-                        );
-
-                    if (
-                        clickedModal &&
-                        event.target === clickedModal
-                    ) {
-
-                        this.closeModal(
-                            clickedModal
-                        );
-
-                    }
-
                 }
-            );
 
+                const modal =
+                    closeButton.closest(
+                        ".modal-overlay, .modal"
+                    );
 
-            document.addEventListener(
-                "keydown",
-                event => {
+                if (modal) {
 
-                    if (event.key === "Escape") {
-
-                        this.closeAllModals();
-
-                    }
-
+                    this.closeModal(
+                        modal
+                    );
                 }
-            );
 
-        },
+                return;
+            }
+
+
+            /* -----------------------------------------
+               CLICK OUTSIDE MODAL
+            ----------------------------------------- */
+
+            const clickedModal =
+                event.target.closest(
+                    ".modal-overlay, .modal"
+                );
+
+            if (
+                clickedModal &&
+                event.target === clickedModal
+            ) {
+
+                this.closeModal(
+                    clickedModal
+                );
+
+            }
+
+        }
+    );
+
+
+    /* ---------------------------------------------
+       ESC KEY
+    --------------------------------------------- */
+
+    document.addEventListener(
+        "keydown",
+        event => {
+
+            if (event.key === "Escape") {
+
+                this.closeAllModals();
+
+            }
+
+        }
+    );
+
+},
+
+          
         /* =================================================
            MOBILE MENU
         ================================================= */
