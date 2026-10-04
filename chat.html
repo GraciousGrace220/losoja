@@ -3262,8 +3262,17 @@ async function initializeChat() {
 
 
         currentUser =
-            await window.getCurrentUser();
+    await window.getCurrentUser();
 
+if (
+    !currentUser &&
+    typeof window.ensureValidSupabaseSession === "function"
+) {
+    await window.ensureValidSupabaseSession();
+
+    currentUser =
+        await window.getCurrentUser();
+}
 
         const loginButton =
             document.getElementById(
