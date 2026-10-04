@@ -3963,40 +3963,40 @@ window.showBusinessDetails = async function (business) {
              * both need the business owner's ID.
              */
 
-            if (!business.user_id) {
+          if (!business.user_id) {
 
-                const accessToken =
-                    getAccessToken();
+    const accessToken =
+        getAccessToken();
 
-                const headers = {
+    const headers = {
 
-                    apikey:
-                        BUSINESS_SUPABASE_KEY,
+        apikey:
+            BUSINESS_SUPABASE_KEY,
 
-                    Authorization:
-                        "Bearer " +
-                        (
-                            accessToken ||
-                            BUSINESS_SUPABASE_KEY
-                        ),
+        "Content-Type":
+            "application/json"
+    };
 
-                    "Content-Type":
-                        "application/json"
-                };
+    if (accessToken) {
 
-                const response =
-                    await fetch(
-                        BUSINESS_SUPABASE_URL +
-                        "/rest/v1/businesses?id=eq." +
-                        encodeURIComponent(
-                            String(business.id)
-                        ) +
-                        "&select=*",
-                        {
-                            method: "GET",
-                            headers: headers
-                        }
-                    );
+        headers.Authorization =
+            "Bearer " +
+            accessToken;
+    }
+
+    const response =
+        await fetch(
+            BUSINESS_SUPABASE_URL +
+            "/rest/v1/businesses?id=eq." +
+            encodeURIComponent(
+                String(business.id)
+            ) +
+            "&select=*",
+            {
+                method: "GET",
+                headers: headers
+            }
+        );
 
                 if (response.ok) {
 
