@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -7,7 +8,7 @@
 <title>LosOja Properties</title>
 
 <meta name="description"
-      content="Find homes, apartments, land and commercial properties on LosOja.">
+   content="Find homes, apartments, land and commercial properties on LosOja.">
 
 <style>
 :root{
@@ -23,9 +24,7 @@
     --shadow:0 8px 28px rgba(0,0,0,.08);
 }
 
-*{
-    box-sizing:border-box;
-}
+*{box-sizing:border-box;}
 
 body{
     margin:0;
@@ -34,16 +33,8 @@ body{
     color:var(--text);
 }
 
-button,
-input,
-select,
-textarea{
-    font:inherit;
-}
-
-button{
-    cursor:pointer;
-}
+button,input,select,textarea{font:inherit;}
+button{cursor:pointer;}
 
 .topbar{
     position:sticky;
@@ -71,16 +62,10 @@ button{
     white-space:nowrap;
 }
 
-.logo span{
-    color:var(--accent);
-}
+.logo span{color:var(--accent);}
+.header-spacer{flex:1;}
 
-.header-spacer{
-    flex:1;
-}
-
-.back-btn,
-.post-btn{
+.back-btn,.post-btn{
     border:0;
     border-radius:12px;
     padding:11px 15px;
@@ -97,9 +82,7 @@ button{
     color:white;
 }
 
-.post-btn:hover{
-    background:var(--green-dark);
-}
+.post-btn:hover{background:var(--green-dark);}
 
 .hero{
     background:linear-gradient(135deg,#087a3e,#055c2e);
@@ -224,6 +207,7 @@ button{
     height:100%;
     object-fit:cover;
     display:block;
+    cursor:pointer;
 }
 
 .no-image{
@@ -234,6 +218,7 @@ button{
     justify-content:center;
     font-size:60px;
     color:#8a968f;
+    cursor:pointer;
 }
 
 .gallery-arrow{
@@ -250,13 +235,8 @@ button{
     z-index:2;
 }
 
-.gallery-arrow.left{
-    left:10px;
-}
-
-.gallery-arrow.right{
-    right:10px;
-}
+.gallery-arrow.left{left:10px;}
+.gallery-arrow.right{right:10px;}
 
 .gallery-count{
     position:absolute;
@@ -269,9 +249,7 @@ button{
     font-size:12px;
 }
 
-.card-body{
-    padding:16px;
-}
+.card-body{padding:16px;}
 
 .badges{
     display:flex;
@@ -335,9 +313,7 @@ button{
     font-weight:700;
 }
 
-.action-btn:hover{
-    background:var(--green-light);
-}
+.action-btn:hover{background:var(--green-light);}
 
 .action-btn.view{
     background:var(--green);
@@ -396,9 +372,7 @@ button{
     padding:15px;
 }
 
-.modal.active{
-    display:flex;
-}
+.modal.active{display:flex;}
 
 .modal-box{
     width:min(760px,100%);
@@ -435,9 +409,7 @@ button{
     font-size:20px;
 }
 
-.modal-content{
-    padding:20px;
-}
+.modal-content{padding:20px;}
 
 .form-grid{
     display:grid;
@@ -451,9 +423,7 @@ button{
     gap:6px;
 }
 
-.form-group.full{
-    grid-column:1/-1;
-}
+.form-group.full{grid-column:1/-1;}
 
 .form-group label{
     font-weight:700;
@@ -546,9 +516,7 @@ button{
     font-size:14px;
 }
 
-.status.show{
-    display:block;
-}
+.status.show{display:block;}
 
 .status.success{
     background:#e9f7ef;
@@ -576,6 +544,7 @@ button{
     width:100%;
     height:100%;
     object-fit:cover;
+    cursor:zoom-in;
 }
 
 .detail-thumbs{
@@ -597,9 +566,7 @@ button{
     background:#eee;
 }
 
-.detail-thumb.active{
-    border-color:var(--green);
-}
+.detail-thumb.active{border-color:var(--green);}
 
 .detail-thumb img{
     width:100%;
@@ -607,13 +574,9 @@ button{
     object-fit:cover;
 }
 
-.detail-info{
-    padding:20px;
-}
+.detail-info{padding:20px;}
 
-.detail-info h2{
-    margin:0 0 8px;
-}
+.detail-info h2{margin:0 0 8px;}
 
 .detail-price{
     color:var(--green);
@@ -671,13 +634,8 @@ button{
     font-size:26px;
 }
 
-.viewer-arrow.left{
-    left:18px;
-}
-
-.viewer-arrow.right{
-    right:18px;
-}
+.viewer-arrow.left{left:18px;}
+.viewer-arrow.right{right:18px;}
 
 @media(max-width:900px){
     .property-grid{
@@ -686,39 +644,28 @@ button{
 }
 
 @media(max-width:650px){
+
     .topbar-inner{
         min-height:62px;
         padding:8px 12px;
     }
 
-    .logo{
-        font-size:21px;
-    }
+    .logo{font-size:21px;}
 
-    .back-btn{
-        display:none;
-    }
+    .back-btn{display:none;}
 
     .post-btn{
         padding:9px 11px;
         font-size:13px;
     }
 
-    .hero{
-        padding:25px 14px;
-    }
+    .hero{padding:25px 14px;}
 
-    .hero h1{
-        font-size:27px;
-    }
+    .hero h1{font-size:27px;}
 
-    .search-box{
-        padding:5px;
-    }
+    .search-box{padding:5px;}
 
-    .search-box button{
-        padding:0 12px;
-    }
+    .search-box button{padding:0 12px;}
 
     .container,
     .filters{
@@ -730,31 +677,24 @@ button{
         grid-template-columns:1fr;
     }
 
-    .card-gallery{
-        height:250px;
-    }
+    .card-gallery{height:250px;}
 
-    .form-grid{
-        grid-template-columns:1fr;
-    }
+    .form-grid{grid-template-columns:1fr;}
 
-    .form-group.full{
-        grid-column:auto;
-    }
+    .form-group.full{grid-column:auto;}
 
     .preview-grid{
         grid-template-columns:repeat(4,1fr);
     }
 
-    .detail-gallery{
-        height:280px;
-    }
+    .detail-gallery{height:280px;}
 
     .detail-actions{
         flex-direction:column;
     }
 }
 </style>
+
 </head>
 
 <body>
@@ -762,372 +702,418 @@ button{
 <header class="topbar">
     <div class="topbar-inner">
 
-        <a href="index.html" class="logo">
-            Los<span>Oja</span>
-        </a>
+```
+    <a href="index.html" class="logo">
+        Los<span>Oja</span>
+    </a>
 
-        <div class="header-spacer"></div>
+    <div class="header-spacer"></div>
 
-        <button class="back-btn" onclick="location.href='index.html'">
-            ← Back
-        </button>
+    <button class="back-btn"
+            onclick="location.href='index.html'">
+        ← Back
+    </button>
 
-        <button class="post-btn" onclick="openPostProperty()">
-            + Post Property
-        </button>
+    <button class="post-btn"
+            onclick="openPostProperty()">
+        + Post Property
+    </button>
 
-    </div>
+</div>
+```
+
 </header>
 
 <section class="hero">
-    <div class="hero-inner">
 
-        <h1>Find Your Next Property</h1>
+```
+<div class="hero-inner">
 
-        <p>
-            Homes, apartments, land and commercial properties across Nigeria.
-        </p>
+    <h1>Find Your Next Property</h1>
 
-        <div class="search-box">
-            <input
-                id="searchInput"
-                type="search"
-                placeholder="Search property, location..."
-                autocomplete="off"
-            >
+    <p>
+        Homes, apartments, land and commercial properties across Nigeria.
+    </p>
 
-            <button onclick="applyFilters()">
-                Search
-            </button>
-        </div>
+    <div class="search-box">
+
+        <input
+            id="searchInput"
+            type="search"
+            placeholder="Search property, location..."
+            autocomplete="off"
+        >
+
+        <button onclick="applyFilters()">
+            Search
+        </button>
 
     </div>
+
+</div>
+```
+
 </section>
 
 <div class="filters">
 
-    <button class="filter-btn active"
-            data-filter="all"
-            onclick="setFilter('all',this)">
-        All
-    </button>
+```
+<button class="filter-btn active"
+        data-filter="all"
+        onclick="setFilter('all',this)">
+    All
+</button>
 
-    <button class="filter-btn"
-            data-filter="sale"
-            onclick="setFilter('sale',this)">
-        For Sale
-    </button>
+<button class="filter-btn"
+        data-filter="sale"
+        onclick="setFilter('sale',this)">
+    For Sale
+</button>
 
-    <button class="filter-btn"
-            data-filter="rent"
-            onclick="setFilter('rent',this)">
-        For Rent
-    </button>
+<button class="filter-btn"
+        data-filter="rent"
+        onclick="setFilter('rent',this)">
+    For Rent
+</button>
 
-    <button class="filter-btn"
-            data-filter="house"
-            onclick="setFilter('house',this)">
-        Houses
-    </button>
+<button class="filter-btn"
+        data-filter="house"
+        onclick="setFilter('house',this)">
+    Houses
+</button>
 
-    <button class="filter-btn"
-            data-filter="apartment"
-            onclick="setFilter('apartment',this)">
-        Apartments
-    </button>
+<button class="filter-btn"
+        data-filter="apartment"
+        onclick="setFilter('apartment',this)">
+    Apartments
+</button>
 
-    <button class="filter-btn"
-            data-filter="land"
-            onclick="setFilter('land',this)">
-        Land
-    </button>
+<button class="filter-btn"
+        data-filter="land"
+        onclick="setFilter('land',this)">
+    Land
+</button>
 
-    <button class="filter-btn"
-            data-filter="commercial"
-            onclick="setFilter('commercial',this)">
-        Commercial
-    </button>
+<button class="filter-btn"
+        data-filter="commercial"
+        onclick="setFilter('commercial',this)">
+    Commercial
+</button>
+```
 
 </div>
 
 <main class="container">
 
-    <div class="results-row">
-        <h2>Properties</h2>
-        <div class="results-count" id="resultsCount">
-            Loading...
-        </div>
+```
+<div class="results-row">
+
+    <h2>Properties</h2>
+
+    <div class="results-count"
+         id="resultsCount">
+        Loading...
     </div>
 
-    <div id="propertyGrid" class="property-grid">
-        <div class="loading">
-            Loading properties...
-        </div>
+</div>
+
+<div id="propertyGrid"
+     class="property-grid">
+
+    <div class="loading">
+        Loading properties...
     </div>
+
+</div>
+```
 
 </main>
 
-
 <!-- POST PROPERTY MODAL -->
 
-<div class="modal" id="postPropertyModal">
+<div class="modal"
+     id="postPropertyModal">
 
-    <div class="modal-box">
+```
+<div class="modal-box">
 
-        <div class="modal-header">
+    <div class="modal-header">
 
-            <h2>Post a Property</h2>
+        <h2>Post a Property</h2>
 
-            <button class="close-btn"
+        <button class="close-btn"
+                onclick="closeModalById('postPropertyModal')">
+            ×
+        </button>
+
+    </div>
+
+
+    <div class="modal-content">
+
+        <p style="color:#68756d;font-size:14px;margin-top:0;">
+            Add your property details and up to 20 photos.
+            You must be logged in to publish.
+        </p>
+
+
+        <form id="propertyForm">
+
+            <div class="form-grid">
+
+                <div class="form-group full">
+
+                    <label for="propertyTitle">
+                        Property Title *
+                    </label>
+
+                    <input
+                        id="propertyTitle"
+                        required
+                        maxlength="120"
+                        placeholder="e.g. Beautiful 3 Bedroom House"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="propertyCategory">
+                        Property Type *
+                    </label>
+
+                    <select id="propertyCategory" required>
+
+                        <option value="">
+                            Select type
+                        </option>
+
+                        <option value="house">
+                            House
+                        </option>
+
+                        <option value="apartment">
+                            Apartment
+                        </option>
+
+                        <option value="land">
+                            Land
+                        </option>
+
+                        <option value="commercial">
+                            Commercial
+                        </option>
+
+                        <option value="property">
+                            Other Property
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="propertyListingType">
+                        Listing Type *
+                    </label>
+
+                    <select id="propertyListingType" required>
+
+                        <option value="">
+                            Select
+                        </option>
+
+                        <option value="sale">
+                            For Sale
+                        </option>
+
+                        <option value="rent">
+                            For Rent
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="propertyPrice">
+                        Price *
+                    </label>
+
+                    <input
+                        id="propertyPrice"
+                        type="number"
+                        min="0"
+                        step="1"
+                        required
+                        placeholder="250000"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="propertyLocation">
+                        Location *
+                    </label>
+
+                    <input
+                        id="propertyLocation"
+                        required
+                        maxlength="180"
+                        placeholder="e.g. Lekki, Lagos"
+                    >
+
+                </div>
+
+
+                <div class="form-group full">
+
+                    <label for="propertyDescription">
+                        Description *
+                    </label>
+
+                    <textarea
+                        id="propertyDescription"
+                        required
+                        maxlength="3000"
+                        placeholder="Describe the property..."
+                    ></textarea>
+
+                </div>
+
+
+                <div class="form-group full">
+
+                    <label for="propertyPhotos">
+                        Property Photos
+                    </label>
+
+                    <input
+                        id="propertyPhotos"
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp,image/gif"
+                        multiple
+                    >
+
+                    <div class="photo-note">
+                        Select up to 20 photos. The first photo will be
+                        treated as the main photo.
+                    </div>
+
+                    <div id="photoPreview"
+                         class="preview-grid">
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div id="postStatus"
+                 class="status">
+            </div>
+
+
+            <div class="form-footer">
+
+                <button
+                    type="button"
+                    class="secondary-btn"
                     onclick="closeModalById('postPropertyModal')">
-                ×
-            </button>
+                    Cancel
+                </button>
 
-        </div>
+                <button
+                    type="submit"
+                    id="publishPropertyBtn"
+                    class="primary-btn">
+                    Publish Property
+                </button>
 
-        <div class="modal-content">
+            </div>
 
-            <p style="color:#68756d;font-size:14px;margin-top:0;">
-                Add your property details and up to 20 photos.
-                You must be logged in to publish.
-            </p>
-
-            <form id="propertyForm">
-
-                <div class="form-grid">
-
-                    <div class="form-group full">
-                        <label for="propertyTitle">
-                            Property Title *
-                        </label>
-
-                        <input
-                            id="propertyTitle"
-                            required
-                            maxlength="120"
-                            placeholder="e.g. Beautiful 3 Bedroom House"
-                        >
-                    </div>
-
-
-                    <div class="form-group">
-                        <label for="propertyCategory">
-                            Property Type *
-                        </label>
-
-                        <select id="propertyCategory" required>
-
-                            <option value="">
-                                Select type
-                            </option>
-
-                            <option value="house">
-                                House
-                            </option>
-
-                            <option value="apartment">
-                                Apartment
-                            </option>
-
-                            <option value="land">
-                                Land
-                            </option>
-
-                            <option value="commercial">
-                                Commercial
-                            </option>
-
-                            <option value="property">
-                                Other Property
-                            </option>
-
-                        </select>
-                    </div>
-
-
-                    <div class="form-group">
-                        <label for="propertyListingType">
-                            Listing Type *
-                        </label>
-
-                        <select id="propertyListingType" required>
-
-                            <option value="">
-                                Select
-                            </option>
-
-                            <option value="sale">
-                                For Sale
-                            </option>
-
-                            <option value="rent">
-                                For Rent
-                            </option>
-
-                        </select>
-                    </div>
-
-
-                    <div class="form-group">
-                        <label for="propertyPrice">
-                            Price *
-                        </label>
-
-                        <input
-                            id="propertyPrice"
-                            type="number"
-                            min="0"
-                            step="1"
-                            required
-                            placeholder="250000"
-                        >
-                    </div>
-
-
-                    <div class="form-group">
-                        <label for="propertyLocation">
-                            Location *
-                        </label>
-
-                        <input
-                            id="propertyLocation"
-                            required
-                            maxlength="180"
-                            placeholder="e.g. Lekki, Lagos"
-                        >
-                    </div>
-
-
-                    <div class="form-group full">
-
-                        <label for="propertyDescription">
-                            Description *
-                        </label>
-
-                        <textarea
-                            id="propertyDescription"
-                            required
-                            maxlength="3000"
-                            placeholder="Describe the property..."
-                        ></textarea>
-
-                    </div>
-
-
-                    <div class="form-group full">
-
-                        <label for="propertyPhotos">
-                            Property Photos
-                        </label>
-
-                        <input
-                            id="propertyPhotos"
-                            type="file"
-                            accept="image/jpeg,image/png,image/webp,image/gif"
-                            multiple
-                        >
-
-                        <div class="photo-note">
-                            Select up to 20 photos. The first photo will be
-                            treated as the main photo.
-                        </div>
-
-                        <div
-                            id="photoPreview"
-                            class="preview-grid">
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <div id="postStatus" class="status"></div>
-
-
-                <div class="form-footer">
-
-                    <button
-                        type="button"
-                        class="secondary-btn"
-                        onclick="closeModalById('postPropertyModal')">
-                        Cancel
-                    </button>
-
-                    <button
-                        type="submit"
-                        id="publishPropertyBtn"
-                        class="primary-btn">
-                        Publish Property
-                    </button>
-
-                </div>
-
-            </form>
-
-        </div>
+        </form>
 
     </div>
 
 </div>
+```
 
+</div>
 
 <!-- PROPERTY DETAILS -->
 
-<div class="modal" id="propertyDetailModal">
+<div class="modal"
+     id="propertyDetailModal">
 
-    <div class="modal-box detail-box">
+```
+<div class="modal-box detail-box">
 
-        <div class="modal-header">
+    <div class="modal-header">
 
-            <h2>Property Details</h2>
+        <h2>Property Details</h2>
 
-            <button class="close-btn"
-                    onclick="closeModalById('propertyDetailModal')">
-                ×
-            </button>
-
-        </div>
-
-        <div id="detailGallery" class="detail-gallery">
-        </div>
-
-        <div id="detailThumbs" class="detail-thumbs">
-        </div>
-
-        <div id="detailInfo" class="detail-info">
-        </div>
+        <button class="close-btn"
+                onclick="closeModalById('propertyDetailModal')">
+            ×
+        </button>
 
     </div>
 
-</div>
+    <div id="detailGallery"
+         class="detail-gallery">
+    </div>
 
+    <div id="detailThumbs"
+         class="detail-thumbs">
+    </div>
+
+    <div id="detailInfo"
+         class="detail-info">
+    </div>
+
+</div>
+```
+
+</div>
 
 <!-- FULL SCREEN IMAGE VIEWER -->
 
-<div class="modal viewer" id="imageViewer">
+<div class="modal viewer"
+     id="imageViewer">
 
-    <button class="viewer-close"
-            onclick="closeModalById('imageViewer')">
-        ×
-    </button>
+```
+<button class="viewer-close"
+        onclick="closeModalById('imageViewer')">
+    ×
+</button>
 
-    <button class="viewer-arrow left"
-            onclick="changeViewerImage(-1)">
-        ‹
-    </button>
+<button class="viewer-arrow left"
+        onclick="changeViewerImage(-1)">
+    ‹
+</button>
 
-    <img id="viewerImage" src="" alt="Property photo">
+<img id="viewerImage"
+     src=""
+     alt="Property photo">
 
-    <button class="viewer-arrow right"
-            onclick="changeViewerImage(1)">
-        ›
-    </button>
+<button class="viewer-arrow right"
+        onclick="changeViewerImage(1)">
+    ›
+</button>
+```
 
 </div>
 
+<!-- AUTH ONLY. app.js removed because the current GitHub Pages copy is 404. -->
 
-<script src="app.js"></script>
 <script src="auth.js"></script>
 
 <script>
@@ -1143,16 +1129,11 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
     "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
 
-/*
- * Create this Supabase Storage bucket:
- *
- * property-images
- *
- * It should be PUBLIC so property photos can be displayed.
- */
-const PROPERTY_BUCKET = "property-images";
+const PROPERTY_BUCKET =
+    "property-images";
 
 const MAX_PROPERTY_IMAGES = 20;
+
 
 let allProperties = [];
 let activeFilter = "all";
@@ -1172,19 +1153,21 @@ let viewerIndex = 0;
 function escapeHtml(value) {
 
     return String(value ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
 }
 
 
 function formatPrice(value) {
 
-    const number = Number(value || 0);
+    const number =
+        Number(value || 0);
 
-    return "₦" + number.toLocaleString("en-NG");
+    return "₦" +
+        number.toLocaleString("en-NG");
 }
 
 
@@ -1195,14 +1178,23 @@ function getPropertyImages(property) {
         Array.isArray(property._images) &&
         property._images.length
     ) {
+
         return property._images
-            .map(x => x.image_url)
+            .map(item => item.image_url)
             .filter(Boolean);
     }
 
-    if (property && property.image_url) {
-        return [property.image_url];
+
+    if (
+        property &&
+        property.image_url
+    ) {
+
+        return [
+            property.image_url
+        ];
     }
+
 
     return [];
 }
@@ -1210,7 +1202,8 @@ function getPropertyImages(property) {
 
 function closeModalById(id) {
 
-    const modal = document.getElementById(id);
+    const modal =
+        document.getElementById(id);
 
     if (!modal) return;
 
@@ -1220,7 +1213,8 @@ function closeModalById(id) {
 
 function openModalById(id) {
 
-    const modal = document.getElementById(id);
+    const modal =
+        document.getElementById(id);
 
     if (!modal) return;
 
@@ -1228,17 +1222,23 @@ function openModalById(id) {
 }
 
 
-function showStatus(message, type) {
+function showStatus(message,type) {
 
-    const box = document.getElementById("postStatus");
+    const box =
+        document.getElementById("postStatus");
 
     if (!box) return;
 
-    box.textContent = message;
+    box.textContent =
+        message;
 
     box.className =
         "status show " +
-        (type === "success" ? "success" : "error");
+        (
+            type === "success"
+                ? "success"
+                : "error"
+        );
 }
 
 
@@ -1251,6 +1251,7 @@ async function getAuthDetails() {
     let user = null;
     let token = null;
 
+
     try {
 
         if (
@@ -1261,24 +1262,41 @@ async function getAuthDetails() {
             const session =
                 await window.ensureValidSupabaseSession();
 
-            if (session && session.user) {
-                user = session.user;
+
+            if (
+                session &&
+                session.user
+            ) {
+                user =
+                    session.user;
             }
 
-            if (session && session.access_token) {
-                token = session.access_token;
+
+            if (
+                session &&
+                session.access_token
+            ) {
+                token =
+                    session.access_token;
             }
         }
 
-    } catch (error) {
-        console.warn("Session check failed:", error);
+    } catch(error) {
+
+        console.warn(
+            "Session check failed:",
+            error
+        );
     }
 
 
     try {
 
-        if (!user &&
-            typeof window.getCurrentUser === "function") {
+        if (
+            !user &&
+            typeof window.getCurrentUser ===
+            "function"
+        ) {
 
             user =
                 await Promise.resolve(
@@ -1286,16 +1304,22 @@ async function getAuthDetails() {
                 );
         }
 
-    } catch (error) {
-        console.warn("User check failed:", error);
+    } catch(error) {
+
+        console.warn(
+            "User check failed:",
+            error
+        );
     }
 
 
     try {
 
-        if (!token &&
+        if (
+            !token &&
             typeof window.getSupabaseAccessToken ===
-            "function") {
+            "function"
+        ) {
 
             token =
                 await Promise.resolve(
@@ -1303,14 +1327,15 @@ async function getAuthDetails() {
                 );
         }
 
-    } catch (error) {
-        console.warn("Token check failed:", error);
+    } catch(error) {
+
+        console.warn(
+            "Token check failed:",
+            error
+        );
     }
 
 
-    /*
-     * Final fallback to the known LosOja session key.
-     */
     if (!user || !token) {
 
         try {
@@ -1320,21 +1345,37 @@ async function getAuthDetails() {
                     "losoja_supabase_session"
                 );
 
+
             if (raw) {
 
-                const session = JSON.parse(raw);
+                const session =
+                    JSON.parse(raw);
 
-                if (!user && session.user) {
-                    user = session.user;
+
+                if (
+                    !user &&
+                    session.user
+                ) {
+                    user =
+                        session.user;
                 }
 
-                if (!token && session.access_token) {
-                    token = session.access_token;
+
+                if (
+                    !token &&
+                    session.access_token
+                ) {
+                    token =
+                        session.access_token;
                 }
             }
 
-        } catch (error) {
-            console.warn("Local session read failed:", error);
+        } catch(error) {
+
+            console.warn(
+                "Local session read failed:",
+                error
+            );
         }
     }
 
@@ -1353,21 +1394,46 @@ async function getAuthDetails() {
 function openPostProperty() {
 
     const form =
-        document.getElementById("propertyForm");
+        document.getElementById(
+            "propertyForm"
+        );
+
 
     if (form) {
         form.reset();
     }
 
-    document.getElementById("photoPreview").innerHTML = "";
+
+    const preview =
+        document.getElementById(
+            "photoPreview"
+        );
+
+
+    if (preview) {
+        preview.innerHTML = "";
+    }
+
 
     const status =
-        document.getElementById("postStatus");
+        document.getElementById(
+            "postStatus"
+        );
 
-    status.className = "status";
-    status.textContent = "";
 
-    openModalById("postPropertyModal");
+    if (status) {
+
+        status.className =
+            "status";
+
+        status.textContent =
+            "";
+    }
+
+
+    openModalById(
+        "postPropertyModal"
+    );
 }
 
 
@@ -1378,29 +1444,39 @@ function openPostProperty() {
 async function loadProperties() {
 
     const grid =
-        document.getElementById("propertyGrid");
+        document.getElementById(
+            "propertyGrid"
+        );
+
+
+    if (!grid) return;
+
 
     grid.innerHTML =
         '<div class="loading">Loading properties...</div>';
 
+
     try {
 
-        const response = await fetch(
-            SUPABASE_URL +
-            "/rest/v1/property_listings" +
-            "?select=*" +
-            "&order=created_at.desc",
-            {
-                headers: {
-                    "apikey": SUPABASE_KEY
+        const response =
+            await fetch(
+                SUPABASE_URL +
+                "/rest/v1/property_listings" +
+                "?select=*" +
+                "&order=created_at.desc",
+                {
+                    headers:{
+                        "apikey":
+                            SUPABASE_KEY
+                    }
                 }
-            }
-        );
+            );
 
 
         if (!response.ok) {
 
-            const text = await response.text();
+            const text =
+                await response.text();
 
             throw new Error(
                 "Property request failed: " +
@@ -1412,6 +1488,7 @@ async function loadProperties() {
         const properties =
             await response.json();
 
+
         allProperties =
             Array.isArray(properties)
                 ? properties
@@ -1422,23 +1499,40 @@ async function loadProperties() {
 
         applyFilters();
 
-    } catch (error) {
 
-        console.error(error);
+    } catch(error) {
+
+        console.error(
+            "Load properties error:",
+            error
+        );
+
 
         grid.innerHTML = `
             <div class="empty">
-                <h3>Unable to load properties</h3>
-                <p>${escapeHtml(error.message)}</p>
-                <button class="post-btn"
-                        onclick="loadProperties()">
+
+                <h3>
+                    Unable to load properties
+                </h3>
+
+                <p>
+                    ${escapeHtml(error.message)}
+                </p>
+
+                <button
+                    class="post-btn"
+                    onclick="loadProperties()">
                     Try Again
                 </button>
+
             </div>
         `;
 
-        document.getElementById("resultsCount")
-            .textContent = "0 properties";
+
+        document.getElementById(
+            "resultsCount"
+        ).textContent =
+            "0 properties";
     }
 }
 
@@ -1449,14 +1543,20 @@ async function loadProperties() {
 
 async function loadPropertyImages() {
 
-    if (!allProperties.length) return;
+    if (!allProperties.length) {
+        return;
+    }
+
 
     const ids =
         allProperties
             .map(property => property.id)
             .filter(Boolean);
 
-    if (!ids.length) return;
+
+    if (!ids.length) {
+        return;
+    }
 
 
     try {
@@ -1467,20 +1567,22 @@ async function loadPropertyImages() {
                 .join(",");
 
 
-        const response = await fetch(
-            SUPABASE_URL +
-            "/rest/v1/property_images" +
-            "?select=property_id,image_url,sort_order" +
-            "&property_id=in.(" +
-            query +
-            ")" +
-            "&order=sort_order.asc",
-            {
-                headers: {
-                    "apikey": SUPABASE_KEY
+        const response =
+            await fetch(
+                SUPABASE_URL +
+                "/rest/v1/property_images" +
+                "?select=property_id,image_url,sort_order" +
+                "&property_id=in.(" +
+                query +
+                ")" +
+                "&order=sort_order.asc",
+                {
+                    headers:{
+                        "apikey":
+                            SUPABASE_KEY
+                    }
                 }
-            }
-        );
+            );
 
 
         if (!response.ok) {
@@ -1497,23 +1599,34 @@ async function loadPropertyImages() {
 
         images.forEach(image => {
 
-            if (!imageMap[image.property_id]) {
-                imageMap[image.property_id] = [];
+            if (
+                !imageMap[
+                    image.property_id
+                ]
+            ) {
+
+                imageMap[
+                    image.property_id
+                ] = [];
             }
 
-            imageMap[image.property_id]
-                .push(image);
+
+            imageMap[
+                image.property_id
+            ].push(image);
         });
 
 
         allProperties.forEach(property => {
 
             property._images =
-                imageMap[property.id] || [];
+                imageMap[
+                    property.id
+                ] || [];
         });
 
 
-    } catch (error) {
+    } catch(error) {
 
         console.warn(
             "Could not load property images:",
@@ -1527,19 +1640,30 @@ async function loadPropertyImages() {
    FILTERS
 ========================================================= */
 
-function setFilter(filter, button) {
+function setFilter(filter,button) {
 
-    activeFilter = filter;
+    activeFilter =
+        filter;
+
 
     document
         .querySelectorAll(".filter-btn")
-        .forEach(btn =>
-            btn.classList.remove("active")
-        );
+        .forEach(btn => {
+
+            btn.classList.remove(
+                "active"
+            );
+
+        });
+
 
     if (button) {
-        button.classList.add("active");
+
+        button.classList.add(
+            "active"
+        );
     }
+
 
     applyFilters();
 }
@@ -1547,28 +1671,40 @@ function setFilter(filter, button) {
 
 function applyFilters() {
 
+    const searchInput =
+        document.getElementById(
+            "searchInput"
+        );
+
+
     const search =
-        document
-            .getElementById("searchInput")
-            .value
-            .trim()
-            .toLowerCase();
+        searchInput
+            ? searchInput.value
+                .trim()
+                .toLowerCase()
+            : "";
 
 
-    let filtered =
+    const filtered =
         allProperties.filter(property => {
 
             const title =
-                String(property.title || "")
-                    .toLowerCase();
+                String(
+                    property.title || ""
+                ).toLowerCase();
+
 
             const location =
-                String(property.location || "")
-                    .toLowerCase();
+                String(
+                    property.location || ""
+                ).toLowerCase();
+
 
             const description =
-                String(property.description || "")
-                    .toLowerCase();
+                String(
+                    property.description || ""
+                ).toLowerCase();
+
 
             const category =
                 String(
@@ -1578,11 +1714,11 @@ function applyFilters() {
                     ""
                 ).toLowerCase();
 
+
             const listingType =
                 String(
                     property.listing_type ||
                     property.listingType ||
-                    property.type ||
                     ""
                 ).toLowerCase();
 
@@ -1605,57 +1741,111 @@ function applyFilters() {
             }
 
 
-            if (activeFilter === "sale") {
-                return listingType.includes("sale");
+            if (
+                activeFilter ===
+                "sale"
+            ) {
+                return listingType.includes(
+                    "sale"
+                );
             }
 
-            if (activeFilter === "rent") {
-                return listingType.includes("rent");
+
+            if (
+                activeFilter ===
+                "rent"
+            ) {
+                return listingType.includes(
+                    "rent"
+                );
             }
 
-            if (activeFilter === "house") {
-                return category.includes("house");
+
+            if (
+                activeFilter ===
+                "house"
+            ) {
+                return category.includes(
+                    "house"
+                );
             }
 
-            if (activeFilter === "apartment") {
-                return category.includes("apartment");
+
+            if (
+                activeFilter ===
+                "apartment"
+            ) {
+                return category.includes(
+                    "apartment"
+                );
             }
 
-            if (activeFilter === "land") {
-                return category.includes("land");
+
+            if (
+                activeFilter ===
+                "land"
+            ) {
+                return category.includes(
+                    "land"
+                );
             }
 
-            if (activeFilter === "commercial") {
-                return category.includes("commercial");
+
+            if (
+                activeFilter ===
+                "commercial"
+            ) {
+                return category.includes(
+                    "commercial"
+                );
             }
+
 
             return true;
         });
 
 
-    renderProperties(filtered);
+    renderProperties(
+        filtered
+    );
 }
 
 
 function renderProperties(properties) {
 
     const grid =
-        document.getElementById("propertyGrid");
+        document.getElementById(
+            "propertyGrid"
+        );
 
-    document.getElementById("resultsCount")
-        .textContent =
+
+    if (!grid) return;
+
+
+    document.getElementById(
+        "resultsCount"
+    ).textContent =
         properties.length +
-        (properties.length === 1
-            ? " property"
-            : " properties");
+        (
+            properties.length === 1
+                ? " property"
+                : " properties"
+        );
 
 
     if (!properties.length) {
 
         grid.innerHTML = `
             <div class="empty">
-                <h3>No properties found</h3>
-                <p>Try another search or category.</p>
+
+                <h3>
+                    No properties found
+                </h3>
+
+                <p>
+                    Try another search or category.
+                </p>
+
             </div>
         `;
 
@@ -1665,7 +1855,12 @@ function renderProperties(properties) {
 
     grid.innerHTML =
         properties
-            .map(property => createPropertyCard(property))
+            .map(
+                property =>
+                    createPropertyCard(
+                        property
+                    )
+            )
             .join("");
 }
 
@@ -1677,10 +1872,14 @@ function renderProperties(properties) {
 function createPropertyCard(property) {
 
     const images =
-        getPropertyImages(property);
+        getPropertyImages(
+            property
+        );
+
 
     const firstImage =
         images[0] || "";
+
 
     const category =
         property.category ||
@@ -1700,28 +1899,33 @@ function createPropertyCard(property) {
             .includes("rent");
 
 
-    const imageHtml = firstImage
+    const imageHtml =
+        firstImage
 
-        ? `
-            <img
-                src="${escapeHtml(firstImage)}"
-                alt="${escapeHtml(property.title || "Property")}"
-                loading="lazy"
-                onclick="openPropertyDetails('${property.id}')"
-            >
-          `
+            ? `
+                <img
+                    src="${escapeHtml(firstImage)}"
+                    alt="${escapeHtml(
+                        property.title ||
+                        "Property"
+                    )}"
+                    loading="lazy"
+                    onclick="openPropertyDetails('${property.id}')"
+                >
+              `
 
-        : `
-            <div
-                class="no-image"
-                onclick="openPropertyDetails('${property.id}')">
-                🏠
-            </div>
-          `;
+            : `
+                <div
+                    class="no-image"
+                    onclick="openPropertyDetails('${property.id}')">
+                    🏠
+                </div>
+              `;
 
 
     const arrows =
         images.length > 1
+
             ? `
                 <button
                     class="gallery-arrow left"
@@ -1739,14 +1943,20 @@ function createPropertyCard(property) {
                     ${images.length} photos
                 </div>
               `
+
             : "";
 
 
     const likeCount =
-        Number(property.like_count || 0);
+        Number(
+            property.like_count || 0
+        );
+
 
     const dislikeCount =
-        Number(property.dislike_count || 0);
+        Number(
+            property.dislike_count || 0
+        );
 
 
     return `
@@ -1767,11 +1977,18 @@ function createPropertyCard(property) {
 
                 <div class="badges">
 
-                    <span class="badge ${isRent ? "rent" : ""}">
-                        ${escapeHtml(
-                            isRent ? "For Rent" : "For Sale"
-                        )}
+                    <span class="badge ${
+                        isRent ? "rent" : ""
+                    }">
+
+                        ${
+                            isRent
+                                ? "For Rent"
+                                : "For Sale"
+                        }
+
                     </span>
+
 
                     <span class="badge">
                         ${escapeHtml(category)}
@@ -1782,20 +1999,24 @@ function createPropertyCard(property) {
 
                 <h3 class="property-title">
                     ${escapeHtml(
-                        property.title || "Property"
+                        property.title ||
+                        "Property"
                     )}
                 </h3>
 
 
                 <div class="location">
                     📍 ${escapeHtml(
-                        property.location || "Nigeria"
+                        property.location ||
+                        "Nigeria"
                     )}
                 </div>
 
 
                 <div class="price">
-                    ${formatPrice(property.price)}
+                    ${formatPrice(
+                        property.price
+                    )}
                 </div>
 
 
@@ -1815,6 +2036,7 @@ function createPropertyCard(property) {
                         View Property
                     </button>
 
+
                     <button
                         class="action-btn"
                         onclick="contactProperty('${property.id}')">
@@ -1833,6 +2055,7 @@ function createPropertyCard(property) {
                         👍 ${likeCount}
                     </button>
 
+
                     <button
                         id="dislike-${property.id}"
                         class="react-btn"
@@ -1850,65 +2073,13 @@ function createPropertyCard(property) {
 
 
 /* =========================================================
-   CARD IMAGE SWIPE / ARROWS
+   CARD IMAGE ARROWS
 ========================================================= */
 
-function moveCardImage(propertyId, direction) {
-
-    const property =
-        allProperties.find(
-            item => String(item.id) === String(propertyId)
-        );
-
-    if (!property) return;
-
-    const images =
-        getPropertyImages(property);
-
-    if (images.length < 2) return;
-
-
-    const gallery =
-        document.getElementById(
-            "gallery-" + propertyId
-        );
-
-    if (!gallery) return;
-
-
-    let index =
-        Number(gallery.dataset.index || 0);
-
-
-    index += direction;
-
-
-    if (index < 0) {
-        index = images.length - 1;
-    }
-
-    if (index >= images.length) {
-        index = 0;
-    }
-
-
-    gallery.dataset.index = index;
-
-
-    const img =
-        gallery.querySelector("img");
-
-    if (img) {
-        img.src = images[index];
-    }
-}
-
-
-/* =========================================================
-   PROPERTY DETAILS
-========================================================= */
-
-function openPropertyDetails(propertyId) {
+function moveCardImage(
+    propertyId,
+    direction
+) {
 
     const property =
         allProperties.find(
@@ -1917,13 +2088,98 @@ function openPropertyDetails(propertyId) {
                 String(propertyId)
         );
 
+
     if (!property) return;
 
 
-    detailProperty = property;
+    const images =
+        getPropertyImages(
+            property
+        );
+
+
+    if (images.length < 2) {
+        return;
+    }
+
+
+    const gallery =
+        document.getElementById(
+            "gallery-" +
+            propertyId
+        );
+
+
+    if (!gallery) return;
+
+
+    let index =
+        Number(
+            gallery.dataset.index ||
+            0
+        );
+
+
+    index += direction;
+
+
+    if (index < 0) {
+        index =
+            images.length - 1;
+    }
+
+
+    if (index >= images.length) {
+        index = 0;
+    }
+
+
+    gallery.dataset.index =
+        index;
+
+
+    const image =
+        gallery.querySelector(
+            "img"
+        );
+
+
+    if (image) {
+
+        image.src =
+            images[index];
+    }
+}
+
+
+/* =========================================================
+   PROPERTY DETAILS
+========================================================= */
+
+function openPropertyDetails(
+    propertyId
+) {
+
+    const property =
+        allProperties.find(
+            item =>
+                String(item.id) ===
+                String(propertyId)
+        );
+
+
+    if (!property) return;
+
+
+    detailProperty =
+        property;
+
 
     detailImages =
-        getPropertyImages(property);
+        getPropertyImages(
+            property
+        );
+
 
     detailImageIndex = 0;
 
@@ -1932,17 +2188,24 @@ function openPropertyDetails(propertyId) {
     renderDetailInfo();
 
 
-    openModalById("propertyDetailModal");
+    openModalById(
+        "propertyDetailModal"
+    );
 }
 
 
 function renderDetailGallery() {
 
     const gallery =
-        document.getElementById("detailGallery");
+        document.getElementById(
+            "detailGallery"
+        );
+
 
     const thumbs =
-        document.getElementById("detailThumbs");
+        document.getElementById(
+            "detailThumbs"
+        );
 
 
     if (!detailImages.length) {
@@ -1950,21 +2213,26 @@ function renderDetailGallery() {
         gallery.innerHTML =
             '<div class="no-image">🏠</div>';
 
-        thumbs.innerHTML = "";
+        thumbs.innerHTML =
+            "";
 
         return;
     }
 
 
     gallery.innerHTML = `
+
         <img
-            src="${escapeHtml(detailImages[0])}"
+            src="${escapeHtml(
+                detailImages[0]
+            )}"
             alt="Property photo"
             onclick="openViewer(0)"
         >
 
         ${
             detailImages.length > 1
+
                 ? `
                     <button
                         class="gallery-arrow left"
@@ -1978,27 +2246,35 @@ function renderDetailGallery() {
                         ›
                     </button>
                   `
+
                 : ""
         }
+
     `;
 
 
     thumbs.innerHTML =
         detailImages
-            .map((image, index) => `
-                <button
-                    class="detail-thumb ${
-                        index === 0 ? "active" : ""
-                    }"
-                    onclick="setDetailImage(${index})">
+            .map(
+                (image,index) => `
 
-                    <img
-                        src="${escapeHtml(image)}"
-                        alt="Property thumbnail"
-                    >
+                    <button
+                        class="detail-thumb ${
+                            index === 0
+                                ? "active"
+                                : ""
+                        }"
+                        onclick="setDetailImage(${index})">
 
-                </button>
-            `)
+                        <img
+                            src="${escapeHtml(image)}"
+                            alt="Property thumbnail"
+                        >
+
+                    </button>
+
+                `
+            )
             .join("");
 }
 
@@ -2012,46 +2288,75 @@ function setDetailImage(index) {
         return;
     }
 
-    detailImageIndex = index;
+
+    detailImageIndex =
+        index;
+
 
     const gallery =
-        document.getElementById("detailGallery");
+        document.getElementById(
+            "detailGallery"
+        );
+
 
     const image =
-        gallery.querySelector("img");
+        gallery.querySelector(
+            "img"
+        );
+
 
     if (image) {
+
         image.src =
             detailImages[index];
     }
 
 
     document
-        .querySelectorAll(".detail-thumb")
-        .forEach((thumb, i) => {
+        .querySelectorAll(
+            ".detail-thumb"
+        )
+        .forEach(
+            (thumb,i) => {
 
-            thumb.classList.toggle(
-                "active",
-                i === index
-            );
+                thumb.classList.toggle(
+                    "active",
+                    i === index
+                );
 
-        });
+            }
+        );
 }
 
 
-function changeDetailImage(direction) {
+function changeDetailImage(
+    direction
+) {
 
-    if (detailImages.length < 2) return;
+    if (
+        detailImages.length < 2
+    ) {
+        return;
+    }
+
 
     let index =
-        detailImageIndex + direction;
+        detailImageIndex +
+        direction;
 
 
     if (index < 0) {
-        index = detailImages.length - 1;
+
+        index =
+            detailImages.length - 1;
     }
 
-    if (index >= detailImages.length) {
+
+    if (
+        index >=
+        detailImages.length
+    ) {
+
         index = 0;
     }
 
@@ -2065,8 +2370,16 @@ function renderDetailInfo() {
     const property =
         detailProperty;
 
+
     const info =
-        document.getElementById("detailInfo");
+        document.getElementById(
+            "detailInfo"
+        );
+
+
+    if (!property || !info) {
+        return;
+    }
 
 
     const category =
@@ -2077,7 +2390,8 @@ function renderDetailInfo() {
 
 
     const listingType =
-        property.listing_type || "sale";
+        property.listing_type ||
+        "sale";
 
 
     const isRent =
@@ -2090,9 +2404,18 @@ function renderDetailInfo() {
 
         <div class="badges">
 
-            <span class="badge ${isRent ? "rent" : ""}">
-                ${isRent ? "For Rent" : "For Sale"}
+            <span class="badge ${
+                isRent ? "rent" : ""
+            }">
+
+                ${
+                    isRent
+                        ? "For Rent"
+                        : "For Sale"
+                }
+
             </span>
+
 
             <span class="badge">
                 ${escapeHtml(category)}
@@ -2103,20 +2426,24 @@ function renderDetailInfo() {
 
         <h2>
             ${escapeHtml(
-                property.title || "Property"
+                property.title ||
+                "Property"
             )}
         </h2>
 
 
         <div class="location">
             📍 ${escapeHtml(
-                property.location || "Nigeria"
+                property.location ||
+                "Nigeria"
             )}
         </div>
 
 
         <div class="detail-price">
-            ${formatPrice(property.price)}
+            ${formatPrice(
+                property.price
+            )}
         </div>
 
 
@@ -2136,6 +2463,7 @@ function renderDetailInfo() {
                 👍 Like
             </button>
 
+
             <button
                 class="react-btn"
                 onclick="reactToProperty('${property.id}','dislike')">
@@ -2153,6 +2481,7 @@ function renderDetailInfo() {
                 Contact Property Owner
             </button>
 
+
             <button
                 class="secondary-btn"
                 onclick="closeModalById('propertyDetailModal')">
@@ -2160,6 +2489,7 @@ function renderDetailInfo() {
             </button>
 
         </div>
+
     `;
 }
 
@@ -2170,44 +2500,70 @@ function renderDetailInfo() {
 
 function openViewer(index) {
 
-    if (!detailImages.length) return;
+    if (!detailImages.length) {
+        return;
+    }
+
 
     viewerImages =
         detailImages.slice();
 
-    viewerIndex = index;
+
+    viewerIndex =
+        index;
+
 
     renderViewer();
 
-    openModalById("imageViewer");
+
+    openModalById(
+        "imageViewer"
+    );
 }
 
 
 function renderViewer() {
 
     const image =
-        document.getElementById("viewerImage");
+        document.getElementById(
+            "viewerImage"
+        );
 
-    if (!image || !viewerImages.length) {
+
+    if (
+        !image ||
+        !viewerImages.length
+    ) {
         return;
     }
 
+
     image.src =
-        viewerImages[viewerIndex];
+        viewerImages[
+            viewerIndex
+        ];
 }
 
 
-function changeViewerImage(direction) {
+function changeViewerImage(
+    direction
+) {
 
-    if (viewerImages.length < 2) {
+    if (
+        viewerImages.length < 2
+    ) {
         return;
     }
 
 
-    viewerIndex += direction;
+    viewerIndex +=
+        direction;
 
 
-    if (viewerIndex < 0) {
+    if (
+        viewerIndex < 0
+    ) {
+
         viewerIndex =
             viewerImages.length - 1;
     }
@@ -2217,6 +2573,7 @@ function changeViewerImage(direction) {
         viewerIndex >=
         viewerImages.length
     ) {
+
         viewerIndex = 0;
     }
 
@@ -2229,7 +2586,9 @@ function changeViewerImage(direction) {
    CONTACT
 ========================================================= */
 
-async function contactProperty(propertyId) {
+async function contactProperty(
+    propertyId
+) {
 
     const auth =
         await getAuthDetails();
@@ -2237,20 +2596,9 @@ async function contactProperty(propertyId) {
 
     if (!auth.user) {
 
-        if (
-            typeof window.openLogin ===
-            "function" &&
-            document.getElementById("loginModal")
-        ) {
-
-            window.openLogin();
-
-        } else {
-
-            alert(
-                "Please log in to contact the property owner."
-            );
-        }
+        alert(
+            "Please log in to contact the property owner."
+        );
 
         return;
     }
@@ -2264,11 +2612,13 @@ async function contactProperty(propertyId) {
         );
 
 
-    if (!property) return;
+    if (!property) {
+        return;
+    }
 
 
     alert(
-        "LosOja in-app property chat will handle this contact. " +
+        "LosOja property chat will handle this contact. " +
         "The owner's private email will not be displayed."
     );
 }
@@ -2278,7 +2628,10 @@ async function contactProperty(propertyId) {
    LIKE / DISLIKE
 ========================================================= */
 
-async function reactToProperty(propertyId, reaction) {
+async function reactToProperty(
+    propertyId,
+    reaction
+) {
 
     const auth =
         await getAuthDetails();
@@ -2286,20 +2639,9 @@ async function reactToProperty(propertyId, reaction) {
 
     if (!auth.user) {
 
-        if (
-            typeof window.openLogin ===
-            "function" &&
-            document.getElementById("loginModal")
-        ) {
-
-            window.openLogin();
-
-        } else {
-
-            alert(
-                "Please log in to like or dislike a property."
-            );
-        }
+        alert(
+            "Please log in to like or dislike a property."
+        );
 
         return;
     }
@@ -2313,33 +2655,43 @@ async function reactToProperty(propertyId, reaction) {
         );
 
 
-    if (!property) return;
+    if (!property) {
+        return;
+    }
 
 
-    /*
-     * If the database does not yet have like/dislike
-     * columns, we keep the UI working locally for now.
-     */
-    if (reaction === "like") {
+    if (
+        reaction ===
+        "like"
+    ) {
 
         property.like_count =
-            Number(property.like_count || 0) + 1;
+            Number(
+                property.like_count ||
+                0
+            ) + 1;
 
     } else {
 
         property.dislike_count =
-            Number(property.dislike_count || 0) + 1;
+            Number(
+                property.dislike_count ||
+                0
+            ) + 1;
     }
 
 
     const likeButton =
         document.getElementById(
-            "like-" + propertyId
+            "like-" +
+            propertyId
         );
+
 
     const dislikeButton =
         document.getElementById(
-            "dislike-" + propertyId
+            "dislike-" +
+            propertyId
         );
 
 
@@ -2347,7 +2699,10 @@ async function reactToProperty(propertyId, reaction) {
 
         likeButton.textContent =
             "👍 " +
-            Number(property.like_count || 0);
+            Number(
+                property.like_count ||
+                0
+            );
     }
 
 
@@ -2355,14 +2710,13 @@ async function reactToProperty(propertyId, reaction) {
 
         dislikeButton.textContent =
             "👎 " +
-            Number(property.dislike_count || 0);
+            Number(
+                property.dislike_count ||
+                0
+            );
     }
 
 
-    /*
-     * Try to save the reaction if the corresponding
-     * columns exist in property_listings.
-     */
     if (!auth.token) {
         return;
     }
@@ -2376,31 +2730,52 @@ async function reactToProperty(propertyId, reaction) {
 
     try {
 
-        await fetch(
-            SUPABASE_URL +
-            "/rest/v1/property_listings?id=eq." +
-            encodeURIComponent(propertyId),
-            {
-                method:"PATCH",
+        const response =
+            await fetch(
+                SUPABASE_URL +
+                "/rest/v1/property_listings?id=eq." +
+                encodeURIComponent(
+                    propertyId
+                ),
+                {
+                    method:"PATCH",
 
-                headers:{
-                    "apikey":SUPABASE_KEY,
-                    "Authorization":
-                        "Bearer " + auth.token,
-                    "Content-Type":
-                        "application/json"
-                },
+                    headers:{
+                        "apikey":
+                            SUPABASE_KEY,
 
-                body:JSON.stringify({
-                    [field]:
-                        Number(
-                            property[field] || 0
-                        )
-                })
-            }
-        );
+                        "Authorization":
+                            "Bearer " +
+                            auth.token,
 
-    } catch (error) {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify({
+                            [field]:
+                                Number(
+                                    property[field] ||
+                                    0
+                                )
+                        })
+                }
+            );
+
+
+        if (!response.ok) {
+
+            const errorText =
+                await response.text();
+
+            console.warn(
+                "Reaction could not be saved:",
+                errorText
+            );
+        }
+
+    } catch(error) {
 
         console.warn(
             "Reaction could not be saved:",
@@ -2415,14 +2790,17 @@ async function reactToProperty(propertyId, reaction) {
 ========================================================= */
 
 document
-    .getElementById("propertyPhotos")
+    .getElementById(
+        "propertyPhotos"
+    )
     .addEventListener(
         "change",
         function(event) {
 
             const files =
                 Array.from(
-                    event.target.files || []
+                    event.target.files ||
+                    []
                 );
 
 
@@ -2432,56 +2810,78 @@ document
                 );
 
 
-            preview.innerHTML = "";
+            preview.innerHTML =
+                "";
 
 
-            if (files.length > MAX_PROPERTY_IMAGES) {
+            if (
+                files.length >
+                MAX_PROPERTY_IMAGES
+            ) {
 
                 alert(
                     "You can upload a maximum of 20 photos."
                 );
 
-                event.target.value = "";
+
+                event.target.value =
+                    "";
+
 
                 return;
             }
 
 
-            files.forEach(file => {
+            files.forEach(
+                file => {
 
-                if (!file.type.startsWith("image/")) {
-                    return;
+                    if (
+                        !file.type.startsWith(
+                            "image/"
+                        )
+                    ) {
+                        return;
+                    }
+
+
+                    const reader =
+                        new FileReader();
+
+
+                    reader.onload =
+                        function(e) {
+
+                            const div =
+                                document.createElement(
+                                    "div"
+                                );
+
+
+                            div.className =
+                                "preview";
+
+
+                            div.innerHTML = `
+
+                                <img
+                                    src="${e.target.result}"
+                                    alt="Selected property photo"
+                                >
+
+                            `;
+
+
+                            preview.appendChild(
+                                div
+                            );
+                        };
+
+
+                    reader.readAsDataURL(
+                        file
+                    );
                 }
-
-
-                const reader =
-                    new FileReader();
-
-
-                reader.onload =
-                    function(e) {
-
-                        const div =
-                            document.createElement("div");
-
-                        div.className =
-                            "preview";
-
-
-                        div.innerHTML = `
-                            <img
-                                src="${e.target.result}"
-                                alt="Selected property photo"
-                            >
-                        `;
-
-
-                        preview.appendChild(div);
-                    };
-
-
-                reader.readAsDataURL(file);
-            });
+            );
 
         }
     );
@@ -2492,7 +2892,9 @@ document
 ========================================================= */
 
 document
-    .getElementById("propertyForm")
+    .getElementById(
+        "propertyForm"
+    )
     .addEventListener(
         "submit",
         publishProperty
@@ -2510,8 +2912,12 @@ async function publishProperty(event) {
         );
 
 
-    button.disabled = true;
-    button.textContent = "Publishing...";
+    button.disabled =
+        true;
+
+
+    button.textContent =
+        "Publishing...";
 
 
     try {
@@ -2526,7 +2932,10 @@ async function publishProperty(event) {
             await getAuthDetails();
 
 
-        if (!auth.user || !auth.token) {
+        if (
+            !auth.user ||
+            !auth.token
+        ) {
 
             throw new Error(
                 "Please log in before publishing a property."
@@ -2536,41 +2945,53 @@ async function publishProperty(event) {
 
         const title =
             document
-                .getElementById("propertyTitle")
+                .getElementById(
+                    "propertyTitle"
+                )
                 .value
                 .trim();
 
 
         const category =
             document
-                .getElementById("propertyCategory")
+                .getElementById(
+                    "propertyCategory"
+                )
                 .value;
 
 
         const listingType =
             document
-                .getElementById("propertyListingType")
+                .getElementById(
+                    "propertyListingType"
+                )
                 .value;
 
 
         const price =
             Number(
                 document
-                    .getElementById("propertyPrice")
+                    .getElementById(
+                        "propertyPrice"
+                    )
                     .value
             );
 
 
         const location =
             document
-                .getElementById("propertyLocation")
+                .getElementById(
+                    "propertyLocation"
+                )
                 .value
                 .trim();
 
 
         const description =
             document
-                .getElementById("propertyDescription")
+                .getElementById(
+                    "propertyDescription"
+                )
                 .value
                 .trim();
 
@@ -2583,35 +3004,67 @@ async function publishProperty(event) {
 
         const files =
             Array.from(
-                photoInput.files || []
+                photoInput.files ||
+                []
             );
 
 
         if (!title) {
-            throw new Error("Enter a property title.");
+
+            throw new Error(
+                "Enter a property title."
+            );
         }
+
 
         if (!category) {
-            throw new Error("Select the property type.");
+
+            throw new Error(
+                "Select the property type."
+            );
         }
+
 
         if (!listingType) {
-            throw new Error("Select For Sale or For Rent.");
+
+            throw new Error(
+                "Select For Sale or For Rent."
+            );
         }
 
-        if (!price || price < 0) {
-            throw new Error("Enter a valid price.");
+
+        if (
+            !price ||
+            price < 0
+        ) {
+
+            throw new Error(
+                "Enter a valid price."
+            );
         }
+
 
         if (!location) {
-            throw new Error("Enter the property location.");
+
+            throw new Error(
+                "Enter the property location."
+            );
         }
+
 
         if (!description) {
-            throw new Error("Enter a property description.");
+
+            throw new Error(
+                "Enter a property description."
+            );
         }
 
-        if (files.length > MAX_PROPERTY_IMAGES) {
+
+        if (
+            files.length >
+            MAX_PROPERTY_IMAGES
+        ) {
+
             throw new Error(
                 "You can upload a maximum of 20 photos."
             );
@@ -2624,9 +3077,8 @@ async function publishProperty(event) {
         );
 
 
-        /*
-         * Create the property first.
-         */
+        /* CREATE PROPERTY */
+
         const insertResponse =
             await fetch(
                 SUPABASE_URL +
@@ -2635,37 +3087,45 @@ async function publishProperty(event) {
                     method:"POST",
 
                     headers:{
-                        "apikey":SUPABASE_KEY,
+                        "apikey":
+                            SUPABASE_KEY,
+
                         "Authorization":
-                            "Bearer " + auth.token,
+                            "Bearer " +
+                            auth.token,
+
                         "Content-Type":
                             "application/json",
+
                         "Prefer":
                             "return=representation"
                     },
 
-                    body:JSON.stringify({
+                    body:
+                        JSON.stringify({
 
-                        user_id:
-                            auth.user.id,
+                            user_id:
+                                auth.user.id,
 
-                        title:
-                            title,
-                          property_type:
+                            title:
+                                title,
+
+                            property_type:
                                 category,
 
-                        listing_type:
-                            listingType,
+                            listing_type:
+                                listingType,
 
-                        price:
-                            price,
+                            price:
+                                price,
 
-                        location:
-                            location,
+                            location:
+                                location,
 
-                        description:
-                            description
-                    })
+                            description:
+                                description
+
+                        })
                 }
             );
 
@@ -2679,10 +3139,14 @@ async function publishProperty(event) {
             let message =
                 insertText;
 
+
             try {
 
                 const error =
-                    JSON.parse(insertText);
+                    JSON.parse(
+                        insertText
+                    );
+
 
                 message =
                     error.message ||
@@ -2690,7 +3154,9 @@ async function publishProperty(event) {
                     error.details ||
                     insertText;
 
-            } catch (_) {}
+            } catch(_) {
+                /* Keep original error text. */
+            }
 
 
             throw new Error(
@@ -2702,21 +3168,32 @@ async function publishProperty(event) {
 
         let inserted;
 
+
         try {
+
             inserted =
-                JSON.parse(insertText);
-        } catch (_) {
+                JSON.parse(
+                    insertText
+                );
+
+        } catch(_) {
+
             inserted = [];
         }
 
 
         const property =
-            Array.isArray(inserted)
+            Array.isArray(
+                inserted
+            )
                 ? inserted[0]
                 : inserted;
 
 
-        if (!property || !property.id) {
+        if (
+            !property ||
+            !property.id
+        ) {
 
             throw new Error(
                 "Property was created, but no property ID was returned."
@@ -2724,9 +3201,10 @@ async function publishProperty(event) {
         }
 
 
-        /*
-         * Upload photos.
-         */
+        /* =====================================================
+           UPLOAD PHOTOS
+        ===================================================== */
+
         const uploadedImages = [];
 
 
@@ -2744,7 +3222,8 @@ async function publishProperty(event) {
                 index++
             ) {
 
-                const file = files[index];
+                const file =
+                    files[index];
 
 
                 const extension =
@@ -2755,7 +3234,10 @@ async function publishProperty(event) {
                         "jpg"
                     )
                     .toLowerCase()
-                    .replace(/[^a-z0-9]/g,"");
+                    .replace(
+                        /[^a-z0-9]/g,
+                        ""
+                    );
 
 
                 const randomId =
@@ -2763,14 +3245,14 @@ async function publishProperty(event) {
                         window.crypto &&
                         crypto.randomUUID
                     )
-                    ? crypto.randomUUID()
-                    : (
-                        Date.now() +
-                        "-" +
-                        Math.random()
-                            .toString(36)
-                            .slice(2)
-                    );
+                        ? crypto.randomUUID()
+                        : (
+                            Date.now() +
+                            "-" +
+                            Math.random()
+                                .toString(36)
+                                .slice(2)
+                        );
 
 
                 const path =
@@ -2788,7 +3270,9 @@ async function publishProperty(event) {
                         .split("/")
                         .map(
                             part =>
-                                encodeURIComponent(part)
+                                encodeURIComponent(
+                                    part
+                                )
                         )
                         .join("/");
 
@@ -2819,20 +3303,25 @@ async function publishProperty(event) {
                                     "false"
                             },
 
-                            body:file
+                            body:
+                                file
                         }
                     );
 
 
-                if (!uploadResponse.ok) {
+                if (
+                    !uploadResponse.ok
+                ) {
 
                     const errorText =
                         await uploadResponse.text();
+
 
                     console.error(
                         "Photo upload failed:",
                         errorText
                     );
+
 
                     continue;
                 }
@@ -2862,10 +3351,13 @@ async function publishProperty(event) {
         }
 
 
-        /*
-         * Save image records.
-         */
-        if (uploadedImages.length) {
+        /* =====================================================
+           SAVE PHOTO RECORDS
+        ===================================================== */
+
+        if (
+            uploadedImages.length
+        ) {
 
             showStatus(
                 "Saving property photos...",
@@ -2903,27 +3395,31 @@ async function publishProperty(event) {
                 );
 
 
-        if (!imageResponse.ok) {
-    const errorText = await imageResponse.text();
+            if (
+                !imageResponse.ok
+            ) {
 
-    console.error(
-        "Image database insert failed:",
-        errorText
-    );
+                const errorText =
+                    await imageResponse.text();
 
-    alert(
-        "Property published, but photo saving failed.\n\n" +
-        "Database error:\n" +
-        errorText
-    );
 
-    throw new Error(
-        "Photo records could not be saved: " +
-        errorText
-    );
-}
+                console.error(
+                    "Image database insert failed:",
+                    errorText
+                );
 
+
+                throw new Error(
+                    "Photo records could not be saved: " +
+                    errorText
+                );
+            }
         }
+
+
+        /* =====================================================
+           SUCCESS
+        ===================================================== */
 
         showStatus(
             "Property published successfully!",
@@ -2931,9 +3427,6 @@ async function publishProperty(event) {
         );
 
 
-        /*
-         * Refresh marketplace.
-         */
         await loadProperties();
 
 
@@ -2944,24 +3437,27 @@ async function publishProperty(event) {
                     "postPropertyModal"
                 );
 
+
                 document
                     .getElementById(
                         "propertyForm"
                     )
                     .reset();
 
+
                 document
                     .getElementById(
                         "photoPreview"
                     )
-                    .innerHTML = "";
+                    .innerHTML =
+                        "";
 
             },
             900
         );
 
 
-    } catch (error) {
+    } catch(error) {
 
         console.error(
             "Publish property error:",
@@ -2975,9 +3471,13 @@ async function publishProperty(event) {
             "error"
         );
 
+
     } finally {
 
-        button.disabled = false;
+        button.disabled =
+            false;
+
+
         button.textContent =
             "Publish Property";
     }
@@ -2989,7 +3489,9 @@ async function publishProperty(event) {
 ========================================================= */
 
 document
-    .getElementById("searchInput")
+    .getElementById(
+        "searchInput"
+    )
     .addEventListener(
         "input",
         applyFilters
@@ -3001,24 +3503,31 @@ document
 ========================================================= */
 
 document
-    .querySelectorAll(".modal")
-    .forEach(modal => {
+    .querySelectorAll(
+        ".modal"
+    )
+    .forEach(
+        modal => {
 
-        modal.addEventListener(
-            "click",
-            function(event) {
+            modal.addEventListener(
+                "click",
+                function(event) {
 
-                if (
-                    event.target === modal
-                ) {
-                    modal.classList.remove(
-                        "active"
-                    );
+                    if (
+                        event.target ===
+                        modal
+                    ) {
+
+                        modal.classList.remove(
+                            "active"
+                        );
+                    }
+
                 }
-            }
-        );
+            );
 
-    });
+        }
+    );
 
 
 /* =========================================================
@@ -3028,13 +3537,16 @@ document
 document.addEventListener(
     "DOMContentLoaded",
     function() {
+
         loadProperties();
+
     }
 );
 
 
 /*
- * In case this script runs after DOMContentLoaded.
+ * If the script executes after DOMContentLoaded,
+ * load immediately.
  */
 if (
     document.readyState ===
@@ -3042,6 +3554,7 @@ if (
     document.readyState ===
     "complete"
 ) {
+
     loadProperties();
 }
 </script>
