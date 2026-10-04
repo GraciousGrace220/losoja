@@ -67,6 +67,7 @@
     .header-title {
         font-size: 20px;
         font-weight: 700;
+
         display: flex;
         align-items: center;
         gap: 8px;
@@ -76,8 +77,12 @@
         width: 10px;
         height: 10px;
         border-radius: 50%;
+
         background: #39d98a;
-        box-shadow: 0 0 0 3px rgba(57,217,138,.18);
+
+        box-shadow:
+            0 0 0 3px rgba(57,217,138,.18);
+
         display: none;
         flex-shrink: 0;
     }
@@ -88,6 +93,7 @@
 
     .login-button {
         border: 1px solid rgba(255,255,255,.7);
+
         background: transparent;
         color: white;
 
@@ -101,6 +107,7 @@
     .page {
         width: 100%;
         max-width: 900px;
+
         margin: 0 auto;
 
         padding: 16px;
@@ -108,7 +115,9 @@
 
     .status {
         background: white;
+
         border-radius: 12px;
+
         padding: 12px 14px;
 
         margin-bottom: 12px;
@@ -122,10 +131,13 @@
 
     .conversation-card {
         background: white;
+
         border: 1px solid #e5e7eb;
+
         border-radius: 12px;
 
         padding: 14px;
+
         margin-bottom: 10px;
 
         cursor: pointer;
@@ -147,9 +159,11 @@
 
     .chat-header {
         background: white;
+
         border-radius: 12px;
 
         padding: 14px;
+
         margin-bottom: 12px;
 
         border: 1px solid #e5e7eb;
@@ -163,6 +177,7 @@
     .listing-info {
         color: #6b7280;
         font-size: 14px;
+
         margin-top: 4px;
     }
 
@@ -172,15 +187,19 @@
 
     .oja-details {
         background: white;
+
         border: 1px solid #e5e7eb;
+
         border-radius: 12px;
 
         padding: 14px;
+
         margin-bottom: 12px;
     }
 
     .oja-image-gallery {
         display: grid;
+
         grid-template-columns:
             repeat(auto-fit, minmax(110px, 1fr));
 
@@ -191,6 +210,7 @@
 
     .oja-image-gallery img {
         width: 100%;
+
         aspect-ratio: 1 / 1;
 
         object-fit: cover;
@@ -209,6 +229,7 @@
 
     .oja-price {
         color: #087a3e;
+
         font-size: 17px;
         font-weight: 700;
 
@@ -217,6 +238,7 @@
 
     .oja-location {
         color: #6b7280;
+
         font-size: 14px;
 
         margin-bottom: 8px;
@@ -224,6 +246,7 @@
 
     .oja-description {
         color: #374151;
+
         font-size: 14px;
 
         line-height: 1.5;
@@ -235,9 +258,11 @@
         width: 100%;
 
         border: none;
+
         border-radius: 9px;
 
         background: #087a3e;
+
         color: white;
 
         padding: 12px;
@@ -245,6 +270,7 @@
         margin-top: 14px;
 
         font-weight: 700;
+
         cursor: pointer;
     }
 
@@ -256,7 +282,9 @@
         display: none;
 
         background: white;
+
         border: 1px solid #dfe7e2;
+
         border-left: 4px solid #087a3e;
 
         border-radius: 12px;
@@ -268,6 +296,7 @@
 
     .escrow-details-title {
         font-size: 16px;
+
         font-weight: 700;
 
         color: #087a3e;
@@ -289,6 +318,7 @@
         color: #6b7280;
 
         font-size: 12px;
+
         font-weight: 600;
 
         margin-bottom: 3px;
@@ -308,7 +338,9 @@
 
     .escrow-amount {
         font-weight: 700;
+
         color: #087a3e;
+
         font-size: 16px;
     }
 
@@ -316,6 +348,7 @@
         display: inline-block;
 
         background: #eef8f2;
+
         color: #087a3e;
 
         padding: 4px 9px;
@@ -323,6 +356,7 @@
         border-radius: 20px;
 
         font-size: 12px;
+
         font-weight: 700;
 
         text-transform: capitalize;
@@ -330,6 +364,7 @@
 
     .escrow-dispute {
         background: #fff7ed;
+
         color: #9a3412;
 
         border-radius: 8px;
@@ -349,12 +384,15 @@
 
     .messages {
         background: white;
+
         border: 1px solid #e5e7eb;
+
         border-radius: 12px;
 
         padding: 14px;
 
         min-height: 350px;
+
         max-height: 55vh;
 
         overflow-y: auto;
@@ -364,6 +402,7 @@
 
     .message-row {
         display: flex;
+
         margin-bottom: 10px;
     }
 
@@ -377,6 +416,7 @@
         background: #eef2f0;
 
         border-radius: 14px;
+
         padding: 10px 12px;
 
         word-break: break-word;
@@ -384,6 +424,7 @@
 
     .message-row.mine .message-bubble {
         background: #087a3e;
+
         color: white;
     }
 
@@ -391,7 +432,9 @@
         display: block;
 
         width: 100%;
+
         max-width: 300px;
+
         max-height: 300px;
 
         object-fit: cover;
@@ -405,18 +448,23 @@
 
     .message-text {
         white-space: pre-wrap;
+
         line-height: 1.4;
     }
 
     .message-time {
         font-size: 11px;
+
         opacity: .7;
+
         margin-top: 4px;
     }
 
     .empty-message {
         text-align: center;
+
         color: #6b7280;
+
         padding: 60px 15px;
     }
 
@@ -426,6 +474,7 @@
 
     .chat-form {
         display: flex;
+
         gap: 8px;
 
         background: white;
@@ -459,6 +508,7 @@
 
     .image-button {
         width: 48px;
+
         flex-shrink: 0;
 
         border: none;
@@ -466,6 +516,7 @@
         border-radius: 9px;
 
         background: #eef8f2;
+
         color: #087a3e;
 
         font-size: 20px;
@@ -479,11 +530,13 @@
 
     .image-button:disabled {
         opacity: .6;
+
         cursor: not-allowed;
     }
 
     .send-button {
         width: 48px;
+
         flex-shrink: 0;
 
         border: none;
@@ -491,9 +544,11 @@
         border-radius: 9px;
 
         background: #087a3e;
+
         color: white;
 
         font-size: 20px;
+
         font-weight: 700;
 
         cursor: pointer;
@@ -501,6 +556,7 @@
 
     .send-button:disabled {
         opacity: .6;
+
         cursor: not-allowed;
     }
 
@@ -508,6 +564,7 @@
         display: none;
 
         background: #eef8f2;
+
         color: #087a3e;
 
         border-radius: 8px;
@@ -523,6 +580,7 @@
         display: none;
 
         background: #fee2e2;
+
         color: #991b1b;
 
         border-radius: 10px;
@@ -534,7 +592,9 @@
 
     .loading {
         text-align: center;
+
         color: #6b7280;
+
         padding: 30px;
     }
 
@@ -554,6 +614,7 @@
 
         .message-image {
             max-width: 240px;
+
             max-height: 240px;
         }
 
@@ -587,8 +648,15 @@
     </button>
 
     <div class="header-title">
+
         LosOja Chat
-        <span id="chatUnreadIndicator" class="chat-unread-dot" aria-label="New chat notification"></span>
+
+        <span
+            id="chatUnreadIndicator"
+            class="chat-unread-dot"
+            aria-label="New chat notification"
+        ></span>
+
     </div>
 
 </div>
@@ -639,8 +707,7 @@
     <div
         id="listingInfo"
         class="listing-info"
-    >
-    </div>
+    ></div>
 
 </div>
 
@@ -771,8 +838,6 @@
 
 </div>
 
-<!-- Selected image indicator -->
-
 <div
     id="selectedImage"
     class="selected-image"
@@ -860,16 +925,35 @@ const ALLOWED_CHAT_IMAGE_TYPES = [
 
 
 let currentUser = null;
+
 let currentConversationId = null;
+
 let currentOtherUserId = null;
+
+/*
+ * BUSINESS CHAT
+ *
+ * This is supplied by:
+ * chat.html?user=OWNER_ID&business=BUSINESS_ID
+ */
+let currentBusinessId = null;
+
 let currentListingId = null;
+
 let currentPropertyId = null;
+
 let currentPropertyTitle = null;
+
 let currentEscrowId = null;
+
 let currentEscrow = null;
+
 let currentOjaListingId = null;
+
 let currentOjaListing = null;
+
 let currentOjaImages = [];
+
 let messagePolling = null;
 
 
@@ -880,26 +964,34 @@ let messagePolling = null;
 function showError(message) {
 
     const box =
-        document.getElementById("errorMessage");
+        document.getElementById(
+            "errorMessage"
+        );
 
     if (!box) return;
 
-    box.textContent = message;
+    box.textContent =
+        message;
 
-    box.style.display = "block";
+    box.style.display =
+        "block";
 }
 
 
 function clearError() {
 
     const box =
-        document.getElementById("errorMessage");
+        document.getElementById(
+            "errorMessage"
+        );
 
     if (!box) return;
 
-    box.textContent = "";
+    box.textContent =
+        "";
 
-    box.style.display = "none";
+    box.style.display =
+        "none";
 }
 
 
@@ -911,7 +1003,8 @@ function goToLogin() {
     );
 
     if (
-        typeof window.openLogin === "function"
+        typeof window.openLogin ===
+        "function"
     ) {
 
         window.openLogin();
@@ -919,7 +1012,8 @@ function goToLogin() {
         return;
     }
 
-    window.location.href = "index.html";
+    window.location.href =
+        "index.html";
 }
 
 
@@ -996,7 +1090,8 @@ async function supabaseRequest(
 
     } catch {
 
-        data = text;
+        data =
+            text;
     }
 
 
@@ -1075,25 +1170,41 @@ async function uploadChatImage(file) {
     }
 
 
-    let extension = "jpg";
+    let extension =
+        "jpg";
 
 
-    if (file.type === "image/png") {
-        extension = "png";
+    if (
+        file.type ===
+        "image/png"
+    ) {
+
+        extension =
+            "png";
     }
 
 
-    if (file.type === "image/webp") {
-        extension = "webp";
+    if (
+        file.type ===
+        "image/webp"
+    ) {
+
+        extension =
+            "webp";
     }
 
 
     const uniqueName =
         (
-            typeof crypto !== "undefined" &&
-            typeof crypto.randomUUID === "function"
+            typeof crypto !==
+            "undefined" &&
+
+            typeof crypto.randomUUID ===
+            "function"
         )
+
             ? crypto.randomUUID()
+
             : Date.now().toString();
 
 
@@ -1117,7 +1228,8 @@ async function uploadChatImage(file) {
         await fetch(
             uploadUrl,
             {
-                method: "POST",
+                method:
+                    "POST",
 
                 headers: {
 
@@ -1133,6 +1245,7 @@ async function uploadChatImage(file) {
 
                     "x-upsert":
                         "false"
+
                 },
 
                 body:
@@ -1147,25 +1260,31 @@ async function uploadChatImage(file) {
 
     if (!response.ok) {
 
-        let errorData = null;
+        let errorData =
+            null;
+
 
         try {
 
             errorData =
                 responseText
-                    ? JSON.parse(responseText)
+                    ? JSON.parse(
+                        responseText
+                    )
                     : null;
 
         } catch {
 
-            errorData = null;
+            errorData =
+                null;
         }
 
 
         console.error(
             "LosOja chat image upload error:",
             response.status,
-            errorData || responseText
+            errorData ||
+            responseText
         );
 
 
@@ -1201,7 +1320,9 @@ async function loadEscrowChatContext() {
     const escrow =
         await supabaseRequest(
             "/rest/v1/escrow_transactions" +
+
             "?select=id,buyer_id,seller_id,amount,currency,status,description,dispute_reason" +
+
             "&id=eq." +
             encodeURIComponent(
                 currentEscrowId
@@ -1390,12 +1511,15 @@ async function findOrCreateConversation() {
     let query;
 
 
-    /* OJA CHAT */
+    /* =====================================================
+       OJA CHAT
+    ===================================================== */
 
     if (currentOjaListingId) {
 
         query =
             "/rest/v1/conversations" +
+
             "?select=*" +
 
             "&oja_listing_id=eq." +
@@ -1430,12 +1554,15 @@ async function findOrCreateConversation() {
             ")";
 
 
-    /* BARTER CHAT */
+    /* =====================================================
+       BARTER CHAT
+    ===================================================== */
 
     } else if (currentListingId) {
 
         query =
             "/rest/v1/conversations" +
+
             "?select=*" +
 
             "&barter_listing_id=eq." +
@@ -1470,12 +1597,15 @@ async function findOrCreateConversation() {
             ")";
 
 
-    /* NORMAL CHAT */
+    /* =====================================================
+       NORMAL / BUSINESS CHAT
+    ===================================================== */
 
     } else {
 
         query =
             "/rest/v1/conversations" +
+
             "?select=*" +
 
             "&or=(" +
@@ -1503,11 +1633,14 @@ async function findOrCreateConversation() {
 
             ")" +
             ")";
+
     }
 
 
     const existing =
-        await supabaseRequest(query);
+        await supabaseRequest(
+            query
+        );
 
 
     if (
@@ -1528,10 +1661,12 @@ async function findOrCreateConversation() {
             currentOtherUserId,
 
         barter_listing_id:
-            currentListingId || null,
+            currentListingId ||
+            null,
 
         oja_listing_id:
-            currentOjaListingId || null
+            currentOjaListingId ||
+            null
 
     };
 
@@ -1540,7 +1675,9 @@ async function findOrCreateConversation() {
         await supabaseRequest(
             "/rest/v1/conversations",
             {
-                method: "POST",
+                method:
+                    "POST",
+
                 body:
                     JSON.stringify(
                         conversation
@@ -1566,7 +1703,6 @@ async function findOrCreateConversation() {
 
 /* =========================================================
    LOAD EXISTING CONVERSATION BY ID
-   Used by notification links
 ========================================================= */
 
 async function loadConversationById(
@@ -1581,7 +1717,9 @@ async function loadConversationById(
     const conversations =
         await supabaseRequest(
             "/rest/v1/conversations" +
+
             "?select=*" +
+
             "&id=eq." +
             encodeURIComponent(
                 conversationId
@@ -1605,10 +1743,19 @@ async function loadConversationById(
 
 
     const isParticipant =
-        String(conversation.user_one_id) ===
-            String(currentUser.id) ||
-        String(conversation.user_two_id) ===
-            String(currentUser.id);
+        String(
+            conversation.user_one_id
+        ) ===
+            String(
+                currentUser.id
+            ) ||
+
+        String(
+            conversation.user_two_id
+        ) ===
+            String(
+                currentUser.id
+            );
 
 
     if (!isParticipant) {
@@ -1624,9 +1771,15 @@ async function loadConversationById(
 
 
     currentOtherUserId =
-        String(conversation.user_one_id) ===
-            String(currentUser.id)
+        String(
+            conversation.user_one_id
+        ) ===
+            String(
+                currentUser.id
+            )
+
             ? conversation.user_two_id
+
             : conversation.user_one_id;
 
 
@@ -1655,6 +1808,7 @@ async function createChatNotification() {
         !currentOtherUserId ||
         !currentConversationId
     ) {
+
         return;
     }
 
@@ -1663,6 +1817,7 @@ async function createChatNotification() {
         String(currentOtherUserId) ===
         String(currentUser.id)
     ) {
+
         return;
     }
 
@@ -1696,13 +1851,15 @@ async function createChatNotification() {
 
             is_read:
                 false
+
         };
 
 
         await supabaseRequest(
             "/rest/v1/notifications",
             {
-                method: "POST",
+                method:
+                    "POST",
 
                 body:
                     JSON.stringify(
@@ -1733,7 +1890,11 @@ async function updateChatUnreadIndicator() {
         );
 
 
-    if (!indicator || !currentUser) {
+    if (
+        !indicator ||
+        !currentUser
+    ) {
+
         return;
     }
 
@@ -1742,13 +1903,19 @@ async function updateChatUnreadIndicator() {
 
         const notifications =
             await supabaseRequest(
+
                 "/rest/v1/notifications" +
+
                 "?select=id,type,is_read" +
+
                 "&user_id=eq." +
+
                 encodeURIComponent(
                     currentUser.id
                 ) +
+
                 "&is_read=eq.false" +
+
                 "&limit=100"
             );
 
@@ -1757,13 +1924,17 @@ async function updateChatUnreadIndicator() {
             Array.isArray(
                 notifications
             ) &&
+
             notifications.some(
                 notification =>
                     String(
-                        notification?.type || ""
+                        notification?.type ||
+                        ""
                     )
                         .toLowerCase()
-                        .startsWith("chat:")
+                        .startsWith(
+                            "chat:"
+                        )
             );
 
 
@@ -1793,6 +1964,7 @@ async function markCurrentChatNotificationsRead() {
         !currentUser ||
         !currentOtherUserId
     ) {
+
         return;
     }
 
@@ -1806,21 +1978,30 @@ async function markCurrentChatNotificationsRead() {
 
 
         await supabaseRequest(
+
             "/rest/v1/notifications" +
+
             "?user_id=eq." +
+
             encodeURIComponent(
                 currentUser.id
             ) +
+
             "&type=like." +
+
             encodeURIComponent(
                 notificationTypePattern
             ),
+
             {
-                method: "PATCH",
+                method:
+                    "PATCH",
 
                 headers: {
+
                     "Prefer":
                         "return=minimal"
+
                 },
 
                 body:
@@ -1913,91 +2094,111 @@ function renderMessages(messages) {
 
     container.innerHTML =
         messages
-            .map(message => {
+            .map(
+                message => {
 
-                const mine =
-                    String(message.sender_id) ===
-                    String(currentUser.id);
-
-
-                const time =
-                    message.created_at
-                        ? new Date(
-                            message.created_at
-                        ).toLocaleTimeString(
-                            [],
-                            {
-                                hour: "2-digit",
-                                minute: "2-digit"
-                            }
-                        )
-                        : "";
-
-
-                const actualText =
-                    message.message &&
-                    message.message !== "📷 Photo"
-                        ? message.message
-                        : "";
-
-
-                let imageHTML = "";
-
-
-                if (message.image_url) {
-
-                    const safeImage =
-                        escapeHTML(
-                            message.image_url
+                    const mine =
+                        String(
+                            message.sender_id
+                        ) ===
+                        String(
+                            currentUser.id
                         );
 
 
-                    imageHTML = `
-                        <img
-                            class="message-image"
-                            src="${safeImage}"
-                            alt="Chat picture"
-                            loading="lazy"
-                            onclick="window.open('${safeImage}','_blank')"
-                        >
-                    `;
-                }
+                    const time =
+                        message.created_at
+
+                            ? new Date(
+                                message.created_at
+                            ).toLocaleTimeString(
+                                [],
+                                {
+                                    hour:
+                                        "2-digit",
+
+                                    minute:
+                                        "2-digit"
+                                }
+                            )
+
+                            : "";
 
 
-                let textHTML = "";
+                    const actualText =
+                        message.message &&
+                        message.message !==
+                            "📷 Photo"
+
+                            ? message.message
+
+                            : "";
 
 
-                if (actualText) {
-
-                    textHTML = `
-                        <div class="message-text">
-                            ${escapeHTML(actualText)}
-                        </div>
-                    `;
-                }
+                    let imageHTML =
+                        "";
 
 
-                return `
-                    <div class="message-row ${
-                        mine ? "mine" : ""
-                    }">
+                    if (
+                        message.image_url
+                    ) {
 
-                        <div class="message-bubble">
+                        const safeImage =
+                            escapeHTML(
+                                message.image_url
+                            );
 
-                            ${imageHTML}
 
-                            ${textHTML}
+                        imageHTML = `
+                            <img
+                                class="message-image"
+                                src="${safeImage}"
+                                alt="Chat picture"
+                                loading="lazy"
+                                onclick="window.open('${safeImage}','_blank')"
+                            >
+                        `;
+                    }
 
-                            <div class="message-time">
-                                ${time}
+
+                    let textHTML =
+                        "";
+
+
+                    if (actualText) {
+
+                        textHTML = `
+                            <div class="message-text">
+                                ${escapeHTML(actualText)}
+                            </div>
+                        `;
+                    }
+
+
+                    return `
+                        <div class="message-row ${
+                            mine
+                                ? "mine"
+                                : ""
+                        }">
+
+                            <div class="message-bubble">
+
+                                ${imageHTML}
+
+                                ${textHTML}
+
+                                <div class="message-time">
+                                    ${time}
+                                </div>
+
                             </div>
 
                         </div>
+                    `;
 
-                    </div>
-                `;
-
-            })
+                }
+            )
             .join("");
 
 
@@ -2015,11 +2216,26 @@ function escapeHTML(value) {
     return String(
         value ?? ""
     )
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
 }
 
 
@@ -2076,13 +2292,15 @@ async function sendMessage() {
 
 
     const selectedFile =
-        imageInput?.files?.[0] || null;
+        imageInput?.files?.[0] ||
+        null;
 
 
     if (
         !cleanMessage &&
         !selectedFile
     ) {
+
         return;
     }
 
@@ -2104,18 +2322,21 @@ async function sendMessage() {
 
 
     if (button) {
-        button.disabled = true;
+        button.disabled =
+            true;
     }
 
 
     if (imageButton) {
-        imageButton.disabled = true;
+        imageButton.disabled =
+            true;
     }
 
 
     try {
 
-        let imageUrl = null;
+        let imageUrl =
+            null;
 
 
         if (selectedFile) {
@@ -2141,13 +2362,15 @@ async function sendMessage() {
 
             image_url:
                 imageUrl
+
         };
 
 
         await supabaseRequest(
             "/rest/v1/messages",
             {
-                method: "POST",
+                method:
+                    "POST",
 
                 body:
                     JSON.stringify(
@@ -2160,11 +2383,14 @@ async function sendMessage() {
         await createChatNotification();
 
 
-        input.value = "";
+        input.value =
+            "";
 
 
         if (imageInput) {
-            imageInput.value = "";
+
+            imageInput.value =
+                "";
         }
 
 
@@ -2191,12 +2417,14 @@ async function sendMessage() {
     } finally {
 
         if (button) {
-            button.disabled = false;
+            button.disabled =
+                false;
         }
 
 
         if (imageButton) {
-            imageButton.disabled = false;
+            imageButton.disabled =
+                false;
         }
 
 
@@ -2227,6 +2455,7 @@ function updateSelectedImage() {
         !imageInput ||
         !selectedImage
     ) {
+
         return;
     }
 
@@ -2280,6 +2509,7 @@ function initializeImageButton() {
         !imageButton ||
         !imageInput
     ) {
+
         return;
     }
 
@@ -2287,7 +2517,9 @@ function initializeImageButton() {
     imageButton.addEventListener(
         "click",
         () => {
+
             imageInput.click();
+
         }
     );
 
@@ -2348,6 +2580,7 @@ function initializeImageButton() {
             clearError();
 
             updateSelectedImage();
+
         }
     );
 }
@@ -2417,7 +2650,8 @@ function renderOjaDetails() {
 
         const amount =
             Number(
-                currentOjaListing.price || 0
+                currentOjaListing.price ||
+                0
             ).toLocaleString(
                 "en-NG",
                 {
@@ -2455,7 +2689,8 @@ function renderOjaDetails() {
 
     if (gallery) {
 
-        gallery.innerHTML = "";
+        gallery.innerHTML =
+            "";
 
 
         currentOjaImages.forEach(
@@ -2488,6 +2723,7 @@ function renderOjaDetails() {
                 gallery.appendChild(
                     img
                 );
+
             }
         );
     }
@@ -2496,13 +2732,6 @@ function renderOjaDetails() {
     details.style.display =
         "block";
 
-
-    /*
-       IMPORTANT:
-       This logic must stay here.
-       currentOjaListing is guaranteed
-       to exist here.
-    */
 
     const buyButton =
         document.getElementById(
@@ -2514,8 +2743,14 @@ function renderOjaDetails() {
 
         if (
             currentUser &&
-            String(currentOjaListing.user_id) !==
-            String(currentUser.id)
+
+            String(
+                currentOjaListing.user_id
+            ) !==
+
+            String(
+                currentUser.id
+            )
         ) {
 
             buyButton.style.display =
@@ -2551,9 +2786,11 @@ async function loadOjaListing(
                 "/rest/v1/oja_listings" +
 
                 "?select=" +
+
                 "id,user_id,title,description,category,price,currency,location,status,created_at" +
 
                 "&id=eq." +
+
                 encodeURIComponent(
                     listingId
                 )
@@ -2581,6 +2818,7 @@ async function loadOjaListing(
                 "?select=id,image_url,sort_order" +
 
                 "&listing_id=eq." +
+
                 encodeURIComponent(
                     listingId
                 ) +
@@ -2642,6 +2880,7 @@ async function loadConversations() {
             "&or=(" +
 
             "user_one_id.eq." +
+
             encodeURIComponent(
                 currentUser.id
             ) +
@@ -2649,6 +2888,7 @@ async function loadConversations() {
             "," +
 
             "user_two_id.eq." +
+
             encodeURIComponent(
                 currentUser.id
             ) +
@@ -2660,7 +2900,9 @@ async function loadConversations() {
 
 
     renderConversationList(
-        Array.isArray(conversations)
+        Array.isArray(
+            conversations
+        )
             ? conversations
             : []
     );
@@ -2698,7 +2940,8 @@ async function renderConversationList(
     }
 
 
-    container.innerHTML = "";
+    container.innerHTML =
+        "";
 
 
     for (
@@ -2719,6 +2962,8 @@ async function renderConversationList(
             "General chat";
 
 
+        /* BARter listing */
+
         if (
             conversation.barter_listing_id
         ) {
@@ -2729,8 +2974,11 @@ async function renderConversationList(
                     await supabaseRequest(
 
                         "/rest/v1/barter_listings" +
+
                         "?select=title" +
+
                         "&id=eq." +
+
                         encodeURIComponent(
                             conversation.barter_listing_id
                         )
@@ -2757,6 +3005,8 @@ async function renderConversationList(
         }
 
 
+        /* Oja listing */
+
         if (
             conversation.oja_listing_id
         ) {
@@ -2767,8 +3017,11 @@ async function renderConversationList(
                     await supabaseRequest(
 
                         "/rest/v1/oja_listings" +
+
                         "?select=title" +
+
                         "&id=eq." +
+
                         encodeURIComponent(
                             conversation.oja_listing_id
                         )
@@ -2807,7 +3060,9 @@ async function renderConversationList(
 
         card.innerHTML = `
             <div class="conversation-title">
-                ${escapeHTML(listingTitle)}
+                ${escapeHTML(
+                    listingTitle
+                )}
             </div>
 
             <div class="conversation-time">
@@ -2822,11 +3077,15 @@ async function renderConversationList(
 
                 let url =
                     "chat.html" +
+
                     "?conversation=" +
+
                     encodeURIComponent(
                         conversation.id
                     ) +
+
                     "&user=" +
+
                     encodeURIComponent(
                         otherUserId
                     );
@@ -2838,6 +3097,7 @@ async function renderConversationList(
 
                     url +=
                         "&listing=" +
+
                         encodeURIComponent(
                             conversation.barter_listing_id
                         );
@@ -2850,6 +3110,7 @@ async function renderConversationList(
 
                     url +=
                         "&oja_listing=" +
+
                         encodeURIComponent(
                             conversation.oja_listing_id
                         );
@@ -2862,6 +3123,7 @@ async function renderConversationList(
 
                     url +=
                         "&escrow=" +
+
                         encodeURIComponent(
                             conversation.escrow_id
                         );
@@ -2870,6 +3132,7 @@ async function renderConversationList(
 
                 window.location.href =
                     url;
+
             }
         );
 
@@ -2894,38 +3157,70 @@ async function openSpecificChat() {
 
 
     const requestedConversationId =
-        params.get("conversation");
+        params.get(
+            "conversation"
+        );
 
+
+    /*
+     * BUSINESS CHAT
+     *
+     * app.js sends:
+     *
+     * chat.html?user=OWNER_ID&business=BUSINESS_ID
+     *
+     * We now correctly capture the business ID.
+     */
 
     currentOtherUserId =
-        params.get("user");
+        params.get(
+            "user"
+        );
+
+
+    currentBusinessId =
+        params.get(
+            "business"
+        );
 
 
     currentListingId =
-        params.get("listing");
+        params.get(
+            "listing"
+        );
 
 
     currentPropertyId =
-        params.get("property_id");
+        params.get(
+            "property_id"
+        );
 
 
     currentPropertyTitle =
-        params.get("property_title");
+        params.get(
+            "property_title"
+        );
 
 
     currentOjaListingId =
-        params.get("oja_listing");
+        params.get(
+            "oja_listing"
+        );
 
 
     currentEscrowId =
-        params.get("escrow");
+        params.get(
+            "escrow"
+        );
 
 
     /*
        NOTIFICATION / EXISTING CONVERSATION
     */
 
-    if (requestedConversationId) {
+    if (
+        requestedConversationId
+    ) {
 
         const conversation =
             await loadConversationById(
@@ -2934,6 +3229,7 @@ async function openSpecificChat() {
 
 
         if (!conversation) {
+
             throw new Error(
                 "Conversation could not be opened."
             );
@@ -2945,7 +3241,9 @@ async function openSpecificChat() {
     }
 
 
-    /* PROPERTY CHAT */
+    /* =====================================================
+       PROPERTY CHAT
+    ===================================================== */
 
     if (
         currentPropertyId &&
@@ -2953,11 +3251,15 @@ async function openSpecificChat() {
     ) {
 
         currentOtherUserId =
-            params.get("seller_id");
+            params.get(
+                "seller_id"
+            );
     }
 
 
-    /* OJA CHAT */
+    /* =====================================================
+       OJA CHAT
+    ===================================================== */
 
     if (
         currentOjaListingId &&
@@ -2994,7 +3296,9 @@ async function openSpecificChat() {
     }
 
 
-    /* ESCROW CHAT */
+    /* =====================================================
+       ESCROW CHAT
+    ===================================================== */
 
     if (currentEscrowId) {
 
@@ -3002,7 +3306,9 @@ async function openSpecificChat() {
     }
 
 
-    /* NO SPECIFIC USER */
+    /* =====================================================
+       NO SPECIFIC USER
+    ===================================================== */
 
     if (!currentOtherUserId) {
 
@@ -3013,8 +3319,13 @@ async function openSpecificChat() {
 
 
     if (
-        String(currentOtherUserId) ===
-        String(currentUser.id)
+        String(
+            currentOtherUserId
+        ) ===
+
+        String(
+            currentUser.id
+        )
     ) {
 
         showError(
@@ -3038,12 +3349,14 @@ async function openSpecificChat() {
 
 
     if (conversationList) {
+
         conversationList.style.display =
             "none";
     }
 
 
     if (chatSection) {
+
         chatSection.style.display =
             "block";
     }
@@ -3070,12 +3383,16 @@ async function openSpecificChat() {
 
         const amount =
             Number(
-                currentEscrow.amount || 0
+                currentEscrow.amount ||
+                0
             ).toLocaleString(
                 "en-NG",
                 {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2
+                    minimumFractionDigits:
+                        2,
+
+                    maximumFractionDigits:
+                        2
                 }
             );
 
@@ -3097,12 +3414,31 @@ async function openSpecificChat() {
 
     } else {
 
+        /* =================================================
+           BUSINESS / OJA / NORMAL TITLE
+        ================================================= */
+
         document.getElementById(
             "chatUser"
         ).textContent =
             currentOjaListingId
+
                 ? "Chat with Seller"
-                : "Chat with Owner";
+
+                : currentBusinessId
+
+                    ? "Chat with Business"
+
+                    : "Chat with Owner";
+
+
+        if (currentBusinessId) {
+
+            document.getElementById(
+                "listingInfo"
+            ).textContent =
+                "Business chat";
+        }
 
 
         if (currentListingId) {
@@ -3126,8 +3462,10 @@ async function openSpecificChat() {
                 "listingInfo"
             ).textContent =
                 currentPropertyTitle
+
                     ? "Property • " +
                       currentPropertyTitle
+
                     : "Property";
         }
 
@@ -3247,7 +3585,7 @@ async function initializeChat() {
 
         /*
            STEP 2
-           Get the current user.
+           Get current user.
         */
 
         currentUser =
@@ -3256,12 +3594,12 @@ async function initializeChat() {
 
         /*
            STEP 3
-           If the first check returns null,
-           give the auth system one more chance.
+           Give auth system one more chance.
         */
 
         if (
             !currentUser &&
+
             typeof window.ensureValidSupabaseSession ===
             "function"
         ) {
@@ -3408,6 +3746,7 @@ if (chatForm) {
             event.preventDefault();
 
             sendMessage();
+
         }
     );
 }
@@ -3427,13 +3766,16 @@ initializeImageButton();
 */
 
 if (
-    document.readyState === "loading"
+    document.readyState ===
+    "loading"
 ) {
 
     document.addEventListener(
         "DOMContentLoaded",
         initializeChat,
-        { once: true }
+        {
+            once: true
+        }
     );
 
 } else {
@@ -3442,6 +3784,7 @@ if (
 }
 
 </script>
+
 </body>
 
 </html>
