@@ -109,7 +109,48 @@
            MODALS
         ================================================= */
 
-        openModal(modalId) {
+       openModal(modalId) {
+
+    const modal =
+        typeof modalId === "string"
+            ? document.getElementById(modalId)
+            : modalId;
+
+    if (!modal) {
+
+        console.error(
+            "LosOja: Modal not found:",
+            modalId
+        );
+
+        return;
+    }
+
+    modal.classList.remove("hidden");
+
+    modal.classList.add("active");
+
+    modal.style.display = "flex";
+
+    modal.style.visibility = "visible";
+
+    modal.style.opacity = "1";
+
+    modal.style.pointerEvents = "auto";
+
+    modal.setAttribute(
+        "aria-hidden",
+        "false"
+    );
+
+    document.body.classList.add(
+        "modal-open"
+    );
+
+},
+
+
+                  closeModal(modalId) {
 
             const modal =
                 typeof modalId === "string"
@@ -126,44 +167,6 @@
                 return;
             }
 
-            modal.classList.remove("hidden");
-
-            modal.classList.add("active");
-
-            modal.style.display = "flex";
-
-            modal.style.visibility = "visible";
-
-            modal.style.opacity = "1";
-
-            modal.style.pointerEvents = "auto";
-
-            modal.setAttribute(
-                "aria-hidden",
-                "false"
-            );
-
-            document.body.classList.add(
-                "modal-open"
-            );
-
-        },
-
-
-        closeModal(modal) {
-
-            if (typeof modal === "string") {
-
-                modal =
-                    document.getElementById(modal);
-
-            }
-
-            if (!modal || !modal.classList) {
-                return;
-            }
-
-
             /* ---------------------------------------------
                REMOVE FOCUS BEFORE HIDING MODAL
             --------------------------------------------- */
@@ -177,7 +180,6 @@
                 document.activeElement.blur();
 
             }
-
 
             modal.classList.remove("active");
 
@@ -195,7 +197,6 @@
                 "aria-hidden",
                 "true"
             );
-
 
             const anotherOpenModal =
                 document.querySelector(
@@ -263,7 +264,6 @@
             );
 
         },
-
 
         /* =================================================
            MODAL CLOSE BUTTONS
@@ -4084,37 +4084,56 @@ window.showBusinessDetails = async function (business) {
        BUSINESS DETAILS CONTENT
     --------------------------------------------------- */
 
-    content.innerHTML = `
+       content.innerHTML = `
 
         ${
             businessImage
-                ? `
-                    <div style="
+        ? `
+            <div style="
+                width:100%;
+                margin-bottom:1rem;
+            ">
+
+                <img
+                    src="${escapeHTML(businessImage)}"
+                    alt="${businessName}"
+                    style="
                         width:100%;
-                        margin-bottom:1rem;
-                    ">
+                        max-height:280px;
+                        object-fit:cover;
+                        border-radius:12px;
+                        display:block;
+                        cursor:pointer;
+                    "
+                    id="businessMainImage"
+                >
 
-                        <img
-                            src="${escapeHTML(
-                                businessImage
-                            )}"
-                            alt="${businessName}"
-                            style="
-                                width:100%;
-                                max-height:280px;
-                                object-fit:cover;
-                                border-radius:12px;
-                                display:block;
-                            "
-                            onerror="
-                                this.style.display='none';
-                            "
-                        >
+                <button
+                    type="button"
+                    id="viewBusinessImageBtn"
+                    class="btn btn-secondary"
+                    style="
+                        width:100%;
+                        margin-top:.6rem;
+                    "
+                >
+                    View Image Details
+                </button>
 
-                    </div>
-                `
-                : ""
-        }
+            </div>
+        `
+        : `
+            <div style="
+                padding:1rem;
+                background:#f3f4f6;
+                border-radius:12px;
+                text-align:center;
+                margin-bottom:1rem;
+            ">
+                No business image available.
+            </div>
+        `
+}
 
         <h2 style="
             margin:0 0 .75rem;
