@@ -3892,8 +3892,7 @@
 
     };
 
-
-    /* =====================================================
+/* =====================================================
    BUSINESS DETAILS
 ===================================================== */
 
@@ -3953,7 +3952,11 @@ window.showBusinessDetails = async function (business) {
                 typeof window.getSupabaseAccessToken ===
                 "function"
             ) {
-                return window.getSupabaseAccessToken();
+
+                const token =
+                    window.getSupabaseAccessToken();
+
+                return token || null;
             }
 
         } catch (error) {
@@ -3968,61 +3971,69 @@ window.showBusinessDetails = async function (business) {
     };
 
     /* ---------------------------------------------------
-       GET COMPLETE BUSINESS RECORD
+       LOAD COMPLETE BUSINESS RECORD
     --------------------------------------------------- */
 
-    if (
-        business.id &&
-        !business.user_id
-    ) {
+    if (business.id) {
 
         try {
 
-            const accessToken =
-                getAccessToken();
+            /*
+             * Always make sure we have user_id.
+             * This is important because Chat and Escrow
+             * both need the business owner's ID.
+             */
 
-            const response =
-                await fetch(
-                    BUSINESS_SUPABASE_URL +
-                    "/rest/v1/businesses?id=eq." +
-                    encodeURIComponent(
-                        String(business.id)
-                    ) +
-                    "&select=*",
-                    {
-                        method: "GET",
+            if (!business.user_id) {
 
-                        headers: {
-                            apikey:
-                                BUSINESS_SUPABASE_KEY,
+                const accessToken =
+                    getAccessToken();
 
-                            Authorization:
-                                "Bearer " +
-                                (
-                                    accessToken ||
-                                    BUSINESS_SUPABASE_KEY
-                                ),
+                const headers = {
 
-                            "Content-Type":
-                                "application/json"
+                    apikey:
+                        BUSINESS_SUPABASE_KEY,
+
+                    Authorization:
+                        "Bearer " +
+                        (
+                            accessToken ||
+                            BUSINESS_SUPABASE_KEY
+                        ),
+
+                    "Content-Type":
+                        "application/json"
+                };
+
+                const response =
+                    await fetch(
+                        BUSINESS_SUPABASE_URL +
+                        "/rest/v1/businesses?id=eq." +
+                        encodeURIComponent(
+                            String(business.id)
+                        ) +
+                        "&select=*",
+                        {
+                            method: "GET",
+                            headers: headers
                         }
-                    }
-                );
-
-            if (response.ok) {
-
-                const rows =
-                    await response.json();
-
-                if (
-                    Array.isArray(rows) &&
-                    rows.length > 0
-                ) {
-
-                    Object.assign(
-                        business,
-                        rows[0]
                     );
+
+                if (response.ok) {
+
+                    const rows =
+                        await response.json();
+
+                    if (
+                        Array.isArray(rows) &&
+                        rows.length > 0
+                    ) {
+
+                        Object.assign(
+                            business,
+                            rows[0]
+                        );
+                    }
                 }
             }
 
@@ -4263,255 +4274,249 @@ window.showBusinessDetails = async function (business) {
         "modal-open"
     );
 
-   /* ---------------------------------------------------
-   CHAT WITH BUSINESS
---------------------------------------------------- */
+    /* ===================================================
+       CHAT WITH BUSINESS
+    =================================================== */
 
-const chatButton =
-    document.getElementById(
-        "businessChatBtn"
-    );
+    const chatButton =
+        document.getElementById(
+            "businessChatBtn"
+        );
 
-if (chatButton) {
+    if (chatButton) {
 
-    chatButton.addEventListener(
-        "click",
-        async function (event) {
+        chatButton.onclick =
+            async function (event) {
 
-            event.preventDefault();
-            event.stopPropagation();
+                event.preventDefault();
+                event.stopPropagation();
 
-            console.log(
-                "LosOja: Chat with Business clicked.",
-                business
-            );
+                console.log(
+                    "LosOja: Chat with Business clicked.",
+                    business
+                );
 
-            try {
+                try {
 
-                /* -----------------------------------------
-                   MAKE SURE BUSINESS OWNER EXISTS
-                ----------------------------------------- */
+                    /* -------------------------------------
+                       MAKE SURE OWNER ID EXISTS
+                    ------------------------------------- */
 
-                if (!business.user_id) {
+                    if (!business.user_id) {
 
-                    console.error(
-                        "LosOja: Business owner ID missing.",
-                        business
-                    );
-
-                    App.showToast(
-                        "This business is not connected to an owner yet.",
-                        "error"
-                    );
-
-                    return;
-                }
-
-                /* -----------------------------------------
-                   CHECK LOGIN
-                ----------------------------------------- */
-
-                let currentUser = null;
-
-                if (
-                    typeof window.getCurrentUser ===
-                    "function"
-                ) {
-
-                    try {
-
-                        currentUser =
-                            await window.getCurrentUser();
-
-                    } catch (authError) {
-
-                        console.warn(
-                            "LosOja: Could not check login state.",
-                            authError
+                        console.error(
+                            "LosOja: Business owner ID missing.",
+                            business
                         );
+
+                        App.showToast(
+                            "This business is not connected to an owner yet.",
+                            "error"
+                        );
+
+                        return;
                     }
-                }
 
-                /* -----------------------------------------
-                   NOT LOGGED IN
-                ----------------------------------------- */
+                    /* -------------------------------------
+                       CHECK LOGIN
+                    ------------------------------------- */
 
-                if (!currentUser) {
-
-                    console.log(
-                        "LosOja: User is not logged in."
-                    );
+                    let currentUser = null;
 
                     if (
-                        typeof window.openLogin ===
+                        typeof window.getCurrentUser ===
                         "function"
                     ) {
 
-                        window.openLogin();
+                        try {
 
-                    } else {
+                            currentUser =
+                                await window.getCurrentUser();
 
-                        const loginModal =
-                            document.getElementById(
-                                "loginModal"
-                            );
+                        } catch (authError) {
 
-                        if (loginModal) {
-
-                            App.openModal(
-                                loginModal
-                            );
-
-                        } else {
-
-                            App.showToast(
-                                "Please login before starting a chat.",
-                                "error"
+                            console.warn(
+                                "LosOja: Login check failed.",
+                                authError
                             );
                         }
                     }
 
-                    return;
-                }
+                    /* -------------------------------------
+                       LOGIN REQUIRED
+                    ------------------------------------- */
 
-                /* -----------------------------------------
-                   PREVENT OWNER SELF-CHAT
-                ----------------------------------------- */
+                    if (!currentUser) {
 
-                if (
-                    currentUser.id &&
-                    String(currentUser.id) ===
-                    String(business.user_id)
-                ) {
+                        console.log(
+                            "LosOja: User is not logged in."
+                        );
+
+                        if (
+                            typeof window.openLogin ===
+                            "function"
+                        ) {
+
+                            window.openLogin();
+
+                        } else {
+
+                            const loginModal =
+                                document.getElementById(
+                                    "loginModal"
+                                );
+
+                            if (loginModal) {
+
+                                App.openModal(
+                                    loginModal
+                                );
+
+                            } else {
+
+                                App.showToast(
+                                    "Please login before starting a chat.",
+                                    "error"
+                                );
+                            }
+                        }
+
+                        return;
+                    }
+
+                    /* -------------------------------------
+                       PREVENT OWNER SELF CHAT
+                    ------------------------------------- */
+
+                    if (
+                        currentUser.id &&
+                        String(currentUser.id) ===
+                        String(business.user_id)
+                    ) {
+
+                        App.showToast(
+                            "This is your business.",
+                            "info"
+                        );
+
+                        return;
+                    }
+
+                    /* -------------------------------------
+                       SAVE BUSINESS CHAT INFORMATION
+                    ------------------------------------- */
+
+                    const chatBusiness = {
+
+                        business_id:
+                            business.id || "",
+
+                        business_name:
+                            business.name || "",
+
+                        business_owner_id:
+                            business.user_id || "",
+
+                        business_location:
+                            business.location || "",
+
+                        business_category:
+                            business.category || ""
+
+                    };
+
+                    try {
+
+                        sessionStorage.setItem(
+                            "losoja_chat_business",
+                            JSON.stringify(
+                                chatBusiness
+                            )
+                        );
+
+                    } catch (storageError) {
+
+                        console.warn(
+                            "LosOja: Could not save chat information.",
+                            storageError
+                        );
+                    }
+
+                    /* -------------------------------------
+                       BUILD CHAT URL
+                    ------------------------------------- */
+
+                    const ownerId =
+                        encodeURIComponent(
+                            String(
+                                business.user_id
+                            )
+                        );
+
+                    let chatUrl =
+                        "chat.html?user=" +
+                        ownerId;
+
+                    if (business.id) {
+
+                        chatUrl +=
+                            "&business=" +
+                            encodeURIComponent(
+                                String(
+                                    business.id
+                                )
+                            );
+                    }
+
+                    console.log(
+                        "LosOja: Navigating to business chat:",
+                        chatUrl
+                    );
+
+                    /* -------------------------------------
+                       CLOSE BUSINESS DETAILS
+                    ------------------------------------- */
+
+                    try {
+
+                        App.closeModal(
+                            modal
+                        );
+
+                    } catch (closeError) {
+
+                        console.warn(
+                            "LosOja: Could not close details modal.",
+                            closeError
+                        );
+                    }
+
+                    /* -------------------------------------
+                       OPEN CHAT
+                    ------------------------------------- */
+
+                    window.location.href =
+                        chatUrl;
+
+                } catch (error) {
+
+                    console.error(
+                        "LosOja business chat error:",
+                        error
+                    );
 
                     App.showToast(
-                        "This is your business.",
-                        "info"
-                    );
-
-                    return;
-                }
-
-                /* -----------------------------------------
-                   SAVE BUSINESS CHAT INFORMATION
-                ----------------------------------------- */
-
-                const chatBusiness = {
-
-                    business_id:
-                        business.id || "",
-
-                    business_name:
-                        business.name || "",
-
-                    business_owner_id:
-                        business.user_id || "",
-
-                    business_location:
-                        business.location || "",
-
-                    business_category:
-                        business.category || ""
-
-                };
-
-                try {
-
-                    sessionStorage.setItem(
-                        "losoja_chat_business",
-                        JSON.stringify(
-                            chatBusiness
-                        )
-                    );
-
-                } catch (storageError) {
-
-                    console.warn(
-                        "LosOja: Could not save chat business.",
-                        storageError
+                        error?.message ||
+                        "Could not open chat right now.",
+                        "error"
                     );
                 }
+            };
+    }
 
-                /* -----------------------------------------
-                   BUILD CHAT URL
-                ----------------------------------------- */
-
-                const ownerId =
-                    encodeURIComponent(
-                        String(
-                            business.user_id
-                        )
-                    );
-
-                const businessId =
-                    business.id
-                        ? encodeURIComponent(
-                            String(
-                                business.id
-                            )
-                        )
-                        : "";
-
-                let chatUrl =
-                    "chat.html?user=" +
-                    ownerId;
-
-                if (businessId) {
-
-                    chatUrl +=
-                        "&business=" +
-                        businessId;
-                }
-
-                console.log(
-                    "LosOja: Navigating to business chat:",
-                    chatUrl
-                );
-
-                /* -----------------------------------------
-                   CLOSE BUSINESS DETAILS
-                ----------------------------------------- */
-
-                try {
-
-                    App.closeModal(
-                        modal
-                    );
-
-                } catch (closeError) {
-
-                    console.warn(
-                        "LosOja: Could not close business details modal.",
-                        closeError
-                    );
-                }
-
-                /* -----------------------------------------
-                   OPEN CHAT
-                ----------------------------------------- */
-
-                window.location.href =
-                    chatUrl;
-
-            } catch (error) {
-
-                console.error(
-                    "LosOja business chat error:",
-                    error
-                );
-
-                App.showToast(
-                    error?.message ||
-                    "Could not open chat right now.",
-                    "error"
-                );
-            }
-        }
-    );
-}
-    /* ---------------------------------------------------
+    /* ===================================================
        CREATE ESCROW
-    --------------------------------------------------- */
+    =================================================== */
 
     const escrowButton =
         document.getElementById(
@@ -4521,7 +4526,10 @@ if (chatButton) {
     if (escrowButton) {
 
         escrowButton.onclick =
-            async function () {
+            async function (event) {
+
+                event.preventDefault();
+                event.stopPropagation();
 
                 try {
 
@@ -4559,6 +4567,13 @@ if (chatButton) {
                         ) {
 
                             window.openLogin();
+
+                        } else {
+
+                            App.showToast(
+                                "Please login before creating escrow.",
+                                "error"
+                            );
                         }
 
                         return;
@@ -4608,6 +4623,7 @@ if (chatButton) {
                     );
 
                     App.showToast(
+                        error?.message ||
                         "Could not open escrow right now.",
                         "error"
                     );
@@ -4615,9 +4631,9 @@ if (chatButton) {
             };
     }
 
-    /* ---------------------------------------------------
+    /* ===================================================
        OWNER CHECK
-    --------------------------------------------------- */
+    =================================================== */
 
     const ownerControls =
         document.getElementById(
@@ -4673,14 +4689,17 @@ if (chatButton) {
         );
     }
 
-    /* ---------------------------------------------------
+    /* ===================================================
        EDIT BUSINESS
-    --------------------------------------------------- */
+    =================================================== */
 
     if (editButton) {
 
         editButton.onclick =
-            async function () {
+            async function (event) {
+
+                event.preventDefault();
+                event.stopPropagation();
 
                 try {
 
@@ -4688,6 +4707,19 @@ if (chatButton) {
 
                         App.showToast(
                             "Only the business owner can edit this business.",
+                            "error"
+                        );
+
+                        return;
+                    }
+
+                    if (
+                        typeof window.getCurrentUser !==
+                        "function"
+                    ) {
+
+                        App.showToast(
+                            "Please login again.",
                             "error"
                         );
 
@@ -5047,7 +5079,7 @@ if (chatButton) {
                                             );
                                         }
 
-                                        window.showBusinessDetails(
+                                        await window.showBusinessDetails(
                                             business
                                         );
 
@@ -5059,7 +5091,7 @@ if (chatButton) {
                                         );
 
                                         App.showToast(
-                                            error.message ||
+                                            error?.message ||
                                             "Could not update the business.",
                                             "error"
                                         );
@@ -5080,30 +5112,55 @@ if (chatButton) {
                         }
                     }
 
-                    document.getElementById(
-                        "editBusinessName"
-                    ).value =
-                        business.name || "";
+                    const nameInput =
+                        document.getElementById(
+                            "editBusinessName"
+                        );
 
-                    document.getElementById(
-                        "editBusinessCategory"
-                    ).value =
-                        business.category || "";
+                    const categoryInput =
+                        document.getElementById(
+                            "editBusinessCategory"
+                        );
 
-                    document.getElementById(
-                        "editBusinessLocation"
-                    ).value =
-                        business.location || "";
+                    const locationInput =
+                        document.getElementById(
+                            "editBusinessLocation"
+                        );
 
-                    document.getElementById(
-                        "editBusinessPhone"
-                    ).value =
-                        business.phone || "";
+                    const phoneInput =
+                        document.getElementById(
+                            "editBusinessPhone"
+                        );
 
-                    document.getElementById(
-                        "editBusinessDescription"
-                    ).value =
-                        business.description || "";
+                    const descriptionInput =
+                        document.getElementById(
+                            "editBusinessDescription"
+                        );
+
+                    if (nameInput) {
+                        nameInput.value =
+                            business.name || "";
+                    }
+
+                    if (categoryInput) {
+                        categoryInput.value =
+                            business.category || "";
+                    }
+
+                    if (locationInput) {
+                        locationInput.value =
+                            business.location || "";
+                    }
+
+                    if (phoneInput) {
+                        phoneInput.value =
+                            business.phone || "";
+                    }
+
+                    if (descriptionInput) {
+                        descriptionInput.value =
+                            business.description || "";
+                    }
 
                     App.openModal(
                         editModal
@@ -5117,7 +5174,7 @@ if (chatButton) {
                     );
 
                     App.showToast(
-                        error.message ||
+                        error?.message ||
                         "Could not open business editor.",
                         "error"
                     );
@@ -5125,14 +5182,17 @@ if (chatButton) {
             };
     }
 
-    /* ---------------------------------------------------
+    /* ===================================================
        DELETE BUSINESS
-    --------------------------------------------------- */
+    =================================================== */
 
     if (deleteButton) {
 
         deleteButton.onclick =
-            async function () {
+            async function (event) {
+
+                event.preventDefault();
+                event.stopPropagation();
 
                 try {
 
@@ -5150,6 +5210,19 @@ if (chatButton) {
 
                         App.showToast(
                             "This business ID is missing.",
+                            "error"
+                        );
+
+                        return;
+                    }
+
+                    if (
+                        typeof window.getCurrentUser !==
+                        "function"
+                    ) {
+
+                        App.showToast(
+                            "Please login again.",
                             "error"
                         );
 
@@ -5338,7 +5411,7 @@ if (chatButton) {
                     );
 
                     App.showToast(
-                        error.message ||
+                        error?.message ||
                         "Could not delete this business.",
                         "error"
                     );
