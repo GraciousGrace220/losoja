@@ -1460,6 +1460,28 @@ window.toggleSavedBusiness =
             return;
         }
 
+              /*
+        -----------------------------------------------------
+        FALLBACK BUSINESS DETAILS
+        -----------------------------------------------------
+        */
+
+        if (modal && typeof window.showBusinessDetails === "function") {
+
+            console.log(
+                "LosOja: Using main business details renderer."
+            );
+
+            window.losojaSelectedBusiness =
+                business;
+
+            window.showBusinessDetails(
+                business
+            );
+
+            return;
+        }
+
         /*
         -----------------------------------------------------
         Nothing available
@@ -1469,8 +1491,6 @@ window.toggleSavedBusiness =
         console.error(
             "LosOja: Business Details modal was not found."
         );
-
-    }
 
 
     /* =====================================================
