@@ -3893,7 +3893,7 @@
     };
 
 
-     /* =====================================================
+    /* =====================================================
    BUSINESS DETAILS
 ===================================================== */
 
@@ -3917,42 +3917,97 @@ window.showBusinessDetails = async function (business) {
         return;
     }
 
-    /*
-     * ---------------------------------------------------
-     * Resolve complete business record
-     * ---------------------------------------------------
-     * businesses.js may sometimes provide a business
-     * object without user_id. We fetch the full record
-     * here so Chat, Escrow, Edit and Delete know the owner.
-     */
+    /* ---------------------------------------------------
+       SUPABASE CONFIG
+    --------------------------------------------------- */
 
-    if (!business.user_id && business.id) {
+    const BUSINESS_SUPABASE_URL =
+        "https://ycxshwgeebskdozmornh.supabase.co";
+
+    const BUSINESS_SUPABASE_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNzg4MzA2NDY1LCJleHAiOjIxMDM4ODI0NjV9.tMl7wILdVDhu0RWFaG_84ngJEryLt2c5B8MEKW3kfU";
+
+    /* ---------------------------------------------------
+       SAFE HTML ESCAPE
+    --------------------------------------------------- */
+
+    const escapeHTML = function (value) {
+
+        return String(value ?? "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    };
+
+    /* ---------------------------------------------------
+       ACCESS TOKEN
+    --------------------------------------------------- */
+
+    const getAccessToken = function () {
+
+        try {
+
+            if (
+                typeof window.getSupabaseAccessToken ===
+                "function"
+            ) {
+                return window.getSupabaseAccessToken();
+            }
+
+        } catch (error) {
+
+            console.warn(
+                "LosOja: Could not get access token.",
+                error
+            );
+        }
+
+        return null;
+    };
+
+    /* ---------------------------------------------------
+       GET COMPLETE BUSINESS RECORD
+    --------------------------------------------------- */
+
+    if (
+        business.id &&
+        !business.user_id
+    ) {
 
         try {
 
             const accessToken =
-                typeof window.getSupabaseAccessToken ===
-                "function"
-                    ? window.getSupabaseAccessToken()
-                    : null;
+                getAccessToken();
 
-            const response = await fetch(
-                SUPABASE_URL +
-                "/rest/v1/businesses?id=eq." +
-                encodeURIComponent(String(business.id)) +
-                "&select=*",
-                {
-                    method: "GET",
-                    headers: {
-                        apikey: SUPABASE_KEY,
-                        Authorization:
-                            "Bearer " +
-                            (accessToken || SUPABASE_KEY),
-                        "Content-Type":
-                            "application/json"
+            const response =
+                await fetch(
+                    BUSINESS_SUPABASE_URL +
+                    "/rest/v1/businesses?id=eq." +
+                    encodeURIComponent(
+                        String(business.id)
+                    ) +
+                    "&select=*",
+                    {
+                        method: "GET",
+
+                        headers: {
+                            apikey:
+                                BUSINESS_SUPABASE_KEY,
+
+                            Authorization:
+                                "Bearer " +
+                                (
+                                    accessToken ||
+                                    BUSINESS_SUPABASE_KEY
+                                ),
+
+                            "Content-Type":
+                                "application/json"
+                        }
                     }
-                }
-            );
+                );
 
             if (response.ok) {
 
@@ -3963,6 +4018,7 @@ window.showBusinessDetails = async function (business) {
                     Array.isArray(rows) &&
                     rows.length > 0
                 ) {
+
                     Object.assign(
                         business,
                         rows[0]
@@ -3973,21 +4029,22 @@ window.showBusinessDetails = async function (business) {
         } catch (error) {
 
             console.warn(
-                "LosOja: Could not resolve business owner.",
+                "LosOja: Could not load complete business record.",
                 error
             );
         }
     }
 
-    /*
-     * Keep selected business available globally.
-     */
+    /* ---------------------------------------------------
+       SAVE SELECTED BUSINESS
+    --------------------------------------------------- */
 
     window.losojaSelectedBusiness =
         business;
 
-    const escapeHTML =
-        App.escapeHTML.bind(App);
+    /* ---------------------------------------------------
+       BUSINESS VALUES
+    --------------------------------------------------- */
 
     const businessName =
         escapeHTML(
@@ -4033,11 +4090,9 @@ window.showBusinessDetails = async function (business) {
         business.image ||
         "";
 
-    /*
-     * ---------------------------------------------------
-     * BUSINESS DETAILS HTML
-     * ---------------------------------------------------
-     */
+    /* ---------------------------------------------------
+       BUSINESS DETAILS CONTENT
+    --------------------------------------------------- */
 
     content.innerHTML = `
 
@@ -4048,6 +4103,7 @@ window.showBusinessDetails = async function (business) {
                         width:100%;
                         margin-bottom:1rem;
                     ">
+
                         <img
                             src="${escapeHTML(
                                 businessImage
@@ -4064,6 +4120,7 @@ window.showBusinessDetails = async function (business) {
                                 this.style.display='none';
                             "
                         >
+
                     </div>
                 `
                 : ""
@@ -4139,8 +4196,6 @@ window.showBusinessDetails = async function (business) {
 
         </div>
 
-        <!-- OWNER CONTROLS -->
-
         <div
             id="businessOwnerControls"
             style="
@@ -4187,11 +4242,9 @@ window.showBusinessDetails = async function (business) {
         </div>
     `;
 
-    /*
-     * ---------------------------------------------------
-     * OPEN BUSINESS DETAILS MODAL
-     * ---------------------------------------------------
-     */
+    /* ---------------------------------------------------
+       OPEN MODAL
+    --------------------------------------------------- */
 
     modal.classList.remove("hidden");
     modal.classList.add("active");
@@ -4210,11 +4263,9 @@ window.showBusinessDetails = async function (business) {
         "modal-open"
     );
 
-    /*
-     * ---------------------------------------------------
-     * CHAT WITH BUSINESS
-     * ---------------------------------------------------
-     */
+    /* ---------------------------------------------------
+       CHAT WITH BUSINESS
+    --------------------------------------------------- */
 
     const chatButton =
         document.getElementById(
@@ -4226,11 +4277,11 @@ window.showBusinessDetails = async function (business) {
         chatButton.onclick =
             async function () {
 
-                try {
+                console.log(
+                    "LosOja: Chat with Business clicked."
+                );
 
-                    /*
-                     * A business must have an owner.
-                     */
+                try {
 
                     if (!business.user_id) {
 
@@ -4241,10 +4292,6 @@ window.showBusinessDetails = async function (business) {
 
                         return;
                     }
-
-                    /*
-                     * Make sure authentication exists.
-                     */
 
                     if (
                         typeof window.getCurrentUser !==
@@ -4261,10 +4308,6 @@ window.showBusinessDetails = async function (business) {
 
                     const currentUser =
                         await window.getCurrentUser();
-
-                    /*
-                     * Not logged in.
-                     */
 
                     if (!currentUser) {
 
@@ -4283,6 +4326,7 @@ window.showBusinessDetails = async function (business) {
                                 );
 
                             if (loginModal) {
+
                                 App.openModal(
                                     loginModal
                                 );
@@ -4291,11 +4335,6 @@ window.showBusinessDetails = async function (business) {
 
                         return;
                     }
-
-                    /*
-                     * Prevent owner from chatting
-                     * with their own business.
-                     */
 
                     if (
                         String(currentUser.id) ===
@@ -4310,54 +4349,39 @@ window.showBusinessDetails = async function (business) {
                         return;
                     }
 
-                    /*
-                     * Save business context.
-                     */
+                    /* Save business chat context */
 
                     try {
 
                         sessionStorage.setItem(
                             "losoja_chat_business",
                             JSON.stringify({
+
                                 business_id:
-                                    business.id ||
-                                    "",
+                                    business.id || "",
 
                                 business_name:
-                                    business.name ||
-                                    "",
+                                    business.name || "",
 
                                 business_owner_id:
-                                    business.user_id ||
-                                    "",
+                                    business.user_id || "",
 
                                 business_location:
-                                    business.location ||
-                                    "",
+                                    business.location || "",
 
                                 business_category:
-                                    business.category ||
-                                    ""
+                                    business.category || ""
+
                             })
                         );
 
                     } catch (storageError) {
 
                         console.warn(
-                            "LosOja: Could not save business chat context.",
+                            "LosOja: Chat context could not be saved.",
                             storageError
                         );
                     }
-
-                    /*
-                     * Close details before navigation.
-                     */
-
-                    App.closeModal(modal);
-
-                    /*
-                     * Build Chat URL.
-                     */
 
                     const ownerId =
                         encodeURIComponent(
@@ -4382,17 +4406,16 @@ window.showBusinessDetails = async function (business) {
                     }
 
                     console.log(
-                        "LosOja: Opening business chat:",
+                        "LosOja: Opening:",
                         chatUrl
                     );
 
-                    /*
-                     * Navigate to chat.
-                     */
-
-                    window.location.assign(
-                        chatUrl
+                    App.closeModal(
+                        modal
                     );
+
+                    window.location.href =
+                        chatUrl;
 
                 } catch (error) {
 
@@ -4409,11 +4432,9 @@ window.showBusinessDetails = async function (business) {
             };
     }
 
-    /*
-     * ---------------------------------------------------
-     * CREATE ESCROW
-     * ---------------------------------------------------
-     */
+    /* ---------------------------------------------------
+       CREATE ESCROW
+    --------------------------------------------------- */
 
     const escrowButton =
         document.getElementById(
@@ -4459,16 +4480,12 @@ window.showBusinessDetails = async function (business) {
                             typeof window.openLogin ===
                             "function"
                         ) {
+
                             window.openLogin();
                         }
 
                         return;
                     }
-
-                    /*
-                     * Prevent creating escrow with
-                     * yourself.
-                     */
 
                     if (
                         String(currentUser.id) ===
@@ -4486,21 +4503,22 @@ window.showBusinessDetails = async function (business) {
                     sessionStorage.setItem(
                         "losoja_escrow_business",
                         JSON.stringify({
+
                             business_id:
-                                business.id ||
-                                "",
+                                business.id || "",
 
                             business_name:
-                                business.name ||
-                                "",
+                                business.name || "",
 
                             seller_id:
-                                business.user_id ||
-                                ""
+                                business.user_id || ""
+
                         })
                     );
 
-                    App.closeModal(modal);
+                    App.closeModal(
+                        modal
+                    );
 
                     window.location.href =
                         "balance.html";
@@ -4520,11 +4538,9 @@ window.showBusinessDetails = async function (business) {
             };
     }
 
-    /*
-     * ---------------------------------------------------
-     * OWNER CONTROLS
-     * ---------------------------------------------------
-     */
+    /* ---------------------------------------------------
+       OWNER CHECK
+    --------------------------------------------------- */
 
     const ownerControls =
         document.getElementById(
@@ -4547,9 +4563,9 @@ window.showBusinessDetails = async function (business) {
     try {
 
         if (
+            business.user_id &&
             typeof window.getCurrentUser ===
-            "function" &&
-            business.user_id
+            "function"
         ) {
 
             const currentUser =
@@ -4565,6 +4581,7 @@ window.showBusinessDetails = async function (business) {
                     true;
 
                 if (ownerControls) {
+
                     ownerControls.style.display =
                         "block";
                 }
@@ -4574,16 +4591,14 @@ window.showBusinessDetails = async function (business) {
     } catch (ownerError) {
 
         console.warn(
-            "LosOja: Could not check business owner.",
+            "LosOja: Owner check failed.",
             ownerError
         );
     }
 
-    /*
-     * ---------------------------------------------------
-     * EDIT BUSINESS
-     * ---------------------------------------------------
-     */
+    /* ---------------------------------------------------
+       EDIT BUSINESS
+    --------------------------------------------------- */
 
     if (editButton) {
 
@@ -4596,19 +4611,6 @@ window.showBusinessDetails = async function (business) {
 
                         App.showToast(
                             "Only the business owner can edit this business.",
-                            "error"
-                        );
-
-                        return;
-                    }
-
-                    if (
-                        typeof window.getCurrentUser !==
-                        "function"
-                    ) {
-
-                        App.showToast(
-                            "Please login before editing your business.",
                             "error"
                         );
 
@@ -4637,10 +4639,6 @@ window.showBusinessDetails = async function (business) {
                             "editBusinessModal"
                         );
 
-                    /*
-                     * Create edit modal once.
-                     */
-
                     if (!editModal) {
 
                         editModal =
@@ -4652,7 +4650,7 @@ window.showBusinessDetails = async function (business) {
                             "editBusinessModal";
 
                         editModal.className =
-                            "modal hidden";
+                            "modal";
 
                         editModal.setAttribute(
                             "aria-hidden",
@@ -4690,8 +4688,7 @@ window.showBusinessDetails = async function (business) {
 
                                     <div class="form-group">
 
-                                        <label
-                                            for="editBusinessName">
+                                        <label>
                                             Business Name
                                         </label>
 
@@ -4705,8 +4702,7 @@ window.showBusinessDetails = async function (business) {
 
                                     <div class="form-group">
 
-                                        <label
-                                            for="editBusinessCategory">
+                                        <label>
                                             Category
                                         </label>
 
@@ -4720,8 +4716,7 @@ window.showBusinessDetails = async function (business) {
 
                                     <div class="form-group">
 
-                                        <label
-                                            for="editBusinessLocation">
+                                        <label>
                                             Location
                                         </label>
 
@@ -4735,8 +4730,7 @@ window.showBusinessDetails = async function (business) {
 
                                     <div class="form-group">
 
-                                        <label
-                                            for="editBusinessPhone">
+                                        <label>
                                             Phone
                                         </label>
 
@@ -4749,8 +4743,7 @@ window.showBusinessDetails = async function (business) {
 
                                     <div class="form-group">
 
-                                        <label
-                                            for="editBusinessDescription">
+                                        <label>
                                             Description
                                         </label>
 
@@ -4776,10 +4769,6 @@ window.showBusinessDetails = async function (business) {
                         document.body.appendChild(
                             editModal
                         );
-
-                        /*
-                         * Edit form submit.
-                         */
 
                         const editForm =
                             editModal.querySelector(
@@ -4811,10 +4800,7 @@ window.showBusinessDetails = async function (business) {
                                     try {
 
                                         const accessToken =
-                                            typeof window.getSupabaseAccessToken ===
-                                            "function"
-                                                ? window.getSupabaseAccessToken()
-                                                : null;
+                                            getAccessToken();
 
                                         if (!accessToken) {
 
@@ -4826,34 +4812,44 @@ window.showBusinessDetails = async function (business) {
                                         const updatedBusiness = {
 
                                             name:
-                                                document.getElementById(
-                                                    "editBusinessName"
-                                                )?.value.trim() ||
-                                                "",
+                                                document
+                                                    .getElementById(
+                                                        "editBusinessName"
+                                                    )
+                                                    .value
+                                                    .trim(),
 
                                             category:
-                                                document.getElementById(
-                                                    "editBusinessCategory"
-                                                )?.value.trim() ||
-                                                "",
+                                                document
+                                                    .getElementById(
+                                                        "editBusinessCategory"
+                                                    )
+                                                    .value
+                                                    .trim(),
 
                                             location:
-                                                document.getElementById(
-                                                    "editBusinessLocation"
-                                                )?.value.trim() ||
-                                                "",
+                                                document
+                                                    .getElementById(
+                                                        "editBusinessLocation"
+                                                    )
+                                                    .value
+                                                    .trim(),
 
                                             phone:
-                                                document.getElementById(
-                                                    "editBusinessPhone"
-                                                )?.value.trim() ||
-                                                "",
+                                                document
+                                                    .getElementById(
+                                                        "editBusinessPhone"
+                                                    )
+                                                    .value
+                                                    .trim(),
 
                                             description:
-                                                document.getElementById(
-                                                    "editBusinessDescription"
-                                                )?.value.trim() ||
-                                                ""
+                                                document
+                                                    .getElementById(
+                                                        "editBusinessDescription"
+                                                    )
+                                                    .value
+                                                    .trim()
                                         };
 
                                         if (
@@ -4867,9 +4863,9 @@ window.showBusinessDetails = async function (business) {
                                             );
                                         }
 
-                                        const updateResponse =
+                                        const response =
                                             await fetch(
-                                                SUPABASE_URL +
+                                                BUSINESS_SUPABASE_URL +
                                                 "/rest/v1/businesses?id=eq." +
                                                 encodeURIComponent(
                                                     String(
@@ -4889,7 +4885,7 @@ window.showBusinessDetails = async function (business) {
                                                     headers: {
 
                                                         apikey:
-                                                            SUPABASE_KEY,
+                                                            BUSINESS_SUPABASE_KEY,
 
                                                         Authorization:
                                                             "Bearer " +
@@ -4909,49 +4905,40 @@ window.showBusinessDetails = async function (business) {
                                                 }
                                             );
 
-                                        const updateText =
-                                            await updateResponse.text();
+                                        const responseText =
+                                            await response.text();
 
-                                        let updateResult =
+                                        let result =
                                             null;
 
                                         try {
 
-                                            updateResult =
-                                                updateText
+                                            result =
+                                                responseText
                                                     ? JSON.parse(
-                                                        updateText
+                                                        responseText
                                                     )
                                                     : null;
 
                                         } catch {
 
-                                            updateResult =
-                                                updateText;
+                                            result =
+                                                responseText;
                                         }
 
-                                        if (
-                                            !updateResponse.ok
-                                        ) {
+                                        if (!response.ok) {
 
                                             throw new Error(
-                                                updateResult?.message ||
-                                                updateResult?.hint ||
-                                                updateResult?.details ||
+                                                result?.message ||
+                                                result?.hint ||
+                                                result?.details ||
                                                 "Could not update this business."
                                             );
                                         }
 
-                                        const updatedRows =
-                                            Array.isArray(
-                                                updateResult
-                                            )
-                                                ? updateResult
-                                                : [];
-
                                         if (
-                                            updatedRows.length ===
-                                            0
+                                            !Array.isArray(result) ||
+                                            result.length === 0
                                         ) {
 
                                             throw new Error(
@@ -4959,13 +4946,9 @@ window.showBusinessDetails = async function (business) {
                                             );
                                         }
 
-                                        /*
-                                         * Update current object.
-                                         */
-
                                         Object.assign(
                                             business,
-                                            updatedRows[0]
+                                            result[0]
                                         );
 
                                         App.closeModal(
@@ -4977,10 +4960,6 @@ window.showBusinessDetails = async function (business) {
                                             "success"
                                         );
 
-                                        /*
-                                         * Refresh business list.
-                                         */
-
                                         if (
                                             typeof window.loadBusinesses ===
                                             "function"
@@ -4991,26 +4970,19 @@ window.showBusinessDetails = async function (business) {
                                             );
                                         }
 
-                                        /*
-                                         * Reopen details with
-                                         * updated information.
-                                         */
-
                                         window.showBusinessDetails(
                                             business
                                         );
 
-                                    } catch (
-                                        updateError
-                                    ) {
+                                    } catch (error) {
 
                                         console.error(
                                             "LosOja edit business error:",
-                                            updateError
+                                            error
                                         );
 
                                         App.showToast(
-                                            updateError.message ||
+                                            error.message ||
                                             "Could not update the business.",
                                             "error"
                                         );
@@ -5031,73 +5003,44 @@ window.showBusinessDetails = async function (business) {
                         }
                     }
 
-                    /*
-                     * Fill current business values.
-                     */
+                    document.getElementById(
+                        "editBusinessName"
+                    ).value =
+                        business.name || "";
 
-                    const nameInput =
-                        document.getElementById(
-                            "editBusinessName"
-                        );
+                    document.getElementById(
+                        "editBusinessCategory"
+                    ).value =
+                        business.category || "";
 
-                    const categoryInput =
-                        document.getElementById(
-                            "editBusinessCategory"
-                        );
+                    document.getElementById(
+                        "editBusinessLocation"
+                    ).value =
+                        business.location || "";
 
-                    const locationInput =
-                        document.getElementById(
-                            "editBusinessLocation"
-                        );
+                    document.getElementById(
+                        "editBusinessPhone"
+                    ).value =
+                        business.phone || "";
 
-                    const phoneInput =
-                        document.getElementById(
-                            "editBusinessPhone"
-                        );
-
-                    const descriptionInput =
-                        document.getElementById(
-                            "editBusinessDescription"
-                        );
-
-                    if (nameInput) {
-                        nameInput.value =
-                            business.name || "";
-                    }
-
-                    if (categoryInput) {
-                        categoryInput.value =
-                            business.category || "";
-                    }
-
-                    if (locationInput) {
-                        locationInput.value =
-                            business.location || "";
-                    }
-
-                    if (phoneInput) {
-                        phoneInput.value =
-                            business.phone || "";
-                    }
-
-                    if (descriptionInput) {
-                        descriptionInput.value =
-                            business.description || "";
-                    }
+                    document.getElementById(
+                        "editBusinessDescription"
+                    ).value =
+                        business.description || "";
 
                     App.openModal(
                         editModal
                     );
 
-                } catch (editError) {
+                } catch (error) {
 
                     console.error(
                         "LosOja edit business error:",
-                        editError
+                        error
                     );
 
                     App.showToast(
-                        editError.message ||
+                        error.message ||
                         "Could not open business editor.",
                         "error"
                     );
@@ -5105,11 +5048,9 @@ window.showBusinessDetails = async function (business) {
             };
     }
 
-    /*
-     * ---------------------------------------------------
-     * DELETE BUSINESS
-     * ---------------------------------------------------
-     */
+    /* ---------------------------------------------------
+       DELETE BUSINESS
+    --------------------------------------------------- */
 
     if (deleteButton) {
 
@@ -5131,20 +5072,7 @@ window.showBusinessDetails = async function (business) {
                     if (!business.id) {
 
                         App.showToast(
-                            "This business cannot be deleted because its ID is missing.",
-                            "error"
-                        );
-
-                        return;
-                    }
-
-                    if (
-                        typeof window.getCurrentUser !==
-                        "function"
-                    ) {
-
-                        App.showToast(
-                            "Please login before deleting your business.",
+                            "This business ID is missing.",
                             "error"
                         );
 
@@ -5183,19 +5111,13 @@ window.showBusinessDetails = async function (business) {
                     }
 
                     const accessToken =
-                        typeof window.getSupabaseAccessToken ===
-                        "function"
-                            ? window.getSupabaseAccessToken()
-                            : null;
+                        getAccessToken();
 
                     if (!accessToken) {
 
-                        App.showToast(
-                            "Your login session has expired. Please login again.",
-                            "error"
+                        throw new Error(
+                            "Your login session has expired. Please login again."
                         );
-
-                        return;
                     }
 
                     deleteButton.disabled =
@@ -5204,9 +5126,9 @@ window.showBusinessDetails = async function (business) {
                     deleteButton.textContent =
                         "Deleting...";
 
-                    const deleteResponse =
+                    const response =
                         await fetch(
-                            SUPABASE_URL +
+                            BUSINESS_SUPABASE_URL +
                             "/rest/v1/businesses?id=eq." +
                             encodeURIComponent(
                                 String(
@@ -5226,7 +5148,7 @@ window.showBusinessDetails = async function (business) {
                                 headers: {
 
                                     apikey:
-                                        SUPABASE_KEY,
+                                        BUSINESS_SUPABASE_KEY,
 
                                     Authorization:
                                         "Bearer " +
@@ -5241,49 +5163,40 @@ window.showBusinessDetails = async function (business) {
                             }
                         );
 
-                    const deleteText =
-                        await deleteResponse.text();
+                    const responseText =
+                        await response.text();
 
-                    let deleteResult =
+                    let result =
                         null;
 
                     try {
 
-                        deleteResult =
-                            deleteText
+                        result =
+                            responseText
                                 ? JSON.parse(
-                                    deleteText
+                                    responseText
                                 )
                                 : null;
 
                     } catch {
 
-                        deleteResult =
-                            deleteText;
+                        result =
+                            responseText;
                     }
 
-                    if (
-                        !deleteResponse.ok
-                    ) {
+                    if (!response.ok) {
 
                         throw new Error(
-                            deleteResult?.message ||
-                            deleteResult?.hint ||
-                            deleteResult?.details ||
+                            result?.message ||
+                            result?.hint ||
+                            result?.details ||
                             "Could not delete this business."
                         );
                     }
 
-                    /*
-                     * Make sure a row was actually
-                     * deleted when representation is returned.
-                     */
-
                     if (
-                        Array.isArray(
-                            deleteResult
-                        ) &&
-                        deleteResult.length === 0
+                        Array.isArray(result) &&
+                        result.length === 0
                     ) {
 
                         throw new Error(
@@ -5291,24 +5204,12 @@ window.showBusinessDetails = async function (business) {
                         );
                     }
 
-                    /*
-                     * Close details modal.
-                     */
-
                     App.closeModal(
                         modal
                     );
 
-                    /*
-                     * Clear selected business.
-                     */
-
                     window.losojaSelectedBusiness =
                         null;
-
-                    /*
-                     * Remove from local list immediately.
-                     */
 
                     if (
                         Array.isArray(
@@ -5328,10 +5229,6 @@ window.showBusinessDetails = async function (business) {
                             );
                     }
 
-                    /*
-                     * Refresh business list.
-                     */
-
                     if (
                         typeof window.loadBusinesses ===
                         "function"
@@ -5343,10 +5240,7 @@ window.showBusinessDetails = async function (business) {
 
                     } else if (
                         typeof window.renderBusinesses ===
-                        "function" &&
-                        Array.isArray(
-                            window.losojaBusinesses
-                        )
+                        "function"
                     ) {
 
                         window.renderBusinesses(
@@ -5359,18 +5253,16 @@ window.showBusinessDetails = async function (business) {
                         "success"
                     );
 
-                } catch (
-                    deleteError
-                ) {
+                } catch (error) {
 
                     console.error(
                         "LosOja delete business error:",
-                        deleteError
+                        error
                     );
 
                     App.showToast(
-                        deleteError.message ||
-                        "Could not delete the business.",
+                        error.message ||
+                        "Could not delete this business.",
                         "error"
                     );
 
@@ -5387,26 +5279,5 @@ window.showBusinessDetails = async function (business) {
                 }
             };
     }
+
 };
-   
-    /* =====================================================
-       START APPLICATION
-    ===================================================== */
-
-    if (
-        document.readyState ===
-        "loading"
-    ) {
-
-        document.addEventListener(
-            "DOMContentLoaded",
-            () => App.init()
-        );
-
-    } else {
-
-        App.init();
-
-    }
-
-})();
