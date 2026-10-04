@@ -860,27 +860,16 @@ const ALLOWED_CHAT_IMAGE_TYPES = [
 
 
 let currentUser = null;
-
 let currentConversationId = null;
-
 let currentOtherUserId = null;
-
 let currentListingId = null;
-
 let currentPropertyId = null;
-
 let currentPropertyTitle = null;
-
 let currentEscrowId = null;
-
 let currentEscrow = null;
-
 let currentOjaListingId = null;
-
 let currentOjaListing = null;
-
 let currentOjaImages = [];
-
 let messagePolling = null;
 
 
@@ -891,9 +880,7 @@ let messagePolling = null;
 function showError(message) {
 
     const box =
-        document.getElementById(
-            "errorMessage"
-        );
+        document.getElementById("errorMessage");
 
     if (!box) return;
 
@@ -906,9 +893,7 @@ function showError(message) {
 function clearError() {
 
     const box =
-        document.getElementById(
-            "errorMessage"
-        );
+        document.getElementById("errorMessage");
 
     if (!box) return;
 
@@ -926,8 +911,7 @@ function goToLogin() {
     );
 
     if (
-        typeof window.openLogin ===
-        "function"
+        typeof window.openLogin === "function"
     ) {
 
         window.openLogin();
@@ -935,8 +919,7 @@ function goToLogin() {
         return;
     }
 
-    window.location.href =
-        "index.html";
+    window.location.href = "index.html";
 }
 
 
@@ -991,7 +974,6 @@ async function supabaseRequest(
 
                 headers: {
                     ...getHeaders(),
-
                     ...(options.headers || {})
                 }
             }
@@ -1015,7 +997,6 @@ async function supabaseRequest(
     } catch {
 
         data = text;
-
     }
 
 
@@ -1094,13 +1075,13 @@ async function uploadChatImage(file) {
     }
 
 
-    let extension =
-        "jpg";
+    let extension = "jpg";
 
 
     if (file.type === "image/png") {
         extension = "png";
     }
+
 
     if (file.type === "image/webp") {
         extension = "webp";
@@ -1115,11 +1096,6 @@ async function uploadChatImage(file) {
             ? crypto.randomUUID()
             : Date.now().toString();
 
-
-    /*
-       The storage policy expects the
-       first folder to be the user's ID.
-    */
 
     const filePath =
         currentUser.id +
@@ -1157,7 +1133,6 @@ async function uploadChatImage(file) {
 
                     "x-upsert":
                         "false"
-
                 },
 
                 body:
@@ -1178,9 +1153,7 @@ async function uploadChatImage(file) {
 
             errorData =
                 responseText
-                    ? JSON.parse(
-                        responseText
-                    )
+                    ? JSON.parse(responseText)
                     : null;
 
         } catch {
@@ -1204,11 +1177,6 @@ async function uploadChatImage(file) {
     }
 
 
-    /*
-       The chat-images bucket is public,
-       so we can use its public URL.
-    */
-
     return (
         SUPABASE_URL +
         "/storage/v1/object/public/" +
@@ -1226,7 +1194,6 @@ async function uploadChatImage(file) {
 async function loadEscrowChatContext() {
 
     if (!currentEscrowId) {
-
         return false;
     }
 
@@ -1292,7 +1259,6 @@ async function loadEscrowChatContext() {
 function renderEscrowDetails() {
 
     if (!currentEscrow) {
-
         return;
     }
 
@@ -1304,7 +1270,6 @@ function renderEscrowDetails() {
 
 
     if (!details) {
-
         return;
     }
 
@@ -1320,11 +1285,8 @@ function renderEscrowDetails() {
         ).toLocaleString(
             "en-NG",
             {
-                minimumFractionDigits:
-                    2,
-
-                maximumFractionDigits:
-                    2
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
             }
         );
 
@@ -1356,13 +1318,9 @@ function renderEscrowDetails() {
     document.getElementById(
         "escrowStatus"
     ).innerHTML = `
-
         <span class="escrow-status">
-
             ${escapeHTML(status)}
-
         </span>
-
     `;
 
 
@@ -1432,9 +1390,7 @@ async function findOrCreateConversation() {
     let query;
 
 
-    /*
-       OJA CHAT
-    */
+    /* OJA CHAT */
 
     if (currentOjaListingId) {
 
@@ -1471,13 +1427,10 @@ async function findOrCreateConversation() {
             ) +
 
             ")" +
-
             ")";
 
 
-    /*
-       BARTER CHAT
-    */
+    /* BARTER CHAT */
 
     } else if (currentListingId) {
 
@@ -1514,13 +1467,10 @@ async function findOrCreateConversation() {
             ) +
 
             ")" +
-
             ")";
 
 
-    /*
-       NORMAL CHAT
-    */
+    /* NORMAL CHAT */
 
     } else {
 
@@ -1552,15 +1502,12 @@ async function findOrCreateConversation() {
             ) +
 
             ")" +
-
             ")";
     }
 
 
     const existing =
-        await supabaseRequest(
-            query
-        );
+        await supabaseRequest(query);
 
 
     if (
@@ -1594,7 +1541,6 @@ async function findOrCreateConversation() {
             "/rest/v1/conversations",
             {
                 method: "POST",
-
                 body:
                     JSON.stringify(
                         conversation
@@ -1615,6 +1561,86 @@ async function findOrCreateConversation() {
 
 
     return created[0];
+}
+
+
+/* =========================================================
+   LOAD EXISTING CONVERSATION BY ID
+   Used by notification links
+========================================================= */
+
+async function loadConversationById(
+    conversationId
+) {
+
+    if (!conversationId) {
+        return null;
+    }
+
+
+    const conversations =
+        await supabaseRequest(
+            "/rest/v1/conversations" +
+            "?select=*" +
+            "&id=eq." +
+            encodeURIComponent(
+                conversationId
+            )
+        );
+
+
+    if (
+        !Array.isArray(conversations) ||
+        !conversations[0]
+    ) {
+
+        throw new Error(
+            "This conversation could not be found."
+        );
+    }
+
+
+    const conversation =
+        conversations[0];
+
+
+    const isParticipant =
+        String(conversation.user_one_id) ===
+            String(currentUser.id) ||
+        String(conversation.user_two_id) ===
+            String(currentUser.id);
+
+
+    if (!isParticipant) {
+
+        throw new Error(
+            "You are not a participant in this conversation."
+        );
+    }
+
+
+    currentConversationId =
+        conversation.id;
+
+
+    currentOtherUserId =
+        String(conversation.user_one_id) ===
+            String(currentUser.id)
+            ? conversation.user_two_id
+            : conversation.user_one_id;
+
+
+    currentListingId =
+        conversation.barter_listing_id ||
+        null;
+
+
+    currentOjaListingId =
+        conversation.oja_listing_id ||
+        null;
+
+
+    return conversation;
 }
 
 
@@ -1643,15 +1669,12 @@ async function createChatNotification() {
 
     try {
 
-        /*
-           The notification type carries the destination
-           without requiring a new database column:
+        const senderName =
+            currentUser.user_metadata?.full_name ||
+            currentUser.user_metadata?.name ||
+            currentUser.email ||
+            "Someone";
 
-           chat:<other-user-id>:<conversation-id>
-
-           The notification page can use this to open
-           the exact conversation.
-        */
 
         const notification = {
 
@@ -1662,12 +1685,7 @@ async function createChatNotification() {
                 "New LosOja Message",
 
             message:
-                (
-                    currentUser.user_metadata?.full_name ||
-                    currentUser.user_metadata?.name ||
-                    currentUser.email ||
-                    "Someone"
-                ) +
+                senderName +
                 " sent you a new message.",
 
             type:
@@ -1685,20 +1703,15 @@ async function createChatNotification() {
             "/rest/v1/notifications",
             {
                 method: "POST",
-                body: JSON.stringify(notification)
+
+                body:
+                    JSON.stringify(
+                        notification
+                    )
             }
         );
 
-
-        await updateChatUnreadIndicator();
-
-
     } catch (error) {
-
-        /*
-           Notification failure must never stop
-           the actual chat message from succeeding.
-        */
 
         console.warn(
             "LosOja chat notification could not be created:",
@@ -1732,19 +1745,25 @@ async function updateChatUnreadIndicator() {
                 "/rest/v1/notifications" +
                 "?select=id,type,is_read" +
                 "&user_id=eq." +
-                encodeURIComponent(currentUser.id) +
+                encodeURIComponent(
+                    currentUser.id
+                ) +
                 "&is_read=eq.false" +
                 "&limit=100"
             );
 
 
         const hasUnreadChat =
-            Array.isArray(notifications) &&
+            Array.isArray(
+                notifications
+            ) &&
             notifications.some(
                 notification =>
                     String(
                         notification?.type || ""
-                    ).toLowerCase().startsWith("chat:")
+                    )
+                        .toLowerCase()
+                        .startsWith("chat:")
             );
 
 
@@ -1770,7 +1789,10 @@ async function updateChatUnreadIndicator() {
 
 async function markCurrentChatNotificationsRead() {
 
-    if (!currentUser || !currentOtherUserId) {
+    if (
+        !currentUser ||
+        !currentOtherUserId
+    ) {
         return;
     }
 
@@ -1786,17 +1808,26 @@ async function markCurrentChatNotificationsRead() {
         await supabaseRequest(
             "/rest/v1/notifications" +
             "?user_id=eq." +
-            encodeURIComponent(currentUser.id) +
+            encodeURIComponent(
+                currentUser.id
+            ) +
             "&type=like." +
-            encodeURIComponent(notificationTypePattern),
+            encodeURIComponent(
+                notificationTypePattern
+            ),
             {
                 method: "PATCH",
+
                 headers: {
-                    "Prefer": "return=minimal"
+                    "Prefer":
+                        "return=minimal"
                 },
-                body: JSON.stringify({
-                    is_read: true
-                })
+
+                body:
+                    JSON.stringify({
+                        is_read:
+                            true
+                    })
             }
         );
 
@@ -1821,7 +1852,6 @@ async function markCurrentChatNotificationsRead() {
 async function loadMessages() {
 
     if (!currentConversationId) {
-
         return;
     }
 
@@ -1864,7 +1894,6 @@ function renderMessages(messages) {
 
 
     if (!container) {
-
         return;
     }
 
@@ -1872,15 +1901,10 @@ function renderMessages(messages) {
     if (!messages.length) {
 
         container.innerHTML = `
-
             <div class="empty-message">
-
                 No messages yet.<br>
-
                 Start the conversation.
-
             </div>
-
         `;
 
         return;
@@ -1888,133 +1912,92 @@ function renderMessages(messages) {
 
 
     container.innerHTML =
-
         messages
-
             .map(message => {
 
                 const mine =
-                    message.sender_id ===
-                    currentUser.id;
+                    String(message.sender_id) ===
+                    String(currentUser.id);
 
 
                 const time =
                     message.created_at
-
                         ? new Date(
                             message.created_at
                         ).toLocaleTimeString(
                             [],
                             {
-                                hour:
-                                    "2-digit",
-
-                                minute:
-                                    "2-digit"
+                                hour: "2-digit",
+                                minute: "2-digit"
                             }
                         )
-
                         : "";
 
 
-                const hasImage =
-                    !!message.image_url;
-
-
-                /*
-                   Don't display our internal
-                   photo placeholder as normal text.
-                */
-
                 const actualText =
                     message.message &&
-                    message.message !==
-                        "📷 Photo"
+                    message.message !== "📷 Photo"
                         ? message.message
                         : "";
 
 
-                let imageHTML =
-                    "";
+                let imageHTML = "";
 
 
-                if (hasImage) {
+                if (message.image_url) {
+
+                    const safeImage =
+                        escapeHTML(
+                            message.image_url
+                        );
+
 
                     imageHTML = `
-
                         <img
                             class="message-image"
-                            src="${escapeHTML(
-                                message.image_url
-                            )}"
+                            src="${safeImage}"
                             alt="Chat picture"
                             loading="lazy"
-                            onclick="window.open(
-                                '${escapeHTML(
-                                    message.image_url
-                                )}',
-                                '_blank'
-                            )"
+                            onclick="window.open('${safeImage}','_blank')"
                         >
-
                     `;
                 }
 
 
-                let textHTML =
-                    "";
+                let textHTML = "";
 
 
                 if (actualText) {
 
                     textHTML = `
-
                         <div class="message-text">
-
-                            ${escapeHTML(
-                                actualText
-                            )}
-
+                            ${escapeHTML(actualText)}
                         </div>
-
                     `;
                 }
 
 
                 return `
+                    <div class="message-row ${
+                        mine ? "mine" : ""
+                    }">
 
-                    <div
-                        class="message-row ${
-                            mine
-                                ? "mine"
-                                : ""
-                        }"
-                    >
-
-                        <div
-                            class="message-bubble"
-                        >
+                        <div class="message-bubble">
 
                             ${imageHTML}
 
                             ${textHTML}
 
-                            <div
-                                class="message-time"
-                            >
-
+                            <div class="message-time">
                                 ${time}
-
                             </div>
 
                         </div>
 
                     </div>
-
                 `;
 
             })
-
             .join("");
 
 
@@ -2032,31 +2015,11 @@ function escapeHTML(value) {
     return String(
         value ?? ""
     )
-
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-
-        .replace(
-            /</g,
-            "&lt;"
-        )
-
-        .replace(
-            />/g,
-            "&gt;"
-        )
-
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-
-        .replace(
-            /'/g,
-            "&#039;"
-        );
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
 
 
@@ -2104,7 +2067,6 @@ async function sendMessage() {
 
 
     if (!input) {
-
         return;
     }
 
@@ -2117,16 +2079,10 @@ async function sendMessage() {
         imageInput?.files?.[0] || null;
 
 
-    /*
-       User must send either text
-       or an image.
-    */
-
     if (
         !cleanMessage &&
         !selectedFile
     ) {
-
         return;
     }
 
@@ -2159,14 +2115,8 @@ async function sendMessage() {
 
     try {
 
-        let imageUrl =
-            null;
+        let imageUrl = null;
 
-
-        /*
-           Upload the picture first
-           if one was selected.
-        */
 
         if (selectedFile) {
 
@@ -2176,13 +2126,6 @@ async function sendMessage() {
                 );
         }
 
-
-        /*
-           The database may require
-           message text, so use a small
-           internal placeholder for
-           photo-only messages.
-        */
 
         const message = {
 
@@ -2198,7 +2141,6 @@ async function sendMessage() {
 
             image_url:
                 imageUrl
-
         };
 
 
@@ -2215,7 +2157,6 @@ async function sendMessage() {
         );
 
 
-        /* Notify the other participant. */
         await createChatNotification();
 
 
@@ -2228,11 +2169,6 @@ async function sendMessage() {
 
 
         updateSelectedImage();
-
-
-        console.log(
-            "LosOja message saved."
-        );
 
 
         await loadMessages();
@@ -2270,7 +2206,7 @@ async function sendMessage() {
 
 
 /* =========================================================
-   IMAGE SELECTION DISPLAY
+   IMAGE SELECTION
 ========================================================= */
 
 function updateSelectedImage() {
@@ -2291,7 +2227,6 @@ function updateSelectedImage() {
         !imageInput ||
         !selectedImage
     ) {
-
         return;
     }
 
@@ -2327,29 +2262,32 @@ function updateSelectedImage() {
    IMAGE BUTTON
 ========================================================= */
 
-const imageButton =
-    document.getElementById(
-        "imageButton"
-    );
+function initializeImageButton() {
+
+    const imageButton =
+        document.getElementById(
+            "imageButton"
+        );
 
 
-const imageInput =
-    document.getElementById(
-        "imageInput"
-    );
+    const imageInput =
+        document.getElementById(
+            "imageInput"
+        );
 
 
-if (
-    imageButton &&
-    imageInput
-) {
+    if (
+        !imageButton ||
+        !imageInput
+    ) {
+        return;
+    }
+
 
     imageButton.addEventListener(
         "click",
         () => {
-
             imageInput.click();
-
         }
     );
 
@@ -2380,7 +2318,8 @@ if (
                     "Only JPG, PNG and WEBP images are allowed."
                 );
 
-                imageInput.value = "";
+                imageInput.value =
+                    "";
 
                 updateSelectedImage();
 
@@ -2397,7 +2336,8 @@ if (
                     "Chat images must be 5 MB or smaller."
                 );
 
-                imageInput.value = "";
+                imageInput.value =
+                    "";
 
                 updateSelectedImage();
 
@@ -2408,7 +2348,6 @@ if (
             clearError();
 
             updateSelectedImage();
-
         }
     );
 }
@@ -2482,11 +2421,8 @@ function renderOjaDetails() {
             ).toLocaleString(
                 "en-NG",
                 {
-                    minimumFractionDigits:
-                        2,
-
-                    maximumFractionDigits:
-                        2
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
                 }
             );
 
@@ -2559,29 +2495,41 @@ function renderOjaDetails() {
 
     details.style.display =
         "block";
-}
 
-const buyButton =
-    document.getElementById(
-        "buyWithEscrowButton"
-    );
 
-if (buyButton) {
+    /*
+       IMPORTANT:
+       This logic must stay here.
+       currentOjaListing is guaranteed
+       to exist here.
+    */
 
-    if (
-        currentOjaListing.user_id !==
-        currentUser.id
-    ) {
+    const buyButton =
+        document.getElementById(
+            "buyWithEscrowButton"
+        );
 
-        buyButton.style.display =
-            "block";
 
-    } else {
+    if (buyButton) {
 
-        buyButton.style.display =
-            "none";
+        if (
+            currentUser &&
+            String(currentOjaListing.user_id) !==
+            String(currentUser.id)
+        ) {
+
+            buyButton.style.display =
+                "block";
+
+        } else {
+
+            buyButton.style.display =
+                "none";
+        }
     }
 }
+
+
 /* =========================================================
    LOAD OJA LISTING
 ========================================================= */
@@ -2616,10 +2564,6 @@ async function loadOjaListing(
             !Array.isArray(listings) ||
             !listings[0]
         ) {
-
-            console.error(
-                "LosOja Oja listing not found."
-            );
 
             return null;
         }
@@ -2716,9 +2660,7 @@ async function loadConversations() {
 
 
     renderConversationList(
-        Array.isArray(
-            conversations
-        )
+        Array.isArray(conversations)
             ? conversations
             : []
     );
@@ -2747,13 +2689,9 @@ async function renderConversationList(
     if (!conversations.length) {
 
         container.innerHTML = `
-
             <div class="status">
-
                 You do not have any chats yet.
-
             </div>
-
         `;
 
         return;
@@ -2769,7 +2707,6 @@ async function renderConversationList(
     ) {
 
         const otherUserId =
-
             conversation.user_one_id ===
             currentUser.id
 
@@ -2792,11 +2729,8 @@ async function renderConversationList(
                     await supabaseRequest(
 
                         "/rest/v1/barter_listings" +
-
                         "?select=title" +
-
                         "&id=eq." +
-
                         encodeURIComponent(
                             conversation.barter_listing_id
                         )
@@ -2813,7 +2747,6 @@ async function renderConversationList(
                         "Trade listing";
                 }
 
-
             } catch (error) {
 
                 console.warn(
@@ -2823,10 +2756,6 @@ async function renderConversationList(
             }
         }
 
-
-        /*
-           Oja conversation title.
-        */
 
         if (
             conversation.oja_listing_id
@@ -2838,11 +2767,8 @@ async function renderConversationList(
                     await supabaseRequest(
 
                         "/rest/v1/oja_listings" +
-
                         "?select=title" +
-
                         "&id=eq." +
-
                         encodeURIComponent(
                             conversation.oja_listing_id
                         )
@@ -2858,7 +2784,6 @@ async function renderConversationList(
                         listing[0].title ||
                         "Oja item";
                 }
-
 
             } catch (error) {
 
@@ -2881,27 +2806,13 @@ async function renderConversationList(
 
 
         card.innerHTML = `
-
-            <div
-                class="conversation-title"
-            >
-
-                ${
-                    escapeHTML(
-                        listingTitle
-                    )
-                }
-
+            <div class="conversation-title">
+                ${escapeHTML(listingTitle)}
             </div>
 
-            <div
-                class="conversation-time"
-            >
-
+            <div class="conversation-time">
                 Open chat
-
             </div>
-
         `;
 
 
@@ -2909,50 +2820,52 @@ async function renderConversationList(
             "click",
             () => {
 
-                const url =
+                let url =
                     "chat.html" +
-
-                    "?user=" +
-
+                    "?conversation=" +
+                    encodeURIComponent(
+                        conversation.id
+                    ) +
+                    "&user=" +
                     encodeURIComponent(
                         otherUserId
-                    ) +
-
-                    (
-                        conversation.barter_listing_id
-
-                            ? "&listing=" +
-
-                              encodeURIComponent(
-                                  conversation.barter_listing_id
-                              )
-
-                            : ""
-                    ) +
-
-                    (
-                        conversation.oja_listing_id
-
-                            ? "&oja_listing=" +
-
-                              encodeURIComponent(
-                                  conversation.oja_listing_id
-                              )
-
-                            : ""
-                    ) +
-
-                    (
-                        conversation.escrow_id
-
-                            ? "&escrow=" +
-
-                              encodeURIComponent(
-                                  conversation.escrow_id
-                              )
-
-                            : ""
                     );
+
+
+                if (
+                    conversation.barter_listing_id
+                ) {
+
+                    url +=
+                        "&listing=" +
+                        encodeURIComponent(
+                            conversation.barter_listing_id
+                        );
+                }
+
+
+                if (
+                    conversation.oja_listing_id
+                ) {
+
+                    url +=
+                        "&oja_listing=" +
+                        encodeURIComponent(
+                            conversation.oja_listing_id
+                        );
+                }
+
+
+                if (
+                    conversation.escrow_id
+                ) {
+
+                    url +=
+                        "&escrow=" +
+                        encodeURIComponent(
+                            conversation.escrow_id
+                        );
+                }
 
 
                 window.location.href =
@@ -2980,6 +2893,10 @@ async function openSpecificChat() {
         );
 
 
+    const requestedConversationId =
+        params.get("conversation");
+
+
     currentOtherUserId =
         params.get("user");
 
@@ -3005,21 +2922,47 @@ async function openSpecificChat() {
 
 
     /*
-       PROPERTY CHAT
+       NOTIFICATION / EXISTING CONVERSATION
     */
 
-    if (currentPropertyId && !currentOtherUserId) {
+    if (requestedConversationId) {
+
+        const conversation =
+            await loadConversationById(
+                requestedConversationId
+            );
+
+
+        if (!conversation) {
+            throw new Error(
+                "Conversation could not be opened."
+            );
+        }
+
+
+        currentConversationId =
+            conversation.id;
+    }
+
+
+    /* PROPERTY CHAT */
+
+    if (
+        currentPropertyId &&
+        !currentOtherUserId
+    ) {
 
         currentOtherUserId =
             params.get("seller_id");
     }
 
 
-    /*
-       OJA CHAT
-    */
+    /* OJA CHAT */
 
-    if (currentOjaListingId) {
+    if (
+        currentOjaListingId &&
+        !requestedConversationId
+    ) {
 
         const ojaListing =
             await loadOjaListing(
@@ -3051,20 +2994,15 @@ async function openSpecificChat() {
     }
 
 
-    /*
-       ESCROW CHAT
-    */
+    /* ESCROW CHAT */
 
     if (currentEscrowId) {
 
         await loadEscrowChatContext();
-
     }
 
 
-    /*
-       NORMAL CHAT
-    */
+    /* NO SPECIFIC USER */
 
     if (!currentOtherUserId) {
 
@@ -3075,8 +3013,8 @@ async function openSpecificChat() {
 
 
     if (
-        currentOtherUserId ===
-        currentUser.id
+        String(currentOtherUserId) ===
+        String(currentUser.id)
     ) {
 
         showError(
@@ -3087,21 +3025,33 @@ async function openSpecificChat() {
     }
 
 
-    document.getElementById(
-        "conversationList"
-    ).style.display =
-        "none";
+    const conversationList =
+        document.getElementById(
+            "conversationList"
+        );
 
 
-    document.getElementById(
-        "chatSection"
-    ).style.display =
-        "block";
+    const chatSection =
+        document.getElementById(
+            "chatSection"
+        );
 
 
-    /*
+    if (conversationList) {
+        conversationList.style.display =
+            "none";
+    }
+
+
+    if (chatSection) {
+        chatSection.style.display =
+            "block";
+    }
+
+
+    /* =====================================================
        ESCROW TITLE
-    */
+    ===================================================== */
 
     if (currentEscrowId) {
 
@@ -3124,11 +3074,8 @@ async function openSpecificChat() {
             ).toLocaleString(
                 "en-NG",
                 {
-                    minimumFractionDigits:
-                        2,
-
-                    maximumFractionDigits:
-                        2
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
                 }
             );
 
@@ -3174,11 +3121,13 @@ async function openSpecificChat() {
             ).textContent =
                 "Chat with Property Owner";
 
+
             document.getElementById(
                 "listingInfo"
             ).textContent =
                 currentPropertyTitle
-                    ? "Property • " + currentPropertyTitle
+                    ? "Property • " +
+                      currentPropertyTitle
                     : "Property";
         }
 
@@ -3193,12 +3142,23 @@ async function openSpecificChat() {
     }
 
 
-    const conversation =
-        await findOrCreateConversation();
+    /*
+       If the notification already gave us
+       a conversation ID, use it.
+
+       Otherwise find/create the correct
+       conversation normally.
+    */
+
+    if (!currentConversationId) {
+
+        const conversation =
+            await findOrCreateConversation();
 
 
-    currentConversationId =
-        conversation.id;
+        currentConversationId =
+            conversation.id;
+    }
 
 
     await markCurrentChatNotificationsRead();
@@ -3261,18 +3221,67 @@ async function initializeChat() {
         }
 
 
+        /*
+           STEP 1
+           Refresh/validate session.
+        */
+
+        if (
+            typeof window.ensureValidSupabaseSession ===
+            "function"
+        ) {
+
+            try {
+
+                await window.ensureValidSupabaseSession();
+
+            } catch (sessionError) {
+
+                console.warn(
+                    "LosOja session refresh warning:",
+                    sessionError
+                );
+            }
+        }
+
+
+        /*
+           STEP 2
+           Get the current user.
+        */
+
         currentUser =
-    await window.getCurrentUser();
+            await window.getCurrentUser();
 
-if (
-    !currentUser &&
-    typeof window.ensureValidSupabaseSession === "function"
-) {
-    await window.ensureValidSupabaseSession();
 
-    currentUser =
-        await window.getCurrentUser();
-}
+        /*
+           STEP 3
+           If the first check returns null,
+           give the auth system one more chance.
+        */
+
+        if (
+            !currentUser &&
+            typeof window.ensureValidSupabaseSession ===
+            "function"
+        ) {
+
+            try {
+
+                await window.ensureValidSupabaseSession();
+
+                currentUser =
+                    await window.getCurrentUser();
+
+            } catch (retryError) {
+
+                console.warn(
+                    "LosOja authentication retry failed:",
+                    retryError
+                );
+            }
+        }
+
 
         const loginButton =
             document.getElementById(
@@ -3289,37 +3298,64 @@ if (
         }
 
 
+        /*
+           User is genuinely not logged in.
+        */
+
         if (!currentUser) {
 
-            document.getElementById(
-                "status"
-            ).innerHTML =
-                "<strong>Please login to use chat.</strong>";
+            const status =
+                document.getElementById(
+                    "status"
+                );
 
 
-            document.getElementById(
-                "conversationList"
-            ).innerHTML = `
+            if (status) {
 
-                <div class="status">
+                status.innerHTML =
+                    "<strong>Please login to use chat.</strong>";
+            }
 
-                    Please login to send and receive messages.
 
-                </div>
+            const conversationList =
+                document.getElementById(
+                    "conversationList"
+                );
 
-            `;
+
+            if (conversationList) {
+
+                conversationList.innerHTML = `
+                    <div class="status">
+                        Please login to send and receive messages.
+                    </div>
+                `;
+            }
+
 
             return;
         }
 
 
-        document.getElementById(
-            "status"
-        ).innerHTML =
-            "<strong>Connected</strong>";
+        /*
+           User is logged in.
+        */
+
+        const status =
+            document.getElementById(
+                "status"
+            );
+
+
+        if (status) {
+
+            status.innerHTML =
+                "<strong>Connected</strong>";
+        }
 
 
         await openSpecificChat();
+
 
         await updateChatUnreadIndicator();
 
@@ -3336,39 +3372,76 @@ if (
             error.message ||
             "Chat could not be loaded."
         );
+
+
+        const status =
+            document.getElementById(
+                "status"
+            );
+
+
+        if (status) {
+
+            status.innerHTML =
+                "<strong>Chat could not be loaded.</strong>";
+        }
     }
 }
 
 
 /* =========================================================
-   FORM
+   CHAT FORM
 ========================================================= */
 
-document
-    .getElementById("chatForm")
-    .addEventListener(
+const chatForm =
+    document.getElementById(
+        "chatForm"
+    );
+
+
+if (chatForm) {
+
+    chatForm.addEventListener(
         "submit",
         event => {
 
             event.preventDefault();
 
             sendMessage();
-
         }
     );
+}
 
 
 /* =========================================================
    START
 ========================================================= */
 
-document.addEventListener(
-    "DOMContentLoaded",
-    initializeChat
-);
+initializeImageButton();
+
+
+/*
+   The script is at the bottom of the page,
+   but DOMContentLoaded is kept so auth.js
+   has time to initialize.
+*/
+
+if (
+    document.readyState === "loading"
+) {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        initializeChat,
+        { once: true }
+    );
+
+} else {
+
+    initializeChat();
+}
 
 </script>
-
 </body>
 
 </html>
