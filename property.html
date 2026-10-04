@@ -1,9 +1,13 @@
 <!DOCTYPE html>
 
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="viewport"
+   content="width=device-width, initial-scale=1.0">
 
 <title>LosOja Properties</title>
 
@@ -11,6 +15,7 @@
    content="Find homes, apartments, land and commercial properties on LosOja.">
 
 <style>
+
 :root{
     --green:#087a3e;
     --green-dark:#055c2e;
@@ -24,7 +29,9 @@
     --shadow:0 8px 28px rgba(0,0,0,.08);
 }
 
-*{box-sizing:border-box;}
+*{
+    box-sizing:border-box;
+}
 
 body{
     margin:0;
@@ -33,8 +40,16 @@ body{
     color:var(--text);
 }
 
-button,input,select,textarea{font:inherit;}
-button{cursor:pointer;}
+button,
+input,
+select,
+textarea{
+    font:inherit;
+}
+
+button{
+    cursor:pointer;
+}
 
 .topbar{
     position:sticky;
@@ -62,10 +77,16 @@ button{cursor:pointer;}
     white-space:nowrap;
 }
 
-.logo span{color:var(--accent);}
-.header-spacer{flex:1;}
+.logo span{
+    color:var(--accent);
+}
 
-.back-btn,.post-btn{
+.header-spacer{
+    flex:1;
+}
+
+.back-btn,
+.post-btn{
     border:0;
     border-radius:12px;
     padding:11px 15px;
@@ -82,7 +103,9 @@ button{cursor:pointer;}
     color:white;
 }
 
-.post-btn:hover{background:var(--green-dark);}
+.post-btn:hover{
+    background:var(--green-dark);
+}
 
 .hero{
     background:linear-gradient(135deg,#087a3e,#055c2e);
@@ -235,8 +258,13 @@ button{cursor:pointer;}
     z-index:2;
 }
 
-.gallery-arrow.left{left:10px;}
-.gallery-arrow.right{right:10px;}
+.gallery-arrow.left{
+    left:10px;
+}
+
+.gallery-arrow.right{
+    right:10px;
+}
 
 .gallery-count{
     position:absolute;
@@ -249,7 +277,9 @@ button{cursor:pointer;}
     font-size:12px;
 }
 
-.card-body{padding:16px;}
+.card-body{
+    padding:16px;
+}
 
 .badges{
     display:flex;
@@ -313,7 +343,9 @@ button{cursor:pointer;}
     font-weight:700;
 }
 
-.action-btn:hover{background:var(--green-light);}
+.action-btn:hover{
+    background:var(--green-light);
+}
 
 .action-btn.view{
     background:var(--green);
@@ -372,7 +404,9 @@ button{cursor:pointer;}
     padding:15px;
 }
 
-.modal.active{display:flex;}
+.modal.active{
+    display:flex;
+}
 
 .modal-box{
     width:min(760px,100%);
@@ -409,7 +443,9 @@ button{cursor:pointer;}
     font-size:20px;
 }
 
-.modal-content{padding:20px;}
+.modal-content{
+    padding:20px;
+}
 
 .form-grid{
     display:grid;
@@ -423,7 +459,9 @@ button{cursor:pointer;}
     gap:6px;
 }
 
-.form-group.full{grid-column:1/-1;}
+.form-group.full{
+    grid-column:1/-1;
+}
 
 .form-group label{
     font-weight:700;
@@ -516,7 +554,9 @@ button{cursor:pointer;}
     font-size:14px;
 }
 
-.status.show{display:block;}
+.status.show{
+    display:block;
+}
 
 .status.success{
     background:#e9f7ef;
@@ -566,7 +606,9 @@ button{cursor:pointer;}
     background:#eee;
 }
 
-.detail-thumb.active{border-color:var(--green);}
+.detail-thumb.active{
+    border-color:var(--green);
+}
 
 .detail-thumb img{
     width:100%;
@@ -574,9 +616,13 @@ button{cursor:pointer;}
     object-fit:cover;
 }
 
-.detail-info{padding:20px;}
+.detail-info{
+    padding:20px;
+}
 
-.detail-info h2{margin:0 0 8px;}
+.detail-info h2{
+    margin:0 0 8px;
+}
 
 .detail-price{
     color:var(--green);
@@ -634,10 +680,16 @@ button{cursor:pointer;}
     font-size:26px;
 }
 
-.viewer-arrow.left{left:18px;}
-.viewer-arrow.right{right:18px;}
+.viewer-arrow.left{
+    left:18px;
+}
+
+.viewer-arrow.right{
+    right:18px;
+}
 
 @media(max-width:900px){
+
     .property-grid{
         grid-template-columns:repeat(2,1fr);
     }
@@ -650,22 +702,34 @@ button{cursor:pointer;}
         padding:8px 12px;
     }
 
-    .logo{font-size:21px;}
+    .logo{
+        font-size:21px;
+    }
 
-    .back-btn{display:none;}
+    .back-btn{
+        display:none;
+    }
 
     .post-btn{
         padding:9px 11px;
         font-size:13px;
     }
 
-    .hero{padding:25px 14px;}
+    .hero{
+        padding:25px 14px;
+    }
 
-    .hero h1{font-size:27px;}
+    .hero h1{
+        font-size:27px;
+    }
 
-    .search-box{padding:5px;}
+    .search-box{
+        padding:5px;
+    }
 
-    .search-box button{padding:0 12px;}
+    .search-box button{
+        padding:0 12px;
+    }
 
     .container,
     .filters{
@@ -677,22 +741,31 @@ button{cursor:pointer;}
         grid-template-columns:1fr;
     }
 
-    .card-gallery{height:250px;}
+    .card-gallery{
+        height:250px;
+    }
 
-    .form-grid{grid-template-columns:1fr;}
+    .form-grid{
+        grid-template-columns:1fr;
+    }
 
-    .form-group.full{grid-column:auto;}
+    .form-group.full{
+        grid-column:auto;
+    }
 
     .preview-grid{
         grid-template-columns:repeat(4,1fr);
     }
 
-    .detail-gallery{height:280px;}
+    .detail-gallery{
+        height:280px;
+    }
 
     .detail-actions{
         flex-direction:column;
     }
 }
+
 </style>
 
 </head>
@@ -700,22 +773,26 @@ button{cursor:pointer;}
 <body>
 
 <header class="topbar">
-    <div class="topbar-inner">
 
 ```
-    <a href="index.html" class="logo">
+<div class="topbar-inner">
+
+    <a href="index.html"
+       class="logo">
         Los<span>Oja</span>
     </a>
 
     <div class="header-spacer"></div>
 
-    <button class="back-btn"
-            onclick="location.href='index.html'">
+    <button
+        class="back-btn"
+        onclick="location.href='index.html'">
         ← Back
     </button>
 
-    <button class="post-btn"
-            onclick="openPostProperty()">
+    <button
+        class="post-btn"
+        onclick="openPostProperty()">
         + Post Property
     </button>
 
@@ -729,7 +806,9 @@ button{cursor:pointer;}
 ```
 <div class="hero-inner">
 
-    <h1>Find Your Next Property</h1>
+    <h1>
+        Find Your Next Property
+    </h1>
 
     <p>
         Homes, apartments, land and commercial properties across Nigeria.
@@ -758,45 +837,52 @@ button{cursor:pointer;}
 <div class="filters">
 
 ```
-<button class="filter-btn active"
-        data-filter="all"
-        onclick="setFilter('all',this)">
+<button
+    class="filter-btn active"
+    data-filter="all"
+    onclick="setFilter('all',this)">
     All
 </button>
 
-<button class="filter-btn"
-        data-filter="sale"
-        onclick="setFilter('sale',this)">
+<button
+    class="filter-btn"
+    data-filter="sale"
+    onclick="setFilter('sale',this)">
     For Sale
 </button>
 
-<button class="filter-btn"
-        data-filter="rent"
-        onclick="setFilter('rent',this)">
+<button
+    class="filter-btn"
+    data-filter="rent"
+    onclick="setFilter('rent',this)">
     For Rent
 </button>
 
-<button class="filter-btn"
-        data-filter="house"
-        onclick="setFilter('house',this)">
+<button
+    class="filter-btn"
+    data-filter="house"
+    onclick="setFilter('house',this)">
     Houses
 </button>
 
-<button class="filter-btn"
-        data-filter="apartment"
-        onclick="setFilter('apartment',this)">
+<button
+    class="filter-btn"
+    data-filter="apartment"
+    onclick="setFilter('apartment',this)">
     Apartments
 </button>
 
-<button class="filter-btn"
-        data-filter="land"
-        onclick="setFilter('land',this)">
+<button
+    class="filter-btn"
+    data-filter="land"
+    onclick="setFilter('land',this)">
     Land
 </button>
 
-<button class="filter-btn"
-        data-filter="commercial"
-        onclick="setFilter('commercial',this)">
+<button
+    class="filter-btn"
+    data-filter="commercial"
+    onclick="setFilter('commercial',this)">
     Commercial
 </button>
 ```
@@ -808,17 +894,21 @@ button{cursor:pointer;}
 ```
 <div class="results-row">
 
-    <h2>Properties</h2>
+    <h2>
+        Properties
+    </h2>
 
-    <div class="results-count"
-         id="resultsCount">
+    <div
+        class="results-count"
+        id="resultsCount">
         Loading...
     </div>
 
 </div>
 
-<div id="propertyGrid"
-     class="property-grid">
+<div
+    id="propertyGrid"
+    class="property-grid">
 
     <div class="loading">
         Loading properties...
@@ -831,18 +921,22 @@ button{cursor:pointer;}
 
 <!-- POST PROPERTY MODAL -->
 
-<div class="modal"
-     id="postPropertyModal">
+<div
+    class="modal"
+    id="postPropertyModal">
 
 ```
 <div class="modal-box">
 
     <div class="modal-header">
 
-        <h2>Post a Property</h2>
+        <h2>
+            Post a Property
+        </h2>
 
-        <button class="close-btn"
-                onclick="closeModalById('postPropertyModal')">
+        <button
+            class="close-btn"
+            onclick="closeModalById('postPropertyModal')">
             ×
         </button>
 
@@ -851,7 +945,8 @@ button{cursor:pointer;}
 
     <div class="modal-content">
 
-        <p style="color:#68756d;font-size:14px;margin-top:0;">
+        <p
+            style="color:#68756d;font-size:14px;margin-top:0;">
             Add your property details and up to 20 photos.
             You must be logged in to publish.
         </p>
@@ -883,7 +978,9 @@ button{cursor:pointer;}
                         Property Type *
                     </label>
 
-                    <select id="propertyCategory" required>
+                    <select
+                        id="propertyCategory"
+                        required>
 
                         <option value="">
                             Select type
@@ -920,7 +1017,9 @@ button{cursor:pointer;}
                         Listing Type *
                     </label>
 
-                    <select id="propertyListingType" required>
+                    <select
+                        id="propertyListingType"
+                        required>
 
                         <option value="">
                             Select
@@ -1007,8 +1106,9 @@ button{cursor:pointer;}
                         treated as the main photo.
                     </div>
 
-                    <div id="photoPreview"
-                         class="preview-grid">
+                    <div
+                        id="photoPreview"
+                        class="preview-grid">
                     </div>
 
                 </div>
@@ -1016,8 +1116,9 @@ button{cursor:pointer;}
             </div>
 
 
-            <div id="postStatus"
-                 class="status">
+            <div
+                id="postStatus"
+                class="status">
             </div>
 
 
@@ -1050,33 +1151,40 @@ button{cursor:pointer;}
 
 <!-- PROPERTY DETAILS -->
 
-<div class="modal"
-     id="propertyDetailModal">
+<div
+    class="modal"
+    id="propertyDetailModal">
 
 ```
 <div class="modal-box detail-box">
 
     <div class="modal-header">
 
-        <h2>Property Details</h2>
+        <h2>
+            Property Details
+        </h2>
 
-        <button class="close-btn"
-                onclick="closeModalById('propertyDetailModal')">
+        <button
+            class="close-btn"
+            onclick="closeModalById('propertyDetailModal')">
             ×
         </button>
 
     </div>
 
-    <div id="detailGallery"
-         class="detail-gallery">
+    <div
+        id="detailGallery"
+        class="detail-gallery">
     </div>
 
-    <div id="detailThumbs"
-         class="detail-thumbs">
+    <div
+        id="detailThumbs"
+        class="detail-thumbs">
     </div>
 
-    <div id="detailInfo"
-         class="detail-info">
+    <div
+        id="detailInfo"
+        class="detail-info">
     </div>
 
 </div>
@@ -1086,38 +1194,45 @@ button{cursor:pointer;}
 
 <!-- FULL SCREEN IMAGE VIEWER -->
 
-<div class="modal viewer"
-     id="imageViewer">
+<div
+    class="modal viewer"
+    id="imageViewer">
 
 ```
-<button class="viewer-close"
-        onclick="closeModalById('imageViewer')">
+<button
+    class="viewer-close"
+    onclick="closeModalById('imageViewer')">
     ×
 </button>
 
-<button class="viewer-arrow left"
-        onclick="changeViewerImage(-1)">
+<button
+    class="viewer-arrow left"
+    onclick="changeViewerImage(-1)">
     ‹
 </button>
 
-<img id="viewerImage"
-     src=""
-     alt="Property photo">
+<img
+    id="viewerImage"
+    src=""
+    alt="Property photo">
 
-<button class="viewer-arrow right"
-        onclick="changeViewerImage(1)">
+<button
+    class="viewer-arrow right"
+    onclick="changeViewerImage(1)">
     ›
 </button>
 ```
 
 </div>
 
-<!-- AUTH ONLY. app.js removed because the current GitHub Pages copy is 404. -->
+<!-- AUTH ONLY -->
 
 <script src="auth.js"></script>
 
 <script>
+
 "use strict";
+
 
 /* =========================================================
    LOSOJA PROPERTY MARKETPLACE
@@ -1132,7 +1247,8 @@ const SUPABASE_KEY =
 const PROPERTY_BUCKET =
     "property-images";
 
-const MAX_PROPERTY_IMAGES = 20;
+const MAX_PROPERTY_IMAGES =
+    20;
 
 
 let allProperties = [];
@@ -1150,7 +1266,7 @@ let viewerIndex = 0;
    BASIC HELPERS
 ========================================================= */
 
-function escapeHtml(value) {
+function escapeHtml(value){
 
     return String(value ?? "")
         .replace(/&/g,"&amp;")
@@ -1161,7 +1277,7 @@ function escapeHtml(value) {
 }
 
 
-function formatPrice(value) {
+function formatPrice(value){
 
     const number =
         Number(value || 0);
@@ -1171,13 +1287,13 @@ function formatPrice(value) {
 }
 
 
-function getPropertyImages(property) {
+function getPropertyImages(property){
 
-    if (
+    if(
         property &&
         Array.isArray(property._images) &&
         property._images.length
-    ) {
+    ){
 
         return property._images
             .map(item => item.image_url)
@@ -1185,10 +1301,10 @@ function getPropertyImages(property) {
     }
 
 
-    if (
+    if(
         property &&
         property.image_url
-    ) {
+    ){
 
         return [
             property.image_url
@@ -1200,34 +1316,42 @@ function getPropertyImages(property) {
 }
 
 
-function closeModalById(id) {
+function closeModalById(id){
 
     const modal =
         document.getElementById(id);
 
-    if (!modal) return;
+    if(!modal){
+        return;
+    }
 
     modal.classList.remove("active");
 }
 
 
-function openModalById(id) {
+function openModalById(id){
 
     const modal =
         document.getElementById(id);
 
-    if (!modal) return;
+    if(!modal){
+        return;
+    }
 
     modal.classList.add("active");
 }
 
 
-function showStatus(message,type) {
+function showStatus(message,type){
 
     const box =
-        document.getElementById("postStatus");
+        document.getElementById(
+            "postStatus"
+        );
 
-    if (!box) return;
+    if(!box){
+        return;
+    }
 
     box.textContent =
         message;
@@ -1246,42 +1370,44 @@ function showStatus(message,type) {
    AUTH
 ========================================================= */
 
-async function getAuthDetails() {
+async function getAuthDetails(){
 
     let user = null;
     let token = null;
 
 
-    try {
+    try{
 
-        if (
+        if(
             typeof window.ensureValidSupabaseSession ===
             "function"
-        ) {
+        ){
 
             const session =
                 await window.ensureValidSupabaseSession();
 
 
-            if (
+            if(
                 session &&
                 session.user
-            ) {
+            ){
+
                 user =
                     session.user;
             }
 
 
-            if (
+            if(
                 session &&
                 session.access_token
-            ) {
+            ){
+
                 token =
                     session.access_token;
             }
         }
 
-    } catch(error) {
+    }catch(error){
 
         console.warn(
             "Session check failed:",
@@ -1290,13 +1416,13 @@ async function getAuthDetails() {
     }
 
 
-    try {
+    try{
 
-        if (
+        if(
             !user &&
             typeof window.getCurrentUser ===
             "function"
-        ) {
+        ){
 
             user =
                 await Promise.resolve(
@@ -1304,7 +1430,7 @@ async function getAuthDetails() {
                 );
         }
 
-    } catch(error) {
+    }catch(error){
 
         console.warn(
             "User check failed:",
@@ -1313,13 +1439,13 @@ async function getAuthDetails() {
     }
 
 
-    try {
+    try{
 
-        if (
+        if(
             !token &&
             typeof window.getSupabaseAccessToken ===
             "function"
-        ) {
+        ){
 
             token =
                 await Promise.resolve(
@@ -1327,7 +1453,7 @@ async function getAuthDetails() {
                 );
         }
 
-    } catch(error) {
+    }catch(error){
 
         console.warn(
             "Token check failed:",
@@ -1336,9 +1462,9 @@ async function getAuthDetails() {
     }
 
 
-    if (!user || !token) {
+    if(!user || !token){
 
-        try {
+        try{
 
             const raw =
                 localStorage.getItem(
@@ -1346,31 +1472,33 @@ async function getAuthDetails() {
                 );
 
 
-            if (raw) {
+            if(raw){
 
                 const session =
                     JSON.parse(raw);
 
 
-                if (
+                if(
                     !user &&
                     session.user
-                ) {
+                ){
+
                     user =
                         session.user;
                 }
 
 
-                if (
+                if(
                     !token &&
                     session.access_token
-                ) {
+                ){
+
                     token =
                         session.access_token;
                 }
             }
 
-        } catch(error) {
+        }catch(error){
 
             console.warn(
                 "Local session read failed:",
@@ -1391,7 +1519,7 @@ async function getAuthDetails() {
    OPEN POST PROPERTY
 ========================================================= */
 
-function openPostProperty() {
+function openPostProperty(){
 
     const form =
         document.getElementById(
@@ -1399,7 +1527,7 @@ function openPostProperty() {
         );
 
 
-    if (form) {
+    if(form){
         form.reset();
     }
 
@@ -1410,7 +1538,7 @@ function openPostProperty() {
         );
 
 
-    if (preview) {
+    if(preview){
         preview.innerHTML = "";
     }
 
@@ -1421,7 +1549,7 @@ function openPostProperty() {
         );
 
 
-    if (status) {
+    if(status){
 
         status.className =
             "status";
@@ -1441,7 +1569,7 @@ function openPostProperty() {
    LOAD PROPERTIES
 ========================================================= */
 
-async function loadProperties() {
+async function loadProperties(){
 
     const grid =
         document.getElementById(
@@ -1449,14 +1577,16 @@ async function loadProperties() {
         );
 
 
-    if (!grid) return;
+    if(!grid){
+        return;
+    }
 
 
     grid.innerHTML =
         '<div class="loading">Loading properties...</div>';
 
 
-    try {
+    try{
 
         const response =
             await fetch(
@@ -1473,7 +1603,7 @@ async function loadProperties() {
             );
 
 
-        if (!response.ok) {
+        if(!response.ok){
 
             const text =
                 await response.text();
@@ -1500,7 +1630,7 @@ async function loadProperties() {
         applyFilters();
 
 
-    } catch(error) {
+    }catch(error){
 
         console.error(
             "Load properties error:",
@@ -1541,9 +1671,9 @@ async function loadProperties() {
    LOAD PROPERTY IMAGES
 ========================================================= */
 
-async function loadPropertyImages() {
+async function loadPropertyImages(){
 
-    if (!allProperties.length) {
+    if(!allProperties.length){
         return;
     }
 
@@ -1554,12 +1684,12 @@ async function loadPropertyImages() {
             .filter(Boolean);
 
 
-    if (!ids.length) {
+    if(!ids.length){
         return;
     }
 
 
-    try {
+    try{
 
         const query =
             ids
@@ -1585,7 +1715,7 @@ async function loadPropertyImages() {
             );
 
 
-        if (!response.ok) {
+        if(!response.ok){
             return;
         }
 
@@ -1599,11 +1729,11 @@ async function loadPropertyImages() {
 
         images.forEach(image => {
 
-            if (
+            if(
                 !imageMap[
                     image.property_id
                 ]
-            ) {
+            ){
 
                 imageMap[
                     image.property_id
@@ -1614,6 +1744,7 @@ async function loadPropertyImages() {
             imageMap[
                 image.property_id
             ].push(image);
+
         });
 
 
@@ -1623,10 +1754,11 @@ async function loadPropertyImages() {
                 imageMap[
                     property.id
                 ] || [];
+
         });
 
 
-    } catch(error) {
+    }catch(error){
 
         console.warn(
             "Could not load property images:",
@@ -1640,7 +1772,7 @@ async function loadPropertyImages() {
    FILTERS
 ========================================================= */
 
-function setFilter(filter,button) {
+function setFilter(filter,button){
 
     activeFilter =
         filter;
@@ -1657,7 +1789,7 @@ function setFilter(filter,button) {
         });
 
 
-    if (button) {
+    if(button){
 
         button.classList.add(
             "active"
@@ -1669,7 +1801,7 @@ function setFilter(filter,button) {
 }
 
 
-function applyFilters() {
+function applyFilters(){
 
     const searchInput =
         document.getElementById(
@@ -1733,68 +1865,75 @@ function applyFilters() {
                 category;
 
 
-            if (
+            if(
                 search &&
                 !searchable.includes(search)
-            ) {
+            ){
+
                 return false;
             }
 
 
-            if (
+            if(
                 activeFilter ===
                 "sale"
-            ) {
+            ){
+
                 return listingType.includes(
                     "sale"
                 );
             }
 
 
-            if (
+            if(
                 activeFilter ===
                 "rent"
-            ) {
+            ){
+
                 return listingType.includes(
                     "rent"
                 );
             }
 
 
-            if (
+            if(
                 activeFilter ===
                 "house"
-            ) {
+            ){
+
                 return category.includes(
                     "house"
                 );
             }
 
 
-            if (
+            if(
                 activeFilter ===
                 "apartment"
-            ) {
+            ){
+
                 return category.includes(
                     "apartment"
                 );
             }
 
 
-            if (
+            if(
                 activeFilter ===
                 "land"
-            ) {
+            ){
+
                 return category.includes(
                     "land"
                 );
             }
 
 
-            if (
+            if(
                 activeFilter ===
                 "commercial"
-            ) {
+            ){
+
                 return category.includes(
                     "commercial"
                 );
@@ -1811,7 +1950,7 @@ function applyFilters() {
 }
 
 
-function renderProperties(properties) {
+function renderProperties(properties){
 
     const grid =
         document.getElementById(
@@ -1819,7 +1958,9 @@ function renderProperties(properties) {
         );
 
 
-    if (!grid) return;
+    if(!grid){
+        return;
+    }
 
 
     document.getElementById(
@@ -1833,7 +1974,7 @@ function renderProperties(properties) {
         );
 
 
-    if (!properties.length) {
+    if(!properties.length){
 
         grid.innerHTML = `
             <div class="empty">
@@ -1869,7 +2010,7 @@ function renderProperties(properties) {
    PROPERTY CARD
 ========================================================= */
 
-function createPropertyCard(property) {
+function createPropertyCard(property){
 
     const images =
         getPropertyImages(
@@ -2079,7 +2220,7 @@ function createPropertyCard(property) {
 function moveCardImage(
     propertyId,
     direction
-) {
+){
 
     const property =
         allProperties.find(
@@ -2089,7 +2230,9 @@ function moveCardImage(
         );
 
 
-    if (!property) return;
+    if(!property){
+        return;
+    }
 
 
     const images =
@@ -2098,7 +2241,7 @@ function moveCardImage(
         );
 
 
-    if (images.length < 2) {
+    if(images.length < 2){
         return;
     }
 
@@ -2110,7 +2253,9 @@ function moveCardImage(
         );
 
 
-    if (!gallery) return;
+    if(!gallery){
+        return;
+    }
 
 
     let index =
@@ -2123,13 +2268,13 @@ function moveCardImage(
     index += direction;
 
 
-    if (index < 0) {
+    if(index < 0){
         index =
             images.length - 1;
     }
 
 
-    if (index >= images.length) {
+    if(index >= images.length){
         index = 0;
     }
 
@@ -2144,7 +2289,7 @@ function moveCardImage(
         );
 
 
-    if (image) {
+    if(image){
 
         image.src =
             images[index];
@@ -2158,7 +2303,7 @@ function moveCardImage(
 
 function openPropertyDetails(
     propertyId
-) {
+){
 
     const property =
         allProperties.find(
@@ -2168,7 +2313,9 @@ function openPropertyDetails(
         );
 
 
-    if (!property) return;
+    if(!property){
+        return;
+    }
 
 
     detailProperty =
@@ -2181,7 +2328,8 @@ function openPropertyDetails(
         );
 
 
-    detailImageIndex = 0;
+    detailImageIndex =
+        0;
 
 
     renderDetailGallery();
@@ -2194,7 +2342,7 @@ function openPropertyDetails(
 }
 
 
-function renderDetailGallery() {
+function renderDetailGallery(){
 
     const gallery =
         document.getElementById(
@@ -2208,7 +2356,7 @@ function renderDetailGallery() {
         );
 
 
-    if (!detailImages.length) {
+    if(!detailImages.length){
 
         gallery.innerHTML =
             '<div class="no-image">🏠</div>';
@@ -2279,12 +2427,13 @@ function renderDetailGallery() {
 }
 
 
-function setDetailImage(index) {
+function setDetailImage(index){
 
-    if (
+    if(
         index < 0 ||
         index >= detailImages.length
-    ) {
+    ){
+
         return;
     }
 
@@ -2305,7 +2454,7 @@ function setDetailImage(index) {
         );
 
 
-    if (image) {
+    if(image){
 
         image.src =
             detailImages[index];
@@ -2331,11 +2480,12 @@ function setDetailImage(index) {
 
 function changeDetailImage(
     direction
-) {
+){
 
-    if (
+    if(
         detailImages.length < 2
-    ) {
+    ){
+
         return;
     }
 
@@ -2345,17 +2495,17 @@ function changeDetailImage(
         direction;
 
 
-    if (index < 0) {
+    if(index < 0){
 
         index =
             detailImages.length - 1;
     }
 
 
-    if (
+    if(
         index >=
         detailImages.length
-    ) {
+    ){
 
         index = 0;
     }
@@ -2365,7 +2515,7 @@ function changeDetailImage(
 }
 
 
-function renderDetailInfo() {
+function renderDetailInfo(){
 
     const property =
         detailProperty;
@@ -2377,7 +2527,7 @@ function renderDetailInfo() {
         );
 
 
-    if (!property || !info) {
+    if(!property || !info){
         return;
     }
 
@@ -2498,9 +2648,9 @@ function renderDetailInfo() {
    FULL SCREEN VIEWER
 ========================================================= */
 
-function openViewer(index) {
+function openViewer(index){
 
-    if (!detailImages.length) {
+    if(!detailImages.length){
         return;
     }
 
@@ -2522,7 +2672,7 @@ function openViewer(index) {
 }
 
 
-function renderViewer() {
+function renderViewer(){
 
     const image =
         document.getElementById(
@@ -2530,10 +2680,11 @@ function renderViewer() {
         );
 
 
-    if (
+    if(
         !image ||
         !viewerImages.length
-    ) {
+    ){
+
         return;
     }
 
@@ -2547,11 +2698,12 @@ function renderViewer() {
 
 function changeViewerImage(
     direction
-) {
+){
 
-    if (
+    if(
         viewerImages.length < 2
-    ) {
+    ){
+
         return;
     }
 
@@ -2560,19 +2712,19 @@ function changeViewerImage(
         direction;
 
 
-    if (
+    if(
         viewerIndex < 0
-    ) {
+    ){
 
         viewerIndex =
             viewerImages.length - 1;
     }
 
 
-    if (
+    if(
         viewerIndex >=
         viewerImages.length
-    ) {
+    ){
 
         viewerIndex = 0;
     }
@@ -2588,13 +2740,13 @@ function changeViewerImage(
 
 async function contactProperty(
     propertyId
-) {
+){
 
     const auth =
         await getAuthDetails();
 
 
-    if (!auth.user) {
+    if(!auth.user){
 
         alert(
             "Please log in to contact the property owner."
@@ -2612,7 +2764,7 @@ async function contactProperty(
         );
 
 
-    if (!property) {
+    if(!property){
         return;
     }
 
@@ -2631,13 +2783,13 @@ async function contactProperty(
 async function reactToProperty(
     propertyId,
     reaction
-) {
+){
 
     const auth =
         await getAuthDetails();
 
 
-    if (!auth.user) {
+    if(!auth.user){
 
         alert(
             "Please log in to like or dislike a property."
@@ -2655,15 +2807,15 @@ async function reactToProperty(
         );
 
 
-    if (!property) {
+    if(!property){
         return;
     }
 
 
-    if (
+    if(
         reaction ===
         "like"
-    ) {
+    ){
 
         property.like_count =
             Number(
@@ -2671,7 +2823,7 @@ async function reactToProperty(
                 0
             ) + 1;
 
-    } else {
+    }else{
 
         property.dislike_count =
             Number(
@@ -2695,7 +2847,7 @@ async function reactToProperty(
         );
 
 
-    if (likeButton) {
+    if(likeButton){
 
         likeButton.textContent =
             "👍 " +
@@ -2706,7 +2858,7 @@ async function reactToProperty(
     }
 
 
-    if (dislikeButton) {
+    if(dislikeButton){
 
         dislikeButton.textContent =
             "👎 " +
@@ -2717,7 +2869,7 @@ async function reactToProperty(
     }
 
 
-    if (!auth.token) {
+    if(!auth.token){
         return;
     }
 
@@ -2728,7 +2880,7 @@ async function reactToProperty(
             : "dislike_count";
 
 
-    try {
+    try{
 
         const response =
             await fetch(
@@ -2764,7 +2916,7 @@ async function reactToProperty(
             );
 
 
-        if (!response.ok) {
+        if(!response.ok){
 
             const errorText =
                 await response.text();
@@ -2775,7 +2927,7 @@ async function reactToProperty(
             );
         }
 
-    } catch(error) {
+    }catch(error){
 
         console.warn(
             "Reaction could not be saved:",
@@ -2795,7 +2947,7 @@ document
     )
     .addEventListener(
         "change",
-        function(event) {
+        function(event){
 
             const files =
                 Array.from(
@@ -2814,10 +2966,10 @@ document
                 "";
 
 
-            if (
+            if(
                 files.length >
                 MAX_PROPERTY_IMAGES
-            ) {
+            ){
 
                 alert(
                     "You can upload a maximum of 20 photos."
@@ -2835,11 +2987,12 @@ document
             files.forEach(
                 file => {
 
-                    if (
+                    if(
                         !file.type.startsWith(
                             "image/"
                         )
-                    ) {
+                    ){
+
                         return;
                     }
 
@@ -2849,7 +3002,7 @@ document
 
 
                     reader.onload =
-                        function(e) {
+                        function(e){
 
                             const div =
                                 document.createElement(
@@ -2880,6 +3033,7 @@ document
                     reader.readAsDataURL(
                         file
                     );
+
                 }
             );
 
@@ -2901,7 +3055,7 @@ document
     );
 
 
-async function publishProperty(event) {
+async function publishProperty(event){
 
     event.preventDefault();
 
@@ -2920,7 +3074,7 @@ async function publishProperty(event) {
         "Publishing...";
 
 
-    try {
+    try{
 
         showStatus(
             "Checking your account...",
@@ -2932,13 +3086,21 @@ async function publishProperty(event) {
             await getAuthDetails();
 
 
-        if (
+        if(
             !auth.user ||
             !auth.token
-        ) {
+        ){
 
             throw new Error(
                 "Please log in before publishing a property."
+            );
+        }
+
+
+        if(!auth.user.id){
+
+            throw new Error(
+                "Your account ID could not be found. Please log in again."
             );
         }
 
@@ -3009,7 +3171,7 @@ async function publishProperty(event) {
             );
 
 
-        if (!title) {
+        if(!title){
 
             throw new Error(
                 "Enter a property title."
@@ -3017,7 +3179,7 @@ async function publishProperty(event) {
         }
 
 
-        if (!category) {
+        if(!category){
 
             throw new Error(
                 "Select the property type."
@@ -3025,7 +3187,7 @@ async function publishProperty(event) {
         }
 
 
-        if (!listingType) {
+        if(!listingType){
 
             throw new Error(
                 "Select For Sale or For Rent."
@@ -3033,10 +3195,10 @@ async function publishProperty(event) {
         }
 
 
-        if (
+        if(
             !price ||
             price < 0
-        ) {
+        ){
 
             throw new Error(
                 "Enter a valid price."
@@ -3044,7 +3206,7 @@ async function publishProperty(event) {
         }
 
 
-        if (!location) {
+        if(!location){
 
             throw new Error(
                 "Enter the property location."
@@ -3052,7 +3214,7 @@ async function publishProperty(event) {
         }
 
 
-        if (!description) {
+        if(!description){
 
             throw new Error(
                 "Enter a property description."
@@ -3060,10 +3222,10 @@ async function publishProperty(event) {
         }
 
 
-        if (
+        if(
             files.length >
             MAX_PROPERTY_IMAGES
-        ) {
+        ){
 
             throw new Error(
                 "You can upload a maximum of 20 photos."
@@ -3077,7 +3239,9 @@ async function publishProperty(event) {
         );
 
 
-        /* CREATE PROPERTY */
+        /* =====================================================
+           CREATE PROPERTY
+        ===================================================== */
 
         const insertResponse =
             await fetch(
@@ -3134,13 +3298,13 @@ async function publishProperty(event) {
             await insertResponse.text();
 
 
-        if (!insertResponse.ok) {
+        if(!insertResponse.ok){
 
             let message =
                 insertText;
 
 
-            try {
+            try{
 
                 const error =
                     JSON.parse(
@@ -3154,8 +3318,10 @@ async function publishProperty(event) {
                     error.details ||
                     insertText;
 
-            } catch(_) {
+            }catch(_){
+
                 /* Keep original error text. */
+
             }
 
 
@@ -3169,16 +3335,17 @@ async function publishProperty(event) {
         let inserted;
 
 
-        try {
+        try{
 
             inserted =
                 JSON.parse(
                     insertText
                 );
 
-        } catch(_) {
+        }catch(_){
 
             inserted = [];
+
         }
 
 
@@ -3190,10 +3357,10 @@ async function publishProperty(event) {
                 : inserted;
 
 
-        if (
+        if(
             !property ||
             !property.id
-        ) {
+        ){
 
             throw new Error(
                 "Property was created, but no property ID was returned."
@@ -3201,7 +3368,6 @@ async function publishProperty(event) {
         }
 
 
-       ```js
         /* =====================================================
            UPLOAD PHOTOS
         ===================================================== */
@@ -3209,7 +3375,7 @@ async function publishProperty(event) {
         const uploadedImages = [];
 
 
-        if (files.length) {
+        if(files.length){
 
             showStatus(
                 "Uploading property photos...",
@@ -3217,11 +3383,11 @@ async function publishProperty(event) {
             );
 
 
-            for (
+            for(
                 let index = 0;
                 index < files.length;
                 index++
-            ) {
+            ){
 
                 const file =
                     files[index];
@@ -3286,9 +3452,9 @@ async function publishProperty(event) {
                         "/" +
                         encodedPath,
                         {
-                            method: "POST",
+                            method:"POST",
 
-                            headers: {
+                            headers:{
                                 "Authorization":
                                     "Bearer " +
                                     auth.token,
@@ -3304,12 +3470,12 @@ async function publishProperty(event) {
                                     "false"
                             },
 
-                            body: file
+                            body:file
                         }
                     );
 
 
-                if (!uploadResponse.ok) {
+                if(!uploadResponse.ok){
 
                     const errorText =
                         await uploadResponse.text();
@@ -3353,17 +3519,18 @@ async function publishProperty(event) {
                         index
 
                 });
+
             }
         }
 
 
         /* =====================================================
-           SAVE PHOTO RECORDS
+           SAVE PHOTO RECORDS — ONCE
         ===================================================== */
 
-        if (
+        if(
             uploadedImages.length
-        ) {
+        ){
 
             showStatus(
                 "Saving property photos...",
@@ -3374,77 +3541,6 @@ async function publishProperty(event) {
             console.log(
                 "Saving property image records:",
                 uploadedImages
-            );
-
-
-            const imageResponse =
-                await fetch(
-                    SUPABASE_URL +
-                    "/rest/v1/property_images",
-                    {
-                        method: "POST",
-
-                        headers: {
-                            "apikey":
-                                SUPABASE_KEY,
-
-                            "Authorization":
-                                "Bearer " +
-                                auth.token,
-
-                            "Content-Type":
-                                "application/json",
-
-                            "Prefer":
-                                "return=minimal"
-                        },
-
-                        body:
-                            JSON.stringify(
-                                uploadedImages
-                            )
-                    }
-                );
-
-
-            if (
-                !imageResponse.ok
-            ) {
-
-                const errorText =
-                    await imageResponse.text();
-
-
-                console.error(
-                    "Image database insert failed:",
-                    errorText
-                );
-
-
-                throw new Error(
-                    "Photo records could not be saved: " +
-                    errorText
-                );
-            }
-
-
-            console.log(
-                "Property photo records saved successfully."
-            );
-        }
-
-
-        /* =====================================================
-           SAVE PHOTO RECORDS
-        ===================================================== */
-
-        if (
-            uploadedImages.length
-        ) {
-
-            showStatus(
-                "Saving property photos...",
-                "success"
             );
 
 
@@ -3478,9 +3574,7 @@ async function publishProperty(event) {
                 );
 
 
-            if (
-                !imageResponse.ok
-            ) {
+            if(!imageResponse.ok){
 
                 const errorText =
                     await imageResponse.text();
@@ -3497,6 +3591,11 @@ async function publishProperty(event) {
                     errorText
                 );
             }
+
+
+            console.log(
+                "Property photo records saved successfully."
+            );
         }
 
 
@@ -3514,7 +3613,7 @@ async function publishProperty(event) {
 
 
         setTimeout(
-            function() {
+            function(){
 
                 closeModalById(
                     "postPropertyModal"
@@ -3540,7 +3639,7 @@ async function publishProperty(event) {
         );
 
 
-    } catch(error) {
+    }catch(error){
 
         console.error(
             "Publish property error:",
@@ -3555,7 +3654,7 @@ async function publishProperty(event) {
         );
 
 
-    } finally {
+    }finally{
 
         button.disabled =
             false;
@@ -3594,12 +3693,12 @@ document
 
             modal.addEventListener(
                 "click",
-                function(event) {
+                function(event){
 
-                    if (
+                    if(
                         event.target ===
                         modal
-                    ) {
+                    ){
 
                         modal.classList.remove(
                             "active"
@@ -3619,7 +3718,7 @@ document
 
 document.addEventListener(
     "DOMContentLoaded",
-    function() {
+    function(){
 
         loadProperties();
 
@@ -3631,15 +3730,17 @@ document.addEventListener(
  * If the script executes after DOMContentLoaded,
  * load immediately.
  */
-if (
+
+if(
     document.readyState ===
     "interactive" ||
     document.readyState ===
     "complete"
-) {
+){
 
     loadProperties();
 }
+
 </script>
 
 </body>
