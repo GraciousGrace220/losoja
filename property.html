@@ -2903,17 +2903,27 @@ async function publishProperty(event) {
                 );
 
 
-          if (!imageResponse.ok) {
+        if (!imageResponse.ok) {
     const errorText = await imageResponse.text();
 
-    console.error("Image database insert failed:", errorText);
+    console.error(
+        "Image database insert failed:",
+        errorText
+    );
 
     alert(
         "Property published, but photo saving failed.\n\n" +
         "Database error:\n" +
         errorText
     );
+
+    throw new Error(
+        "Photo records could not be saved: " +
+        errorText
+    );
 }
+
+        }
 
         showStatus(
             "Property published successfully!",
