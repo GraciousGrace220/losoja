@@ -468,11 +468,32 @@ async function getAccessToken() {
     try {
 
         if (
+            typeof window.ensureValidSupabaseSession ===
+            "function"
+        ) {
+
+            try {
+                await window.ensureValidSupabaseSession();
+            } catch (error) {
+                console.warn(
+                    "LosOja: session refresh check failed:",
+                    error
+                );
+            }
+
+        }
+
+        if (
             typeof window.getSupabaseAccessToken ===
             "function"
         ) {
 
-            return await window.getSupabaseAccessToken();
+            const token =
+                await window.getSupabaseAccessToken();
+
+            if (token) {
+                return token;
+            }
 
         }
 
@@ -483,9 +504,13 @@ async function getAccessToken() {
 
             const {
                 data
-            } = await window.losojaSupabase.auth.getSession();
+            } =
+                await window.losojaSupabase.auth.getSession();
 
-            return data?.session?.access_token || null;
+            return (
+                data?.session?.access_token ||
+                null
+            );
 
         }
 
@@ -503,7 +528,6 @@ async function getAccessToken() {
     }
 
 }
-
 
 /* =========================================================
    HEADERS
@@ -633,6 +657,22 @@ async function getCurrentUserId() {
     try {
 
         if (
+            typeof window.ensureValidSupabaseSession ===
+            "function"
+        ) {
+
+            try {
+                await window.ensureValidSupabaseSession();
+            } catch (error) {
+                console.warn(
+                    "LosOja: session validation failed:",
+                    error
+                );
+            }
+
+        }
+
+        if (
             typeof window.getCurrentUser ===
             "function"
         ) {
@@ -671,7 +711,13 @@ async function getCurrentUserId() {
 
         const user =
             await supabaseRequest(
-                "/auth/v1/user"
+                "/auth/v1/user",
+                {
+                    headers: {
+                        Authorization:
+                            `Bearer ${token}`
+                    }
+                }
             );
 
         return user?.id || null;
@@ -702,10 +748,11 @@ async function loadWallet() {
         );
 
     if (!balanceElement) {
-
         return;
-
     }
+
+    balanceElement.textContent =
+        "Loading...";
 
     try {
 
@@ -714,22 +761,44 @@ async function loadWallet() {
 
         if (!userId) {
 
+            console.warn(
+                "LosOja: no authenticated user found."
+            );
+
             balanceElement.textContent =
                 "₦0.00";
 
             return;
 
         }
+
+        console.log(
+            "LosOja: loading wallet for user:",
+            userId
+        );
+
 
         const data =
             await supabaseRequest(
                 `/rest/v1/wallets?select=balance,currency&user_id=eq.${encodeURIComponent(userId)}&limit=1`
             );
 
+
+        console.log(
+            "LosOja: wallet response:",
+            data
+        );
+
+
         if (
-            !data ||
+            !Array.isArray(data) ||
             !data.length
         ) {
+
+            console.warn(
+                "LosOja: no wallet row found for user:",
+                userId
+            );
 
             balanceElement.textContent =
                 "₦0.00";
@@ -738,11 +807,33 @@ async function loadWallet() {
 
         }
 
+
         const wallet =
             data[0];
 
+
         const balance =
-            Number(wallet.balance || 0);
+            Number(
+                wallet.balance ?? 0
+            );
+
+
+        if (
+            !Number.isFinite(balance)
+        ) {
+
+            console.warn(
+                "LosOja: invalid wallet balance:",
+                wallet.balance
+            );
+
+            balanceElement.textContent =
+                "₦0.00";
+
+            return;
+
+        }
+
 
         balanceElement.textContent =
             `₦${balance.toLocaleString(
@@ -753,6 +844,7 @@ async function loadWallet() {
                 }
             )}`;
 
+
     } catch (error) {
 
         console.error(
@@ -760,13 +852,17 @@ async function loadWallet() {
             error
         );
 
+        /*
+         * Do not hide the problem as a fake zero balance.
+         * The wallet itself is not changed.
+         */
+
         balanceElement.textContent =
-            "₦0.00";
+            "Unable to load";
 
     }
 
 }
-
 
 /* =========================================================
    FORMAT TRANSACTION TYPE
