@@ -1176,35 +1176,106 @@ window.toggleSavedBusiness =
        OPEN BUSINESS
     ===================================================== */
 
-    function openBusiness(businessId) {
+   function openBusiness(businessId) {
 
-        console.log(
-            "LosOja: Business card clicked:",
-            businessId
+    console.log(
+        "LosOja: Business card clicked:",
+        businessId
+    );
+
+    const business =
+        businesses.find(
+            function (item) {
+
+                return String(item.id) ===
+                    String(businessId);
+
+            }
         );
 
-        /*
-        -----------------------------------------------------
-        Find the business
-        -----------------------------------------------------
-        */
+    if (!business) {
 
-        const business =
-            businesses.find(
-                function (item) {
+        console.error(
+            "LosOja: Business not found:",
+            businessId,
+            businesses
+        );
 
-                    return String(item.id) ===
-                        String(businessId);
+        if (
+            typeof window.showToast ===
+            "function"
+        ) {
 
-                }
+            window.showToast(
+                "Business could not be found."
             );
 
-        if (!business) {
+        }
+
+        return;
+    }
+
+    window.losojaSelectedBusiness =
+        business;
+
+    console.log(
+        "LosOja: Opening business:",
+        business
+    );
+
+    /*
+    -----------------------------------------------------
+    Use the main Business Details renderer
+    -----------------------------------------------------
+    */
+
+    if (
+        typeof window.showBusinessDetails ===
+        "function"
+    ) {
+
+        try {
+
+            const result =
+                window.showBusinessDetails(
+                    business
+                );
+
+            if (
+                result &&
+                typeof result.catch ===
+                "function"
+            ) {
+
+                result.catch(
+                    function (error) {
+
+                        console.error(
+                            "LosOja: Business details error:",
+                            error
+                        );
+
+                        if (
+                            typeof window.showToast ===
+                            "function"
+                        ) {
+
+                            window.showToast(
+                                "Could not open business details."
+                            );
+
+                        }
+
+                    }
+                );
+
+            }
+
+        } catch (error) {
 
             console.error(
-                "LosOja: Business not found:",
-                businessId,
-                businesses
+                "LosOja: Business details crashed:",
+                error
             );
 
             if (
@@ -1213,284 +1284,134 @@ window.toggleSavedBusiness =
             ) {
 
                 window.showToast(
-                    "Business could not be found."
+                    "Could not open business details."
                 );
 
             }
 
-            return;
         }
 
-        /*
-        -----------------------------------------------------
-        Save selected business globally
-        -----------------------------------------------------
-        */
+        return;
+    }
 
-        window.losojaSelectedBusiness =
-            business;
+    /*
+    -----------------------------------------------------
+    Main renderer is not available
+    -----------------------------------------------------
+    */
 
-        console.log(
-            "LosOja: Opening business:",
-            business
+    const modal =
+        document.getElementById(
+            "businessDetailsModal"
         );
 
-        /*
-        -----------------------------------------------------
-        Open Business Details
-        -----------------------------------------------------
-        */
+    const content =
+        document.getElementById(
+            "businessDetailsContent"
+        );
 
-        if (
-            typeof window.showBusinessDetails ===
-            "function"
-        ) {
+    if (
+        modal &&
+        content
+    ) {
 
-            try {
+        content.innerHTML = `
 
-                const result =
-                    window.showBusinessDetails(
-                        business
-                    );
+            <div class="business-details">
 
-                /*
-                 * showBusinessDetails is async.
-                 * Catch rejected promises too.
-                 */
-
-                if (
-                    result &&
-                    typeof result.catch ===
-                    "function"
-                ) {
-
-                    result.catch(
-                        function (error) {
-
-                            console.error(
-                                "LosOja: Business details error:",
-                                error
-                            );
-
-                            if (
-                                typeof window.showToast ===
-                                "function"
-                            ) {
-
-                                window.showToast(
-                                    "Could not open business details."
-                                );
-                            }
-
-                        }
-                    );
-                }
-
-            } catch (error) {
-
-                console.error(
-                    "LosOja: Business details crashed:",
-                    error
-                );
-
-                if (
-                    typeof window.showToast ===
-                    "function"
-                ) {
-
-                    window.showToast(
-                        "Could not open business details."
-                    );
-                }
-            }
-
-            return;
-        }
-
-        /*
-        -----------------------------------------------------
-        Fallback: open the modal directly if
-        showBusinessDetails is not available.
-        -----------------------------------------------------
-        */
-
-        const modal =
-            document.getElementById(
-                "businessDetailsModal"
-            );
-
-        const content =
-            document.getElementById(
-                "businessDetailsContent"
-            );
-
-        if (
-            modal &&
-            content
-        ) {
-
-            const safe =
-                function (value) {
-
-                    return String(
-                        value ?? ""
-                    )
-                    .replace(
-                        /&/g,
-                        "&amp;"
-                    )
-                    .replace(
-                        /</g,
-                        "&lt;"
-                    )
-                    .replace(
-                        />/g,
-                        "&gt;"
-                    )
-                    .replace(
-                        /"/g,
-                        "&quot;"
-                    )
-                    .replace(
-                        /'/g,
-                        "&#039;"
-                    );
-
-                };
-
-            content.innerHTML = `
-
-                <div class="business-details">
-
-                    <h2>
-                        ${safe(
+                <h2>
+                    ${
+                        String(
                             business.name ||
                             "Business"
-                        )}
-                    </h2>
+                        )
+                        .replace(
+                            /&/g,
+                            "&amp;"
+                        )
+                        .replace(
+                            /</g,
+                            "&lt;"
+                        )
+                        .replace(
+                            />/g,
+                            "&gt;"
+                        )
+                    }
+                </h2>
 
-                    <p>
-                        <strong>Category:</strong>
-                        ${safe(
+                <p>
+                    <strong>Category:</strong>
+                    ${
+                        String(
                             business.category ||
-                            "Business"
-                        )}
-                    </p>
+                            "Not specified"
+                        )
+                        .replace(
+                            /&/g,
+                            "&amp;"
+                        )
+                        .replace(
+                            /</g,
+                            "&lt;"
+                        )
+                        .replace(
+                            />/g,
+                            "&gt;"
+                        )
+                    }
+                </p>
 
-                    <p>
-                        📍
-                        ${safe(
+                <p>
+                    ${
+                        String(
                             business.location ||
                             "Nigeria"
-                        )}
-                    </p>
-
-                    ${
-                        business.phone
-                            ? `
-                                <p>
-                                    📞
-                                    ${safe(
-                                        business.phone
-                                    )}
-                                </p>
-                              `
-                            : ""
+                        )
+                        .replace(
+                            /&/g,
+                            "&amp;"
+                        )
+                        .replace(
+                            /</g,
+                            "&lt;"
+                        )
+                        .replace(
+                            />/g,
+                            "&gt;"
+                        )
                     }
+                </p>
 
-                    <p>
-                        ${safe(
-                            business.description ||
-                            "No description provided."
-                        )}
-                    </p>
+            </div>
 
-                    <button
-                        type="button"
-                        onclick="
-                            if (
-                                typeof window.showBusinessDetails ===
-                                'function'
-                            ) {
-                                window.showBusinessDetails(
-                                    window.losojaSelectedBusiness
-                                );
-                            }
-                        "
-                        style="
-                            width:100%;
-                            padding:14px;
-                            margin-top:15px;
-                            border:0;
-                            border-radius:10px;
-                            background:#087a3e;
-                            color:#ffffff;
-                            font-weight:700;
-                            cursor:pointer;
-                        "
-                    >
-                        View Business Details
-                    </button>
+        `;
 
-                </div>
+        modal.classList.add("active");
+        modal.classList.remove("hidden");
 
-            `;
+        modal.style.display = "flex";
+        modal.style.visibility = "visible";
+        modal.style.opacity = "1";
+        modal.style.pointerEvents = "auto";
 
-            modal.classList.add("active");
-
-            modal.classList.remove("hidden");
-
-            modal.style.display = "flex";
-
-            modal.style.visibility = "visible";
-
-            modal.style.opacity = "1";
-
-            modal.style.pointerEvents = "auto";
-
-            modal.setAttribute(
-                "aria-hidden",
-                "false"
-            );
-
-            document.body.classList.add(
-                "modal-open"
-            );
-
-            return;
-        }
-
-              /*
-        -----------------------------------------------------
-        FALLBACK BUSINESS DETAILS
-        -----------------------------------------------------
-        */
-
-        if (modal && typeof window.showBusinessDetails === "function") {
-
-            console.log(
-                "LosOja: Using main business details renderer."
-            );
-
-            window.losojaSelectedBusiness =
-                business;
-
-            window.showBusinessDetails(
-                business
-            );
-
-            return;
-        }
-
-        /*
-        -----------------------------------------------------
-        Nothing available
-        -----------------------------------------------------
-        */
-
-        console.error(
-            "LosOja: Business Details modal was not found."
+        modal.setAttribute(
+            "aria-hidden",
+            "false"
         );
+
+        document.body.classList.add(
+            "modal-open"
+        );
+
+        return;
+    }
+
+    console.error(
+        "LosOja: Business Details modal was not found."
+    );
+
+}
 
 
     /* =====================================================
