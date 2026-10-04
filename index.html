@@ -1862,7 +1862,87 @@ main {
 
 </div>
 
+<!-- =================================================
+     BUSINESS IMAGE VIEWER
+================================================= -->
 
+<div
+    class="modal"
+    id="businessImageViewerModal"
+    aria-hidden="true"
+>
+
+    <div
+        class="modal-content"
+        style="
+            max-width:900px;
+            width:100%;
+            padding:1rem;
+        "
+    >
+
+        <div
+            class="modal-header"
+            style="
+                display:flex;
+                align-items:center;
+                justify-content:space-between;
+                gap:1rem;
+            "
+        >
+
+            <h2 style="margin:0;">
+                Business Image
+            </h2>
+
+            <button
+                type="button"
+                class="close-modal"
+                data-close="businessImageViewerModal"
+                aria-label="Close image viewer"
+            >
+                ×
+            </button>
+
+        </div>
+
+        <div
+            style="
+                text-align:center;
+                margin-top:1rem;
+            "
+        >
+
+            <img
+                id="businessImageViewer"
+                src=""
+                alt="Business image"
+                style="
+                    display:block;
+                    width:100%;
+                    max-height:70vh;
+                    object-fit:contain;
+                    border-radius:12px;
+                "
+            >
+
+        </div>
+
+        <button
+            type="button"
+            class="btn btn-secondary"
+            data-close="businessImageViewerModal"
+            style="
+                width:100%;
+                margin-top:1rem;
+            "
+        >
+            Cancel
+        </button>
+
+    </div>
+
+</div>
 
 <!-- =====================================================
      LOGIN MODAL
