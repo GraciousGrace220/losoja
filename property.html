@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
 <meta charset="UTF-8">
@@ -375,10 +376,6 @@ button{
    FORM
 ========================================================= */
 
-.post-card h2{
-    margin-top:0;
-}
-
 .form-group{
     margin-bottom:15px;
 }
@@ -478,6 +475,18 @@ button{
     line-height:27px;
     padding:0;
     z-index:5;
+}
+
+.existing-photo-label{
+    position:absolute;
+    left:6px;
+    bottom:6px;
+    background:rgba(0,0,0,.70);
+    color:#fff;
+    padding:4px 7px;
+    border-radius:6px;
+    font-size:11px;
+    font-weight:700;
 }
 
 .form-actions{
@@ -626,13 +635,7 @@ button{
     margin-top:14px;
     padding-top:15px;
     border-top:1px solid var(--border);
-
-    /*
-       Reserve the owner-controls area so the modal
-       does not jump when authentication finishes.
-    */
-    min-height:92px;
-
+    min-height:145px;
     visibility:hidden;
 }
 
@@ -650,6 +653,19 @@ button{
     color:var(--muted);
     font-size:13px;
     font-weight:700;
+}
+
+.edit-btn{
+    background:#7b4f00;
+    color:#fff;
+    border:0;
+    padding:12px 17px;
+    border-radius:10px;
+    font-weight:700;
+}
+
+.edit-btn:hover{
+    background:#5f3d00;
 }
 
 .sold-btn{
@@ -874,6 +890,7 @@ button{
 
     .property-owner-actions{
         flex-direction:column;
+        min-height:330px;
     }
 
     .property-owner-actions button{
@@ -1044,196 +1061,410 @@ button{
 
         <div class="modal-content">
 
-            <div class="post-card">
+            <h2>
+                Post Your Property
+            </h2>
 
-                <h2>
-                    Post Your Property
-                </h2>
+            <p>
+                List your property on LosOja.
+            </p>
 
-                <p>
-                    List your property on LosOja.
-                </p>
+            <form id="propertyForm">
 
-                <form id="propertyForm">
+                <div class="form-group">
 
-                    <div class="form-group">
+                    <label for="propertyTitle">
+                        Property Title
+                    </label>
 
-                        <label for="propertyTitle">
-                            Property Title
-                        </label>
+                    <input
+                        type="text"
+                        id="propertyTitle"
+                        required
+                        placeholder="e.g. Modern 3 Bedroom House"
+                    >
 
-                        <input
-                            type="text"
-                            id="propertyTitle"
-                            required
-                            placeholder="e.g. Modern 3 Bedroom House"
-                        >
+                </div>
 
+                <div class="form-group">
+
+                    <label for="propertyType">
+                        Property Type
+                    </label>
+
+                    <select
+                        id="propertyType"
+                        required
+                    >
+
+                        <option value="">
+                            Select type
+                        </option>
+
+                        <option value="House">
+                            House
+                        </option>
+
+                        <option value="Apartment">
+                            Apartment
+                        </option>
+
+                        <option value="Land">
+                            Land
+                        </option>
+
+                        <option value="Commercial">
+                            Commercial
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="listingType">
+                        Listing Type
+                    </label>
+
+                    <select
+                        id="listingType"
+                        required
+                    >
+
+                        <option value="">
+                            Select listing type
+                        </option>
+
+                        <option value="For Sale">
+                            For Sale
+                        </option>
+
+                        <option value="For Rent">
+                            For Rent
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="propertyPrice">
+                        Price
+                    </label>
+
+                    <input
+                        type="number"
+                        id="propertyPrice"
+                        min="0"
+                        step="0.01"
+                        required
+                        placeholder="Enter price"
+                    >
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="propertyLocation">
+                        Location
+                    </label>
+
+                    <input
+                        type="text"
+                        id="propertyLocation"
+                        required
+                        placeholder="e.g. Lekki, Lagos"
+                    >
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="propertyDescription">
+                        Description
+                    </label>
+
+                    <textarea
+                        id="propertyDescription"
+                        placeholder="Describe the property..."
+                    ></textarea>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="propertyImages">
+                        Property Photos
+                    </label>
+
+                    <input
+                        type="file"
+                        id="propertyImages"
+                        accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
+                        multiple
+                    >
+
+                    <div class="photo-help">
+                        Select up to 10 photos. Maximum 5MB per photo.
+                        You can select more photos without losing the ones already selected.
                     </div>
 
-                    <div class="form-group">
-
-                        <label for="propertyType">
-                            Property Type
-                        </label>
-
-                        <select
-                            id="propertyType"
-                            required
-                        >
-
-                            <option value="">
-                                Select type
-                            </option>
-
-                            <option value="House">
-                                House
-                            </option>
-
-                            <option value="Apartment">
-                                Apartment
-                            </option>
-
-                            <option value="Land">
-                                Land
-                            </option>
-
-                            <option value="Commercial">
-                                Commercial
-                            </option>
-
-                        </select>
-
+                    <div
+                        id="photoSelectionInfo"
+                        class="photo-selection-info"
+                    >
+                        No photos selected
                     </div>
 
-                    <div class="form-group">
+                    <div
+                        id="propertyPhotoPreview"
+                        class="property-photo-preview"
+                    ></div>
 
-                        <label for="listingType">
-                            Listing Type
-                        </label>
+                </div>
 
-                        <select
-                            id="listingType"
-                            required
-                        >
+                <div class="form-actions">
 
-                            <option value="">
-                                Select listing type
-                            </option>
+                    <button
+                        type="button"
+                        class="secondary-btn"
+                        onclick="closePostPropertyModal()"
+                    >
+                        Cancel
+                    </button>
 
-                            <option value="For Sale">
-                                For Sale
-                            </option>
+                    <button
+                        type="submit"
+                        id="publishPropertyButton"
+                        class="primary-btn"
+                    >
+                        Publish Property
+                    </button>
 
-                            <option value="For Rent">
-                                For Rent
-                            </option>
+                </div>
 
-                        </select>
+            </form>
 
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     EDIT PROPERTY MODAL
+===================================================== -->
+
+<div
+    id="editPropertyModal"
+    class="modal"
+    onclick="closeEditPropertyOnBackdrop(event)"
+>
+
+    <div class="modal-box">
+
+        <button
+            type="button"
+            class="modal-close"
+            onclick="closeEditPropertyModal()"
+        >
+            ×
+        </button>
+
+        <div class="modal-content">
+
+            <h2>
+                Edit Property
+            </h2>
+
+            <p>
+                Update your property information and photos.
+            </p>
+
+            <form id="editPropertyForm">
+
+                <div class="form-group">
+
+                    <label for="editPropertyTitle">
+                        Property Title
+                    </label>
+
+                    <input
+                        type="text"
+                        id="editPropertyTitle"
+                        required
+                    >
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="editPropertyType">
+                        Property Type
+                    </label>
+
+                    <select
+                        id="editPropertyType"
+                        required
+                    >
+
+                        <option value="House">
+                            House
+                        </option>
+
+                        <option value="Apartment">
+                            Apartment
+                        </option>
+
+                        <option value="Land">
+                            Land
+                        </option>
+
+                        <option value="Commercial">
+                            Commercial
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="editListingType">
+                        Listing Type
+                    </label>
+
+                    <select
+                        id="editListingType"
+                        required
+                    >
+
+                        <option value="For Sale">
+                            For Sale
+                        </option>
+
+                        <option value="For Rent">
+                            For Rent
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="editPropertyPrice">
+                        Price
+                    </label>
+
+                    <input
+                        type="number"
+                        id="editPropertyPrice"
+                        min="0"
+                        step="0.01"
+                        required
+                    >
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="editPropertyLocation">
+                        Location
+                    </label>
+
+                    <input
+                        type="text"
+                        id="editPropertyLocation"
+                        required
+                    >
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="editPropertyDescription">
+                        Description
+                    </label>
+
+                    <textarea
+                        id="editPropertyDescription"
+                    ></textarea>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label>
+                        Existing Photos
+                    </label>
+
+                    <div
+                        id="editExistingPhotos"
+                        class="property-photo-preview"
+                    ></div>
+
+                    <div class="photo-help">
+                        Click × on a photo to remove it from this property.
                     </div>
 
-                    <div class="form-group">
+                </div>
 
-                        <label for="propertyPrice">
-                            Price
-                        </label>
+                <div class="form-group">
 
-                        <input
-                            type="number"
-                            id="propertyPrice"
-                            min="0"
-                            step="0.01"
-                            required
-                            placeholder="Enter price"
-                        >
+                    <label for="editPropertyImages">
+                        Add New Photos
+                    </label>
 
+                    <input
+                        type="file"
+                        id="editPropertyImages"
+                        accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
+                        multiple
+                    >
+
+                    <div class="photo-help">
+                        Maximum 10 photos total and 5MB per photo.
                     </div>
 
-                    <div class="form-group">
-
-                        <label for="propertyLocation">
-                            Location
-                        </label>
-
-                        <input
-                            type="text"
-                            id="propertyLocation"
-                            required
-                            placeholder="e.g. Lekki, Lagos"
-                        >
-
+                    <div
+                        id="editPhotoSelectionInfo"
+                        class="photo-selection-info"
+                    >
+                        No new photos selected
                     </div>
 
-                    <div class="form-group">
+                    <div
+                        id="editNewPhotoPreview"
+                        class="property-photo-preview"
+                    ></div>
 
-                        <label for="propertyDescription">
-                            Description
-                        </label>
+                </div>
 
-                        <textarea
-                            id="propertyDescription"
-                            placeholder="Describe the property..."
-                        ></textarea>
+                <div class="form-actions">
 
-                    </div>
+                    <button
+                        type="button"
+                        class="secondary-btn"
+                        onclick="closeEditPropertyModal()"
+                    >
+                        Cancel
+                    </button>
 
-                    <div class="form-group">
+                    <button
+                        type="submit"
+                        id="saveEditPropertyButton"
+                        class="primary-btn"
+                    >
+                        Save Changes
+                    </button>
 
-                        <label for="propertyImages">
-                            Property Photos
-                        </label>
+                </div>
 
-                        <input
-                            type="file"
-                            id="propertyImages"
-                            name="propertyImages"
-                            accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
-                            multiple
-                        >
-
-                        <div class="photo-help">
-                            Select up to 10 photos. Maximum 5MB per photo.
-                            You can select more photos again without losing the ones already selected.
-                        </div>
-
-                        <div
-                            id="photoSelectionInfo"
-                            class="photo-selection-info"
-                        >
-                            No photos selected
-                        </div>
-
-                        <div
-                            id="propertyPhotoPreview"
-                            class="property-photo-preview"
-                        ></div>
-
-                    </div>
-
-                    <div class="form-actions">
-
-                        <button
-                            type="button"
-                            class="secondary-btn"
-                            onclick="closePostPropertyModal()"
-                        >
-                            Cancel
-                        </button>
-
-                        <button
-                            type="submit"
-                            id="publishPropertyButton"
-                            class="primary-btn"
-                        >
-                            Publish Property
-                        </button>
-
-                    </div>
-
-                </form>
-
-            </div>
+            </form>
 
         </div>
 
@@ -1354,7 +1585,7 @@ button{
 
                 </div>
 
-                <!-- OWNER CONTROLS -->
+                <!-- OWNER MANAGEMENT -->
 
                 <div
                     id="propertyOwnerActions"
@@ -1365,6 +1596,15 @@ button{
                     <div class="property-owner-label">
                         Property Management
                     </div>
+
+                    <button
+                        type="button"
+                        id="editPropertyButton"
+                        class="edit-btn"
+                        onclick="openEditPropertyModal()"
+                    >
+                        ✎ Edit Property
+                    </button>
 
                     <button
                         type="button"
@@ -1462,12 +1702,16 @@ button{
 </div>
 
 
-<div id="toast" class="toast"></div>
+<div
+    id="toast"
+    class="toast"
+></div>
 
 
 <script>
 
 "use strict";
+
 
 /* =========================================================
    SUPABASE
@@ -1508,28 +1752,22 @@ let toastTimer =
     null;
 
 
-/*
-==========================================================
-IMPORTANT PHOTO FIX
-==========================================================
+/* NEW PROPERTY PHOTOS */
 
-The browser input.files gets replaced every time
-the user opens the file picker.
+let selectedPropertyFiles =
+    [];
 
-LosOja therefore keeps its own array.
 
-Select 1
-=> 1 photo
+/* EDIT PROPERTY STATE */
 
-Select 3 more
-=> 4 photos
+let editExistingImages =
+    [];
 
-Select 6 more
-=> 10 photos
-==========================================================
-*/
+let editRemovedImages =
+    [];
 
-let selectedPropertyFiles = [];
+let selectedEditPropertyFiles =
+    [];
 
 
 /* =========================================================
@@ -1697,7 +1935,7 @@ function showToast(message){
 
 
 /* =========================================================
-   MODAL STATE
+   BODY MODAL STATE
 ========================================================= */
 
 function updateBodyModalState(){
@@ -1749,9 +1987,7 @@ function closePostPropertyModal(){
 }
 
 
-function closePostPropertyOnBackdrop(
-    event
-){
+function closePostPropertyOnBackdrop(event){
 
     if(
         event.target.id ===
@@ -1769,9 +2005,7 @@ function closePostPropertyOnBackdrop(
    DETAIL MODAL
 ========================================================= */
 
-function closeDetailOnBackdrop(
-    event
-){
+function closeDetailOnBackdrop(event){
 
     if(
         event.target.id ===
@@ -1801,7 +2035,7 @@ function closeDetailModal(){
 
 
 /* =========================================================
-   ESCAPE KEY
+   ESCAPE
 ========================================================= */
 
 document.addEventListener(
@@ -1819,6 +2053,8 @@ document.addEventListener(
 
         closePostPropertyModal();
 
+        closeEditPropertyModal();
+
         closeDetailModal();
 
         closeViewer();
@@ -1828,76 +2064,44 @@ document.addEventListener(
 
 
 /* =========================================================
-   PHOTO INPUT
+   NEW PROPERTY PHOTO INPUT
 ========================================================= */
 
-const propertyImagesInput =
-    document.getElementById(
+document
+    .getElementById(
         "propertyImages"
-    );
+    )
+    .addEventListener(
+        "change",
+        function(){
 
-const photoSelectionInfo =
-    document.getElementById(
-        "photoSelectionInfo"
-    );
-
-const propertyPhotoPreview =
-    document.getElementById(
-        "propertyPhotoPreview"
-    );
-
-
-propertyImagesInput.addEventListener(
-    "change",
-    function(){
-
-        const newFiles =
-            Array.from(
-                this.files || []
-            );
-
-        if(
-            !newFiles.length
-        ){
-
-            return;
-
-        }
-
-        if(
-            selectedPropertyFiles.length +
-            newFiles.length >
-            10
-        ){
-
-            const remaining =
-                10 -
-                selectedPropertyFiles.length;
-
-            showToast(
-                remaining > 0
-                    ? `You can add only ${remaining} more photo${remaining === 1 ? "" : "s"}.`
-                    : "You already selected 10 photos."
-            );
-
-            this.value =
-                "";
-
-            return;
-
-        }
-
-        for(
-            const file of newFiles
-        ){
+            const newFiles =
+                Array.from(
+                    this.files || []
+                );
 
             if(
-                file.size >
-                5 * 1024 * 1024
+                !newFiles.length
             ){
 
+                return;
+
+            }
+
+            if(
+                selectedPropertyFiles.length +
+                newFiles.length >
+                10
+            ){
+
+                const remaining =
+                    10 -
+                    selectedPropertyFiles.length;
+
                 showToast(
-                    `${file.name} is larger than 5MB. Maximum is 5MB per photo.`
+                    remaining > 0
+                        ? `You can add only ${remaining} more photo${remaining === 1 ? "" : "s"}.`
+                        : "You already selected 10 photos."
                 );
 
                 this.value =
@@ -1907,54 +2111,79 @@ propertyImagesInput.addEventListener(
 
             }
 
+            for(
+                const file of newFiles
+            ){
+
+                if(
+                    file.size >
+                    5 * 1024 * 1024
+                ){
+
+                    showToast(
+                        `${file.name} is larger than 5MB. Maximum is 5MB per photo.`
+                    );
+
+                    this.value =
+                        "";
+
+                    return;
+
+                }
+
+            }
+
+            selectedPropertyFiles.push(
+                ...newFiles
+            );
+
+            this.value =
+                "";
+
+            renderSelectedPropertyPhotos();
+
         }
-
-        selectedPropertyFiles.push(
-            ...newFiles
-        );
-
-        this.value =
-            "";
-
-        renderSelectedPropertyPhotos();
-
-    }
-);
+    );
 
 
 /* =========================================================
-   RENDER SELECTED PHOTOS
+   NEW PROPERTY PHOTO PREVIEW
 ========================================================= */
 
 function renderSelectedPropertyPhotos(){
 
-    propertyPhotoPreview.innerHTML =
+    const preview =
+        document.getElementById(
+            "propertyPhotoPreview"
+        );
+
+    const info =
+        document.getElementById(
+            "photoSelectionInfo"
+        );
+
+    preview.innerHTML =
         "";
 
-    const total =
-        selectedPropertyFiles.length;
-
     if(
-        total === 0
+        selectedPropertyFiles.length ===
+        0
     ){
 
-        photoSelectionInfo.textContent =
+        info.textContent =
             "No photos selected";
 
         return;
 
     }
 
-    photoSelectionInfo.textContent =
-        total === 1
+    info.textContent =
+        selectedPropertyFiles.length === 1
             ? "1 photo selected"
-            : `${total} photos selected`;
+            : `${selectedPropertyFiles.length} photos selected`;
 
     selectedPropertyFiles.forEach(
-        function(
-            file,
-            index
-        ){
+        function(file,index){
 
             const wrapper =
                 document.createElement(
@@ -1969,9 +2198,6 @@ function renderSelectedPropertyPhotos(){
                     "img"
                 );
 
-            image.alt =
-                `Property photo ${index + 1}`;
-
             const number =
                 document.createElement(
                     "div"
@@ -1983,24 +2209,21 @@ function renderSelectedPropertyPhotos(){
             number.textContent =
                 String(index + 1);
 
-            const removeButton =
+            const remove =
                 document.createElement(
                     "button"
                 );
 
-            removeButton.type =
+            remove.type =
                 "button";
 
-            removeButton.className =
+            remove.className =
                 "remove-photo-btn";
 
-            removeButton.textContent =
+            remove.textContent =
                 "×";
 
-            removeButton.title =
-                "Remove photo";
-
-            removeButton.onclick =
+            remove.onclick =
                 function(){
 
                     selectedPropertyFiles.splice(
@@ -2036,10 +2259,10 @@ function renderSelectedPropertyPhotos(){
             );
 
             wrapper.appendChild(
-                removeButton
+                remove
             );
 
-            propertyPhotoPreview.appendChild(
+            preview.appendChild(
                 wrapper
             );
 
@@ -2049,23 +2272,17 @@ function renderSelectedPropertyPhotos(){
 }
 
 
-/* =========================================================
-   CLEAR SELECTED PHOTOS
-========================================================= */
-
 function clearSelectedPropertyFiles(){
 
     selectedPropertyFiles =
         [];
 
-    propertyImagesInput.value =
+    document.getElementById(
+        "propertyImages"
+    ).value =
         "";
 
-    propertyPhotoPreview.innerHTML =
-        "";
-
-    photoSelectionInfo.textContent =
-        "No photos selected";
+    renderSelectedPropertyPhotos();
 
 }
 
@@ -2158,7 +2375,7 @@ async function loadPropertyImages(){
             await fetch(
                 SUPABASE_URL +
                 "/rest/v1/property_images" +
-                "?select=id,property_id,image_url,sort_order" +
+                "?select=id,property_id,user_id,image_url,sort_order" +
                 "&order=property_id.asc,sort_order.asc,id.asc",
                 {
                     headers:
@@ -2171,7 +2388,7 @@ async function loadPropertyImages(){
         ){
 
             console.error(
-                "Property images error:",
+                "Property image error:",
                 await response.text()
             );
 
@@ -2201,19 +2418,23 @@ async function loadPropertyImages(){
 
                 }
 
-                if(
-                    row.image_url
-                ){
+                imageMap
+                    .get(
+                        row.property_id
+                    )
+                    .push({
+                        id:
+                            row.id,
 
-                    imageMap
-                        .get(
-                            row.property_id
-                        )
-                        .push(
-                            row.image_url
-                        );
+                        image_url:
+                            row.image_url,
 
-                }
+                        user_id:
+                            row.user_id,
+
+                        sort_order:
+                            row.sort_order
+                    });
 
             }
         );
@@ -2221,34 +2442,21 @@ async function loadPropertyImages(){
         allProperties.forEach(
             function(property){
 
-                property._images =
+                property._imageRows =
                     imageMap.get(
                         property.id
                     ) || [];
 
                 property._images =
-                    property._images.filter(
-                        function(
-                            url,
-                            index,
-                            array
-                        ){
+                    property._imageRows.map(
+                        function(row){
 
-                            return (
-                                url &&
-                                array.indexOf(url) ===
-                                index
-                            );
+                            return row.image_url;
 
                         }
                     );
 
             }
-        );
-
-        console.log(
-            "Property image rows loaded:",
-            rows.length
         );
 
     }catch(error){
@@ -2267,9 +2475,7 @@ async function loadPropertyImages(){
    GET PROPERTY IMAGES
 ========================================================= */
 
-function getPropertyImages(
-    property
-){
+function getPropertyImages(property){
 
     if(
         property &&
@@ -2511,12 +2717,10 @@ function applyFilters(){
 
 
 /* =========================================================
-   PROPERTY CARDS
+   RENDER PROPERTY CARDS
 ========================================================= */
 
-function renderProperties(
-    properties
-){
+function renderProperties(properties){
 
     const container =
         document.getElementById(
@@ -2614,10 +2818,7 @@ function renderProperties(
                                 ${
                                     images
                                     .map(
-                                        function(
-                                            image,
-                                            imageIndex
-                                        ){
+                                        function(image,imageIndex){
 
                                             return `
 
@@ -2711,7 +2912,7 @@ function renderProperties(
 
 
 /* =========================================================
-   CARD IMAGE
+   CARD GALLERY
 ========================================================= */
 
 function changeCardImage(
@@ -2900,7 +3101,7 @@ function setCardImage(
 
 
 /* =========================================================
-   PROPERTY DETAIL
+   OPEN PROPERTY DETAIL
 ========================================================= */
 
 async function openPropertyDetail(
@@ -2988,16 +3189,16 @@ async function openPropertyDetail(
     );
 
 
-    /*
-    =========================================================
-       PREPARE OWNER CONTROLS BEFORE SHOWING MODAL
-       This prevents the modal from jumping.
-    =========================================================
-    */
+    /* Reset owner controls */
 
     const ownerActions =
         document.getElementById(
             "propertyOwnerActions"
+        );
+
+    const editButton =
+        document.getElementById(
+            "editPropertyButton"
         );
 
     const markSoldButton =
@@ -3016,43 +3217,30 @@ async function openPropertyDetail(
         );
 
 
-    if(ownerActions){
+    ownerActions.classList.remove(
+        "visible"
+    );
 
-        ownerActions.classList.remove(
-            "visible"
-        );
-
-        ownerActions.setAttribute(
-            "aria-hidden",
-            "true"
-        );
-
-    }
+    ownerActions.setAttribute(
+        "aria-hidden",
+        "true"
+    );
 
 
-    if(markSoldButton){
+    editButton.style.display =
+        "none";
 
-        markSoldButton.style.display =
-            "none";
+    markSoldButton.style.display =
+        "none";
 
-    }
+    markRentedButton.style.display =
+        "none";
 
-
-    if(markRentedButton){
-
-        markRentedButton.style.display =
-            "none";
-
-    }
+    markAvailableButton.style.display =
+        "none";
 
 
-    if(markAvailableButton){
-
-        markAvailableButton.style.display =
-            "none";
-
-    }
-
+    /* Wait for authentication BEFORE showing modal */
 
     const user =
         await getAuthenticatedUser();
@@ -3081,53 +3269,41 @@ async function openPropertyDetail(
             ).toLowerCase();
 
 
-        if(markSoldButton){
-
-            markSoldButton.style.display =
-                listingType.includes("sale") &&
-                status !== "sold"
-                    ? "block"
-                    : "none";
-
-        }
+        editButton.style.display =
+            "block";
 
 
-        if(markRentedButton){
-
-            markRentedButton.style.display =
-                listingType.includes("rent") &&
-                status !== "rented"
-                    ? "block"
-                    : "none";
-
-        }
+        markSoldButton.style.display =
+            listingType.includes("sale") &&
+            status !== "sold"
+                ? "block"
+                : "none";
 
 
-        if(markAvailableButton){
-
-            markAvailableButton.style.display =
-                (
-                    status === "sold" ||
-                    status === "rented"
-                )
-                    ? "block"
-                    : "none";
-
-        }
+        markRentedButton.style.display =
+            listingType.includes("rent") &&
+            status !== "rented"
+                ? "block"
+                : "none";
 
 
-        if(ownerActions){
+        markAvailableButton.style.display =
+            (
+                status === "sold" ||
+                status === "rented"
+            )
+                ? "block"
+                : "none";
 
-            ownerActions.classList.add(
-                "visible"
-            );
 
-            ownerActions.setAttribute(
-                "aria-hidden",
-                "false"
-            );
+        ownerActions.classList.add(
+            "visible"
+        );
 
-        }
+        ownerActions.setAttribute(
+            "aria-hidden",
+            "false"
+        );
 
     }
 
@@ -3149,9 +3325,7 @@ async function openPropertyDetail(
    DETAIL GALLERY
 ========================================================= */
 
-function renderDetailGallery(
-    images
-){
+function renderDetailGallery(images){
 
     if(!images.length){
 
@@ -3189,10 +3363,7 @@ function renderDetailGallery(
     thumbnails.innerHTML =
         images
             .map(
-                function(
-                    image,
-                    index
-                ){
+                function(image,index){
 
                     return `
 
@@ -3212,9 +3383,7 @@ function renderDetailGallery(
 }
 
 
-function setDetailImage(
-    index
-){
+function setDetailImage(index){
 
     if(!currentDetailProperty){
 
@@ -3276,7 +3445,9 @@ function changeDetailImage(
         currentDetailImageIndex +
         direction;
 
-    if(next < 0){
+    if(
+        next < 0
+    ){
 
         next =
             images.length - 1;
@@ -3284,8 +3455,7 @@ function changeDetailImage(
     }
 
     if(
-        next >=
-        images.length
+        next >= images.length
     ){
 
         next = 0;
@@ -3300,7 +3470,7 @@ function changeDetailImage(
 
 
 /* =========================================================
-   FULLSCREEN VIEWER
+   VIEWER
 ========================================================= */
 
 function openViewerFromDetail(){
@@ -3414,7 +3584,7 @@ function closeViewer(){
 
 
 /* =========================================================
-   CHAT OWNER
+   CONTACT OWNER
 ========================================================= */
 
 async function contactProperty(){
@@ -3467,18 +3637,11 @@ async function contactProperty(){
 
     }
 
-    const propertyId =
-        currentDetailProperty.id;
-
-    const propertyTitle =
-        currentDetailProperty.title ||
-        "Property";
-
-    const chatUrl =
+    window.location.href =
         "chat.html" +
         "?property_id=" +
         encodeURIComponent(
-            propertyId
+            currentDetailProperty.id
         ) +
         "&seller_id=" +
         encodeURIComponent(
@@ -3486,28 +3649,20 @@ async function contactProperty(){
         ) +
         "&property_title=" +
         encodeURIComponent(
-            propertyTitle
+            currentDetailProperty.title ||
+            "Property"
         );
-
-    window.location.href =
-        chatUrl;
 
 }
 
 
 /* =========================================================
-   MARK PROPERTY SOLD / RENTED / AVAILABLE
+   EDIT PROPERTY MODAL
 ========================================================= */
 
-async function markPropertyStatus(
-    newStatus
-){
+async function openEditPropertyModal(){
 
     if(!currentDetailProperty){
-
-        showToast(
-            "Property information is unavailable."
-        );
 
         return;
 
@@ -3519,7 +3674,7 @@ async function markPropertyStatus(
     if(!user){
 
         showToast(
-            "Please log in to manage your property."
+            "Please log in to edit your property."
         );
 
         return;
@@ -3532,30 +3687,7 @@ async function markPropertyStatus(
     ){
 
         showToast(
-            "You can only manage your own property."
-        );
-
-        return;
-
-    }
-
-    const propertyId =
-        currentDetailProperty.id;
-
-    const listingType =
-        String(
-            currentDetailProperty.listing_type ||
-            ""
-        ).toLowerCase();
-
-
-    if(
-        newStatus === "sold" &&
-        !listingType.includes("sale")
-    ){
-
-        showToast(
-            "This property is not listed for sale."
+            "You can only edit your own property."
         );
 
         return;
@@ -3563,441 +3695,534 @@ async function markPropertyStatus(
     }
 
 
-    if(
-        newStatus === "rented" &&
-        !listingType.includes("rent")
-    ){
+    editExistingImages =
+        Array.isArray(
+            currentDetailProperty._imageRows
+        )
+            ? currentDetailProperty._imageRows.map(
+                function(row){
 
-        showToast(
-            "This property is not listed for rent."
-        );
-
-        return;
-
-    }
-
-
-    let label;
-
-    if(
-        newStatus === "sold"
-    ){
-
-        label =
-            "sold";
-
-    }else if(
-        newStatus === "rented"
-    ){
-
-        label =
-            "rented";
-
-    }else{
-
-        label =
-            "available";
-
-    }
-
-
-    const confirmed =
-        window.confirm(
-            newStatus === "available"
-                ? `Make "${currentDetailProperty.title || "this property"}" available again?`
-                : `Mark "${currentDetailProperty.title || "this property"}" as ${label}?`
-        );
-
-
-    if(!confirmed){
-
-        return;
-
-    }
-
-
-    try{
-
-        const token =
-            await getAccessToken();
-
-
-        if(!token){
-
-            throw new Error(
-                "Your login session has expired. Please log in again."
-            );
-
-        }
-
-
-        const response =
-            await fetch(
-                SUPABASE_URL +
-                "/rest/v1/property_listings" +
-                "?id=eq." +
-                encodeURIComponent(
-                    propertyId
-                ) +
-                "&user_id=eq." +
-                encodeURIComponent(
-                    user.id
-                ),
-                {
-                    method:"PATCH",
-
-                    headers:{
-                        "apikey":
-                            SUPABASE_KEY,
-
-                        "Authorization":
-                            "Bearer " +
-                            token,
-
-                        "Content-Type":
-                            "application/json",
-
-                        "Prefer":
-                            "return=representation"
-                    },
-
-                    body:
-                        JSON.stringify({
-
-                            status:
-                                newStatus
-
-                        })
-                }
-            );
-
-
-        if(
-            !response.ok
-        ){
-
-            throw new Error(
-                "Unable to update property status: " +
-                await response.text()
-            );
-
-        }
-
-
-        const updated =
-            await response.json();
-
-
-        if(
-            !updated.length
-        ){
-
-            throw new Error(
-                "Property status was not updated. Please check your account permissions."
-            );
-
-        }
-
-
-        currentDetailProperty.status =
-            newStatus;
-
-
-        const propertyIndex =
-            allProperties.findIndex(
-                function(property){
-
-                    return (
-                        property.id ===
-                        propertyId
-                    );
+                    return {
+                        id:row.id,
+                        image_url:row.image_url,
+                        sort_order:row.sort_order,
+                        user_id:row.user_id
+                    };
 
                 }
-            );
+            )
+            : [];
 
 
-        if(
-            propertyIndex !== -1
-        ){
+    editRemovedImages =
+        [];
 
-            allProperties[
-                propertyIndex
-            ].status =
-                newStatus;
-
-        }
+    selectedEditPropertyFiles =
+        [];
 
 
-        showToast(
-            newStatus === "available"
-                ? "Property is available again."
-                : `Property marked as ${label}.`
-        );
-
-
-        closeDetailModal();
-
-
-        applyFilters();
-
-
-    }catch(error){
-
-        console.error(
-            "Property status update error:",
-            error
-        );
-
-
-        showToast(
-            error.message ||
-            "Unable to update property status."
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   DELETE PROPERTY
-========================================================= */
-
-async function deleteCurrentProperty(){
-
-    if(!currentDetailProperty){
-
-        showToast(
-            "Property information is unavailable."
-        );
-
-        return;
-
-    }
-
-
-    const user =
-        await getAuthenticatedUser();
-
-
-    if(!user){
-
-        showToast(
-            "Please log in to delete your property."
-        );
-
-        return;
-
-    }
-
-
-    if(
-        currentDetailProperty.user_id !==
-        user.id
-    ){
-
-        showToast(
-            "You can only delete your own property."
-        );
-
-        return;
-
-    }
-
-
-    const propertyTitle =
+    document.getElementById(
+        "editPropertyTitle"
+    ).value =
         currentDetailProperty.title ||
-        "this property";
+        "";
 
 
-    const confirmed =
-        window.confirm(
-            `Delete "${propertyTitle}"?\n\nThis will permanently remove the property listing and its photo records.`
+    document.getElementById(
+        "editPropertyType"
+    ).value =
+        currentDetailProperty.property_type ||
+        "House";
+
+
+    document.getElementById(
+        "editListingType"
+    ).value =
+        currentDetailProperty.listing_type ||
+        "For Sale";
+
+
+    document.getElementById(
+        "editPropertyPrice"
+    ).value =
+        currentDetailProperty.price ||
+        "";
+
+
+    document.getElementById(
+        "editPropertyLocation"
+    ).value =
+        currentDetailProperty.location ||
+        "";
+
+
+    document.getElementById(
+        "editPropertyDescription"
+    ).value =
+        currentDetailProperty.description ||
+        "";
+
+
+    document.getElementById(
+        "editPropertyImages"
+    ).value =
+        "";
+
+
+    renderEditExistingPhotos();
+
+    renderEditNewPhotos();
+
+
+    document
+        .getElementById(
+            "detailModal"
+        )
+        .classList.remove(
+            "show"
         );
 
 
-    if(!confirmed){
+    document
+        .getElementById(
+            "editPropertyModal"
+        )
+        .classList.add(
+            "show"
+        );
+
+
+    updateBodyModalState();
+
+}
+
+
+/* =========================================================
+   CLOSE EDIT MODAL
+========================================================= */
+
+function closeEditPropertyModal(){
+
+    document
+        .getElementById(
+            "editPropertyModal"
+        )
+        .classList.remove(
+            "show"
+        );
+
+    updateBodyModalState();
+
+}
+
+
+function closeEditPropertyOnBackdrop(event){
+
+    if(
+        event.target.id ===
+        "editPropertyModal"
+    ){
+
+        closeEditPropertyModal();
+
+    }
+
+}
+
+
+/* =========================================================
+   EXISTING EDIT PHOTOS
+========================================================= */
+
+function renderEditExistingPhotos(){
+
+    const container =
+        document.getElementById(
+            "editExistingPhotos"
+        );
+
+    container.innerHTML =
+        "";
+
+    if(
+        !editExistingImages.length
+    ){
+
+        container.innerHTML =
+            `
+            <div class="photo-help">
+                No existing photos.
+            </div>
+            `;
 
         return;
 
     }
 
 
-    try{
+    editExistingImages.forEach(
+        function(row,index){
 
-        const token =
-            await getAccessToken();
+            const wrapper =
+                document.createElement(
+                    "div"
+                );
 
-
-        if(!token){
-
-            throw new Error(
-                "Your login session has expired. Please log in again."
-            );
-
-        }
+            wrapper.className =
+                "property-preview-item";
 
 
-        const propertyId =
-            currentDetailProperty.id;
+            const image =
+                document.createElement(
+                    "img"
+                );
+
+            image.src =
+                row.image_url;
+
+            image.alt =
+                `Existing property photo ${index + 1}`;
 
 
-        /*
-        -----------------------------------------------------
-        DELETE PHOTO DATABASE ROWS
-        -----------------------------------------------------
-        */
+            const number =
+                document.createElement(
+                    "div"
+                );
 
-        const imageDeleteResponse =
-            await fetch(
-                SUPABASE_URL +
-                "/rest/v1/property_images" +
-                "?property_id=eq." +
-                encodeURIComponent(
-                    propertyId
-                ) +
-                "&user_id=eq." +
-                encodeURIComponent(
-                    user.id
-                ),
-                {
-                    method:"DELETE",
+            number.className =
+                "property-preview-number";
 
-                    headers:{
-                        "apikey":
-                            SUPABASE_KEY,
+            number.textContent =
+                String(index + 1);
 
-                        "Authorization":
-                            "Bearer " +
-                            token,
 
-                        "Prefer":
-                            "return=minimal"
+            const remove =
+                document.createElement(
+                    "button"
+                );
+
+            remove.type =
+                "button";
+
+            remove.className =
+                "remove-photo-btn";
+
+            remove.textContent =
+                "×";
+
+            remove.title =
+                "Remove this photo";
+
+
+            remove.onclick =
+                function(){
+
+                    const removed =
+                        editExistingImages.splice(
+                            index,
+                            1
+                        )[0];
+
+                    if(
+                        removed &&
+                        removed.id
+                    ){
+
+                        editRemovedImages.push(
+                            removed
+                        );
+
                     }
-                }
+
+                    renderEditExistingPhotos();
+
+                    updateEditPhotoInfo();
+
+                };
+
+
+            const label =
+                document.createElement(
+                    "div"
+                );
+
+            label.className =
+                "existing-photo-label";
+
+            label.textContent =
+                "Existing";
+
+
+            wrapper.appendChild(
+                image
             );
 
-
-        if(
-            !imageDeleteResponse.ok
-        ){
-
-            throw new Error(
-                "Unable to remove the property's photo records: " +
-                await imageDeleteResponse.text()
+            wrapper.appendChild(
+                number
             );
 
-        }
-
-
-        /*
-        -----------------------------------------------------
-        DELETE PROPERTY
-        -----------------------------------------------------
-        */
-
-        const propertyDeleteResponse =
-            await fetch(
-                SUPABASE_URL +
-                "/rest/v1/property_listings" +
-                "?id=eq." +
-                encodeURIComponent(
-                    propertyId
-                ) +
-                "&user_id=eq." +
-                encodeURIComponent(
-                    user.id
-                ),
-                {
-                    method:"DELETE",
-
-                    headers:{
-                        "apikey":
-                            SUPABASE_KEY,
-
-                        "Authorization":
-                            "Bearer " +
-                            token,
-
-                        "Content-Type":
-                            "application/json",
-
-                        "Prefer":
-                            "return=representation"
-                    }
-                }
+            wrapper.appendChild(
+                label
             );
 
+            wrapper.appendChild(
+                remove
+            );
 
-        if(
-            !propertyDeleteResponse.ok
-        ){
-
-            throw new Error(
-                "Unable to delete property: " +
-                await propertyDeleteResponse.text()
+            container.appendChild(
+                wrapper
             );
 
         }
+    );
+
+}
 
 
-        const deleted =
-            await propertyDeleteResponse.json();
+/* =========================================================
+   EDIT NEW PHOTO INPUT
+========================================================= */
+
+document
+    .getElementById(
+        "editPropertyImages"
+    )
+    .addEventListener(
+        "change",
+        function(){
+
+            const newFiles =
+                Array.from(
+                    this.files || []
+                );
 
 
-        if(
-            !deleted.length
-        ){
+            if(
+                !newFiles.length
+            ){
 
-            throw new Error(
-                "Property was not deleted. Please check your account permissions."
-            );
+                return;
 
-        }
+            }
 
 
-        allProperties =
-            allProperties.filter(
-                function(property){
+            const currentTotal =
+                editExistingImages.length +
+                selectedEditPropertyFiles.length;
 
-                    return (
-                        property.id !==
-                        propertyId
+
+            if(
+                currentTotal +
+                newFiles.length >
+                10
+            ){
+
+                const remaining =
+                    10 -
+                    currentTotal;
+
+                showToast(
+                    remaining > 0
+                        ? `You can add only ${remaining} more photo${remaining === 1 ? "" : "s"}.`
+                        : "You already have 10 photos."
+                );
+
+                this.value =
+                    "";
+
+                return;
+
+            }
+
+
+            for(
+                const file of newFiles
+            ){
+
+                if(
+                    file.size >
+                    5 * 1024 * 1024
+                ){
+
+                    showToast(
+                        `${file.name} is larger than 5MB. Maximum is 5MB per photo.`
                     );
 
+                    this.value =
+                        "";
+
+                    return;
+
                 }
+
+            }
+
+
+            selectedEditPropertyFiles.push(
+                ...newFiles
             );
 
 
-        currentDetailProperty =
-            null;
+            this.value =
+                "";
 
 
-        closeDetailModal();
+            renderEditNewPhotos();
+
+            updateEditPhotoInfo();
+
+        }
+    );
 
 
-        applyFilters();
+/* =========================================================
+   EDIT NEW PHOTO PREVIEW
+========================================================= */
 
+function renderEditNewPhotos(){
 
-        showToast(
-            "Property deleted successfully."
+    const container =
+        document.getElementById(
+            "editNewPhotoPreview"
         );
 
+    container.innerHTML =
+        "";
 
-    }catch(error){
+    selectedEditPropertyFiles.forEach(
+        function(file,index){
 
-        console.error(
-            "Delete property error:",
-            error
+            const wrapper =
+                document.createElement(
+                    "div"
+                );
+
+            wrapper.className =
+                "property-preview-item";
+
+
+            const image =
+                document.createElement(
+                    "img"
+                );
+
+
+            const number =
+                document.createElement(
+                    "div"
+                );
+
+            number.className =
+                "property-preview-number";
+
+            number.textContent =
+                String(
+                    editExistingImages.length +
+                    index +
+                    1
+                );
+
+
+            const remove =
+                document.createElement(
+                    "button"
+                );
+
+            remove.type =
+                "button";
+
+            remove.className =
+                "remove-photo-btn";
+
+            remove.textContent =
+                "×";
+
+
+            remove.onclick =
+                function(){
+
+                    selectedEditPropertyFiles.splice(
+                        index,
+                        1
+                    );
+
+                    renderEditNewPhotos();
+
+                    updateEditPhotoInfo();
+
+                };
+
+
+            const reader =
+                new FileReader();
+
+
+            reader.onload =
+                function(event){
+
+                    image.src =
+                        event.target.result;
+
+                };
+
+
+            reader.readAsDataURL(
+                file
+            );
+
+
+            wrapper.appendChild(
+                image
+            );
+
+            wrapper.appendChild(
+                number
+            );
+
+            wrapper.appendChild(
+                remove
+            );
+
+            container.appendChild(
+                wrapper
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   EDIT PHOTO INFO
+========================================================= */
+
+function updateEditPhotoInfo(){
+
+    const info =
+        document.getElementById(
+            "editPhotoSelectionInfo"
         );
 
+    const total =
+        editExistingImages.length +
+        selectedEditPropertyFiles.length;
 
-        showToast(
-            error.message ||
-            "Unable to delete property."
-        );
+
+    if(
+        total === 0
+    ){
+
+        info.textContent =
+            "No photos selected";
+
+        return;
 
     }
+
+
+    info.textContent =
+        `${total} photo${total === 1 ? "" : "s"} will be kept on this property`;
 
 }
 
@@ -4013,22 +4238,14 @@ async function uploadPropertyImage(
     index
 ){
 
-    if(!file){
+    const token =
+        await getAccessToken();
+
+
+    if(!token){
 
         throw new Error(
-            "Photo is missing."
-        );
-
-    }
-
-
-    if(
-        file.size >
-        5 * 1024 * 1024
-    ){
-
-        throw new Error(
-            `${file.name} is larger than 5MB.`
+            "Your login session has expired."
         );
 
     }
@@ -4050,19 +4267,6 @@ async function uploadPropertyImage(
 
     const filePath =
         `properties/${propertyId}_${Date.now()}_${index}.${extension}`;
-
-
-    const token =
-        await getAccessToken();
-
-
-    if(!token){
-
-        throw new Error(
-            "Your login session has expired."
-        );
-
-    }
 
 
     const response =
@@ -4206,7 +4410,408 @@ async function savePropertyImageRow(
 
 
 /* =========================================================
-   PUBLISH PROPERTY
+   DELETE IMAGE ROW
+========================================================= */
+
+async function deletePropertyImageRow(
+    imageId,
+    userId
+){
+
+    const token =
+        await getAccessToken();
+
+
+    if(!token){
+
+        throw new Error(
+            "Your login session has expired."
+        );
+
+    }
+
+
+    const response =
+        await fetch(
+            SUPABASE_URL +
+            "/rest/v1/property_images" +
+            "?id=eq." +
+            encodeURIComponent(
+                imageId
+            ) +
+            "&user_id=eq." +
+            encodeURIComponent(
+                userId
+            ),
+            {
+                method:"DELETE",
+
+                headers:{
+                    "apikey":
+                        SUPABASE_KEY,
+
+                    "Authorization":
+                        "Bearer " +
+                        token,
+
+                    "Prefer":
+                        "return=minimal"
+                }
+            }
+        );
+
+
+    if(
+        !response.ok
+    ){
+
+        throw new Error(
+            "Unable to remove property photo: " +
+            await response.text()
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   SAVE EDITED PROPERTY
+========================================================= */
+
+document
+    .getElementById(
+        "editPropertyForm"
+    )
+    .addEventListener(
+        "submit",
+        saveEditedProperty
+    );
+
+
+async function saveEditedProperty(
+    event
+){
+
+    event.preventDefault();
+
+
+    if(!currentDetailProperty){
+
+        showToast(
+            "Property information is unavailable."
+        );
+
+        return;
+
+    }
+
+
+    const user =
+        await getAuthenticatedUser();
+
+
+    if(!user){
+
+        showToast(
+            "Please log in to edit your property."
+        );
+
+        return;
+
+    }
+
+
+    if(
+        currentDetailProperty.user_id !==
+        user.id
+    ){
+
+        showToast(
+            "You can only edit your own property."
+        );
+
+        return;
+
+    }
+
+
+    const title =
+        document.getElementById(
+            "editPropertyTitle"
+        ).value.trim();
+
+
+    const propertyType =
+        document.getElementById(
+            "editPropertyType"
+        ).value;
+
+
+    const listingType =
+        document.getElementById(
+            "editListingType"
+        ).value;
+
+
+    const price =
+        document.getElementById(
+            "editPropertyPrice"
+        ).value;
+
+
+    const location =
+        document.getElementById(
+            "editPropertyLocation"
+        ).value.trim();
+
+
+    const description =
+        document.getElementById(
+            "editPropertyDescription"
+        ).value.trim();
+
+
+    const totalPhotos =
+        editExistingImages.length +
+        selectedEditPropertyFiles.length;
+
+
+    if(
+        totalPhotos > 10
+    ){
+
+        showToast(
+            "A property can have a maximum of 10 photos."
+        );
+
+        return;
+
+    }
+
+
+    const saveButton =
+        document.getElementById(
+            "saveEditPropertyButton"
+        );
+
+
+    try{
+
+        saveButton.disabled =
+            true;
+
+        saveButton.textContent =
+            "Saving changes...";
+
+
+        const token =
+            await getAccessToken();
+
+
+        if(!token){
+
+            throw new Error(
+                "Your login session has expired. Please log in again."
+            );
+
+        }
+
+
+        const propertyId =
+            currentDetailProperty.id;
+
+
+        /* =================================================
+           UPDATE PROPERTY DETAILS
+        ================================================= */
+
+        const updateResponse =
+            await fetch(
+                SUPABASE_URL +
+                "/rest/v1/property_listings" +
+                "?id=eq." +
+                encodeURIComponent(
+                    propertyId
+                ) +
+                "&user_id=eq." +
+                encodeURIComponent(
+                    user.id
+                ),
+                {
+                    method:"PATCH",
+
+                    headers:{
+                        "apikey":
+                            SUPABASE_KEY,
+
+                        "Authorization":
+                            "Bearer " +
+                            token,
+
+                        "Content-Type":
+                            "application/json",
+
+                        "Prefer":
+                            "return=representation"
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            title:
+                                title,
+
+                            property_type:
+                                propertyType,
+
+                            listing_type:
+                                listingType,
+
+                            price:
+                                Number(price),
+
+                            location:
+                                location,
+
+                            description:
+                                description
+
+                        })
+                }
+            );
+
+
+        if(
+            !updateResponse.ok
+        ){
+
+            throw new Error(
+                "Unable to update property: " +
+                await updateResponse.text()
+            );
+
+        }
+
+
+        const updatedRows =
+            await updateResponse.json();
+
+
+        if(
+            !updatedRows.length
+        ){
+
+            throw new Error(
+                "The property was not updated. Please check your account permissions."
+            );
+
+        }
+
+
+        /* =================================================
+           REMOVE SELECTED OLD PHOTOS
+        ================================================= */
+
+        saveButton.textContent =
+            "Updating photos...";
+
+
+        for(
+            const row of editRemovedImages
+        ){
+
+            await deletePropertyImageRow(
+                row.id,
+                user.id
+            );
+
+        }
+
+
+        /* =================================================
+           ADD NEW PHOTOS
+        ================================================= */
+
+        const startingOrder =
+            editExistingImages.length;
+
+
+        for(
+            let index = 0;
+            index <
+            selectedEditPropertyFiles.length;
+            index++
+        ){
+
+            saveButton.textContent =
+                `Uploading photo ${index + 1} of ${selectedEditPropertyFiles.length}...`;
+
+
+            const imageRow =
+                await uploadPropertyImage(
+                    selectedEditPropertyFiles[index],
+                    propertyId,
+                    user.id,
+                    startingOrder + index
+                );
+
+
+            await savePropertyImageRow(
+                imageRow
+            );
+
+        }
+
+
+        /* =================================================
+           REFRESH PROPERTY
+        ================================================= */
+
+        closeEditPropertyModal();
+
+
+        showToast(
+            "Property updated successfully."
+        );
+
+
+        currentDetailProperty =
+            null;
+
+
+        await loadProperties();
+
+
+    }catch(error){
+
+        console.error(
+            "Edit property error:",
+            error
+        );
+
+
+        showToast(
+            error.message ||
+            "Unable to update property."
+        );
+
+
+    }finally{
+
+        saveButton.disabled =
+            false;
+
+        saveButton.textContent =
+            "Save Changes";
+
+    }
+
+}
+
+
+/* =========================================================
+   PUBLISH NEW PROPERTY
 ========================================================= */
 
 document
@@ -4219,9 +4824,7 @@ document
     );
 
 
-async function publishProperty(
-    event
-){
+async function publishProperty(event){
 
     event.preventDefault();
 
@@ -4268,14 +4871,10 @@ async function publishProperty(
         ).value.trim();
 
 
-    /*
-    IMPORTANT:
-    Get files from our own array,
-    NOT input.files.
-    */
-
     const files =
-        getSelectedPropertyFiles();
+        [
+            ...selectedPropertyFiles
+        ];
 
 
     if(
@@ -4287,39 +4886,6 @@ async function publishProperty(
         );
 
         return;
-
-    }
-
-
-    if(
-        files.length > 10
-    ){
-
-        showToast(
-            "You can select up to 10 photos."
-        );
-
-        return;
-
-    }
-
-
-    for(
-        const file of files
-    ){
-
-        if(
-            file.size >
-            5 * 1024 * 1024
-        ){
-
-            showToast(
-                `${file.name} is larger than 5MB.`
-            );
-
-            return;
-
-        }
 
     }
 
@@ -4344,7 +4910,6 @@ async function publishProperty(
         submitButton.disabled =
             true;
 
-
         submitButton.textContent =
             "Creating property...";
 
@@ -4362,11 +4927,7 @@ async function publishProperty(
         }
 
 
-        /* -------------------------------------------------
-           CREATE PROPERTY
-        ------------------------------------------------- */
-
-        const propertyResponse =
+        const response =
             await fetch(
                 SUPABASE_URL +
                 "/rest/v1/property_listings",
@@ -4421,23 +4982,23 @@ async function publishProperty(
 
 
         if(
-            !propertyResponse.ok
+            !response.ok
         ){
 
             throw new Error(
                 "Property creation failed: " +
-                await propertyResponse.text()
+                await response.text()
             );
 
         }
 
 
-        const createdProperties =
-            await propertyResponse.json();
+        const properties =
+            await response.json();
 
 
         const property =
-            createdProperties[0];
+            properties[0];
 
 
         if(
@@ -4451,10 +5012,6 @@ async function publishProperty(
 
         }
 
-
-        /* -------------------------------------------------
-           UPLOAD EVERY PHOTO
-        ------------------------------------------------- */
 
         const uploadedImages =
             [];
@@ -4470,7 +5027,7 @@ async function publishProperty(
                 `Uploading photo ${index + 1} of ${files.length}...`;
 
 
-            const imageRow =
+            const row =
                 await uploadPropertyImage(
                     files[index],
                     property.id,
@@ -4480,42 +5037,21 @@ async function publishProperty(
 
 
             uploadedImages.push(
-                imageRow
+                row
             );
 
         }
 
-
-        /* -------------------------------------------------
-           SAVE EVERY PHOTO ROW
-        ------------------------------------------------- */
 
         for(
-            let index = 0;
-            index < uploadedImages.length;
-            index++
+            const row of uploadedImages
         ){
 
-            submitButton.textContent =
-                `Saving photo ${index + 1} of ${uploadedImages.length}...`;
-
-
             await savePropertyImageRow(
-                uploadedImages[index]
+                row
             );
 
         }
-
-
-        /* -------------------------------------------------
-           RESET
-        ------------------------------------------------- */
-
-        showToast(
-            files.length === 1
-                ? "Property published successfully."
-                : `Property published with ${files.length} photos.`
-        );
 
 
         document
@@ -4529,6 +5065,13 @@ async function publishProperty(
 
 
         closePostPropertyModal();
+
+
+        showToast(
+            files.length === 1
+                ? "Property published successfully."
+                : `Property published with ${files.length} photos.`
+        );
 
 
         await loadProperties();
@@ -4553,7 +5096,6 @@ async function publishProperty(
         submitButton.disabled =
             false;
 
-
         submitButton.textContent =
             "Publish Property";
 
@@ -4563,14 +5105,384 @@ async function publishProperty(
 
 
 /* =========================================================
-   GET SELECTED FILES
+   MARK SOLD / RENTED / AVAILABLE
 ========================================================= */
 
-function getSelectedPropertyFiles(){
+async function markPropertyStatus(
+    newStatus
+){
 
-    return [
-        ...selectedPropertyFiles
-    ];
+    if(!currentDetailProperty){
+
+        return;
+
+    }
+
+
+    const user =
+        await getAuthenticatedUser();
+
+
+    if(!user){
+
+        showToast(
+            "Please log in to manage your property."
+        );
+
+        return;
+
+    }
+
+
+    if(
+        currentDetailProperty.user_id !==
+        user.id
+    ){
+
+        showToast(
+            "You can only manage your own property."
+        );
+
+        return;
+
+    }
+
+
+    const listingType =
+        String(
+            currentDetailProperty.listing_type ||
+            ""
+        ).toLowerCase();
+
+
+    if(
+        newStatus === "sold" &&
+        !listingType.includes("sale")
+    ){
+
+        showToast(
+            "This property is not listed for sale."
+        );
+
+        return;
+
+    }
+
+
+    if(
+        newStatus === "rented" &&
+        !listingType.includes("rent")
+    ){
+
+        showToast(
+            "This property is not listed for rent."
+        );
+
+        return;
+
+    }
+
+
+    const title =
+        currentDetailProperty.title ||
+        "this property";
+
+
+    const label =
+        newStatus === "available"
+            ? "available"
+            : newStatus;
+
+
+    if(
+        !window.confirm(
+            newStatus === "available"
+                ? `Make "${title}" available again?`
+                : `Mark "${title}" as ${label}?`
+        )
+    ){
+
+        return;
+
+    }
+
+
+    try{
+
+        const token =
+            await getAccessToken();
+
+
+        const response =
+            await fetch(
+                SUPABASE_URL +
+                "/rest/v1/property_listings" +
+                "?id=eq." +
+                encodeURIComponent(
+                    currentDetailProperty.id
+                ) +
+                "&user_id=eq." +
+                encodeURIComponent(
+                    user.id
+                ),
+                {
+                    method:"PATCH",
+
+                    headers:{
+                        "apikey":
+                            SUPABASE_KEY,
+
+                        "Authorization":
+                            "Bearer " +
+                            token,
+
+                        "Content-Type":
+                            "application/json",
+
+                        "Prefer":
+                            "return=representation"
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            status:
+                                newStatus
+
+                        })
+                }
+            );
+
+
+        if(
+            !response.ok
+        ){
+
+            throw new Error(
+                await response.text()
+            );
+
+        }
+
+
+        currentDetailProperty.status =
+            newStatus;
+
+
+        const property =
+            allProperties.find(
+                function(item){
+
+                    return (
+                        item.id ===
+                        currentDetailProperty.id
+                    );
+
+                }
+            );
+
+
+        if(property){
+
+            property.status =
+                newStatus;
+
+        }
+
+
+        closeDetailModal();
+
+        applyFilters();
+
+
+        showToast(
+            newStatus === "available"
+                ? "Property is available again."
+                : `Property marked as ${label}.`
+        );
+
+
+    }catch(error){
+
+        console.error(
+            error
+        );
+
+        showToast(
+            error.message ||
+            "Unable to update property status."
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   DELETE PROPERTY
+========================================================= */
+
+async function deleteCurrentProperty(){
+
+    if(!currentDetailProperty){
+
+        return;
+
+    }
+
+
+    const user =
+        await getAuthenticatedUser();
+
+
+    if(!user){
+
+        showToast(
+            "Please log in to delete your property."
+        );
+
+        return;
+
+    }
+
+
+    if(
+        currentDetailProperty.user_id !==
+        user.id
+    ){
+
+        showToast(
+            "You can only delete your own property."
+        );
+
+        return;
+
+    }
+
+
+    if(
+        !window.confirm(
+            `Delete "${currentDetailProperty.title || "this property"}"?\n\nThis will permanently remove the property listing and its photo records.`
+        )
+    ){
+
+        return;
+
+    }
+
+
+    try{
+
+        const token =
+            await getAccessToken();
+
+
+        if(
+            Array.isArray(
+                currentDetailProperty._imageRows
+            )
+        ){
+
+            for(
+                const row of currentDetailProperty._imageRows
+            ){
+
+                if(row.id){
+
+                    await deletePropertyImageRow(
+                        row.id,
+                        user.id
+                    );
+
+                }
+
+            }
+
+        }
+
+
+        const response =
+            await fetch(
+                SUPABASE_URL +
+                "/rest/v1/property_listings" +
+                "?id=eq." +
+                encodeURIComponent(
+                    currentDetailProperty.id
+                ) +
+                "&user_id=eq." +
+                encodeURIComponent(
+                    user.id
+                ),
+                {
+                    method:"DELETE",
+
+                    headers:{
+                        "apikey":
+                            SUPABASE_KEY,
+
+                        "Authorization":
+                            "Bearer " +
+                            token,
+
+                        "Prefer":
+                            "return=representation"
+                    }
+                }
+            );
+
+
+        if(
+            !response.ok
+        ){
+
+            throw new Error(
+                await response.text()
+            );
+
+        }
+
+
+        allProperties =
+            allProperties.filter(
+                function(property){
+
+                    return (
+                        property.id !==
+                        currentDetailProperty.id
+                    );
+
+                }
+            );
+
+
+        currentDetailProperty =
+            null;
+
+
+        closeDetailModal();
+
+        applyFilters();
+
+
+        showToast(
+            "Property deleted successfully."
+        );
+
+
+    }catch(error){
+
+        console.error(
+            "Delete property error:",
+            error
+        );
+
+
+        showToast(
+            error.message ||
+            "Unable to delete property."
+        );
+
+    }
 
 }
 
@@ -4579,9 +5491,7 @@ function getSelectedPropertyFiles(){
    PRICE
 ========================================================= */
 
-function formatPrice(
-    price
-){
+function formatPrice(price){
 
     if(
         price === null ||
@@ -4625,9 +5535,7 @@ function formatPrice(
    SECURITY HELPERS
 ========================================================= */
 
-function escapeHtml(
-    value
-){
+function escapeHtml(value){
 
     return String(
         value ?? ""
@@ -4656,9 +5564,7 @@ function escapeHtml(
 }
 
 
-function escapeAttribute(
-    value
-){
+function escapeAttribute(value){
 
     return escapeHtml(
         value
