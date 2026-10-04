@@ -888,6 +888,7 @@ main {
             🔔
         </button>
 
+
         <button
             class="header-btn"
             id="accountBtn"
@@ -896,12 +897,13 @@ main {
             Account
         </button>
 
-       <a
-    href="oja.html"
-    class="header-btn"
->
-    Oja
-</a>
+
+        <a
+            href="oja.html"
+            class="header-btn"
+        >
+            Oja
+        </a>
 
     </div>
 
@@ -1054,6 +1056,7 @@ main {
             id="toggleBalanceBtn"
             class="wallet-secondary"
             type="button"
+            aria-label="Show or hide balance"
         >
             👁️
         </button>
@@ -1550,38 +1553,7 @@ main {
 </section>
 
 
-/* =================================================
-   ACCOUNT
-================================================= */
 
-const accountButtons = [
-
-    document.getElementById("accountBtn"),
-
-    document.getElementById("bottomAccountBtn")
-
-];
-
-
-accountButtons.forEach(
-    function (button) {
-
-        if (button) {
-
-            button.addEventListener(
-                "click",
-                function () {
-
-                    window.location.href =
-                        "account.html";
-
-                }
-            );
-
-        }
-
-    }
-);
 <!-- =====================================================
      EXPLORE MORE
 ===================================================== -->
@@ -1931,6 +1903,7 @@ accountButtons.forEach(
                     id="loginEmail"
                     name="email"
                     type="email"
+                    autocomplete="email"
                     required
                 >
 
@@ -1947,6 +1920,7 @@ accountButtons.forEach(
                     id="loginPassword"
                     name="password"
                     type="password"
+                    autocomplete="current-password"
                     required
                 >
 
@@ -2022,6 +1996,7 @@ accountButtons.forEach(
                     id="signupName"
                     name="name"
                     type="text"
+                    autocomplete="name"
                     required
                 >
 
@@ -2038,6 +2013,7 @@ accountButtons.forEach(
                     id="signupEmail"
                     name="email"
                     type="email"
+                    autocomplete="email"
                     required
                 >
 
@@ -2054,6 +2030,7 @@ accountButtons.forEach(
                     id="signupPassword"
                     name="password"
                     type="password"
+                    autocomplete="new-password"
                     required
                 >
 
@@ -2153,7 +2130,6 @@ accountButtons.forEach(
         id="bottomChatBtn"
         class="chat-nav-btn"
         type="button"
-        onclick="window.location.href='chat.html'"
     >
 
         <span class="bottom-nav-icon">
@@ -2198,6 +2174,8 @@ accountButtons.forEach(
     </button>
 
 </nav>
+
+
 
 <!-- =====================================================
      SAVED ITEMS SCRIPT
@@ -2502,17 +2480,6 @@ document.addEventListener(
     document.addEventListener(
         "DOMContentLoaded",
         function () {
-            const bottomChatBtn =
-    document.getElementById("bottomChatBtn");
-
-if (bottomChatBtn) {
-    bottomChatBtn.addEventListener(
-        "click",
-        function () {
-            window.location.href = "chat.html";
-        }
-    );
-}
 
             loadWalletBalance();
 
@@ -2538,6 +2505,44 @@ if (bottomChatBtn) {
 document.addEventListener(
     "DOMContentLoaded",
     function () {
+
+
+        /* =================================================
+           ACCOUNT
+        ================================================= */
+
+        const accountButtons = [
+
+            document.getElementById(
+                "accountBtn"
+            ),
+
+            document.getElementById(
+                "bottomAccountBtn"
+            )
+
+        ];
+
+
+        accountButtons.forEach(
+            function (button) {
+
+                if (button) {
+
+                    button.addEventListener(
+                        "click",
+                        function () {
+
+                            window.location.href =
+                                "account.html";
+
+                        }
+                    );
+
+                }
+
+            }
+        );
 
 
         /* =================================================
@@ -2658,6 +2663,7 @@ document.addEventListener(
                 }
             );
 
+
         /* =================================================
            WALLET
         ================================================= */
@@ -2702,6 +2708,44 @@ document.addEventListener(
             );
 
         }
+
+
+        /* =================================================
+           CHAT
+        ================================================= */
+
+        const chatButtons = [
+
+            document.getElementById(
+                "chatBabaOjaBtn"
+            ),
+
+            document.getElementById(
+                "bottomChatBtn"
+            )
+
+        ];
+
+
+        chatButtons.forEach(
+            function (button) {
+
+                if (button) {
+
+                    button.addEventListener(
+                        "click",
+                        function () {
+
+                            window.location.href =
+                                "chat.html";
+
+                        }
+                    );
+
+                }
+
+            }
+        );
 
 
         /* =================================================
@@ -2796,25 +2840,27 @@ document.addEventListener(
 
         ];
 
-marketplaceButtons.forEach(
-    function (button) {
 
-        if (button) {
+        marketplaceButtons.forEach(
+            function (button) {
 
-            button.addEventListener(
-                "click",
-                function () {
+                if (button) {
 
-                    window.location.href =
-                        "oja.html";
+                    button.addEventListener(
+                        "click",
+                        function () {
+
+                            window.location.href =
+                                "oja.html";
+
+                        }
+                    );
 
                 }
-            );
 
-        }
+            }
+        );
 
-    }
-);
 
         /* =================================================
            SERVICES
@@ -3071,10 +3117,12 @@ marketplaceButtons.forEach(
 
             }
 
+
             const grid =
                 document.getElementById(
                     "businessGrid"
                 );
+
 
             if (grid) {
 
@@ -3196,10 +3244,12 @@ marketplaceButtons.forEach(
 
                     }
 
+
                     const grid =
                         document.getElementById(
                             "businessGrid"
                         );
+
 
                     if (grid) {
 
@@ -3236,10 +3286,13 @@ marketplaceButtons.forEach(
                             "toast"
                         );
 
+
                     if (!toast) return;
+
 
                     toast.textContent =
                         "No new notifications.";
+
 
                     toast.classList.add(
                         "show"
