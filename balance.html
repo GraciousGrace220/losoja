@@ -370,82 +370,98 @@
          ESCROW
     ========================================== -->
 
-   <section class="card">
+    <section class="card">
 
-    <h2>Escrow</h2>
+        <h2>Escrow</h2>
 
-    <p>
-        Secure payments between buyers and sellers.
-    </p>
-
-    <div
-        style="
-            background:#fff7ed;
-            border:1px solid #fed7aa;
-            border-radius:12px;
-            padding:14px;
-            margin:12px 0;
-            color:#7c2d12;
-        "
-    >
-
-        <strong>
-            ⚠️ LosOja Escrow Safety Warning
-        </strong>
-
-        <p
-            style="
-                margin:8px 0 0;
-                font-size:14px;
-                line-height:1.5;
-            "
-        >
-            Keep your conversation and payment inside LosOja.
-            Never click payment, verification, refund, delivery,
-            or account links sent by another user.
+        <p>
+            Secure payments between buyers and sellers.
         </p>
 
-        <p
+        <div
             style="
-                margin:8px 0 0;
-                font-size:14px;
-                line-height:1.5;
+                background:#fff7ed;
+                border:1px solid #fed7aa;
+                border-radius:12px;
+                padding:14px;
+                margin:12px 0;
+                color:#7c2d12;
             "
         >
-            LosOja will never ask you to enter your password,
-            OTP, PIN, or financial information through a link
-            sent by a buyer or seller.
-        </p>
 
-        <p
-            style="
-                margin:8px 0 0;
-                font-size:14px;
-                line-height:1.5;
-                font-weight:bold;
-            "
+            <strong>
+                ⚠️ LosOja Escrow Safety Warning
+            </strong>
+
+            <p
+                style="
+                    margin:8px 0 0;
+                    font-size:14px;
+                    line-height:1.5;
+                "
+            >
+                Keep your conversation and payment inside LosOja.
+                Never click payment, verification, refund, delivery,
+                or account links sent by another user.
+            </p>
+
+            <p
+                style="
+                    margin:8px 0 0;
+                    font-size:14px;
+                    line-height:1.5;
+                "
+            >
+                LosOja will never ask you to enter your password,
+                OTP, PIN, or financial information through a link
+                sent by a buyer or seller.
+            </p>
+
+            <p
+                style="
+                    margin:8px 0 0;
+                    font-size:14px;
+                    line-height:1.5;
+                    font-weight:bold;
+                "
+            >
+                Never send additional money outside LosOja Escrow.
+                If someone pressures you to leave LosOja or click
+                an external payment link, stop the transaction
+                and report it.
+            </p>
+
+        </div>
+
+        <button
+            class="escrow-btn"
+            onclick="openEscrowInfo()"
         >
-            Never send additional money outside LosOja Escrow.
-            If someone pressures you to leave LosOja or click
-            an external payment link, stop the transaction
-            and report it.
-        </p>
+            View Escrow
+        </button>
 
-    </div>
+        <div id="escrowInfo"></div>
 
-    <button
-        class="escrow-btn"
-        onclick="openEscrowInfo()"
-    >
-        View Escrow
-    </button>
-
-    <div id="escrowInfo"></div>
-
-</section>
+    </section>
 
 
 </main>
+
+
+<!-- =======================================================
+     LOSOJA AUTH
+======================================================== -->
+
+<script src="js/auth.js"></script>
+
+
+<!-- =======================================================
+     LOSOJA WALLET
+======================================================== -->
+
+<script src="js/wallet.js"></script>
+
+
 <script>
 
 /* =========================================================
@@ -473,15 +489,20 @@ async function getAccessToken() {
         ) {
 
             try {
+
                 await window.ensureValidSupabaseSession();
+
             } catch (error) {
+
                 console.warn(
                     "LosOja: session refresh check failed:",
                     error
                 );
+
             }
 
         }
+
 
         if (
             typeof window.getSupabaseAccessToken ===
@@ -492,10 +513,18 @@ async function getAccessToken() {
                 await window.getSupabaseAccessToken();
 
             if (token) {
+
                 return token;
+
             }
 
         }
+
+
+        /*
+         * Keep this fallback for compatibility with
+         * older LosOja authentication implementations.
+         */
 
         if (
             window.losojaSupabase &&
@@ -507,6 +536,7 @@ async function getAccessToken() {
             } =
                 await window.losojaSupabase.auth.getSession();
 
+
             return (
                 data?.session?.access_token ||
                 null
@@ -514,7 +544,9 @@ async function getAccessToken() {
 
         }
 
+
         return null;
+
 
     } catch (error) {
 
@@ -529,6 +561,7 @@ async function getAccessToken() {
 
 }
 
+
 /* =========================================================
    HEADERS
 ========================================================= */
@@ -537,6 +570,7 @@ async function getHeaders() {
 
     const token =
         await getAccessToken();
+
 
     const headers = {
 
@@ -548,12 +582,14 @@ async function getHeaders() {
 
     };
 
+
     if (token) {
 
         headers.Authorization =
             `Bearer ${token}`;
 
     }
+
 
     return headers;
 
@@ -572,11 +608,13 @@ async function supabaseRequest(
     const headers =
         await getHeaders();
 
+
     const response =
         await fetch(
             SUPABASE_URL + endpoint,
             {
                 ...options,
+
                 headers: {
                     ...headers,
                     ...(options.headers || {})
@@ -584,10 +622,13 @@ async function supabaseRequest(
             }
         );
 
+
     const text =
         await response.text();
 
+
     let data = null;
+
 
     try {
 
@@ -602,12 +643,14 @@ async function supabaseRequest(
 
     }
 
+
     if (!response.ok) {
 
         console.error(
             "LosOja Supabase error:",
             data
         );
+
 
         throw new Error(
             data?.message ||
@@ -617,6 +660,7 @@ async function supabaseRequest(
         );
 
     }
+
 
     return data;
 
@@ -638,12 +682,33 @@ function escapeHTML(value) {
 
     }
 
+
     return String(value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
 
 }
 
@@ -656,63 +721,38 @@ async function getCurrentUserId() {
 
     try {
 
-        if (
-            typeof window.ensureValidSupabaseSession ===
-            "function"
-        ) {
-
-            try {
-                await window.ensureValidSupabaseSession();
-            } catch (error) {
-                console.warn(
-                    "LosOja: session validation failed:",
-                    error
-                );
-            }
-
-        }
-
-        if (
-            typeof window.getCurrentUser ===
-            "function"
-        ) {
-
-            const user =
-                await window.getCurrentUser();
-
-            if (user?.id) {
-
-                return user.id;
-
-            }
-
-        }
-
-    } catch (error) {
-
-        console.warn(
-            "LosOja: getCurrentUser failed:",
-            error
-        );
-
-    }
-
-
-    try {
+        /*
+         * Always obtain the current access token first.
+         * This ensures the user ID and subsequent wallet
+         * request belong to the same authenticated session.
+         */
 
         const token =
             await getAccessToken();
 
+
         if (!token) {
+
+            console.warn(
+                "LosOja: no valid Supabase access token found."
+            );
 
             return null;
 
         }
 
+
+        /*
+         * Ask Supabase Auth directly which user owns
+         * the access token.
+         */
+
         const user =
             await supabaseRequest(
                 "/auth/v1/user",
                 {
+                    method: "GET",
+
                     headers: {
                         Authorization:
                             `Bearer ${token}`
@@ -720,12 +760,24 @@ async function getCurrentUserId() {
                 }
             );
 
-        return user?.id || null;
+
+        if (
+            user &&
+            user.id
+        ) {
+
+            return user.id;
+
+        }
+
+
+        return null;
+
 
     } catch (error) {
 
         console.error(
-            "LosOja: unable to get current user:",
+            "LosOja: unable to get authenticated user:",
             error
         );
 
@@ -747,40 +799,112 @@ async function loadWallet() {
             "balanceAmount"
         );
 
+
     if (!balanceElement) {
+
         return;
+
     }
+
 
     balanceElement.textContent =
         "Loading...";
 
+
     try {
 
-        const userId =
-            await getCurrentUserId();
+        /*
+         * Get the current authenticated access token.
+         */
 
-        if (!userId) {
+        const token =
+            await getAccessToken();
+
+
+        if (!token) {
 
             console.warn(
-                "LosOja: no authenticated user found."
+                "LosOja: wallet load stopped because no access token exists."
             );
 
+
             balanceElement.textContent =
-                "₦0.00";
+                "Please log in";
+
 
             return;
 
         }
 
+
+        /*
+         * Ask Supabase Auth for the user associated
+         * with this exact access token.
+         */
+
+        const user =
+            await supabaseRequest(
+                "/auth/v1/user",
+                {
+                    method: "GET",
+
+                    headers: {
+                        Authorization:
+                            `Bearer ${token}`
+                    }
+                }
+            );
+
+
+        const userId =
+            user?.id;
+
+
+        if (!userId) {
+
+            console.warn(
+                "LosOja: authenticated user could not be identified."
+            );
+
+
+            balanceElement.textContent =
+                "Please log in";
+
+
+            return;
+
+        }
+
+
         console.log(
-            "LosOja: loading wallet for user:",
+            "LosOja: loading wallet for authenticated user:",
             userId
         );
 
 
+        /*
+         * IMPORTANT:
+         *
+         * Explicitly send the SAME authenticated token
+         * with the wallet request.
+         *
+         * This allows Supabase RLS to evaluate:
+         *
+         * auth.uid() = wallet.user_id
+         *
+         */
+
         const data =
             await supabaseRequest(
-                `/rest/v1/wallets?select=balance,currency&user_id=eq.${encodeURIComponent(userId)}&limit=1`
+                `/rest/v1/wallets?select=id,balance,currency,user_id&user_id=eq.${encodeURIComponent(userId)}&limit=1`,
+                {
+                    method: "GET",
+
+                    headers: {
+                        Authorization:
+                            `Bearer ${token}`
+                    }
+                }
             );
 
 
@@ -796,12 +920,14 @@ async function loadWallet() {
         ) {
 
             console.warn(
-                "LosOja: no wallet row found for user:",
+                "LosOja: wallet query returned no visible row for authenticated user:",
                 userId
             );
 
+
             balanceElement.textContent =
                 "₦0.00";
+
 
             return;
 
@@ -822,13 +948,15 @@ async function loadWallet() {
             !Number.isFinite(balance)
         ) {
 
-            console.warn(
+            console.error(
                 "LosOja: invalid wallet balance:",
                 wallet.balance
             );
 
+
             balanceElement.textContent =
-                "₦0.00";
+                "Unable to load";
+
 
             return;
 
@@ -845,6 +973,12 @@ async function loadWallet() {
             )}`;
 
 
+        console.log(
+            "LosOja: wallet balance loaded successfully:",
+            balance
+        );
+
+
     } catch (error) {
 
         console.error(
@@ -852,10 +986,6 @@ async function loadWallet() {
             error
         );
 
-        /*
-         * Do not hide the problem as a fake zero balance.
-         * The wallet itself is not changed.
-         */
 
         balanceElement.textContent =
             "Unable to load";
@@ -863,6 +993,7 @@ async function loadWallet() {
     }
 
 }
+
 
 /* =========================================================
    FORMAT TRANSACTION TYPE
@@ -891,10 +1022,14 @@ function formatTransactionType(
 
     };
 
+
     return (
         names[type] ||
         String(type || "Transaction")
-            .replace(/_/g, " ")
+            .replace(
+                /_/g,
+                " "
+            )
             .replace(
                 /\b\w/g,
                 letter =>
@@ -916,21 +1051,25 @@ async function loadTransactions() {
             "transactions"
         );
 
+
     if (!container) {
 
         return;
 
     }
 
+
     container.innerHTML =
         `<div class="loading">
             Loading transactions...
         </div>`;
 
+
     try {
 
         const userId =
             await getCurrentUserId();
+
 
         if (!userId) {
 
@@ -939,14 +1078,17 @@ async function loadTransactions() {
                     Please login to view transactions.
                 </div>`;
 
+
             return;
 
         }
+
 
         const data =
             await supabaseRequest(
                 `/rest/v1/wallet_transactions?select=*&user_id=eq.${encodeURIComponent(userId)}&order=created_at.desc&limit=50`
             );
+
 
         if (
             !data ||
@@ -958,9 +1100,11 @@ async function loadTransactions() {
                     No transactions yet.
                 </div>`;
 
+
             return;
 
         }
+
 
         container.innerHTML =
             data.map(transaction => {
@@ -969,25 +1113,30 @@ async function loadTransactions() {
                     transaction.type ||
                     "transaction";
 
+
                 const amount =
                     Number(
                         transaction.amount || 0
                     );
+
 
                 const positive =
                     type === "deposit" ||
                     type === "escrow_release" ||
                     type === "escrow_refund";
 
+
                 const sign =
                     positive
                         ? "+"
                         : "-";
 
+
                 const className =
                     positive
                         ? "positive"
                         : "negative";
+
 
                 const date =
                     transaction.created_at
@@ -997,6 +1146,7 @@ async function loadTransactions() {
                             "en-NG"
                         )
                         : "";
+
 
                 return `
 
@@ -1042,12 +1192,14 @@ async function loadTransactions() {
 
             }).join("");
 
+
     } catch (error) {
 
         console.error(
             "LosOja: transactions error:",
             error
         );
+
 
         container.innerHTML =
             `<div class="error">
@@ -1074,17 +1226,21 @@ async function depositFunds() {
 
             await window.losojaDepositFunds();
 
+
             await loadWallet();
 
             await loadTransactions();
+
 
             return;
 
         }
 
+
         alert(
             "Deposit system is not available yet."
         );
+
 
     } catch (error) {
 
@@ -1092,6 +1248,7 @@ async function depositFunds() {
             "LosOja deposit error:",
             error
         );
+
 
         alert(
             error.message ||
@@ -1110,13 +1267,17 @@ async function depositFunds() {
 async function withdrawFunds() {
 
     const withdrawButton =
-        document.querySelector(".withdraw-btn");
+        document.querySelector(
+            ".withdraw-btn"
+        );
+
 
     try {
 
         if (withdrawButton) {
 
-            withdrawButton.disabled = true;
+            withdrawButton.disabled =
+                true;
 
             withdrawButton.textContent =
                 "Checking...";
@@ -1127,11 +1288,13 @@ async function withdrawFunds() {
         const userId =
             await getCurrentUserId();
 
+
         if (!userId) {
 
             alert(
                 "Please log in before withdrawing."
             );
+
 
             return;
 
@@ -1141,11 +1304,13 @@ async function withdrawFunds() {
         const accessToken =
             await getAccessToken();
 
+
         if (!accessToken) {
 
             alert(
                 "Your login session has expired. Please log in again."
             );
+
 
             return;
 
@@ -1161,6 +1326,7 @@ async function withdrawFunds() {
                 "Enter the amount you want to withdraw (₦):"
             );
 
+
         if (
             amountInput === null
         ) {
@@ -1169,12 +1335,17 @@ async function withdrawFunds() {
 
         }
 
+
         const amount =
             Number(
                 amountInput
-                    .replace(/,/g, "")
+                    .replace(
+                        /,/g,
+                        ""
+                    )
                     .trim()
             );
+
 
         if (
             !Number.isFinite(amount) ||
@@ -1185,9 +1356,11 @@ async function withdrawFunds() {
                 "Please enter a valid withdrawal amount."
             );
 
+
             return;
 
         }
+
 
         if (
             amount < 100
@@ -1196,6 +1369,7 @@ async function withdrawFunds() {
             alert(
                 "Minimum withdrawal amount is ₦100."
             );
+
 
             return;
 
@@ -1213,6 +1387,7 @@ async function withdrawFunds() {
 
         }
 
+
         const banksResponse =
             await fetch(
                 `${SUPABASE_URL}/functions/v1/withdraw-funds`,
@@ -1220,6 +1395,7 @@ async function withdrawFunds() {
                     method: "GET",
 
                     headers: {
+
                         "Content-Type":
                             "application/json",
 
@@ -1228,6 +1404,7 @@ async function withdrawFunds() {
 
                         "Authorization":
                             `Bearer ${accessToken}`
+
                     }
                 }
             );
@@ -1275,6 +1452,7 @@ async function withdrawFunds() {
 
         let selectedBank = null;
 
+
         while (!selectedBank) {
 
             const search =
@@ -1305,6 +1483,7 @@ async function withdrawFunds() {
                     "Please enter a bank name."
                 );
 
+
                 continue;
 
             }
@@ -1317,7 +1496,9 @@ async function withdrawFunds() {
                             bank.name || ""
                         )
                             .toLowerCase()
-                            .includes(searchText)
+                            .includes(
+                                searchText
+                            )
                 );
 
 
@@ -1330,6 +1511,7 @@ async function withdrawFunds() {
                     "Try another spelling or search term."
                 );
 
+
                 continue;
 
             }
@@ -1341,6 +1523,7 @@ async function withdrawFunds() {
 
                 selectedBank =
                     matches[0];
+
 
                 break;
 
@@ -1391,6 +1574,7 @@ async function withdrawFunds() {
                     "Invalid bank selection."
                 );
 
+
                 continue;
 
             }
@@ -1438,6 +1622,7 @@ async function withdrawFunds() {
                 "Please enter a valid 10-digit Nigerian bank account number."
             );
 
+
             return;
 
         }
@@ -1454,6 +1639,7 @@ async function withdrawFunds() {
 
         }
 
+
         const verifyResponse =
             await fetch(
                 `${SUPABASE_URL}/functions/v1/withdraw-funds`,
@@ -1461,6 +1647,7 @@ async function withdrawFunds() {
                     method: "POST",
 
                     headers: {
+
                         "Content-Type":
                             "application/json",
 
@@ -1469,6 +1656,7 @@ async function withdrawFunds() {
 
                         "Authorization":
                             `Bearer ${accessToken}`
+
                     },
 
                     body:
@@ -1484,6 +1672,7 @@ async function withdrawFunds() {
                                 cleanAccountNumber
 
                         })
+
                 }
             );
 
@@ -1557,6 +1746,7 @@ async function withdrawFunds() {
 
         }
 
+
         const withdrawalResponse =
             await fetch(
                 `${SUPABASE_URL}/functions/v1/withdraw-funds`,
@@ -1564,6 +1754,7 @@ async function withdrawFunds() {
                     method: "POST",
 
                     headers: {
+
                         "Content-Type":
                             "application/json",
 
@@ -1572,6 +1763,7 @@ async function withdrawFunds() {
 
                         "Authorization":
                             `Bearer ${accessToken}`
+
                     },
 
                     body:
@@ -1587,6 +1779,7 @@ async function withdrawFunds() {
                                 cleanAccountNumber
 
                         })
+
                 }
             );
 
@@ -1601,6 +1794,7 @@ async function withdrawFunds() {
 
         const payoutUnavailable =
             withdrawalResult?.payout_available === false ||
+
             String(
                 withdrawalResult?.error || ""
             )
@@ -1608,6 +1802,7 @@ async function withdrawFunds() {
                 .includes(
                     "third-party payout"
                 ) ||
+
             String(
                 withdrawalResult?.error || ""
             )
@@ -1615,6 +1810,7 @@ async function withdrawFunds() {
                 .includes(
                     "third party payout"
                 ) ||
+
             String(
                 withdrawalResult?.error || ""
             )
@@ -1644,6 +1840,7 @@ async function withdrawFunds() {
             await loadWallet();
 
             await loadTransactions();
+
 
             return;
 
@@ -1727,11 +1924,13 @@ async function withdrawFunds() {
                 .includes(
                     "third-party payout"
                 ) ||
+
             errorMessage
                 .toLowerCase()
                 .includes(
                     "third party payout"
                 ) ||
+
             errorMessage
                 .toLowerCase()
                 .includes(
@@ -1762,15 +1961,18 @@ async function withdrawFunds() {
 
         }
 
+
         await loadWallet();
 
         await loadTransactions();
+
 
     } finally {
 
         if (withdrawButton) {
 
-            withdrawButton.disabled = false;
+            withdrawButton.disabled =
+                false;
 
             withdrawButton.textContent =
                 "Withdraw";
@@ -1889,11 +2091,13 @@ async function disputeEscrow(
             method: "POST",
 
             body: JSON.stringify({
+
                 p_escrow_id:
                     escrowId,
 
                 p_reason:
                     reason
+
             })
         }
     );
@@ -1931,10 +2135,14 @@ function formatEscrowStatus(
 
     };
 
+
     return (
         labels[status] ||
         String(status || "Unknown")
-            .replace(/_/g, " ")
+            .replace(
+                /_/g,
+                " "
+            )
     );
 
 }
@@ -1954,9 +2162,11 @@ function openEscrowChat(
             "Unable to open escrow chat."
         );
 
+
         return;
 
     }
+
 
     window.location.href =
         `chat.html?escrow=${encodeURIComponent(escrowId)}`;
@@ -1978,15 +2188,18 @@ async function loadEscrowTransactions(
 
     }
 
+
     section.innerHTML =
         `<div class="loading">
             Loading escrow transactions...
         </div>`;
 
+
     try {
 
         const userId =
             await getCurrentUserId();
+
 
         if (!userId) {
 
@@ -1995,14 +2208,17 @@ async function loadEscrowTransactions(
                     Please login to view escrow transactions.
                 </div>`;
 
+
             return;
 
         }
+
 
         const data =
             await supabaseRequest(
                 `/rest/v1/escrow_transactions?select=*&or=(buyer_id.eq.${encodeURIComponent(userId)},seller_id.eq.${encodeURIComponent(userId)})&order=created_at.desc&limit=30`
             );
+
 
         if (
             !data ||
@@ -2013,6 +2229,7 @@ async function loadEscrowTransactions(
                 `<div class="empty">
                     No escrow transactions yet.
                 </div>`;
+
 
             return;
 
@@ -2027,19 +2244,23 @@ async function loadEscrowTransactions(
                         transaction.amount || 0
                     );
 
+
                 const isBuyer =
                     transaction.buyer_id ===
                     userId;
 
+
                 const isSeller =
                     transaction.seller_id ===
                     userId;
+
 
                 const status =
                     String(
                         transaction.status ||
                         ""
                     ).toLowerCase();
+
 
                 const created =
                     transaction.created_at
@@ -2050,6 +2271,7 @@ async function loadEscrowTransactions(
                         )
                         : "";
 
+
                 const shipped =
                     transaction.shipped_at
                         ? new Date(
@@ -2058,6 +2280,7 @@ async function loadEscrowTransactions(
                             "en-NG"
                         )
                         : "";
+
 
                 const delivered =
                     transaction.delivered_at
@@ -2068,11 +2291,13 @@ async function loadEscrowTransactions(
                         )
                         : "";
 
+
                 const description =
                     escapeHTML(
                         transaction.description ||
                         "Escrow transaction"
                     );
+
 
                 const disputeReason =
                     escapeHTML(
@@ -2080,8 +2305,10 @@ async function loadEscrowTransactions(
                         ""
                     );
 
+
                 let role =
                     "Participant";
+
 
                 if (isBuyer) {
 
@@ -2323,9 +2550,10 @@ async function loadEscrowTransactions(
                                     '${transaction.id}'
                                 )"
                             >
-                                ${isBuyer
-                                    ? "Chat with Seller"
-                                    : "Chat with Buyer"
+                                ${
+                                    isBuyer
+                                        ? "Chat with Seller"
+                                        : "Chat with Buyer"
                                 }
                             </button>
 
@@ -2362,11 +2590,13 @@ async function loadEscrowTransactions(
 
                         <div class="escrow-line">
                             <strong>Status:</strong>
+
                             <span class="escrow-status">
                                 ${escapeHTML(
                                     formatEscrowStatus(status)
                                 )}
                             </span>
+
                         </div>
 
                         <div class="escrow-line">
@@ -2404,12 +2634,14 @@ async function loadEscrowTransactions(
 
             }).join("");
 
+
     } catch (error) {
 
         console.error(
             "LosOja: escrow load error:",
             error
         );
+
 
         section.innerHTML =
             `<div class="error">
@@ -2430,14 +2662,15 @@ async function handleMarkEscrowShipped(
     button
 ) {
 
-const confirmed =
-    confirm(
-        "LosOja Safety Warning\n\n" +
-        "Only mark the order as shipped when you have actually shipped it.\n\n" +
-        "Never use an external link sent by another user to verify payment " +
-        "or delivery.\n\n" +
-        "Mark this escrow order as shipped?"
-    );
+    const confirmed =
+        confirm(
+            "LosOja Safety Warning\n\n" +
+            "Only mark the order as shipped when you have actually shipped it.\n\n" +
+            "Never use an external link sent by another user to verify payment " +
+            "or delivery.\n\n" +
+            "Mark this escrow order as shipped?"
+        );
+
 
     if (!confirmed) {
 
@@ -2445,12 +2678,14 @@ const confirmed =
 
     }
 
+
     const actionButtons =
         button
             ?.parentElement
             ?.querySelectorAll(
                 "button"
             );
+
 
     if (actionButtons) {
 
@@ -2462,24 +2697,29 @@ const confirmed =
 
     }
 
+
     try {
 
         await markEscrowShipped(
             escrowId
         );
 
+
         alert(
             "Escrow marked as shipped."
         );
+
 
         const section =
             document.getElementById(
                 "escrowInfo"
             );
 
+
         await loadEscrowTransactions(
             section
         );
+
 
     } catch (error) {
 
@@ -2488,10 +2728,12 @@ const confirmed =
             error
         );
 
+
         alert(
             error.message ||
             "Unable to mark escrow as shipped."
         );
+
 
         if (actionButtons) {
 
@@ -2518,13 +2760,14 @@ async function handleConfirmEscrowDelivery(
 ) {
 
     const confirmed =
-    confirm(
-        "LosOja Safety Warning\n\n" +
-        "Only confirm delivery after you have actually received the goods " +
-        "and checked the transaction.\n\n" +
-        "Do not confirm because someone sends you a verification link.\n\n" +
-        "Confirm that you received the goods?"
-    );
+        confirm(
+            "LosOja Safety Warning\n\n" +
+            "Only confirm delivery after you have actually received the goods " +
+            "and checked the transaction.\n\n" +
+            "Do not confirm because someone sends you a verification link.\n\n" +
+            "Confirm that you received the goods?"
+        );
+
 
     if (!confirmed) {
 
@@ -2532,12 +2775,14 @@ async function handleConfirmEscrowDelivery(
 
     }
 
+
     const actionButtons =
         button
             ?.parentElement
             ?.querySelectorAll(
                 "button"
             );
+
 
     if (actionButtons) {
 
@@ -2549,24 +2794,29 @@ async function handleConfirmEscrowDelivery(
 
     }
 
+
     try {
 
         await confirmEscrowDelivery(
             escrowId
         );
 
+
         alert(
             "Delivery confirmed."
         );
+
 
         const section =
             document.getElementById(
                 "escrowInfo"
             );
 
+
         await loadEscrowTransactions(
             section
         );
+
 
     } catch (error) {
 
@@ -2575,10 +2825,12 @@ async function handleConfirmEscrowDelivery(
             error
         );
 
+
         alert(
             error.message ||
             "Unable to confirm delivery."
         );
+
 
         if (actionButtons) {
 
@@ -2609,6 +2861,7 @@ async function handleDisputeEscrow(
             "Why are you disputing this escrow?"
         );
 
+
     if (
         reason === null
     ) {
@@ -2617,8 +2870,10 @@ async function handleDisputeEscrow(
 
     }
 
+
     const trimmedReason =
         reason.trim();
+
 
     if (!trimmedReason) {
 
@@ -2626,9 +2881,11 @@ async function handleDisputeEscrow(
             "Please enter a dispute reason."
         );
 
+
         return;
 
     }
+
 
     if (
         trimmedReason.length > 1000
@@ -2638,9 +2895,11 @@ async function handleDisputeEscrow(
             "Dispute reason must be 1000 characters or less."
         );
 
+
         return;
 
     }
+
 
     const actionButtons =
         button
@@ -2648,6 +2907,7 @@ async function handleDisputeEscrow(
             ?.querySelectorAll(
                 "button"
             );
+
 
     if (actionButtons) {
 
@@ -2659,6 +2919,7 @@ async function handleDisputeEscrow(
 
     }
 
+
     try {
 
         await disputeEscrow(
@@ -2666,18 +2927,22 @@ async function handleDisputeEscrow(
             trimmedReason
         );
 
+
         alert(
             "Dispute opened successfully."
         );
+
 
         const section =
             document.getElementById(
                 "escrowInfo"
             );
 
+
         await loadEscrowTransactions(
             section
         );
+
 
     } catch (error) {
 
@@ -2686,10 +2951,12 @@ async function handleDisputeEscrow(
             error
         );
 
+
         alert(
             error.message ||
             "Unable to open dispute."
         );
+
 
         if (actionButtons) {
 
@@ -2715,19 +2982,22 @@ async function handleReleaseEscrow(
     button
 ) {
 
-   const confirmed =
-    confirm(
-        "LosOja Safety Warning\n\n" +
-        "Only release the payment when you are satisfied with the transaction.\n\n" +
-        "Never release payment because a seller sends you an external link " +
-        "or asks you to pay an additional fee outside LosOja.\n\n" +
-        "Release this escrow payment to the seller?"
-    );
+    const confirmed =
+        confirm(
+            "LosOja Safety Warning\n\n" +
+            "Only release the payment when you are satisfied with the transaction.\n\n" +
+            "Never release payment because a seller sends you an external link " +
+            "or asks you to pay an additional fee outside LosOja.\n\n" +
+            "Release this escrow payment to the seller?"
+        );
+
+
     if (!confirmed) {
 
         return;
 
     }
+
 
     const actionButtons =
         button
@@ -2735,6 +3005,7 @@ async function handleReleaseEscrow(
             ?.querySelectorAll(
                 "button"
             );
+
 
     if (actionButtons) {
 
@@ -2746,28 +3017,34 @@ async function handleReleaseEscrow(
 
     }
 
+
     try {
 
         await releaseEscrow(
             escrowId
         );
 
+
         alert(
             "Escrow released successfully."
         );
 
+
         await loadWallet();
 
         await loadTransactions();
+
 
         const section =
             document.getElementById(
                 "escrowInfo"
             );
 
+
         await loadEscrowTransactions(
             section
         );
+
 
     } catch (error) {
 
@@ -2776,10 +3053,12 @@ async function handleReleaseEscrow(
             error
         );
 
+
         alert(
             error.message ||
             "Unable to release escrow."
         );
+
 
         if (actionButtons) {
 
@@ -2805,19 +3084,22 @@ async function handleRefundEscrow(
     button
 ) {
 
-   const confirmed =
-    confirm(
-        "LosOja Safety Warning\n\n" +
-        "Only continue if you are sure you want to refund this escrow.\n\n" +
-        "Never follow payment, verification, refund, or delivery links " +
-        "sent by another user.\n\n" +
-        "Refund this escrow payment to your wallet?"
-    );
+    const confirmed =
+        confirm(
+            "LosOja Safety Warning\n\n" +
+            "Only continue if you are sure you want to refund this escrow.\n\n" +
+            "Never follow payment, verification, refund, or delivery links " +
+            "sent by another user.\n\n" +
+            "Refund this escrow payment to your wallet?"
+        );
+
+
     if (!confirmed) {
 
         return;
 
     }
+
 
     const actionButtons =
         button
@@ -2825,6 +3107,7 @@ async function handleRefundEscrow(
             ?.querySelectorAll(
                 "button"
             );
+
 
     if (actionButtons) {
 
@@ -2836,28 +3119,34 @@ async function handleRefundEscrow(
 
     }
 
+
     try {
 
         await refundEscrow(
             escrowId
         );
 
+
         alert(
             "Escrow refunded successfully."
         );
 
+
         await loadWallet();
 
         await loadTransactions();
+
 
         const section =
             document.getElementById(
                 "escrowInfo"
             );
 
+
         await loadEscrowTransactions(
             section
         );
+
 
     } catch (error) {
 
@@ -2866,10 +3155,12 @@ async function handleRefundEscrow(
             error
         );
 
+
         alert(
             error.message ||
             "Unable to refund escrow."
         );
+
 
         if (actionButtons) {
 
@@ -2897,21 +3188,26 @@ async function openEscrowInfo() {
             "escrowInfo"
         );
 
+
     if (!section) {
 
         return;
 
     }
 
+
     if (
         section.innerHTML.trim() !== ""
     ) {
 
-        section.innerHTML = "";
+        section.innerHTML =
+            "";
+
 
         return;
 
     }
+
 
     await loadEscrowTransactions(
         section
@@ -2936,18 +3232,6 @@ document.addEventListener(
 );
 
 </script>
-
-<!-- =======================================================
-     LOSOJA AUTH
-======================================================== -->
-
-<script src="js/auth.js"></script>
-
-<!-- =======================================================
-     LOSOJA WALLET
-======================================================== -->
-
-<script src="js/wallet.js"></script>
 
 </body>
 
