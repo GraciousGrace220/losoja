@@ -3155,78 +3155,73 @@ async function openSpecificChat() {
             window.location.search
         );
 
-
     const requestedConversationId =
-        params.get(
-            "conversation"
-        );
-
+        params.get("conversation");
 
     /*
-     * BUSINESS CHAT
-     *
-     * app.js sends:
-     *
-     * chat.html?user=OWNER_ID&business=BUSINESS_ID
-     *
-     * We now correctly capture the business ID.
+     * =====================================================
+     * READ URL PARAMETERS
+     * =====================================================
      */
 
     currentOtherUserId =
-        params.get(
-            "user"
-        );
-
+        params.get("user");
 
     currentBusinessId =
-        params.get(
-            "business"
-        );
-
+        params.get("business");
 
     currentListingId =
-        params.get(
-            "listing"
-        );
-
+        params.get("listing");
 
     currentPropertyId =
-        params.get(
-            "property_id"
-        );
-
+        params.get("property_id");
 
     currentPropertyTitle =
-        params.get(
-            "property_title"
-        );
-
+        params.get("property_title");
 
     currentOjaListingId =
-        params.get(
-            "oja_listing"
-        );
-
+        params.get("oja_listing");
 
     currentEscrowId =
-        params.get(
-            "escrow"
-        );
+        params.get("escrow");
 
 
     /*
-       NOTIFICATION / EXISTING CONVERSATION
-    */
+     * =====================================================
+     * IMPORTANT:
+     * BUSINESS CHAT MUST NEVER BE TREATED AS ESCROW CHAT
+     *
+     * Business Chat is:
+     *
+     * chat.html?user=OWNER_ID&business=BUSINESS_ID
+     *
+     * If an old/stale escrow parameter somehow exists,
+     * ignore it.
+     * =====================================================
+     */
 
-    if (
-        requestedConversationId
-    ) {
+    if (currentBusinessId) {
+
+        currentEscrowId =
+            null;
+
+        currentEscrow =
+            null;
+    }
+
+
+    /*
+     * =====================================================
+     * EXISTING CONVERSATION
+     * =====================================================
+     */
+
+    if (requestedConversationId) {
 
         const conversation =
             await loadConversationById(
                 requestedConversationId
             );
-
 
         if (!conversation) {
 
@@ -3235,15 +3230,51 @@ async function openSpecificChat() {
             );
         }
 
-
         currentConversationId =
             conversation.id;
     }
 
 
-    /* =====================================================
-       PROPERTY CHAT
-    ===================================================== */
+    /*
+     * =====================================================
+     * BUSINESS CHAT
+     *
+     * Business chat already provides:
+     *
+     * user = business owner ID
+     * business = business ID
+     *
+     * We deliberately do NOT load escrow here.
+     * =====================================================
+     */
+
+    if (currentBusinessId) {
+
+        if (!currentOtherUserId) {
+
+            throw new Error(
+                "This business does not have a registered owner."
+            );
+        }
+
+        /*
+         * Make absolutely sure Business Chat does not
+         * inherit an escrow context.
+         */
+
+        currentEscrowId =
+            null;
+
+        currentEscrow =
+            null;
+    }
+
+
+    /*
+     * =====================================================
+     * PROPERTY CHAT
+     * =====================================================
+     */
 
     if (
         currentPropertyId &&
@@ -3257,9 +3288,11 @@ async function openSpecificChat() {
     }
 
 
-    /* =====================================================
-       OJA CHAT
-    ===================================================== */
+    /*
+     * =====================================================
+     * OJA CHAT
+     * =====================================================
+     */
 
     if (
         currentOjaListingId &&
@@ -3271,14 +3304,12 @@ async function openSpecificChat() {
                 currentOjaListingId
             );
 
-
         if (!ojaListing) {
 
             throw new Error(
                 "Oja listing could not be found."
             );
         }
-
 
         if (
             ojaListing.status !==
@@ -3290,25 +3321,33 @@ async function openSpecificChat() {
             );
         }
 
-
         currentOtherUserId =
             ojaListing.user_id;
     }
 
 
-    /* =====================================================
-       ESCROW CHAT
-    ===================================================== */
+    /*
+     * =====================================================
+     * ESCROW CHAT
+     *
+     * ONLY run this when this is NOT Business Chat.
+     * =====================================================
+     */
 
-    if (currentEscrowId) {
+    if (
+        currentEscrowId &&
+        !currentBusinessId
+    ) {
 
         await loadEscrowChatContext();
     }
 
 
-    /* =====================================================
-       NO SPECIFIC USER
-    ===================================================== */
+    /*
+     * =====================================================
+     * NO SPECIFIC USER
+     * =====================================================
+     */
 
     if (!currentOtherUserId) {
 
@@ -3318,11 +3357,16 @@ async function openSpecificChat() {
     }
 
 
+    /*
+     * =====================================================
+     * PREVENT SELF CHAT
+     * =====================================================
+     */
+
     if (
         String(
             currentOtherUserId
         ) ===
-
         String(
             currentUser.id
         )
@@ -3336,24 +3380,27 @@ async function openSpecificChat() {
     }
 
 
+    /*
+     * =====================================================
+     * SHOW CHAT SECTION
+     * =====================================================
+     */
+
     const conversationList =
         document.getElementById(
             "conversationList"
         );
-
 
     const chatSection =
         document.getElementById(
             "chatSection"
         );
 
-
     if (conversationList) {
 
         conversationList.style.display =
             "none";
     }
-
 
     if (chatSection) {
 
@@ -3362,16 +3409,25 @@ async function openSpecificChat() {
     }
 
 
-    /* =====================================================
-       ESCROW TITLE
-    ===================================================== */
+    /*
+     * =====================================================
+     * ESCROW TITLE
+     * =====================================================
+     */
 
-    if (currentEscrowId) {
+    if (
+        currentEscrowId &&
+        currentEscrow &&
+        !currentBusinessId
+    ) {
 
         const isBuyer =
-            currentUser.id ===
-            currentEscrow.buyer_id;
-
+            String(
+                currentUser.id
+            ) ===
+            String(
+                currentEscrow.buyer_id
+            );
 
         document.getElementById(
             "chatUser"
@@ -3414,9 +3470,11 @@ async function openSpecificChat() {
 
     } else {
 
-        /* =================================================
-           BUSINESS / OJA / NORMAL TITLE
-        ================================================= */
+        /*
+         * =================================================
+         * BUSINESS / OJA / PROPERTY / NORMAL CHAT
+         * =================================================
+         */
 
         document.getElementById(
             "chatUser"
@@ -3481,29 +3539,44 @@ async function openSpecificChat() {
 
 
     /*
-       If the notification already gave us
-       a conversation ID, use it.
-
-       Otherwise find/create the correct
-       conversation normally.
-    */
+     * =====================================================
+     * FIND OR CREATE CONVERSATION
+     * =====================================================
+     */
 
     if (!currentConversationId) {
 
         const conversation =
             await findOrCreateConversation();
 
-
         currentConversationId =
             conversation.id;
     }
 
 
+    /*
+     * =====================================================
+     * MARK NOTIFICATIONS READ
+     * =====================================================
+     */
+
     await markCurrentChatNotificationsRead();
 
 
+    /*
+     * =====================================================
+     * LOAD MESSAGES
+     * =====================================================
+     */
+
     await loadMessages();
 
+
+    /*
+     * =====================================================
+     * MESSAGE POLLING
+     * =====================================================
+     */
 
     if (messagePolling) {
 
@@ -3535,256 +3608,3 @@ async function openSpecificChat() {
             3000
         );
 }
-
-
-/* =========================================================
-   AUTH INITIALIZATION
-========================================================= */
-
-async function initializeChat() {
-
-    clearError();
-
-
-    try {
-
-        if (
-            typeof window.getCurrentUser !==
-            "function"
-        ) {
-
-            throw new Error(
-                "LosOja authentication is not available."
-            );
-        }
-
-
-        /*
-           STEP 1
-           Refresh/validate session.
-        */
-
-        if (
-            typeof window.ensureValidSupabaseSession ===
-            "function"
-        ) {
-
-            try {
-
-                await window.ensureValidSupabaseSession();
-
-            } catch (sessionError) {
-
-                console.warn(
-                    "LosOja session refresh warning:",
-                    sessionError
-                );
-            }
-        }
-
-
-        /*
-           STEP 2
-           Get current user.
-        */
-
-        currentUser =
-            await window.getCurrentUser();
-
-
-        /*
-           STEP 3
-           Give auth system one more chance.
-        */
-
-        if (
-            !currentUser &&
-
-            typeof window.ensureValidSupabaseSession ===
-            "function"
-        ) {
-
-            try {
-
-                await window.ensureValidSupabaseSession();
-
-                currentUser =
-                    await window.getCurrentUser();
-
-            } catch (retryError) {
-
-                console.warn(
-                    "LosOja authentication retry failed:",
-                    retryError
-                );
-            }
-        }
-
-
-        const loginButton =
-            document.getElementById(
-                "loginButton"
-            );
-
-
-        if (loginButton) {
-
-            loginButton.style.display =
-                currentUser
-                    ? "none"
-                    : "block";
-        }
-
-
-        /*
-           User is genuinely not logged in.
-        */
-
-        if (!currentUser) {
-
-            const status =
-                document.getElementById(
-                    "status"
-                );
-
-
-            if (status) {
-
-                status.innerHTML =
-                    "<strong>Please login to use chat.</strong>";
-            }
-
-
-            const conversationList =
-                document.getElementById(
-                    "conversationList"
-                );
-
-
-            if (conversationList) {
-
-                conversationList.innerHTML = `
-                    <div class="status">
-                        Please login to send and receive messages.
-                    </div>
-                `;
-            }
-
-
-            return;
-        }
-
-
-        /*
-           User is logged in.
-        */
-
-        const status =
-            document.getElementById(
-                "status"
-            );
-
-
-        if (status) {
-
-            status.innerHTML =
-                "<strong>Connected</strong>";
-        }
-
-
-        await openSpecificChat();
-
-
-        await updateChatUnreadIndicator();
-
-
-    } catch (error) {
-
-        console.error(
-            "LosOja chat initialization error:",
-            error
-        );
-
-
-        showError(
-            error.message ||
-            "Chat could not be loaded."
-        );
-
-
-        const status =
-            document.getElementById(
-                "status"
-            );
-
-
-        if (status) {
-
-            status.innerHTML =
-                "<strong>Chat could not be loaded.</strong>";
-        }
-    }
-}
-
-
-/* =========================================================
-   CHAT FORM
-========================================================= */
-
-const chatForm =
-    document.getElementById(
-        "chatForm"
-    );
-
-
-if (chatForm) {
-
-    chatForm.addEventListener(
-        "submit",
-        event => {
-
-            event.preventDefault();
-
-            sendMessage();
-
-        }
-    );
-}
-
-
-/* =========================================================
-   START
-========================================================= */
-
-initializeImageButton();
-
-
-/*
-   The script is at the bottom of the page,
-   but DOMContentLoaded is kept so auth.js
-   has time to initialize.
-*/
-
-if (
-    document.readyState ===
-    "loading"
-) {
-
-    document.addEventListener(
-        "DOMContentLoaded",
-        initializeChat,
-        {
-            once: true
-        }
-    );
-
-} else {
-
-    initializeChat();
-}
-
-</script>
-
-</body>
-
-</html>
