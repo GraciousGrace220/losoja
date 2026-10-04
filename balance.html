@@ -259,11 +259,13 @@ h2 {
 
 </style>
 
+
 <!-- =======================================================
      LOSOJA AUTH
 ======================================================== -->
 
 <script src="js/auth.js?v=2"></script>
+
 
 <!-- =======================================================
      LOSOJA WALLET
@@ -273,7 +275,9 @@ h2 {
 
 </head>
 
+
 <body>
+
 
 <header class="header">
 
@@ -486,57 +490,16 @@ function wait(ms) {
 
 
 /* =========================================================
-   EXTRACT TOKEN FROM ANY SESSION SHAPE
-========================================================= */
-
-function extractAccessToken(value) {
-
-    if (!value) {
-        return null;
-    }
-
-
-    if (
-        typeof value === "string" &&
-        value.trim()
-    ) {
-
-        return value.trim();
-
-    }
-
-
-    return (
-
-        value?.access_token ||
-
-        value?.session?.access_token ||
-
-        value?.data?.access_token ||
-
-        value?.data?.session?.access_token ||
-
-        value?.data?.session?.session?.access_token ||
-
-        value?.session?.session?.access_token ||
-
-        null
-
-    );
-
-}
-
-
-/* =========================================================
    GET ACCESS TOKEN
 ========================================================= */
 
 async function getAccessToken() {
 
     /*
-     * auth.js is already loaded before this page script.
-     * We still retry because restoring a Supabase session
-     * can be asynchronous.
+     * auth.js is loaded before this script.
+     *
+     * We still retry because restoring/refreshing a
+     * Supabase session can be asynchronous.
      */
 
     const delays = [
@@ -544,7 +507,7 @@ async function getAccessToken() {
         300,
         700,
         1200,
-        2000
+        1800
     ];
 
 
@@ -554,21 +517,19 @@ async function getAccessToken() {
         attempt++
     ) {
 
+        if (delays[attempt] > 0) {
+
+            await wait(
+                delays[attempt]
+            );
+
+        }
+
+
         try {
 
-            if (
-                delays[attempt] > 0
-            ) {
-
-                await wait(
-                    delays[attempt]
-                );
-
-            }
-
-
             /* -----------------------------------------
-               PRIMARY LOSOJA SESSION VALIDATION
+               ASK LOSOJA AUTH TO VALIDATE SESSION
             ----------------------------------------- */
 
             if (
@@ -578,36 +539,12 @@ async function getAccessToken() {
 
                 try {
 
-                    const sessionResult =
-                        await window.ensureValidSupabaseSession();
-
-
-                    /*
-                     * Important:
-                     * Some versions of auth.js return
-                     * the session from this function.
-                     */
-
-                    const token =
-                        extractAccessToken(
-                            sessionResult
-                        );
-
-
-                    if (token) {
-
-                        console.log(
-                            "LosOja: valid access token recovered from session validation."
-                        );
-
-                        return token;
-
-                    }
+                    await window.ensureValidSupabaseSession();
 
                 } catch (error) {
 
                     console.warn(
-                        "LosOja: session validation failed:",
+                        "LosOja: session validation/refresh check failed:",
                         error
                     );
 
@@ -617,7 +554,7 @@ async function getAccessToken() {
 
 
             /* -----------------------------------------
-               LOSOJA ACCESS TOKEN HELPER
+               PRIMARY LOSOJA TOKEN HELPER
             ----------------------------------------- */
 
             if (
@@ -627,17 +564,13 @@ async function getAccessToken() {
 
                 try {
 
-                    const tokenResult =
+                    const token =
                         await window.getSupabaseAccessToken();
 
-
-                    const token =
-                        extractAccessToken(
-                            tokenResult
-                        );
-
-
-                    if (token) {
+                    if (
+                        token &&
+                        typeof token === "string"
+                    ) {
 
                         console.log(
                             "LosOja: valid access token found."
@@ -660,7 +593,7 @@ async function getAccessToken() {
 
 
             /* -----------------------------------------
-               OPTIONAL SESSION HELPER
+               SESSION HELPER FALLBACK
             ----------------------------------------- */
 
             if (
@@ -670,20 +603,25 @@ async function getAccessToken() {
 
                 try {
 
-                    const sessionResult =
+                    const session =
                         await window.getSupabaseSession();
 
 
                     const token =
-                        extractAccessToken(
-                            sessionResult
-                        );
+                        session?.access_token ||
+                        session?.session?.access_token ||
+                        session?.data?.session?.access_token ||
+                        session?.data?.access_token ||
+                        null;
 
 
-                    if (token) {
+                    if (
+                        token &&
+                        typeof token === "string"
+                    ) {
 
                         console.log(
-                            "LosOja: access token recovered from getSupabaseSession."
+                            "LosOja: access token recovered from session helper."
                         );
 
                         return token;
@@ -703,7 +641,7 @@ async function getAccessToken() {
 
 
             /* -----------------------------------------
-               DIRECT LOSOJA SUPABASE CLIENT
+               DIRECT LOSOJA SUPABASE CLIENT FALLBACK
             ----------------------------------------- */
 
             if (
@@ -720,12 +658,13 @@ async function getAccessToken() {
 
 
                     const token =
-                        extractAccessToken(
-                            result
-                        );
+                        result?.data?.session?.access_token;
 
 
-                    if (token) {
+                    if (
+                        token &&
+                        typeof token === "string"
+                    ) {
 
                         console.log(
                             "LosOja: access token recovered from Supabase session."
@@ -748,7 +687,7 @@ async function getAccessToken() {
 
 
             /* -----------------------------------------
-               SAVED LOSOJA SESSION
+               LOCAL STORAGE FALLBACK
             ----------------------------------------- */
 
             try {
@@ -768,12 +707,18 @@ async function getAccessToken() {
 
 
                     const token =
-                        extractAccessToken(
-                            parsed
-                        );
+                        parsed?.access_token ||
+                        parsed?.session?.access_token ||
+                        parsed?.data?.session?.access_token ||
+                        parsed?.data?.access_token ||
+                        parsed?.currentSession?.access_token ||
+                        null;
 
 
-                    if (token) {
+                    if (
+                        token &&
+                        typeof token === "string"
+                    ) {
 
                         console.log(
                             "LosOja: access token recovered from saved session."
@@ -794,84 +739,6 @@ async function getAccessToken() {
 
             }
 
-
-            /* -----------------------------------------
-               CHECK LOCAL STORAGE FOR SUPABASE SESSION
-            ----------------------------------------- */
-
-            try {
-
-                for (
-                    let index = 0;
-                    index < localStorage.length;
-                    index++
-                ) {
-
-                    const key =
-                        localStorage.key(index);
-
-
-                    if (
-                        !key ||
-                        !key.startsWith("sb-")
-                    ) {
-
-                        continue;
-
-                    }
-
-
-                    const raw =
-                        localStorage.getItem(key);
-
-
-                    if (!raw) {
-                        continue;
-                    }
-
-
-                    try {
-
-                        const parsed =
-                            JSON.parse(raw);
-
-
-                        const token =
-                            extractAccessToken(
-                                parsed
-                            );
-
-
-                        if (token) {
-
-                            console.log(
-                                "LosOja: access token recovered from Supabase local session."
-                            );
-
-                            return token;
-
-                        }
-
-                    } catch {
-
-                        /*
-                         * Ignore non-JSON local-storage
-                         * values.
-                         */
-
-                    }
-
-                }
-
-            } catch (error) {
-
-                console.warn(
-                    "LosOja: Supabase local-storage scan failed:",
-                    error
-                );
-
-            }
-
         } catch (error) {
 
             console.warn(
@@ -885,7 +752,7 @@ async function getAccessToken() {
 
 
     console.warn(
-        "LosOja: no valid Supabase access token found."
+        "LosOja: no valid Supabase access token found after retries."
     );
 
 
@@ -1065,10 +932,36 @@ function escapeHTML(value) {
 async function getCurrentUserId() {
 
     /*
-     * Try LosOja's normal current-user helper.
+     * First give auth.js a chance to restore/refresh
+     * the current session.
      */
 
     try {
+
+        if (
+            typeof window.ensureValidSupabaseSession ===
+            "function"
+        ) {
+
+            try {
+
+                await window.ensureValidSupabaseSession();
+
+            } catch (error) {
+
+                console.warn(
+                    "LosOja: session validation failed:",
+                    error
+                );
+
+            }
+
+        }
+
+
+        /* -----------------------------------------
+           CURRENT USER HELPER
+        ----------------------------------------- */
 
         if (
             typeof window.getCurrentUser ===
@@ -1083,6 +976,11 @@ async function getCurrentUserId() {
 
                 if (user?.id) {
 
+                    console.log(
+                        "LosOja: current user found:",
+                        user.id
+                    );
+
                     return user.id;
 
                 }
@@ -1091,6 +989,50 @@ async function getCurrentUserId() {
 
                 console.warn(
                     "LosOja: getCurrentUser helper failed:",
+                    error
+                );
+
+            }
+
+        }
+
+
+        /* -----------------------------------------
+           DIRECT SUPABASE SESSION
+        ----------------------------------------- */
+
+        if (
+            window.losojaSupabase &&
+            window.losojaSupabase.auth &&
+            typeof window.losojaSupabase.auth.getSession ===
+            "function"
+        ) {
+
+            try {
+
+                const result =
+                    await window.losojaSupabase.auth.getSession();
+
+
+                const user =
+                    result?.data?.session?.user;
+
+
+                if (user?.id) {
+
+                    console.log(
+                        "LosOja: current user recovered from Supabase session:",
+                        user.id
+                    );
+
+                    return user.id;
+
+                }
+
+            } catch (error) {
+
+                console.warn(
+                    "LosOja: direct Supabase user lookup failed:",
                     error
                 );
 
@@ -1108,50 +1050,9 @@ async function getCurrentUserId() {
     }
 
 
-    /*
-     * Try the direct Supabase session.
-     */
-
-    try {
-
-        if (
-            window.losojaSupabase &&
-            window.losojaSupabase.auth &&
-            typeof window.losojaSupabase.auth.getSession ===
-            "function"
-        ) {
-
-            const result =
-                await window.losojaSupabase.auth.getSession();
-
-
-            const user =
-                result?.data?.session?.user;
-
-
-            if (user?.id) {
-
-                return user.id;
-
-            }
-
-        }
-
-    } catch (error) {
-
-        console.warn(
-            "LosOja: direct Supabase user lookup failed:",
-            error
-        );
-
-    }
-
-
-    /*
-     * Final fallback:
-     * get the authenticated user from Supabase
-     * using the access token.
-     */
+    /* -----------------------------------------
+       FINAL TOKEN-BASED USER LOOKUP
+    ----------------------------------------- */
 
     try {
 
@@ -1162,7 +1063,7 @@ async function getCurrentUserId() {
         if (!token) {
 
             console.warn(
-                "LosOja: no valid Supabase access token found."
+                "LosOja: no access token available for user lookup."
             );
 
             return null;
@@ -1192,16 +1093,10 @@ async function getCurrentUserId() {
 
         if (!response.ok) {
 
-            const errorText =
-                await response.text();
-
-
             console.warn(
                 "LosOja: Supabase user request failed:",
-                response.status,
-                errorText
+                response.status
             );
-
 
             return null;
 
@@ -1212,7 +1107,17 @@ async function getCurrentUserId() {
             await response.json();
 
 
-        return userData?.id || null;
+        if (userData?.id) {
+
+            console.log(
+                "LosOja: current user recovered from /auth/v1/user:",
+                userData.id
+            );
+
+            return userData.id;
+
+        }
+
 
     } catch (error) {
 
@@ -1221,10 +1126,10 @@ async function getCurrentUserId() {
             error
         );
 
-
-        return null;
-
     }
+
+
+    return null;
 
 }
 
@@ -1322,6 +1227,11 @@ async function loadWallet() {
                 userId
             );
 
+
+            /*
+             * Do not hide the problem behind a fake
+             * balance if the query returns nothing.
+             */
 
             balanceElement.textContent =
                 "₦0.00";
@@ -1468,7 +1378,6 @@ async function loadTransactions() {
                     Please login to view transactions.
                 </div>`;
 
-
             return;
 
         }
@@ -1489,7 +1398,6 @@ async function loadTransactions() {
                 `<div class="empty">
                     No transactions yet.
                 </div>`;
-
 
             return;
 
@@ -1618,11 +1526,9 @@ async function depositFunds() {
 
             await window.losojaDepositFunds();
 
-
             await loadWallet();
 
             await loadTransactions();
-
 
             return;
 
@@ -1687,7 +1593,6 @@ async function withdrawFunds() {
                 "Please log in before withdrawing."
             );
 
-
             return;
 
         }
@@ -1702,7 +1607,6 @@ async function withdrawFunds() {
             alert(
                 "Your login session has expired. Please log in again."
             );
-
 
             return;
 
@@ -1741,7 +1645,6 @@ async function withdrawFunds() {
                 "Please enter a valid withdrawal amount."
             );
 
-
             return;
 
         }
@@ -1754,7 +1657,6 @@ async function withdrawFunds() {
             alert(
                 "Minimum withdrawal amount is ₦100."
             );
-
 
             return;
 
@@ -1858,7 +1760,6 @@ async function withdrawFunds() {
                     "Please enter a bank name."
                 );
 
-
                 continue;
 
             }
@@ -1886,7 +1787,6 @@ async function withdrawFunds() {
                     "Try another spelling or search term."
                 );
 
-
                 continue;
 
             }
@@ -1898,7 +1798,6 @@ async function withdrawFunds() {
 
                 selectedBank =
                     matches[0];
-
 
                 break;
 
@@ -1949,7 +1848,6 @@ async function withdrawFunds() {
                     "Invalid bank selection."
                 );
 
-
                 continue;
 
             }
@@ -1992,7 +1890,6 @@ async function withdrawFunds() {
             alert(
                 "Please enter a valid 10-digit Nigerian bank account number."
             );
-
 
             return;
 
@@ -2188,7 +2085,6 @@ async function withdrawFunds() {
 
             await loadTransactions();
 
-
             return;
 
         }
@@ -2220,9 +2116,7 @@ async function withdrawFunds() {
             )}\n` +
 
             `Bank: ${selectedBank.name}\n` +
-
             `Account name: ${accountName}\n` +
-
             `Account: ${cleanAccountNumber}\n` +
 
             `Status: ${
@@ -2504,7 +2398,6 @@ function openEscrowChat(
             "Unable to open escrow chat."
         );
 
-
         return;
 
     }
@@ -2550,7 +2443,6 @@ async function loadEscrowTransactions(
                     Please login to view escrow transactions.
                 </div>`;
 
-
             return;
 
         }
@@ -2571,7 +2463,6 @@ async function loadEscrowTransactions(
                 `<div class="empty">
                     No escrow transactions yet.
                 </div>`;
-
 
             return;
 
@@ -3204,7 +3095,6 @@ async function handleDisputeEscrow(
             "Please enter a dispute reason."
         );
 
-
         return;
 
     }
@@ -3217,7 +3107,6 @@ async function handleDisputeEscrow(
         alert(
             "Dispute reason must be 1000 characters or less."
         );
-
 
         return;
 
@@ -3542,7 +3431,8 @@ document.addEventListener(
 
 
         /*
-         * Give auth.js time to restore the session.
+         * Allow auth.js to finish restoring the
+         * existing session before financial queries.
          */
 
         await wait(500);
@@ -3556,6 +3446,7 @@ document.addEventListener(
 );
 
 </script>
+
 
 </body>
 
