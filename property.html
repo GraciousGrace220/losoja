@@ -626,6 +626,18 @@ button{
     margin-top:14px;
     padding-top:15px;
     border-top:1px solid var(--border);
+
+    /*
+       Reserve the owner-controls area so the modal
+       does not jump when authentication finishes.
+    */
+    min-height:92px;
+
+    visibility:hidden;
+}
+
+.property-owner-actions.visible{
+    visibility:visible;
 }
 
 .property-owner-actions button{
@@ -664,6 +676,19 @@ button{
 
 .rented-btn:hover{
     background:#1a466b;
+}
+
+.available-btn{
+    background:var(--green);
+    color:#fff;
+    border:0;
+    padding:12px 17px;
+    border-radius:10px;
+    font-weight:700;
+}
+
+.available-btn:hover{
+    background:var(--green-dark);
 }
 
 .danger-btn{
@@ -863,10 +888,6 @@ button{
 
 <body>
 
-<!-- =====================================================
-     HEADER
-===================================================== -->
-
 <header class="header">
 
     <div class="header-inner">
@@ -875,11 +896,9 @@ button{
             LosOja
         </a>
 
-
         <a href="index.html" class="back-link">
             ← Back
         </a>
-
 
         <button
             type="button"
@@ -894,21 +913,15 @@ button{
 </header>
 
 
-<!-- =====================================================
-     MAIN
-===================================================== -->
-
 <main class="page">
 
     <h1 class="page-title">
         Properties
     </h1>
 
-
     <p class="page-subtitle">
         Find houses, apartments, land and commercial properties on LosOja.
     </p>
-
 
     <section class="toolbar">
 
@@ -919,7 +932,6 @@ button{
             placeholder="Search properties, locations..."
         >
 
-
         <div class="filters">
 
             <button
@@ -929,14 +941,12 @@ button{
                 All
             </button>
 
-
             <button
                 class="filter-btn"
                 onclick="setPropertyFilter('available',this)"
             >
                 Available
             </button>
-
 
             <button
                 class="filter-btn"
@@ -945,14 +955,12 @@ button{
                 For Sale
             </button>
 
-
             <button
                 class="filter-btn"
                 onclick="setPropertyFilter('rent',this)"
             >
                 For Rent
             </button>
-
 
             <button
                 class="filter-btn"
@@ -961,14 +969,12 @@ button{
                 Sold
             </button>
 
-
             <button
                 class="filter-btn"
                 onclick="setPropertyFilter('rented',this)"
             >
                 Rented
             </button>
-
 
             <button
                 class="filter-btn"
@@ -977,7 +983,6 @@ button{
                 Houses
             </button>
 
-
             <button
                 class="filter-btn"
                 onclick="setPropertyFilter('apartment',this)"
@@ -985,14 +990,12 @@ button{
                 Apartments
             </button>
 
-
             <button
                 class="filter-btn"
                 onclick="setPropertyFilter('land',this)"
             >
                 Land
             </button>
-
 
             <button
                 class="filter-btn"
@@ -1004,7 +1007,6 @@ button{
         </div>
 
     </section>
-
 
     <div
         id="propertiesContainer"
@@ -1040,7 +1042,6 @@ button{
             ×
         </button>
 
-
         <div class="modal-content">
 
             <div class="post-card">
@@ -1049,11 +1050,9 @@ button{
                     Post Your Property
                 </h2>
 
-
                 <p>
                     List your property on LosOja.
                 </p>
-
 
                 <form id="propertyForm">
 
@@ -1062,7 +1061,6 @@ button{
                         <label for="propertyTitle">
                             Property Title
                         </label>
-
 
                         <input
                             type="text"
@@ -1073,13 +1071,11 @@ button{
 
                     </div>
 
-
                     <div class="form-group">
 
                         <label for="propertyType">
                             Property Type
                         </label>
-
 
                         <select
                             id="propertyType"
@@ -1090,21 +1086,17 @@ button{
                                 Select type
                             </option>
 
-
                             <option value="House">
                                 House
                             </option>
-
 
                             <option value="Apartment">
                                 Apartment
                             </option>
 
-
                             <option value="Land">
                                 Land
                             </option>
-
 
                             <option value="Commercial">
                                 Commercial
@@ -1114,13 +1106,11 @@ button{
 
                     </div>
 
-
                     <div class="form-group">
 
                         <label for="listingType">
                             Listing Type
                         </label>
-
 
                         <select
                             id="listingType"
@@ -1131,11 +1121,9 @@ button{
                                 Select listing type
                             </option>
 
-
                             <option value="For Sale">
                                 For Sale
                             </option>
-
 
                             <option value="For Rent">
                                 For Rent
@@ -1145,13 +1133,11 @@ button{
 
                     </div>
 
-
                     <div class="form-group">
 
                         <label for="propertyPrice">
                             Price
                         </label>
-
 
                         <input
                             type="number"
@@ -1164,13 +1150,11 @@ button{
 
                     </div>
 
-
                     <div class="form-group">
 
                         <label for="propertyLocation">
                             Location
                         </label>
-
 
                         <input
                             type="text"
@@ -1181,13 +1165,11 @@ button{
 
                     </div>
 
-
                     <div class="form-group">
 
                         <label for="propertyDescription">
                             Description
                         </label>
-
 
                         <textarea
                             id="propertyDescription"
@@ -1196,13 +1178,11 @@ button{
 
                     </div>
 
-
                     <div class="form-group">
 
                         <label for="propertyImages">
                             Property Photos
                         </label>
-
 
                         <input
                             type="file"
@@ -1212,12 +1192,10 @@ button{
                             multiple
                         >
 
-
                         <div class="photo-help">
                             Select up to 10 photos. Maximum 5MB per photo.
                             You can select more photos again without losing the ones already selected.
                         </div>
-
 
                         <div
                             id="photoSelectionInfo"
@@ -1226,14 +1204,12 @@ button{
                             No photos selected
                         </div>
 
-
                         <div
                             id="propertyPhotoPreview"
                             class="property-photo-preview"
                         ></div>
 
                     </div>
-
 
                     <div class="form-actions">
 
@@ -1244,7 +1220,6 @@ button{
                         >
                             Cancel
                         </button>
-
 
                         <button
                             type="submit"
@@ -1287,7 +1262,6 @@ button{
             ×
         </button>
 
-
         <div class="modal-content">
 
             <div class="detail-gallery">
@@ -1302,7 +1276,6 @@ button{
                         onclick="openViewerFromDetail()"
                     >
 
-
                     <button
                         type="button"
                         class="detail-arrow prev"
@@ -1311,7 +1284,6 @@ button{
                         ‹
                     </button>
 
-
                     <button
                         type="button"
                         class="detail-arrow next"
@@ -1319,7 +1291,6 @@ button{
                     >
                         ›
                     </button>
-
 
                     <div
                         id="detailCounter"
@@ -1330,7 +1301,6 @@ button{
 
                 </div>
 
-
                 <div
                     id="detailThumbnails"
                     class="detail-thumbnails"
@@ -1338,37 +1308,31 @@ button{
 
             </div>
 
-
             <div class="detail-info">
 
                 <h2 id="detailTitle">
                     Property
                 </h2>
 
-
                 <div
                     id="detailPrice"
                     class="detail-price"
                 ></div>
-
 
                 <div
                     id="detailMeta"
                     class="property-meta"
                 ></div>
 
-
                 <div
                     id="detailLocation"
                     class="property-location"
                 ></div>
 
-
                 <div
                     id="detailDescription"
                     class="detail-description"
                 ></div>
-
 
                 <div class="detail-actions">
 
@@ -1380,7 +1344,6 @@ button{
                         💬 Chat Owner
                     </button>
 
-
                     <button
                         type="button"
                         class="secondary-btn"
@@ -1391,19 +1354,17 @@ button{
 
                 </div>
 
-
                 <!-- OWNER CONTROLS -->
 
                 <div
                     id="propertyOwnerActions"
                     class="property-owner-actions"
-                    style="display:none;"
+                    aria-hidden="true"
                 >
 
                     <div class="property-owner-label">
                         Property Management
                     </div>
-
 
                     <button
                         type="button"
@@ -1414,7 +1375,6 @@ button{
                         ✓ Mark as Sold
                     </button>
 
-
                     <button
                         type="button"
                         id="markRentedButton"
@@ -1424,6 +1384,14 @@ button{
                         ✓ Mark as Rented
                     </button>
 
+                    <button
+                        type="button"
+                        id="markAvailableButton"
+                        class="available-btn"
+                        onclick="markPropertyStatus('available')"
+                    >
+                        ↻ Mark as Available
+                    </button>
 
                     <button
                         type="button"
@@ -1461,7 +1429,6 @@ button{
         ×
     </button>
 
-
     <button
         type="button"
         class="viewer-arrow viewer-prev"
@@ -1470,14 +1437,12 @@ button{
         ‹
     </button>
 
-
     <img
         id="viewerImage"
         class="viewer-image"
         src=""
         alt="Property photo"
     >
-
 
     <button
         type="button"
@@ -1486,7 +1451,6 @@ button{
     >
         ›
     </button>
-
 
     <div
         id="viewerCounter"
@@ -1504,7 +1468,6 @@ button{
 <script>
 
 "use strict";
-
 
 /* =========================================================
    SUPABASE
@@ -1605,12 +1568,10 @@ async function getAccessToken(){
 
         }
 
-
         const raw =
             localStorage.getItem(
                 "losoja_supabase_session"
             );
-
 
         if(!raw){
 
@@ -1618,10 +1579,8 @@ async function getAccessToken(){
 
         }
 
-
         const session =
             JSON.parse(raw);
-
 
         return (
             session.access_token ||
@@ -1660,12 +1619,10 @@ async function getAuthenticatedUser(){
 
         }
 
-
         const raw =
             localStorage.getItem(
                 "losoja_supabase_session"
             );
-
 
         if(!raw){
 
@@ -1673,10 +1630,8 @@ async function getAuthenticatedUser(){
 
         }
 
-
         const session =
             JSON.parse(raw);
-
 
         return (
             session.user ||
@@ -1709,27 +1664,22 @@ function showToast(message){
             "toast"
         );
 
-
     if(!toast){
 
         return;
 
     }
 
-
     toast.textContent =
         message;
-
 
     toast.classList.add(
         "show"
     );
 
-
     clearTimeout(
         toastTimer
     );
-
 
     toastTimer =
         setTimeout(
@@ -1757,7 +1707,6 @@ function updateBodyModalState(){
             ".modal.show, .viewer.show"
         );
 
-
     document.body.classList.toggle(
         "modal-open",
         !!openModal
@@ -1780,7 +1729,6 @@ function openPostPropertyModal(){
             "show"
         );
 
-
     updateBodyModalState();
 
 }
@@ -1795,7 +1743,6 @@ function closePostPropertyModal(){
         .classList.remove(
             "show"
         );
-
 
     updateBodyModalState();
 
@@ -1848,7 +1795,6 @@ function closeDetailModal(){
             "show"
         );
 
-
     updateBodyModalState();
 
 }
@@ -1870,7 +1816,6 @@ document.addEventListener(
             return;
 
         }
-
 
         closePostPropertyModal();
 
@@ -1911,7 +1856,6 @@ propertyImagesInput.addEventListener(
                 this.files || []
             );
 
-
         if(
             !newFiles.length
         ){
@@ -1919,7 +1863,6 @@ propertyImagesInput.addEventListener(
             return;
 
         }
-
 
         if(
             selectedPropertyFiles.length +
@@ -1931,22 +1874,18 @@ propertyImagesInput.addEventListener(
                 10 -
                 selectedPropertyFiles.length;
 
-
             showToast(
                 remaining > 0
                     ? `You can add only ${remaining} more photo${remaining === 1 ? "" : "s"}.`
                     : "You already selected 10 photos."
             );
 
-
             this.value =
                 "";
-
 
             return;
 
         }
-
 
         for(
             const file of newFiles
@@ -1961,10 +1900,8 @@ propertyImagesInput.addEventListener(
                     `${file.name} is larger than 5MB. Maximum is 5MB per photo.`
                 );
 
-
                 this.value =
                     "";
-
 
                 return;
 
@@ -1972,15 +1909,12 @@ propertyImagesInput.addEventListener(
 
         }
 
-
         selectedPropertyFiles.push(
             ...newFiles
         );
 
-
         this.value =
             "";
-
 
         renderSelectedPropertyPhotos();
 
@@ -1997,10 +1931,8 @@ function renderSelectedPropertyPhotos(){
     propertyPhotoPreview.innerHTML =
         "";
 
-
     const total =
         selectedPropertyFiles.length;
-
 
     if(
         total === 0
@@ -2013,12 +1945,10 @@ function renderSelectedPropertyPhotos(){
 
     }
 
-
     photoSelectionInfo.textContent =
         total === 1
             ? "1 photo selected"
             : `${total} photos selected`;
-
 
     selectedPropertyFiles.forEach(
         function(
@@ -2031,56 +1961,44 @@ function renderSelectedPropertyPhotos(){
                     "div"
                 );
 
-
             wrapper.className =
                 "property-preview-item";
-
 
             const image =
                 document.createElement(
                     "img"
                 );
 
-
             image.alt =
                 `Property photo ${index + 1}`;
-
 
             const number =
                 document.createElement(
                     "div"
                 );
 
-
             number.className =
                 "property-preview-number";
 
-
             number.textContent =
                 String(index + 1);
-
 
             const removeButton =
                 document.createElement(
                     "button"
                 );
 
-
             removeButton.type =
                 "button";
-
 
             removeButton.className =
                 "remove-photo-btn";
 
-
             removeButton.textContent =
                 "×";
 
-
             removeButton.title =
                 "Remove photo";
-
 
             removeButton.onclick =
                 function(){
@@ -2090,15 +2008,12 @@ function renderSelectedPropertyPhotos(){
                         1
                     );
 
-
                     renderSelectedPropertyPhotos();
 
                 };
 
-
             const reader =
                 new FileReader();
-
 
             reader.onload =
                 function(event){
@@ -2108,26 +2023,21 @@ function renderSelectedPropertyPhotos(){
 
                 };
 
-
             reader.readAsDataURL(
                 file
             );
-
 
             wrapper.appendChild(
                 image
             );
 
-
             wrapper.appendChild(
                 number
             );
 
-
             wrapper.appendChild(
                 removeButton
             );
-
 
             propertyPhotoPreview.appendChild(
                 wrapper
@@ -2148,14 +2058,11 @@ function clearSelectedPropertyFiles(){
     selectedPropertyFiles =
         [];
 
-
     propertyImagesInput.value =
         "";
 
-
     propertyPhotoPreview.innerHTML =
         "";
-
 
     photoSelectionInfo.textContent =
         "No photos selected";
@@ -2174,14 +2081,12 @@ async function loadProperties(){
             "propertiesContainer"
         );
 
-
     container.innerHTML =
         `
         <div class="loading">
             Loading properties...
         </div>
         `;
-
 
     try{
 
@@ -2197,7 +2102,6 @@ async function loadProperties(){
                 }
             );
 
-
         if(
             !response.ok
         ){
@@ -2208,16 +2112,12 @@ async function loadProperties(){
 
         }
 
-
         allProperties =
             await response.json();
 
-
         await loadPropertyImages();
 
-
         applyFilters();
-
 
     }catch(error){
 
@@ -2225,7 +2125,6 @@ async function loadProperties(){
             "Property loading error:",
             error
         );
-
 
         container.innerHTML =
             `
@@ -2253,7 +2152,6 @@ async function loadPropertyImages(){
 
     }
 
-
     try{
 
         const response =
@@ -2268,7 +2166,6 @@ async function loadPropertyImages(){
                 }
             );
 
-
         if(
             !response.ok
         ){
@@ -2282,14 +2179,11 @@ async function loadPropertyImages(){
 
         }
 
-
         const rows =
             await response.json();
 
-
         const imageMap =
             new Map();
-
 
         rows.forEach(
             function(row){
@@ -2306,7 +2200,6 @@ async function loadPropertyImages(){
                     );
 
                 }
-
 
                 if(
                     row.image_url
@@ -2325,7 +2218,6 @@ async function loadPropertyImages(){
             }
         );
 
-
         allProperties.forEach(
             function(property){
 
@@ -2333,7 +2225,6 @@ async function loadPropertyImages(){
                     imageMap.get(
                         property.id
                     ) || [];
-
 
                 property._images =
                     property._images.filter(
@@ -2355,12 +2246,10 @@ async function loadPropertyImages(){
             }
         );
 
-
         console.log(
             "Property image rows loaded:",
             rows.length
         );
-
 
     }catch(error){
 
@@ -2394,7 +2283,6 @@ function getPropertyImages(
 
     }
 
-
     if(
         property &&
         property.image_url
@@ -2410,13 +2298,11 @@ function getPropertyImages(
 
         }
 
-
         return [
             property.image_url
         ];
 
     }
-
 
     return [
         "https://via.placeholder.com/800x500?text=LosOja+Property"
@@ -2437,7 +2323,6 @@ function setPropertyFilter(
     currentPropertyFilter =
         filter;
 
-
     document
         .querySelectorAll(
             ".filter-btn"
@@ -2452,7 +2337,6 @@ function setPropertyFilter(
             }
         );
 
-
     if(button){
 
         button.classList.add(
@@ -2460,7 +2344,6 @@ function setPropertyFilter(
         );
 
     }
-
 
     applyFilters();
 
@@ -2477,18 +2360,15 @@ function matchesFilter(
             property.property_type || ""
         ).toLowerCase();
 
-
     const listing =
         String(
             property.listing_type || ""
         ).toLowerCase();
 
-
     const status =
         String(
             property.status || "available"
         ).toLowerCase();
-
 
     if(
         filter === "all"
@@ -2497,7 +2377,6 @@ function matchesFilter(
         return true;
 
     }
-
 
     if(
         filter === "available"
@@ -2510,7 +2389,6 @@ function matchesFilter(
 
     }
 
-
     if(
         filter === "sale"
     ){
@@ -2520,7 +2398,6 @@ function matchesFilter(
         );
 
     }
-
 
     if(
         filter === "rent"
@@ -2532,7 +2409,6 @@ function matchesFilter(
 
     }
 
-
     if(
         filter === "sold"
     ){
@@ -2540,7 +2416,6 @@ function matchesFilter(
         return status === "sold";
 
     }
-
 
     if(
         filter === "rented"
@@ -2550,7 +2425,6 @@ function matchesFilter(
 
     }
 
-
     if(
         filter === "house"
     ){
@@ -2558,7 +2432,6 @@ function matchesFilter(
         return type === "house";
 
     }
-
 
     if(
         filter === "apartment"
@@ -2568,7 +2441,6 @@ function matchesFilter(
 
     }
 
-
     if(
         filter === "land"
     ){
@@ -2577,7 +2449,6 @@ function matchesFilter(
 
     }
 
-
     if(
         filter === "commercial"
     ){
@@ -2585,7 +2456,6 @@ function matchesFilter(
         return type === "commercial";
 
     }
-
 
     return true;
 
@@ -2603,7 +2473,6 @@ function applyFilters(){
             .trim()
             .toLowerCase();
 
-
     const filtered =
         allProperties.filter(
             function(property){
@@ -2620,7 +2489,6 @@ function applyFilters(){
                     .join(" ")
                     .toLowerCase();
 
-
                 return (
                     (!search ||
                         searchable.includes(
@@ -2634,7 +2502,6 @@ function applyFilters(){
 
             }
         );
-
 
     renderProperties(
         filtered
@@ -2656,7 +2523,6 @@ function renderProperties(
             "propertiesContainer"
         );
 
-
     if(
         !properties.length
     ){
@@ -2674,7 +2540,6 @@ function renderProperties(
 
     }
 
-
     container.innerHTML =
         properties
             .map(
@@ -2685,17 +2550,14 @@ function renderProperties(
                             property
                         );
 
-
                     const images =
                         getPropertyImages(
                             property
                         );
 
-
                     const status =
                         property.status ||
                         "Available";
-
 
                     return `
 
@@ -2725,7 +2587,6 @@ function renderProperties(
                                     ‹
                                 </button>
 
-
                                 <button
                                     type="button"
                                     class="gallery-arrow gallery-next"
@@ -2738,13 +2599,11 @@ function renderProperties(
                                 : ""
                             }
 
-
                             <div class="gallery-counter">
                                 1 / ${images.length}
                             </div>
 
                         </div>
-
 
                         ${
                             images.length > 1
@@ -2783,7 +2642,6 @@ function renderProperties(
                             : ""
                         }
 
-
                         <div class="property-card-body">
 
                             <h2 class="property-card-title">
@@ -2792,7 +2650,6 @@ function renderProperties(
                                     "Property"
                                 )}
                             </h2>
-
 
                             <div class="property-meta">
 
@@ -2803,14 +2660,12 @@ function renderProperties(
                                     )}
                                 </span>
 
-
                                 <span class="badge">
                                     ${escapeHtml(
                                         property.listing_type ||
                                         ""
                                     )}
                                 </span>
-
 
                                 <span class="badge">
                                     ${escapeHtml(
@@ -2820,13 +2675,11 @@ function renderProperties(
 
                             </div>
 
-
                             <div class="property-price">
                                 ${formatPrice(
                                     property.price
                                 )}
                             </div>
-
 
                             <div class="property-location">
                                 📍
@@ -2835,7 +2688,6 @@ function renderProperties(
                                     "Location not provided"
                                 )}
                             </div>
-
 
                             <button
                                 type="button"
@@ -2874,12 +2726,10 @@ function changeCardImage(
 
     }
 
-
     const property =
         allProperties[
             propertyIndex
         ];
-
 
     if(!property){
 
@@ -2887,12 +2737,10 @@ function changeCardImage(
 
     }
 
-
     const images =
         getPropertyImages(
             property
         );
-
 
     if(
         images.length <= 1
@@ -2902,12 +2750,10 @@ function changeCardImage(
 
     }
 
-
     const main =
         document.getElementById(
             `cardImage-${propertyIndex}`
         );
-
 
     if(!main){
 
@@ -2915,17 +2761,14 @@ function changeCardImage(
 
     }
 
-
     let current =
         Number(
             main.dataset.imageIndex ||
             0
         );
 
-
     current +=
         direction;
-
 
     if(
         current < 0
@@ -2936,7 +2779,6 @@ function changeCardImage(
 
     }
 
-
     if(
         current >= images.length
     ){
@@ -2944,7 +2786,6 @@ function changeCardImage(
         current = 0;
 
     }
-
 
     setCardImage(
         event,
@@ -2967,12 +2808,10 @@ function setCardImage(
 
     }
 
-
     const property =
         allProperties[
             propertyIndex
         ];
-
 
     if(!property){
 
@@ -2980,18 +2819,15 @@ function setCardImage(
 
     }
 
-
     const images =
         getPropertyImages(
             property
         );
 
-
     const main =
         document.getElementById(
             `cardImage-${propertyIndex}`
         );
-
 
     if(
         !main ||
@@ -3002,7 +2838,6 @@ function setCardImage(
 
     }
 
-
     imageIndex =
         Math.max(
             0,
@@ -3012,24 +2847,20 @@ function setCardImage(
             )
         );
 
-
     main.src =
         images[
             imageIndex
         ];
-
 
     main.dataset.imageIndex =
         String(
             imageIndex
         );
 
-
     const card =
         main.closest(
             ".property-card"
         );
-
 
     if(card){
 
@@ -3051,12 +2882,10 @@ function setCardImage(
                 }
             );
 
-
         const counter =
             card.querySelector(
                 ".gallery-counter"
             );
-
 
         if(counter){
 
@@ -3074,7 +2903,7 @@ function setCardImage(
    PROPERTY DETAIL
 ========================================================= */
 
-function openPropertyDetail(
+async function openPropertyDetail(
     propertyIndex
 ){
 
@@ -3083,27 +2912,22 @@ function openPropertyDetail(
             propertyIndex
         ];
 
-
     if(!property){
 
         return;
 
     }
 
-
     currentDetailProperty =
         property;
 
-
     currentDetailImageIndex =
         0;
-
 
     const images =
         getPropertyImages(
             property
         );
-
 
     document.getElementById(
         "detailTitle"
@@ -3111,14 +2935,12 @@ function openPropertyDetail(
         property.title ||
         "Property";
 
-
     document.getElementById(
         "detailPrice"
     ).textContent =
         formatPrice(
             property.price
         );
-
 
     document.getElementById(
         "detailLocation"
@@ -3129,13 +2951,11 @@ function openPropertyDetail(
             "Location not provided"
         );
 
-
     document.getElementById(
         "detailDescription"
     ).textContent =
         property.description ||
         "No description provided.";
-
 
     document.getElementById(
         "detailMeta"
@@ -3163,16 +2983,16 @@ function openPropertyDetail(
         </span>
         `;
 
-
     renderDetailGallery(
         images
     );
 
 
     /*
-    ---------------------------------------------------------
-    OWNER CONTROLS
-    ---------------------------------------------------------
+    =========================================================
+       PREPARE OWNER CONTROLS BEFORE SHOWING MODAL
+       This prevents the modal from jumping.
+    =========================================================
     */
 
     const ownerActions =
@@ -3180,23 +3000,32 @@ function openPropertyDetail(
             "propertyOwnerActions"
         );
 
-
     const markSoldButton =
         document.getElementById(
             "markSoldButton"
         );
-
 
     const markRentedButton =
         document.getElementById(
             "markRentedButton"
         );
 
+    const markAvailableButton =
+        document.getElementById(
+            "markAvailableButton"
+        );
+
 
     if(ownerActions){
 
-        ownerActions.style.display =
-            "none";
+        ownerActions.classList.remove(
+            "visible"
+        );
+
+        ownerActions.setAttribute(
+            "aria-hidden",
+            "true"
+        );
 
     }
 
@@ -3217,66 +3046,90 @@ function openPropertyDetail(
     }
 
 
-    getAuthenticatedUser()
-        .then(
-            function(user){
+    if(markAvailableButton){
 
-                if(
-                    !user ||
-                    !property.user_id ||
-                    user.id !== property.user_id
-                ){
+        markAvailableButton.style.display =
+            "none";
 
-                    return;
-
-                }
+    }
 
 
-                if(ownerActions){
-
-                    ownerActions.style.display =
-                        "flex";
-
-                }
+    const user =
+        await getAuthenticatedUser();
 
 
-                const status =
-                    String(
-                        property.status ||
-                        "available"
-                    ).toLowerCase();
-
-
-                const listingType =
-                    String(
-                        property.listing_type ||
-                        ""
-                    ).toLowerCase();
-
-
-                if(markSoldButton){
-
-                    markSoldButton.style.display =
-                        listingType.includes("sale") &&
-                        status !== "sold"
-                            ? "block"
-                            : "none";
-
-                }
-
-
-                if(markRentedButton){
-
-                    markRentedButton.style.display =
-                        listingType.includes("rent") &&
-                        status !== "rented"
-                            ? "block"
-                            : "none";
-
-                }
-
-            }
+    const isOwner =
+        !!(
+            user &&
+            property.user_id &&
+            user.id === property.user_id
         );
+
+
+    if(isOwner){
+
+        const status =
+            String(
+                property.status ||
+                "available"
+            ).toLowerCase();
+
+        const listingType =
+            String(
+                property.listing_type ||
+                ""
+            ).toLowerCase();
+
+
+        if(markSoldButton){
+
+            markSoldButton.style.display =
+                listingType.includes("sale") &&
+                status !== "sold"
+                    ? "block"
+                    : "none";
+
+        }
+
+
+        if(markRentedButton){
+
+            markRentedButton.style.display =
+                listingType.includes("rent") &&
+                status !== "rented"
+                    ? "block"
+                    : "none";
+
+        }
+
+
+        if(markAvailableButton){
+
+            markAvailableButton.style.display =
+                (
+                    status === "sold" ||
+                    status === "rented"
+                )
+                    ? "block"
+                    : "none";
+
+        }
+
+
+        if(ownerActions){
+
+            ownerActions.classList.add(
+                "visible"
+            );
+
+            ownerActions.setAttribute(
+                "aria-hidden",
+                "false"
+            );
+
+        }
+
+    }
 
 
     document
@@ -3286,7 +3139,6 @@ function openPropertyDetail(
         .classList.add(
             "show"
         );
-
 
     updateBodyModalState();
 
@@ -3307,39 +3159,32 @@ function renderDetailGallery(
 
     }
 
-
     const main =
         document.getElementById(
             "detailMainImage"
         );
-
 
     const thumbnails =
         document.getElementById(
             "detailThumbnails"
         );
 
-
     const counter =
         document.getElementById(
             "detailCounter"
         );
-
 
     main.src =
         images[
             currentDetailImageIndex
         ];
 
-
     main.alt =
         currentDetailProperty?.title ||
         "Property";
 
-
     counter.textContent =
         `${currentDetailImageIndex + 1} / ${images.length}`;
-
 
     thumbnails.innerHTML =
         images
@@ -3377,19 +3222,16 @@ function setDetailImage(
 
     }
 
-
     const images =
         getPropertyImages(
             currentDetailProperty
         );
-
 
     if(!images.length){
 
         return;
 
     }
-
 
     currentDetailImageIndex =
         Math.max(
@@ -3399,7 +3241,6 @@ function setDetailImage(
                 images.length - 1
             )
         );
-
 
     renderDetailGallery(
         images
@@ -3418,12 +3259,10 @@ function changeDetailImage(
 
     }
 
-
     const images =
         getPropertyImages(
             currentDetailProperty
         );
-
 
     if(
         images.length <= 1
@@ -3433,11 +3272,9 @@ function changeDetailImage(
 
     }
 
-
     let next =
         currentDetailImageIndex +
         direction;
-
 
     if(next < 0){
 
@@ -3445,7 +3282,6 @@ function changeDetailImage(
             images.length - 1;
 
     }
-
 
     if(
         next >=
@@ -3455,7 +3291,6 @@ function changeDetailImage(
         next = 0;
 
     }
-
 
     setDetailImage(
         next
@@ -3476,19 +3311,15 @@ function openViewerFromDetail(){
 
     }
 
-
     currentViewerImages =
         getPropertyImages(
             currentDetailProperty
         );
 
-
     currentViewerImageIndex =
         currentDetailImageIndex;
 
-
     renderViewer();
-
 
     document
         .getElementById(
@@ -3497,7 +3328,6 @@ function openViewerFromDetail(){
         .classList.add(
             "show"
         );
-
 
     updateBodyModalState();
 
@@ -3514,14 +3344,12 @@ function renderViewer(){
 
     }
 
-
     document.getElementById(
         "viewerImage"
     ).src =
         currentViewerImages[
             currentViewerImageIndex
         ];
-
 
     document.getElementById(
         "viewerCounter"
@@ -3543,10 +3371,8 @@ function changeViewerImage(
 
     }
 
-
     currentViewerImageIndex +=
         direction;
-
 
     if(
         currentViewerImageIndex < 0
@@ -3557,7 +3383,6 @@ function changeViewerImage(
 
     }
 
-
     if(
         currentViewerImageIndex >=
         currentViewerImages.length
@@ -3567,7 +3392,6 @@ function changeViewerImage(
             0;
 
     }
-
 
     renderViewer();
 
@@ -3583,7 +3407,6 @@ function closeViewer(){
         .classList.remove(
             "show"
         );
-
 
     updateBodyModalState();
 
@@ -3606,10 +3429,8 @@ async function contactProperty(){
 
     }
 
-
     const user =
         await getAuthenticatedUser();
-
 
     if(!user){
 
@@ -3621,10 +3442,8 @@ async function contactProperty(){
 
     }
 
-
     const sellerId =
         currentDetailProperty.user_id;
-
 
     if(!sellerId){
 
@@ -3635,7 +3454,6 @@ async function contactProperty(){
         return;
 
     }
-
 
     if(
         sellerId === user.id
@@ -3649,15 +3467,12 @@ async function contactProperty(){
 
     }
 
-
     const propertyId =
         currentDetailProperty.id;
-
 
     const propertyTitle =
         currentDetailProperty.title ||
         "Property";
-
 
     const chatUrl =
         "chat.html" +
@@ -3674,7 +3489,6 @@ async function contactProperty(){
             propertyTitle
         );
 
-
     window.location.href =
         chatUrl;
 
@@ -3682,7 +3496,7 @@ async function contactProperty(){
 
 
 /* =========================================================
-   MARK PROPERTY SOLD / RENTED
+   MARK PROPERTY SOLD / RENTED / AVAILABLE
 ========================================================= */
 
 async function markPropertyStatus(
@@ -3699,10 +3513,8 @@ async function markPropertyStatus(
 
     }
 
-
     const user =
         await getAuthenticatedUser();
-
 
     if(!user){
 
@@ -3713,7 +3525,6 @@ async function markPropertyStatus(
         return;
 
     }
-
 
     if(
         currentDetailProperty.user_id !==
@@ -3728,10 +3539,8 @@ async function markPropertyStatus(
 
     }
 
-
     const propertyId =
         currentDetailProperty.id;
-
 
     const listingType =
         String(
@@ -3768,15 +3577,35 @@ async function markPropertyStatus(
     }
 
 
-    const label =
+    let label;
+
+    if(
         newStatus === "sold"
-            ? "sold"
-            : "rented";
+    ){
+
+        label =
+            "sold";
+
+    }else if(
+        newStatus === "rented"
+    ){
+
+        label =
+            "rented";
+
+    }else{
+
+        label =
+            "available";
+
+    }
 
 
     const confirmed =
         window.confirm(
-            `Mark "${currentDetailProperty.title || "this property"}" as ${label}?`
+            newStatus === "available"
+                ? `Make "${currentDetailProperty.title || "this property"}" available again?`
+                : `Mark "${currentDetailProperty.title || "this property"}" as ${label}?`
         );
 
 
@@ -3900,7 +3729,9 @@ async function markPropertyStatus(
 
 
         showToast(
-            `Property marked as ${label}.`
+            newStatus === "available"
+                ? "Property is available again."
+                : `Property marked as ${label}.`
         );
 
 
@@ -4087,6 +3918,9 @@ async function deleteCurrentProperty(){
                         "Authorization":
                             "Bearer " +
                             token,
+
+                        "Content-Type":
+                            "application/json",
 
                         "Prefer":
                             "return=representation"
