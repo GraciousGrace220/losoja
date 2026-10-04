@@ -1043,7 +1043,10 @@ function getHeaders() {
 
         "Authorization":
             "Bearer " +
-            (token || SUPABASE_KEY),
+            (
+                token ||
+                SUPABASE_KEY
+            ),
 
         "Content-Type":
             "application/json",
@@ -3155,50 +3158,63 @@ async function openSpecificChat() {
             window.location.search
         );
 
-    const requestedConversationId =
-        params.get("conversation");
 
-    /*
-     * =====================================================
-     * READ URL PARAMETERS
-     * =====================================================
-     */
+    const requestedConversationId =
+        params.get(
+            "conversation"
+        );
+
+
+    /* =====================================================
+       READ URL PARAMETERS
+    ===================================================== */
 
     currentOtherUserId =
-        params.get("user");
+        params.get(
+            "user"
+        );
+
 
     currentBusinessId =
-        params.get("business");
+        params.get(
+            "business"
+        );
+
 
     currentListingId =
-        params.get("listing");
+        params.get(
+            "listing"
+        );
+
 
     currentPropertyId =
-        params.get("property_id");
+        params.get(
+            "property_id"
+        );
+
 
     currentPropertyTitle =
-        params.get("property_title");
+        params.get(
+            "property_title"
+        );
+
 
     currentOjaListingId =
-        params.get("oja_listing");
+        params.get(
+            "oja_listing"
+        );
+
 
     currentEscrowId =
-        params.get("escrow");
+        params.get(
+            "escrow"
+        );
 
 
-    /*
-     * =====================================================
-     * IMPORTANT:
-     * BUSINESS CHAT MUST NEVER BE TREATED AS ESCROW CHAT
-     *
-     * Business Chat is:
-     *
-     * chat.html?user=OWNER_ID&business=BUSINESS_ID
-     *
-     * If an old/stale escrow parameter somehow exists,
-     * ignore it.
-     * =====================================================
-     */
+    /* =====================================================
+       IMPORTANT:
+       BUSINESS CHAT MUST NEVER LOAD ESCROW CONTEXT
+    ===================================================== */
 
     if (currentBusinessId) {
 
@@ -3207,21 +3223,23 @@ async function openSpecificChat() {
 
         currentEscrow =
             null;
+
     }
 
 
-    /*
-     * =====================================================
-     * EXISTING CONVERSATION
-     * =====================================================
-     */
+    /* =====================================================
+       EXISTING CONVERSATION
+    ===================================================== */
 
-    if (requestedConversationId) {
+    if (
+        requestedConversationId
+    ) {
 
         const conversation =
             await loadConversationById(
                 requestedConversationId
             );
+
 
         if (!conversation) {
 
@@ -3230,51 +3248,15 @@ async function openSpecificChat() {
             );
         }
 
+
         currentConversationId =
             conversation.id;
     }
 
 
-    /*
-     * =====================================================
-     * BUSINESS CHAT
-     *
-     * Business chat already provides:
-     *
-     * user = business owner ID
-     * business = business ID
-     *
-     * We deliberately do NOT load escrow here.
-     * =====================================================
-     */
-
-    if (currentBusinessId) {
-
-        if (!currentOtherUserId) {
-
-            throw new Error(
-                "This business does not have a registered owner."
-            );
-        }
-
-        /*
-         * Make absolutely sure Business Chat does not
-         * inherit an escrow context.
-         */
-
-        currentEscrowId =
-            null;
-
-        currentEscrow =
-            null;
-    }
-
-
-    /*
-     * =====================================================
-     * PROPERTY CHAT
-     * =====================================================
-     */
+    /* =====================================================
+       PROPERTY CHAT
+    ===================================================== */
 
     if (
         currentPropertyId &&
@@ -3288,11 +3270,9 @@ async function openSpecificChat() {
     }
 
 
-    /*
-     * =====================================================
-     * OJA CHAT
-     * =====================================================
-     */
+    /* =====================================================
+       OJA CHAT
+    ===================================================== */
 
     if (
         currentOjaListingId &&
@@ -3304,12 +3284,14 @@ async function openSpecificChat() {
                 currentOjaListingId
             );
 
+
         if (!ojaListing) {
 
             throw new Error(
                 "Oja listing could not be found."
             );
         }
+
 
         if (
             ojaListing.status !==
@@ -3321,18 +3303,18 @@ async function openSpecificChat() {
             );
         }
 
+
         currentOtherUserId =
             ojaListing.user_id;
     }
 
 
-    /*
-     * =====================================================
-     * ESCROW CHAT
-     *
-     * ONLY run this when this is NOT Business Chat.
-     * =====================================================
-     */
+    /* =====================================================
+       ESCROW CHAT
+       
+       ONLY escrow chats are allowed here.
+       Business chats are excluded above.
+    ===================================================== */
 
     if (
         currentEscrowId &&
@@ -3343,11 +3325,9 @@ async function openSpecificChat() {
     }
 
 
-    /*
-     * =====================================================
-     * NO SPECIFIC USER
-     * =====================================================
-     */
+    /* =====================================================
+       NO SPECIFIC USER
+    ===================================================== */
 
     if (!currentOtherUserId) {
 
@@ -3357,11 +3337,9 @@ async function openSpecificChat() {
     }
 
 
-    /*
-     * =====================================================
-     * PREVENT SELF CHAT
-     * =====================================================
-     */
+    /* =====================================================
+       PREVENT SELF CHAT
+    ===================================================== */
 
     if (
         String(
@@ -3380,27 +3358,24 @@ async function openSpecificChat() {
     }
 
 
-    /*
-     * =====================================================
-     * SHOW CHAT SECTION
-     * =====================================================
-     */
-
     const conversationList =
         document.getElementById(
             "conversationList"
         );
+
 
     const chatSection =
         document.getElementById(
             "chatSection"
         );
 
+
     if (conversationList) {
 
         conversationList.style.display =
             "none";
     }
+
 
     if (chatSection) {
 
@@ -3409,25 +3384,19 @@ async function openSpecificChat() {
     }
 
 
-    /*
-     * =====================================================
-     * ESCROW TITLE
-     * =====================================================
-     */
+    /* =====================================================
+       ESCROW TITLE
+    ===================================================== */
 
     if (
         currentEscrowId &&
-        currentEscrow &&
-        !currentBusinessId
+        currentEscrow
     ) {
 
         const isBuyer =
-            String(
-                currentUser.id
-            ) ===
-            String(
-                currentEscrow.buyer_id
-            );
+            currentUser.id ===
+            currentEscrow.buyer_id;
+
 
         document.getElementById(
             "chatUser"
@@ -3470,25 +3439,35 @@ async function openSpecificChat() {
 
     } else {
 
-        /*
-         * =================================================
-         * BUSINESS / OJA / PROPERTY / NORMAL CHAT
-         * =================================================
-         */
+        /* =================================================
+           BUSINESS / OJA / PROPERTY / NORMAL
+        ================================================= */
 
         document.getElementById(
             "chatUser"
         ).textContent =
-            currentOjaListingId
+            currentBusinessId
 
-                ? "Chat with Seller"
+                ? "Chat with Business"
 
-                : currentBusinessId
+                : currentOjaListingId
 
-                    ? "Chat with Business"
+                    ? "Chat with Seller"
 
-                    : "Chat with Owner";
+                    : currentPropertyId
 
+                        ? "Chat with Property Owner"
+
+                        : "Chat with Owner";
+
+
+        document.getElementById(
+            "listingInfo"
+        ).textContent =
+            "";
+
+
+        /* BUSINESS */
 
         if (currentBusinessId) {
 
@@ -3499,6 +3478,8 @@ async function openSpecificChat() {
         }
 
 
+        /* BARTER */
+
         if (currentListingId) {
 
             document.getElementById(
@@ -3508,13 +3489,9 @@ async function openSpecificChat() {
         }
 
 
+        /* PROPERTY */
+
         if (currentPropertyId) {
-
-            document.getElementById(
-                "chatUser"
-            ).textContent =
-                "Chat with Property Owner";
-
 
             document.getElementById(
                 "listingInfo"
@@ -3528,6 +3505,8 @@ async function openSpecificChat() {
         }
 
 
+        /* OJA */
+
         if (currentOjaListingId) {
 
             document.getElementById(
@@ -3538,45 +3517,38 @@ async function openSpecificChat() {
     }
 
 
-    /*
-     * =====================================================
-     * FIND OR CREATE CONVERSATION
-     * =====================================================
-     */
+    /* =====================================================
+       FIND OR CREATE CONVERSATION
+    ===================================================== */
 
     if (!currentConversationId) {
 
         const conversation =
             await findOrCreateConversation();
 
+
         currentConversationId =
             conversation.id;
     }
 
 
-    /*
-     * =====================================================
-     * MARK NOTIFICATIONS READ
-     * =====================================================
-     */
+    /* =====================================================
+       MARK NOTIFICATIONS READ
+    ===================================================== */
 
     await markCurrentChatNotificationsRead();
 
 
-    /*
-     * =====================================================
-     * LOAD MESSAGES
-     * =====================================================
-     */
+    /* =====================================================
+       LOAD MESSAGES
+    ===================================================== */
 
     await loadMessages();
 
 
-    /*
-     * =====================================================
-     * MESSAGE POLLING
-     * =====================================================
-     */
+    /* =====================================================
+       REFRESH MESSAGES
+    ===================================================== */
 
     if (messagePolling) {
 
