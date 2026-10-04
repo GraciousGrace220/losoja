@@ -11,7 +11,7 @@
 <title>LosOja Properties</title>
 
 <meta name="description"
-   content="Find homes, apartments, land and commercial properties on LosOja.">
+content="Find homes, apartments, land and commercial properties on LosOja.">
 
 <style>
 
@@ -235,7 +235,7 @@ button{
     overflow:hidden;
 }
 
-.card-gallery img{
+.card-gallery img.main-card-image{
     width:100%;
     height:100%;
     object-fit:cover;
@@ -244,7 +244,7 @@ button{
     transition:transform .25s ease;
 }
 
-.card-gallery:hover img{
+.card-gallery:hover img.main-card-image{
     transform:scale(1.02);
 }
 
@@ -270,7 +270,7 @@ button{
     background:rgba(0,0,0,.52);
     color:#fff;
     font-size:20px;
-    z-index:2;
+    z-index:5;
 }
 
 .gallery-arrow:hover{
@@ -288,12 +288,66 @@ button{
 .gallery-count{
     position:absolute;
     right:10px;
-    bottom:10px;
+    top:10px;
     background:rgba(0,0,0,.62);
     color:#fff;
     padding:5px 9px;
     border-radius:20px;
     font-size:12px;
+    z-index:5;
+}
+
+/* MULTI PHOTO CARD STRIP */
+
+.card-photo-strip{
+    position:absolute;
+    left:8px;
+    right:8px;
+    bottom:8px;
+    display:flex;
+    gap:5px;
+    overflow-x:auto;
+    z-index:6;
+    scrollbar-width:none;
+}
+
+.card-photo-strip::-webkit-scrollbar{
+    display:none;
+}
+
+.card-photo-thumb{
+    flex:0 0 48px;
+    width:48px;
+    height:38px;
+    padding:0;
+    border:2px solid rgba(255,255,255,.8);
+    border-radius:7px;
+    overflow:hidden;
+    background:#222;
+    box-shadow:0 2px 8px rgba(0,0,0,.25);
+}
+
+.card-photo-thumb.active{
+    border-color:var(--accent);
+}
+
+.card-photo-thumb img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+}
+
+.card-photo-more{
+    position:absolute;
+    left:8px;
+    bottom:52px;
+    background:rgba(0,0,0,.62);
+    color:white;
+    border-radius:12px;
+    padding:4px 8px;
+    font-size:11px;
+    z-index:7;
 }
 
 .card-body{
@@ -395,6 +449,7 @@ button{
     padding:7px 12px;
     font-weight:700;
     color:#4b554f;
+    transition:.15s ease;
 }
 
 .react-btn:hover{
@@ -405,6 +460,12 @@ button{
     background:var(--green-light);
     border-color:var(--green);
     color:var(--green-dark);
+    box-shadow:0 0 0 2px rgba(8,122,62,.08);
+}
+
+.react-btn:disabled{
+    opacity:.65;
+    cursor:not-allowed;
 }
 
 .empty{
@@ -797,6 +858,12 @@ button{
     .detail-actions{
         flex-direction:column;
     }
+
+    .card-photo-thumb{
+        flex-basis:44px;
+        width:44px;
+        height:36px;
+    }
 }
 
 </style>
@@ -809,7 +876,6 @@ button{
 
 <div class="topbar-inner">
 
-```
 <a href="index.html" class="logo">
     Los<span>Oja</span>
 </a>
@@ -817,17 +883,14 @@ button{
 <div class="header-spacer"></div>
 
 <button
-    class="back-btn"
-    onclick="location.href='index.html'">
-    ← Back
-</button>
+ class="back-btn"
+ onclick="location.href='index.html'">
+← Back </button>
 
 <button
-    class="post-btn"
-    onclick="openPostProperty()">
-    + Post Property
-</button>
-```
+ class="post-btn"
+ onclick="openPostProperty()">
++ Post Property </button>
 
 </div>
 
@@ -837,7 +900,6 @@ button{
 
 <div class="hero-inner">
 
-```
 <h1>
     Find Your Next Property
 </h1>
@@ -848,19 +910,19 @@ button{
 
 <div class="search-box">
 
-    <input
-        id="searchInput"
-        type="search"
-        placeholder="Search property, location..."
-        autocomplete="off"
-    >
+<input
+id="searchInput"
+type="search"
+placeholder="Search property, location..."
+autocomplete="off"
 
-    <button onclick="applyFilters()">
-        Search
-    </button>
+>
+
+<button onclick="applyFilters()">
+    Search
+</button>
 
 </div>
-```
 
 </div>
 
@@ -869,45 +931,45 @@ button{
 <div class="filters">
 
 <button
- class="filter-btn active"
- data-filter="all"
- onclick="setFilter('all',this)">
+class="filter-btn active"
+data-filter="all"
+onclick="setFilter('all',this)">
 All </button>
 
 <button
- class="filter-btn"
- data-filter="sale"
- onclick="setFilter('sale',this)">
+class="filter-btn"
+data-filter="sale"
+onclick="setFilter('sale',this)">
 For Sale </button>
 
 <button
- class="filter-btn"
- data-filter="rent"
- onclick="setFilter('rent',this)">
+class="filter-btn"
+data-filter="rent"
+onclick="setFilter('rent',this)">
 For Rent </button>
 
 <button
- class="filter-btn"
- data-filter="house"
- onclick="setFilter('house',this)">
+class="filter-btn"
+data-filter="house"
+onclick="setFilter('house',this)">
 Houses </button>
 
 <button
- class="filter-btn"
- data-filter="apartment"
- onclick="setFilter('apartment',this)">
+class="filter-btn"
+data-filter="apartment"
+onclick="setFilter('apartment',this)">
 Apartments </button>
 
 <button
- class="filter-btn"
- data-filter="land"
- onclick="setFilter('land',this)">
+class="filter-btn"
+data-filter="land"
+onclick="setFilter('land',this)">
 Land </button>
 
 <button
- class="filter-btn"
- data-filter="commercial"
- onclick="setFilter('commercial',this)">
+class="filter-btn"
+data-filter="commercial"
+onclick="setFilter('commercial',this)">
 Commercial </button>
 
 </div>
@@ -916,7 +978,6 @@ Commercial </button>
 
 <div class="results-row">
 
-```
 <h2>
     Properties
 </h2>
@@ -926,7 +987,6 @@ Commercial </button>
     id="resultsCount">
     Loading...
 </div>
-```
 
 </div>
 
@@ -934,11 +994,9 @@ Commercial </button>
     id="propertyGrid"
     class="property-grid">
 
-```
 <div class="loading">
     Loading properties...
 </div>
-```
 
 </div>
 
@@ -952,216 +1010,206 @@ Commercial </button>
 
 <div class="modal-box">
 
-```
 <div class="modal-header">
 
-    <h2>
-        Post a Property
-    </h2>
+<h2>
+    Post a Property
+</h2>
 
-    <button
-        class="close-btn"
-        onclick="closeModalById('postPropertyModal')">
-        ×
-    </button>
+<button
+ class="close-btn"
+ onclick="closeModalById('postPropertyModal')">
+× </button>
 
 </div>
 
 <div class="modal-content">
 
-    <p style="color:#68756d;font-size:14px;margin-top:0;">
-        Add your property details and up to 20 photos.
-        You must be logged in to publish.
-    </p>
+<p style="color:#68756d;font-size:14px;margin-top:0;">
+    Add your property details and up to 20 photos.
+    You must be logged in to publish.
+</p>
 
-    <form id="propertyForm">
+<form id="propertyForm">
 
-        <div class="form-grid">
+<div class="form-grid">
 
-            <div class="form-group full">
+<div class="form-group full">
 
-                <label for="propertyTitle">
-                    Property Title *
-                </label>
+<label for="propertyTitle">
+    Property Title *
+</label>
 
-                <input
-                    id="propertyTitle"
-                    required
-                    maxlength="120"
-                    placeholder="e.g. Beautiful 3 Bedroom House"
-                >
+<input
+id="propertyTitle"
+required
+maxlength="120"
+placeholder="e.g. Beautiful 3 Bedroom House"
 
-            </div>
-
-
-            <div class="form-group">
-
-                <label for="propertyCategory">
-                    Property Type *
-                </label>
-
-                <select id="propertyCategory" required>
-
-                    <option value="">
-                        Select type
-                    </option>
-
-                    <option value="house">
-                        House
-                    </option>
-
-                    <option value="apartment">
-                        Apartment
-                    </option>
-
-                    <option value="land">
-                        Land
-                    </option>
-
-                    <option value="commercial">
-                        Commercial
-                    </option>
-
-                    <option value="property">
-                        Other Property
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label for="propertyListingType">
-                    Listing Type *
-                </label>
-
-                <select id="propertyListingType" required>
-
-                    <option value="">
-                        Select
-                    </option>
-
-                    <option value="sale">
-                        For Sale
-                    </option>
-
-                    <option value="rent">
-                        For Rent
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label for="propertyPrice">
-                    Price *
-                </label>
-
-                <input
-                    id="propertyPrice"
-                    type="number"
-                    min="0"
-                    step="1"
-                    required
-                    placeholder="250000"
-                >
-
-            </div>
-
-
-            <div class="form-group">
-
-                <label for="propertyLocation">
-                    Location *
-                </label>
-
-                <input
-                    id="propertyLocation"
-                    required
-                    maxlength="180"
-                    placeholder="e.g. Lekki, Lagos"
-                >
-
-            </div>
-
-
-            <div class="form-group full">
-
-                <label for="propertyDescription">
-                    Description *
-                </label>
-
-                <textarea
-                    id="propertyDescription"
-                    required
-                    maxlength="3000"
-                    placeholder="Describe the property..."
-                ></textarea>
-
-            </div>
-
-
-            <div class="form-group full">
-
-                <label for="propertyPhotos">
-                    Property Photos
-                </label>
-
-                <input
-                    id="propertyPhotos"
-                    type="file"
-                    accept="image/jpeg,image/png,image/webp,image/gif"
-                    multiple
-                >
-
-                <div class="photo-note">
-                    Select up to 20 photos. The first photo will be
-                    treated as the main photo.
-                </div>
-
-                <div
-                    id="photoPreview"
-                    class="preview-grid">
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <div
-            id="postStatus"
-            class="status">
-        </div>
-
-
-        <div class="form-footer">
-
-            <button
-                type="button"
-                class="secondary-btn"
-                onclick="closeModalById('postPropertyModal')">
-                Cancel
-            </button>
-
-            <button
-                type="submit"
-                id="publishPropertyBtn"
-                class="primary-btn">
-                Publish Property
-            </button>
-
-        </div>
-
-    </form>
+>
 
 </div>
-```
+
+<div class="form-group">
+
+<label for="propertyCategory">
+    Property Type *
+</label>
+
+<select id="propertyCategory" required>
+
+<option value="">
+    Select type
+</option>
+
+<option value="house">
+    House
+</option>
+
+<option value="apartment">
+    Apartment
+</option>
+
+<option value="land">
+    Land
+</option>
+
+<option value="commercial">
+    Commercial
+</option>
+
+<option value="property">
+    Other Property
+</option>
+
+</select>
+
+</div>
+
+<div class="form-group">
+
+<label for="propertyListingType">
+    Listing Type *
+</label>
+
+<select id="propertyListingType" required>
+
+<option value="">
+    Select
+</option>
+
+<option value="sale">
+    For Sale
+</option>
+
+<option value="rent">
+    For Rent
+</option>
+
+</select>
+
+</div>
+
+<div class="form-group">
+
+<label for="propertyPrice">
+    Price *
+</label>
+
+<input
+id="propertyPrice"
+type="number"
+min="0"
+step="1"
+required
+placeholder="250000"
+
+>
+
+</div>
+
+<div class="form-group">
+
+<label for="propertyLocation">
+    Location *
+</label>
+
+<input
+id="propertyLocation"
+required
+maxlength="180"
+placeholder="e.g. Lekki, Lagos"
+
+>
+
+</div>
+
+<div class="form-group full">
+
+<label for="propertyDescription">
+    Description *
+</label>
+
+<textarea
+    id="propertyDescription"
+    required
+    maxlength="3000"
+    placeholder="Describe the property..."
+></textarea>
+
+</div>
+
+<div class="form-group full">
+
+<label for="propertyPhotos">
+    Property Photos
+</label>
+
+<input
+id="propertyPhotos"
+type="file"
+accept="image/jpeg,image/png,image/webp,image/gif"
+multiple
+
+>
+
+<div class="photo-note">
+    Select up to 20 photos. The first photo will be treated as the main photo.
+</div>
+
+<div
+    id="photoPreview"
+    class="preview-grid">
+</div>
+
+</div>
+
+</div>
+
+<div
+    id="postStatus"
+    class="status">
+</div>
+
+<div class="form-footer">
+
+<button
+ type="button"
+ class="secondary-btn"
+ onclick="closeModalById('postPropertyModal')">
+Cancel </button>
+
+<button
+ type="submit"
+ id="publishPropertyBtn"
+ class="primary-btn">
+Publish Property </button>
+
+</div>
+
+</form>
+
+</div>
 
 </div>
 
@@ -1175,18 +1223,16 @@ Commercial </button>
 
 <div class="modal-box detail-box">
 
-```
 <div class="modal-header">
 
-    <h2>
-        Property Details
-    </h2>
+<h2>
+    Property Details
+</h2>
 
-    <button
-        class="close-btn"
-        onclick="closeModalById('propertyDetailModal')">
-        ×
-    </button>
+<button
+ class="close-btn"
+ onclick="closeModalById('propertyDetailModal')">
+× </button>
 
 </div>
 
@@ -1204,7 +1250,6 @@ Commercial </button>
     id="detailInfo"
     class="detail-info">
 </div>
-```
 
 </div>
 
@@ -1217,28 +1262,28 @@ Commercial </button>
     id="imageViewer">
 
 <button
- class="viewer-close"
- onclick="closeModalById('imageViewer')">
+class="viewer-close"
+onclick="closeModalById('imageViewer')">
 × </button>
 
 <button
- class="viewer-arrow left"
- onclick="changeViewerImage(-1)">
+class="viewer-arrow left"
+onclick="changeViewerImage(-1)">
 ‹ </button>
 
 <img
- id="viewerImage"
- src=""
- alt="Property photo">
+id="viewerImage"
+src=""
+alt="Property photo">
 
 <button
- class="viewer-arrow right"
- onclick="changeViewerImage(1)">
+class="viewer-arrow right"
+onclick="changeViewerImage(1)">
 › </button>
 
 </div>
 
-<!-- AUTH ONLY -->
+<!-- AUTH -->
 
 <script src="auth.js"></script>
 
@@ -1246,10 +1291,6 @@ Commercial </button>
 
 "use strict";
 
-
-/* =========================================================
-   LOSOJA PROPERTY MARKETPLACE
-========================================================= */
 
 const SUPABASE_URL =
     "https://ycxshwgeebskdozmornh.supabase.co";
@@ -1273,6 +1314,18 @@ let detailImageIndex = 0;
 
 let viewerImages = [];
 let viewerIndex = 0;
+
+
+/*
+    Stores the current user's reaction for each property.
+
+    Example:
+
+    {
+        "property-id": "like"
+    }
+*/
+let propertyUserReactions = {};
 
 
 /* =========================================================
@@ -1300,8 +1353,6 @@ function formatPrice(value){
 }
 
 
-/* STANDARDIZE PROPERTY TYPE DISPLAY */
-
 function formatPropertyType(value){
 
     const type =
@@ -1312,13 +1363,9 @@ function formatPropertyType(value){
     const labels = {
 
         house:"House",
-
         apartment:"Apartment",
-
         land:"Land",
-
         commercial:"Commercial",
-
         property:"Property"
 
     };
@@ -1332,8 +1379,6 @@ function formatPropertyType(value){
         );
 }
 
-
-/* STANDARDIZE LISTING TYPE DISPLAY */
 
 function formatListingType(value){
 
@@ -1359,10 +1404,14 @@ function getPropertyImages(property){
     ){
 
         return property._images
+            .sort(
+                (a,b) =>
+                    Number(a.sort_order || 0) -
+                    Number(b.sort_order || 0)
+            )
             .map(item => item.image_url)
             .filter(Boolean);
     }
-
 
     if(
         property &&
@@ -1373,7 +1422,6 @@ function getPropertyImages(property){
             property.image_url
         ];
     }
-
 
     return [];
 }
@@ -1671,6 +1719,8 @@ async function loadProperties(){
 
         await loadPropertyImages();
 
+        await loadPropertyReactions();
+
         applyFilters();
 
     }catch(error){
@@ -1792,6 +1842,96 @@ async function loadPropertyImages(){
 
         console.warn(
             "Could not load property images:",
+            error
+        );
+    }
+}
+
+
+/* =========================================================
+   LOAD ONE-VOTE REACTIONS
+========================================================= */
+
+async function loadPropertyReactions(){
+
+    propertyUserReactions = {};
+
+    const auth =
+        await getAuthDetails();
+
+    if(
+        !auth.user ||
+        !auth.token
+    ){
+
+        return;
+    }
+
+    try{
+
+        const response =
+            await fetch(
+                SUPABASE_URL +
+                "/rest/v1/property_reactions" +
+                "?select=property_id,reaction" +
+                "&user_id=eq." +
+                encodeURIComponent(
+                    auth.user.id
+                ),
+                {
+                    headers:{
+                        "apikey":
+                            SUPABASE_KEY,
+
+                        "Authorization":
+                            "Bearer " +
+                            auth.token
+                    }
+                }
+            );
+
+        if(!response.ok){
+
+            const text =
+                await response.text();
+
+            console.warn(
+                "Could not load property reactions:",
+                text
+            );
+
+            return;
+        }
+
+        const reactions =
+            await response.json();
+
+        if(!Array.isArray(reactions)){
+            return;
+        }
+
+        reactions.forEach(item => {
+
+            if(
+                item.property_id &&
+                (
+                    item.reaction === "like" ||
+                    item.reaction === "dislike"
+                )
+            ){
+
+                propertyUserReactions[
+                    item.property_id
+                ] =
+                    item.reaction;
+            }
+
+        });
+
+    }catch(error){
+
+        console.warn(
+            "Reaction loading failed:",
             error
         );
     }
@@ -2052,11 +2192,18 @@ function createPropertyCard(property){
             .toLowerCase()
             .includes("rent");
 
+    const currentReaction =
+        propertyUserReactions[
+            property.id
+        ] || "";
+
+
     const imageHtml =
         firstImage
 
             ? `
                 <img
+                    class="main-card-image"
                     src="${escapeHtml(firstImage)}"
                     alt="${escapeHtml(
                         property.title ||
@@ -2074,6 +2221,7 @@ function createPropertyCard(property){
                     🏠
                 </div>
               `;
+
 
     const arrows =
         images.length > 1
@@ -2100,6 +2248,53 @@ function createPropertyCard(property){
 
             : "";
 
+
+    const thumbnails =
+        images.length > 1
+
+            ? `
+                <div class="card-photo-strip">
+
+                    ${images
+                        .slice(0,6)
+                        .map(
+                            (image,index) => `
+
+                                <button
+                                    class="card-photo-thumb ${
+                                        index === 0
+                                            ? "active"
+                                            : ""
+                                    }"
+                                    onclick="event.stopPropagation();setCardImage('${property.id}',${index})">
+
+                                    <img
+                                        src="${escapeHtml(image)}"
+                                        alt="Property photo ${index + 1}"
+                                    >
+
+                                </button>
+
+                            `
+                        )
+                        .join("")}
+
+                </div>
+
+                ${
+                    images.length > 6
+                        ? `
+                            <div class="card-photo-more">
+                                +${images.length - 6} more
+                            </div>
+                          `
+                        : ""
+                }
+              `
+
+            : "";
+
+
     const likeCount =
         Number(
             property.like_count || 0
@@ -2110,6 +2305,7 @@ function createPropertyCard(property){
             property.dislike_count || 0
         );
 
+
     return `
         <article class="property-card">
 
@@ -2119,7 +2315,10 @@ function createPropertyCard(property){
                 data-index="0">
 
                 ${imageHtml}
+
                 ${arrows}
+
+                ${thumbnails}
 
             </div>
 
@@ -2138,7 +2337,9 @@ function createPropertyCard(property){
 
 
                     <span class="badge">
+
                         ${escapeHtml(category)}
+
                     </span>
 
                 </div>
@@ -2197,17 +2398,29 @@ function createPropertyCard(property){
 
                     <button
                         id="like-${property.id}"
-                        class="react-btn"
+                        class="react-btn ${
+                            currentReaction === "like"
+                                ? "active"
+                                : ""
+                        }"
                         onclick="reactToProperty('${property.id}','like')">
+
                         👍 ${likeCount}
+
                     </button>
 
 
                     <button
                         id="dislike-${property.id}"
-                        class="react-btn"
+                        class="react-btn ${
+                            currentReaction === "dislike"
+                                ? "active"
+                                : ""
+                        }"
                         onclick="reactToProperty('${property.id}','dislike')">
+
                         👎 ${dislikeCount}
+
                     </button>
 
                 </div>
@@ -2220,8 +2433,79 @@ function createPropertyCard(property){
 
 
 /* =========================================================
-   CARD IMAGE ARROWS
+   CARD IMAGE SELECTION
 ========================================================= */
+
+function setCardImage(
+    propertyId,
+    index
+){
+
+    const property =
+        allProperties.find(
+            item =>
+                String(item.id) ===
+                String(propertyId)
+        );
+
+    if(!property){
+        return;
+    }
+
+    const images =
+        getPropertyImages(
+            property
+        );
+
+    if(
+        !images.length ||
+        index < 0 ||
+        index >= images.length
+    ){
+
+        return;
+    }
+
+    const gallery =
+        document.getElementById(
+            "gallery-" +
+            propertyId
+        );
+
+    if(!gallery){
+        return;
+    }
+
+    gallery.dataset.index =
+        index;
+
+    const image =
+        gallery.querySelector(
+            "img.main-card-image"
+        );
+
+    if(image){
+
+        image.src =
+            images[index];
+    }
+
+    gallery
+        .querySelectorAll(
+            ".card-photo-thumb"
+        )
+        .forEach(
+            (thumb,i) => {
+
+                thumb.classList.toggle(
+                    "active",
+                    i === index
+                );
+
+            }
+        );
+}
+
 
 function moveCardImage(
     propertyId,
@@ -2275,19 +2559,10 @@ function moveCardImage(
         index = 0;
     }
 
-    gallery.dataset.index =
-        index;
-
-    const image =
-        gallery.querySelector(
-            "img"
-        );
-
-    if(image){
-
-        image.src =
-            images[index];
-    }
+    setCardImage(
+        propertyId,
+        index
+    );
 }
 
 
@@ -2490,6 +2765,10 @@ function changeDetailImage(
 }
 
 
+/* =========================================================
+   DETAIL INFO
+========================================================= */
+
 function renderDetailInfo(){
 
     const property =
@@ -2529,6 +2808,12 @@ function renderDetailInfo(){
             .toLowerCase()
             .includes("rent");
 
+    const currentReaction =
+        propertyUserReactions[
+            property.id
+        ] || "";
+
+
     info.innerHTML = `
 
         <div class="badges">
@@ -2543,7 +2828,9 @@ function renderDetailInfo(){
 
 
             <span class="badge">
+
                 ${escapeHtml(category)}
+
             </span>
 
         </div>
@@ -2583,16 +2870,30 @@ function renderDetailInfo(){
         <div class="reactions">
 
             <button
-                class="react-btn"
+                id="detail-like-${property.id}"
+                class="react-btn ${
+                    currentReaction === "like"
+                        ? "active"
+                        : ""
+                }"
                 onclick="reactToProperty('${property.id}','like')">
-                👍 Like
+
+                👍 ${Number(property.like_count || 0)}
+
             </button>
 
 
             <button
-                class="react-btn"
+                id="detail-dislike-${property.id}"
+                class="react-btn ${
+                    currentReaction === "dislike"
+                        ? "active"
+                        : ""
+                }"
                 onclick="reactToProperty('${property.id}','dislike')">
-                👎 Dislike
+
+                👎 ${Number(property.dislike_count || 0)}
+
             </button>
 
         </div>
@@ -2616,6 +2917,607 @@ function renderDetailInfo(){
         </div>
 
     `;
+}
+
+
+/* =========================================================
+   UPDATE REACTION BUTTONS
+========================================================= */
+
+function updateReactionUI(property){
+
+    if(!property){
+        return;
+    }
+
+    const propertyId =
+        property.id;
+
+    const likeCount =
+        Number(
+            property.like_count || 0
+        );
+
+    const dislikeCount =
+        Number(
+            property.dislike_count || 0
+        );
+
+    const currentReaction =
+        propertyUserReactions[
+            propertyId
+        ] || "";
+
+
+    const likeButton =
+        document.getElementById(
+            "like-" +
+            propertyId
+        );
+
+    const dislikeButton =
+        document.getElementById(
+            "dislike-" +
+            propertyId
+        );
+
+    const detailLikeButton =
+        document.getElementById(
+            "detail-like-" +
+            propertyId
+        );
+
+    const detailDislikeButton =
+        document.getElementById(
+            "detail-dislike-" +
+            propertyId
+        );
+
+
+    if(likeButton){
+
+        likeButton.textContent =
+            "👍 " +
+            likeCount;
+
+        likeButton.classList.toggle(
+            "active",
+            currentReaction === "like"
+        );
+    }
+
+
+    if(dislikeButton){
+
+        dislikeButton.textContent =
+            "👎 " +
+            dislikeCount;
+
+        dislikeButton.classList.toggle(
+            "active",
+            currentReaction === "dislike"
+        );
+    }
+
+
+    if(detailLikeButton){
+
+        detailLikeButton.textContent =
+            "👍 " +
+            likeCount;
+
+        detailLikeButton.classList.toggle(
+            "active",
+            currentReaction === "like"
+        );
+    }
+
+
+    if(detailDislikeButton){
+
+        detailDislikeButton.textContent =
+            "👎 " +
+            dislikeCount;
+
+        detailDislikeButton.classList.toggle(
+            "active",
+            currentReaction === "dislike"
+        );
+    }
+}
+
+
+/* =========================================================
+   LIKE / DISLIKE — ONE VOTE PER USER
+========================================================= */
+
+async function reactToProperty(
+    propertyId,
+    reaction
+){
+
+    if(
+        reaction !== "like" &&
+        reaction !== "dislike"
+    ){
+
+        return;
+    }
+
+    const auth =
+        await getAuthDetails();
+
+    if(!auth.user){
+
+        alert(
+            "Please log in to like or dislike a property."
+        );
+
+        return;
+    }
+
+    if(!auth.token){
+
+        alert(
+            "Your login session has expired. Please log in again."
+        );
+
+        return;
+    }
+
+    const property =
+        allProperties.find(
+            item =>
+                String(item.id) ===
+                String(propertyId)
+        );
+
+    if(!property){
+        return;
+    }
+
+
+    const existingReaction =
+        propertyUserReactions[
+            propertyId
+        ] || "";
+
+
+    /*
+        Same reaction clicked again.
+
+        Do NOT create another row.
+        Do NOT increase the count.
+    */
+
+    if(
+        existingReaction ===
+        reaction
+    ){
+
+        return;
+    }
+
+
+    const likeButton =
+        document.getElementById(
+            "like-" +
+            propertyId
+        );
+
+    const dislikeButton =
+        document.getElementById(
+            "dislike-" +
+            propertyId
+        );
+
+    const detailLikeButton =
+        document.getElementById(
+            "detail-like-" +
+            propertyId
+        );
+
+    const detailDislikeButton =
+        document.getElementById(
+            "detail-dislike-" +
+            propertyId
+        );
+
+
+    [
+        likeButton,
+        dislikeButton,
+        detailLikeButton,
+        detailDislikeButton
+    ]
+        .filter(Boolean)
+        .forEach(
+            button => {
+                button.disabled = true;
+            }
+        );
+
+
+    try{
+
+        /*
+            First check the database directly.
+
+            This protects against duplicate votes if
+            the page was opened in another tab/device.
+        */
+
+        const existingResponse =
+            await fetch(
+                SUPABASE_URL +
+                "/rest/v1/property_reactions" +
+                "?select=id,reaction" +
+                "&property_id=eq." +
+                encodeURIComponent(propertyId) +
+                "&user_id=eq." +
+                encodeURIComponent(auth.user.id) +
+                "&limit=1",
+                {
+                    headers:{
+                        "apikey":
+                            SUPABASE_KEY,
+
+                        "Authorization":
+                            "Bearer " +
+                            auth.token
+                    }
+                }
+            );
+
+
+        if(!existingResponse.ok){
+
+            const errorText =
+                await existingResponse.text();
+
+            throw new Error(
+                "Could not check your previous reaction: " +
+                errorText
+            );
+        }
+
+
+        const existingRows =
+            await existingResponse.json();
+
+
+        const databaseReaction =
+            Array.isArray(existingRows) &&
+            existingRows.length
+                ? existingRows[0]
+                : null;
+
+
+        /*
+            If the same reaction already exists,
+            simply sync the local state and stop.
+        */
+
+        if(
+            databaseReaction &&
+            databaseReaction.reaction ===
+            reaction
+        ){
+
+            propertyUserReactions[
+                propertyId
+            ] =
+                reaction;
+
+            updateReactionUI(
+                property
+            );
+
+            return;
+        }
+
+
+        /*
+            CASE 1:
+            User previously voted the opposite way.
+
+            Update the existing row rather than inserting
+            another row.
+        */
+
+        if(databaseReaction){
+
+            const updateResponse =
+                await fetch(
+                    SUPABASE_URL +
+                    "/rest/v1/property_reactions?id=eq." +
+                    encodeURIComponent(
+                        databaseReaction.id
+                    ),
+                    {
+                        method:"PATCH",
+
+                        headers:{
+                            "apikey":
+                                SUPABASE_KEY,
+
+                            "Authorization":
+                                "Bearer " +
+                                auth.token,
+
+                            "Content-Type":
+                                "application/json",
+
+                            "Prefer":
+                                "return=minimal"
+                        },
+
+                        body:
+                            JSON.stringify({
+                                reaction:
+                                    reaction
+                            })
+                    }
+                );
+
+
+            if(!updateResponse.ok){
+
+                const errorText =
+                    await updateResponse.text();
+
+                throw new Error(
+                    "Reaction could not be updated: " +
+                    errorText
+                );
+            }
+
+
+            /*
+                Move the count from the old reaction
+                to the new reaction.
+            */
+
+            if(
+                databaseReaction.reaction ===
+                "like"
+            ){
+
+                property.like_count =
+                    Math.max(
+                        0,
+                        Number(
+                            property.like_count || 0
+                        ) - 1
+                    );
+
+                property.dislike_count =
+                    Number(
+                        property.dislike_count || 0
+                    ) + 1;
+
+            }else{
+
+                property.dislike_count =
+                    Math.max(
+                        0,
+                        Number(
+                            property.dislike_count || 0
+                        ) - 1
+                    );
+
+                property.like_count =
+                    Number(
+                        property.like_count || 0
+                    ) + 1;
+            }
+
+        }else{
+
+            /*
+                CASE 2:
+                User has never voted on this property.
+
+                Create exactly one reaction row.
+            */
+
+            const insertResponse =
+                await fetch(
+                    SUPABASE_URL +
+                    "/rest/v1/property_reactions",
+                    {
+                        method:"POST",
+
+                        headers:{
+                            "apikey":
+                                SUPABASE_KEY,
+
+                            "Authorization":
+                                "Bearer " +
+                                auth.token,
+
+                            "Content-Type":
+                                "application/json",
+
+                            "Prefer":
+                                "return=minimal"
+                        },
+
+                        body:
+                            JSON.stringify({
+                                property_id:
+                                    propertyId,
+
+                                user_id:
+                                    auth.user.id,
+
+                                reaction:
+                                    reaction
+                            })
+                    }
+                );
+
+
+            if(!insertResponse.ok){
+
+                const errorText =
+                    await insertResponse.text();
+
+                /*
+                    If another request already created
+                    the unique reaction row, don't inflate
+                    the count.
+                */
+
+                if(
+                    errorText.includes(
+                        "duplicate key"
+                    ) ||
+                    errorText.includes(
+                        "23505"
+                    )
+                ){
+
+                    propertyUserReactions[
+                        propertyId
+                    ] =
+                        reaction;
+
+                    updateReactionUI(
+                        property
+                    );
+
+                    return;
+                }
+
+
+                throw new Error(
+                    "Reaction could not be saved: " +
+                    errorText
+                );
+            }
+
+
+            if(reaction === "like"){
+
+                property.like_count =
+                    Number(
+                        property.like_count || 0
+                    ) + 1;
+
+            }else{
+
+                property.dislike_count =
+                    Number(
+                        property.dislike_count || 0
+                    ) + 1;
+            }
+
+        }
+
+
+        /*
+            Store the user's new reaction locally.
+        */
+
+        propertyUserReactions[
+            propertyId
+        ] =
+            reaction;
+
+
+        /*
+            Keep the existing like_count and
+            dislike_count fields synchronized.
+        */
+
+        const countResponse =
+            await fetch(
+                SUPABASE_URL +
+                "/rest/v1/property_listings?id=eq." +
+                encodeURIComponent(
+                    propertyId
+                ),
+                {
+                    method:"PATCH",
+
+                    headers:{
+                        "apikey":
+                            SUPABASE_KEY,
+
+                        "Authorization":
+                            "Bearer " +
+                            auth.token,
+
+                        "Content-Type":
+                            "application/json",
+
+                        "Prefer":
+                            "return=minimal"
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            like_count:
+                                Number(
+                                    property.like_count || 0
+                                ),
+
+                            dislike_count:
+                                Number(
+                                    property.dislike_count || 0
+                                )
+
+                        })
+                }
+            );
+
+
+        if(!countResponse.ok){
+
+            const errorText =
+                await countResponse.text();
+
+            console.warn(
+                "Reaction row saved but counts could not be synchronized:",
+                errorText
+            );
+        }
+
+
+        updateReactionUI(
+            property
+        );
+
+
+    }catch(error){
+
+        console.error(
+            "Reaction error:",
+            error
+        );
+
+        alert(
+            error.message ||
+            "Your reaction could not be saved. Please try again."
+        );
+
+    }finally{
+
+        [
+            likeButton,
+            dislikeButton,
+            detailLikeButton,
+            detailDislikeButton
+        ]
+            .filter(Boolean)
+            .forEach(
+                button => {
+                    button.disabled = false;
+                }
+            );
+    }
 }
 
 
@@ -2734,155 +3636,6 @@ async function contactProperty(
         "LosOja property chat will handle this contact. " +
         "The owner's private email will not be displayed."
     );
-}
-
-
-/* =========================================================
-   LIKE / DISLIKE
-========================================================= */
-
-async function reactToProperty(
-    propertyId,
-    reaction
-){
-
-    const auth =
-        await getAuthDetails();
-
-    if(!auth.user){
-
-        alert(
-            "Please log in to like or dislike a property."
-        );
-
-        return;
-    }
-
-    const property =
-        allProperties.find(
-            item =>
-                String(item.id) ===
-                String(propertyId)
-        );
-
-    if(!property){
-        return;
-    }
-
-    if(
-        reaction ===
-        "like"
-    ){
-
-        property.like_count =
-            Number(
-                property.like_count ||
-                0
-            ) + 1;
-
-    }else{
-
-        property.dislike_count =
-            Number(
-                property.dislike_count ||
-                0
-            ) + 1;
-    }
-
-    const likeButton =
-        document.getElementById(
-            "like-" +
-            propertyId
-        );
-
-    const dislikeButton =
-        document.getElementById(
-            "dislike-" +
-            propertyId
-        );
-
-    if(likeButton){
-
-        likeButton.textContent =
-            "👍 " +
-            Number(
-                property.like_count ||
-                0
-            );
-    }
-
-    if(dislikeButton){
-
-        dislikeButton.textContent =
-            "👎 " +
-            Number(
-                property.dislike_count ||
-                0
-            );
-    }
-
-    if(!auth.token){
-        return;
-    }
-
-    const field =
-        reaction === "like"
-            ? "like_count"
-            : "dislike_count";
-
-    try{
-
-        const response =
-            await fetch(
-                SUPABASE_URL +
-                "/rest/v1/property_listings?id=eq." +
-                encodeURIComponent(
-                    propertyId
-                ),
-                {
-                    method:"PATCH",
-
-                    headers:{
-                        "apikey":
-                            SUPABASE_KEY,
-
-                        "Authorization":
-                            "Bearer " +
-                            auth.token,
-
-                        "Content-Type":
-                            "application/json"
-                    },
-
-                    body:
-                        JSON.stringify({
-                            [field]:
-                                Number(
-                                    property[field] ||
-                                    0
-                                )
-                        })
-                }
-            );
-
-        if(!response.ok){
-
-            const errorText =
-                await response.text();
-
-            console.warn(
-                "Reaction could not be saved:",
-                errorText
-            );
-        }
-
-    }catch(error){
-
-        console.warn(
-            "Reaction could not be saved:",
-            error
-        );
-    }
 }
 
 
@@ -3147,6 +3900,7 @@ async function publishProperty(event){
             );
         }
 
+
         showStatus(
             "Creating your property listing...",
             "success"
@@ -3229,8 +3983,6 @@ async function publishProperty(event){
                     insertText;
 
             }catch(_){
-
-                /* Keep original error text. */
 
             }
 
@@ -3395,8 +4147,6 @@ async function publishProperty(event){
                     encodedPath;
 
 
-                /* PHOTO RECORD REQUIRES USER ID */
-
                 uploadedImages.push({
 
                     property_id:
@@ -3417,7 +4167,7 @@ async function publishProperty(event){
         }
 
 
-        /* SAVE PHOTO RECORDS — ONCE */
+        /* SAVE PHOTO RECORDS */
 
         if(
             uploadedImages.length
