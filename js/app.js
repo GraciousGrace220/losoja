@@ -4168,6 +4168,10 @@
 
                         try {
 
+                            /* -----------------------------------------
+                               BUSINESS OWNER CHECK
+                            ----------------------------------------- */
+
                             if (
                                 !business.user_id
                             ) {
@@ -4181,6 +4185,10 @@
 
                             }
 
+
+                            /* -----------------------------------------
+                               LOGIN CHECK
+                            ----------------------------------------- */
 
                             if (
                                 typeof window.getCurrentUser !==
@@ -4200,6 +4208,10 @@
                             const currentUser =
                                 await window.getCurrentUser();
 
+
+                            /* -----------------------------------------
+                               NOT LOGGED IN
+                            ----------------------------------------- */
 
                             if (!currentUser) {
 
@@ -4222,6 +4234,10 @@
                             }
 
 
+                            /* -----------------------------------------
+                               PREVENT SELF CHAT
+                            ----------------------------------------- */
+
                             if (
                                 String(
                                     currentUser.id
@@ -4241,11 +4257,99 @@
                             }
 
 
-                            window.location.href =
-                                "chat.html?user=" +
-                                encodeURIComponent(
-                                    business.user_id
+                            /* -----------------------------------------
+                               SAVE BUSINESS CHAT CONTEXT
+                            ----------------------------------------- */
+
+                            try {
+
+                                sessionStorage.setItem(
+                                    "losoja_chat_business",
+                                    JSON.stringify({
+
+                                        business_id:
+                                            business.id || "",
+
+                                        business_name:
+                                            business.name || "",
+
+                                        business_owner_id:
+                                            business.user_id || "",
+
+                                        business_location:
+                                            business.location || "",
+
+                                        business_category:
+                                            business.category || ""
+
+                                    })
                                 );
+
+                            } catch (storageError) {
+
+                                console.warn(
+                                    "LosOja: Could not save business chat context.",
+                                    storageError
+                                );
+
+                            }
+
+
+                            /* -----------------------------------------
+                               BUILD CHAT URL
+                            ----------------------------------------- */
+
+                            const ownerId =
+                                encodeURIComponent(
+                                    String(
+                                        business.user_id
+                                    )
+                                );
+
+
+                            const businessId =
+                                encodeURIComponent(
+                                    String(
+                                        business.id || ""
+                                    )
+                                );
+
+
+                            let chatUrl =
+                                "chat.html?user=" +
+                                ownerId;
+
+
+                            if (businessId) {
+
+                                chatUrl +=
+                                    "&business=" +
+                                    businessId;
+
+                            }
+
+
+                            console.log(
+                                "LosOja: Opening business chat:",
+                                {
+                                    businessId:
+                                        business.id,
+
+                                    businessName:
+                                        business.name,
+
+                                    ownerId:
+                                        business.user_id,
+
+                                    chatUrl:
+                                        chatUrl
+                                }
+                            );
+
+
+                            window.location.href =
+                                chatUrl;
+
 
                         } catch (error) {
 
