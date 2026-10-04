@@ -627,6 +627,16 @@ button {
 
 
 /* =========================================================
+   LIVE PROVIDER MAP MARKERS
+========================================================= */
+
+.leaflet-div-icon {
+    background: transparent;
+    border: 0;
+}
+
+
+/* =========================================================
    MOBILE
 ========================================================= */
 
@@ -759,7 +769,7 @@ button {
         >
 
             <div class="gps-status-title">
-                📍 GPS location received
+                📍 Location status
             </div>
 
             <div
@@ -823,6 +833,7 @@ button {
 
     <div class="map-note">
         Tap the map to set your pickup location.
+        Available verified LosOja vehicles appear on the map.
         Select a destination to calculate the road route.
     </div>
 
@@ -1205,6 +1216,9 @@ let routeLayer =
 
 let driverMarkers =
     [];
+
+let driverMarkerById =
+    {};
 
 
 /* =========================================================
@@ -1757,7 +1771,9 @@ function drawRoute(
             bounds,
             {
                 padding:
-                    [40, 40]
+                    [40, 40],
+                maxZoom:
+                    14
             }
         );
 
@@ -2161,7 +2177,7 @@ async function setPickupLocationFromCoordinates(
             latitude,
             longitude
         ],
-        15
+        13
     );
 
 
@@ -2249,493 +2265,182 @@ async function setPickupLocationFromCoordinates(
 
 /* =========================================================
    CURRENT LOCATION
-   IMPROVED GPS RELIABILITY
+   GPS + MANUAL MAP FALLBACK
 ========================================================= */
 
 function useCurrentLocation() {
 
-    if (
-        !navigator.geolocation
-    ) {
+    if (!navigator.geolocation) {
+
+        gpsStatus.classList.add("active");
+        gpsCoordinates.textContent =
+            "GPS is not available. Tap the map to choose your pickup.";
 
         alert(
-            "Location services are not supported by this browser."
+            "GPS is not available on this device. Tap the map to set your pickup location."
         );
 
         return;
 
     }
 
-
     pickupInput.value =
-        "Getting your actual location...";
+        "Finding your location...";
 
-
-    gpsStatus.classList.add(
-        "active"
-    );
-
-
+    gpsStatus.classList.add("active");
     gpsCoordinates.textContent =
-        "Searching for an accurate GPS location...";
+        "Searching for the best available GPS reading...";
 
+    let bestPosition = null;
+    let watchId = null;
+    let finished = false;
 
-    let bestPosition =
-        null;
+    const MAX_ACCEPTABLE_ACCURACY_METERS = 500;
+    const MAX_WAIT_TIME = 20000;
 
-
-    let watchId =
-        null;
-
-
-    let finished =
-        false;
-
-
-    const MAX_ACCEPTABLE_ACCURACY_METERS =
-        500;
-
-
-    const MAX_WAIT_TIME =
-        30000;
-
-
-    function finishWithPosition(
-        position
-    ) {
-
-        if (
-            finished
-        ) {
-
-            return;
-
+    function stopWatching() {
+        if (watchId !== null) {
+            navigator.geolocation.clearWatch(watchId);
+            watchId = null;
         }
-
-
-        finished =
-            true;
-
-
-        if (
-            watchId !== null
-        ) {
-
-            navigator.geolocation.clearWatch(
-                watchId
-            );
-
-        }
-
-
-        const latitude =
-            Number(
-                position.coords.latitude
-            );
-
-
-        const longitude =
-            Number(
-                position.coords.longitude
-            );
-
-
-        const accuracy =
-            Number(
-                position.coords.accuracy
-            );
-
-
-        if (
-            !Number.isFinite(
-                latitude
-            ) ||
-            !Number.isFinite(
-                longitude
-            ) ||
-            !Number.isFinite(
-                accuracy
-            )
-        ) {
-
-            pickupInput.value =
-                "";
-
-
-            gpsCoordinates.textContent =
-                "Invalid GPS coordinates received. Please try again.";
-
-
-            return;
-
-        }
-
-
-        gpsCoordinates.textContent =
-            "Latitude: " +
-            latitude.toFixed(6) +
-
-            " | Longitude: " +
-            longitude.toFixed(6) +
-
-            " | Accuracy: approximately " +
-            Math.round(
-                accuracy
-            ) +
-            " m";
-
-
-        console.log(
-            "LOSOJA GPS LOCATION ACCEPTED:",
-            {
-                latitude:
-                    latitude,
-
-                longitude:
-                    longitude,
-
-                accuracy:
-                    accuracy
-            }
-        );
-
-
-        setPickupLocationFromCoordinates(
-            latitude,
-            longitude
-        );
-
     }
 
+    function finishWithPosition(position) {
+        if (finished) return;
 
-    function handlePosition(
-        position
-    ) {
+        finished = true;
+        stopWatching();
 
-        if (
-            finished
-        ) {
-
-            return;
-
-        }
-
-
-        const accuracy =
-            Number(
-                position.coords.accuracy
-            );
-
+        const latitude = Number(position.coords.latitude);
+        const longitude = Number(position.coords.longitude);
+        const accuracy = Number(position.coords.accuracy);
 
         if (
-            !Number.isFinite(
-                accuracy
-            )
+            !Number.isFinite(latitude) ||
+            !Number.isFinite(longitude) ||
+            !Number.isFinite(accuracy)
         ) {
-
+            gpsCoordinates.textContent =
+                "Invalid GPS reading. Tap the map to choose your pickup.";
+            pickupInput.value = "";
             return;
-
         }
 
+        gpsCoordinates.textContent =
+            "Latitude: " + latitude.toFixed(6) +
+            " | Longitude: " + longitude.toFixed(6) +
+            " | Accuracy: approximately " + Math.round(accuracy) + " m";
 
-        console.log(
-            "LosOja GPS reading:",
-            {
-                latitude:
-                    position.coords.latitude,
+        console.log("LOSOJA GPS LOCATION ACCEPTED:", {
+            latitude,
+            longitude,
+            accuracy
+        });
 
-                longitude:
-                    position.coords.longitude,
+        setPickupLocationFromCoordinates(latitude, longitude);
+    }
 
-                accuracy:
-                    accuracy
-            }
-        );
+    function handlePosition(position) {
+        if (finished) return;
 
-
-        /*
-           Keep the most accurate reading received.
-        */
+        const accuracy = Number(position.coords.accuracy);
+        if (!Number.isFinite(accuracy)) return;
 
         if (
             !bestPosition ||
-            accuracy <
-            Number(
-                bestPosition.coords.accuracy
-            )
+            accuracy < Number(bestPosition.coords.accuracy)
         ) {
-
-            bestPosition =
-                position;
-
+            bestPosition = position;
         }
-
 
         gpsCoordinates.textContent =
             "Searching... Best accuracy: approximately " +
-            Math.round(
-                bestPosition.coords.accuracy
-            ) +
+            Math.round(Number(bestPosition.coords.accuracy)) +
             " m";
 
-
-        /*
-           Accept a reasonably accurate reading.
-        */
-
-        if (
-            accuracy <=
-            MAX_ACCEPTABLE_ACCURACY_METERS
-        ) {
-
-            finishWithPosition(
-                position
-            );
-
+        if (accuracy <= MAX_ACCEPTABLE_ACCURACY_METERS) {
+            finishWithPosition(position);
         }
-
     }
 
+    function handleError(error) {
+        console.error("Geolocation error:", error);
 
-    function handleError(
-        error
-    ) {
+        if (finished) return;
 
-        console.error(
-            "Geolocation error:",
-            error
-        );
-
-
-        if (
-            finished
-        ) {
-
-            return;
-
-        }
-
-
-        if (
-            bestPosition &&
-            Number.isFinite(
-                bestPosition.coords.accuracy
-            )
-        ) {
-
+        if (error.code === error.PERMISSION_DENIED) {
+            finished = true;
+            stopWatching();
             gpsCoordinates.textContent =
-                "Best available accuracy: approximately " +
-                Math.round(
-                    bestPosition.coords.accuracy
-                ) +
-                " m";
-
-        }
-
-
-        if (
-            error.code ===
-            error.PERMISSION_DENIED
-        ) {
-
-            finished =
-                true;
-
-
-            if (
-                watchId !== null
-            ) {
-
-                navigator.geolocation.clearWatch(
-                    watchId
-                );
-
-            }
-
-
-            gpsCoordinates.textContent =
-                "Location permission was denied.";
-
-
-            pickupInput.value =
-                "";
-
-
+                "Location permission was denied. Tap the map to choose your pickup.";
+            pickupInput.value = "";
             alert(
-                "Location permission was denied. Please allow location access for LosOja in your browser."
+                "Location permission was denied. You can still tap the map to set your pickup location."
             );
-
         }
-
     }
-
-
-    /*
-       First attempt:
-       fresh high-accuracy reading.
-    */
 
     navigator.geolocation.getCurrentPosition(
-
         handlePosition,
-
         handleError,
-
         {
-            enableHighAccuracy:
-                true,
-
-            maximumAge:
-                0,
-
-            timeout:
-                15000
+            enableHighAccuracy: true,
+            maximumAge: 0,
+            timeout: 12000
         }
-
     );
 
+    watchId = navigator.geolocation.watchPosition(
+        handlePosition,
+        handleError,
+        {
+            enableHighAccuracy: true,
+            maximumAge: 0,
+            timeout: 12000
+        }
+    );
 
-    /*
-       Continue watching for a better reading.
-       This helps when the first result comes
-       from Wi-Fi or IP-based positioning.
-    */
+    setTimeout(function () {
 
-    watchId =
-        navigator.geolocation.watchPosition(
+        if (finished) return;
 
-            handlePosition,
+        if (bestPosition) {
+            const accuracy = Number(bestPosition.coords.accuracy);
 
-            handleError,
-
-            {
-                enableHighAccuracy:
-                    true,
-
-                maximumAge:
-                    0,
-
-                timeout:
-                    15000
-            }
-
-        );
-
-
-    /*
-       Give the browser up to 30 seconds to
-       improve the location.
-    */
-
-    setTimeout(
-        function () {
-
-            if (
-                finished
-            ) {
-
+            if (accuracy <= MAX_ACCEPTABLE_ACCURACY_METERS) {
+                finishWithPosition(bestPosition);
                 return;
-
             }
 
-
-            if (
-                bestPosition
-            ) {
-
-                const accuracy =
-                    Number(
-                        bestPosition.coords.accuracy
-                    );
-
-
-                /*
-                   Use the best reading if it
-                   meets our reliability limit.
-                */
-
-                if (
-                    accuracy <=
-                    MAX_ACCEPTABLE_ACCURACY_METERS
-                ) {
-
-                    finishWithPosition(
-                        bestPosition
-                    );
-
-                    return;
-
-                }
-
-
-                finished =
-                    true;
-
-
-                if (
-                    watchId !== null
-                ) {
-
-                    navigator.geolocation.clearWatch(
-                        watchId
-                    );
-
-                }
-
-
-                gpsCoordinates.textContent =
-                    "Location found, but accuracy is too low (" +
-                    Math.round(
-                        accuracy
-                    ) +
-                    " m). Please enable device location/GPS and try again.";
-
-
-                pickupInput.value =
-                    "";
-
-
-                alert(
-                    "LosOja found your location, but the accuracy is too low for reliable nearby-driver matching. Please enable your device's location/GPS and try again."
-                );
-
-
-                return;
-
-            }
-
-
-            finished =
-                true;
-
-
-            if (
-                watchId !== null
-            ) {
-
-                navigator.geolocation.clearWatch(
-                    watchId
-                );
-
-            }
-
+            finished = true;
+            stopWatching();
 
             gpsCoordinates.textContent =
-                "Could not obtain an accurate GPS location.";
+                "GPS accuracy is too low (" +
+                Math.round(accuracy) +
+                " m). Tap the map to set your pickup manually.";
 
-
-            pickupInput.value =
-                "";
-
+            pickupInput.value = "";
 
             alert(
-                "LosOja could not get an accurate GPS location. Please check your browser/device location settings and try again."
+                "Your device returned an inaccurate location. Tap the map to choose your pickup instead."
             );
 
-        },
-        MAX_WAIT_TIME
-    );
+            return;
+        }
 
+        finished = true;
+        stopWatching();
+
+        gpsCoordinates.textContent =
+            "No usable GPS reading. Tap the map to choose your pickup.";
+        pickupInput.value = "";
+
+        alert(
+            "LosOja could not get a usable GPS location. Tap the map to set your pickup."
+        );
+
+    }, MAX_WAIT_TIME);
 }
 
 
@@ -3159,187 +2864,84 @@ function clearDestinationResults() {
 
 
 /* =========================================================
-   NEARBY DRIVERS
+   NEARBY DRIVERS + LIVE MAP PROVIDERS
 ========================================================= */
 
 async function loadNearbyDrivers() {
 
-    if (
-        !pickupCoordinates
-    ) {
-
-        driverCount.textContent =
-            "Pickup location required";
-
-
-        driversList.innerHTML =
-            `
+    if (!pickupCoordinates) {
+        driverCount.textContent = "Pickup location required";
+        driversList.innerHTML = `
             <div class="empty-state">
                 Set your pickup location to find nearby drivers.
             </div>
-            `;
-
-
+        `;
         clearDriverMarkers();
-
-
         return;
-
     }
 
-
     driverCount.textContent =
-        "Finding nearby " +
-        serviceTypeLabel(
-            selectedServiceType
-        ) +
+        "Finding available LosOja " +
+        serviceTypeLabel(selectedServiceType) +
         " providers...";
-
 
     try {
 
+        /*
+           Fetch all verified available providers in the area.
+           The selected ride type controls the driver list, while
+           the map can show all available LosOja vehicles nearby.
+        */
         const endpoint =
             "/rest/v1/mobility_drivers" +
-
             "?verification_status=eq.verified" +
-
             "&is_available=eq.true" +
-
-            "&service_type=eq." +
-            encodeURIComponent(
-                selectedServiceType
-            ) +
-
             "&select=id,user_id,service_type,full_name,vehicle_name,vehicle_plate,location,latitude,longitude";
 
+        const drivers = await supabaseRequest(endpoint);
 
-        console.log(
-            "LosOja mobility provider search:",
-            selectedServiceType
-        );
+        const nearbyDrivers = (drivers || [])
+            .filter(function (driver) {
 
+                const latitude = Number(driver.latitude);
+                const longitude = Number(driver.longitude);
 
-        const drivers =
-            await supabaseRequest(
-                endpoint
-            );
+                if (
+                    !Number.isFinite(latitude) ||
+                    !Number.isFinite(longitude)
+                ) {
+                    return false;
+                }
 
-
-        const nearbyDrivers =
-            (drivers || [])
-
-                .filter(
-                    function (
-                        driver
-                    ) {
-
-                        if (
-                            driver.latitude ===
-                            null ||
-
-                            driver.longitude ===
-                            null
-                        ) {
-
-                            return false;
-
-                        }
-
-
-                        const latitude =
-                            Number(
-                                driver.latitude
-                            );
-
-
-                        const longitude =
-                            Number(
-                                driver.longitude
-                            );
-
-
-                        if (
-                            !Number.isFinite(
-                                latitude
-                            ) ||
-                            !Number.isFinite(
-                                longitude
-                            )
-                        ) {
-
-                            return false;
-
-                        }
-
-
-                        const distance =
-                            calculateDistanceKm(
-
-                                pickupCoordinates.latitude,
-
-                                pickupCoordinates.longitude,
-
-                                latitude,
-
-                                longitude
-
-                            );
-
-
-                        driver.distanceKm =
-                            distance;
-
-
-                        return (
-                            distance <=
-                            NEARBY_RADIUS_KM
-                        );
-
-                    }
-                )
-
-                .sort(
-                    function (
-                        a,
-                        b
-                    ) {
-
-                        return (
-                            a.distanceKm -
-                            b.distanceKm
-                        );
-
-                    }
+                const distance = calculateDistanceKm(
+                    pickupCoordinates.latitude,
+                    pickupCoordinates.longitude,
+                    latitude,
+                    longitude
                 );
 
+                driver.distanceKm = distance;
+                return distance <= NEARBY_RADIUS_KM;
+            })
+            .sort(function (a, b) {
+                return a.distanceKm - b.distanceKm;
+            });
 
-        renderDrivers(
-            nearbyDrivers
-        );
-
+        renderDrivers(nearbyDrivers);
 
     } catch (error) {
 
-        console.error(
-            "Could not load nearby drivers:",
-            error
-        );
+        console.error("Could not load nearby drivers:", error);
 
+        driverCount.textContent = "Could not load drivers";
 
-        driverCount.textContent =
-            "Could not load drivers";
-
-
-        driversList.innerHTML =
-            `
+        driversList.innerHTML = `
             <div class="empty-state">
                 We could not load nearby providers right now.
                 Please try again.
             </div>
-            `;
-
+        `;
     }
-
 }
 
 
@@ -3349,31 +2951,55 @@ async function loadNearbyDrivers() {
 
 function clearDriverMarkers() {
 
-    driverMarkers.forEach(
-        function (
-            marker
-        ) {
+    Object.keys(driverMarkerById).forEach(function (id) {
+        const marker = driverMarkerById[id];
 
-            if (
-                marker &&
-                mobilityMap.hasLayer(
-                    marker
-                )
-            ) {
-
-                mobilityMap.removeLayer(
-                    marker
-                );
-
-            }
-
+        if (marker && mobilityMap.hasLayer(marker)) {
+            mobilityMap.removeLayer(marker);
         }
-    );
+    });
+
+    driverMarkerById = {};
+    driverMarkers = [];
+}
 
 
-    driverMarkers =
-        [];
+/* =========================================================
+   SMOOTH DRIVER MOVEMENT
+========================================================= */
 
+function moveDriverMarker(marker, targetLat, targetLng) {
+
+    if (!marker) return;
+
+    const start = marker.getLatLng();
+    const startLat = start.lat;
+    const startLng = start.lng;
+    const duration = 700;
+    const started = performance.now();
+
+    function animate(now) {
+        const progress = Math.min(
+            1,
+            (now - started) / duration
+        );
+
+        const eased =
+            progress < 0.5
+                ? 2 * progress * progress
+                : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+
+        marker.setLatLng([
+            startLat + (targetLat - startLat) * eased,
+            startLng + (targetLng - startLng) * eased
+        ]);
+
+        if (progress < 1) {
+            requestAnimationFrame(animate);
+        }
+    }
+
+    requestAnimationFrame(animate);
 }
 
 
@@ -3381,135 +3007,102 @@ function clearDriverMarkers() {
    RENDER DRIVERS
 ========================================================= */
 
-function renderDrivers(
-    drivers
-) {
+function renderDrivers(drivers) {
 
-    clearDriverMarkers();
-
+    const selectedDrivers = drivers
+        .filter(function (driver) {
+            return driver.service_type === selectedServiceType;
+        })
+        .sort(function (a, b) {
+            return a.distanceKm - b.distanceKm;
+        });
 
     driverCount.textContent =
-        drivers.length +
-
+        selectedDrivers.length +
         " " +
-
-        serviceTypeLabel(
-            selectedServiceType
-        ) +
-
+        serviceTypeLabel(selectedServiceType) +
         " provider" +
-
-        (
-            drivers.length ===
-            1
-                ? ""
-                : "s"
-        ) +
-
+        (selectedDrivers.length === 1 ? "" : "s") +
         " within " +
-
         NEARBY_RADIUS_KM +
-
         " km";
 
-
-    if (
-        !drivers.length
-    ) {
-
-        driversList.innerHTML =
-            `
+    if (!selectedDrivers.length) {
+        driversList.innerHTML = `
             <div class="empty-state">
-                No verified available
-                ${escapeHtml(
-                    serviceTypeLabel(
-                        selectedServiceType
-                    )
-                )}
-                providers were found within
-                ${NEARBY_RADIUS_KM} km of your pickup location.
+                No verified available ${escapeHtml(
+                    serviceTypeLabel(selectedServiceType)
+                )} providers were found within ${NEARBY_RADIUS_KM} km of your pickup location.
+                <br><br>
+                Other available LosOja vehicles are still shown on the map.
             </div>
-            `;
+        `;
+    } else {
+        driversList.innerHTML = "";
 
-
-        return;
-
+        selectedDrivers.forEach(function (driver) {
+            driversList.appendChild(renderDriverCard(driver));
+        });
     }
 
+    /*
+       Keep every nearby verified vehicle visible on the map.
+       If a provider's coordinates change in Supabase, the marker
+       smoothly moves during the next refresh.
+    */
+    const activeIds = {};
 
-    driversList.innerHTML =
-        "";
+    drivers.forEach(function (driver) {
 
+        const id = String(driver.id);
+        const latitude = Number(driver.latitude);
+        const longitude = Number(driver.longitude);
+        activeIds[id] = true;
 
-    drivers.forEach(
-        function (
-            driver
-        ) {
+        let marker = driverMarkerById[id];
 
-            const card =
-                renderDriverCard(
-                    driver
-                );
+        if (!marker) {
+            marker = L.marker(
+                [latitude, longitude],
+                {
+                    icon: createDriverIcon(driver.service_type)
+                }
+            ).addTo(mobilityMap);
 
-
-            driversList.appendChild(
-                card
-            );
-
-
-            const marker =
-                L.marker(
-
-                    [
-                        Number(
-                            driver.latitude
-                        ),
-
-                        Number(
-                            driver.longitude
-                        )
-                    ],
-
-                    {
-                        icon:
-                            createDriverIcon(
-                                driver.service_type
-                            )
-                    }
-
-                )
-                .addTo(
-                    mobilityMap
-                );
-
-
-            marker.bindPopup(
-
-                `<strong>${escapeHtml(
-                    driver.full_name ||
-                    "LosOja Provider"
-                )}</strong><br>` +
-
-                `${escapeHtml(
-                    serviceTypeLabel(
-                        driver.service_type
-                    )
-                )}<br>` +
-
-                `${formatDistance(
-                    driver.distanceKm
-                )}`
-
-            );
-
-
-            driverMarkers.push(
-                marker
-            );
-
+            driverMarkerById[id] = marker;
+            driverMarkers.push(marker);
+        } else {
+            moveDriverMarker(marker, latitude, longitude);
+            marker.setIcon(createDriverIcon(driver.service_type));
         }
-    );
 
+        marker.bindPopup(
+            `<strong>${escapeHtml(
+                driver.full_name || "LosOja Provider"
+            )}</strong><br>` +
+            `${escapeHtml(
+                serviceTypeLabel(driver.service_type)
+            )}<br>` +
+            `Vehicle: ${escapeHtml(
+                driver.vehicle_name || "Not provided"
+            )}<br>` +
+            `${formatDistance(driver.distanceKm)}`
+        );
+    });
+
+    Object.keys(driverMarkerById).forEach(function (id) {
+        if (!activeIds[id]) {
+            const marker = driverMarkerById[id];
+            if (marker && mobilityMap.hasLayer(marker)) {
+                mobilityMap.removeLayer(marker);
+            }
+            delete driverMarkerById[id];
+        }
+    });
+
+    driverMarkers = Object.keys(driverMarkerById).map(function (id) {
+        return driverMarkerById[id];
+    });
 }
 
 
