@@ -3201,6 +3201,7 @@ async function publishProperty(event) {
         }
 
 
+       ```js
         /* =====================================================
            UPLOAD PHOTOS
         ===================================================== */
@@ -3285,9 +3286,9 @@ async function publishProperty(event) {
                         "/" +
                         encodedPath,
                         {
-                            method:"POST",
+                            method: "POST",
 
-                            headers:{
+                            headers: {
                                 "Authorization":
                                     "Bearer " +
                                     auth.token,
@@ -3303,15 +3304,12 @@ async function publishProperty(event) {
                                     "false"
                             },
 
-                            body:
-                                file
+                            body: file
                         }
                     );
 
 
-                if (
-                    !uploadResponse.ok
-                ) {
+                if (!uploadResponse.ok) {
 
                     const errorText =
                         await uploadResponse.text();
@@ -3335,10 +3333,18 @@ async function publishProperty(event) {
                     encodedPath;
 
 
+                /*
+                 * IMPORTANT:
+                 * property_images requires user_id.
+                 */
+
                 uploadedImages.push({
 
                     property_id:
                         property.id,
+
+                    user_id:
+                        auth.user.id,
 
                     image_url:
                         publicUrl,
@@ -3348,6 +3354,83 @@ async function publishProperty(event) {
 
                 });
             }
+        }
+
+
+        /* =====================================================
+           SAVE PHOTO RECORDS
+        ===================================================== */
+
+        if (
+            uploadedImages.length
+        ) {
+
+            showStatus(
+                "Saving property photos...",
+                "success"
+            );
+
+
+            console.log(
+                "Saving property image records:",
+                uploadedImages
+            );
+
+
+            const imageResponse =
+                await fetch(
+                    SUPABASE_URL +
+                    "/rest/v1/property_images",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "apikey":
+                                SUPABASE_KEY,
+
+                            "Authorization":
+                                "Bearer " +
+                                auth.token,
+
+                            "Content-Type":
+                                "application/json",
+
+                            "Prefer":
+                                "return=minimal"
+                        },
+
+                        body:
+                            JSON.stringify(
+                                uploadedImages
+                            )
+                    }
+                );
+
+
+            if (
+                !imageResponse.ok
+            ) {
+
+                const errorText =
+                    await imageResponse.text();
+
+
+                console.error(
+                    "Image database insert failed:",
+                    errorText
+                );
+
+
+                throw new Error(
+                    "Photo records could not be saved: " +
+                    errorText
+                );
+            }
+
+
+            console.log(
+                "Property photo records saved successfully."
+            );
         }
 
 
