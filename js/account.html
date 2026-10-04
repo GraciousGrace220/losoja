@@ -150,6 +150,7 @@
 
         .account-text {
             flex: 1;
+            min-width: 0;
         }
 
         .account-title {
@@ -163,9 +164,31 @@
             font-size: 13px;
         }
 
+        .balance-preview {
+            color: #087a3e;
+            font-size: 16px;
+            font-weight: 700;
+            margin-top: 5px;
+        }
+
+        .balance-loading {
+            color: #6b7280;
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 5px;
+        }
+
+        .balance-error {
+            color: #dc2626;
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 5px;
+        }
+
         .arrow {
             color: #9ca3af;
             font-size: 20px;
+            flex-shrink: 0;
         }
 
         .logout-button {
@@ -278,7 +301,9 @@
             </div>
 
 
-            <!-- BALANCE -->
+            <!-- =========================================
+                 BALANCE
+            ========================================== -->
 
             <div class="account-card">
 
@@ -295,11 +320,18 @@
                     <div class="account-text">
 
                         <div class="account-title">
-                            Balance
+                            LosOja Balance
+                        </div>
+
+                        <div
+                            id="accountBalance"
+                            class="balance-loading"
+                        >
+                            Loading balance...
                         </div>
 
                         <div class="account-description">
-                            View your LosOja wallet balance
+                            View your wallet, transactions and escrow
                         </div>
 
                     </div>
@@ -313,7 +345,9 @@
             </div>
 
 
-            <!-- BARTER -->
+            <!-- =========================================
+                 BARTER
+            ========================================== -->
 
             <div class="account-card">
 
@@ -348,7 +382,9 @@
             </div>
 
 
-            <!-- CHATS -->
+            <!-- =========================================
+                 CHATS
+            ========================================== -->
 
             <div class="account-card">
 
@@ -383,7 +419,9 @@
             </div>
 
 
-            <!-- BUSINESSES -->
+            <!-- =========================================
+                 BUSINESSES
+            ========================================== -->
 
             <div class="account-card">
 
@@ -423,7 +461,9 @@
             </div>
 
 
-            <!-- LOGOUT -->
+            <!-- =========================================
+                 LOGOUT
+            ========================================== -->
 
             <button
                 id="logoutButton"
@@ -438,56 +478,291 @@
     </main>
 
 
+    <!-- ================================================
+         LOSOJA AUTH
+    ================================================= -->
+
     <script src="js/auth.js?v=2"></script>
 
 
     <script>
 
-        (async function () {
+        /*
+        =================================================
+        LOSOJA ACCOUNT
+        =================================================
+        */
 
-            const status =
-                document.getElementById(
-                    "status"
+        const LOSOJA_SUPABASE_URL =
+            "https://ycxshwgeebskdozmornh.supabase.co";
+
+        const LOSOJA_SUPABASE_KEY =
+            "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
+
+
+        /*
+        =================================================
+        DOM ELEMENTS
+        =================================================
+        */
+
+        const status =
+            document.getElementById(
+                "status"
+            );
+
+        const accountContent =
+            document.getElementById(
+                "accountContent"
+            );
+
+        const profileName =
+            document.getElementById(
+                "profileName"
+            );
+
+        const profileEmail =
+            document.getElementById(
+                "profileEmail"
+            );
+
+        const accountBalance =
+            document.getElementById(
+                "accountBalance"
+            );
+
+        const errorMessage =
+            document.getElementById(
+                "errorMessage"
+            );
+
+        const logoutButton =
+            document.getElementById(
+                "logoutButton"
+            );
+
+
+        /*
+        =================================================
+        SHOW ERROR
+        =================================================
+        */
+
+        function showError(message) {
+
+            if (!errorMessage) {
+                return;
+            }
+
+            errorMessage.textContent =
+                message;
+
+            errorMessage.style.display =
+                "block";
+
+        }
+
+
+        /*
+        =================================================
+        GET AUTH ACCESS TOKEN
+        =================================================
+        */
+
+        async function getAccountAccessToken() {
+
+            try {
+
+                if (
+                    typeof window.getSupabaseAccessToken ===
+                    "function"
+                ) {
+
+                    const token =
+                        await window.getSupabaseAccessToken();
+
+                    if (token) {
+                        return token;
+                    }
+
+                }
+
+            } catch (error) {
+
+                console.warn(
+                    "LosOja account token error:",
+                    error
                 );
-
-            const accountContent =
-                document.getElementById(
-                    "accountContent"
-                );
-
-            const profileName =
-                document.getElementById(
-                    "profileName"
-                );
-
-            const profileEmail =
-                document.getElementById(
-                    "profileEmail"
-                );
-
-            const errorMessage =
-                document.getElementById(
-                    "errorMessage"
-                );
-
-            const logoutButton =
-                document.getElementById(
-                    "logoutButton"
-                );
-
-
-            function showError(message) {
-
-                errorMessage.textContent =
-                    message;
-
-                errorMessage.style.display =
-                    "block";
 
             }
 
+            return null;
+
+        }
+
+
+        /*
+        =================================================
+        LOAD WALLET BALANCE
+        =================================================
+        */
+
+        async function loadAccountBalance(
+            userId
+        ) {
+
+            if (!accountBalance) {
+                return;
+            }
+
+            accountBalance.textContent =
+                "Loading balance...";
+
+            accountBalance.className =
+                "balance-loading";
+
 
             try {
+
+                const token =
+                    await getAccountAccessToken();
+
+
+                if (!token) {
+
+                    accountBalance.textContent =
+                        "Session expired";
+
+                    accountBalance.className =
+                        "balance-error";
+
+                    return;
+
+                }
+
+
+                const response =
+                    await fetch(
+                        `${LOSOJA_SUPABASE_URL}/rest/v1/wallets?select=balance,currency&user_id=eq.${encodeURIComponent(userId)}&limit=1`,
+                        {
+                            method: "GET",
+
+                            headers: {
+
+                                "apikey":
+                                    LOSOJA_SUPABASE_KEY,
+
+                                "Authorization":
+                                    `Bearer ${token}`,
+
+                                "Content-Type":
+                                    "application/json",
+
+                                "Accept":
+                                    "application/json"
+
+                            }
+
+                        }
+                    );
+
+
+                if (!response.ok) {
+
+                    const errorText =
+                        await response.text();
+
+                    console.error(
+                        "LosOja account wallet error:",
+                        errorText
+                    );
+
+                    throw new Error(
+                        "Unable to load wallet."
+                    );
+
+                }
+
+
+                const wallets =
+                    await response.json();
+
+
+                /*
+                   No wallet yet.
+                */
+
+                if (
+                    !Array.isArray(wallets) ||
+                    wallets.length === 0
+                ) {
+
+                    accountBalance.textContent =
+                        "₦0.00";
+
+                    accountBalance.className =
+                        "balance-preview";
+
+                    return;
+
+                }
+
+
+                const wallet =
+                    wallets[0];
+
+
+                const balance =
+                    Number(
+                        wallet.balance || 0
+                    );
+
+
+                accountBalance.textContent =
+                    `₦${balance.toLocaleString(
+                        "en-NG",
+                        {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                        }
+                    )}`;
+
+
+                accountBalance.className =
+                    "balance-preview";
+
+
+            } catch (error) {
+
+                console.error(
+                    "LosOja account balance error:",
+                    error
+                );
+
+                accountBalance.textContent =
+                    "Unable to load balance";
+
+                accountBalance.className =
+                    "balance-error";
+
+            }
+
+        }
+
+
+        /*
+        =================================================
+        INITIALIZE ACCOUNT
+        =================================================
+        */
+
+        async function initializeAccount() {
+
+            try {
+
+                /*
+                   Make sure authentication exists.
+                */
 
                 if (
                     typeof window.getCurrentUser !==
@@ -501,9 +776,43 @@
                 }
 
 
-                const user =
+                /*
+                   Give auth.js a moment to restore
+                   the existing session when necessary.
+                */
+
+                let user =
                     await window.getCurrentUser();
 
+
+                if (
+                    !user &&
+                    typeof window.ensureValidSupabaseSession ===
+                    "function"
+                ) {
+
+                    try {
+
+                        await window.ensureValidSupabaseSession();
+
+                    } catch (sessionError) {
+
+                        console.warn(
+                            "LosOja session refresh:",
+                            sessionError
+                        );
+
+                    }
+
+                    user =
+                        await window.getCurrentUser();
+
+                }
+
+
+                /*
+                   User is not logged in.
+                */
 
                 if (!user) {
 
@@ -514,6 +823,10 @@
 
                 }
 
+
+                /*
+                   Profile information.
+                */
 
                 const metadata =
                     user.user_metadata || {};
@@ -533,12 +846,24 @@
                     user.email || "—";
 
 
+                /*
+                   Show account immediately.
+                */
+
                 status.style.display =
                     "none";
 
                 accountContent.style.display =
                     "block";
 
+
+                /*
+                   Load live wallet balance.
+                */
+
+                await loadAccountBalance(
+                    user.id
+                );
 
             } catch (error) {
 
@@ -559,6 +884,16 @@
 
             }
 
+        }
+
+
+        /*
+        =================================================
+        LOGOUT
+        =================================================
+        */
+
+        if (logoutButton) {
 
             logoutButton.addEventListener(
                 "click",
@@ -614,7 +949,33 @@
                 }
             );
 
-        })();
+        }
+
+
+        /*
+        =================================================
+        START
+        =================================================
+        */
+
+        if (
+            document.readyState ===
+            "loading"
+        ) {
+
+            document.addEventListener(
+                "DOMContentLoaded",
+                initializeAccount,
+                {
+                    once: true
+                }
+            );
+
+        } else {
+
+            initializeAccount();
+
+        }
 
     </script>
 
