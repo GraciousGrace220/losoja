@@ -1,57 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
 
 <title>LosOja Properties</title>
 
 <meta
     name="description"
-    content="Browse houses, apartments, land and commercial properties available on LosOja."
+    content="Find houses, apartments, land and commercial properties on LosOja."
 >
 
 <style>
+
 :root{
     --green:#087a3e;
     --green-dark:#055c2e;
     --green-light:#eef8f2;
     --accent:#ffb703;
-    --text:#17251d;
-    --muted:#68756e;
-    --border:#e3e9e5;
-    --white:#fff;
-    --danger:#d93025;
-    --shadow:0 8px 25px rgba(0,0,0,.08);
+    --white:#ffffff;
+    --text:#172019;
+    --muted:#68736c;
+    --border:#dce5df;
+    --danger:#c62828;
+    --shadow:0 10px 30px rgba(0,0,0,.10);
 }
 
-*{box-sizing:border-box}
+*{
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
 
 body{
     margin:0;
     font-family:Arial,Helvetica,sans-serif;
-    background:#f7faf8;
+    background:#f6f8f7;
     color:var(--text);
 }
 
-button,input,select,textarea{font:inherit}
-button{cursor:pointer}
-a{color:inherit;text-decoration:none}
+body.modal-open{
+    overflow:hidden;
+}
 
-/* HEADER */
-.topbar{
-    background:var(--green);
-    color:#fff;
-    padding:14px 18px;
+button,
+input,
+select,
+textarea{
+    font:inherit;
+}
+
+button{
+    cursor:pointer;
+}
+
+img{
+    max-width:100%;
+}
+
+.header{
     position:sticky;
     top:0;
     z-index:100;
-    box-shadow:0 3px 12px rgba(0,0,0,.12);
+    background:var(--white);
+    border-bottom:1px solid var(--border);
 }
 
-.topbar-inner{
-    max-width:1200px;
+.header-inner{
+    width:min(1200px,94%);
     margin:auto;
+    min-height:70px;
     display:flex;
     align-items:center;
     justify-content:space-between;
@@ -59,173 +85,132 @@ a{color:inherit;text-decoration:none}
 }
 
 .logo{
-    font-size:23px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    color:var(--green);
+    text-decoration:none;
+    font-size:24px;
     font-weight:800;
 }
 
-.top-actions{
+.logo-mark{
+    width:42px;
+    height:42px;
+    border-radius:12px;
+    background:var(--green);
+    color:white;
     display:flex;
     align-items:center;
-    gap:8px;
+    justify-content:center;
+    font-weight:900;
+}
+
+.back-link{
+    color:var(--green);
+    text-decoration:none;
+    font-weight:700;
 }
 
 .top-publish-btn{
     border:0;
-    background:var(--accent);
-    color:#17251d;
-    padding:10px 15px;
+    background:var(--green);
+    color:white;
+    padding:11px 16px;
     border-radius:10px;
-    font-weight:800;
-    box-shadow:0 3px 10px rgba(0,0,0,.12);
+    font-weight:700;
 }
 
 .top-publish-btn:hover{
-    background:#f4aa00;
-    transform:translateY(-1px);
+    background:var(--green-dark);
 }
 
-.back-btn{
-    border:1px solid rgba(255,255,255,.35);
-    background:rgba(255,255,255,.12);
-    color:#fff;
-    padding:9px 14px;
-    border-radius:10px;
-    font-weight:700;
+.page{
+    width:min(1200px,94%);
+    margin:0 auto;
+    padding:25px 0 80px;
 }
 
-/* HERO */
-.hero{
-    max-width:1200px;
-    margin:auto;
-    padding:28px 18px 15px;
-}
-
-.hero h1{
-    margin:0 0 8px;
+.page-title{
+    margin:0;
     font-size:32px;
 }
 
-.hero p{
-    margin:0;
+.page-subtitle{
+    margin:8px 0 22px;
     color:var(--muted);
-    line-height:1.5;
 }
 
-/* FILTERS */
-.filters-wrap{
-    max-width:1200px;
-    margin:auto;
-    padding:10px 18px 20px;
-}
-
-.search-row{
-    display:flex;
-    gap:10px;
-    margin-bottom:12px;
-}
-
-.search-row input{
-    flex:1;
-    min-width:0;
+.toolbar{
+    background:white;
     border:1px solid var(--border);
-    border-radius:12px;
+    border-radius:16px;
+    padding:15px;
+    box-shadow:var(--shadow);
+    margin-bottom:22px;
+}
+
+.search-box{
+    width:100%;
     padding:13px 15px;
+    border:1px solid var(--border);
+    border-radius:10px;
     outline:none;
-    background:#fff;
 }
 
-.search-row input:focus{
+.search-box:focus{
     border-color:var(--green);
-    box-shadow:0 0 0 3px rgba(8,122,62,.1);
 }
 
-.filter-row{
+.filters{
     display:flex;
+    flex-wrap:wrap;
     gap:8px;
-    overflow-x:auto;
-    padding-bottom:4px;
+    margin-top:12px;
 }
 
 .filter-btn{
-    flex:0 0 auto;
     border:1px solid var(--border);
-    background:#fff;
-    color:#34423a;
+    background:white;
+    color:var(--text);
     padding:9px 13px;
     border-radius:999px;
-    font-weight:700;
+    font-weight:600;
 }
 
 .filter-btn.active{
     background:var(--green);
-    color:#fff;
+    color:white;
     border-color:var(--green);
 }
 
-/* MAIN */
-.main{
-    max-width:1200px;
-    margin:auto;
-    padding:0 18px 50px;
-}
-
-.section-title{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin:10px 0 18px;
-}
-
-.section-title h2{
-    margin:0;
-    font-size:22px;
-}
-
-.property-count{
-    color:var(--muted);
-    font-size:14px;
-}
-
-/* GRID */
-.property-grid{
+.properties-grid{
     display:grid;
     grid-template-columns:repeat(3,minmax(0,1fr));
-    gap:18px;
+    gap:20px;
 }
 
 .property-card{
-    background:#fff;
+    background:white;
     border:1px solid var(--border);
-    border-radius:18px;
+    border-radius:16px;
     overflow:hidden;
-    box-shadow:var(--shadow);
+    box-shadow:0 7px 22px rgba(0,0,0,.07);
 }
 
 .card-gallery{
     position:relative;
-    background:#eaf0ec;
+    height:230px;
+    background:#e9eeeb;
+    overflow:hidden;
 }
 
 .card-main-image{
-    display:block;
     width:100%;
-    height:230px;
+    height:100%;
     object-fit:cover;
-    background:#eaf0ec;
+    display:block;
     cursor:pointer;
-}
-
-.image-counter{
-    position:absolute;
-    top:12px;
-    right:12px;
-    background:rgba(0,0,0,.68);
-    color:#fff;
-    padding:5px 9px;
-    border-radius:999px;
-    font-size:12px;
-    font-weight:700;
-    z-index:4;
 }
 
 .gallery-arrow{
@@ -236,58 +221,66 @@ a{color:inherit;text-decoration:none}
     height:38px;
     border:0;
     border-radius:50%;
-    background:rgba(0,0,0,.62);
-    color:#fff;
-    font-size:23px;
-    z-index:5;
+    background:rgba(0,0,0,.55);
+    color:white;
+    font-size:22px;
+    z-index:3;
 }
 
 .gallery-arrow:hover{
-    background:rgba(0,0,0,.85);
+    background:rgba(0,0,0,.75);
 }
 
-.gallery-arrow.prev{left:10px}
-.gallery-arrow.next{right:10px}
+.gallery-prev{
+    left:10px;
+}
 
-/* THUMBNAILS */
-.card-thumbnails,
-.detail-thumbnails{
+.gallery-next{
+    right:10px;
+}
+
+.gallery-counter{
+    position:absolute;
+    right:10px;
+    bottom:10px;
+    background:rgba(0,0,0,.65);
+    color:white;
+    padding:5px 9px;
+    border-radius:999px;
+    font-size:12px;
+}
+
+.card-thumbnails{
     display:flex;
-    gap:7px;
+    gap:5px;
+    padding:7px;
     overflow-x:auto;
-    padding:9px;
-    background:#f4f7f5;
 }
 
-.thumbnail{
+.card-thumb{
+    width:52px;
+    height:42px;
     flex:0 0 auto;
-    width:54px;
-    height:45px;
-    padding:0;
+    object-fit:cover;
+    border-radius:6px;
     border:2px solid transparent;
-    border-radius:8px;
-    overflow:hidden;
-    background:#ddd;
+    cursor:pointer;
 }
 
-.thumbnail.active{
+.card-thumb.active{
     border-color:var(--green);
 }
 
-.thumbnail img{
-    width:100%;
-    height:100%;
-    display:block;
-    object-fit:cover;
-    pointer-events:none;
-}
-
-/* CARD */
-.card-content{
+.property-card-body{
     padding:16px;
 }
 
-.property-badges{
+.property-card-title{
+    margin:0 0 7px;
+    font-size:19px;
+}
+
+.property-meta{
     display:flex;
     flex-wrap:wrap;
     gap:6px;
@@ -295,330 +288,150 @@ a{color:inherit;text-decoration:none}
 }
 
 .badge{
+    display:inline-block;
+    padding:5px 8px;
     border-radius:999px;
-    padding:5px 9px;
-    font-size:11px;
-    font-weight:800;
-}
-
-.badge-sale{
-    background:#e8f6ed;
-    color:var(--green-dark);
-}
-
-.badge-status{
-    background:#eef1f0;
-    color:#48544e;
-}
-
-.card-content h3{
-    margin:0 0 7px;
-    font-size:19px;
-}
-
-.location{
-    color:var(--muted);
-    font-size:14px;
-    margin-bottom:8px;
-}
-
-.price{
-    color:var(--green-dark);
-    font-size:20px;
-    font-weight:800;
-    margin-bottom:10px;
-}
-
-.description{
-    color:#56625b;
-    line-height:1.45;
-    font-size:14px;
-    margin-bottom:14px;
-    display:-webkit-box;
-    -webkit-line-clamp:3;
-    -webkit-box-orient:vertical;
-    overflow:hidden;
-}
-
-.card-actions{
-    display:flex;
-    gap:8px;
-}
-
-.primary-btn,
-.secondary-btn,
-.danger-btn{
-    border:0;
-    border-radius:10px;
-    padding:10px 13px;
-    font-weight:800;
-}
-
-.primary-btn{
-    background:var(--green);
-    color:#fff;
-    flex:1;
-}
-
-.primary-btn:hover{
-    background:var(--green-dark);
-}
-
-.secondary-btn{
     background:var(--green-light);
     color:var(--green-dark);
-}
-
-.danger-btn{
-    background:#fff0ef;
-    color:var(--danger);
-}
-
-/* MESSAGES */
-.center-message{
-    text-align:center;
-    padding:55px 20px;
-    background:#fff;
-    border:1px solid var(--border);
-    border-radius:16px;
-    color:var(--muted);
-    grid-column:1/-1;
-}
-
-.error-message{color:var(--danger)}
-
-.retry-btn{
-    margin-top:12px;
-    border:0;
-    background:var(--green);
-    color:#fff;
-    padding:10px 16px;
-    border-radius:10px;
+    font-size:12px;
     font-weight:700;
 }
 
-/* MODALS */
+.property-price{
+    font-size:20px;
+    font-weight:800;
+    color:var(--green);
+    margin:8px 0;
+}
+
+.property-location{
+    color:var(--muted);
+    margin-bottom:12px;
+}
+
+.view-property-btn{
+    width:100%;
+    border:0;
+    background:var(--green);
+    color:white;
+    padding:11px;
+    border-radius:9px;
+    font-weight:700;
+}
+
+.view-property-btn:hover{
+    background:var(--green-dark);
+}
+
+.empty-state{
+    background:white;
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:45px 20px;
+    text-align:center;
+    color:var(--muted);
+}
+
+.loading{
+    text-align:center;
+    padding:40px;
+    color:var(--muted);
+}
+
+
+/* =========================================================
+   MODALS
+========================================================= */
+
 .modal{
-    display:none;
     position:fixed;
     inset:0;
-    background:rgba(0,0,0,.65);
     z-index:500;
+    background:rgba(0,0,0,.65);
+    display:none;
+    align-items:center;
+    justify-content:center;
     padding:20px;
-    overflow-y:auto;
 }
 
 .modal.show{
     display:flex;
-    align-items:center;
-    justify-content:center;
 }
 
 .modal-box{
-    width:min(950px,100%);
+    width:min(850px,100%);
     max-height:92vh;
-    overflow-y:auto;
-    background:#fff;
-    border-radius:20px;
+    overflow:auto;
+    background:white;
+    border-radius:18px;
+    box-shadow:0 25px 70px rgba(0,0,0,.30);
     position:relative;
-    box-shadow:0 20px 60px rgba(0,0,0,.3);
+}
+
+.modal-content{
+    padding:25px;
 }
 
 .modal-close{
     position:absolute;
     right:14px;
-    top:14px;
-    z-index:20;
-    width:38px;
-    height:38px;
+    top:12px;
+    width:40px;
+    height:40px;
     border:0;
     border-radius:50%;
-    background:rgba(0,0,0,.65);
-    color:#fff;
-    font-size:22px;
+    background:#f0f2f1;
+    color:#222;
+    font-size:25px;
+    z-index:10;
 }
 
-.modal-content{
-    padding:22px;
+.modal-close:hover{
+    background:#e3e7e5;
 }
 
 .modal-title{
-    margin:0 45px 8px 0;
-    font-size:27px;
+    margin:0 45px 5px 0;
+    font-size:25px;
 }
 
-.modal-meta{
+.modal-subtitle{
     color:var(--muted);
-    margin-bottom:15px;
+    margin:0 0 20px;
 }
 
-/* DETAIL */
-.detail-main{
-    position:relative;
-    background:#eaf0ec;
-    border-radius:14px;
-    overflow:hidden;
-}
 
-.detail-main img{
-    width:100%;
-    height:min(520px,60vh);
-    object-fit:contain;
-    display:block;
-    background:#eaf0ec;
-    cursor:pointer;
-}
-
-.detail-counter{
-    position:absolute;
-    right:12px;
-    top:12px;
-    background:rgba(0,0,0,.68);
-    color:#fff;
-    padding:6px 10px;
-    border-radius:999px;
-    font-size:12px;
-    font-weight:700;
-}
-
-.detail-thumbnails{
-    background:#fff;
-    padding:10px 0;
-}
-
-.detail-thumbnails .thumbnail{
-    width:72px;
-    height:58px;
-}
-
-.detail-description{
-    color:#4f5c54;
-    line-height:1.6;
-    white-space:pre-wrap;
-}
-
-.detail-actions{
-    display:flex;
-    flex-wrap:wrap;
-    gap:9px;
-    margin-top:18px;
-}
-
-.reaction-group{
-    display:flex;
-    gap:8px;
-}
-
-.reaction-btn{
-    border:1px solid var(--border);
-    background:#fff;
-    padding:9px 13px;
-    border-radius:10px;
-    font-weight:800;
-}
-
-.reaction-btn.selected{
-    border-color:var(--green);
-    background:var(--green-light);
-    color:var(--green-dark);
-}
-
-/* IMAGE VIEWER */
-.viewer{
-    display:none;
-    position:fixed;
-    inset:0;
-    z-index:1000;
-    background:rgba(0,0,0,.94);
-    align-items:center;
-    justify-content:center;
-}
-
-.viewer.show{display:flex}
-
-.viewer img{
-    max-width:94vw;
-    max-height:90vh;
-    object-fit:contain;
-}
-
-.viewer-close{
-    position:absolute;
-    right:20px;
-    top:18px;
-    width:42px;
-    height:42px;
-    border:0;
-    border-radius:50%;
-    background:rgba(255,255,255,.15);
-    color:#fff;
-    font-size:25px;
-    z-index:10;
-}
-
-.viewer-arrow{
-    position:absolute;
-    top:50%;
-    transform:translateY(-50%);
-    width:46px;
-    height:46px;
-    border:0;
-    border-radius:50%;
-    background:rgba(255,255,255,.16);
-    color:#fff;
-    font-size:25px;
-    z-index:10;
-}
-
-.viewer-arrow.prev{left:18px}
-.viewer-arrow.next{right:18px}
-
-/* POST PROPERTY POPUP */
-.post-modal-box{
-    width:min(760px,100%);
-}
+/* =========================================================
+   POST PROPERTY
+========================================================= */
 
 .post-card{
-    padding:24px;
+    background:white;
 }
 
 .post-card h2{
-    margin:0 45px 5px 0;
-}
-
-.post-card > p{
     margin-top:0;
 }
 
-.form-grid{
-    display:grid;
-    grid-template-columns:repeat(2,minmax(0,1fr));
-    gap:13px;
-}
-
 .form-group{
-    display:flex;
-    flex-direction:column;
-    gap:6px;
-}
-
-.form-group.full{
-    grid-column:1/-1;
+    margin-bottom:15px;
 }
 
 .form-group label{
+    display:block;
+    margin-bottom:7px;
     font-weight:700;
-    font-size:14px;
 }
 
 .form-group input,
 .form-group select,
 .form-group textarea{
+    width:100%;
     border:1px solid var(--border);
     border-radius:10px;
     padding:12px;
     outline:none;
-    background:#fff;
+    background:white;
 }
 
 .form-group input:focus,
@@ -628,309 +441,582 @@ a{color:inherit;text-decoration:none}
 }
 
 .form-group textarea{
-    min-height:110px;
+    min-height:120px;
     resize:vertical;
 }
 
-/* PHOTO PICKER */
 .photo-help{
     color:var(--muted);
     font-size:13px;
-    margin-top:2px;
+    margin-top:6px;
 }
 
-.photo-selection-count{
-    display:none;
-    margin-top:8px;
-    color:var(--green-dark);
-    font-weight:800;
-    font-size:13px;
-}
-
-.photo-selection-count.show{
-    display:block;
-}
-
-.photo-preview{
-    display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(90px,1fr));
-    gap:9px;
+.photo-selection-info{
     margin-top:10px;
-}
-
-.preview-item{
-    position:relative;
-    height:80px;
+    padding:10px 12px;
     border-radius:9px;
-    overflow:hidden;
-    border:1px solid var(--border);
-    background:#eaf0ec;
+    background:var(--green-light);
+    color:var(--green-dark);
+    font-weight:700;
 }
 
-.preview-item img{
+.property-photo-preview{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+    margin-top:12px;
+}
+
+.property-preview-item{
+    position:relative;
+    height:110px;
+    border-radius:10px;
+    overflow:hidden;
+    background:#eef1ef;
+}
+
+.property-preview-item img{
     width:100%;
     height:100%;
     object-fit:cover;
 }
 
-.preview-number{
+.property-preview-number{
     position:absolute;
-    left:5px;
-    top:5px;
-    background:rgba(0,0,0,.7);
-    color:#fff;
-    border-radius:999px;
-    padding:3px 7px;
-    font-size:11px;
-    font-weight:800;
-}
-
-.submit-row{
-    margin-top:18px;
+    left:6px;
+    top:6px;
+    width:25px;
+    height:25px;
+    border-radius:50%;
+    background:rgba(0,0,0,.65);
+    color:white;
     display:flex;
-    justify-content:flex-end;
+    align-items:center;
+    justify-content:center;
+    font-size:12px;
+    font-weight:700;
 }
 
-.submit-btn{
-    border:0;
-    background:var(--green);
-    color:#fff;
-    padding:12px 20px;
+.form-actions{
+    display:flex;
+    gap:10px;
+    margin-top:20px;
+}
+
+.primary-btn,
+.secondary-btn{
+    padding:12px 17px;
     border-radius:10px;
+    font-weight:700;
+    border:0;
+}
+
+.primary-btn{
+    background:var(--green);
+    color:white;
+}
+
+.primary-btn:hover{
+    background:var(--green-dark);
+}
+
+.secondary-btn{
+    background:#edf1ef;
+    color:#26302a;
+}
+
+
+/* =========================================================
+   DETAIL MODAL
+========================================================= */
+
+.detail-gallery{
+    background:#eef1ef;
+    border-radius:12px;
+    overflow:hidden;
+    position:relative;
+}
+
+.detail-main-wrap{
+    position:relative;
+    height:430px;
+}
+
+.detail-main-image{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    cursor:pointer;
+}
+
+.detail-arrow{
+    position:absolute;
+    top:50%;
+    transform:translateY(-50%);
+    width:45px;
+    height:45px;
+    border:0;
+    border-radius:50%;
+    background:rgba(0,0,0,.55);
+    color:white;
+    font-size:24px;
+    z-index:3;
+}
+
+.detail-arrow.prev{
+    left:12px;
+}
+
+.detail-arrow.next{
+    right:12px;
+}
+
+.detail-counter{
+    position:absolute;
+    right:12px;
+    bottom:12px;
+    background:rgba(0,0,0,.65);
+    color:white;
+    padding:6px 10px;
+    border-radius:999px;
+    font-size:13px;
+}
+
+.detail-thumbnails{
+    display:flex;
+    gap:7px;
+    padding:10px;
+    overflow-x:auto;
+}
+
+.detail-thumb{
+    width:72px;
+    height:55px;
+    object-fit:cover;
+    border-radius:7px;
+    border:2px solid transparent;
+    cursor:pointer;
+}
+
+.detail-thumb.active{
+    border-color:var(--green);
+}
+
+.detail-info{
+    padding-top:20px;
+}
+
+.detail-info h2{
+    margin:0 0 8px;
+}
+
+.detail-price{
+    color:var(--green);
+    font-size:24px;
     font-weight:800;
+    margin-bottom:10px;
 }
 
-.submit-btn:disabled{
-    opacity:.6;
-    cursor:not-allowed;
+.detail-description{
+    line-height:1.6;
+    white-space:pre-wrap;
+    color:#4f5a53;
 }
 
-/* TOAST */
+.detail-actions{
+    display:flex;
+    gap:10px;
+    margin-top:20px;
+}
+
+.detail-actions button{
+    flex:1;
+}
+
+
+/* =========================================================
+   FULLSCREEN VIEWER
+========================================================= */
+
+.viewer{
+    position:fixed;
+    inset:0;
+    z-index:900;
+    background:rgba(0,0,0,.95);
+    display:none;
+    align-items:center;
+    justify-content:center;
+}
+
+.viewer.show{
+    display:flex;
+}
+
+.viewer-image{
+    max-width:92vw;
+    max-height:88vh;
+    object-fit:contain;
+}
+
+.viewer-close{
+    position:absolute;
+    right:20px;
+    top:15px;
+    width:45px;
+    height:45px;
+    border:0;
+    border-radius:50%;
+    background:rgba(255,255,255,.15);
+    color:white;
+    font-size:28px;
+}
+
+.viewer-arrow{
+    position:absolute;
+    top:50%;
+    transform:translateY(-50%);
+    width:50px;
+    height:50px;
+    border:0;
+    border-radius:50%;
+    background:rgba(255,255,255,.15);
+    color:white;
+    font-size:27px;
+}
+
+.viewer-prev{
+    left:20px;
+}
+
+.viewer-next{
+    right:20px;
+}
+
+.viewer-counter{
+    position:absolute;
+    bottom:20px;
+    left:50%;
+    transform:translateX(-50%);
+    color:white;
+    background:rgba(0,0,0,.6);
+    padding:7px 12px;
+    border-radius:999px;
+}
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
 .toast{
     position:fixed;
     left:50%;
     bottom:25px;
-    transform:translateX(-50%) translateY(20px);
-    background:#17251d;
-    color:#fff;
+    transform:translate(-50%,20px);
+    background:#172019;
+    color:white;
     padding:12px 18px;
-    border-radius:12px;
-    z-index:1500;
+    border-radius:10px;
     opacity:0;
     pointer-events:none;
-    transition:.25s ease;
+    transition:.25s;
+    z-index:2000;
     max-width:90%;
     text-align:center;
 }
 
 .toast.show{
     opacity:1;
-    transform:translateX(-50%) translateY(0);
+    transform:translate(-50%,0);
 }
 
-/* MOBILE */
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
 @media(max-width:850px){
-    .property-grid{
+
+    .properties-grid{
         grid-template-columns:repeat(2,minmax(0,1fr));
     }
+
 }
 
-@media(max-width:620px){
-    .topbar{padding:11px 12px}
+@media(max-width:600px){
 
-    .topbar-inner{gap:8px}
+    .header-inner{
+        min-height:62px;
+    }
 
-    .logo{font-size:20px}
+    .logo{
+        font-size:20px;
+    }
 
-    .top-actions{gap:6px}
+    .logo-mark{
+        width:36px;
+        height:36px;
+    }
+
+    .back-link{
+        display:none;
+    }
 
     .top-publish-btn{
-        padding:8px 10px;
+        padding:9px 11px;
         font-size:13px;
     }
 
-    .back-btn{
-        padding:8px 10px;
-        font-size:13px;
+    .page{
+        width:94%;
+        padding-top:20px;
     }
 
-    .hero h1{font-size:26px}
+    .page-title{
+        font-size:27px;
+    }
 
-    .property-grid{grid-template-columns:1fr}
+    .properties-grid{
+        grid-template-columns:1fr;
+    }
 
-    .card-main-image{height:240px}
+    .property-photo-preview{
+        grid-template-columns:repeat(3,1fr);
+    }
 
-    .form-grid{grid-template-columns:1fr}
+    .property-preview-item{
+        height:90px;
+    }
 
-    .form-group.full{grid-column:auto}
+    .detail-main-wrap{
+        height:300px;
+    }
 
-    .search-row{flex-direction:column}
-
-    .modal{padding:8px}
+    .modal{
+        padding:8px;
+    }
 
     .modal-box{
-        max-height:96vh;
-        border-radius:16px;
+        max-height:95vh;
+        border-radius:14px;
     }
 
-    .post-card{padding:17px}
+    .modal-content{
+        padding:18px;
+    }
 
-    .detail-main img{height:50vh}
+    .detail-actions{
+        flex-direction:column;
+    }
+
 }
 
-@media(max-width:430px){
-    .top-publish-btn{
-        font-size:12px;
-        padding:8px;
-    }
-
-    .back-btn{
-        font-size:12px;
-        padding:8px;
-    }
-}
 </style>
+
 </head>
+
 
 <body>
 
-<header class="topbar">
-    <div class="topbar-inner">
 
-        <div class="logo">LosOja</div>
+<header class="header">
 
-        <div class="top-actions">
+    <div class="header-inner">
 
-            <button
-                type="button"
-                class="top-publish-btn"
-                onclick="openPostPropertyModal()"
-            >
-                + Post Property
-            </button>
+        <a
+            href="index.html"
+            class="logo"
+        >
 
-            <a href="index.html" class="back-btn">
-                ← Back
-            </a>
+            <span class="logo-mark">
+                LO
+            </span>
 
-        </div>
+            <span>
+                LosOja
+            </span>
+
+        </a>
+
+
+        <a
+            href="index.html"
+            class="back-link"
+        >
+            ← Back
+        </a>
+
+
+        <button
+            type="button"
+            class="top-publish-btn"
+            onclick="openPostPropertyModal()"
+        >
+            + Post Property
+        </button>
+
     </div>
+
 </header>
 
 
-<section class="hero">
+<main class="page">
 
-    <h1>Find Your Next Property</h1>
+    <h1 class="page-title">
+        Properties
+    </h1>
 
-    <p>
-        Browse houses, apartments, land and commercial properties available on LosOja.
+    <p class="page-subtitle">
+        Find houses, apartments, land and commercial properties on LosOja.
     </p>
 
-</section>
 
-
-<section class="filters-wrap">
-
-    <div class="search-row">
+    <section class="toolbar">
 
         <input
-            id="searchInput"
             type="search"
-            placeholder="Search by title, location or property type..."
-            autocomplete="off"
+            id="propertySearch"
+            class="search-box"
+            placeholder="Search properties, locations..."
         >
 
+
+        <div class="filters">
+
+            <button
+                class="filter-btn active"
+                data-filter="all"
+                onclick="setPropertyFilter('all',this)"
+            >
+                All
+            </button>
+
+            <button
+                class="filter-btn"
+                data-filter="available"
+                onclick="setPropertyFilter('available',this)"
+            >
+                Available
+            </button>
+
+            <button
+                class="filter-btn"
+                data-filter="sale"
+                onclick="setPropertyFilter('sale',this)"
+            >
+                For Sale
+            </button>
+
+            <button
+                class="filter-btn"
+                data-filter="rent"
+                onclick="setPropertyFilter('rent',this)"
+            >
+                For Rent
+            </button>
+
+            <button
+                class="filter-btn"
+                data-filter="sold"
+                onclick="setPropertyFilter('sold',this)"
+            >
+                Sold
+            </button>
+
+            <button
+                class="filter-btn"
+                data-filter="rented"
+                onclick="setPropertyFilter('rented',this)"
+            >
+                Rented
+            </button>
+
+            <button
+                class="filter-btn"
+                data-filter="house"
+                onclick="setPropertyFilter('house',this)"
+            >
+                Houses
+            </button>
+
+            <button
+                class="filter-btn"
+                data-filter="apartment"
+                onclick="setPropertyFilter('apartment',this)"
+            >
+                Apartments
+            </button>
+
+            <button
+                class="filter-btn"
+                data-filter="land"
+                onclick="setPropertyFilter('land',this)"
+            >
+                Land
+            </button>
+
+            <button
+                class="filter-btn"
+                data-filter="commercial"
+                onclick="setPropertyFilter('commercial',this)"
+            >
+                Commercial
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <div
+        id="propertiesContainer"
+        class="properties-grid"
+    >
+
+        <div class="loading">
+            Loading properties...
+        </div>
+
     </div>
-
-    <div class="filter-row">
-
-        <button type="button" class="filter-btn active" data-filter="all">
-            All
-        </button>
-
-        <button type="button" class="filter-btn" data-filter="available">
-            Available
-        </button>
-
-        <button type="button" class="filter-btn" data-filter="for sale">
-            For Sale
-        </button>
-
-        <button type="button" class="filter-btn" data-filter="for rent">
-            For Rent
-        </button>
-
-        <button type="button" class="filter-btn" data-filter="sold">
-            Sold
-        </button>
-
-        <button type="button" class="filter-btn" data-filter="rented">
-            Rented
-        </button>
-
-        <button type="button" class="filter-btn" data-filter="house">
-            Houses
-        </button>
-
-        <button type="button" class="filter-btn" data-filter="apartment">
-            Apartments
-        </button>
-
-        <button type="button" class="filter-btn" data-filter="land">
-            Land
-        </button>
-
-        <button type="button" class="filter-btn" data-filter="commercial">
-            Commercial
-        </button>
-
-    </div>
-
-</section>
-
-
-<main class="main">
-
-    <div class="section-title">
-
-        <h2>Properties</h2>
-
-        <span id="propertyCount" class="property-count">
-            Loading...
-        </span>
-
-    </div>
-
-    <div id="propertyGrid" class="property-grid"></div>
 
 </main>
 
 
-<!-- POST PROPERTY POPUP -->
-<div id="postPropertyModal" class="modal">
+<!-- =======================================================
+     POST PROPERTY MODAL
+======================================================= -->
 
-    <div class="modal-box post-modal-box">
+<div
+    id="postPropertyModal"
+    class="modal"
+    onclick="closePostPropertyOnBackdrop(event)"
+>
+
+    <div class="modal-box">
 
         <button
             type="button"
             class="modal-close"
             onclick="closePostPropertyModal()"
-            aria-label="Close"
         >
             ×
         </button>
 
-        <div class="post-card">
 
-            <h2>Post a Property</h2>
+        <div class="modal-content">
 
-            <p class="location">
-                List your property on LosOja.
-            </p>
+            <div class="post-card">
 
-            <form id="propertyForm">
+                <h2>
+                    Post Your Property
+                </h2>
 
-                <div class="form-grid">
+                <p class="modal-subtitle">
+                    List your property on LosOja.
+                </p>
+
+
+                <form id="propertyForm">
 
                     <div class="form-group">
 
@@ -939,9 +1025,10 @@ a{color:inherit;text-decoration:none}
                         </label>
 
                         <input
+                            type="text"
                             id="propertyTitle"
                             required
-                            placeholder="e.g. 3 Bedroom House"
+                            placeholder="e.g. Modern 3 Bedroom House"
                         >
 
                     </div>
@@ -953,25 +1040,28 @@ a{color:inherit;text-decoration:none}
                             Property Type
                         </label>
 
-                        <select id="propertyType" required>
+                        <select
+                            id="propertyType"
+                            required
+                        >
 
                             <option value="">
                                 Select type
                             </option>
 
-                            <option value="house">
+                            <option value="House">
                                 House
                             </option>
 
-                            <option value="apartment">
+                            <option value="Apartment">
                                 Apartment
                             </option>
 
-                            <option value="land">
+                            <option value="Land">
                                 Land
                             </option>
 
-                            <option value="commercial">
+                            <option value="Commercial">
                                 Commercial
                             </option>
 
@@ -986,7 +1076,10 @@ a{color:inherit;text-decoration:none}
                             Listing Type
                         </label>
 
-                        <select id="listingType" required>
+                        <select
+                            id="listingType"
+                            required
+                        >
 
                             <option value="">
                                 Select listing type
@@ -1012,24 +1105,25 @@ a{color:inherit;text-decoration:none}
                         </label>
 
                         <input
-                            id="propertyPrice"
                             type="number"
+                            id="propertyPrice"
                             min="0"
-                            step="1"
+                            step="0.01"
                             required
-                            placeholder="250000"
+                            placeholder="Enter price"
                         >
 
                     </div>
 
 
-                    <div class="form-group full">
+                    <div class="form-group">
 
                         <label for="propertyLocation">
                             Location
                         </label>
 
                         <input
+                            type="text"
                             id="propertyLocation"
                             required
                             placeholder="e.g. Lekki, Lagos"
@@ -1038,7 +1132,7 @@ a{color:inherit;text-decoration:none}
                     </div>
 
 
-                    <div class="form-group full">
+                    <div class="form-group">
 
                         <label for="propertyDescription">
                             Description
@@ -1052,15 +1146,16 @@ a{color:inherit;text-decoration:none}
                     </div>
 
 
-                    <div class="form-group full">
+                    <div class="form-group">
 
                         <label for="propertyImages">
                             Property Photos
                         </label>
 
                         <input
-                            id="propertyImages"
                             type="file"
+                            id="propertyImages"
+                            name="propertyImages"
                             accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
                             multiple
                         >
@@ -1069,34 +1164,47 @@ a{color:inherit;text-decoration:none}
                             Select up to 10 photos. Maximum 5MB per photo.
                         </div>
 
-                        <div
-                            id="photoSelectionCount"
-                            class="photo-selection-count"
-                        ></div>
 
                         <div
-                            id="photoPreview"
-                            class="photo-preview"
+                            id="photoSelectionInfo"
+                            class="photo-selection-info"
+                        >
+                            No photos selected
+                        </div>
+
+
+                        <div
+                            id="propertyPhotoPreview"
+                            class="property-photo-preview"
                         ></div>
 
                     </div>
 
-                </div>
+
+                    <div class="form-actions">
+
+                        <button
+                            type="button"
+                            class="secondary-btn"
+                            onclick="closePostPropertyModal()"
+                        >
+                            Cancel
+                        </button>
 
 
-                <div class="submit-row">
+                        <button
+                            type="submit"
+                            id="publishPropertyButton"
+                            class="primary-btn"
+                        >
+                            Publish Property
+                        </button>
 
-                    <button
-                        id="submitPropertyBtn"
-                        type="submit"
-                        class="submit-btn"
-                    >
-                        Publish Property
-                    </button>
+                    </div>
 
-                </div>
+                </form>
 
-            </form>
+            </div>
 
         </div>
 
@@ -1105,8 +1213,15 @@ a{color:inherit;text-decoration:none}
 </div>
 
 
-<!-- DETAIL MODAL -->
-<div id="detailModal" class="modal">
+<!-- =======================================================
+     PROPERTY DETAIL MODAL
+======================================================= -->
+
+<div
+    id="detailModal"
+    class="modal"
+    onclick="closeDetailOnBackdrop(event)"
+>
 
     <div class="modal-box">
 
@@ -1114,67 +1229,190 @@ a{color:inherit;text-decoration:none}
             type="button"
             class="modal-close"
             onclick="closeDetailModal()"
-            aria-label="Close"
         >
             ×
         </button>
 
-        <div id="detailContent" class="modal-content"></div>
+
+        <div class="modal-content">
+
+            <div class="detail-gallery">
+
+                <div class="detail-main-wrap">
+
+                    <img
+                        id="detailMainImage"
+                        class="detail-main-image"
+                        src=""
+                        alt="Property"
+                        onclick="openViewerFromDetail()"
+                    >
+
+
+                    <button
+                        type="button"
+                        class="detail-arrow prev"
+                        onclick="changeDetailImage(-1)"
+                    >
+                        ‹
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="detail-arrow next"
+                        onclick="changeDetailImage(1)"
+                    >
+                        ›
+                    </button>
+
+
+                    <div
+                        id="detailCounter"
+                        class="detail-counter"
+                    >
+                        1 / 1
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="detailThumbnails"
+                    class="detail-thumbnails"
+                ></div>
+
+            </div>
+
+
+            <div class="detail-info">
+
+                <h2 id="detailTitle">
+                    Property
+                </h2>
+
+
+                <div
+                    id="detailPrice"
+                    class="detail-price"
+                ></div>
+
+
+                <div
+                    id="detailMeta"
+                    class="property-meta"
+                ></div>
+
+
+                <div
+                    id="detailLocation"
+                    class="property-location"
+                ></div>
+
+
+                <div
+                    id="detailDescription"
+                    class="detail-description"
+                ></div>
+
+
+                <div class="detail-actions">
+
+                    <button
+                        type="button"
+                        class="primary-btn"
+                        onclick="contactProperty()"
+                    >
+                        💬 Chat Owner
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="secondary-btn"
+                        onclick="closeDetailModal()"
+                    >
+                        Close
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
 
     </div>
 
 </div>
 
 
-<!-- FULLSCREEN IMAGE VIEWER -->
-<div id="imageViewer" class="viewer">
+<!-- =======================================================
+     FULLSCREEN IMAGE VIEWER
+======================================================= -->
+
+<div
+    id="imageViewer"
+    class="viewer"
+>
 
     <button
         type="button"
         class="viewer-close"
-        onclick="closeImageViewer()"
-        aria-label="Close image"
+        onclick="closeViewer()"
     >
         ×
     </button>
 
+
     <button
         type="button"
-        class="viewer-arrow prev"
-        onclick="viewerPrevious()"
-        aria-label="Previous image"
+        class="viewer-arrow viewer-prev"
+        onclick="changeViewerImage(-1)"
     >
         ‹
     </button>
 
+
     <img
         id="viewerImage"
+        class="viewer-image"
         src=""
         alt="Property photo"
     >
 
+
     <button
         type="button"
-        class="viewer-arrow next"
-        onclick="viewerNext()"
-        aria-label="Next image"
+        class="viewer-arrow viewer-next"
+        onclick="changeViewerImage(1)"
     >
         ›
     </button>
 
+
+    <div
+        id="viewerCounter"
+        class="viewer-counter"
+    >
+        1 / 1
+    </div>
+
 </div>
 
 
-<div id="toast" class="toast"></div>
+<div
+    id="toast"
+    class="toast"
+></div>
 
-
-<script src="auth.js"></script>
 
 <script>
+
 "use strict";
 
+
 /* =========================================================
-   CONFIG
+   SUPABASE
 ========================================================= */
 
 const SUPABASE_URL =
@@ -1192,44 +1430,173 @@ const PROPERTY_BUCKET =
 ========================================================= */
 
 let allProperties = [];
-let filteredProperties = [];
-let currentFilter = "all";
 
-let currentDetailProperty = null;
-let currentDetailImageIndex = 0;
+let currentPropertyFilter =
+    "all";
 
-let currentViewerImages = [];
-let currentViewerIndex = 0;
+let currentDetailProperty =
+    null;
+
+let currentDetailImageIndex =
+    0;
+
+let currentViewerImages =
+    [];
+
+let currentViewerImageIndex =
+    0;
+
+let toastTimer =
+    null;
 
 
 /* =========================================================
-   HEADERS
+   SUPABASE HEADERS
 ========================================================= */
 
 function publicHeaders(){
 
     return {
-        "apikey": SUPABASE_KEY,
-        "Authorization": "Bearer " + SUPABASE_KEY,
-        "Content-Type": "application/json"
+
+        "apikey":
+            SUPABASE_KEY,
+
+        "Content-Type":
+            "application/json"
+
     };
 
 }
 
 
-function authHeaders(){
+async function getAccessToken(){
+
+    try{
+
+        if(
+            typeof window.getSupabaseAccessToken ===
+            "function"
+        ){
+
+            return await window.getSupabaseAccessToken();
+
+        }
+
+
+        const raw =
+            localStorage.getItem(
+                "losoja_supabase_session"
+            );
+
+
+        if(!raw){
+
+            return null;
+
+        }
+
+
+        const session =
+            JSON.parse(raw);
+
+
+        return (
+            session.access_token ||
+            session?.session?.access_token ||
+            null
+        );
+
+    }catch(error){
+
+        console.error(
+            "Access token error:",
+            error
+        );
+
+        return null;
+
+    }
+
+}
+
+
+async function getAuthenticatedUser(){
+
+    try{
+
+        if(
+            typeof window.getCurrentUser ===
+            "function"
+        ){
+
+            return await window.getCurrentUser();
+
+        }
+
+
+        const raw =
+            localStorage.getItem(
+                "losoja_supabase_session"
+            );
+
+
+        if(!raw){
+
+            return null;
+
+        }
+
+
+        const session =
+            JSON.parse(raw);
+
+
+        return (
+            session.user ||
+            session?.session?.user ||
+            null
+        );
+
+    }catch(error){
+
+        console.error(
+            "User error:",
+            error
+        );
+
+        return null;
+
+    }
+
+}
+
+
+async function authHeaders(){
 
     const token =
-        typeof window.getSupabaseAccessToken === "function"
-            ? window.getSupabaseAccessToken()
-            : null;
+        await getAccessToken();
 
-    return {
-        "apikey": SUPABASE_KEY,
-        "Authorization":
-            "Bearer " + (token || SUPABASE_KEY),
-        "Content-Type": "application/json"
+
+    const headers = {
+
+        "apikey":
+            SUPABASE_KEY,
+
+        "Content-Type":
+            "application/json"
+
     };
+
+
+    if(token){
+
+        headers.Authorization =
+            "Bearer " + token;
+
+    }
+
+
+    return headers;
 
 }
 
@@ -1238,64 +1605,63 @@ function authHeaders(){
    TOAST
 ========================================================= */
 
-let toastTimer = null;
-
 function showToast(message){
 
     const toast =
         document.getElementById("toast");
 
-    toast.textContent = message;
 
-    toast.classList.add("show");
+    if(!toast){
 
-    clearTimeout(toastTimer);
-
-    toastTimer = setTimeout(function(){
-
-        toast.classList.remove("show");
-
-    },3200);
-
-}
-
-
-/* =========================================================
-   AUTH
-========================================================= */
-
-async function getAuthenticatedUser(){
-
-    try{
-
-        if(typeof window.getCurrentUser === "function"){
-
-            const user =
-                await window.getCurrentUser();
-
-            if(user){
-                return user;
-            }
-
-        }
-
-    }catch(error){
-
-        console.warn(
-            "Could not get current user:",
-            error
-        );
+        return;
 
     }
 
-    return null;
+
+    toast.textContent =
+        message;
+
+
+    toast.classList.add("show");
+
+
+    clearTimeout(toastTimer);
+
+
+    toastTimer =
+        setTimeout(
+            function(){
+
+                toast.classList.remove(
+                    "show"
+                );
+
+            },
+            3500
+        );
 
 }
 
 
 /* =========================================================
-   POST PROPERTY MODAL
+   MODAL CONTROL
 ========================================================= */
+
+function updateBodyModalState(){
+
+    const anyOpen =
+        document.querySelector(
+            ".modal.show, .viewer.show"
+        );
+
+
+    document.body.classList.toggle(
+        "modal-open",
+        !!anyOpen
+    );
+
+}
+
 
 function openPostPropertyModal(){
 
@@ -1304,13 +1670,10 @@ function openPostPropertyModal(){
             "postPropertyModal"
         );
 
-    if(!modal){
-        return;
-    }
 
     modal.classList.add("show");
 
-    document.body.style.overflow = "hidden";
+    updateBodyModalState();
 
 }
 
@@ -1322,206 +1685,250 @@ function closePostPropertyModal(){
             "postPropertyModal"
         );
 
-    if(!modal){
-        return;
-    }
 
     modal.classList.remove("show");
 
-    document.body.style.overflow = "";
+    updateBodyModalState();
 
 }
 
 
-/*
- Keep old function name available in case
- anything else in the app calls it.
-*/
-function scrollToPostProperty(){
+function closePostPropertyOnBackdrop(event){
 
-    openPostPropertyModal();
+    if(
+        event.target.id ===
+        "postPropertyModal"
+    ){
+
+        closePostPropertyModal();
+
+    }
 
 }
+
+
+function closeDetailOnBackdrop(event){
+
+    if(
+        event.target.id ===
+        "detailModal"
+    ){
+
+        closeDetailModal();
+
+    }
+
+}
+
+
+function closeDetailModal(){
+
+    document
+        .getElementById("detailModal")
+        .classList.remove("show");
+
+    updateBodyModalState();
+
+}
+
+
+document.addEventListener(
+    "keydown",
+    function(event){
+
+        if(event.key !== "Escape"){
+
+            return;
+
+        }
+
+
+        closePostPropertyModal();
+
+        closeDetailModal();
+
+        closeViewer();
+
+    }
+);
 
 
 /* =========================================================
-   FORMATTERS
+   PROPERTY PHOTO SELECTION
 ========================================================= */
 
-function formatMoney(value){
+const propertyImagesInput =
+    document.getElementById(
+        "propertyImages"
+    );
 
-    const amount =
-        Number(value || 0);
+const photoSelectionInfo =
+    document.getElementById(
+        "photoSelectionInfo"
+    );
 
-    return "₦" +
-        amount.toLocaleString(
-            "en-NG",
-            {
-                maximumFractionDigits:2
+const propertyPhotoPreview =
+    document.getElementById(
+        "propertyPhotoPreview"
+    );
+
+
+propertyImagesInput.addEventListener(
+    "change",
+    function(){
+
+        const files =
+            Array.from(
+                this.files || []
+            );
+
+
+        propertyPhotoPreview.innerHTML =
+            "";
+
+
+        if(!files.length){
+
+            photoSelectionInfo.textContent =
+                "No photos selected";
+
+            return;
+
+        }
+
+
+        if(files.length > 10){
+
+            showToast(
+                "You can select up to 10 photos."
+            );
+
+
+            this.value =
+                "";
+
+
+            photoSelectionInfo.textContent =
+                "No photos selected";
+
+            return;
+
+        }
+
+
+        for(
+            let index = 0;
+            index < files.length;
+            index++
+        ){
+
+            const file =
+                files[index];
+
+
+            if(file.size > 5 * 1024 * 1024){
+
+                showToast(
+                    `${file.name} is larger than 5MB.`
+                );
+
+
+                this.value =
+                    "";
+
+                propertyPhotoPreview.innerHTML =
+                    "";
+
+                photoSelectionInfo.textContent =
+                    "No photos selected";
+
+                return;
+
+            }
+
+        }
+
+
+        photoSelectionInfo.textContent =
+            files.length === 1
+                ? "1 photo selected"
+                : `${files.length} photos selected`;
+
+
+        files.forEach(
+            function(file,index){
+
+                const reader =
+                    new FileReader();
+
+
+                reader.onload =
+                    function(event){
+
+                        const wrapper =
+                            document.createElement(
+                                "div"
+                            );
+
+
+                        wrapper.className =
+                            "property-preview-item";
+
+
+                        const image =
+                            document.createElement(
+                                "img"
+                            );
+
+
+                        image.src =
+                            event.target.result;
+
+
+                        image.alt =
+                            `Property photo ${index + 1}`;
+
+
+                        const number =
+                            document.createElement(
+                                "div"
+                            );
+
+
+                        number.className =
+                            "property-preview-number";
+
+
+                        number.textContent =
+                            String(index + 1);
+
+
+                        wrapper.appendChild(
+                            image
+                        );
+
+
+                        wrapper.appendChild(
+                            number
+                        );
+
+
+                        propertyPhotoPreview.appendChild(
+                            wrapper
+                        );
+
+                    };
+
+
+                reader.readAsDataURL(
+                    file
+                );
+
             }
         );
 
-}
-
-
-function formatPropertyType(value){
-
-    const type =
-        String(value || "")
-            .trim()
-            .toLowerCase();
-
-    const labels = {
-        house:"House",
-        apartment:"Apartment",
-        land:"Land",
-        commercial:"Commercial",
-        property:"Property"
-    };
-
-    return labels[type] ||
-        (
-            type
-                ? type.charAt(0).toUpperCase() +
-                  type.slice(1)
-                : "Property"
-        );
-
-}
-
-
-function formatListingType(value){
-
-    const type =
-        String(value || "")
-            .trim()
-            .toLowerCase();
-
-    if(type.includes("rent")){
-        return "For Rent";
     }
-
-    return "For Sale";
-
-}
-
-
-function formatStatus(value){
-
-    const status =
-        String(value || "available")
-            .trim()
-            .toLowerCase();
-
-    if(status === "sold"){
-        return "Sold";
-    }
-
-    if(status === "rented"){
-        return "Rented";
-    }
-
-    return "Available";
-
-}
-
-
-/* =========================================================
-   ESCAPE
-========================================================= */
-
-function escapeHtml(value){
-
-    return String(value ?? "")
-        .replace(/&/g,"&amp;")
-        .replace(/</g,"&lt;")
-        .replace(/>/g,"&gt;")
-        .replace(/"/g,"&quot;")
-        .replace(/'/g,"&#039;");
-
-}
-
-
-/* =========================================================
-   PLACEHOLDER
-========================================================= */
-
-function placeholderImage(){
-
-    return "data:image/svg+xml;charset=UTF-8," +
-        encodeURIComponent(`
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="800"
-                height="500"
-            >
-                <rect
-                    width="800"
-                    height="500"
-                    fill="#eaf0ec"
-                />
-                <text
-                    x="400"
-                    y="250"
-                    text-anchor="middle"
-                    dominant-baseline="middle"
-                    font-family="Arial"
-                    font-size="34"
-                    fill="#68756e"
-                >
-                    LosOja Property
-                </text>
-            </svg>
-        `);
-
-}
-
-
-/* =========================================================
-   PROPERTY IMAGES
-========================================================= */
-
-function getPropertyImages(property){
-
-    if(
-        property &&
-        Array.isArray(property._images) &&
-        property._images.length
-    ){
-
-        return property._images
-            .filter(function(item){
-
-                return item &&
-                       item.image_url;
-
-            })
-            .sort(function(a,b){
-
-                return Number(a.sort_order || 0) -
-                       Number(b.sort_order || 0);
-
-            });
-
-    }
-
-
-    if(property && property.image_url){
-
-        return [{
-            image_url:property.image_url,
-            sort_order:0
-        }];
-
-    }
-
-
-    return [{
-        image_url:placeholderImage(),
-        sort_order:0
-    }];
-
-}
+);
 
 
 /* =========================================================
@@ -1530,16 +1937,15 @@ function getPropertyImages(property){
 
 async function loadProperties(){
 
-    const grid =
+    const container =
         document.getElementById(
-            "propertyGrid"
+            "propertiesContainer"
         );
 
-    grid.innerHTML = `
-        <div class="center-message">
-            Loading properties...
-        </div>
-    `;
+
+    container.innerHTML =
+        '<div class="loading">Loading properties...</div>';
+
 
     try{
 
@@ -1550,49 +1956,30 @@ async function loadProperties(){
                 "?select=*" +
                 "&order=created_at.desc",
                 {
-                    method:"GET",
-                    headers:publicHeaders()
+                    headers:
+                        publicHeaders()
                 }
             );
 
-        const text =
-            await response.text();
-
-        let data;
-
-        try{
-
-            data =
-                text
-                    ? JSON.parse(text)
-                    : [];
-
-        }catch(error){
-
-            throw new Error(
-                "Supabase returned an invalid response."
-            );
-
-        }
 
         if(!response.ok){
 
             throw new Error(
-                data?.message ||
-                data?.hint ||
-                "Unable to load properties."
+                await response.text()
             );
 
         }
 
+
         allProperties =
-            Array.isArray(data)
-                ? data
-                : [];
+            await response.json();
+
 
         await loadPropertyImages();
 
+
         applyFilters();
+
 
     }catch(error){
 
@@ -1601,33 +1988,12 @@ async function loadProperties(){
             error
         );
 
-        grid.innerHTML = `
-            <div class="center-message error-message">
 
-                <strong>
-                    Unable to load properties.
-                </strong>
-
-                <br><br>
-
-                ${escapeHtml(error.message)}
-
-                <br>
-
-                <button
-                    type="button"
-                    class="retry-btn"
-                    onclick="loadProperties()"
-                >
-                    Try Again
-                </button>
-
+        container.innerHTML = `
+            <div class="empty-state">
+                Unable to load properties right now.
             </div>
         `;
-
-        document.getElementById(
-            "propertyCount"
-        ).textContent = "Unable to load";
 
     }
 
@@ -1640,15 +2006,12 @@ async function loadProperties(){
 
 async function loadPropertyImages(){
 
-    allProperties.forEach(function(property){
-
-        property._images = [];
-
-    });
-
     if(!allProperties.length){
+
         return;
+
     }
+
 
     try{
 
@@ -1659,138 +2022,99 @@ async function loadPropertyImages(){
                 "?select=id,property_id,image_url,sort_order" +
                 "&order=property_id.asc,sort_order.asc,id.asc",
                 {
-                    method:"GET",
-                    headers:publicHeaders()
+                    headers:
+                        publicHeaders()
                 }
             );
 
-        const responseText =
-            await response.text();
 
         if(!response.ok){
 
-            console.warn(
-                "Property images request failed:",
-                responseText
+            console.error(
+                "Property images response:",
+                await response.text()
             );
 
             return;
 
         }
 
-        let images = [];
 
-        try{
-
-            images =
-                responseText
-                    ? JSON.parse(responseText)
-                    : [];
-
-        }catch(error){
-
-            console.warn(
-                "Invalid property images response:",
-                error
-            );
-
-            return;
-
-        }
-
-        if(!Array.isArray(images)){
-            return;
-        }
-
-        const imageMap = new Map();
-
-        images.forEach(function(image){
-
-            if(
-                !image ||
-                !image.property_id ||
-                !image.image_url
-            ){
-                return;
-            }
-
-            const propertyId =
-                String(image.property_id);
-
-            if(!imageMap.has(propertyId)){
-
-                imageMap.set(
-                    propertyId,
-                    []
-                );
-
-            }
-
-            imageMap.get(propertyId).push({
-
-                id:image.id,
-
-                image_url:String(
-                    image.image_url
-                ),
-
-                sort_order:Number(
-                    image.sort_order ?? 0
-                )
-
-            });
-
-        });
+        const rows =
+            await response.json();
 
 
-        imageMap.forEach(function(photoList){
+        const imageMap =
+            new Map();
 
-            photoList.sort(function(a,b){
 
-                const difference =
-                    a.sort_order -
-                    b.sort_order;
+        rows.forEach(
+            function(row){
 
-                if(difference !== 0){
-                    return difference;
-                }
+                if(
+                    !imageMap.has(
+                        row.property_id
+                    )
+                ){
 
-                return String(a.id || "")
-                    .localeCompare(
-                        String(b.id || "")
+                    imageMap.set(
+                        row.property_id,
+                        []
                     );
 
-            });
-
-        });
+                }
 
 
-        allProperties.forEach(function(property){
+                if(row.image_url){
 
-            const propertyId =
-                String(property.id);
+                    imageMap
+                        .get(row.property_id)
+                        .push(
+                            row.image_url
+                        );
 
-            property._images =
-                imageMap.get(propertyId) || [];
+                }
 
-            console.log(
-                "Property:",
-                property.title || property.name,
-                "| Photos:",
-                property._images.length
-            );
+            }
+        );
 
-        });
+
+        allProperties.forEach(
+            function(property){
+
+                property._images =
+                    imageMap.get(
+                        property.id
+                    ) || [];
+
+
+                property._images =
+                    property._images.filter(
+                        function(url,index,array){
+
+                            return (
+                                url &&
+                                array.indexOf(url) ===
+                                index
+                            );
+
+                        }
+                    );
+
+            }
+        );
+
 
         console.log(
-            "TOTAL PROPERTY IMAGE RECORDS:",
-            images.length
+            "Loaded property image rows:",
+            rows.length
         );
+
 
     }catch(error){
 
-        console.warn(
-            "Property image loading error:",
+        console.error(
+            "Property images error:",
             error
         );
 
@@ -1800,138 +2124,267 @@ async function loadPropertyImages(){
 
 
 /* =========================================================
-   FILTERING
+   GET PROPERTY IMAGES
 ========================================================= */
 
-function applyFilters(){
+function getPropertyImages(property){
 
-    const search =
-        document.getElementById(
-            "searchInput"
-        )
-        .value
-        .trim()
-        .toLowerCase();
+    if(
+        property &&
+        Array.isArray(property._images) &&
+        property._images.length
+    ){
 
-    filteredProperties =
-        allProperties.filter(function(property){
+        return property._images;
 
-            const title =
-                String(
-                    property.title ||
-                    property.name ||
-                    ""
-                ).toLowerCase();
+    }
 
-            const location =
-                String(
-                    property.location || ""
-                ).toLowerCase();
 
-            const type =
-                String(
-                    property.property_type || ""
-                ).toLowerCase();
+    if(property?.image_url){
 
-            const listing =
-                formatListingType(
-                    property.listing_type ||
-                    property.transaction_type ||
-                    property.type
-                ).toLowerCase();
+        if(
+            Array.isArray(
+                property.image_url
+            )
+        ){
 
-            const status =
-                String(
-                    property.status ||
-                    "available"
-                ).toLowerCase();
+            return property.image_url;
 
-            const matchesSearch =
-                !search ||
-                title.includes(search) ||
-                location.includes(search) ||
-                type.includes(search) ||
-                listing.includes(search);
+        }
 
-            let matchesFilter = true;
 
-            if(currentFilter !== "all"){
+        return [
+            property.image_url
+        ];
 
-                if(currentFilter === "for sale"){
+    }
 
-                    matchesFilter =
-                        listing === "for sale";
 
-                }else if(currentFilter === "for rent"){
-
-                    matchesFilter =
-                        listing === "for rent";
-
-                }else if(currentFilter === "available"){
-
-                    matchesFilter =
-                        status === "available";
-
-                }else if(currentFilter === "sold"){
-
-                    matchesFilter =
-                        status === "sold";
-
-                }else if(currentFilter === "rented"){
-
-                    matchesFilter =
-                        status === "rented";
-
-                }else{
-
-                    matchesFilter =
-                        type === currentFilter;
-
-                }
-
-            }
-
-            return (
-                matchesSearch &&
-                matchesFilter
-            );
-
-        });
-
-    renderProperties();
+    return [
+        "https://via.placeholder.com/800x500?text=LosOja+Property"
+    ];
 
 }
 
 
 /* =========================================================
-   RENDER
+   FILTERS
 ========================================================= */
 
-function renderProperties(){
+function setPropertyFilter(
+    filter,
+    button
+){
 
-    const grid =
+    currentPropertyFilter =
+        filter;
+
+
+    document
+        .querySelectorAll(
+            ".filter-btn"
+        )
+        .forEach(
+            function(btn){
+
+                btn.classList.remove(
+                    "active"
+                );
+
+            }
+        );
+
+
+    if(button){
+
+        button.classList.add(
+            "active"
+        );
+
+    }
+
+
+    applyFilters();
+
+}
+
+
+function matchesFilter(
+    property,
+    filter
+){
+
+    const type =
+        String(
+            property.property_type || ""
+        ).toLowerCase();
+
+
+    const listing =
+        String(
+            property.listing_type || ""
+        ).toLowerCase();
+
+
+    const status =
+        String(
+            property.status || "available"
+        ).toLowerCase();
+
+
+    if(filter === "all"){
+
+        return true;
+
+    }
+
+
+    if(filter === "available"){
+
+        return (
+            status === "available" ||
+            status === ""
+        );
+
+    }
+
+
+    if(filter === "sale"){
+
+        return listing.includes(
+            "sale"
+        );
+
+    }
+
+
+    if(filter === "rent"){
+
+        return listing.includes(
+            "rent"
+        );
+
+    }
+
+
+    if(filter === "sold"){
+
+        return status === "sold";
+
+    }
+
+
+    if(filter === "rented"){
+
+        return status === "rented";
+
+    }
+
+
+    if(filter === "house"){
+
+        return type === "house";
+
+    }
+
+
+    if(filter === "apartment"){
+
+        return type === "apartment";
+
+    }
+
+
+    if(filter === "land"){
+
+        return type === "land";
+
+    }
+
+
+    if(filter === "commercial"){
+
+        return type === "commercial";
+
+    }
+
+
+    return true;
+
+}
+
+
+function applyFilters(){
+
+    const search =
+        document
+            .getElementById(
+                "propertySearch"
+            )
+            .value
+            .trim()
+            .toLowerCase();
+
+
+    const filtered =
+        allProperties.filter(
+            function(property){
+
+                const matchesSearch =
+                    !search ||
+                    [
+                        property.title,
+                        property.property_type,
+                        property.listing_type,
+                        property.location,
+                        property.description
+                    ]
+                    .filter(Boolean)
+                    .join(" ")
+                    .toLowerCase()
+                    .includes(search);
+
+
+                return (
+                    matchesSearch &&
+                    matchesFilter(
+                        property,
+                        currentPropertyFilter
+                    )
+                );
+
+            }
+        );
+
+
+    renderProperties(
+        filtered
+    );
+
+}
+
+
+/* =========================================================
+   RENDER PROPERTY CARDS
+========================================================= */
+
+function renderProperties(
+    properties
+){
+
+    const container =
         document.getElementById(
-            "propertyGrid"
+            "propertiesContainer"
         );
 
-    const count =
-        document.getElementById(
-            "propertyCount"
-        );
 
-    count.textContent =
-        filteredProperties.length +
-        (
-            filteredProperties.length === 1
-                ? " property"
-                : " properties"
-        );
+    if(!properties.length){
 
-    if(!filteredProperties.length){
-
-        grid.innerHTML = `
-            <div class="center-message">
-                No properties found.
+        container.innerHTML = `
+            <div class="empty-state">
+                <strong>No properties found.</strong>
+                <br>
+                Try another search or filter.
             </div>
         `;
 
@@ -1939,1458 +2392,904 @@ function renderProperties(){
 
     }
 
-    grid.innerHTML =
-        filteredProperties
-            .map(function(property,index){
 
-                return renderPropertyCard(
-                    property,
-                    index
-                );
+    container.innerHTML =
+        properties
+            .map(
+                function(property){
 
-            })
+                    const originalIndex =
+                        allProperties.indexOf(
+                            property
+                        );
+
+
+                    const images =
+                        getPropertyImages(
+                            property
+                        );
+
+
+                    const firstImage =
+                        images[0];
+
+
+                    const status =
+                        property.status ||
+                        "Available";
+
+
+                    const price =
+                        formatPrice(
+                            property.price
+                        );
+
+
+                    return `
+
+                        <article
+                            class="property-card"
+                        >
+
+                            <div
+                                class="card-gallery"
+                            >
+
+                                <img
+                                    id="cardImage-${originalIndex}"
+                                    class="card-main-image"
+                                    src="${escapeAttribute(firstImage)}"
+                                    alt="${escapeAttribute(property.title || "Property")}"
+                                    data-image-index="0"
+                                    onclick="openPropertyDetail(${originalIndex})"
+                                    onerror="this.src='https://via.placeholder.com/800x500?text=LosOja+Property'"
+                                >
+
+
+                                ${
+                                    images.length > 1
+                                    ? `
+
+                                        <button
+                                            type="button"
+                                            class="gallery-arrow gallery-prev"
+                                            onclick="changeCardImage(event,${originalIndex},-1)"
+                                        >
+                                            ‹
+                                        </button>
+
+
+                                        <button
+                                            type="button"
+                                            class="gallery-arrow gallery-next"
+                                            onclick="changeCardImage(event,${originalIndex},1)"
+                                        >
+                                            ›
+                                        </button>
+
+                                    `
+                                    : ""
+                                }
+
+
+                                <div
+                                    class="gallery-counter"
+                                >
+                                    1 / ${images.length}
+                                </div>
+
+                            </div>
+
+
+                            ${
+                                images.length > 1
+                                ? `
+
+                                    <div
+                                        class="card-thumbnails"
+                                    >
+
+                                        ${images
+                                            .map(
+                                                function(image,imageIndex){
+
+                                                    return `
+
+                                                        <img
+                                                            class="card-thumb ${imageIndex === 0 ? "active" : ""}"
+                                                            src="${escapeAttribute(image)}"
+                                                            alt="Property photo ${imageIndex + 1}"
+                                                            onclick="setCardImage(event,${originalIndex},${imageIndex})"
+                                                            onerror="this.style.display='none'"
+                                                        >
+
+                                                    `;
+
+                                                }
+                                            )
+                                            .join("")}
+
+                                    </div>
+
+                                `
+                                : ""
+                            }
+
+
+                            <div
+                                class="property-card-body"
+                            >
+
+                                <h2
+                                    class="property-card-title"
+                                >
+                                    ${escapeHtml(
+                                        property.title ||
+                                        "Property"
+                                    )}
+                                </h2>
+
+
+                                <div
+                                    class="property-meta"
+                                >
+
+                                    <span
+                                        class="badge"
+                                    >
+                                        ${escapeHtml(
+                                            property.property_type ||
+                                            "Property"
+                                        )}
+                                    </span>
+
+
+                                    <span
+                                        class="badge"
+                                    >
+                                        ${escapeHtml(
+                                            property.listing_type ||
+                                            ""
+                                        )}
+                                    </span>
+
+
+                                    <span
+                                        class="badge"
+                                    >
+                                        ${escapeHtml(
+                                            status
+                                        )}
+                                    </span>
+
+                                </div>
+
+
+                                <div
+                                    class="property-price"
+                                >
+                                    ${price}
+                                </div>
+
+
+                                <div
+                                    class="property-location"
+                                >
+                                    📍
+                                    ${escapeHtml(
+                                        property.location ||
+                                        "Location not provided"
+                                    )}
+                                </div>
+
+
+                                <button
+                                    type="button"
+                                    class="view-property-btn"
+                                    onclick="openPropertyDetail(${originalIndex})"
+                                >
+                                    View Property
+                                </button>
+
+                            </div>
+
+                        </article>
+
+                    `;
+
+                }
+            )
             .join("");
 
 }
 
 
 /* =========================================================
-   PROPERTY CARD
-========================================================= */
-
-function renderPropertyCard(property,index){
-
-    const images =
-        getPropertyImages(property);
-
-    const title =
-        property.title ||
-        property.name ||
-        "Property";
-
-    const location =
-        property.location ||
-        "Location not provided";
-
-    const listing =
-        formatListingType(
-            property.listing_type ||
-            property.transaction_type ||
-            property.type
-        );
-
-    const type =
-        formatPropertyType(
-            property.property_type
-        );
-
-    const status =
-        formatStatus(property.status);
-
-    const description =
-        property.description ||
-        "No description provided.";
-
-    return `
-        <article
-            class="property-card"
-            data-property-index="${index}"
-        >
-
-            <div class="card-gallery">
-
-                <img
-                    id="card-main-${index}"
-                    class="card-main-image"
-                    src="${escapeHtml(images[0].image_url)}"
-                    alt="${escapeHtml(title)}"
-                    loading="lazy"
-                    data-image-index="0"
-                    onclick="openImageViewerForProperty(${index},0)"
-                    onerror="this.src=placeholderImage()"
-                >
-
-                <span
-                    id="card-counter-${index}"
-                    class="image-counter"
-                >
-                    1 / ${images.length}
-                </span>
-
-                ${
-                    images.length > 1
-                    ? `
-                        <button
-                            type="button"
-                            class="gallery-arrow prev"
-                            onclick="event.stopPropagation();changeCardImage(${index},-1)"
-                            aria-label="Previous property photo"
-                        >
-                            ‹
-                        </button>
-
-                        <button
-                            type="button"
-                            class="gallery-arrow next"
-                            onclick="event.stopPropagation();changeCardImage(${index},1)"
-                            aria-label="Next property photo"
-                        >
-                            ›
-                        </button>
-                    `
-                    : ""
-                }
-
-            </div>
-
-
-            ${
-                images.length > 1
-                ? `
-                    <div
-                        id="card-thumbnails-${index}"
-                        class="card-thumbnails"
-                    >
-
-                        ${
-                            images.map(function(image,imageIndex){
-
-                                return `
-                                    <button
-                                        type="button"
-                                        class="thumbnail ${
-                                            imageIndex === 0
-                                                ? "active"
-                                                : ""
-                                        }"
-                                        onclick="event.stopPropagation();setCardImage(${index},${imageIndex})"
-                                        aria-label="View property photo ${imageIndex + 1}"
-                                    >
-
-                                        <img
-                                            src="${escapeHtml(image.image_url)}"
-                                            alt="Property thumbnail ${imageIndex + 1}"
-                                            loading="lazy"
-                                            onerror="this.src=placeholderImage()"
-                                        >
-
-                                    </button>
-                                `;
-
-                            }).join("")
-                        }
-
-                    </div>
-                `
-                : ""
-            }
-
-
-            <div class="card-content">
-
-                <div class="property-badges">
-
-                    <span class="badge badge-sale">
-                        ${escapeHtml(listing)}
-                    </span>
-
-                    <span class="badge badge-status">
-                        ${escapeHtml(status)}
-                    </span>
-
-                </div>
-
-                <h3>
-                    ${escapeHtml(title)}
-                </h3>
-
-                <div class="location">
-                    📍 ${escapeHtml(location)}
-                </div>
-
-                <div class="price">
-                    ${formatMoney(property.price)}
-                </div>
-
-                <div class="description">
-                    ${escapeHtml(description)}
-                </div>
-
-                <div class="card-actions">
-
-                    <button
-                        type="button"
-                        class="primary-btn"
-                        onclick="openDetailModal(${index})"
-                    >
-                        View Property
-                    </button>
-
-                </div>
-
-            </div>
-
-        </article>
-    `;
-
-}
-
-
-/* =========================================================
    CARD IMAGE CONTROLS
-   RELIABLE INDEX VERSION
 ========================================================= */
-
-function setCardImage(propertyIndex,imageIndex){
-
-    const property =
-        filteredProperties[propertyIndex];
-
-    if(!property){
-        return;
-    }
-
-    const images =
-        getPropertyImages(property);
-
-    if(
-        imageIndex < 0 ||
-        imageIndex >= images.length
-    ){
-        return;
-    }
-
-    const main =
-        document.getElementById(
-            "card-main-" +
-            propertyIndex
-        );
-
-    const counter =
-        document.getElementById(
-            "card-counter-" +
-            propertyIndex
-        );
-
-    const thumbnails =
-        document.querySelectorAll(
-            "#card-thumbnails-" +
-            propertyIndex +
-            " .thumbnail"
-        );
-
-    if(main){
-
-        main.src =
-            images[imageIndex].image_url;
-
-        /*
-         IMPORTANT:
-         Store the actual image index on
-         the image element.
-        */
-        main.dataset.imageIndex =
-            String(imageIndex);
-
-        main.onerror =
-            function(){
-
-                this.src =
-                    placeholderImage();
-
-            };
-
-    }
-
-    if(counter){
-
-        counter.textContent =
-            (imageIndex + 1) +
-            " / " +
-            images.length;
-
-    }
-
-    thumbnails.forEach(function(
-        thumbnail,
-        index
-    ){
-
-        thumbnail.classList.toggle(
-            "active",
-            index === imageIndex
-        );
-
-    });
-
-}
-
 
 function changeCardImage(
+    event,
     propertyIndex,
     direction
 ){
 
+    if(event){
+
+        event.stopPropagation();
+
+    }
+
+
     const property =
-        filteredProperties[propertyIndex];
+        allProperties[propertyIndex];
+
 
     if(!property){
+
         return;
+
     }
+
 
     const images =
-        getPropertyImages(property);
+        getPropertyImages(
+            property
+        );
+
 
     if(images.length <= 1){
+
         return;
+
     }
+
 
     const main =
         document.getElementById(
-            "card-main-" +
-            propertyIndex
+            `cardImage-${propertyIndex}`
         );
 
-    let currentIndex = 0;
 
-    if(main){
+    if(!main){
 
-        currentIndex =
-            Number(
-                main.dataset.imageIndex || 0
-            );
-
-        if(
-            !Number.isFinite(currentIndex) ||
-            currentIndex < 0 ||
-            currentIndex >= images.length
-        ){
-            currentIndex = 0;
-        }
+        return;
 
     }
 
-    let nextIndex =
-        currentIndex + direction;
 
-    if(nextIndex < 0){
-        nextIndex = images.length - 1;
+    let current =
+        Number(
+            main.dataset.imageIndex || 0
+        );
+
+
+    current +=
+        direction;
+
+
+    if(current < 0){
+
+        current =
+            images.length - 1;
+
     }
 
-    if(nextIndex >= images.length){
-        nextIndex = 0;
+
+    if(current >= images.length){
+
+        current =
+            0;
+
     }
+
 
     setCardImage(
+        event,
         propertyIndex,
-        nextIndex
+        current
     );
 
 }
 
 
-/* =========================================================
-   DETAIL MODAL
-========================================================= */
+function setCardImage(
+    event,
+    propertyIndex,
+    imageIndex
+){
 
-function openDetailModal(index){
+    if(event){
+
+        event.stopPropagation();
+
+    }
+
 
     const property =
-        filteredProperties[index];
+        allProperties[propertyIndex];
+
 
     if(!property){
+
         return;
+
     }
+
+
+    const images =
+        getPropertyImages(
+            property
+        );
+
+
+    if(!images.length){
+
+        return;
+
+    }
+
+
+    imageIndex =
+        Math.max(
+            0,
+            Math.min(
+                imageIndex,
+                images.length - 1
+            )
+        );
+
+
+    const main =
+        document.getElementById(
+            `cardImage-${propertyIndex}`
+        );
+
+
+    if(!main){
+
+        return;
+
+    }
+
+
+    main.src =
+        images[imageIndex];
+
+
+    main.dataset.imageIndex =
+        String(imageIndex);
+
+
+    const card =
+        main.closest(
+            ".property-card"
+        );
+
+
+    if(card){
+
+        const thumbs =
+            card.querySelectorAll(
+                ".card-thumb"
+            );
+
+
+        thumbs.forEach(
+            function(thumb,index){
+
+                thumb.classList.toggle(
+                    "active",
+                    index === imageIndex
+                );
+
+            }
+        );
+
+
+        const counter =
+            card.querySelector(
+                ".gallery-counter"
+            );
+
+
+        if(counter){
+
+            counter.textContent =
+                `${imageIndex + 1} / ${images.length}`;
+
+        }
+
+    }
+
+}
+
+
+/* =========================================================
+   PROPERTY DETAIL
+========================================================= */
+
+function openPropertyDetail(
+    propertyIndex
+){
+
+    const property =
+        allProperties[propertyIndex];
+
+
+    if(!property){
+
+        return;
+
+    }
+
 
     currentDetailProperty =
         property;
 
+
     currentDetailImageIndex =
         0;
 
-    renderDetailModal();
-
-}
-
-
-function renderDetailModal(){
-
-    const property =
-        currentDetailProperty;
-
-    if(!property){
-        return;
-    }
-
-    const images =
-        getPropertyImages(property);
-
-    const title =
-        property.title ||
-        property.name ||
-        "Property";
-
-    const listing =
-        formatListingType(
-            property.listing_type ||
-            property.transaction_type ||
-            property.type
-        );
-
-    const status =
-        formatStatus(property.status);
-
-    const location =
-        property.location ||
-        "Location not provided";
-
-    const description =
-        property.description ||
-        "No description provided.";
-
-    const detailContent =
-        document.getElementById(
-            "detailContent"
-        );
-
-    detailContent.innerHTML = `
-
-        <h2 class="modal-title">
-            ${escapeHtml(title)}
-        </h2>
-
-        <div class="modal-meta">
-
-            ${escapeHtml(
-                formatPropertyType(
-                    property.property_type
-                )
-            )}
-
-            ·
-
-            ${escapeHtml(listing)}
-
-            ·
-
-            ${escapeHtml(status)}
-
-            ·
-
-            📍 ${escapeHtml(location)}
-
-        </div>
-
-
-        <div class="detail-main">
-
-            <img
-                id="detailMainImage"
-                src="${escapeHtml(images[0].image_url)}"
-                alt="${escapeHtml(title)}"
-                data-image-index="0"
-                onclick="openImageViewerForDetail(0)"
-                onerror="this.src=placeholderImage()"
-            >
-
-            <span
-                id="detailCounter"
-                class="detail-counter"
-            >
-                1 / ${images.length}
-            </span>
-
-        </div>
-
-
-        ${
-            images.length > 1
-            ? `
-                <div class="detail-thumbnails">
-
-                    ${
-                        images.map(function(image,imageIndex){
-
-                            return `
-                                <button
-                                    type="button"
-                                    class="thumbnail ${
-                                        imageIndex === 0
-                                            ? "active"
-                                            : ""
-                                    }"
-                                    onclick="setDetailImage(${imageIndex})"
-                                >
-
-                                    <img
-                                        src="${escapeHtml(image.image_url)}"
-                                        alt="Property photo ${imageIndex + 1}"
-                                        loading="lazy"
-                                        onerror="this.src=placeholderImage()"
-                                    >
-
-                                </button>
-                            `;
-
-                        }).join("")
-                    }
-
-                </div>
-            `
-            : ""
-        }
-
-
-        <div class="price">
-            ${formatMoney(property.price)}
-        </div>
-
-
-        <div class="detail-description">
-            ${escapeHtml(description)}
-        </div>
-
-
-        <div class="detail-actions">
-
-            <button
-                type="button"
-                class="primary-btn"
-                onclick="contactProperty()"
-            >
-                Contact
-            </button>
-
-
-            <div class="reaction-group">
-
-                <button
-                    id="likeBtn"
-                    type="button"
-                    class="reaction-btn"
-                    onclick="reactToProperty('like')"
-                >
-                    👍 Like
-                </button>
-
-                <button
-                    id="dislikeBtn"
-                    type="button"
-                    class="reaction-btn"
-                    onclick="reactToProperty('dislike')"
-                >
-                    👎 Dislike
-                </button>
-
-            </div>
-
-        </div>
-
-
-        ${renderOwnerActions(property)}
-
-    `;
-
-    document
-        .getElementById("detailModal")
-        .classList.add("show");
-
-    document.body.style.overflow = "hidden";
-
-    loadCurrentReaction();
-
-}
-
-
-function renderOwnerActions(property){
-
-    return `
-        <div
-            id="ownerActions"
-            style="
-                display:none;
-                margin-top:20px;
-                padding-top:18px;
-                border-top:1px solid #e3e9e5;
-            "
-        >
-
-            <strong>Your Property</strong>
-
-            <div
-                style="
-                    display:flex;
-                    gap:8px;
-                    flex-wrap:wrap;
-                    margin-top:10px;
-                "
-            >
-
-                <button
-                    type="button"
-                    class="secondary-btn"
-                    onclick="markPropertyStatus('available')"
-                >
-                    Mark Available
-                </button>
-
-                <button
-                    type="button"
-                    class="secondary-btn"
-                    onclick="markPropertyStatus('sold')"
-                >
-                    Mark Sold
-                </button>
-
-                <button
-                    type="button"
-                    class="secondary-btn"
-                    onclick="markPropertyStatus('rented')"
-                >
-                    Mark Rented
-                </button>
-
-                <button
-                    type="button"
-                    class="danger-btn"
-                    onclick="deleteCurrentProperty()"
-                >
-                    Delete Property
-                </button>
-
-            </div>
-
-        </div>
-    `;
-
-}
-
-
-function closeDetailModal(){
-
-    document
-        .getElementById("detailModal")
-        .classList.remove("show");
-
-    if(
-        !document
-            .getElementById("postPropertyModal")
-            .classList.contains("show")
-    ){
-
-        document.body.style.overflow = "";
-
-    }
-
-    currentDetailProperty = null;
-
-}
-
-
-/* =========================================================
-   DETAIL IMAGE
-========================================================= */
-
-function setDetailImage(index){
-
-    if(!currentDetailProperty){
-        return;
-    }
 
     const images =
         getPropertyImages(
-            currentDetailProperty
+            property
         );
 
-    if(
-        index < 0 ||
-        index >= images.length
-    ){
-        return;
-    }
 
-    currentDetailImageIndex =
-        index;
+    document.getElementById(
+        "detailTitle"
+    ).textContent =
+        property.title ||
+        "Property";
+
+
+    document.getElementById(
+        "detailPrice"
+    ).textContent =
+        formatPrice(
+            property.price
+        );
+
+
+    document.getElementById(
+        "detailLocation"
+    ).textContent =
+        "📍 " +
+        (
+            property.location ||
+            "Location not provided"
+        );
+
+
+    document.getElementById(
+        "detailDescription"
+    ).textContent =
+        property.description ||
+        "No description provided.";
+
+
+    document.getElementById(
+        "detailMeta"
+    ).innerHTML = `
+
+        <span class="badge">
+            ${escapeHtml(
+                property.property_type ||
+                "Property"
+            )}
+        </span>
+
+        <span class="badge">
+            ${escapeHtml(
+                property.listing_type ||
+                ""
+            )}
+        </span>
+
+        <span class="badge">
+            ${escapeHtml(
+                property.status ||
+                "Available"
+            )}
+        </span>
+
+    `;
+
+
+    renderDetailGallery(
+        images
+    );
+
+
+    document
+        .getElementById(
+            "detailModal"
+        )
+        .classList.add(
+            "show"
+        );
+
+
+    updateBodyModalState();
+
+}
+
+
+function renderDetailGallery(
+    images
+){
 
     const main =
         document.getElementById(
             "detailMainImage"
         );
 
+
+    const thumbnails =
+        document.getElementById(
+            "detailThumbnails"
+        );
+
+
     const counter =
         document.getElementById(
             "detailCounter"
         );
 
-    if(main){
 
-        main.src =
-            images[index].image_url;
+    if(!images.length){
 
-        main.dataset.imageIndex =
-            String(index);
-
-        main.onerror =
-            function(){
-
-                this.src =
-                    placeholderImage();
-
-            };
+        return;
 
     }
 
-    if(counter){
 
-        counter.textContent =
-            (index + 1) +
-            " / " +
-            images.length;
+    main.src =
+        images[currentDetailImageIndex];
+
+
+    main.alt =
+        currentDetailProperty?.title ||
+        "Property";
+
+
+    counter.textContent =
+        `${currentDetailImageIndex + 1} / ${images.length}`;
+
+
+    thumbnails.innerHTML =
+        images
+            .map(
+                function(image,index){
+
+                    return `
+
+                        <img
+                            class="detail-thumb ${index === currentDetailImageIndex ? "active" : ""}"
+                            src="${escapeAttribute(image)}"
+                            alt="Property photo ${index + 1}"
+                            onclick="setDetailImage(${index})"
+                            onerror="this.style.display='none'"
+                        >
+
+                    `;
+
+                }
+            )
+            .join("");
+
+}
+
+
+function setDetailImage(
+    index
+){
+
+    if(!currentDetailProperty){
+
+        return;
 
     }
 
-    document
-        .querySelectorAll(
-            ".detail-thumbnails .thumbnail"
-        )
-        .forEach(function(
-            thumbnail,
-            thumbIndex
-        ){
 
-            thumbnail.classList.toggle(
-                "active",
-                thumbIndex === index
-            );
+    const images =
+        getPropertyImages(
+            currentDetailProperty
+        );
 
-        });
+
+    if(!images.length){
+
+        return;
+
+    }
+
+
+    currentDetailImageIndex =
+        Math.max(
+            0,
+            Math.min(
+                index,
+                images.length - 1
+            )
+        );
+
+
+    renderDetailGallery(
+        images
+    );
+
+}
+
+
+function changeDetailImage(
+    direction
+){
+
+    if(!currentDetailProperty){
+
+        return;
+
+    }
+
+
+    const images =
+        getPropertyImages(
+            currentDetailProperty
+        );
+
+
+    if(images.length <= 1){
+
+        return;
+
+    }
+
+
+    let next =
+        currentDetailImageIndex +
+        direction;
+
+
+    if(next < 0){
+
+        next =
+            images.length - 1;
+
+    }
+
+
+    if(next >= images.length){
+
+        next =
+            0;
+
+    }
+
+
+    setDetailImage(
+        next
+    );
 
 }
 
 
 /* =========================================================
-   IMAGE VIEWER
+   FULLSCREEN VIEWER
 ========================================================= */
 
-function openImageViewerForProperty(
-    index,
-    imageIndex
-){
-
-    const property =
-        filteredProperties[index];
-
-    if(!property){
-        return;
-    }
-
-    currentViewerImages =
-        getPropertyImages(property)
-            .map(function(image){
-                return image.image_url;
-            });
-
-    currentViewerIndex =
-        Number(imageIndex) || 0;
-
-    if(
-        currentViewerIndex < 0 ||
-        currentViewerIndex >= currentViewerImages.length
-    ){
-        currentViewerIndex = 0;
-    }
-
-    showViewer();
-
-}
-
-
-function openImageViewerForDetail(imageIndex){
+function openViewerFromDetail(){
 
     if(!currentDetailProperty){
+
         return;
+
     }
+
 
     currentViewerImages =
         getPropertyImages(
             currentDetailProperty
-        )
-        .map(function(image){
-            return image.image_url;
-        });
-
-    currentViewerIndex =
-        Number(imageIndex) || 0;
-
-    if(
-        currentViewerIndex < 0 ||
-        currentViewerIndex >= currentViewerImages.length
-    ){
-        currentViewerIndex = 0;
-    }
-
-    showViewer();
-
-}
-
-
-function showViewer(){
-
-    const viewer =
-        document.getElementById(
-            "imageViewer"
         );
 
-    const image =
-        document.getElementById(
-            "viewerImage"
-        );
 
-    if(!currentViewerImages.length){
-        return;
-    }
-
-    image.src =
-        currentViewerImages[
-            currentViewerIndex
-        ];
-
-    image.onerror =
-        function(){
-            this.src = placeholderImage();
-        };
-
-    viewer.classList.add("show");
-
-}
+    currentViewerImageIndex =
+        currentDetailImageIndex;
 
 
-function closeImageViewer(){
+    renderViewer();
+
 
     document
-        .getElementById("imageViewer")
-        .classList.remove("show");
+        .getElementById(
+            "imageViewer"
+        )
+        .classList.add(
+            "show"
+        );
+
+
+    updateBodyModalState();
 
 }
 
 
-function viewerPrevious(){
+function renderViewer(){
 
     if(!currentViewerImages.length){
+
         return;
+
     }
 
-    currentViewerIndex--;
 
-    if(currentViewerIndex < 0){
+    document.getElementById(
+        "viewerImage"
+    ).src =
+        currentViewerImages[
+            currentViewerImageIndex
+        ];
 
-        currentViewerIndex =
+
+    document.getElementById(
+        "viewerCounter"
+    ).textContent =
+        `${currentViewerImageIndex + 1} / ${currentViewerImages.length}`;
+
+}
+
+
+function changeViewerImage(
+    direction
+){
+
+    if(
+        currentViewerImages.length <= 1
+    ){
+
+        return;
+
+    }
+
+
+    currentViewerImageIndex +=
+        direction;
+
+
+    if(
+        currentViewerImageIndex < 0
+    ){
+
+        currentViewerImageIndex =
             currentViewerImages.length - 1;
 
     }
 
-    updateViewerImage();
-
-}
-
-
-function viewerNext(){
-
-    if(!currentViewerImages.length){
-        return;
-    }
-
-    currentViewerIndex++;
 
     if(
-        currentViewerIndex >=
+        currentViewerImageIndex >=
         currentViewerImages.length
     ){
 
-        currentViewerIndex = 0;
+        currentViewerImageIndex =
+            0;
 
     }
 
-    updateViewerImage();
+
+    renderViewer();
 
 }
 
 
-function updateViewerImage(){
+function closeViewer(){
 
-    const image =
-        document.getElementById(
-            "viewerImage"
+    document
+        .getElementById(
+            "imageViewer"
+        )
+        .classList.remove(
+            "show"
         );
 
-    image.src =
-        currentViewerImages[
-            currentViewerIndex
-        ];
+
+    updateBodyModalState();
 
 }
 
 
 /* =========================================================
-   CONTACT
+   CHAT OWNER
 ========================================================= */
 
 async function contactProperty(){
 
-    const user =
-        await getAuthenticatedUser();
-
-    if(!user){
+    if(!currentDetailProperty){
 
         showToast(
-            "Please log in to contact the property owner."
+            "Property information is unavailable."
         );
 
         return;
 
     }
 
-    showToast(
-        "Property contact messaging will be connected to LosOja chat."
-    );
-
-}
-
-
-/* =========================================================
-   REACTIONS
-========================================================= */
-
-async function loadCurrentReaction(){
-
-    if(!currentDetailProperty){
-        return;
-    }
 
     const user =
         await getAuthenticatedUser();
 
-    const likeBtn =
-        document.getElementById("likeBtn");
-
-    const dislikeBtn =
-        document.getElementById("dislikeBtn");
-
-    const ownerActions =
-        document.getElementById("ownerActions");
 
     if(!user){
 
-        if(ownerActions){
-            ownerActions.style.display = "none";
-        }
+        showToast(
+            "Please log in to chat with the property owner."
+        );
 
         return;
 
     }
+
+
+    const sellerId =
+        currentDetailProperty.user_id;
+
+
+    if(!sellerId){
+
+        showToast(
+            "This property does not have an owner account connected yet."
+        );
+
+        return;
+
+    }
+
 
     if(
-        currentDetailProperty.user_id &&
-        currentDetailProperty.user_id === user.id
-    ){
-
-        if(ownerActions){
-            ownerActions.style.display = "block";
-        }
-
-    }
-
-    try{
-
-        const response =
-            await fetch(
-                SUPABASE_URL +
-                "/rest/v1/property_reactions" +
-                "?select=reaction" +
-                "&property_id=eq." +
-                encodeURIComponent(
-                    currentDetailProperty.id
-                ) +
-                "&user_id=eq." +
-                encodeURIComponent(user.id) +
-                "&limit=1",
-                {
-                    method:"GET",
-                    headers:authHeaders()
-                }
-            );
-
-        if(!response.ok){
-            return;
-        }
-
-        const rows =
-            await response.json();
-
-        if(!rows.length){
-            return;
-        }
-
-        if(
-            rows[0].reaction === "like" &&
-            likeBtn
-        ){
-            likeBtn.classList.add("selected");
-        }
-
-        if(
-            rows[0].reaction === "dislike" &&
-            dislikeBtn
-        ){
-            dislikeBtn.classList.add("selected");
-        }
-
-    }catch(error){
-
-        console.warn(
-            "Could not load reaction:",
-            error
-        );
-
-    }
-
-}
-
-
-async function reactToProperty(reaction){
-
-    if(!currentDetailProperty){
-        return;
-    }
-
-    const user =
-        await getAuthenticatedUser();
-
-    if(!user){
-
-        showToast(
-            "Please log in to react to a property."
-        );
-
-        return;
-
-    }
-
-    try{
-
-        const response =
-            await fetch(
-                SUPABASE_URL +
-                "/rest/v1/property_reactions" +
-                "?on_conflict=property_id,user_id",
-                {
-                    method:"POST",
-
-                    headers:{
-                        ...authHeaders(),
-                        "Prefer":
-                            "resolution=merge-duplicates,return=minimal"
-                    },
-
-                    body:JSON.stringify({
-
-                        property_id:
-                            currentDetailProperty.id,
-
-                        user_id:
-                            user.id,
-
-                        reaction:
-                            reaction
-
-                    })
-                }
-            );
-
-        if(!response.ok){
-
-            throw new Error(
-                await response.text()
-            );
-
-        }
-
-        const likeBtn =
-            document.getElementById("likeBtn");
-
-        const dislikeBtn =
-            document.getElementById("dislikeBtn");
-
-        if(likeBtn){
-
-            likeBtn.classList.toggle(
-                "selected",
-                reaction === "like"
-            );
-
-        }
-
-        if(dislikeBtn){
-
-            dislikeBtn.classList.toggle(
-                "selected",
-                reaction === "dislike"
-            );
-
-        }
-
-        showToast(
-            reaction === "like"
-                ? "You liked this property."
-                : "You disliked this property."
-        );
-
-    }catch(error){
-
-        console.error(
-            "Reaction error:",
-            error
-        );
-
-        showToast(
-            "Unable to save your reaction."
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   OWNER STATUS
-========================================================= */
-
-async function markPropertyStatus(status){
-
-    if(!currentDetailProperty){
-        return;
-    }
-
-    const user =
-        await getAuthenticatedUser();
-
-    if(!user){
-
-        showToast("Please log in first.");
-        return;
-
-    }
-
-    if(
-        currentDetailProperty.user_id !==
+        sellerId ===
         user.id
     ){
 
         showToast(
-            "Only the property owner can change this status."
+            "This is your own property."
         );
 
         return;
 
     }
 
-    try{
 
-        const response =
-            await fetch(
-                SUPABASE_URL +
-                "/rest/v1/property_listings" +
-                "?id=eq." +
-                encodeURIComponent(
-                    currentDetailProperty.id
-                ),
-                {
-                    method:"PATCH",
+    const propertyId =
+        currentDetailProperty.id;
 
-                    headers:{
-                        ...authHeaders(),
-                        "Prefer":
-                            "return=representation"
-                    },
 
-                    body:JSON.stringify({
-                        status:status
-                    })
-                }
-            );
+    const propertyTitle =
+        currentDetailProperty.title ||
+        "Property";
 
-        if(!response.ok){
 
-            throw new Error(
-                await response.text()
-            );
-
-        }
-
-        const updated =
-            await response.json();
-
-        if(
-            Array.isArray(updated) &&
-            updated[0]
-        ){
-
-            currentDetailProperty =
-                updated[0];
-
-        }else{
-
-            currentDetailProperty.status =
-                status;
-
-        }
-
-        const index =
-            allProperties.findIndex(function(property){
-
-                return property.id ===
-                    currentDetailProperty.id;
-
-            });
-
-        if(index >= 0){
-
-            allProperties[index] =
-                currentDetailProperty;
-
-        }
-
-        showToast(
-            "Property status updated."
+    const chatUrl =
+        "chat.html" +
+        "?property_id=" +
+        encodeURIComponent(
+            propertyId
+        ) +
+        "&seller_id=" +
+        encodeURIComponent(
+            sellerId
+        ) +
+        "&property_title=" +
+        encodeURIComponent(
+            propertyTitle
         );
 
-        renderDetailModal();
-        applyFilters();
 
-    }catch(error){
-
-        console.error(
-            "Status update error:",
-            error
-        );
-
-        showToast(
-            "Unable to update property."
-        );
-
-    }
+    window.location.href =
+        chatUrl;
 
 }
-
-
-/* =========================================================
-   DELETE PROPERTY
-========================================================= */
-
-async function deleteCurrentProperty(){
-
-    if(!currentDetailProperty){
-        return;
-    }
-
-    const user =
-        await getAuthenticatedUser();
-
-    if(!user){
-
-        showToast("Please log in first.");
-        return;
-
-    }
-
-    if(
-        currentDetailProperty.user_id !==
-        user.id
-    ){
-
-        showToast(
-            "Only the property owner can delete this property."
-        );
-
-        return;
-
-    }
-
-    if(
-        !window.confirm(
-            "Delete this property from LosOja?"
-        )
-    ){
-        return;
-    }
-
-    try{
-
-        const response =
-            await fetch(
-                SUPABASE_URL +
-                "/rest/v1/property_listings" +
-                "?id=eq." +
-                encodeURIComponent(
-                    currentDetailProperty.id
-                ),
-                {
-                    method:"DELETE",
-
-                    headers:{
-                        ...authHeaders(),
-                        "Prefer":"return=minimal"
-                    }
-                }
-            );
-
-        if(!response.ok){
-
-            throw new Error(
-                await response.text()
-            );
-
-        }
-
-        allProperties =
-            allProperties.filter(function(property){
-
-                return property.id !==
-                    currentDetailProperty.id;
-
-            });
-
-        closeDetailModal();
-
-        applyFilters();
-
-        showToast(
-            "Property deleted."
-        );
-
-    }catch(error){
-
-        console.error(
-            "Delete property error:",
-            error
-        );
-
-        showToast(
-            "Unable to delete property."
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   PHOTO PREVIEW
-========================================================= */
-
-document
-    .getElementById("propertyImages")
-    .addEventListener(
-        "change",
-        function(){
-
-            const preview =
-                document.getElementById(
-                    "photoPreview"
-                );
-
-            const count =
-                document.getElementById(
-                    "photoSelectionCount"
-                );
-
-            preview.innerHTML = "";
-
-            const files =
-                Array.from(
-                    this.files || []
-                );
-
-            if(files.length > 10){
-
-                showToast(
-                    "You can select up to 10 photos."
-                );
-
-                this.value = "";
-
-                count.textContent = "";
-                count.classList.remove("show");
-
-                return;
-
-            }
-
-            if(!files.length){
-
-                count.textContent = "";
-                count.classList.remove("show");
-
-                return;
-
-            }
-
-            count.textContent =
-                files.length +
-                (
-                    files.length === 1
-                        ? " photo selected"
-                        : " photos selected"
-                );
-
-            count.classList.add("show");
-
-
-            files.forEach(function(file,index){
-
-                if(
-                    !file.type ||
-                    !file.type.startsWith("image/")
-                ){
-                    return;
-                }
-
-                const url =
-                    URL.createObjectURL(file);
-
-                const item =
-                    document.createElement("div");
-
-                item.className =
-                    "preview-item";
-
-                const image =
-                    document.createElement("img");
-
-                image.src = url;
-
-                image.alt =
-                    "Property photo preview " +
-                    (index + 1);
-
-                const number =
-                    document.createElement("span");
-
-                number.className =
-                    "preview-number";
-
-                number.textContent =
-                    index + 1;
-
-                item.appendChild(image);
-                item.appendChild(number);
-
-                preview.appendChild(item);
-
-            });
-
-        }
-    );
 
 
 /* =========================================================
@@ -3407,22 +3306,11 @@ async function uploadPropertyImage(
     if(!file){
 
         throw new Error(
-            "Invalid property photo."
+            "Photo is missing."
         );
 
     }
 
-    if(
-        !file.type ||
-        !file.type.startsWith("image/")
-    ){
-
-        throw new Error(
-            file.name +
-            " is not a supported image."
-        );
-
-    }
 
     if(
         file.size >
@@ -3430,11 +3318,11 @@ async function uploadPropertyImage(
     ){
 
         throw new Error(
-            file.name +
-            " is larger than 5MB."
+            `${file.name} is larger than 5MB.`
         );
 
     }
+
 
     const extension =
         (
@@ -3442,51 +3330,30 @@ async function uploadPropertyImage(
                 .split(".")
                 .pop() ||
             "jpg"
-        ).toLowerCase();
+        )
+        .toLowerCase()
+        .replace(
+            /[^a-z0-9]/g,
+            ""
+        );
 
-    const safeExtension =
-        [
-            "jpg",
-            "jpeg",
-            "png",
-            "webp",
-            "gif"
-        ].includes(extension)
-            ? extension
-            : "jpg";
 
-    /*
-     IMPORTANT:
-     Every photo receives its own unique
-     storage path.
-    */
     const filePath =
-        "properties/" +
-        propertyId +
-        "_" +
-        Date.now() +
-        "_" +
-        index +
-        "_" +
-        Math.random()
-            .toString(36)
-            .slice(2,8) +
-        "." +
-        safeExtension;
+        `properties/${propertyId}_${Date.now()}_${index}.${extension}`;
 
-    const accessToken =
-        typeof window.getSupabaseAccessToken ===
-        "function"
-            ? window.getSupabaseAccessToken()
-            : null;
 
-    if(!accessToken){
+    const token =
+        await getAccessToken();
+
+
+    if(!token){
 
         throw new Error(
-            "Your login session has expired. Please log in again."
+            "Your login session has expired."
         );
 
     }
+
 
     const uploadResponse =
         await fetch(
@@ -3499,14 +3366,16 @@ async function uploadPropertyImage(
                 method:"POST",
 
                 headers:{
-                    "apikey":SUPABASE_KEY,
-
                     "Authorization":
                         "Bearer " +
-                        accessToken,
+                        token,
+
+                    "apikey":
+                        SUPABASE_KEY,
 
                     "Content-Type":
-                        file.type,
+                        file.type ||
+                        "application/octet-stream",
 
                     "x-upsert":
                         "false"
@@ -3516,35 +3385,33 @@ async function uploadPropertyImage(
             }
         );
 
+
     if(!uploadResponse.ok){
 
-        const text =
+        const errorText =
             await uploadResponse.text();
 
-        console.error(
-            "Property image upload failed:",
-            text
-        );
 
         throw new Error(
-            "Could not upload " +
-            file.name +
-            ". Please check the property image storage permissions."
+            "Photo upload failed: " +
+            errorText
         );
 
     }
 
-    const publicUrl =
+
+    const imageUrl =
         SUPABASE_URL +
         "/storage/v1/object/public/" +
         PROPERTY_BUCKET +
         "/" +
         filePath
             .split("/")
-            .map(function(part){
-                return encodeURIComponent(part);
-            })
+            .map(
+                encodeURIComponent
+            )
             .join("/");
+
 
     return {
 
@@ -3555,7 +3422,7 @@ async function uploadPropertyImage(
             userId,
 
         image_url:
-            publicUrl,
+            imageUrl,
 
         sort_order:
             index
@@ -3566,470 +3433,528 @@ async function uploadPropertyImage(
 
 
 /* =========================================================
+   SAVE PROPERTY IMAGE ROW
+========================================================= */
+
+async function savePropertyImageRow(
+    imageRow
+){
+
+    const token =
+        await getAccessToken();
+
+
+    if(!token){
+
+        throw new Error(
+            "Your login session has expired."
+        );
+
+    }
+
+
+    const response =
+        await fetch(
+            SUPABASE_URL +
+            "/rest/v1/property_images",
+            {
+                method:"POST",
+
+                headers:{
+                    "apikey":
+                        SUPABASE_KEY,
+
+                    "Authorization":
+                        "Bearer " +
+                        token,
+
+                    "Content-Type":
+                        "application/json",
+
+                    "Prefer":
+                        "return=minimal"
+                },
+
+                body:
+                    JSON.stringify(
+                        imageRow
+                    )
+            }
+        );
+
+
+    if(!response.ok){
+
+        const text =
+            await response.text();
+
+
+        throw new Error(
+            "Photo database save failed: " +
+            text
+        );
+
+    }
+
+}
+
+
+/* =========================================================
    PUBLISH PROPERTY
 ========================================================= */
 
 document
-    .getElementById("propertyForm")
+    .getElementById(
+        "propertyForm"
+    )
     .addEventListener(
         "submit",
-        async function(event){
-
-            event.preventDefault();
-
-            const user =
-                await getAuthenticatedUser();
-
-            if(!user){
-
-                showToast(
-                    "Please log in before posting a property."
-                );
-
-                return;
-
-            }
-
-            const submitButton =
-                document.getElementById(
-                    "submitPropertyBtn"
-                );
-
-            submitButton.disabled = true;
-
-            submitButton.textContent =
-                "Publishing...";
-
-
-            try{
-
-                const title =
-                    document
-                        .getElementById(
-                            "propertyTitle"
-                        )
-                        .value
-                        .trim();
-
-                const propertyType =
-                    document
-                        .getElementById(
-                            "propertyType"
-                        )
-                        .value;
-
-                const listingType =
-                    document
-                        .getElementById(
-                            "listingType"
-                        )
-                        .value;
-
-                const price =
-                    Number(
-                        document
-                            .getElementById(
-                                "propertyPrice"
-                            )
-                            .value
-                    );
-
-                const location =
-                    document
-                        .getElementById(
-                            "propertyLocation"
-                        )
-                        .value
-                        .trim();
-
-                const description =
-                    document
-                        .getElementById(
-                            "propertyDescription"
-                        )
-                        .value
-                        .trim();
-
-                const imageInput =
-                    document.getElementById(
-                        "propertyImages"
-                    );
-
-                /*
-                 IMPORTANT:
-                 Take the complete FileList
-                 before doing anything else.
-                */
-                const files =
-                    Array.from(
-                        imageInput.files || []
-                    );
-
-
-                if(files.length > 10){
-
-                    throw new Error(
-                        "You can upload up to 10 property photos."
-                    );
-
-                }
-
-
-                for(
-                    const file of files
-                ){
-
-                    if(
-                        !file.type ||
-                        !file.type.startsWith("image/")
-                    ){
-
-                        throw new Error(
-                            file.name +
-                            " is not a supported image."
-                        );
-
-                    }
-
-                    if(
-                        file.size >
-                        5 * 1024 * 1024
-                    ){
-
-                        throw new Error(
-                            file.name +
-                            " is larger than 5MB."
-                        );
-
-                    }
-
-                }
-
-
-                const propertyPayload = {
-
-                    user_id:
-                        user.id,
-
-                    title:
-                        title,
-
-                    property_type:
-                        propertyType,
-
-                    listing_type:
-                        listingType,
-
-                    location:
-                        location,
-
-                    price:
-                        price,
-
-                    description:
-                        description,
-
-                    status:
-                        "available"
-
-                };
-
-
-                /* CREATE PROPERTY */
-                const propertyResponse =
-                    await fetch(
-                        SUPABASE_URL +
-                        "/rest/v1/property_listings",
-                        {
-                            method:"POST",
-
-                            headers:{
-                                ...authHeaders(),
-                                "Prefer":
-                                    "return=representation"
-                            },
-
-                            body:
-                                JSON.stringify(
-                                    propertyPayload
-                                )
-                        }
-                    );
-
-
-                const propertyText =
-                    await propertyResponse.text();
-
-                let propertyData;
-
-                try{
-
-                    propertyData =
-                        propertyText
-                            ? JSON.parse(propertyText)
-                            : [];
-
-                }catch(error){
-
-                    propertyData = [];
-
-                }
-
-
-                if(!propertyResponse.ok){
-
-                    throw new Error(
-                        propertyData?.message ||
-                        propertyData?.hint ||
-                        propertyText ||
-                        "Could not create property."
-                    );
-
-                }
-
-
-                const property =
-                    Array.isArray(propertyData)
-                        ? propertyData[0]
-                        : propertyData;
-
-
-                if(
-                    !property ||
-                    !property.id
-                ){
-
-                    throw new Error(
-                        "Property was created but its ID was not returned."
-                    );
-
-                }
-
-
-                /* UPLOAD ALL PHOTOS */
-
-                if(files.length){
-
-                    const uploadedImages = [];
-
-
-                    for(
-                        let index = 0;
-                        index < files.length;
-                        index++
-                    ){
-
-                        submitButton.textContent =
-                            "Uploading photo " +
-                            (index + 1) +
-                            " of " +
-                            files.length +
-                            "...";
-
-
-                        const imageRow =
-                            await uploadPropertyImage(
-                                files[index],
-                                property.id,
-                                user.id,
-                                index
-                            );
-
-
-                        uploadedImages.push(
-                            imageRow
-                        );
-
-                    }
-
-
-                    /*
-                     SAVE EVERY PHOTO SEPARATELY.
-                     This avoids a bulk request hiding
-                     which photo failed.
-                    */
-
-                    for(
-                        let imageIndex = 0;
-                        imageIndex < uploadedImages.length;
-                        imageIndex++
-                    ){
-
-                        submitButton.textContent =
-                            "Saving photo " +
-                            (imageIndex + 1) +
-                            " of " +
-                            uploadedImages.length +
-                            "...";
-
-
-                        const imageRow =
-                            uploadedImages[imageIndex];
-
-
-                        const imageResponse =
-                            await fetch(
-                                SUPABASE_URL +
-                                "/rest/v1/property_images",
-                                {
-                                    method:"POST",
-
-                                    headers:{
-                                        ...authHeaders(),
-                                        "Prefer":
-                                            "return=minimal"
-                                    },
-
-                                    body:
-                                        JSON.stringify(
-                                            imageRow
-                                        )
-                                }
-                            );
-
-
-                        if(!imageResponse.ok){
-
-                            const imageError =
-                                await imageResponse.text();
-
-                            console.error(
-                                "Property image database error:",
-                                imageError
-                            );
-
-                            throw new Error(
-                                "Photo " +
-                                (imageIndex + 1) +
-                                " could not be saved. " +
-                                imageError
-                            );
-
-                        }
-
-                    }
-
-                    console.log(
-                        "Successfully saved " +
-                        uploadedImages.length +
-                        " property photos."
-                    );
-
-                }
-
-
-                /*
-                 SUCCESS
-                */
-
-                showToast(
-                    "Property published successfully."
-                );
-
-
-                document
-                    .getElementById(
-                        "propertyForm"
-                    )
-                    .reset();
-
-
-                document
-                    .getElementById(
-                        "photoPreview"
-                    )
-                    .innerHTML = "";
-
-
-                document
-                    .getElementById(
-                        "photoSelectionCount"
-                    )
-                    .textContent = "";
-
-
-                document
-                    .getElementById(
-                        "photoSelectionCount"
-                    )
-                    .classList.remove("show");
-
-
-                closePostPropertyModal();
-
-
-                /*
-                 Reload properties AND all
-                 associated images.
-                */
-                await loadProperties();
-
-
-                window.scrollTo({
-                    top:0,
-                    behavior:"smooth"
-                });
-
-
-            }catch(error){
-
-                console.error(
-                    "Publish property error:",
-                    error
-                );
-
-                showToast(
-                    error.message ||
-                    "Unable to publish property."
-                );
-
-            }finally{
-
-                submitButton.disabled = false;
-
-                submitButton.textContent =
-                    "Publish Property";
-
-            }
-
-        }
+        publishProperty
     );
 
 
-/* =========================================================
-   FILTER BUTTONS
-========================================================= */
+async function publishProperty(
+    event
+){
 
-document
-    .querySelectorAll(".filter-btn")
-    .forEach(function(button){
+    event.preventDefault();
 
-        button.addEventListener(
-            "click",
-            function(){
 
-                document
-                    .querySelectorAll(".filter-btn")
-                    .forEach(function(item){
-
-                        item.classList.remove(
-                            "active"
-                        );
-
-                    });
-
-                this.classList.add("active");
-
-                currentFilter =
-                    this.dataset.filter ||
-                    "all";
-
-                applyFilters();
-
-            }
+    const submitButton =
+        document.getElementById(
+            "publishPropertyButton"
         );
 
-    });
+
+    const title =
+        document.getElementById(
+            "propertyTitle"
+        ).value.trim();
+
+
+    const propertyType =
+        document.getElementById(
+            "propertyType"
+        ).value;
+
+
+    const listingType =
+        document.getElementById(
+            "listingType"
+        ).value;
+
+
+    const price =
+        document.getElementById(
+            "propertyPrice"
+        ).value;
+
+
+    const location =
+        document.getElementById(
+            "propertyLocation"
+        ).value.trim();
+
+
+    const description =
+        document.getElementById(
+            "propertyDescription"
+        ).value.trim();
+
+
+    const files =
+        Array.from(
+            propertyImagesInput.files || []
+        );
+
+
+    if(!files.length){
+
+        showToast(
+            "Please select at least one property photo."
+        );
+
+        return;
+
+    }
+
+
+    if(files.length > 10){
+
+        showToast(
+            "You can select up to 10 photos."
+        );
+
+        return;
+
+    }
+
+
+    for(
+        const file of files
+    ){
+
+        if(
+            file.size >
+            5 * 1024 * 1024
+        ){
+
+            showToast(
+                `${file.name} is larger than 5MB.`
+            );
+
+            return;
+
+        }
+
+    }
+
+
+    const user =
+        await getAuthenticatedUser();
+
+
+    if(!user){
+
+        showToast(
+            "Please log in before posting a property."
+        );
+
+        return;
+
+    }
+
+
+    try{
+
+        submitButton.disabled =
+            true;
+
+
+        submitButton.textContent =
+            "Creating property...";
+
+
+        const token =
+            await getAccessToken();
+
+
+        if(!token){
+
+            throw new Error(
+                "Your login session has expired. Please log in again."
+            );
+
+        }
+
+
+        /*
+         ----------------------------------------------------
+         CREATE PROPERTY
+         ----------------------------------------------------
+        */
+
+        const propertyResponse =
+            await fetch(
+                SUPABASE_URL +
+                "/rest/v1/property_listings",
+                {
+                    method:"POST",
+
+                    headers:{
+                        "apikey":
+                            SUPABASE_KEY,
+
+                        "Authorization":
+                            "Bearer " +
+                            token,
+
+                        "Content-Type":
+                            "application/json",
+
+                        "Prefer":
+                            "return=representation"
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            user_id:
+                                user.id,
+
+                            title:
+                                title,
+
+                            property_type:
+                                propertyType,
+
+                            listing_type:
+                                listingType,
+
+                            location:
+                                location,
+
+                            price:
+                                Number(price),
+
+                            description:
+                                description,
+
+                            status:
+                                "available"
+
+                        })
+                }
+            );
+
+
+        if(!propertyResponse.ok){
+
+            const errorText =
+                await propertyResponse.text();
+
+
+            throw new Error(
+                "Property creation failed: " +
+                errorText
+            );
+
+        }
+
+
+        const createdProperties =
+            await propertyResponse.json();
+
+
+        const property =
+            createdProperties[0];
+
+
+        if(!property?.id){
+
+            throw new Error(
+                "Property was created but no property ID was returned."
+            );
+
+        }
+
+
+        /*
+         ----------------------------------------------------
+         UPLOAD EVERY PHOTO
+         ----------------------------------------------------
+        */
+
+        const uploadedImages =
+            [];
+
+
+        for(
+            let index = 0;
+            index < files.length;
+            index++
+        ){
+
+            submitButton.textContent =
+                `Uploading photo ${index + 1} of ${files.length}...`;
+
+
+            const imageRow =
+                await uploadPropertyImage(
+                    files[index],
+                    property.id,
+                    user.id,
+                    index
+                );
+
+
+            uploadedImages.push(
+                imageRow
+            );
+
+        }
+
+
+        /*
+         ----------------------------------------------------
+         SAVE EVERY PHOTO ROW
+         ----------------------------------------------------
+        */
+
+        for(
+            let index = 0;
+            index < uploadedImages.length;
+            index++
+        ){
+
+            submitButton.textContent =
+                `Saving photo ${index + 1} of ${uploadedImages.length}...`;
+
+
+            await savePropertyImageRow(
+                uploadedImages[index]
+            );
+
+        }
+
+
+        /*
+         ----------------------------------------------------
+         COMPLETE
+         ----------------------------------------------------
+        */
+
+        showToast(
+            files.length === 1
+                ? "Property published successfully."
+                : `Property published with ${files.length} photos.`
+        );
+
+
+        document
+            .getElementById(
+                "propertyForm"
+            )
+            .reset();
+
+
+        propertyPhotoPreview.innerHTML =
+            "";
+
+
+        photoSelectionInfo.textContent =
+            "No photos selected";
+
+
+        closePostPropertyModal();
+
+
+        /*
+         Reload from database so the gallery
+         uses the actual saved image rows.
+        */
+
+        await loadProperties();
+
+
+    }catch(error){
+
+        console.error(
+            "Publish property error:",
+            error
+        );
+
+
+        showToast(
+            error.message ||
+            "Unable to publish property."
+        );
+
+
+    }finally{
+
+        submitButton.disabled =
+            false;
+
+
+        submitButton.textContent =
+            "Publish Property";
+
+    }
+
+}
+
+
+/* =========================================================
+   PRICE FORMAT
+========================================================= */
+
+function formatPrice(
+    price
+){
+
+    if(
+        price === null ||
+        price === undefined ||
+        price === ""
+    ){
+
+        return "Price on request";
+
+    }
+
+
+    const number =
+        Number(price);
+
+
+    if(
+        Number.isNaN(number)
+    ){
+
+        return String(price);
+
+    }
+
+
+    return (
+        "₦" +
+        number.toLocaleString(
+            "en-NG",
+            {
+                minimumFractionDigits:0,
+                maximumFractionDigits:2
+            }
+        )
+    );
+
+}
+
+
+/* =========================================================
+   SAFE HTML
+========================================================= */
+
+function escapeHtml(
+    value
+){
+
+    return String(
+        value ?? ""
+    )
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+    .replace(
+        /</g,
+        "&lt;"
+    )
+    .replace(
+        />/g,
+        "&gt;"
+    )
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+    .replace(
+        /'/g,
+        "&#039;"
+    );
+
+}
+
+
+function escapeAttribute(
+    value
+){
+
+    return escapeHtml(
+        value
+    );
+
+}
 
 
 /* =========================================================
@@ -4037,101 +3962,13 @@ document
 ========================================================= */
 
 document
-    .getElementById("searchInput")
+    .getElementById(
+        "propertySearch"
+    )
     .addEventListener(
         "input",
         applyFilters
     );
-
-
-/* =========================================================
-   CLICK OUTSIDE MODALS
-========================================================= */
-
-document
-    .getElementById("postPropertyModal")
-    .addEventListener(
-        "click",
-        function(event){
-
-            if(event.target === this){
-
-                closePostPropertyModal();
-
-            }
-
-        }
-    );
-
-
-document
-    .getElementById("detailModal")
-    .addEventListener(
-        "click",
-        function(event){
-
-            if(event.target === this){
-
-                closeDetailModal();
-
-            }
-
-        }
-    );
-
-
-document
-    .getElementById("imageViewer")
-    .addEventListener(
-        "click",
-        function(event){
-
-            if(event.target === this){
-
-                closeImageViewer();
-
-            }
-
-        }
-    );
-
-
-/* =========================================================
-   KEYBOARD
-========================================================= */
-
-document.addEventListener(
-    "keydown",
-    function(event){
-
-        if(event.key === "Escape"){
-
-            closePostPropertyModal();
-            closeDetailModal();
-            closeImageViewer();
-
-        }
-
-
-        if(
-            document
-                .getElementById("imageViewer")
-                .classList
-                .contains("show")
-        ){
-
-            if(event.key === "ArrowLeft"){
-                viewerPrevious();
-            }
-
-            if(event.key === "ArrowRight"){
-                viewerNext();
-            }
-
-        }
-
-    }
-);
 
 
 /* =========================================================
@@ -4143,4 +3980,5 @@ loadProperties();
 </script>
 
 </body>
+
 </html>
