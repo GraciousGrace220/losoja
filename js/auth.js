@@ -1595,11 +1595,24 @@ function initializeAuth() {
 
     }
 
+(async function () {
 
-    window.updateAuthUI();
+    try {
 
-}
+        await window.ensureValidSupabaseSession();
 
+    } catch (error) {
+
+        console.warn(
+            "LosOja: session startup check failed.",
+            error
+        );
+
+    }
+
+    await window.updateAuthUI();
+
+})();
 
 /* =========================================================
    START
