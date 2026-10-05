@@ -3717,43 +3717,132 @@ document
 
         }
 
+/* =================================================
+   CHAT
+   LOGIN REQUIRED
+================================================= */
 
-        /* =================================================
-           CHAT
-        ================================================= */
+const chatButtons = [
 
-        const chatButtons = [
+    document.getElementById(
+        "chatBabaOjaBtn"
+    ),
 
-            document.getElementById(
-                "chatBabaOjaBtn"
-            ),
+    document.getElementById(
+        "bottomChatBtn"
+    )
 
-            document.getElementById(
-                "bottomChatBtn"
-            )
-
-        ];
+];
 
 
-        chatButtons.forEach(
-            function (button) {
+async function requireLoginForChat() {
 
-                if (button) {
+    let user = null;
 
-                    button.addEventListener(
-                        "click",
-                        function () {
 
-                            window.location.href =
-                                "chat.html";
+    /*
+     * Use the existing LosOja authentication helper.
+     */
 
-                        }
-                    );
+    if (
+        typeof window.getCurrentUser ===
+        "function"
+    ) {
+
+        try {
+
+            const result =
+                await window.getCurrentUser();
+
+            user =
+                result?.user ||
+                result?.data?.user ||
+                result?.data ||
+                result ||
+                null;
+
+        } catch (error) {
+
+            console.warn(
+                "LosOja: could not check login status.",
+                error
+            );
+
+        }
+
+    }
+
+
+    /*
+     * User is logged in.
+     */
+
+    if (
+        user &&
+        user.id
+    ) {
+
+        window.location.href =
+            "chat.html";
+
+        return;
+
+    }
+
+
+    /*
+     * User is not logged in.
+     * Open the existing Login modal.
+     */
+
+    const loginModal =
+        document.getElementById(
+            "loginModal"
+        );
+
+
+    if (
+        window.App &&
+        typeof window.App.openModal ===
+        "function" &&
+        loginModal
+    ) {
+
+        window.App.openModal(
+            loginModal
+        );
+
+    } else if (loginModal) {
+
+        loginModal.classList.add(
+            "active"
+        );
+
+    }
+
+}
+
+
+chatButtons.forEach(
+    function (button) {
+
+        if (button) {
+
+            button.addEventListener(
+                "click",
+                function (event) {
+
+                    event.preventDefault();
+
+                    requireLoginForChat();
 
                 }
+            );
 
-            }
-        );
+        }
+
+    }
+);
 
 
         /* =================================================
@@ -4182,59 +4271,158 @@ document
         }
 
 
-        /* =================================================
-           CATEGORY FILTER
-        ================================================= */
+       /* =================================================
+   CATEGORY FILTER
+   TRADE BY BARTER REQUIRES LOGIN
+================================================= */
 
-        document
-            .querySelectorAll(
-                ".category-card"
-            )
-            .forEach(
-                function (card) {
+document
+    .querySelectorAll(
+        ".category-card"
+    )
+    .forEach(
+        function (card) {
 
-                    card.addEventListener(
-                        "click",
-                        function () {
+            card.addEventListener(
+                "click",
+                async function () {
 
-                            const category =
-                                card.getAttribute(
-                                    "data-category"
+                    const category =
+                        card.getAttribute(
+                            "data-category"
+                        );
+
+
+                    /* -----------------------------------------
+                       TRADE BY BARTER
+                       LOGIN REQUIRED
+                    ----------------------------------------- */
+
+                    if (
+                        category ===
+                        "Trade by Barter"
+                    ) {
+
+                        let user = null;
+
+
+                        if (
+                            typeof window.getCurrentUser ===
+                            "function"
+                        ) {
+
+                            try {
+
+                                const result =
+                                    await window.getCurrentUser();
+
+                                user =
+                                    result?.user ||
+                                    result?.data?.user ||
+                                    result?.data ||
+                                    result ||
+                                    null;
+
+                            } catch (error) {
+
+                                console.warn(
+                                    "LosOja: could not check login status.",
+                                    error
                                 );
-
-
-                            if (
-                                typeof window.filterByCategory ===
-                                "function"
-                            ) {
-
-                                window.filterByCategory(
-                                    category
-                                );
-
-                            }
-
-
-                            const grid =
-                                document.getElementById(
-                                    "businessGrid"
-                                );
-
-
-                            if (grid) {
-
-                                grid.scrollIntoView({
-                                    behavior: "smooth"
-                                });
 
                             }
 
                         }
-                    );
+
+
+                        /* -----------------------------------------
+                           LOGGED IN
+                        ----------------------------------------- */
+
+                        if (
+                            user &&
+                            user.id
+                        ) {
+
+                            window.location.href =
+                                "barter.html";
+
+                            return;
+
+                        }
+
+
+                        /* -----------------------------------------
+                           NOT LOGGED IN
+                        ----------------------------------------- */
+
+                        const loginModal =
+                            document.getElementById(
+                                "loginModal"
+                            );
+
+
+                        if (
+                            window.App &&
+                            typeof window.App.openModal ===
+                            "function" &&
+                            loginModal
+                        ) {
+
+                            window.App.openModal(
+                                loginModal
+                            );
+
+                        } else if (loginModal) {
+
+                            loginModal.classList.add(
+                                "active"
+                            );
+
+                        }
+
+
+                        return;
+
+                    }
+
+
+                    /* -----------------------------------------
+                       NORMAL CATEGORIES
+                       KEEP EXISTING BEHAVIOR
+                    ----------------------------------------- */
+
+                    if (
+                        typeof window.filterByCategory ===
+                        "function"
+                    ) {
+
+                        window.filterByCategory(
+                            category
+                        );
+
+                    }
+
+
+                    const grid =
+                        document.getElementById(
+                            "businessGrid"
+                        );
+
+
+                    if (grid) {
+
+                        grid.scrollIntoView({
+                            behavior: "smooth"
+                        });
+
+                    }
 
                 }
             );
 
+        }
+    );
 
         /* =================================================
            DISCOVER NEAR ME
