@@ -119,6 +119,24 @@ function getAccessToken() {
     return session.access_token;
 
 }
+  /* =========================================================
+   PUBLIC SESSION ACCESS
+========================================================= */
+
+window.getSupabaseAccessToken =
+    function () {
+
+        return getAccessToken();
+
+    };
+
+
+window.getSupabaseSession =
+    function () {
+
+        return getSession();
+
+    }; 
 /* =========================================================
    SUPABASE REQUEST
 ========================================================= */
