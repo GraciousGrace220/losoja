@@ -682,19 +682,8 @@
         "click",
         function () {
 
-            if (
-                typeof window.openLogin ===
-                "function"
-            ) {
-
-                window.openLogin();
-
-                return;
-
-            }
-
             window.location.href =
-                "index.html";
+                "index.html?login=1";
 
         }
     );
