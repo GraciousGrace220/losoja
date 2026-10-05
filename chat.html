@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
@@ -15,619 +14,647 @@
 
 <style>
 
-    * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-    }
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
-    body {
-        font-family:
-            Arial,
-            Helvetica,
-            sans-serif;
+body {
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
 
-        background: #f4f7f5;
-        color: #111827;
-        min-height: 100vh;
-    }
+    background: #f4f7f5;
+    color: #111827;
+    min-height: 100vh;
+}
 
-    header {
-        background: #087a3e;
-        color: white;
-        padding: 14px 16px;
+/* =========================================================
+   HEADER
+========================================================= */
 
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
+header {
+    background: #087a3e;
+    color: white;
 
-        position: sticky;
-        top: 0;
-        z-index: 10;
-    }
+    padding: 14px 16px;
 
-    .header-left {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
-    .back-button {
-        border: none;
-        background: transparent;
-        color: white;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
 
-        font-size: 30px;
-        line-height: 1;
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
 
-        cursor: pointer;
-        padding: 0 5px;
-    }
+.back-button {
+    border: none;
+    background: transparent;
+    color: white;
 
-    .header-title {
-        font-size: 20px;
-        font-weight: 700;
+    font-size: 30px;
+    line-height: 1;
 
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
+    cursor: pointer;
+    padding: 0 5px;
+}
 
-    .chat-unread-dot {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
+.header-title {
+    font-size: 20px;
+    font-weight: 700;
 
-        background: #39d98a;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
 
-        box-shadow:
-            0 0 0 3px rgba(57,217,138,.18);
+.chat-unread-dot {
+    width: 10px;
+    height: 10px;
 
-        display: none;
-        flex-shrink: 0;
-    }
+    border-radius: 50%;
 
-    .chat-unread-dot.visible {
-        display: inline-block;
-    }
+    background: #39d98a;
 
-    .login-button {
-        border: 1px solid rgba(255,255,255,.7);
+    box-shadow:
+        0 0 0 3px rgba(57, 217, 138, .18);
 
-        background: transparent;
-        color: white;
+    display: none;
+    flex-shrink: 0;
+}
 
-        padding: 7px 12px;
-        border-radius: 8px;
+.chat-unread-dot.visible {
+    display: inline-block;
+}
 
-        cursor: pointer;
-        font-weight: 600;
-    }
+.login-button {
+    border: 1px solid rgba(255, 255, 255, .7);
+
+    background: transparent;
+    color: white;
+
+    padding: 7px 12px;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    font-weight: 600;
+}
+
+/* =========================================================
+   PAGE
+========================================================= */
+
+.page {
+    width: 100%;
+    max-width: 900px;
+
+    margin: 0 auto;
+
+    padding: 16px;
+}
+
+.status {
+    background: white;
+
+    border-radius: 12px;
+
+    padding: 12px 14px;
+
+    margin-bottom: 12px;
+
+    border: 1px solid #e5e7eb;
+}
+
+.status strong {
+    color: #087a3e;
+}
+
+.error {
+    display: none;
+
+    background: #fee2e2;
+    color: #991b1b;
+
+    border-radius: 10px;
+
+    padding: 12px;
+
+    margin-bottom: 12px;
+
+    line-height: 1.5;
+}
+
+/* =========================================================
+   CONVERSATION LIST
+========================================================= */
+
+.conversation-card {
+    background: white;
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 12px;
+
+    padding: 14px;
+
+    margin-bottom: 10px;
+
+    cursor: pointer;
+
+    transition:
+        border-color .15s ease,
+        transform .15s ease;
+}
+
+.conversation-card:hover {
+    border-color: #087a3e;
+}
+
+.conversation-card:active {
+    transform: scale(.99);
+}
+
+.conversation-title {
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.conversation-time {
+    color: #6b7280;
+    font-size: 13px;
+}
+
+/* =========================================================
+   CHAT HEADER
+========================================================= */
+
+.chat-header {
+    background: white;
+
+    border-radius: 12px;
+
+    padding: 14px;
+
+    margin-bottom: 12px;
+
+    border: 1px solid #e5e7eb;
+}
+
+.chat-user {
+    font-weight: 700;
+    font-size: 17px;
+}
+
+.listing-info {
+    color: #6b7280;
+    font-size: 14px;
+
+    margin-top: 4px;
+}
+
+/* =========================================================
+   OJA DETAILS
+========================================================= */
+
+.oja-details {
+    background: white;
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 12px;
+
+    padding: 14px;
+
+    margin-bottom: 12px;
+}
+
+.oja-image-gallery {
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fit, minmax(110px, 1fr));
+
+    gap: 8px;
+
+    margin-bottom: 12px;
+}
+
+.oja-image-gallery img {
+    width: 100%;
+
+    aspect-ratio: 1 / 1;
+
+    object-fit: cover;
+
+    border-radius: 9px;
+
+    border: 1px solid #e5e7eb;
+}
+
+.oja-title {
+    font-size: 18px;
+    font-weight: 700;
+
+    margin-bottom: 6px;
+}
+
+.oja-price {
+    color: #087a3e;
+
+    font-size: 17px;
+    font-weight: 700;
+
+    margin-bottom: 5px;
+}
+
+.oja-location {
+    color: #6b7280;
+
+    font-size: 14px;
+
+    margin-bottom: 8px;
+}
+
+.oja-description {
+    color: #374151;
+
+    font-size: 14px;
+
+    line-height: 1.5;
+
+    white-space: pre-wrap;
+}
+
+.buy-escrow-button {
+    width: 100%;
+
+    border: none;
+
+    border-radius: 9px;
+
+    background: #087a3e;
+    color: white;
+
+    padding: 12px;
+
+    margin-top: 14px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+/* =========================================================
+   ESCROW DETAILS
+========================================================= */
+
+.escrow-details {
+    display: none;
+
+    background: white;
+
+    border: 1px solid #dfe7e2;
+
+    border-left: 4px solid #087a3e;
+
+    border-radius: 12px;
+
+    padding: 15px;
+
+    margin-bottom: 12px;
+}
+
+.escrow-details-title {
+    font-size: 16px;
+
+    font-weight: 700;
+
+    color: #087a3e;
+
+    margin-bottom: 12px;
+}
+
+.escrow-detail-row {
+    margin-bottom: 10px;
+}
+
+.escrow-detail-row:last-child {
+    margin-bottom: 0;
+}
+
+.escrow-detail-label {
+    display: block;
+
+    color: #6b7280;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    margin-bottom: 3px;
+
+    text-transform: uppercase;
+}
+
+.escrow-detail-value {
+    color: #111827;
+
+    font-size: 14px;
+
+    line-height: 1.5;
+
+    word-break: break-word;
+}
+
+.escrow-amount {
+    font-weight: 700;
+
+    color: #087a3e;
+
+    font-size: 16px;
+}
+
+.escrow-status {
+    display: inline-block;
+
+    background: #eef8f2;
+
+    color: #087a3e;
+
+    padding: 4px 9px;
+
+    border-radius: 20px;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    text-transform: capitalize;
+}
+
+.escrow-dispute {
+    background: #fff7ed;
+
+    color: #9a3412;
+
+    border-radius: 8px;
+
+    padding: 10px;
+
+    margin-top: 10px;
+
+    font-size: 13px;
+
+    line-height: 1.5;
+}
+
+/* =========================================================
+   MESSAGES
+========================================================= */
+
+.messages {
+    background: white;
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 12px;
+
+    padding: 14px;
+
+    min-height: 350px;
+
+    max-height: 55vh;
+
+    overflow-y: auto;
+
+    margin-bottom: 12px;
+}
+
+.message-row {
+    display: flex;
+
+    margin-bottom: 10px;
+}
+
+.message-row.mine {
+    justify-content: flex-end;
+}
+
+.message-bubble {
+    max-width: 80%;
+
+    background: #eef2f0;
+
+    border-radius: 14px;
+
+    padding: 10px 12px;
+
+    word-break: break-word;
+}
+
+.message-row.mine .message-bubble {
+    background: #087a3e;
+    color: white;
+}
+
+.message-image {
+    display: block;
+
+    width: 100%;
+
+    max-width: 300px;
+    max-height: 300px;
+
+    object-fit: cover;
+
+    border-radius: 10px;
+
+    cursor: pointer;
+
+    margin-bottom: 6px;
+}
+
+.message-text {
+    white-space: pre-wrap;
+
+    line-height: 1.4;
+}
+
+.message-time {
+    font-size: 11px;
+
+    opacity: .7;
+
+    margin-top: 4px;
+}
+
+.empty-message {
+    text-align: center;
+
+    color: #6b7280;
+
+    padding: 60px 15px;
+}
+
+.loading {
+    text-align: center;
+
+    color: #6b7280;
+
+    padding: 30px;
+}
+
+/* =========================================================
+   CHAT FORM
+========================================================= */
+
+.chat-form {
+    display: flex;
+
+    gap: 8px;
+
+    background: white;
+
+    padding: 10px;
+
+    border-radius: 12px;
+
+    border: 1px solid #e5e7eb;
+}
+
+.message-input {
+    flex: 1;
+
+    min-width: 0;
+
+    border: 1px solid #d1d5db;
+
+    border-radius: 9px;
+
+    padding: 11px 12px;
+
+    font-size: 15px;
+
+    outline: none;
+}
+
+.message-input:focus {
+    border-color: #087a3e;
+}
+
+.image-button {
+    width: 48px;
+
+    flex-shrink: 0;
+
+    border: none;
+
+    border-radius: 9px;
+
+    background: #eef8f2;
+
+    color: #087a3e;
+
+    font-size: 20px;
+
+    cursor: pointer;
+}
+
+.image-button:hover {
+    background: #dff2e7;
+}
+
+.image-button:disabled {
+    opacity: .6;
+
+    cursor: not-allowed;
+}
+
+.send-button {
+    width: 48px;
+
+    flex-shrink: 0;
+
+    border: none;
+
+    border-radius: 9px;
+
+    background: #087a3e;
+
+    color: white;
+
+    font-size: 20px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+.send-button:disabled {
+    opacity: .6;
+
+    cursor: not-allowed;
+}
+
+.selected-image {
+    display: none;
+
+    background: #eef8f2;
+
+    color: #087a3e;
+
+    border-radius: 8px;
+
+    padding: 7px 10px;
+
+    margin-bottom: 8px;
+
+    font-size: 13px;
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
 
     .page {
-        width: 100%;
-        max-width: 900px;
-
-        margin: 0 auto;
-
-        padding: 16px;
-    }
-
-    .status {
-        background: white;
-
-        border-radius: 12px;
-
-        padding: 12px 14px;
-
-        margin-bottom: 12px;
-
-        border: 1px solid #e5e7eb;
-    }
-
-    .status strong {
-        color: #087a3e;
-    }
-
-    .conversation-card {
-        background: white;
-
-        border: 1px solid #e5e7eb;
-
-        border-radius: 12px;
-
-        padding: 14px;
-
-        margin-bottom: 10px;
-
-        cursor: pointer;
-    }
-
-    .conversation-card:hover {
-        border-color: #087a3e;
-    }
-
-    .conversation-title {
-        font-weight: 700;
-        margin-bottom: 5px;
-    }
-
-    .conversation-time {
-        color: #6b7280;
-        font-size: 13px;
-    }
-
-    .chat-header {
-        background: white;
-
-        border-radius: 12px;
-
-        padding: 14px;
-
-        margin-bottom: 12px;
-
-        border: 1px solid #e5e7eb;
-    }
-
-    .chat-user {
-        font-weight: 700;
-        font-size: 17px;
-    }
-
-    .listing-info {
-        color: #6b7280;
-        font-size: 14px;
-
-        margin-top: 4px;
-    }
-
-    /* =====================================================
-       OJA ITEM DETAILS
-    ===================================================== */
-
-    .oja-details {
-        background: white;
-
-        border: 1px solid #e5e7eb;
-
-        border-radius: 12px;
-
-        padding: 14px;
-
-        margin-bottom: 12px;
-    }
-
-    .oja-image-gallery {
-        display: grid;
-
-        grid-template-columns:
-            repeat(auto-fit, minmax(110px, 1fr));
-
-        gap: 8px;
-
-        margin-bottom: 12px;
-    }
-
-    .oja-image-gallery img {
-        width: 100%;
-
-        aspect-ratio: 1 / 1;
-
-        object-fit: cover;
-
-        border-radius: 9px;
-
-        border: 1px solid #e5e7eb;
-    }
-
-    .oja-title {
-        font-size: 18px;
-        font-weight: 700;
-
-        margin-bottom: 6px;
-    }
-
-    .oja-price {
-        color: #087a3e;
-
-        font-size: 17px;
-        font-weight: 700;
-
-        margin-bottom: 5px;
-    }
-
-    .oja-location {
-        color: #6b7280;
-
-        font-size: 14px;
-
-        margin-bottom: 8px;
-    }
-
-    .oja-description {
-        color: #374151;
-
-        font-size: 14px;
-
-        line-height: 1.5;
-
-        white-space: pre-wrap;
-    }
-
-    .buy-escrow-button {
-        width: 100%;
-
-        border: none;
-
-        border-radius: 9px;
-
-        background: #087a3e;
-
-        color: white;
-
-        padding: 12px;
-
-        margin-top: 14px;
-
-        font-weight: 700;
-
-        cursor: pointer;
-    }
-
-    /* =====================================================
-       ESCROW PURCHASE DETAILS
-    ===================================================== */
-
-    .escrow-details {
-        display: none;
-
-        background: white;
-
-        border: 1px solid #dfe7e2;
-
-        border-left: 4px solid #087a3e;
-
-        border-radius: 12px;
-
-        padding: 15px;
-
-        margin-bottom: 12px;
-    }
-
-    .escrow-details-title {
-        font-size: 16px;
-
-        font-weight: 700;
-
-        color: #087a3e;
-
-        margin-bottom: 12px;
-    }
-
-    .escrow-detail-row {
-        margin-bottom: 10px;
-    }
-
-    .escrow-detail-row:last-child {
-        margin-bottom: 0;
-    }
-
-    .escrow-detail-label {
-        display: block;
-
-        color: #6b7280;
-
-        font-size: 12px;
-
-        font-weight: 600;
-
-        margin-bottom: 3px;
-
-        text-transform: uppercase;
-    }
-
-    .escrow-detail-value {
-        color: #111827;
-
-        font-size: 14px;
-
-        line-height: 1.5;
-
-        word-break: break-word;
-    }
-
-    .escrow-amount {
-        font-weight: 700;
-
-        color: #087a3e;
-
-        font-size: 16px;
-    }
-
-    .escrow-status {
-        display: inline-block;
-
-        background: #eef8f2;
-
-        color: #087a3e;
-
-        padding: 4px 9px;
-
-        border-radius: 20px;
-
-        font-size: 12px;
-
-        font-weight: 700;
-
-        text-transform: capitalize;
-    }
-
-    .escrow-dispute {
-        background: #fff7ed;
-
-        color: #9a3412;
-
-        border-radius: 8px;
-
         padding: 10px;
-
-        margin-top: 10px;
-
-        font-size: 13px;
-
-        line-height: 1.5;
     }
-
-    /* =====================================================
-       MESSAGES
-    ===================================================== */
 
     .messages {
-        background: white;
-
-        border: 1px solid #e5e7eb;
-
-        border-radius: 12px;
-
-        padding: 14px;
-
-        min-height: 350px;
-
-        max-height: 55vh;
-
-        overflow-y: auto;
-
-        margin-bottom: 12px;
-    }
-
-    .message-row {
-        display: flex;
-
-        margin-bottom: 10px;
-    }
-
-    .message-row.mine {
-        justify-content: flex-end;
+        max-height: 60vh;
     }
 
     .message-bubble {
-        max-width: 80%;
-
-        background: #eef2f0;
-
-        border-radius: 14px;
-
-        padding: 10px 12px;
-
-        word-break: break-word;
-    }
-
-    .message-row.mine .message-bubble {
-        background: #087a3e;
-
-        color: white;
+        max-width: 88%;
     }
 
     .message-image {
-        display: block;
-
-        width: 100%;
-
-        max-width: 300px;
-
-        max-height: 300px;
-
-        object-fit: cover;
-
-        border-radius: 10px;
-
-        cursor: pointer;
-
-        margin-bottom: 6px;
+        max-width: 240px;
+        max-height: 240px;
     }
-
-    .message-text {
-        white-space: pre-wrap;
-
-        line-height: 1.4;
-    }
-
-    .message-time {
-        font-size: 11px;
-
-        opacity: .7;
-
-        margin-top: 4px;
-    }
-
-    .empty-message {
-        text-align: center;
-
-        color: #6b7280;
-
-        padding: 60px 15px;
-    }
-
-    /* =====================================================
-       CHAT FORM
-    ===================================================== */
 
     .chat-form {
-        display: flex;
-
-        gap: 8px;
-
-        background: white;
-
-        padding: 10px;
-
-        border-radius: 12px;
-
-        border: 1px solid #e5e7eb;
+        gap: 6px;
     }
 
-    .message-input {
-        flex: 1;
-
-        min-width: 0;
-
-        border: 1px solid #d1d5db;
-
-        border-radius: 9px;
-
-        padding: 11px 12px;
-
-        font-size: 15px;
-
-        outline: none;
-    }
-
-    .message-input:focus {
-        border-color: #087a3e;
-    }
-
-    .image-button {
-        width: 48px;
-
-        flex-shrink: 0;
-
-        border: none;
-
-        border-radius: 9px;
-
-        background: #eef8f2;
-
-        color: #087a3e;
-
-        font-size: 20px;
-
-        cursor: pointer;
-    }
-
-    .image-button:hover {
-        background: #dff2e7;
-    }
-
-    .image-button:disabled {
-        opacity: .6;
-
-        cursor: not-allowed;
-    }
-
+    .image-button,
     .send-button {
-        width: 48px;
-
-        flex-shrink: 0;
-
-        border: none;
-
-        border-radius: 9px;
-
-        background: #087a3e;
-
-        color: white;
-
-        font-size: 20px;
-
-        font-weight: 700;
-
-        cursor: pointer;
+        width: 44px;
     }
-
-    .send-button:disabled {
-        opacity: .6;
-
-        cursor: not-allowed;
-    }
-
-    .selected-image {
-        display: none;
-
-        background: #eef8f2;
-
-        color: #087a3e;
-
-        border-radius: 8px;
-
-        padding: 7px 10px;
-
-        margin-bottom: 8px;
-
-        font-size: 13px;
-    }
-
-    .error {
-        display: none;
-
-        background: #fee2e2;
-
-        color: #991b1b;
-
-        border-radius: 10px;
-
-        padding: 12px;
-
-        margin-bottom: 12px;
-    }
-
-    .loading {
-        text-align: center;
-
-        color: #6b7280;
-
-        padding: 30px;
-    }
-
-    @media (max-width: 600px) {
-
-        .page {
-            padding: 10px;
-        }
-
-        .messages {
-            max-height: 60vh;
-        }
-
-        .message-bubble {
-            max-width: 88%;
-        }
-
-        .message-image {
-            max-width: 240px;
-
-            max-height: 240px;
-        }
-
-        .chat-form {
-            gap: 6px;
-        }
-
-        .image-button,
-        .send-button {
-            width: 44px;
-        }
-
-    }
+}
 
 </style>
 
@@ -637,286 +664,269 @@
 
 <header>
 
-<div class="header-left">
+    <div class="header-left">
 
-    <button
-        class="back-button"
-        type="button"
-        onclick="history.back()"
-    >
-        &lsaquo;
-    </button>
+        <button
+            class="back-button"
+            type="button"
+            onclick="history.back()"
+            aria-label="Go back"
+        >
+            &lsaquo;
+        </button>
 
-    <div class="header-title">
+        <div class="header-title">
 
-        LosOja Chat
+            LosOja Chat
 
-        <span
-            id="chatUnreadIndicator"
-            class="chat-unread-dot"
-            aria-label="New chat notification"
-        ></span>
+            <span
+                id="chatUnreadIndicator"
+                class="chat-unread-dot"
+                aria-label="New chat notification"
+            ></span>
+
+        </div>
 
     </div>
 
-</div>
+    <button
+        id="loginButton"
+        class="login-button"
+        type="button"
+    >
+        Login
+    </button>
 
-<button
-    id="loginButton"
-    class="login-button"
-    type="button"
->
-    Login
-</button>
-<script>
-(function () {
-
-    const loginButton =
-        document.getElementById("loginButton");
-
-    if (!loginButton) {
-        return;
-    }
-
-   loginButton.addEventListener(
-    "click",
-    function () {
-
-        sessionStorage.setItem(
-            "losoja_return_to_chat",
-            "true"
-        );
-
-        window.location.href =
-            "index.html?login=1";
-
-    }
-);
-
-})();
-</script>
 </header>
 
 <main class="page">
 
-<div
-    id="status"
-    class="status"
->
-    <strong>Connecting...</strong>
-</div>
-
-<div
-    id="errorMessage"
-    class="error"
-></div>
-
-<div
-    id="conversationList"
-></div>
-
-<section
-    id="chatSection"
-    style="display:none;"
->
-
-<div class="chat-header">
-
     <div
-        id="chatUser"
-        class="chat-user"
+        id="status"
+        class="status"
     >
-        Chat
+        <strong>Connecting...</strong>
     </div>
 
     <div
-        id="listingInfo"
-        class="listing-info"
+        id="errorMessage"
+        class="error"
     ></div>
-
-</div>
-
-<!-- =====================================================
-     OJA ITEM DETAILS
-===================================================== -->
-
-<div
-    id="ojaDetails"
-    class="oja-details"
-    style="display:none;"
->
 
     <div
-        id="ojaImageGallery"
-        class="oja-image-gallery"
+        id="conversationList"
     ></div>
 
-    <div class="oja-details-content">
-
-        <div
-            id="ojaTitle"
-            class="oja-title"
-        ></div>
-
-        <div
-            id="ojaPrice"
-            class="oja-price"
-        ></div>
-
-        <div
-            id="ojaLocation"
-            class="oja-location"
-        ></div>
-
-        <div
-            id="ojaDescription"
-            class="oja-description"
-        ></div>
-
-    </div>
-
-    <button
-        id="buyWithEscrowButton"
-        class="buy-escrow-button"
-        type="button"
+    <section
+        id="chatSection"
         style="display:none;"
     >
-        Buy with Escrow
-    </button>
 
-</div>
+        <div class="chat-header">
 
-<!-- =====================================================
-     ESCROW PURCHASE DETAILS
-===================================================== -->
+            <div
+                id="chatUser"
+                class="chat-user"
+            >
+                Chat
+            </div>
 
-<div
-    id="escrowDetails"
-    class="escrow-details"
->
+            <div
+                id="listingInfo"
+                class="listing-info"
+            ></div>
 
-    <div class="escrow-details-title">
-        Escrow Purchase Details
-    </div>
-
-    <div class="escrow-detail-row">
-
-        <span class="escrow-detail-label">
-            What is being bought
-        </span>
-
-        <div
-            id="escrowDescription"
-            class="escrow-detail-value"
-        >
-            -
         </div>
 
-    </div>
-
-    <div class="escrow-detail-row">
-
-        <span class="escrow-detail-label">
-            Amount
-        </span>
+        <!-- =================================================
+             OJA ITEM DETAILS
+        ================================================== -->
 
         <div
-            id="escrowAmount"
-            class="escrow-detail-value escrow-amount"
+            id="ojaDetails"
+            class="oja-details"
+            style="display:none;"
         >
-            -
+
+            <div
+                id="ojaImageGallery"
+                class="oja-image-gallery"
+            ></div>
+
+            <div class="oja-details-content">
+
+                <div
+                    id="ojaTitle"
+                    class="oja-title"
+                ></div>
+
+                <div
+                    id="ojaPrice"
+                    class="oja-price"
+                ></div>
+
+                <div
+                    id="ojaLocation"
+                    class="oja-location"
+                ></div>
+
+                <div
+                    id="ojaDescription"
+                    class="oja-description"
+                ></div>
+
+            </div>
+
+            <button
+                id="buyWithEscrowButton"
+                class="buy-escrow-button"
+                type="button"
+                style="display:none;"
+            >
+                Buy with Escrow
+            </button>
+
         </div>
 
-    </div>
-
-    <div class="escrow-detail-row">
-
-        <span class="escrow-detail-label">
-            Escrow Status
-        </span>
+        <!-- =================================================
+             ESCROW PURCHASE DETAILS
+        ================================================== -->
 
         <div
-            id="escrowStatus"
-            class="escrow-detail-value"
+            id="escrowDetails"
+            class="escrow-details"
         >
-            -
+
+            <div class="escrow-details-title">
+                Escrow Purchase Details
+            </div>
+
+            <div class="escrow-detail-row">
+
+                <span class="escrow-detail-label">
+                    What is being bought
+                </span>
+
+                <div
+                    id="escrowDescription"
+                    class="escrow-detail-value"
+                >
+                    -
+                </div>
+
+            </div>
+
+            <div class="escrow-detail-row">
+
+                <span class="escrow-detail-label">
+                    Amount
+                </span>
+
+                <div
+                    id="escrowAmount"
+                    class="escrow-detail-value escrow-amount"
+                >
+                    -
+                </div>
+
+            </div>
+
+            <div class="escrow-detail-row">
+
+                <span class="escrow-detail-label">
+                    Escrow Status
+                </span>
+
+                <div
+                    id="escrowStatus"
+                    class="escrow-detail-value"
+                >
+                    -
+                </div>
+
+            </div>
+
+            <div
+                id="escrowDispute"
+                class="escrow-dispute"
+                style="display:none;"
+            ></div>
+
         </div>
 
-    </div>
+        <!-- =================================================
+             MESSAGES
+        ================================================== -->
 
-    <div
-        id="escrowDispute"
-        class="escrow-dispute"
-        style="display:none;"
-    ></div>
+        <div
+            id="messages"
+            class="messages"
+        >
 
-</div>
+            <div class="loading">
+                Loading messages...
+            </div>
 
-<div
-    id="messages"
-    class="messages"
->
+        </div>
 
-    <div class="loading">
-        Loading messages...
-    </div>
+        <div
+            id="selectedImage"
+            class="selected-image"
+        ></div>
 
-</div>
+        <!-- =================================================
+             CHAT FORM
+        ================================================== -->
 
-<div
-    id="selectedImage"
-    class="selected-image"
-></div>
+        <form
+            id="chatForm"
+            class="chat-form"
+        >
 
-<!-- =====================================================
-     CHAT FORM
-===================================================== -->
+            <input
+                id="messageInput"
+                class="message-input"
+                type="text"
+                maxlength="2000"
+                placeholder="Type a message..."
+                autocomplete="off"
+            >
 
-<form
-    id="chatForm"
-    class="chat-form"
->
+            <input
+                id="imageInput"
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                hidden
+            >
 
-    <input
-        id="messageInput"
-        class="message-input"
-        type="text"
-        maxlength="2000"
-        placeholder="Type a message..."
-        autocomplete="off"
-    >
+            <button
+                id="imageButton"
+                class="image-button"
+                type="button"
+                aria-label="Send picture"
+                title="Send picture"
+            >
+                📷
+            </button>
 
-    <input
-        id="imageInput"
-        type="file"
-        accept="image/jpeg,image/png,image/webp"
-        hidden
-    >
+            <button
+                id="sendButton"
+                class="send-button"
+                type="submit"
+                aria-label="Send message"
+            >
+                &gt;
+            </button>
 
-    <button
-        id="imageButton"
-        class="image-button"
-        type="button"
-        aria-label="Send picture"
-        title="Send picture"
-    >
-        📷
-    </button>
+        </form>
 
-    <button
-        id="sendButton"
-        class="send-button"
-        type="submit"
-        aria-label="Send message"
-    >
-        &gt;
-    </button>
-
-</form>
-
-</section>
+    </section>
 
 </main>
+
+<!-- =========================================================
+     LOSOJA AUTH
+========================================================= -->
 
 <script src="js/auth.js?v=2"></script>
 
@@ -924,13 +934,15 @@
 
 "use strict";
 
+/* =========================================================
+   SUPABASE
+========================================================= */
 
 const SUPABASE_URL =
     "https://ycxshwgeebskdozmornh.supabase.co";
 
 const SUPABASE_KEY =
     "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
-
 
 /* =========================================================
    CHAT IMAGE SETTINGS
@@ -948,6 +960,9 @@ const ALLOWED_CHAT_IMAGE_TYPES = [
     "image/webp"
 ];
 
+/* =========================================================
+   CHAT STATE
+========================================================= */
 
 let currentUser = null;
 
@@ -955,12 +970,6 @@ let currentConversationId = null;
 
 let currentOtherUserId = null;
 
-/*
- * BUSINESS CHAT
- *
- * This is supplied by:
- * chat.html?user=OWNER_ID&business=BUSINESS_ID
- */
 let currentBusinessId = null;
 
 let currentListingId = null;
@@ -981,9 +990,8 @@ let currentOjaImages = [];
 
 let messagePolling = null;
 
-
 /* =========================================================
-   HELPERS
+   BASIC UI HELPERS
 ========================================================= */
 
 function showError(message) {
@@ -993,10 +1001,12 @@ function showError(message) {
             "errorMessage"
         );
 
-    if (!box) return;
+    if (!box) {
+        return;
+    }
 
     box.textContent =
-        message;
+        message || "Something went wrong.";
 
     box.style.display =
         "block";
@@ -1010,68 +1020,131 @@ function clearError() {
             "errorMessage"
         );
 
-    if (!box) return;
+    if (!box) {
+        return;
+    }
 
-    box.textContent =
-        "";
+    box.textContent = "";
 
     box.style.display =
         "none";
 }
 
 
-function goToLogin() {
+/* =========================================================
+   HTML ESCAPE
+========================================================= */
 
-    localStorage.setItem(
-        "losoja_return_to_chat",
-        window.location.href
-    );
+function escapeHTML(value) {
 
-    if (
-        typeof window.openLogin ===
-        "function"
-    ) {
-
-        window.openLogin();
-
-        return;
-    }
-
-    window.location.href =
-        "index.html";
+    return String(
+        value ?? ""
+    )
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
 }
 
 
-function getAccessToken() {
+/* =========================================================
+   AUTH TOKEN
+========================================================= */
+
+async function getValidAccessToken() {
+
+    /*
+     * Always try the session helper first.
+     * This prevents the chat from accidentally sending
+     * the public key as the Bearer token when a real
+     * authenticated session exists.
+     */
+
+    if (
+        typeof window.ensureValidSupabaseSession ===
+        "function"
+    ) {
+
+        try {
+
+            const session =
+                await window.ensureValidSupabaseSession();
+
+            if (
+                session &&
+                session.access_token
+            ) {
+
+                return session.access_token;
+            }
+
+        } catch (error) {
+
+            console.warn(
+                "LosOja session validation failed:",
+                error
+            );
+        }
+    }
+
 
     if (
         typeof window.getSupabaseAccessToken ===
         "function"
     ) {
 
-        return window.getSupabaseAccessToken();
+        try {
+
+            const token =
+                window.getSupabaseAccessToken();
+
+            if (token) {
+                return token;
+            }
+
+        } catch (error) {
+
+            console.warn(
+                "LosOja access token lookup failed:",
+                error
+            );
+        }
     }
+
 
     return null;
 }
 
 
-function getHeaders() {
+/* =========================================================
+   SUPABASE HEADERS
+========================================================= */
+
+async function getHeaders() {
 
     const token =
-        getAccessToken();
+        await getValidAccessToken();
 
-    return {
+    const headers = {
 
         "apikey":
             SUPABASE_KEY,
-
-        "Authorization":
-            "Bearer " +
-            (
-                token ||
-                SUPABASE_KEY
-            ),
 
         "Content-Type":
             "application/json",
@@ -1080,13 +1153,45 @@ function getHeaders() {
             "return=representation"
 
     };
+
+
+    if (token) {
+
+        headers.Authorization =
+            "Bearer " +
+            token;
+
+    } else {
+
+        /*
+         * Do not send the public API key as a fake
+         * authenticated Bearer token.
+         *
+         * This is important for Supabase RLS.
+         */
+
+        headers.Authorization =
+            "Bearer " +
+            SUPABASE_KEY;
+    }
+
+
+    return headers;
 }
 
+
+/* =========================================================
+   SUPABASE REQUEST
+========================================================= */
 
 async function supabaseRequest(
     path,
     options = {}
 ) {
+
+    const headers =
+        await getHeaders();
+
 
     const response =
         await fetch(
@@ -1095,14 +1200,14 @@ async function supabaseRequest(
                 ...options,
 
                 headers: {
-                    ...getHeaders(),
+                    ...headers,
                     ...(options.headers || {})
                 }
             }
         );
 
 
-    const text =
+    const responseText =
         await response.text();
 
 
@@ -1112,14 +1217,16 @@ async function supabaseRequest(
     try {
 
         data =
-            text
-                ? JSON.parse(text)
+            responseText
+                ? JSON.parse(
+                    responseText
+                )
                 : null;
 
     } catch {
 
         data =
-            text;
+            responseText;
     }
 
 
@@ -1131,6 +1238,7 @@ async function supabaseRequest(
             data
         );
 
+
         throw new Error(
             data?.message ||
             data?.error_description ||
@@ -1141,6 +1249,1010 @@ async function supabaseRequest(
 
 
     return data;
+}
+
+
+/* =========================================================
+   LOAD ESCROW CHAT CONTEXT
+========================================================= */
+
+async function loadEscrowChatContext() {
+
+    if (!currentEscrowId) {
+        return false;
+    }
+
+
+    const escrow =
+        await supabaseRequest(
+            "/rest/v1/escrow_transactions" +
+            "?select=id,buyer_id,seller_id,amount,currency,status,description,dispute_reason" +
+            "&id=eq." +
+            encodeURIComponent(
+                currentEscrowId
+            )
+        );
+
+
+    if (
+        !Array.isArray(escrow) ||
+        !escrow[0]
+    ) {
+
+        throw new Error(
+            "Escrow transaction could not be found."
+        );
+    }
+
+
+    currentEscrow =
+        escrow[0];
+
+
+    const buyerId =
+        currentEscrow.buyer_id;
+
+    const sellerId =
+        currentEscrow.seller_id;
+
+
+    if (
+        String(currentUser.id) !==
+            String(buyerId) &&
+
+        String(currentUser.id) !==
+            String(sellerId)
+    ) {
+
+        throw new Error(
+            "You are not a participant in this escrow."
+        );
+    }
+
+
+    currentOtherUserId =
+        String(currentUser.id) ===
+            String(buyerId)
+
+            ? sellerId
+
+            : buyerId;
+
+
+    return true;
+}
+
+
+/* =========================================================
+   RENDER ESCROW DETAILS
+========================================================= */
+
+function renderEscrowDetails() {
+
+    if (!currentEscrow) {
+        return;
+    }
+
+
+    const details =
+        document.getElementById(
+            "escrowDetails"
+        );
+
+
+    if (!details) {
+        return;
+    }
+
+
+    const description =
+        currentEscrow.description ||
+        "No purchase description was provided.";
+
+
+    const amount =
+        Number(
+            currentEscrow.amount || 0
+        ).toLocaleString(
+            "en-NG",
+            {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }
+        );
+
+
+    const currency =
+        currentEscrow.currency ||
+        "NGN";
+
+
+    const status =
+        currentEscrow.status ||
+        "active";
+
+
+    const descriptionElement =
+        document.getElementById(
+            "escrowDescription"
+        );
+
+
+    const amountElement =
+        document.getElementById(
+            "escrowAmount"
+        );
+
+
+    const statusElement =
+        document.getElementById(
+            "escrowStatus"
+        );
+
+
+    const disputeElement =
+        document.getElementById(
+            "escrowDispute"
+        );
+
+
+    if (descriptionElement) {
+
+        descriptionElement.textContent =
+            description;
+    }
+
+
+    if (amountElement) {
+
+        amountElement.textContent =
+            currency +
+            " " +
+            amount;
+    }
+
+
+    if (statusElement) {
+
+        statusElement.innerHTML =
+            `
+            <span class="escrow-status">
+                ${escapeHTML(status)}
+            </span>
+            `;
+    }
+
+
+    if (
+        disputeElement &&
+        currentEscrow.dispute_reason
+    ) {
+
+        disputeElement.textContent =
+            "Dispute reason: " +
+            currentEscrow.dispute_reason;
+
+        disputeElement.style.display =
+            "block";
+
+    } else if (disputeElement) {
+
+        disputeElement.style.display =
+            "none";
+    }
+
+
+    details.style.display =
+        "block";
+}
+
+
+/* =========================================================
+   FIND OR CREATE CONVERSATION
+========================================================= */
+
+async function findOrCreateConversation() {
+
+    if (!currentUser) {
+
+        throw new Error(
+            "You must be logged in."
+        );
+    }
+
+
+    if (!currentOtherUserId) {
+
+        throw new Error(
+            "The other user could not be found."
+        );
+    }
+
+
+    if (
+        String(currentOtherUserId) ===
+        String(currentUser.id)
+    ) {
+
+        throw new Error(
+            "You cannot chat with yourself."
+        );
+    }
+
+
+    /*
+     * Make sure the authenticated session is valid
+     * before performing the RLS-protected query.
+     */
+
+    const accessToken =
+        await getValidAccessToken();
+
+
+    if (!accessToken) {
+
+        throw new Error(
+            "Your LosOja session has expired. Please log in again."
+        );
+    }
+
+
+    let query;
+
+
+    /* =====================================================
+       OJA CHAT
+    ===================================================== */
+
+    if (currentOjaListingId) {
+
+        query =
+            "/rest/v1/conversations" +
+            "?select=*" +
+
+            "&oja_listing_id=eq." +
+            encodeURIComponent(
+                currentOjaListingId
+            ) +
+
+            "&or=(" +
+
+            "and(user_one_id.eq." +
+            encodeURIComponent(
+                currentUser.id
+            ) +
+
+            ",user_two_id.eq." +
+            encodeURIComponent(
+                currentOtherUserId
+            ) +
+
+            ")," +
+
+            "and(user_one_id.eq." +
+            encodeURIComponent(
+                currentOtherUserId
+            ) +
+
+            ",user_two_id.eq." +
+            encodeURIComponent(
+                currentUser.id
+            ) +
+
+            ")" +
+            ")";
+
+
+    /* =====================================================
+       BARTER CHAT
+    ===================================================== */
+
+    } else if (currentListingId) {
+
+        query =
+            "/rest/v1/conversations" +
+            "?select=*" +
+
+            "&barter_listing_id=eq." +
+            encodeURIComponent(
+                currentListingId
+            ) +
+
+            "&or=(" +
+
+            "and(user_one_id.eq." +
+            encodeURIComponent(
+                currentUser.id
+            ) +
+
+            ",user_two_id.eq." +
+            encodeURIComponent(
+                currentOtherUserId
+            ) +
+
+            ")," +
+
+            "and(user_one_id.eq." +
+            encodeURIComponent(
+                currentOtherUserId
+            ) +
+
+            ",user_two_id.eq." +
+            encodeURIComponent(
+                currentUser.id
+            ) +
+
+            ")" +
+            ")";
+
+
+    /* =====================================================
+       BUSINESS CHAT
+    ===================================================== */
+
+    } else if (currentBusinessId) {
+
+        query =
+            "/rest/v1/conversations" +
+            "?select=*" +
+
+            "&business_id=eq." +
+            encodeURIComponent(
+                currentBusinessId
+            ) +
+
+            "&or=(" +
+
+            "and(user_one_id.eq." +
+            encodeURIComponent(
+                currentUser.id
+            ) +
+
+            ",user_two_id.eq." +
+            encodeURIComponent(
+                currentOtherUserId
+            ) +
+
+            ")," +
+
+            "and(user_one_id.eq." +
+            encodeURIComponent(
+                currentOtherUserId
+            ) +
+
+            ",user_two_id.eq." +
+            encodeURIComponent(
+                currentUser.id
+            ) +
+
+            ")" +
+            ")";
+
+
+    /* =====================================================
+       NORMAL CHAT
+    ===================================================== */
+
+    } else {
+
+        query =
+            "/rest/v1/conversations" +
+            "?select=*" +
+
+            "&or=(" +
+
+            "and(user_one_id.eq." +
+            encodeURIComponent(
+                currentUser.id
+            ) +
+
+            ",user_two_id.eq." +
+            encodeURIComponent(
+                currentOtherUserId
+            ) +
+
+            ")," +
+
+            "and(user_one_id.eq." +
+            encodeURIComponent(
+                currentOtherUserId
+            ) +
+
+            ",user_two_id.eq." +
+            encodeURIComponent(
+                currentUser.id
+            ) +
+
+            ")" +
+            ")";
+    }
+
+
+    /* =====================================================
+       FIND EXISTING CONVERSATION
+    ===================================================== */
+
+    const existing =
+        await supabaseRequest(
+            query
+        );
+
+
+    if (
+        Array.isArray(existing) &&
+        existing.length > 0
+    ) {
+
+        return existing[0];
+    }
+
+
+    /* =====================================================
+       CREATE CONVERSATION
+    ===================================================== */
+
+    const conversation = {
+
+        user_one_id:
+            currentUser.id,
+
+        user_two_id:
+            currentOtherUserId,
+
+        business_id:
+            currentBusinessId ||
+            null,
+
+        barter_listing_id:
+            currentListingId ||
+            null,
+
+        oja_listing_id:
+            currentOjaListingId ||
+            null
+
+    };
+
+
+    const created =
+        await supabaseRequest(
+            "/rest/v1/conversations",
+            {
+                method:
+                    "POST",
+
+                body:
+                    JSON.stringify(
+                        conversation
+                    )
+            }
+        );
+
+
+    if (
+        !Array.isArray(created) ||
+        !created[0]
+    ) {
+
+        throw new Error(
+            "Conversation could not be created."
+        );
+    }
+
+
+    return created[0];
+}
+
+
+/* =========================================================
+   LOAD EXISTING CONVERSATION BY ID
+========================================================= */
+
+async function loadConversationById(
+    conversationId
+) {
+
+    if (!conversationId) {
+        return null;
+    }
+
+
+    const conversations =
+        await supabaseRequest(
+            "/rest/v1/conversations" +
+            "?select=*" +
+            "&id=eq." +
+            encodeURIComponent(
+                conversationId
+            )
+        );
+
+
+    if (
+        !Array.isArray(conversations) ||
+        !conversations[0]
+    ) {
+
+        throw new Error(
+            "This conversation could not be found."
+        );
+    }
+
+
+    const conversation =
+        conversations[0];
+
+
+    const isParticipant =
+        String(
+            conversation.user_one_id
+        ) ===
+            String(
+                currentUser.id
+            ) ||
+
+        String(
+            conversation.user_two_id
+        ) ===
+            String(
+                currentUser.id
+            );
+
+
+    if (!isParticipant) {
+
+        throw new Error(
+            "You are not a participant in this conversation."
+        );
+    }
+
+
+    currentConversationId =
+        conversation.id;
+
+
+    currentOtherUserId =
+        String(
+            conversation.user_one_id
+        ) ===
+            String(
+                currentUser.id
+            )
+
+            ? conversation.user_two_id
+
+            : conversation.user_one_id;
+
+
+    currentBusinessId =
+        conversation.business_id ||
+        null;
+
+
+    currentListingId =
+        conversation.barter_listing_id ||
+        null;
+
+
+    currentOjaListingId =
+        conversation.oja_listing_id ||
+        null;
+
+
+    return conversation;
+}
+
+
+/* =========================================================
+   CREATE CHAT NOTIFICATION
+========================================================= */
+
+async function createChatNotification() {
+
+    if (
+        !currentUser ||
+        !currentOtherUserId ||
+        !currentConversationId
+    ) {
+
+        return;
+    }
+
+
+    if (
+        String(currentOtherUserId) ===
+        String(currentUser.id)
+    ) {
+
+        return;
+    }
+
+
+    try {
+
+        const senderName =
+            currentUser.user_metadata?.full_name ||
+            currentUser.user_metadata?.name ||
+            currentUser.email ||
+            "Someone";
+
+
+        const notification = {
+
+            user_id:
+                currentOtherUserId,
+
+            title:
+                "New LosOja Message",
+
+            message:
+                senderName +
+                " sent you a new message.",
+
+            type:
+                "chat:" +
+                currentUser.id +
+                ":" +
+                currentConversationId,
+
+            is_read:
+                false
+        };
+
+
+        await supabaseRequest(
+            "/rest/v1/notifications",
+            {
+                method:
+                    "POST",
+
+                body:
+                    JSON.stringify(
+                        notification
+                    )
+            }
+        );
+
+    } catch (error) {
+
+        /*
+         * Notification failure should not prevent
+         * the actual chat message from being sent.
+         */
+
+        console.warn(
+            "LosOja chat notification could not be created:",
+            error
+        );
+    }
+}
+
+
+/* =========================================================
+   UPDATE CHAT UNREAD INDICATOR
+========================================================= */
+
+async function updateChatUnreadIndicator() {
+
+    const indicator =
+        document.getElementById(
+            "chatUnreadIndicator"
+        );
+
+
+    if (
+        !indicator ||
+        !currentUser
+    ) {
+
+        return;
+    }
+
+
+    try {
+
+        const notifications =
+            await supabaseRequest(
+
+                "/rest/v1/notifications" +
+
+                "?select=id,type,is_read" +
+
+                "&user_id=eq." +
+
+                encodeURIComponent(
+                    currentUser.id
+                ) +
+
+                "&is_read=eq.false" +
+
+                "&limit=100"
+            );
+
+
+        const hasUnreadChat =
+            Array.isArray(
+                notifications
+            ) &&
+
+            notifications.some(
+                notification =>
+
+                    String(
+                        notification?.type ||
+                        ""
+                    )
+                        .toLowerCase()
+                        .startsWith(
+                            "chat:"
+                        )
+            );
+
+
+        indicator.classList.toggle(
+            "visible",
+            hasUnreadChat
+        );
+
+    } catch (error) {
+
+        console.warn(
+            "LosOja chat unread indicator error:",
+            error
+        );
+    }
+}
+
+
+/* =========================================================
+   MARK CURRENT CHAT NOTIFICATIONS READ
+========================================================= */
+
+async function markCurrentChatNotificationsRead() {
+
+    if (
+        !currentUser ||
+        !currentOtherUserId
+    ) {
+
+        return;
+    }
+
+
+    try {
+
+        const notificationTypePattern =
+            "chat:" +
+            currentOtherUserId +
+            ":*";
+
+
+        await supabaseRequest(
+
+            "/rest/v1/notifications" +
+
+            "?user_id=eq." +
+
+            encodeURIComponent(
+                currentUser.id
+            ) +
+
+            "&type=like." +
+
+            encodeURIComponent(
+                notificationTypePattern
+            ),
+
+            {
+                method:
+                    "PATCH",
+
+                headers: {
+
+                    "Prefer":
+                        "return=minimal"
+
+                },
+
+                body:
+                    JSON.stringify({
+                        is_read:
+                            true
+                    })
+            }
+        );
+
+
+        await updateChatUnreadIndicator();
+
+    } catch (error) {
+
+        console.warn(
+            "LosOja chat notification read update failed:",
+            error
+        );
+    }
+}
+
+
+/* =========================================================
+   LOAD MESSAGES
+========================================================= */
+
+async function loadMessages() {
+
+    if (!currentConversationId) {
+        return;
+    }
+
+
+    const messages =
+        await supabaseRequest(
+
+            "/rest/v1/messages" +
+
+            "?select=*" +
+
+            "&conversation_id=eq." +
+
+            encodeURIComponent(
+                currentConversationId
+            ) +
+
+            "&order=created_at.asc"
+        );
+
+
+    renderMessages(
+        Array.isArray(messages)
+            ? messages
+            : []
+    );
+}
+
+
+/* =========================================================
+   RENDER MESSAGES
+========================================================= */
+
+function renderMessages(messages) {
+
+    const container =
+        document.getElementById(
+            "messages"
+        );
+
+
+    if (!container) {
+        return;
+    }
+
+
+    if (!messages.length) {
+
+        container.innerHTML = `
+            <div class="empty-message">
+                No messages yet.<br>
+                Start the conversation.
+            </div>
+        `;
+
+        return;
+    }
+
+
+    container.innerHTML =
+        messages
+            .map(
+                message => {
+
+                    const mine =
+                        String(
+                            message.sender_id
+                        ) ===
+                        String(
+                            currentUser.id
+                        );
+
+
+                    const time =
+                        message.created_at
+
+                            ? new Date(
+                                message.created_at
+                            ).toLocaleTimeString(
+                                [],
+                                {
+                                    hour:
+                                        "2-digit",
+
+                                    minute:
+                                        "2-digit"
+                                }
+                            )
+
+                            : "";
+
+
+                    const actualText =
+                        message.message &&
+                        message.message !==
+                            "📷 Photo"
+
+                            ? message.message
+
+                            : "";
+
+
+                    let imageHTML =
+                        "";
+
+
+                    if (
+                        message.image_url
+                    ) {
+
+                        const safeImage =
+                            escapeHTML(
+                                message.image_url
+                            );
+
+
+                        imageHTML = `
+                            <img
+                                class="message-image"
+                                src="${safeImage}"
+                                alt="Chat picture"
+                                loading="lazy"
+                                onclick="window.open('${safeImage}', '_blank')"
+                            >
+                        `;
+                    }
+
+
+                    let textHTML =
+                        "";
+
+
+                    if (actualText) {
+
+                        textHTML = `
+                            <div class="message-text">
+                                ${escapeHTML(actualText)}
+                            </div>
+                        `;
+                    }
+
+
+                    return `
+                        <div class="message-row ${
+                            mine
+                                ? "mine"
+                                : ""
+                        }">
+
+                            <div class="message-bubble">
+
+                                ${imageHTML}
+
+                                ${textHTML}
+
+                                <div class="message-time">
+                                    ${escapeHTML(time)}
+                                </div>
+
+                            </div>
+
+                        </div>
+                    `;
+
+                }
+            )
+            .join("");
+
+
+    container.scrollTop =
+        container.scrollHeight;
 }
 
 
@@ -1187,7 +2299,7 @@ async function uploadChatImage(file) {
 
 
     const token =
-        getAccessToken();
+        await getValidAccessToken();
 
 
     if (!token) {
@@ -1335,963 +2447,6 @@ async function uploadChatImage(file) {
 
 
 /* =========================================================
-   LOAD ESCROW CHAT CONTEXT
-========================================================= */
-
-async function loadEscrowChatContext() {
-
-    if (!currentEscrowId) {
-        return false;
-    }
-
-
-    const escrow =
-        await supabaseRequest(
-            "/rest/v1/escrow_transactions" +
-
-            "?select=id,buyer_id,seller_id,amount,currency,status,description,dispute_reason" +
-
-            "&id=eq." +
-            encodeURIComponent(
-                currentEscrowId
-            )
-        );
-
-
-    if (
-        !Array.isArray(escrow) ||
-        !escrow[0]
-    ) {
-
-        throw new Error(
-            "Escrow transaction could not be found."
-        );
-    }
-
-
-    currentEscrow =
-        escrow[0];
-
-
-    const buyerId =
-        currentEscrow.buyer_id;
-
-    const sellerId =
-        currentEscrow.seller_id;
-
-
-    if (
-        currentUser.id !== buyerId &&
-        currentUser.id !== sellerId
-    ) {
-
-        throw new Error(
-            "You are not a participant in this escrow."
-        );
-    }
-
-
-    currentOtherUserId =
-        currentUser.id === buyerId
-            ? sellerId
-            : buyerId;
-
-
-    return true;
-}
-
-
-/* =========================================================
-   DISPLAY ESCROW DETAILS
-========================================================= */
-
-function renderEscrowDetails() {
-
-    if (!currentEscrow) {
-        return;
-    }
-
-
-    const details =
-        document.getElementById(
-            "escrowDetails"
-        );
-
-
-    if (!details) {
-        return;
-    }
-
-
-    const description =
-        currentEscrow.description ||
-        "No purchase description was provided.";
-
-
-    const amount =
-        Number(
-            currentEscrow.amount || 0
-        ).toLocaleString(
-            "en-NG",
-            {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            }
-        );
-
-
-    const currency =
-        currentEscrow.currency ||
-        "NGN";
-
-
-    const status =
-        currentEscrow.status ||
-        "active";
-
-
-    document.getElementById(
-        "escrowDescription"
-    ).textContent =
-        description;
-
-
-    document.getElementById(
-        "escrowAmount"
-    ).textContent =
-        currency +
-        " " +
-        amount;
-
-
-    document.getElementById(
-        "escrowStatus"
-    ).innerHTML = `
-        <span class="escrow-status">
-            ${escapeHTML(status)}
-        </span>
-    `;
-
-
-    const disputeBox =
-        document.getElementById(
-            "escrowDispute"
-        );
-
-
-    if (
-        currentEscrow.dispute_reason &&
-        disputeBox
-    ) {
-
-        disputeBox.textContent =
-            "Dispute reason: " +
-            currentEscrow.dispute_reason;
-
-        disputeBox.style.display =
-            "block";
-
-    } else if (disputeBox) {
-
-        disputeBox.style.display =
-            "none";
-    }
-
-
-    details.style.display =
-        "block";
-}
-
-
-/* =========================================================
-   FIND OR CREATE CONVERSATION
-========================================================= */
-
-async function findOrCreateConversation() {
-
-    if (!currentUser) {
-
-        throw new Error(
-            "You must be logged in."
-        );
-    }
-
-
-    if (!currentOtherUserId) {
-
-        throw new Error(
-            "The other user could not be found."
-        );
-    }
-
-
-    if (
-        currentOtherUserId ===
-        currentUser.id
-    ) {
-
-        throw new Error(
-            "You cannot chat with yourself."
-        );
-    }
-
-
-    let query;
-
-
-    /* =====================================================
-       OJA CHAT
-    ===================================================== */
-
-    if (currentOjaListingId) {
-
-        query =
-            "/rest/v1/conversations" +
-
-            "?select=*" +
-
-            "&oja_listing_id=eq." +
-            encodeURIComponent(
-                currentOjaListingId
-            ) +
-
-            "&or=(" +
-
-            "and(user_one_id.eq." +
-            encodeURIComponent(
-                currentUser.id
-            ) +
-
-            ",user_two_id.eq." +
-            encodeURIComponent(
-                currentOtherUserId
-            ) +
-            ")," +
-
-            "and(user_one_id.eq." +
-            encodeURIComponent(
-                currentOtherUserId
-            ) +
-
-            ",user_two_id.eq." +
-            encodeURIComponent(
-                currentUser.id
-            ) +
-
-            ")" +
-            ")";
-
-
-    /* =====================================================
-       BARTER CHAT
-    ===================================================== */
-
-    } else if (currentListingId) {
-
-        query =
-            "/rest/v1/conversations" +
-
-            "?select=*" +
-
-            "&barter_listing_id=eq." +
-            encodeURIComponent(
-                currentListingId
-            ) +
-
-            "&or=(" +
-
-            "and(user_one_id.eq." +
-            encodeURIComponent(
-                currentUser.id
-            ) +
-
-            ",user_two_id.eq." +
-            encodeURIComponent(
-                currentOtherUserId
-            ) +
-            ")," +
-
-            "and(user_one_id.eq." +
-            encodeURIComponent(
-                currentOtherUserId
-            ) +
-
-            ",user_two_id.eq." +
-            encodeURIComponent(
-                currentUser.id
-            ) +
-
-            ")" +
-            ")";
-
-
-    /* =====================================================
-       NORMAL / BUSINESS CHAT
-    ===================================================== */
-
-    } else {
-
-        query =
-            "/rest/v1/conversations" +
-
-            "?select=*" +
-
-            "&or=(" +
-
-            "and(user_one_id.eq." +
-            encodeURIComponent(
-                currentUser.id
-            ) +
-
-            ",user_two_id.eq." +
-            encodeURIComponent(
-                currentOtherUserId
-            ) +
-            ")," +
-
-            "and(user_one_id.eq." +
-            encodeURIComponent(
-                currentOtherUserId
-            ) +
-
-            ",user_two_id.eq." +
-            encodeURIComponent(
-                currentUser.id
-            ) +
-
-            ")" +
-            ")";
-
-    }
-
-
-  /* =====================================================
-   VERIFY CURRENT SESSION BEFORE CHAT REQUEST
-===================================================== */
-
-if (
-    typeof window.ensureValidSupabaseSession ===
-    "function"
-) {
-
-    const validSession =
-        await window.ensureValidSupabaseSession();
-
-    if (
-        !validSession ||
-        !validSession.access_token
-    ) {
-
-        throw new Error(
-            "Your LosOja session has expired. Please log in again."
-        );
-    }
-
-}
-
-/* =====================================================
-   FIND EXISTING CONVERSATION
-===================================================== */
-
-const existing =
-    await supabaseRequest(query);
-    if (
-        Array.isArray(existing) &&
-        existing.length > 0
-    ) {
-
-        return existing[0];
-    }
-
-
-    const conversation = {
-
-        user_one_id:
-            currentUser.id,
-
-        user_two_id:
-            currentOtherUserId,
-
-        barter_listing_id:
-            currentListingId ||
-            null,
-
-        oja_listing_id:
-            currentOjaListingId ||
-            null
-
-    };
-
-
-    const created =
-        await supabaseRequest(
-            "/rest/v1/conversations",
-            {
-                method:
-                    "POST",
-
-                body:
-                    JSON.stringify(
-                        conversation
-                    )
-            }
-        );
-
-
-    if (
-        !Array.isArray(created) ||
-        !created[0]
-    ) {
-
-        throw new Error(
-            "Conversation could not be created."
-        );
-    }
-
-
-    return created[0];
-}
-
-
-/* =========================================================
-   LOAD EXISTING CONVERSATION BY ID
-========================================================= */
-
-async function loadConversationById(
-    conversationId
-) {
-
-    if (!conversationId) {
-        return null;
-    }
-
-
-    const conversations =
-        await supabaseRequest(
-            "/rest/v1/conversations" +
-
-            "?select=*" +
-
-            "&id=eq." +
-            encodeURIComponent(
-                conversationId
-            )
-        );
-
-
-    if (
-        !Array.isArray(conversations) ||
-        !conversations[0]
-    ) {
-
-        throw new Error(
-            "This conversation could not be found."
-        );
-    }
-
-
-    const conversation =
-        conversations[0];
-
-
-    const isParticipant =
-        String(
-            conversation.user_one_id
-        ) ===
-            String(
-                currentUser.id
-            ) ||
-
-        String(
-            conversation.user_two_id
-        ) ===
-            String(
-                currentUser.id
-            );
-
-
-    if (!isParticipant) {
-
-        throw new Error(
-            "You are not a participant in this conversation."
-        );
-    }
-
-
-    currentConversationId =
-        conversation.id;
-
-
-    currentOtherUserId =
-        String(
-            conversation.user_one_id
-        ) ===
-            String(
-                currentUser.id
-            )
-
-            ? conversation.user_two_id
-
-            : conversation.user_one_id;
-
-
-    currentListingId =
-        conversation.barter_listing_id ||
-        null;
-
-
-    currentOjaListingId =
-        conversation.oja_listing_id ||
-        null;
-
-
-    return conversation;
-}
-
-
-/* =========================================================
-   CHAT NOTIFICATION
-========================================================= */
-
-async function createChatNotification() {
-
-    if (
-        !currentUser ||
-        !currentOtherUserId ||
-        !currentConversationId
-    ) {
-
-        return;
-    }
-
-
-    if (
-        String(currentOtherUserId) ===
-        String(currentUser.id)
-    ) {
-
-        return;
-    }
-
-
-    try {
-
-        const senderName =
-            currentUser.user_metadata?.full_name ||
-            currentUser.user_metadata?.name ||
-            currentUser.email ||
-            "Someone";
-
-
-        const notification = {
-
-            user_id:
-                currentOtherUserId,
-
-            title:
-                "New LosOja Message",
-
-            message:
-                senderName +
-                " sent you a new message.",
-
-            type:
-                "chat:" +
-                currentUser.id +
-                ":" +
-                currentConversationId,
-
-            is_read:
-                false
-
-        };
-
-
-        await supabaseRequest(
-            "/rest/v1/notifications",
-            {
-                method:
-                    "POST",
-
-                body:
-                    JSON.stringify(
-                        notification
-                    )
-            }
-        );
-
-    } catch (error) {
-
-        console.warn(
-            "LosOja chat notification could not be created:",
-            error
-        );
-    }
-}
-
-
-/* =========================================================
-   CHAT UNREAD INDICATOR
-========================================================= */
-
-async function updateChatUnreadIndicator() {
-
-    const indicator =
-        document.getElementById(
-            "chatUnreadIndicator"
-        );
-
-
-    if (
-        !indicator ||
-        !currentUser
-    ) {
-
-        return;
-    }
-
-
-    try {
-
-        const notifications =
-            await supabaseRequest(
-
-                "/rest/v1/notifications" +
-
-                "?select=id,type,is_read" +
-
-                "&user_id=eq." +
-
-                encodeURIComponent(
-                    currentUser.id
-                ) +
-
-                "&is_read=eq.false" +
-
-                "&limit=100"
-            );
-
-
-        const hasUnreadChat =
-            Array.isArray(
-                notifications
-            ) &&
-
-            notifications.some(
-                notification =>
-                    String(
-                        notification?.type ||
-                        ""
-                    )
-                        .toLowerCase()
-                        .startsWith(
-                            "chat:"
-                        )
-            );
-
-
-        indicator.classList.toggle(
-            "visible",
-            hasUnreadChat
-        );
-
-
-    } catch (error) {
-
-        console.warn(
-            "LosOja chat unread indicator error:",
-            error
-        );
-    }
-}
-
-
-/* =========================================================
-   MARK CHAT NOTIFICATIONS READ
-========================================================= */
-
-async function markCurrentChatNotificationsRead() {
-
-    if (
-        !currentUser ||
-        !currentOtherUserId
-    ) {
-
-        return;
-    }
-
-
-    try {
-
-        const notificationTypePattern =
-            "chat:" +
-            currentOtherUserId +
-            ":*";
-
-
-        await supabaseRequest(
-
-            "/rest/v1/notifications" +
-
-            "?user_id=eq." +
-
-            encodeURIComponent(
-                currentUser.id
-            ) +
-
-            "&type=like." +
-
-            encodeURIComponent(
-                notificationTypePattern
-            ),
-
-            {
-                method:
-                    "PATCH",
-
-                headers: {
-
-                    "Prefer":
-                        "return=minimal"
-
-                },
-
-                body:
-                    JSON.stringify({
-                        is_read:
-                            true
-                    })
-            }
-        );
-
-
-        await updateChatUnreadIndicator();
-
-
-    } catch (error) {
-
-        console.warn(
-            "LosOja chat notification read update failed:",
-            error
-        );
-    }
-}
-
-
-/* =========================================================
-   LOAD MESSAGES
-========================================================= */
-
-async function loadMessages() {
-
-    if (!currentConversationId) {
-        return;
-    }
-
-
-    const messages =
-        await supabaseRequest(
-
-            "/rest/v1/messages" +
-
-            "?select=*" +
-
-            "&conversation_id=eq." +
-
-            encodeURIComponent(
-                currentConversationId
-            ) +
-
-            "&order=created_at.asc"
-        );
-
-
-    renderMessages(
-        Array.isArray(messages)
-            ? messages
-            : []
-    );
-}
-
-
-/* =========================================================
-   RENDER MESSAGES
-========================================================= */
-
-function renderMessages(messages) {
-
-    const container =
-        document.getElementById(
-            "messages"
-        );
-
-
-    if (!container) {
-        return;
-    }
-
-
-    if (!messages.length) {
-
-        container.innerHTML = `
-            <div class="empty-message">
-                No messages yet.<br>
-                Start the conversation.
-            </div>
-        `;
-
-        return;
-    }
-
-
-    container.innerHTML =
-        messages
-            .map(
-                message => {
-
-                    const mine =
-                        String(
-                            message.sender_id
-                        ) ===
-                        String(
-                            currentUser.id
-                        );
-
-
-                    const time =
-                        message.created_at
-
-                            ? new Date(
-                                message.created_at
-                            ).toLocaleTimeString(
-                                [],
-                                {
-                                    hour:
-                                        "2-digit",
-
-                                    minute:
-                                        "2-digit"
-                                }
-                            )
-
-                            : "";
-
-
-                    const actualText =
-                        message.message &&
-                        message.message !==
-                            "📷 Photo"
-
-                            ? message.message
-
-                            : "";
-
-
-                    let imageHTML =
-                        "";
-
-
-                    if (
-                        message.image_url
-                    ) {
-
-                        const safeImage =
-                            escapeHTML(
-                                message.image_url
-                            );
-
-
-                        imageHTML = `
-                            <img
-                                class="message-image"
-                                src="${safeImage}"
-                                alt="Chat picture"
-                                loading="lazy"
-                                onclick="window.open('${safeImage}','_blank')"
-                            >
-                        `;
-                    }
-
-
-                    let textHTML =
-                        "";
-
-
-                    if (actualText) {
-
-                        textHTML = `
-                            <div class="message-text">
-                                ${escapeHTML(actualText)}
-                            </div>
-                        `;
-                    }
-
-
-                    return `
-                        <div class="message-row ${
-                            mine
-                                ? "mine"
-                                : ""
-                        }">
-
-                            <div class="message-bubble">
-
-                                ${imageHTML}
-
-                                ${textHTML}
-
-                                <div class="message-time">
-                                    ${time}
-                                </div>
-
-                            </div>
-
-                        </div>
-                    `;
-
-                }
-            )
-            .join("");
-
-
-    container.scrollTop =
-        container.scrollHeight;
-}
-
-
-/* =========================================================
-   ESCAPE HTML
-========================================================= */
-
-function escapeHTML(value) {
-
-    return String(
-        value ?? ""
-    )
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-        .replace(
-            /</g,
-            "&lt;"
-        )
-        .replace(
-            />/g,
-            "&gt;"
-        )
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-        .replace(
-            /'/g,
-            "&#039;"
-        );
-}
-
-
-/* =========================================================
    SEND MESSAGE
 ========================================================= */
 
@@ -2414,7 +2569,6 @@ async function sendMessage() {
 
             image_url:
                 imageUrl
-
         };
 
 
@@ -2451,7 +2605,6 @@ async function sendMessage() {
 
         await loadMessages();
 
-
     } catch (error) {
 
         console.error(
@@ -2461,10 +2614,9 @@ async function sendMessage() {
 
 
         showError(
-            error.message ||
+            error?.message ||
             "Message could not be sent."
         );
-
 
     } finally {
 
@@ -2486,7 +2638,7 @@ async function sendMessage() {
 
 
 /* =========================================================
-   IMAGE SELECTION
+   SELECTED IMAGE
 ========================================================= */
 
 function updateSelectedImage() {
@@ -2568,7 +2720,7 @@ function initializeImageButton() {
 
     imageButton.addEventListener(
         "click",
-        () => {
+        function () {
 
             imageInput.click();
 
@@ -2578,7 +2730,7 @@ function initializeImageButton() {
 
     imageInput.addEventListener(
         "change",
-        () => {
+        function () {
 
             const file =
                 imageInput.files?.[0];
@@ -2639,7 +2791,7 @@ function initializeImageButton() {
 
 
 /* =========================================================
-   DISPLAY OJA LISTING
+   RENDER OJA DETAILS
 ========================================================= */
 
 function renderOjaDetails() {
@@ -2898,7 +3050,6 @@ async function loadOjaListing(
 
         return listing;
 
-
     } catch (error) {
 
         console.error(
@@ -2951,7 +3102,7 @@ async function loadConversations() {
         );
 
 
-    renderConversationList(
+    await renderConversationList(
         Array.isArray(
             conversations
         )
@@ -3002,8 +3153,12 @@ async function renderConversationList(
     ) {
 
         const otherUserId =
-            conversation.user_one_id ===
-            currentUser.id
+            String(
+                conversation.user_one_id
+            ) ===
+            String(
+                currentUser.id
+            )
 
                 ? conversation.user_two_id
 
@@ -3014,7 +3169,9 @@ async function renderConversationList(
             "General chat";
 
 
-        /* BARter listing */
+        /* =================================================
+           BARTER LISTING
+        ================================================== */
 
         if (
             conversation.barter_listing_id
@@ -3050,14 +3207,16 @@ async function renderConversationList(
             } catch (error) {
 
                 console.warn(
-                    "Could not load listing:",
+                    "Could not load barter listing:",
                     error
                 );
             }
         }
 
 
-        /* Oja listing */
+        /* =================================================
+           OJA LISTING
+        ================================================== */
 
         if (
             conversation.oja_listing_id
@@ -3100,6 +3259,19 @@ async function renderConversationList(
         }
 
 
+        /* =================================================
+           BUSINESS
+        ================================================== */
+
+        if (
+            conversation.business_id
+        ) {
+
+            listingTitle =
+                "Business chat";
+        }
+
+
         const card =
             document.createElement(
                 "div"
@@ -3112,9 +3284,7 @@ async function renderConversationList(
 
         card.innerHTML = `
             <div class="conversation-title">
-                ${escapeHTML(
-                    listingTitle
-                )}
+                ${escapeHTML(listingTitle)}
             </div>
 
             <div class="conversation-time">
@@ -3125,7 +3295,7 @@ async function renderConversationList(
 
         card.addEventListener(
             "click",
-            () => {
+            function () {
 
                 let url =
                     "chat.html" +
@@ -3141,6 +3311,19 @@ async function renderConversationList(
                     encodeURIComponent(
                         otherUserId
                     );
+
+
+                if (
+                    conversation.business_id
+                ) {
+
+                    url +=
+                        "&business=" +
+
+                        encodeURIComponent(
+                            conversation.business_id
+                        );
+                }
 
 
                 if (
@@ -3169,22 +3352,8 @@ async function renderConversationList(
                 }
 
 
-                if (
-                    conversation.escrow_id
-                ) {
-
-                    url +=
-                        "&escrow=" +
-
-                        encodeURIComponent(
-                            conversation.escrow_id
-                        );
-                }
-
-
                 window.location.href =
                     url;
-
             }
         );
 
@@ -3261,8 +3430,7 @@ async function openSpecificChat() {
 
 
     /* =====================================================
-       IMPORTANT:
-       BUSINESS CHAT MUST NEVER LOAD ESCROW CONTEXT
+       BUSINESS CHAT MUST NOT LOAD ESCROW
     ===================================================== */
 
     if (currentBusinessId) {
@@ -3272,7 +3440,6 @@ async function openSpecificChat() {
 
         currentEscrow =
             null;
-
     }
 
 
@@ -3360,9 +3527,6 @@ async function openSpecificChat() {
 
     /* =====================================================
        ESCROW CHAT
-       
-       ONLY escrow chats are allowed here.
-       Business chats are excluded above.
     ===================================================== */
 
     if (
@@ -3434,8 +3598,20 @@ async function openSpecificChat() {
 
 
     /* =====================================================
-       ESCROW TITLE
+       CHAT TITLE
     ===================================================== */
+
+    const chatUser =
+        document.getElementById(
+            "chatUser"
+        );
+
+
+    const listingInfo =
+        document.getElementById(
+            "listingInfo"
+        );
+
 
     if (
         currentEscrowId &&
@@ -3443,16 +3619,17 @@ async function openSpecificChat() {
     ) {
 
         const isBuyer =
-            currentUser.id ===
-            currentEscrow.buyer_id;
+            String(currentUser.id) ===
+            String(currentEscrow.buyer_id);
 
 
-        document.getElementById(
-            "chatUser"
-        ).textContent =
-            isBuyer
-                ? "Chat with Seller"
-                : "Chat with Buyer";
+        if (chatUser) {
+
+            chatUser.textContent =
+                isBuyer
+                    ? "Chat with Seller"
+                    : "Chat with Buyer";
+        }
 
 
         const amount =
@@ -3471,80 +3648,75 @@ async function openSpecificChat() {
             );
 
 
-        document.getElementById(
-            "listingInfo"
-        ).textContent =
-            "Escrow • ₦" +
-            amount +
-            " • " +
-            (
-                currentEscrow.status ||
-                "active"
-            );
+        if (listingInfo) {
+
+            listingInfo.textContent =
+                "Escrow • ₦" +
+                amount +
+                " • " +
+                (
+                    currentEscrow.status ||
+                    "active"
+                );
+        }
 
 
         renderEscrowDetails();
 
-
     } else {
 
-        /* =================================================
-           BUSINESS / OJA / PROPERTY / NORMAL
-        ================================================= */
+        if (chatUser) {
 
-        document.getElementById(
-            "chatUser"
-        ).textContent =
-            currentBusinessId
+            chatUser.textContent =
+                currentBusinessId
 
-                ? "Chat with Business"
+                    ? "Chat with Business"
 
-                : currentOjaListingId
+                    : currentOjaListingId
 
-                    ? "Chat with Seller"
+                        ? "Chat with Seller"
 
-                    : currentPropertyId
+                        : currentPropertyId
 
-                        ? "Chat with Property Owner"
+                            ? "Chat with Property Owner"
 
-                        : "Chat with Owner";
+                            : "Chat with Owner";
+        }
 
 
-        document.getElementById(
-            "listingInfo"
-        ).textContent =
-            "";
+        if (listingInfo) {
+
+            listingInfo.textContent =
+                "";
+        }
 
 
-        /* BUSINESS */
+        if (
+            currentBusinessId &&
+            listingInfo
+        ) {
 
-        if (currentBusinessId) {
-
-            document.getElementById(
-                "listingInfo"
-            ).textContent =
+            listingInfo.textContent =
                 "Business chat";
         }
 
 
-        /* BARTER */
+        if (
+            currentListingId &&
+            listingInfo
+        ) {
 
-        if (currentListingId) {
-
-            document.getElementById(
-                "listingInfo"
-            ).textContent =
+            listingInfo.textContent =
                 "Trade listing";
         }
 
 
-        /* PROPERTY */
+        if (
+            currentPropertyId &&
+            listingInfo
+        ) {
 
-        if (currentPropertyId) {
-
-            document.getElementById(
-                "listingInfo"
-            ).textContent =
+            listingInfo.textContent =
                 currentPropertyTitle
 
                     ? "Property • " +
@@ -3554,75 +3726,155 @@ async function openSpecificChat() {
         }
 
 
-        /* OJA */
+        if (
+            currentOjaListingId &&
+            listingInfo
+        ) {
 
-        if (currentOjaListingId) {
-
-            document.getElementById(
-                "listingInfo"
-            ).textContent =
+            listingInfo.textContent =
                 "Oja item";
         }
     }
 
 
-/* =====================================================
-   FIND OR CREATE CONVERSATION
-===================================================== */
+    /* =====================================================
+       FIND OR CREATE CONVERSATION
+    ===================================================== */
 
-const conversation =
-    await findOrCreateConversation();
+    const conversation =
+        await findOrCreateConversation();
 
-currentConversationId =
-    conversation.id;
 
-/* =====================================================
-   MARK NOTIFICATIONS READ
-===================================================== */
+    currentConversationId =
+        conversation.id;
 
-await markCurrentChatNotificationsRead();
 
-/* =====================================================
-   LOAD MESSAGES
-===================================================== */
+    /* =====================================================
+       MARK NOTIFICATIONS READ
+    ===================================================== */
 
-await loadMessages();
+    await markCurrentChatNotificationsRead();
 
-/* =====================================================
-   REFRESH MESSAGES
-===================================================== */
 
-if (messagePolling) {
-    clearInterval(
-        messagePolling
-    );
+    /* =====================================================
+       LOAD MESSAGES
+    ===================================================== */
+
+    await loadMessages();
+
+
+    /* =====================================================
+       MESSAGE POLLING
+    ===================================================== */
+
+    if (messagePolling) {
+
+        clearInterval(
+            messagePolling
+        );
+    }
+
+
+    messagePolling =
+        setInterval(
+            async function () {
+
+                try {
+
+                    await loadMessages();
+
+                    await updateChatUnreadIndicator();
+
+                } catch (error) {
+
+                    console.warn(
+                        "Message refresh failed:",
+                        error
+                    );
+                }
+
+            },
+            3000
+        );
 }
 
-messagePolling =
-    setInterval(
-        async () => {
-
-            try {
-
-                await loadMessages();
-
-                await updateChatUnreadIndicator();
-
-            } catch (error) {
-
-                console.warn(
-                    "Message refresh failed:",
-                    error
-                );
-            }
-
-        },
-        3000
-    );
-}
 
 /* =========================================================
-   LOSOJA CHAT INITIALIZATION
+   LOGIN BUTTON
+========================================================= */
+
+function initializeLoginButton() {
+
+    const loginButton =
+        document.getElementById(
+            "loginButton"
+        );
+
+
+    if (!loginButton) {
+        return;
+    }
+
+
+    loginButton.addEventListener(
+        "click",
+        function () {
+
+            localStorage.setItem(
+                "losoja_return_to_chat",
+                window.location.href
+            );
+
+
+            if (
+                typeof window.openLogin ===
+                "function"
+            ) {
+
+                window.openLogin();
+
+                return;
+            }
+
+
+            window.location.href =
+                "index.html?login=1";
+        }
+    );
+}
+
+
+/* =========================================================
+   CHAT FORM
+========================================================= */
+
+function initializeChatForm() {
+
+    const chatForm =
+        document.getElementById(
+            "chatForm"
+        );
+
+
+    if (!chatForm) {
+        return;
+    }
+
+
+    chatForm.addEventListener(
+        "submit",
+        async function (event) {
+
+            event.preventDefault();
+
+            await sendMessage();
+        }
+    );
+}
+
+
+/* =========================================================
+   PAGE INITIALIZATION
 ========================================================= */
 
 document.addEventListener(
@@ -3633,11 +3885,23 @@ document.addEventListener(
 
             clearError();
 
-            /* -----------------------------------------
-               CHECK LOGIN
-            ----------------------------------------- */
 
-            let result = null;
+            initializeLoginButton();
+
+
+            initializeChatForm();
+
+
+            initializeImageButton();
+
+
+            /* =============================================
+               CHECK LOGIN
+            ============================================= */
+
+            let result =
+                null;
+
 
             if (
                 typeof window.getCurrentUser ===
@@ -3646,7 +3910,6 @@ document.addEventListener(
 
                 result =
                     await window.getCurrentUser();
-
             }
 
 
@@ -3658,9 +3921,9 @@ document.addEventListener(
                 null;
 
 
-            /* -----------------------------------------
+            /* =============================================
                NOT LOGGED IN
-            ----------------------------------------- */
+            ============================================= */
 
             if (
                 !currentUser ||
@@ -3681,7 +3944,6 @@ document.addEventListener(
                             Please login to use LosOja Chat.
                         </strong>
                         `;
-
                 }
 
 
@@ -3699,7 +3961,6 @@ document.addEventListener(
                             Login is required to view your chats.
                         </div>
                         `;
-
                 }
 
 
@@ -3713,7 +3974,6 @@ document.addEventListener(
 
                     chatSection.style.display =
                         "none";
-
                 }
 
 
@@ -3721,19 +3981,15 @@ document.addEventListener(
             }
 
 
-            /* -----------------------------------------
+            /* =============================================
                USER IS LOGGED IN
-            ----------------------------------------- */
+            ============================================= */
 
             console.log(
                 "LosOja Chat: authenticated user",
                 currentUser.id
             );
 
-
-            /* -----------------------------------------
-               UPDATE LOGIN BUTTON
-            ----------------------------------------- */
 
             const loginButton =
                 document.getElementById(
@@ -3746,20 +4002,15 @@ document.addEventListener(
                 loginButton.textContent =
                     "Account";
 
+
                 loginButton.onclick =
                     function () {
 
                         window.location.href =
                             "account.html";
-
                     };
-
             }
 
-
-            /* -----------------------------------------
-               UPDATE STATUS
-            ----------------------------------------- */
 
             const status =
                 document.getElementById(
@@ -3775,27 +4026,19 @@ document.addEventListener(
                         LosOja Chat
                     </strong>
                     `;
-
             }
 
 
-            /* -----------------------------------------
-               INITIALIZE IMAGE BUTTON
-            ----------------------------------------- */
-
-            initializeImageButton();
-
-
-            /* -----------------------------------------
-               LOAD CHAT / CONVERSATIONS
-            ----------------------------------------- */
+            /* =============================================
+               OPEN CHAT OR CHAT LIST
+            ============================================= */
 
             await openSpecificChat();
 
 
-            /* -----------------------------------------
-               UPDATE UNREAD INDICATOR
-            ----------------------------------------- */
+            /* =============================================
+               UNREAD INDICATOR
+            ============================================= */
 
             await updateChatUnreadIndicator();
 
@@ -3803,7 +4046,6 @@ document.addEventListener(
             console.log(
                 "LosOja Chat initialized successfully."
             );
-
 
         } catch (error) {
 
@@ -3833,46 +4075,13 @@ document.addEventListener(
                         Chat could not be loaded.
                     </strong>
                     `;
-
             }
-
         }
-
-    }
-);
-
-
-/* =========================================================
-   CHAT FORM
-========================================================= */
-
-document.addEventListener(
-    "DOMContentLoaded",
-    function () {
-
-        const chatForm =
-            document.getElementById(
-                "chatForm"
-            );
-
-
-        if (!chatForm) {
-            return;
-        }
-
-
-        chatForm.addEventListener(
-            "submit",
-            async function (event) {
-
-                event.preventDefault();
-
-                await sendMessage();
-
-            }
-        );
-
     }
 );
 
 </script>
+
+</body>
+
+</html>
