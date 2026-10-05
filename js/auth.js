@@ -65,36 +65,39 @@ function getSession() {
 
 function saveSession(session) {
 
-    if (session) {
-
-        localStorage.setItem(
-            SESSION_KEY,
-            JSON.stringify(session)
-        );
-
-    } else {
+    if (!session) {
 
         localStorage.removeItem(
             SESSION_KEY
         );
 
+        return;
+
     }
 
+    /*
+     * Supabase normally returns expires_in.
+     * Store a reliable expires_at so LosOja
+     * knows when the access token actually expires.
+     */
+
+    if (
+        !session.expires_at &&
+        session.expires_in
+    ) {
+
+        session.expires_at =
+            Math.floor(Date.now() / 1000) +
+            Number(session.expires_in);
+
+    }
+
+    localStorage.setItem(
+        SESSION_KEY,
+        JSON.stringify(session)
+    );
+
 }
-
-
-function getAccessToken() {
-
-    const session =
-        getSession();
-
-    return session &&
-        session.access_token
-        ? session.access_token
-        : null;
-
-}
-
 
 /* =========================================================
    SUPABASE REQUEST
@@ -1290,7 +1293,6 @@ window.updateAuthUI =
 /* =========================================================
    SESSION REFRESH
 ========================================================= */
-
 window.refreshSupabaseSession =
     async function () {
 
@@ -1310,11 +1312,30 @@ window.refreshSupabaseSession =
 
         try {
 
-            const refreshed =
-                await supabaseRequest(
+            /*
+             * Do NOT use supabaseRequest() here.
+             *
+             * The refresh endpoint needs the refresh token
+             * and should not depend on the expired access token.
+             */
+
+            const response =
+                await fetch(
+                    SUPABASE_URL +
                     "/auth/v1/token?grant_type=refresh_token",
                     {
                         method: "POST",
+
+                        headers: {
+                            "apikey":
+                                SUPABASE_KEY,
+
+                            "Content-Type":
+                                "application/json",
+
+                            "Accept":
+                                "application/json"
+                        },
 
                         body: JSON.stringify({
 
@@ -1322,9 +1343,73 @@ window.refreshSupabaseSession =
                                 session.refresh_token
 
                         })
-
                     }
                 );
+
+
+            let refreshed = null;
+
+
+            try {
+
+                refreshed =
+                    await response.json();
+
+            } catch (error) {
+
+                refreshed = null;
+
+            }
+
+
+            if (
+                !response.ok ||
+                !refreshed?.access_token
+            ) {
+
+                const message =
+                    refreshed?.msg ||
+                    refreshed?.message ||
+                    refreshed?.error_description ||
+                    refreshed?.error ||
+                    "Session refresh failed.";
+
+                throw new Error(message);
+
+            }
+
+
+            /*
+             * Supabase may rotate the refresh token.
+             * Keep the new token when supplied.
+             * Otherwise preserve the previous one.
+             */
+
+            if (
+                !refreshed.refresh_token
+            ) {
+
+                refreshed.refresh_token =
+                    session.refresh_token;
+
+            }
+
+
+            /*
+             * Make sure the saved session has
+             * a reliable expiration timestamp.
+             */
+
+            if (
+                !refreshed.expires_at &&
+                refreshed.expires_in
+            ) {
+
+                refreshed.expires_at =
+                    Math.floor(Date.now() / 1000) +
+                    Number(refreshed.expires_in);
+
+            }
 
 
             saveSession(
@@ -1343,7 +1428,37 @@ window.refreshSupabaseSession =
             );
 
 
-            saveSession(null);
+            /*
+             * Only remove the session when we know
+             * the refresh token is actually invalid.
+             *
+             * A temporary network/server problem should
+             * NOT immediately log the user out.
+             */
+
+            const message =
+                String(
+                    error?.message || ""
+                ).toLowerCase();
+
+
+            const invalidRefresh =
+                message.includes(
+                    "invalid refresh token"
+                ) ||
+                message.includes(
+                    "refresh token not found"
+                ) ||
+                message.includes(
+                    "refresh token is invalid"
+                );
+
+
+            if (invalidRefresh) {
+
+                saveSession(null);
+
+            }
 
 
             return null;
@@ -1351,37 +1466,6 @@ window.refreshSupabaseSession =
         }
 
     };
-
-
-window.ensureValidSupabaseSession =
-    async function () {
-
-        const session =
-            getSession();
-
-
-        if (!session) {
-
-            return null;
-
-        }
-
-
-        if (
-            session.expires_at &&
-            Date.now() / 1000 <
-            session.expires_at - 60
-        ) {
-
-            return session;
-
-        }
-
-
-        return await window.refreshSupabaseSession();
-
-    };
-
 
 /* =========================================================
    INITIALIZE EVENT LISTENERS
