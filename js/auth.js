@@ -1466,6 +1466,40 @@ window.refreshSupabaseSession =
         }
 
     };
+/* =========================================================
+   ENSURE VALID SESSION
+========================================================= */
+
+window.ensureValidSupabaseSession =
+    async function () {
+
+        const session = getSession();
+
+        if (!session) {
+            return null;
+        }
+
+        if (
+            session.expires_at &&
+            Date.now() / 1000 <
+            Number(session.expires_at) - 60
+        ) {
+            return session;
+        }
+
+        if (session.refresh_token) {
+
+            const refreshed =
+                await window.refreshSupabaseSession();
+
+            if (refreshed) {
+                return refreshed;
+            }
+        }
+
+        return session;
+    };
+
 
 /* =========================================================
    INITIALIZE EVENT LISTENERS
@@ -1475,11 +1509,9 @@ function initializeAuth() {
 
     createAuthModals();
 
-
     /* -----------------------------------------------------
        LOGIN FORM
     ----------------------------------------------------- */
-
     const loginForm =
         document.getElementById(
             "loginForm"
