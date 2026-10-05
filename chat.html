@@ -2937,37 +2937,6 @@ function renderOjaDetails() {
         "block";
 
 
-    const buyButton =
-        document.getElementById(
-            "buyWithEscrowButton"
-        );
-
-
-    if (buyButton) {
-
-        if (
-            currentUser &&
-
-            String(
-                currentOjaListing.user_id
-            ) !==
-
-            String(
-                currentUser.id
-            )
-        ) {
-
-            buyButton.style.display =
-                "block";
-
-        } else {
-
-            buyButton.style.display =
-                "none";
-        }
-    }
-}
-
 
 /* =========================================================
    LOAD OJA LISTING
