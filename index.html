@@ -3541,77 +3541,109 @@ document.addEventListener(
             }
         );
 
+/* =================================================
+   CLOSE MODALS
+================================================= */
 
-        /* =================================================
-           CLOSE MODALS
-        ================================================= */
+document
+    .querySelectorAll("[data-close]")
+    .forEach(function (button) {
 
-        document
-            .querySelectorAll(
-                "[data-close]"
-            )
-            .forEach(
-                function (button) {
+        button.addEventListener(
+            "click",
+            function (event) {
 
-                    button.addEventListener(
-                        "click",
-                        function () {
+                event.preventDefault();
+                event.stopPropagation();
 
-                            const id =
-                                button.getAttribute(
-                                    "data-close"
-                                );
+                const id =
+                    button.getAttribute("data-close");
 
+                const modal =
+                    document.getElementById(id);
 
-                            const modal =
-                                document.getElementById(
-                                    id
-                                );
+                if (!modal) {
+                    return;
+                }
 
+                if (
+                    window.App &&
+                    typeof window.App.closeModal === "function"
+                ) {
 
-                            if (modal) {
+                    window.App.closeModal(modal);
 
-                                modal.classList.remove(
-                                    "active"
-                                );
+                } else {
 
-                            }
+                    modal.classList.remove("active");
 
-                        }
+                    modal.classList.add("hidden");
+
+                    modal.style.display = "none";
+
+                    modal.style.visibility = "hidden";
+
+                    modal.style.opacity = "0";
+
+                    modal.style.pointerEvents = "none";
+
+                    modal.setAttribute(
+                        "aria-hidden",
+                        "true"
                     );
+                }
+
+            }
+        );
+
+    });
+
+
+document
+    .querySelectorAll(".modal")
+    .forEach(function (modal) {
+
+        modal.addEventListener(
+            "click",
+            function (event) {
+
+                if (
+                    event.target === modal
+                ) {
+
+                    if (
+                        window.App &&
+                        typeof window.App.closeModal === "function"
+                    ) {
+
+                        window.App.closeModal(modal);
+
+                    } else {
+
+                        modal.classList.remove("active");
+
+                        modal.classList.add("hidden");
+
+                        modal.style.display = "none";
+
+                        modal.style.visibility = "hidden";
+
+                        modal.style.opacity = "0";
+
+                        modal.style.pointerEvents = "none";
+
+                        modal.setAttribute(
+                            "aria-hidden",
+                            "true"
+                        );
+                    }
 
                 }
-            );
 
+            }
+        );
 
-        document
-            .querySelectorAll(
-                ".modal"
-            )
-            .forEach(
-                function (modal) {
-
-                    modal.addEventListener(
-                        "click",
-                        function (event) {
-
-                            if (
-                                event.target ===
-                                modal
-                            ) {
-
-                                modal.classList.remove(
-                                    "active"
-                                );
-
-                            }
-
-                        }
-                    );
-
-                }
-            );
-
+    });
 
         /* =================================================
            WALLET
