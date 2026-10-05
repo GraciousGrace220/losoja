@@ -785,7 +785,25 @@ async function handleLogin(event) {
             return;
 
         }
+const returnToChat =
+    sessionStorage.getItem(
+        "losoja_return_to_chat"
+    );
 
+if (
+    returnToChat === "true"
+) {
+
+    sessionStorage.removeItem(
+        "losoja_return_to_chat"
+    );
+
+    window.location.href =
+        "chat.html";
+
+    return;
+
+}
 
         const userName =
             session?.user
