@@ -1665,10 +1665,29 @@ async function findOrCreateConversation() {
     }
 
 
-    const existing =
-        await supabaseRequest(
-            query
+  /* =====================================================
+   VERIFY CURRENT SESSION BEFORE CHAT REQUEST
+===================================================== */
+
+if (
+    typeof window.ensureValidSupabaseSession ===
+    "function"
+) {
+
+    const validSession =
+        await window.ensureValidSupabaseSession();
+
+    if (
+        !validSession ||
+        !validSession.access_token
+    ) {
+
+        throw new Error(
+            "Your LosOja session has expired. Please log in again."
         );
+    }
+
+}
 
 
     if (
@@ -3542,19 +3561,150 @@ async function openSpecificChat() {
     }
 
 
-    /* =====================================================
-       FIND OR CREATE CONVERSATION
-    ===================================================== */
+/* =========================================================
+   FIND OR CREATE CONVERSATION
+========================================================= */
 
-    if (!currentConversationId) {
+async function findOrCreateConversation() {
 
-        const conversation =
-            await findOrCreateConversation();
-
-
-        currentConversationId =
-            conversation.id;
+    if (!currentUser) {
+        throw new Error("You must be logged in.");
     }
+
+    if (!currentOtherUserId) {
+        throw new Error("The other user could not be found.");
+    }
+
+    if (
+        String(currentOtherUserId) ===
+        String(currentUser.id)
+    ) {
+        throw new Error("You cannot chat with yourself.");
+    }
+
+    let query;
+
+    /* OJA CHAT */
+    if (currentOjaListingId) {
+
+        query =
+            "/rest/v1/conversations" +
+            "?select=*" +
+            "&oja_listing_id=eq." +
+            encodeURIComponent(currentOjaListingId) +
+            "&or=(" +
+            "and(user_one_id.eq." +
+            encodeURIComponent(currentUser.id) +
+            ",user_two_id.eq." +
+            encodeURIComponent(currentOtherUserId) +
+            ")," +
+            "and(user_one_id.eq." +
+            encodeURIComponent(currentOtherUserId) +
+            ",user_two_id.eq." +
+            encodeURIComponent(currentUser.id) +
+            ")" +
+            ")";
+
+    /* BARTER CHAT */
+    } else if (currentListingId) {
+
+        query =
+            "/rest/v1/conversations" +
+            "?select=*" +
+            "&barter_listing_id=eq." +
+            encodeURIComponent(currentListingId) +
+            "&or=(" +
+            "and(user_one_id.eq." +
+            encodeURIComponent(currentUser.id) +
+            ",user_two_id.eq." +
+            encodeURIComponent(currentOtherUserId) +
+            ")," +
+            "and(user_one_id.eq." +
+            encodeURIComponent(currentOtherUserId) +
+            ",user_two_id.eq." +
+            encodeURIComponent(currentUser.id) +
+            ")" +
+            ")";
+
+    /* NORMAL / BUSINESS CHAT */
+    } else {
+
+        query =
+            "/rest/v1/conversations" +
+            "?select=*" +
+            "&or=(" +
+            "and(user_one_id.eq." +
+            encodeURIComponent(currentUser.id) +
+            ",user_two_id.eq." +
+            encodeURIComponent(currentOtherUserId) +
+            ")," +
+            "and(user_one_id.eq." +
+            encodeURIComponent(currentOtherUserId) +
+            ",user_two_id.eq." +
+            encodeURIComponent(currentUser.id) +
+            ")" +
+            ")";
+    }
+
+    /* VERIFY CURRENT SESSION */
+    if (
+        typeof window.ensureValidSupabaseSession ===
+        "function"
+    ) {
+
+        const validSession =
+            await window.ensureValidSupabaseSession();
+
+        if (
+            !validSession ||
+            !validSession.access_token
+        ) {
+            throw new Error(
+                "Your LosOja session has expired. Please log in again."
+            );
+        }
+    }
+
+    /* FIND EXISTING CONVERSATION */
+    const existing =
+        await supabaseRequest(query);
+
+    if (
+        Array.isArray(existing) &&
+        existing.length > 0
+    ) {
+        return existing[0];
+    }
+
+    /* CREATE CONVERSATION */
+    const conversation = {
+        user_one_id: currentUser.id,
+        user_two_id: currentOtherUserId,
+        barter_listing_id: currentListingId || null,
+        oja_listing_id: currentOjaListingId || null
+    };
+
+    const created =
+        await supabaseRequest(
+            "/rest/v1/conversations",
+            {
+                method: "POST",
+                body: JSON.stringify(conversation)
+            }
+        );
+
+    if (
+        !Array.isArray(created) ||
+        !created[0]
+    ) {
+        throw new Error(
+            "Conversation could not be created."
+        );
+    }
+
+    return created[0];
+}
+
 
 
     /* =====================================================
