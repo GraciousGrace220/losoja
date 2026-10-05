@@ -5554,4 +5554,15 @@ document.body.classList.add(
 
 })(); 
 
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", function () {
+        App.init();
+    }, { once: true });
+} else {
+    App.init();
+}
+
+})();
+
 console.log("LosOja: app.js reached the end.");
