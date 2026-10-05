@@ -3600,3 +3600,260 @@ async function openSpecificChat() {
             3000
         );
 }
+<script>
+
+/* =========================================================
+   LOSOJA CHAT INITIALIZATION
+========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    async function () {
+
+        try {
+
+            clearError();
+
+            /* -----------------------------------------
+               CHECK LOGIN
+            ----------------------------------------- */
+
+            let result = null;
+
+            if (
+                typeof window.getCurrentUser ===
+                "function"
+            ) {
+
+                result =
+                    await window.getCurrentUser();
+
+            }
+
+
+            currentUser =
+                result?.user ||
+                result?.data?.user ||
+                result?.data ||
+                result ||
+                null;
+
+
+            /* -----------------------------------------
+               NOT LOGGED IN
+            ----------------------------------------- */
+
+            if (
+                !currentUser ||
+                !currentUser.id
+            ) {
+
+                const status =
+                    document.getElementById(
+                        "status"
+                    );
+
+
+                if (status) {
+
+                    status.innerHTML =
+                        `
+                        <strong>
+                            Please login to use LosOja Chat.
+                        </strong>
+                        `;
+
+                }
+
+
+                const conversationList =
+                    document.getElementById(
+                        "conversationList"
+                    );
+
+
+                if (conversationList) {
+
+                    conversationList.innerHTML =
+                        `
+                        <div class="status">
+                            Login is required to view your chats.
+                        </div>
+                        `;
+
+                }
+
+
+                const chatSection =
+                    document.getElementById(
+                        "chatSection"
+                    );
+
+
+                if (chatSection) {
+
+                    chatSection.style.display =
+                        "none";
+
+                }
+
+
+                return;
+            }
+
+
+            /* -----------------------------------------
+               USER IS LOGGED IN
+            ----------------------------------------- */
+
+            console.log(
+                "LosOja Chat: authenticated user",
+                currentUser.id
+            );
+
+
+            /* -----------------------------------------
+               UPDATE LOGIN BUTTON
+            ----------------------------------------- */
+
+            const loginButton =
+                document.getElementById(
+                    "loginButton"
+                );
+
+
+            if (loginButton) {
+
+                loginButton.textContent =
+                    "Account";
+
+                loginButton.onclick =
+                    function () {
+
+                        window.location.href =
+                            "account.html";
+
+                    };
+
+            }
+
+
+            /* -----------------------------------------
+               UPDATE STATUS
+            ----------------------------------------- */
+
+            const status =
+                document.getElementById(
+                    "status"
+                );
+
+
+            if (status) {
+
+                status.innerHTML =
+                    `
+                    <strong>
+                        LosOja Chat
+                    </strong>
+                    `;
+
+            }
+
+
+            /* -----------------------------------------
+               INITIALIZE IMAGE BUTTON
+            ----------------------------------------- */
+
+            initializeImageButton();
+
+
+            /* -----------------------------------------
+               LOAD CHAT / CONVERSATIONS
+            ----------------------------------------- */
+
+            await openSpecificChat();
+
+
+            /* -----------------------------------------
+               UPDATE UNREAD INDICATOR
+            ----------------------------------------- */
+
+            await updateChatUnreadIndicator();
+
+
+            console.log(
+                "LosOja Chat initialized successfully."
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "LosOja Chat initialization error:",
+                error
+            );
+
+
+            showError(
+                error?.message ||
+                "LosOja Chat could not be loaded."
+            );
+
+
+            const status =
+                document.getElementById(
+                    "status"
+                );
+
+
+            if (status) {
+
+                status.innerHTML =
+                    `
+                    <strong>
+                        Chat could not be loaded.
+                    </strong>
+                    `;
+
+            }
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   CHAT FORM
+========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const chatForm =
+            document.getElementById(
+                "chatForm"
+            );
+
+
+        if (!chatForm) {
+            return;
+        }
+
+
+        chatForm.addEventListener(
+            "submit",
+            async function (event) {
+
+                event.preventDefault();
+
+                await sendMessage();
+
+            }
+        );
+
+    }
+);
+
+</script>
