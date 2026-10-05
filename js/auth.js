@@ -98,7 +98,27 @@ function saveSession(session) {
     );
 
 }
+/* =========================================================
+   GET ACCESS TOKEN
+========================================================= */
 
+function getAccessToken() {
+
+    const session =
+        getSession();
+
+    if (
+        !session ||
+        !session.access_token
+    ) {
+
+        return null;
+
+    }
+
+    return session.access_token;
+
+}
 /* =========================================================
    SUPABASE REQUEST
 ========================================================= */
