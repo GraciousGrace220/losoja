@@ -2518,82 +2518,24 @@ document.body.classList.add(
 
         },
 
+/* =================================================
+   ACCOUNT BUTTON
+================================================= */
 
-        /* =================================================
-           ACCOUNT BUTTON
-        ================================================= */
+bindAccountButton() {
 
-        bindAccountButton() {
+    /*
+     * Account navigation is handled by the page-level
+     * Account buttons in index.html.
+     *
+     * Do not attach another click handler here.
+     * This prevents duplicate Account navigation
+     * and device/browser timing conflicts.
+     */
 
-            const accountButtons =
-                document.querySelectorAll(
-                    '#accountBtn, .account-btn, .nav-account, [data-action="account"], [data-nav="account"]'
-                );
+    return;
 
-
-            if (!accountButtons.length) {
-
-                console.warn(
-                    "LosOja: Account button not found."
-                );
-
-                return;
-
-            }
-
-
-            accountButtons.forEach(button => {
-
-                if (
-                    button.dataset
-                        .losojaAccountReady ===
-                    "true"
-                ) {
-
-                    return;
-
-                }
-
-
-                button.dataset
-                    .losojaAccountReady =
-                    "true";
-
-
-                button.addEventListener(
-                    "click",
-                    event => {
-
-                        event.preventDefault();
-
-                        console.log(
-                            "LosOja: Account button clicked."
-                        );
-
-
-                        if (
-                            typeof window.openAccount ===
-                            "function"
-                        ) {
-
-                            window.openAccount();
-
-                        } else {
-
-                            console.error(
-                                "LosOja: openAccount function is not available."
-                            );
-
-                        }
-
-                    }
-                );
-
-            });
-
-        },
-
-
+},
         /* =================================================
            NOTIFICATION SOUND
         ================================================= */
