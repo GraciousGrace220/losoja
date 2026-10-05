@@ -1689,7 +1689,12 @@ if (
 
 }
 
+/* =====================================================
+   FIND EXISTING CONVERSATION
+===================================================== */
 
+const existing =
+    await supabaseRequest(query);
     if (
         Array.isArray(existing) &&
         existing.length > 0
@@ -3561,199 +3566,59 @@ async function openSpecificChat() {
     }
 
 
-/* =========================================================
+/* =====================================================
    FIND OR CREATE CONVERSATION
-========================================================= */
+===================================================== */
 
-async function findOrCreateConversation() {
+const conversation =
+    await findOrCreateConversation();
 
-    if (!currentUser) {
-        throw new Error("You must be logged in.");
-    }
+currentConversationId =
+    conversation.id;
 
-    if (!currentOtherUserId) {
-        throw new Error("The other user could not be found.");
-    }
+/* =====================================================
+   MARK NOTIFICATIONS READ
+===================================================== */
 
-    if (
-        String(currentOtherUserId) ===
-        String(currentUser.id)
-    ) {
-        throw new Error("You cannot chat with yourself.");
-    }
+await markCurrentChatNotificationsRead();
 
-    let query;
+/* =====================================================
+   LOAD MESSAGES
+===================================================== */
 
-    /* OJA CHAT */
-    if (currentOjaListingId) {
+await loadMessages();
 
-        query =
-            "/rest/v1/conversations" +
-            "?select=*" +
-            "&oja_listing_id=eq." +
-            encodeURIComponent(currentOjaListingId) +
-            "&or=(" +
-            "and(user_one_id.eq." +
-            encodeURIComponent(currentUser.id) +
-            ",user_two_id.eq." +
-            encodeURIComponent(currentOtherUserId) +
-            ")," +
-            "and(user_one_id.eq." +
-            encodeURIComponent(currentOtherUserId) +
-            ",user_two_id.eq." +
-            encodeURIComponent(currentUser.id) +
-            ")" +
-            ")";
+/* =====================================================
+   REFRESH MESSAGES
+===================================================== */
 
-    /* BARTER CHAT */
-    } else if (currentListingId) {
-
-        query =
-            "/rest/v1/conversations" +
-            "?select=*" +
-            "&barter_listing_id=eq." +
-            encodeURIComponent(currentListingId) +
-            "&or=(" +
-            "and(user_one_id.eq." +
-            encodeURIComponent(currentUser.id) +
-            ",user_two_id.eq." +
-            encodeURIComponent(currentOtherUserId) +
-            ")," +
-            "and(user_one_id.eq." +
-            encodeURIComponent(currentOtherUserId) +
-            ",user_two_id.eq." +
-            encodeURIComponent(currentUser.id) +
-            ")" +
-            ")";
-
-    /* NORMAL / BUSINESS CHAT */
-    } else {
-
-        query =
-            "/rest/v1/conversations" +
-            "?select=*" +
-            "&or=(" +
-            "and(user_one_id.eq." +
-            encodeURIComponent(currentUser.id) +
-            ",user_two_id.eq." +
-            encodeURIComponent(currentOtherUserId) +
-            ")," +
-            "and(user_one_id.eq." +
-            encodeURIComponent(currentOtherUserId) +
-            ",user_two_id.eq." +
-            encodeURIComponent(currentUser.id) +
-            ")" +
-            ")";
-    }
-
-    /* VERIFY CURRENT SESSION */
-    if (
-        typeof window.ensureValidSupabaseSession ===
-        "function"
-    ) {
-
-        const validSession =
-            await window.ensureValidSupabaseSession();
-
-        if (
-            !validSession ||
-            !validSession.access_token
-        ) {
-            throw new Error(
-                "Your LosOja session has expired. Please log in again."
-            );
-        }
-    }
-
-    /* FIND EXISTING CONVERSATION */
-    const existing =
-        await supabaseRequest(query);
-
-    if (
-        Array.isArray(existing) &&
-        existing.length > 0
-    ) {
-        return existing[0];
-    }
-
-    /* CREATE CONVERSATION */
-    const conversation = {
-        user_one_id: currentUser.id,
-        user_two_id: currentOtherUserId,
-        barter_listing_id: currentListingId || null,
-        oja_listing_id: currentOjaListingId || null
-    };
-
-    const created =
-        await supabaseRequest(
-            "/rest/v1/conversations",
-            {
-                method: "POST",
-                body: JSON.stringify(conversation)
-            }
-        );
-
-    if (
-        !Array.isArray(created) ||
-        !created[0]
-    ) {
-        throw new Error(
-            "Conversation could not be created."
-        );
-    }
-
-    return created[0];
+if (messagePolling) {
+    clearInterval(
+        messagePolling
+    );
 }
 
+messagePolling =
+    setInterval(
+        async () => {
 
+            try {
 
-    /* =====================================================
-       MARK NOTIFICATIONS READ
-    ===================================================== */
+                await loadMessages();
 
-    await markCurrentChatNotificationsRead();
+                await updateChatUnreadIndicator();
 
+            } catch (error) {
 
-    /* =====================================================
-       LOAD MESSAGES
-    ===================================================== */
+                console.warn(
+                    "Message refresh failed:",
+                    error
+                );
+            }
 
-    await loadMessages();
-
-
-    /* =====================================================
-       REFRESH MESSAGES
-    ===================================================== */
-
-    if (messagePolling) {
-
-        clearInterval(
-            messagePolling
-        );
-    }
-
-
-    messagePolling =
-        setInterval(
-            async () => {
-
-                try {
-
-                    await loadMessages();
-
-                    await updateChatUnreadIndicator();
-
-                } catch (error) {
-
-                    console.warn(
-                        "Message refresh failed:",
-                        error
-                    );
-                }
-
-            },
-            3000
-        );
+        },
+        3000
+    );
 }
 
 /* =========================================================
