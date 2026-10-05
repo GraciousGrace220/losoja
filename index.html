@@ -3476,6 +3476,37 @@ document.addEventListener(
 
 
         /* =================================================
+           OPEN LOGIN FROM CHAT
+        ================================================= */
+
+        if (
+            new URLSearchParams(
+                window.location.search
+            ).get("login") === "1"
+        ) {
+
+            const loginModal =
+                document.getElementById(
+                    "loginModal"
+                );
+
+            if (
+                loginModal &&
+                window.App &&
+                typeof window.App.openModal ===
+                "function"
+            ) {
+
+                window.App.openModal(
+                    loginModal
+                );
+
+            }
+
+        }
+
+
+        /* =================================================
            ACCOUNT
         ================================================= */
 
