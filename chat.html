@@ -1264,14 +1264,22 @@ async function loadEscrowChatContext() {
 
 
     const escrow =
-        await supabaseRequest(
-            "/rest/v1/escrow_transactions" +
-            "?select=id,buyer_id,seller_id,amount,currency,status,description,dispute_reason" +
-            "&id=eq." +
-            encodeURIComponent(
-                currentEscrowId
+       await supabaseRequest(
+    "/rest/v1/notifications",
+    {
+        method:
+            "POST",
+
+        headers: {
+            "Prefer": "return=minimal"
+        },
+
+        body:
+            JSON.stringify(
+                notification
             )
-        );
+    }
+);
 
 
     if (
