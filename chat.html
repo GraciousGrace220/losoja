@@ -665,11 +665,42 @@
     id="loginButton"
     class="login-button"
     type="button"
-    onclick="goToLogin()"
 >
     Login
 </button>
+<script>
+(function () {
 
+    const loginButton =
+        document.getElementById("loginButton");
+
+    if (!loginButton) {
+        return;
+    }
+
+    loginButton.addEventListener(
+        "click",
+        function () {
+
+            if (
+                typeof window.openLogin ===
+                "function"
+            ) {
+
+                window.openLogin();
+
+                return;
+
+            }
+
+            window.location.href =
+                "index.html";
+
+        }
+    );
+
+})();
+</script>
 </header>
 
 <main class="page">
