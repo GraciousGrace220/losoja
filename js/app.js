@@ -4654,21 +4654,31 @@ document.body.classList.add(
                         return;
                     }
 
+                    /*
+                     * Clear any previous escrow business first.
+                     * Then save the business currently being viewed.
+                     */
+
+                    sessionStorage.removeItem(
+                        "losoja_escrow_business"
+                    );
+
                     sessionStorage.setItem(
                         "losoja_escrow_business",
                         JSON.stringify({
 
                             business_id:
-                                business.id || "",
+                                String(business.id || ""),
 
                             business_name:
-                                business.name || "",
+                                String(business.name || ""),
 
                             seller_id:
-                                business.user_id || ""
+                                String(business.user_id || "")
 
                         })
                     );
+
 
                     App.closeModal(
                         modal
