@@ -3887,31 +3887,45 @@ async function openEscrowInfo() {
    INITIAL LOAD
 ========================================================= */
 
-document.addEventListener(
-    "DOMContentLoaded",
-    async function () {
+async function initializeBalancePage() {
 
-        console.log(
-            "LosOja: balance page ready."
-        );
+    console.log(
+        "LosOja: balance page ready."
+    );
+
+    /*
+     * Allow auth.js to finish restoring the
+     * existing session before financial queries.
+     */
+
+    await wait(500);
+
+    await loadWallet();
+
+    await loadTransactions();
+
+    /*
+     * Load the escrow form after the balance page
+     * and session are ready.
+     */
+
+    loadCreateEscrowBox();
+}
 
 
-        /*
-         * Allow auth.js to finish restoring the
-         * existing session before financial queries.
-         */
+if (document.readyState === "loading") {
 
-        await wait(500);
+    document.addEventListener(
+        "DOMContentLoaded",
+        initializeBalancePage
+    );
 
+} else {
 
-        await loadWallet();
+    initializeBalancePage();
 
-        await loadTransactions();
+}
 
-        loadCreateEscrowBox();
-
-    }
-);
 
 </script>
 
@@ -3919,4 +3933,3 @@ document.addEventListener(
 </body>
 
 </html>
-```
