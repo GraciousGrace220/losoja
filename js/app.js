@@ -5497,3 +5497,6 @@ document.body.classList.add(
 })();
 
 console.log("LosOja: app.js reached the end.");
+document.addEventListener("DOMContentLoaded", function () {
+    App.init();
+});
