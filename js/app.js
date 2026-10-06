@@ -4731,15 +4731,45 @@ document.body.classList.add(
                 String(currentUser.id) ===
                 String(business.user_id)
             ) {
+               
+currentBusinessOwner =
+    true;
 
-                currentBusinessOwner =
-                    true;
+/*
+ * Business owners can manage their own listing,
+ * but they cannot use buyer actions on their own business.
+ */
 
-                if (ownerControls) {
+if (ownerControls) {
 
-                    ownerControls.style.display =
-                        "block";
-                }
+    ownerControls.style.display =
+        "block";
+}
+
+const ownerChatButton =
+    document.getElementById(
+        "businessChatBtn"
+    );
+
+const ownerEscrowButton =
+    document.getElementById(
+        "businessEscrowBtn"
+    );
+
+if (ownerChatButton) {
+
+    ownerChatButton.style.display =
+        "none";
+}
+
+if (ownerEscrowButton) {
+
+    ownerEscrowButton.style.display =
+        "none";
+}
+
+
+
             }
         }
 
