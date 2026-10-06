@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 
@@ -257,6 +258,65 @@ h2 {
     font-size: 13px;
 }
 
+
+/* =========================================================
+   CREATE ESCROW
+========================================================= */
+
+.create-escrow-box {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 12px;
+    padding: 16px;
+    margin: 14px 0;
+}
+
+.create-escrow-box h3 {
+    margin: 0 0 8px;
+    font-size: 17px;
+    color: #087a3e;
+}
+
+.create-escrow-business {
+    font-weight: bold;
+    margin-bottom: 12px;
+}
+
+.create-escrow-box label {
+    display: block;
+    font-size: 13px;
+    font-weight: bold;
+    margin: 10px 0 5px;
+}
+
+.create-escrow-box input,
+.create-escrow-box textarea {
+    width: 100%;
+    padding: 11px;
+    border: 1px solid #d1d5db;
+    border-radius: 9px;
+    font: inherit;
+}
+
+.create-escrow-box textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+.create-escrow-submit {
+    width: 100%;
+    margin-top: 12px;
+    background: #087a3e;
+    color: white;
+}
+
+.create-escrow-cancel {
+    width: 100%;
+    margin-top: 8px;
+    background: #e5e7eb;
+    color: #111827;
+}
+
 </style>
 
 
@@ -448,6 +508,14 @@ h2 {
 
         </div>
 
+
+        <!-- =========================================
+             CREATE ESCROW BOX
+        ========================================== -->
+
+        <div id="createEscrowBox"></div>
+
+
         <button
             class="escrow-btn"
             onclick="openEscrowInfo()"
@@ -495,13 +563,6 @@ function wait(ms) {
 
 async function getAccessToken() {
 
-    /*
-     * auth.js is loaded before this script.
-     *
-     * We still retry because restoring/refreshing a
-     * Supabase session can be asynchronous.
-     */
-
     const delays = [
         0,
         300,
@@ -528,10 +589,6 @@ async function getAccessToken() {
 
         try {
 
-            /* -----------------------------------------
-               ASK LOSOJA AUTH TO VALIDATE SESSION
-            ----------------------------------------- */
-
             if (
                 typeof window.ensureValidSupabaseSession ===
                 "function"
@@ -552,10 +609,6 @@ async function getAccessToken() {
 
             }
 
-
-            /* -----------------------------------------
-               PRIMARY LOSOJA TOKEN HELPER
-            ----------------------------------------- */
 
             if (
                 typeof window.getSupabaseAccessToken ===
@@ -591,10 +644,6 @@ async function getAccessToken() {
 
             }
 
-
-            /* -----------------------------------------
-               SESSION HELPER FALLBACK
-            ----------------------------------------- */
 
             if (
                 typeof window.getSupabaseSession ===
@@ -640,10 +689,6 @@ async function getAccessToken() {
             }
 
 
-            /* -----------------------------------------
-               DIRECT LOSOJA SUPABASE CLIENT FALLBACK
-            ----------------------------------------- */
-
             if (
                 window.losojaSupabase &&
                 window.losojaSupabase.auth &&
@@ -685,10 +730,6 @@ async function getAccessToken() {
 
             }
 
-
-            /* -----------------------------------------
-               LOCAL STORAGE FALLBACK
-            ----------------------------------------- */
 
             try {
 
@@ -931,11 +972,6 @@ function escapeHTML(value) {
 
 async function getCurrentUserId() {
 
-    /*
-     * First give auth.js a chance to restore/refresh
-     * the current session.
-     */
-
     try {
 
         if (
@@ -958,10 +994,6 @@ async function getCurrentUserId() {
 
         }
 
-
-        /* -----------------------------------------
-           CURRENT USER HELPER
-        ----------------------------------------- */
 
         if (
             typeof window.getCurrentUser ===
@@ -996,10 +1028,6 @@ async function getCurrentUserId() {
 
         }
 
-
-        /* -----------------------------------------
-           DIRECT SUPABASE SESSION
-        ----------------------------------------- */
 
         if (
             window.losojaSupabase &&
@@ -1049,10 +1077,6 @@ async function getCurrentUserId() {
 
     }
 
-
-    /* -----------------------------------------
-       FINAL TOKEN-BASED USER LOOKUP
-    ----------------------------------------- */
 
     try {
 
@@ -1227,11 +1251,6 @@ async function loadWallet() {
                 userId
             );
 
-
-            /*
-             * Do not hide the problem behind a fake
-             * balance if the query returns nothing.
-             */
 
             balanceElement.textContent =
                 "₦0.00";
@@ -3380,6 +3399,453 @@ async function handleRefundEscrow(
 
 
 /* =========================================================
+   CREATE ESCROW BOX
+========================================================= */
+
+function loadCreateEscrowBox() {
+
+    const container =
+        document.getElementById(
+            "createEscrowBox"
+        );
+
+
+    if (!container) {
+
+        return;
+
+    }
+
+
+    container.innerHTML =
+        "";
+
+
+    let escrowBusiness = null;
+
+
+    try {
+
+        const stored =
+            sessionStorage.getItem(
+                "losoja_escrow_business"
+            );
+
+
+        if (stored) {
+
+            escrowBusiness =
+                JSON.parse(stored);
+
+        }
+
+    } catch (error) {
+
+        console.error(
+            "LosOja: unable to read escrow business:",
+            error
+        );
+
+    }
+
+
+    if (
+        !escrowBusiness ||
+        !escrowBusiness.business_id ||
+        !escrowBusiness.seller_id
+    ) {
+
+        return;
+
+    }
+
+
+    container.innerHTML = `
+
+        <div class="create-escrow-box">
+
+            <h3>
+                Create Escrow Payment
+            </h3>
+
+            <div class="create-escrow-business">
+                Buying from:
+                ${escapeHTML(
+                    escrowBusiness.business_name ||
+                    "Selected business"
+                )}
+            </div>
+
+            <label for="escrowAmount">
+                Amount (₦)
+            </label>
+
+            <input
+                id="escrowAmount"
+                type="number"
+                min="1"
+                step="0.01"
+                placeholder="Enter amount"
+            >
+
+            <label for="escrowDescription">
+                What are you paying for?
+            </label>
+
+            <textarea
+                id="escrowDescription"
+                maxlength="500"
+                placeholder="Example: Payment for 2 pairs of shoes"
+            ></textarea>
+
+            <button
+                type="button"
+                class="create-escrow-submit"
+                id="createEscrowSubmit"
+                onclick="createEscrowPayment()"
+            >
+                Create Escrow
+            </button>
+
+            <button
+                type="button"
+                class="create-escrow-cancel"
+                onclick="cancelCreateEscrow()"
+            >
+                Cancel
+            </button>
+
+        </div>
+
+    `;
+
+}
+
+
+/* =========================================================
+   CREATE ESCROW PAYMENT
+========================================================= */
+
+async function createEscrowPayment() {
+
+    const button =
+        document.getElementById(
+            "createEscrowSubmit"
+        );
+
+
+    try {
+
+        let escrowBusiness = null;
+
+
+        try {
+
+            const stored =
+                sessionStorage.getItem(
+                    "losoja_escrow_business"
+                );
+
+
+            if (stored) {
+
+                escrowBusiness =
+                    JSON.parse(stored);
+
+            }
+
+        } catch (error) {
+
+            console.error(
+                "LosOja: escrow context error:",
+                error
+            );
+
+        }
+
+
+        if (
+            !escrowBusiness ||
+            !escrowBusiness.seller_id
+        ) {
+
+            throw new Error(
+                "The selected business could not be identified. Please return to the business and try again."
+            );
+
+        }
+
+
+        const buyerId =
+            await getCurrentUserId();
+
+
+        if (!buyerId) {
+
+            throw new Error(
+                "Please log in before creating an escrow payment."
+            );
+
+        }
+
+
+        const sellerId =
+            String(
+                escrowBusiness.seller_id
+            );
+
+
+        if (
+            String(buyerId) === sellerId
+        ) {
+
+            throw new Error(
+                "You cannot create an escrow payment with your own business."
+            );
+
+        }
+
+
+        const amountInput =
+            document.getElementById(
+                "escrowAmount"
+            );
+
+
+        const descriptionInput =
+            document.getElementById(
+                "escrowDescription"
+            );
+
+
+        const amount =
+            Number(
+                amountInput?.value
+            );
+
+
+        const description =
+            String(
+                descriptionInput?.value ||
+                ""
+            ).trim();
+
+
+        if (
+            !Number.isFinite(amount) ||
+            amount <= 0
+        ) {
+
+            throw new Error(
+                "Please enter a valid escrow amount."
+            );
+
+        }
+
+
+        if (
+            description.length < 3
+        ) {
+
+            throw new Error(
+                "Please describe what you are paying for."
+            );
+
+        }
+
+
+        if (
+            description.length > 500
+        ) {
+
+            throw new Error(
+                "The escrow description must be 500 characters or less."
+            );
+
+        }
+
+
+        const confirmed =
+            confirm(
+
+                "LosOja Escrow\n\n" +
+
+                `Business: ${
+                    escrowBusiness.business_name ||
+                    "Selected business"
+                }\n` +
+
+                `Amount: ₦${amount.toLocaleString(
+                    "en-NG",
+                    {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    }
+                )}\n\n` +
+
+                `Description: ${description}\n\n` +
+
+                "This amount will be held in LosOja Escrow.\n\n" +
+
+                "Continue?"
+
+            );
+
+
+        if (!confirmed) {
+
+            return;
+
+        }
+
+
+        if (button) {
+
+            button.disabled =
+                true;
+
+            button.textContent =
+                "Creating Escrow...";
+
+        }
+
+
+        const result =
+            await supabaseRequest(
+                "/rest/v1/rpc/create_escrow_transaction",
+                {
+                    method: "POST",
+
+                    body:
+                        JSON.stringify({
+
+                            p_buyer_id:
+                                buyerId,
+
+                            p_seller_id:
+                                sellerId,
+
+                            p_amount:
+                                amount,
+
+                            p_description:
+                                description
+
+                        })
+                }
+            );
+
+
+        console.log(
+            "LosOja: escrow created:",
+            result
+        );
+
+
+        sessionStorage.removeItem(
+            "losoja_escrow_business"
+        );
+
+
+        alert(
+
+            "Escrow created successfully.\n\n" +
+
+            `Amount held: ₦${amount.toLocaleString(
+                "en-NG",
+                {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                }
+            )}\n\n` +
+
+            "The payment is now protected by LosOja Escrow."
+
+        );
+
+
+        await loadWallet();
+
+        await loadTransactions();
+
+
+        const escrowSection =
+            document.getElementById(
+                "escrowInfo"
+            );
+
+
+        if (escrowSection) {
+
+            await loadEscrowTransactions(
+                escrowSection
+            );
+
+        }
+
+
+        loadCreateEscrowBox();
+
+
+    } catch (error) {
+
+        console.error(
+            "LosOja: create escrow error:",
+            error
+        );
+
+
+        alert(
+            error?.message ||
+            "Unable to create escrow payment."
+        );
+
+
+    } finally {
+
+        if (button) {
+
+            button.disabled =
+                false;
+
+            button.textContent =
+                "Create Escrow";
+
+        }
+
+    }
+
+}
+
+
+/* =========================================================
+   CANCEL CREATE ESCROW
+========================================================= */
+
+function cancelCreateEscrow() {
+
+    sessionStorage.removeItem(
+        "losoja_escrow_business"
+    );
+
+
+    const container =
+        document.getElementById(
+            "createEscrowBox"
+        );
+
+
+    if (container) {
+
+        container.innerHTML =
+            "";
+
+    }
+
+}
+
+
+/* =========================================================
    OPEN ESCROW INFO
 ========================================================= */
 
@@ -3442,6 +3908,8 @@ document.addEventListener(
 
         await loadTransactions();
 
+        loadCreateEscrowBox();
+
     }
 );
 
@@ -3451,3 +3919,4 @@ document.addEventListener(
 </body>
 
 </html>
+```
