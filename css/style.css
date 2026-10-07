@@ -1,95 +1,115 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ugo Phones - Losoja</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family: -apple-system, system-ui, sans-serif}
-body{background:#f5f5f5}
-.header{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:white}
-.logo{font-weight:800;font-size:22px}
-.logo span{color:#16a34a}
-.banner{height:180px;background:linear-gradient(45deg,#0f172a,#16a34a);display:flex;align-items:center;justify-content:center;color:white;font-size:14px}
-.shop-card{background:white;margin:-50px 12px 0 12px;border-radius:16px;padding:16px;box-shadow:0 4px 20px rgba(0,0,0,.1);position:relative}
-.top{display:flex;gap:12px}
-.shop-logo{width:70px;height:70px;border-radius:50%;background:#16a34a;display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:28px;border:3px solid white;box-shadow:0 2px 10px rgba(0,0,0,.1)}
-.badge{color:#1d9bf0;font-size:18px}
-.addr{font-size:13px;color:#555;margin-top:4px}
-.stats{display:flex;gap:16px;margin:16px 0;font-size:14px}
-.stats b{color:#111}
-.btns{display:flex;gap:10px}
-.btn{flex:1;padding:12px;border-radius:10px;font-weight:700;text-align:center;text-decoration:none;font-size:15px}
-.btn-what{background:#16a34a;color:white}
-.btn-call{background:white;color:#16a34a;border:2px solid #16a34a}
-.tabs{display:flex;background:white;margin:12px;border-radius:10px;overflow:hidden}
-.tab{flex:1;padding:12px;text-align:center;font-weight:700;font-size:14px}
-.tab.active{border-bottom:3px solid #16a34a}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 12px 80px 12px}
-.card{background:white;border-radius:12px;padding:10px;text-align:center}
-.card img{width:100%;height:110px;object-fit:contain}
-.price{color:#16a34a;font-weight:800;margin:4px 0}
-.name{font-size:13px}
+/* CORE */
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui, sans-serif; background:#f7f9f8; padding-bottom:80px}
+a{text-decoration:none;color:inherit}
+
+/* HEADER */
+.losoja-header{
+  position:sticky; top:0; z-index:1000;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:12px 18px; background:white; border-bottom:1px solid #e5e7eb;
+}
+.losoja-brand{ display:flex; align-items:center; gap:8px; font-weight:900; font-size:22px; color:#087a3e }
+.losoja-brand img{ width:40px; height:40px; object-fit:contain }
+.header-actions{ display:flex; gap:8px }
+.header-btn{ border:1px solid #e5e7eb; background:white; padding:8px 14px; border-radius:10px; font-weight:700; cursor:pointer }
+
+/* HERO */
+.losoja-hero{
+  background: linear-gradient(135deg,#087a3e 0%, #0ab35a 100%);
+  color:white; text-align:center; padding:35px 18px;
+}
+.losoja-hero h1{ font-size:36px; line-height:1.2; margin-bottom:10px }
+.losoja-hero p{ opacity:.9; max-width:600px; margin:0 auto 20px }
+.search-wrap{
+  max-width:650px; margin:0 auto 12px;
+  display:flex; background:white; border-radius:12px; padding:6px;
+}
+.search-wrap input{ flex:1; border:none; outline:none; padding:12px; font-size:16px }
+.search-wrap button{ border:none; background:#087a3e; color:white; padding:0 20px; border-radius:8px; font-weight:800 }
+.discover-btn{ border:1px solid rgba(255,255,255,.4); background:rgba(255,255,255,.15); color:white; padding:8px 16px; border-radius:20px; margin-top:10px }
+
+/* QUICK ACTIONS */
+.quick-actions{
+  display:flex; gap:10px; overflow-x:auto; padding:14px 18px; background:white; scrollbar-width:none
+}
+.quick-actions::-webkit-scrollbar{ display:none }
+.quick-action{
+  flex:0 0 auto; min-width:110px; border:1px solid #e5e7eb; background:white;
+  border-radius:12px; padding:14px 8px; text-align:center; font-weight:700; font-size:13px; cursor:pointer
+}
+.quick-action-icon{ display:block; font-size:22px; margin-bottom:4px }
+
+/* SECTIONS */
+.losoja-section{ padding:25px 18px }
+.losoja-section-header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:14px }
+.section-link{ color:#087a3e; font-weight:700; font-size:14px }
+
+/* BUSINESS GRID - THIS IS YOUR BUSINESS PAGE GRID */
+#businessGrid{
+  display:grid; grid-template-columns:repeat(4,1fr); gap:14px
+}
+.business-card{
+  background:white; border:1px solid #e5e7eb; border-radius:16px; overflow:hidden; cursor:pointer;
+  transition: transform .2s, box-shadow .2s;
+}
+.business-card:hover{ transform:translateY(-3px); box-shadow:0 8px 20px rgba(0,0,0,.08) }
+.business-card img{ width:100%; height:170px; object-fit:cover }
+.business-card-body{ padding:12px }
+.business-card-body h3{ font-size:15px; margin-bottom:4px }
+.business-card-body p{ font-size:13px; color:#6b7280; margin:2px 0 }
+
+/* WALLET / BILLS */
+.wallet-card, .bills-card{
+  margin:18px; background:white; border:1px solid #e5e7eb; border-radius:16px; padding:18px
+}
+.wallet-top{ display:flex; justify-content:space-between; align-items:center }
+.wallet-balance{ font-size:26px; font-weight:900; margin-top:4px }
+.wallet-actions{ display:flex; gap:10px; margin-top:14px }
+.wallet-primary, .wallet-secondary, .bills-btn{
+  flex:1; padding:10px; border-radius:10px; border:none; font-weight:700; cursor:pointer
+}
+.wallet-primary, .bills-btn{ background:#087a3e; color:white }
+.wallet-secondary{ background:#eef8f2; color:#087a3e }
+
+/* BOTTOM NAV - FIXED */
+.bottom-nav{
+  position:fixed; left:0; right:0; bottom:0; z-index:9999;
+  display:flex; justify-content:space-around; align-items:center;
+  background:white; border-top:1px solid #e5e7eb; min-height:70px;
+}
+.bottom-nav a, .bottom-nav button{
+  flex:1; border:none; background:none; display:flex; flex-direction:column;
+  align-items:center; gap:3px; color:#6b7280; font-size:11px; font-weight:700; cursor:pointer
+}
+.bottom-nav a.active, .bottom-nav button.active{ color:#087a3e }
+.bottom-nav-icon{ font-size:22px }
+
+/* MODALS */
+.modal{ position:fixed; inset:0; background:rgba(0,0,0,.55); display:none; align-items:center; justify-content:center; padding:20px; z-index:10000 }
+.modal.active{ display:flex }
+.modal-content{ width:min(100%, 520px); max-height:90vh; overflow-y:auto; background:white; border-radius:18px; padding:22px }
+.form-group{ margin-bottom:14px }
+.form-group label{ display:block; margin-bottom:6px; font-weight:700 }
+.form-group input, .form-group select, .form-group textarea{
+  width:100%; border:1px solid #d1d5db; border-radius:10px; padding:12px; font:inherit; outline:none
+}
+.form-submit{ width:100%; background:#087a3e; color:white; border:none; padding:13px; border-radius:10px; font-weight:800; cursor:pointer }
+
+/* TOAST */
+#toast{ position:fixed; left:50%; bottom:95px; transform:translateX(-50%); background:#111827; color:white; padding:12px 18px; border-radius:10px; display:none; z-index:11000 }
+#toast.show{ display:block }
+
+/* MOBILE - THIS MAKES IT WORK */
+@media(max-width:900px){
+  #businessGrid{ grid-template-columns:repeat(2,1fr) }
+}
+@media(max-width:600px){
+  .losoja-hero h1{ font-size:27px }
+  #businessGrid{ grid-template-columns:1fr 1fr; gap:10px }
+  .business-card img{ height:130px }
+  .quick-actions{ padding-left:12px; padding-right:12px }
+  .losoja-section{ padding-left:12px; padding-right:12px }
+}
 </style>
-</head>
-<body>
-
-<div class="header">
-  <div class="logo"><span>●</span> Losoja</div>
-  <div>🔍 💬 🛒</div>
-</div>
-
-<div class="banner">SHOP BANNER PHOTO HERE</div>
-
-<div class="shop-card">
-  <div class="top">
-    <div class="shop-logo">U</div>
-    <div>
-      <div style="font-weight:800;font-size:18px">Ugo Phones - Onitsha <span class="badge">✓</span></div>
-      <div style="font-size:13px;color:#666">UK Used iPhones & Accessories</div>
-      <div class="addr">📍 Shop B12 Old Market Road Onitsha</div>
-    </div>
-  </div>
-  <div class="stats">
-    <div><b>128</b> products</div>
-    <div>⭐ <b>4.8</b> rating</div>
-  </div>
-  <div class="btns">
-    <a class="btn btn-what" href="https://wa.me/2348012345678?text=Hi, I saw your shop on Losoja">WhatsApp</a>
-    <a class="btn btn-call" href="tel:+2348012345678">Call</a>
-  </div>
-</div>
-
-<div class="tabs">
-  <div class="tab active">Products</div>
-  <div class="tab">Reviews (23)</div>
-</div>
-
-<div class="grid">
-  <div class="card">
-    <img src="https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=200">
-    <div class="name">iPhone 12 Pro 128GB</div>
-    <div class="price">₦285,000</div>
-    <div style="font-size:12px">⭐ 4.7 (42)</div>
-  </div>
-  <div class="card">
-    <img src="https://images.unsplash.com/photo-1574944985070-8f3ebc6b79d2?w=200">
-    <div class="name">iPhone 11 64GB - Black</div>
-    <div class="price">₦195,000</div>
-    <div style="font-size:12px">4.6 (31)</div>
-  </div>
-  <div class="card">
-    <img src="https://images.unsplash.com/photo-1572569511254-d8f925fe2cbb?w=200">
-    <div class="name">AirPods Pro 2</div>
-    <div class="price">₦75,000</div>
-    <div style="font-size:12px">4.9 (18)</div>
-  </div>
-  <div class="card">
-    <img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=200">
-    <div class="name">iPhone XR 64GB - Coral</div>
-    <div class="price">₦145,000</div>
-    <div style="font-size:12px">4.5 (25)</div>
-  </div>
-</div>
-
-</body>
-</html>
