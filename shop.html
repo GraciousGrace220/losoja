@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shop - LosOja</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Inter,system-ui,sans-serif}
+:root{--green:#087a3e;--border:#e5e7eb;--gray:#6b7280}
+body{background:#f6f7f8;padding-bottom:90px}
+.header{position:sticky;top:0;z-index:20;background:#fff;padding:12px 14px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border)}
+.header button{width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:#fff;font-size:20px;cursor:pointer}
+.hero{height:260px;background:linear-gradient(135deg,#eef8f2,#d1fae5);position:relative;overflow:hidden}
+.hero img{width:100%;height:100%;object-fit:cover;display:block}
+.hero-placeholder{height:100%;display:flex;align-items:center;justify-content:center;font-size:56px}
+.shop-card{background:#fff;margin:-30px 12px 0;position:relative;z-index:2;border-radius:18px;padding:16px;box-shadow:0 10px 24px rgba(0,0,0,.08);border:1px solid var(--border)}
+.top-row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.badge{background:#eef8f2;color:#087a3e;font-size:9px;font-weight:800;padding:4px 8px;border-radius:20px;text-transform:uppercase}
+.verified{background:#087a3e;color:#fff;padding:3px 8px;border-radius:20px;font-size:9px;font-weight:800;margin-left:6px}
+.shop-card h1{font-size:20px;font-weight:900;margin:8px 0 4px;line-height:1.2}
+.meta{font-size:12px;color:var(--gray);margin:3px 0;display:flex;align-items:center;gap:6px}
+.rating{color:var(--green);font-weight:800;font-size:12px}
+.desc{margin-top:10px;font-size:13px;color:#374151;line-height:1.5;background:#f9fafb;padding:10px;border-radius:10px}
+.actions{padding:14px 12px;display:grid;grid-template-columns:1fr 1fr;gap:10px;position:sticky;bottom:70px;z-index:15;background:#f6f7f8}
+.btn{padding:14px;border-radius:12px;text-align:center;font-weight:800;font-size:13px;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:6px}
+.btn-wa{background:#087a3e;color:#fff}
+.btn-call{background:#fff;color:#087a3e;border:1.5px solid #087a3e}
+.tabs{display:flex;gap:8px;padding:14px 12px 0;overflow:auto}
+.tabs button{padding:8px 14px;border-radius:20px;border:1px solid var(--border);background:#fff;font-size:12px;font-weight:700;white-space:nowrap}
+.tabs button.active{background:#111827;color:#fff;border-color:#111827}
+.products{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px}
+.product{background:#fff;border-radius:12px;overflow:hidden;border:1px solid var(--border)}
+.product img{width:100%;height:130px;object-fit:cover;background:#eef8f2}
+.product-info{padding:8px}
+.product-info p{font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.product-info span{font-size:11px;color:var(--green);font-weight:800}
+.bottom-nav{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--border);display:flex;padding:8px 12px;gap:10px;z-index:99}
+.bottom-nav a{flex:1}
+.bottom-nav .btn{width:100%}
+#toast{position:fixed;left:50%;bottom:100px;transform:translateX(-50%);background:#111827;color:#fff;padding:10px 16px;border-radius:10px;display:none;z-index:100}
+@media(min-width:900px){
+  .hero{height:340px}
+  .shop-card{max-width:900px;margin:-40px auto 0}
+  .actions{max-width:900px;margin:0 auto}
+  .products{grid-template-columns:repeat(4,1fr);max-width:900px;margin:0 auto}
+  .tabs{max-width:900px;margin:0 auto}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <button onclick="history.back()">‹</button>
+  <strong id="headerTitle">Business Shop</strong>
+  <div style="margin-left:auto;font-size:18px">♡</div>
+</div>
+
+<div class="hero" id="shopHero">
+  <div class="hero-placeholder">🏪</div>
+</div>
+
+<div class="shop-card" id="shopInfo">
+  <p>Loading business...</p>
+</div>
+
+<div class="actions" id="shopActions"></div>
+
+<div class="tabs">
+  <button class="active">All Items</button>
+  <button>Phones</button>
+  <button>Accessories</button>
+  <button>Reviews</button>
+</div>
+
+<div class="products" id="shopProducts"></div>
+
+<div id="toast"></div>
+
+<script>
+const SUPABASE_URL="https://ycxshwgeebskdozmornh.supabase.co";
+const SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InljeHNod2dlZWJza2Rvem1vcm5oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzMDY0NjUsImV4cCI6MjEwMzg4MjQ2NX0.tMl7wILdVDhu0RWFaG_84ngJEryLt2c5cB8MEKW3kfU";
+
+function toast(msg){
+  const t=document.getElementById("toast");
+  t.textContent=msg; t.style.display="block";
+  setTimeout(()=>t.style.display="none",2500);
+}
+
+async function loadShop(){
+  const params=new URLSearchParams(location.search);
+  const id=params.get("id");
+  if(!id){ document.getElementById("shopInfo").innerHTML="<p>No business ID found</p>"; return; }
+
+  try{
+    const res=await fetch(`${SUPABASE_URL}/rest/v1/businesses?id=eq.${id}&select=*`,{
+      headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${SUPABASE_KEY}`}
+    });
+    const data=await res.json();
+    const b=data[0];
+    if(!b){ document.getElementById("shopInfo").innerHTML="<p>Business not found</p>"; return; }
+
+    const img=b.image_url||b.image||b.photo_url||"";
+    const name=b.name||"Business";
+    const cat=b.category||"Business";
+    const loc=b.location||b.address||"Onitsha, Nigeria";
+    const phone=(b.phone||"").toString();
+    const cleanPhone=phone.replace(/[^0-9]/g,"");
+    const rating=b.rating||"4.8";
+    const desc=b.description||`Welcome to ${name}. We sell quality ${cat} at affordable prices in ${loc}. Chat us on WhatsApp to order.`;
+
+    document.getElementById("headerTitle").textContent=name;
+    if(img){
+      document.getElementById("shopHero").innerHTML=`<img src="${img}" alt="${name}" onerror="this.parentElement.innerHTML='<div class=hero-placeholder>🏪</div>'">`;
+    }
+
+    document.getElementById("shopInfo").innerHTML=`
+      <div class="top-row">
+        <span class="badge">${cat}</span>
+        <span class="rating">⭐ ${rating}</span>
+      </div>
+      <h1>${name} ${b.verified?'<span class="verified">✓ VERIFIED</span>':''}</h1>
+      <div class="meta">📍 ${loc}</div>
+      <div class="meta">⏰ Open • Closes 9pm • Fast delivery in Onitsha</div>
+      <div class="desc">${desc}</div>
+    `;
+
+    document.getElementById("shopActions").innerHTML=`
+      <a class="btn btn-wa" href="https://wa.me/${cleanPhone}?text=Hi%20${encodeURIComponent(name)},%20I%20saw%20you%20on%20LosOja.%20I%20want%20to%20buy%20...">💬 WhatsApp</a>
+      <a class="btn btn-call" href="tel:${phone}">📞 Call Seller</a>
+    `;
+
+    // Products - use same image for demo, replace later with real products table
+    const productImages=[
+      img,
+      "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400",
+      "https://images.unsplash.com/photo-1592899677977-9bb10ba128a5?w=400",
+      "https://images.unsplash.com/photo-1525598912003-663126343e1f?w=400",
+      "https://images.unsplash.com/photo-1583394838336-acd977736f90?w=400",
+      "https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=400"
+    ];
+    
+    document.getElementById("shopProducts").innerHTML=productImages.map((pImg,i)=>`
+      <div class="product" onclick="toast('Chat seller on WhatsApp to buy')">
+        <img src="${pImg||productImages[1]}" loading="lazy" onerror="this.src='${productImages[1]}'">
+        <div class="product-info">
+          <p>${cat} ${i+1}</p>
+          <span>₦${(15000+(i*7000)).toLocaleString()}</span>
+        </div>
+      </div>
+    `).join("");
+
+  }catch(e){
+    console.error(e);
+    document.getElementById("shopInfo").innerHTML=`<p>Could not load business. Check connection.</p><p style="font-size:11px;color:#6b7280">${e.message}</p>`;
+  }
+}
+
+loadShop();
+</script>
+
+</body>
+</html>
