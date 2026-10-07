@@ -3,57 +3,46 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LosOja</title>
+<title>LosOja.com</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<header class="losoja-header">
-  <div class="losoja-brand">LosOja<span>.com</span></div>
-  <div style="font-size:20px">☰</div>
+<header class="top">
+  <div class="logo">LosOja.com</div>
+  <div class="menu">☰</div>
 </header>
 
-<section class="losoja-hero">
-  <h1>Find Trusted Businesses</h1>
+<section class="hero">
+  <h1>Find Trusted Businesses in <span>Onitsha</span></h1>
   <p>Phones, Fashion, Food, Electrical - Verified</p>
+  <div class="search">
+    <input id="searchInput" placeholder="Search business, product, phone...">
+    <button>Search</button>
+  </div>
 </section>
 
-<div class="search-wrap">
-  <input id="searchInput" placeholder="Search business, product, phone...">
-  <button>Search</button>
+<h2 class="sec">Categories</h2>
+<div class="cats">
+  <div class="cat" data-category="Phones"><span>📱</span>Phones</div>
+  <div class="cat" data-category="Fashion"><span>👗</span>Fashion</div>
+  <div class="cat" data-category="Food"><span>🍛</span>Food</div>
+  <div class="cat" data-category="Electrical"><span>💡</span>Electrical</div>
+  <div class="cat" data-category="Building"><span>🏠</span>Building</div>
+  <div class="cat" data-category="Services"><span>🔧</span>Services</div>
 </div>
 
-<section class="losoja-section">
-  <h2>Categories</h2>
-  <div class="category-grid">
-    <div class="category-card" data-category="Phones"><div>📱</div><p>Phones</p></div>
-    <div class="category-card" data-category="Fashion"><div>👗</div><p>Fashion</p></div>
-    <div class="category-card" data-category="Food"><div>🍛</div><p>Food</p></div>
-    <div class="category-card" data-category="Electrical"><div>💡</div><p>Electrical</p></div>
-    <div class="category-card" data-category="Building"><div>🏠</div><p>Building</p></div>
-    <div class="category-card" data-category="Services"><div>🔧</div><p>Services</p></div>
-  </div>
-</section>
+<h2 class="sec">Verified Businesses</h2>
+<div id="businessGrid"></div>
 
-<section class="losoja-section">
-  <h2>Verified Businesses</h2>
-  <div id="businessGrid"></div>
-  <button id="viewAllBtn" style="margin:14px auto;display:block;padding:10px 20px;background:#fff;border:1px solid #087a3e;color:#087a3e;border-radius:8px;font-weight:700">View All ↓</button>
-</section>
+<div class="add-box">
+  <h3>Own a business in Onitsha?</h3>
+  <p>Add it to LosOja for free and get customers on WhatsApp</p>
+  <a href="add-business.html">Add Your Business +</a>
+</div>
 
-<section class="losoja-section">
-  <div class="add-business-cta">
-    <h3>Own a business?</h3>
-    <p>Add it to LosOja for free and get customers on WhatsApp</p>
-    <a href="add-business.html">Add Your Business +</a>
-  </div>
-</section>
-
-<nav class="bottom-nav">
-  <a href="#" class="active">🏠 Home</a>
-  <a href="#">🔍 Search</a>
-  <a href="#">❤️ Saved</a>
-  <a href="#">👤 Profile</a>
+<nav class="bottom">
+  <a class="on">🏠 Home</a><a>🔍 Search</a><a>❤️ Saved</a><a>👤 Profile</a>
 </nav>
 
 <script src="js/businesses.js"></script>
