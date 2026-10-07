@@ -3,24 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LosOja - Find Businesses in Onitsha</title>
+<title>LosOja</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <header class="losoja-header">
   <div class="losoja-brand">LosOja<span>.com</span></div>
-  <div class="location">Onitsha 📍</div>
+  <div style="font-size:20px">☰</div>
 </header>
 
 <section class="losoja-hero">
-  <h1>Find Trusted Businesses in Onitsha</h1>
+  <h1>Find Trusted Businesses</h1>
   <p>Phones, Fashion, Food, Electrical - Verified</p>
 </section>
 
 <div class="search-wrap">
-  <input id="searchInput" type="text" placeholder="Search business, product, phone...">
-  <button onclick="window.searchBusinesses(document.getElementById('searchInput').value)">Search</button>
+  <input id="searchInput" placeholder="Search business, product, phone...">
+  <button>Search</button>
 </div>
 
 <section class="losoja-section">
@@ -35,67 +35,27 @@
   </div>
 </section>
 
-<section class="losoja-section" id="businesses">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-    <h2>Verified Businesses</h2>
-    <span id="businessCount" style="font-size:11px;color:#6b7280"></span>
-  </div>
-  <div id="businessGrid" class="limited"></div>
-  <button id="viewAllBtn">View All Businesses ↓</button>
+<section class="losoja-section">
+  <h2>Verified Businesses</h2>
+  <div id="businessGrid"></div>
+  <button id="viewAllBtn" style="margin:14px auto;display:block;padding:10px 20px;background:#fff;border:1px solid #087a3e;color:#087a3e;border-radius:8px;font-weight:700">View All ↓</button>
 </section>
 
 <section class="losoja-section">
   <div class="add-business-cta">
-    <h3>Own a business in Onitsha?</h3>
+    <h3>Own a business?</h3>
     <p>Add it to LosOja for free and get customers on WhatsApp</p>
     <a href="add-business.html">Add Your Business +</a>
   </div>
 </section>
 
 <nav class="bottom-nav">
-  <a href="#" class="active"><span>🏠</span>Home</a>
-  <a href="#"><span>🔍</span>Search</a>
-  <a href="#"><span>❤️</span>Saved</a>
-  <a href="#"><span>👤</span>Profile</a>
+  <a href="#" class="active">🏠 Home</a>
+  <a href="#">🔍 Search</a>
+  <a href="#">❤️ Saved</a>
+  <a href="#">👤 Profile</a>
 </nav>
 
-<div id="toast"></div>
-
 <script src="js/businesses.js"></script>
-<script>
-// View All / Show Less - 2 ROWS ONLY
-document.getElementById("viewAllBtn")?.addEventListener("click", function(){
-  const grid=document.getElementById("businessGrid");
-  const limited=grid.classList.contains("limited");
-  if(limited){
-    grid.classList.remove("limited");
-    this.textContent="Show Less ↑";
-  } else {
-    grid.classList.add("limited");
-    this.textContent="View All Businesses ↓";
-    window.scrollTo({top:document.getElementById("businesses").offsetTop-70, behavior:"smooth"});
-  }
-});
-
-// Toast
-window.showToast=function(msg){
-  const t=document.getElementById("toast");
-  t.textContent=msg; t.classList.add("show");
-  setTimeout(()=>t.classList.remove("show"),2500);
-};
-
-// Search live
-document.getElementById("searchInput")?.addEventListener("input", e=>{
-  window.searchBusinesses(e.target.value);
-});
-
-// Category click
-document.querySelectorAll(".category-card").forEach(card=>{
-  card.addEventListener("click", ()=>{
-    window.filterByCategory(card.dataset.category);
-  });
-});
-</script>
-
 </body>
 </html>
