@@ -899,83 +899,63 @@ const url =
     }
 
 
-    /* =====================================================
-       OPEN BUSINESS
-    ===================================================== */
+  /* =====================================================
+   OPEN BUSINESS
+===================================================== */
 
-    function openBusiness(businessId) {
+function openBusiness(businessId) {
 
-        const business =
-            businesses.find(
-                function (item) {
+    if (!businessId) {
 
-                    return String(
-                        item.id
-                    ) ===
-                    String(
-                        businessId
-                    );
-                }
-            );
+        console.warn(
+            "LosOja: No business ID provided."
+        );
 
-
-        if (!business) {
-
-            console.warn(
-                "LosOja: Business not found:",
-                businessId
-            );
-
-            return;
-        }
-
-
-        window.losojaSelectedBusiness =
-            business;
-
-
-        if (
-            typeof window.showBusinessDetails ===
-            "function"
-        ) {
-
-            window.showBusinessDetails(
-                business
-            );
-
-            return;
-        }
-
-
-        if (
-            typeof window.openBusinessDetails ===
-            "function"
-        ) {
-
-            window.openBusinessDetails(
-                business
-            );
-
-            return;
-        }
-
-
-        if (
-            typeof window.showToast ===
-            "function"
-        ) {
-
-            window.showToast(
-                business.name +
-                " • " +
-                (
-                    business.location ||
-                    "Nigeria"
-                )
-            );
-        }
+        return;
     }
 
+
+    const business =
+        businesses.find(
+            function (item) {
+
+                return String(
+                    item.id
+                ) ===
+                String(
+                    businessId
+                );
+            }
+        );
+
+
+    if (!business) {
+
+        console.warn(
+            "LosOja: Business not found:",
+            businessId
+        );
+
+        return;
+    }
+
+
+    window.losojaSelectedBusiness =
+        business;
+
+
+    console.log(
+        "LosOja: Opening storefront:",
+        businessId
+    );
+
+
+    window.location.href =
+        "shop.html?id=" +
+        encodeURIComponent(
+            String(businessId)
+        );
+}
 
     /* =====================================================
        PUBLIC FUNCTIONS
