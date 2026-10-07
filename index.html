@@ -1,57 +1,1083 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-<title>LosOja.com - Find Trusted Businesses</title>
+    <title>LosOja - Find What You Need Across Nigeria</title>
 
-<link
-    rel="stylesheet"
-    href="css/style.css"
->
+    <meta
+        name="description"
+        content="LosOja helps you find trusted Nigerian businesses, services, products, property, transportation and more."
+    >
+
+    <meta name="theme-color" content="#087a3e">
+
+    <link rel="stylesheet" href="css/style.css">
+
+<style>
+
+/* =========================================================
+   LOSOJA HOMEPAGE EXTRAS
+   Page-level only
+
+   IMPORTANT:
+   businesses.js and css/style.css remain untouched.
+========================================================= */
+
+
+/* =========================================================
+   FIX BOTTOM NAVIGATION
+========================================================= */
+
+.bottom-nav,
+.bottom-navigation,
+#bottomNav {
+    position: fixed !important;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    z-index: 9999;
+    box-sizing: border-box;
+}
+
+body {
+    padding-bottom: 90px;
+}
+
+
+/* =========================================================
+   LOSOJA HOMEPAGE BACKGROUND
+========================================================= */
+
+body.losoja-home {
+    position: relative;
+    min-height: 100vh;
+}
+
+body.losoja-home::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image: url("images/losoja-logo.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 360px auto;
+    opacity: 0.035;
+    pointer-events: none;
+    z-index: -1;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.losoja-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 18px;
+    background: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.losoja-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: #087a3e;
+    font-weight: 800;
+    font-size: 22px;
+}
+
+.losoja-brand img {
+    width: 42px;
+    height: 42px;
+    object-fit: contain;
+    border-radius: 10px;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.header-btn {
+    border: none;
+    background: #eef8f2;
+    color: #087a3e;
+    border-radius: 10px;
+    padding: 9px 12px;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.losoja-hero {
+    padding: 28px 18px;
+    text-align: center;
+}
+
+.losoja-hero h1 {
+    margin: 0 0 10px;
+    font-size: 34px;
+    line-height: 1.15;
+    color: #111827;
+}
+
+.losoja-hero p {
+    margin: 0 auto 20px;
+    max-width: 650px;
+    color: #6b7280;
+}
+
+.search-wrap {
+    display: flex;
+    max-width: 720px;
+    margin: 0 auto;
+    background: #ffffff;
+    border: 1px solid #d1d5db;
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.search-wrap input {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 15px;
+    font-size: 16px;
+}
+
+.search-wrap button {
+    border: none;
+    background: #087a3e;
+    color: #ffffff;
+    padding: 0 20px;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   DISCOVER BUTTON
+========================================================= */
+
+.discover-btn {
+    margin-top: 14px;
+    border: none;
+    background: #ffb703;
+    color: #111827;
+    border-radius: 12px;
+    padding: 12px 18px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   QUICK ACTIONS
+========================================================= */
+
+.quick-actions {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 12px;
+    padding: 0 18px 24px;
+}
+
+.quick-action {
+    border: 1px solid #e5e7eb;
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 16px 10px;
+    text-align: center;
+    cursor: pointer;
+    font-weight: 700;
+    color: #111827;
+}
+
+.quick-action:hover {
+    border-color: #087a3e;
+}
+
+.quick-action-icon {
+    display: block;
+    font-size: 26px;
+    margin-bottom: 7px;
+}
+
+
+/* =========================================================
+   WALLET CARD
+========================================================= */
+
+.wallet-card {
+    margin: 0 18px 25px;
+    padding: 22px;
+    border-radius: 20px;
+    color: #ffffff;
+    background: linear-gradient(
+        135deg,
+        #087a3e,
+        #055c2e
+    );
+    box-shadow: 0 10px 25px rgba(0,0,0,0.10);
+}
+
+.wallet-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.wallet-title {
+    font-size: 15px;
+    opacity: 0.9;
+}
+
+.wallet-balance {
+    font-size: 32px;
+    font-weight: 800;
+    margin: 8px 0 18px;
+}
+
+.wallet-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.wallet-actions button {
+    border: none;
+    border-radius: 10px;
+    padding: 10px 14px;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.wallet-primary {
+    background: #ffffff;
+    color: #087a3e;
+}
+
+.wallet-secondary {
+    background: rgba(255,255,255,0.15);
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   SECTION
+========================================================= */
+
+.losoja-section {
+    padding: 0 18px 28px;
+}
+
+.losoja-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+.losoja-section-header h2 {
+    margin: 0;
+    font-size: 22px;
+    color: #111827;
+}
+
+.section-link {
+    color: #087a3e;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+
+/* =========================================================
+   TUTORIAL VIDEOS
+========================================================= */
+
+.video-slider {
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    scroll-snap-type: x mandatory;
+}
+
+.video-card {
+    flex: 0 0 310px;
+    background: #ffffff;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid #e5e7eb;
+    scroll-snap-align: start;
+}
+
+.video-card video {
+    display: block;
+    width: 100%;
+    height: 175px;
+    object-fit: cover;
+    background: #111827;
+}
+
+.video-card-content {
+    padding: 14px;
+}
+
+.video-card-content h3 {
+    margin: 0 0 6px;
+    font-size: 16px;
+}
+
+.video-card-content p {
+    margin: 0;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   BILLS CARD
+========================================================= */
+
+.bills-card {
+    margin: 0 18px 28px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    padding: 20px;
+}
+
+.bills-card h2 {
+    margin: 0 0 7px;
+}
+
+.bills-card p {
+    color: #6b7280;
+    margin: 0 0 15px;
+}
+
+.bills-btn {
+    display: inline-block;
+    background: #087a3e;
+    color: #ffffff;
+    padding: 11px 17px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   CATEGORY GRID
+========================================================= */
+
+.category-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+}
+
+.category-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 15px 10px;
+    text-align: center;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.category-card:hover {
+    border-color: #087a3e;
+}
+
+.category-icon {
+    display: block;
+    font-size: 25px;
+    margin-bottom: 7px;
+}
+
+
+/* =========================================================
+   BUSINESS MARKETPLACE
+========================================================= */
+
+#businessGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+
+.business-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.business-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+}
+
+.business-card-body {
+    padding: 14px;
+}
+
+.business-card-body h3 {
+    margin: 0 0 6px;
+}
+
+.business-card-body p {
+    margin: 4px 0;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   SAVED ITEMS
+========================================================= */
+
+#savedItemsGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+}
+
+
+/* =========================================================
+   EXPLORE MORE
+========================================================= */
+
+.explore-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+}
+
+.explore-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 20px;
+    cursor: pointer;
+}
+
+.explore-card h3 {
+    margin: 0 0 7px;
+}
+
+.explore-card p {
+    margin: 0;
+    color: #6b7280;
+}
+
+
+/* =========================================================
+   ADD BUSINESS CTA
+========================================================= */
+
+.add-business-cta {
+    margin: 10px 18px 30px;
+    padding: 25px;
+    border-radius: 20px;
+    background: #eef8f2;
+    text-align: center;
+}
+
+.add-business-cta h2 {
+    margin: 0 0 8px;
+}
+
+.add-business-cta p {
+    color: #6b7280;
+}
+
+.add-business-cta button {
+    border: none;
+    background: #087a3e;
+    color: #ffffff;
+    padding: 12px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   MODALS
+========================================================= */
+
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 10000;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    width: min(100%, 520px);
+    max-height: 90vh;
+    overflow-y: auto;
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 22px;
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.modal-header h2 {
+    margin: 0;
+}
+
+.close-modal {
+    border: none;
+    background: #f3f4f6;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+
+/* =========================================================
+   FORMS
+========================================================= */
+
+.form-group {
+    margin-bottom: 14px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 700;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    padding: 12px;
+    outline: none;
+    font: inherit;
+}
+
+.form-group textarea {
+    min-height: 110px;
+    resize: vertical;
+}
+
+.form-submit {
+    width: 100%;
+    border: none;
+    background: #087a3e;
+    color: #ffffff;
+    padding: 13px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   AUTH BRANDING
+========================================================= */
+
+.auth-logo {
+    width: 58px;
+    height: 58px;
+    border-radius: 15px;
+    background: #087a3e;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 900;
+    margin: 0 auto 12px;
+}
+
+.auth-title {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.auth-title h2 {
+    margin: 0 0 5px;
+    color: #087a3e;
+}
+
+.auth-title p {
+    margin: 0;
+    color: #6b7280;
+}
+
+
+/* =========================================================
+   BOTTOM NAV
+========================================================= */
+
+.bottom-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    background: #ffffff;
+    border-top: 1px solid #e5e7eb;
+    min-height: 70px;
+    box-shadow: 0 -4px 15px rgba(0,0,0,0.08);
+}
+
+.bottom-nav a,
+.bottom-nav button {
+    flex: 1;
+    min-height: 70px;
+    border: none;
+    background: transparent;
+    text-decoration: none;
+    color: #6b7280;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.bottom-nav a.active,
+.bottom-nav button.active {
+    color: #087a3e;
+}
+
+.bottom-nav-icon {
+    font-size: 22px;
+}
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+#toast {
+    position: fixed;
+    left: 50%;
+    bottom: 95px;
+    transform: translateX(-50%);
+    background: #111827;
+    color: #ffffff;
+    padding: 12px 18px;
+    border-radius: 10px;
+    display: none;
+    z-index: 11000;
+    max-width: calc(100% - 30px);
+    text-align: center;
+}
+
+#toast.show {
+    display: block;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 900px) {
+
+    .quick-actions {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .category-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    #businessGrid,
+    #savedItemsGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .explore-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+
+@media (max-width: 600px) {
+
+    .losoja-header {
+        padding: 11px 12px;
+    }
+
+    .losoja-brand {
+        font-size: 19px;
+    }
+
+    .losoja-brand img {
+        width: 36px;
+        height: 36px;
+    }
+
+    .header-btn {
+        padding: 8px;
+    }
+
+    .losoja-hero {
+        padding: 22px 14px;
+    }
+
+    .losoja-hero h1 {
+        font-size: 27px;
+    }
+
+    .search-wrap {
+        width: 100%;
+    }
+
+    .search-wrap input {
+        min-width: 0;
+    }
+
+    .search-wrap button {
+        padding: 0 14px;
+    }
+
+    .quick-actions {
+        padding-left: 12px;
+        padding-right: 12px;
+        gap: 8px;
+    }
+
+    .quick-action {
+        padding: 12px 6px;
+        font-size: 13px;
+    }
+
+    .wallet-card,
+    .bills-card {
+        margin-left: 12px;
+        margin-right: 12px;
+    }
+
+    .losoja-section {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .category-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    #businessGrid,
+    #savedItemsGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .explore-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .video-card {
+        flex-basis: 280px;
+    }
+
+    .add-business-cta {
+        margin-left: 12px;
+        margin-right: 12px;
+    }
+
+    body {
+        padding-bottom: 82px;
+    }
+
+    .bottom-nav,
+    .bottom-nav a,
+    .bottom-nav button {
+        min-height: 64px;
+    }
+
+}
+
+
+/* =========================================================
+   PREVENT CONTENT FROM HIDING UNDER NAV
+========================================================= */
+
+main {
+    position: relative;
+    z-index: 1;
+}
+
+</style>
 
 </head>
 
-<body>
 
-<header class="top">
+<body class="losoja-home">
 
-    <div class="logo">
-        LosOja<span>.com</span>
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
+<header class="losoja-header">
+
+    <a href="index.html" class="losoja-brand">
+
+        <img
+            src="images/losoja-logo.png"
+            alt="LosOja"
+            onerror="this.style.display='none'"
+        >
+
+        <span>LosOja</span>
+
+    </a>
+
+
+    <div class="header-actions">
+
+        <button
+            class="header-btn"
+            id="notificationBtn"
+            type="button"
+            aria-label="Notifications"
+        >
+            🔔
+        </button>
+
+        <button
+            class="header-btn"
+            id="accountBtn"
+            type="button"
+        >
+            Account
+        </button>
+
+       <a
+    href="oja.html"
+    class="header-btn"
+>
+    Oja
+</a>
+
     </div>
-
-    <div>☰</div>
 
 </header>
 
 
-<section class="hero">
 
-    <h1>
-        Find Trusted Businesses
-    </h1>
+<main>
+
+
+<!-- =====================================================
+     HERO
+===================================================== -->
+
+<section class="losoja-hero">
+
+    <h1>Find What You Need Across Nigeria</h1>
 
     <p>
-        Phones, Fashion, Food, Electrical - Verified
+        Discover trusted businesses, products, services,
+        property, transportation and more on LosOja.
     </p>
 
-    <div class="search">
+
+    <div class="search-wrap">
 
         <input
+            type="search"
             id="searchInput"
-            placeholder="Search business, product, phone..."
+            placeholder="Search businesses, products or services..."
+            autocomplete="off"
         >
 
-        <button>
+        <button
+            id="searchBtn"
+            type="button"
+        >
             Search
+        </button>
+
+    </div>
+
+
+    <button
+        id="discoverBtn"
+        class="discover-btn"
+        type="button"
+    >
+        📍 Discover Near Me
+    </button>
+
+</section>
+
+
+
+<!-- =====================================================
+     QUICK ACTIONS
+===================================================== -->
+
+<section class="quick-actions">
+
+    <button
+        class="quick-action"
+        id="categoriesBtn"
+        type="button"
+    >
+        <span class="quick-action-icon">🗂️</span>
+        Categories
+    </button>
+
+
+    <button
+        class="quick-action"
+        id="marketplaceBtn"
+        type="button"
+    >
+        <span class="quick-action-icon">🛒</span>
+        Marketplace
+    </button>
+
+
+    <button
+        class="quick-action"
+        id="propertyBtn"
+        type="button"
+    >
+        <span class="quick-action-icon">🏠</span>
+        Property
+    </button>
+
+
+    <button
+        class="quick-action"
+        id="mobilityBtn"
+        type="button"
+    >
+        <span class="quick-action-icon">🚕</span>
+        Mobility
+    </button>
+
+
+    <button
+        class="quick-action"
+        id="addBusinessBtn"
+        type="button"
+    >
+        <span class="quick-action-icon">➕</span>
+        Add Business
+    </button>
+
+
+    <button
+        class="quick-action"
+        id="chatBabaOjaBtn"
+        type="button"
+    >
+        <span class="quick-action-icon">💬</span>
+        Chat with Baba Oja
+    </button>
+
+</section>
+
+
+
+<!-- =====================================================
+     WALLET
+===================================================== -->
+
+<section class="wallet-card">
+
+    <div class="wallet-top">
+
+        <div>
+
+            <div class="wallet-title">
+                LosOja Balance
+            </div>
+
+            <div
+                class="wallet-balance"
+                id="walletBalance"
+            >
+                ₦0.00
+            </div>
+
+        </div>
+
+
+        <button
+            id="toggleBalanceBtn"
+            class="wallet-secondary"
+            type="button"
+        >
+            👁️
+        </button>
+
+    </div>
+
+
+    <div class="wallet-actions">
+
+        <button
+            id="viewWalletBtn"
+            class="wallet-primary"
+            type="button"
+        >
+            View Wallet
+        </button>
+
+
+        <button
+            id="payBillsWalletBtn"
+            class="wallet-secondary"
+            type="button"
+        >
+            Pay Bills
         </button>
 
     </div>
@@ -59,95 +1085,2191 @@
 </section>
 
 
-<h2 class="sec">
-    Categories
-</h2>
 
+<!-- =====================================================
+     HOW TO USE OJA
+===================================================== -->
 
-<div class="cats">
+<section class="losoja-section">
 
-    <div class="cat">
-        <span>📱</span>
-        Phones
+    <div class="losoja-section-header">
+
+        <h2>How to Use Oja</h2>
+
+        <span class="section-link">
+            Learn LosOja
+        </span>
+
     </div>
 
-    <div class="cat">
-        <span>👗</span>
-        Fashion
+
+    <div class="video-slider">
+
+
+        <article class="video-card">
+
+            <video
+                controls
+                preload="metadata"
+                playsinline
+            >
+                <source
+                    src="videos/how-to-use-oja.mp4"
+                    type="video/mp4"
+                >
+            </video>
+
+            <div class="video-card-content">
+
+                <h3>How to Use Oja</h3>
+
+                <p>
+                    Learn how to navigate and use the LosOja marketplace.
+                </p>
+
+            </div>
+
+        </article>
+
+
+
+        <article class="video-card">
+
+            <video
+                controls
+                preload="metadata"
+                playsinline
+            >
+                <source
+                    src="videos/how-to-search.mp4"
+                    type="video/mp4"
+                >
+            </video>
+
+            <div class="video-card-content">
+
+                <h3>How to Search</h3>
+
+                <p>
+                    Find businesses, products and services quickly.
+                </p>
+
+            </div>
+
+        </article>
+
+
+
+        <article class="video-card">
+
+            <video
+                controls
+                preload="metadata"
+                playsinline
+            >
+                <source
+                    src="videos/how-to-add-business.mp4"
+                    type="video/mp4"
+                >
+            </video>
+
+            <div class="video-card-content">
+
+                <h3>Add Your Business</h3>
+
+                <p>
+                    Learn how businesses can join LosOja.
+                </p>
+
+            </div>
+
+        </article>
+
+
+
+        <article class="video-card">
+
+            <video
+                controls
+                preload="metadata"
+                playsinline
+            >
+                <source
+                    src="videos/how-escrow-works.mp4"
+                    type="video/mp4"
+                >
+            </video>
+
+            <div class="video-card-content">
+
+                <h3>How Escrow Works</h3>
+
+                <p>
+                    Understand how LosOja protects transactions.
+                </p>
+
+            </div>
+
+        </article>
+
+
+
+        <article class="video-card">
+
+            <video
+                controls
+                preload="metadata"
+                playsinline
+            >
+                <source
+                    src="videos/how-to-pay-bills.mp4"
+                    type="video/mp4"
+                >
+            </video>
+
+            <div class="video-card-content">
+
+                <h3>How to Pay Bills</h3>
+
+                <p>
+                    Learn how to use LosOja for bill payments.
+                </p>
+
+            </div>
+
+        </article>
+
     </div>
 
-    <div class="cat">
-        <span>🍛</span>
-        Food
-    </div>
-
-    <div class="cat">
-        <span>💡</span>
-        Electrical
-    </div>
-
-    <div class="cat">
-        <span>🏠</span>
-        Building
-    </div>
-
-    <div class="cat">
-        <span>🔧</span>
-        Services
-    </div>
-
-</div>
+</section>
 
 
-<h2 class="sec">
-    Verified Businesses
-</h2>
 
+<!-- =====================================================
+     PAY BILLS
+===================================================== -->
 
-<div id="businessGrid"></div>
+<section class="bills-card">
 
-
-<div class="add">
-
-    <h3>
-        Own a business?
-    </h3>
+    <h2>Pay Bills</h2>
 
     <p>
-        Add it to LosOja for free and get customers on WhatsApp
+        Buy airtime, data and access other LosOja financial services.
     </p>
 
-    <a href="add-business.html">
-        Add Your Business +
+    <a
+        href="bills.html"
+        class="bills-btn"
+    >
+        Pay Bills
     </a>
+
+</section>
+
+
+
+<!-- =====================================================
+     VERIFIED BUSINESSES
+===================================================== -->
+
+<section class="losoja-section">
+
+    <div class="losoja-section-header">
+
+        <h2>Verified Businesses</h2>
+
+        <a
+            href="#businessGrid"
+            class="section-link"
+        >
+            View All
+        </a>
+
+    </div>
+
+
+    <div id="businessGrid">
+
+        <div class="business-card">
+
+            <div class="business-card-body">
+
+                <h3>Loading businesses...</h3>
+
+                <p>
+                    Please wait while LosOja loads nearby businesses.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     CATEGORIES
+===================================================== -->
+
+<section
+    class="losoja-section"
+    id="categoriesSection"
+>
+
+    <div class="losoja-section-header">
+
+        <h2>Categories</h2>
+
+    </div>
+
+
+    <div class="category-grid">
+
+
+        <div
+            class="category-card"
+            data-category="Food"
+        >
+            <span class="category-icon">🍔</span>
+            Food
+        </div>
+
+
+        <div
+            class="category-card"
+            data-category="Fashion"
+        >
+            <span class="category-icon">👕</span>
+            Fashion
+        </div>
+
+
+        <div
+            class="category-card"
+            data-category="Phones"
+        >
+            <span class="category-icon">📱</span>
+            Phones
+        </div>
+
+
+        <div
+            class="category-card"
+            data-category="Vehicles"
+        >
+            <span class="category-icon">🚗</span>
+            Vehicles
+        </div>
+
+
+        <div
+            class="category-card"
+            data-category="Property"
+        >
+            <span class="category-icon">🏠</span>
+            Property
+        </div>
+
+
+        <div
+            class="category-card"
+            data-category="Furniture & Home"
+        >
+            <span class="category-icon">🛋️</span>
+            Furniture & Home
+        </div>
+
+
+        <div
+            class="category-card"
+            data-category="Plumbing"
+        >
+            <span class="category-icon">🔧</span>
+            Plumbing
+        </div>
+
+
+        <div
+            class="category-card"
+            data-category="Electrical"
+        >
+            <span class="category-icon">💡</span>
+            Electrical
+        </div>
+
+
+        <div
+            class="category-card"
+            data-category="Carpentry"
+        >
+            <span class="category-icon">🪚</span>
+            Carpentry
+        </div>
+
+
+        <div
+            class="category-card"
+            data-category="Construction"
+        >
+            <span class="category-icon">🏗️</span>
+            Construction
+        </div>
+
+
+        <div
+            class="category-card"
+            data-category="Healthcare"
+        >
+            <span class="category-icon">🏥</span>
+            Healthcare
+        </div>
+
+
+        <div
+            class="category-card"
+            data-category="Beauty"
+        >
+            <span class="category-icon">💄</span>
+            Beauty
+        </div>
+
+
+        <div
+            class="category-card"
+            data-category="Cleaning"
+        >
+            <span class="category-icon">🧹</span>
+            Cleaning
+        </div>
+
+
+        <div
+            class="category-card"
+            data-category="Repairs & Maintenance"
+        >
+            <span class="category-icon">🛠️</span>
+            Repairs & Maintenance
+        </div>
+
+
+        <div
+            class="category-card"
+            data-category="Technology"
+        >
+            <span class="category-icon">💻</span>
+            Technology
+        </div>
+
+
+        <div
+            class="category-card"
+            data-category="Agriculture"
+        >
+            <span class="category-icon">🌱</span>
+            Agriculture
+        </div>
+
+
+        <div
+            class="category-card"
+            data-category="Logistics & Moving"
+        >
+            <span class="category-icon">🚚</span>
+            Logistics & Moving
+        </div>
+
+
+        <div
+            class="category-card"
+            data-category="Education & Tutors"
+        >
+            <span class="category-icon">📚</span>
+            Education & Tutors
+        </div>
+
+
+        <div
+            class="category-card"
+            data-category="Professional Services"
+        >
+            <span class="category-icon">💼</span>
+            Professional Services
+        </div>
+
+
+        <div
+            class="category-card"
+            data-category="Services"
+        >
+            <span class="category-icon">🔨</span>
+            Services
+        </div>
+
+
+        <div
+            class="category-card"
+            data-category="Trade by Barter"
+        >
+            <span class="category-icon">🔄</span>
+            Trade by Barter
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     SAVED
+===================================================== -->
+
+<section
+    class="losoja-section"
+    id="savedSection"
+>
+
+    <div class="losoja-section-header">
+
+        <h2>Saved Items</h2>
+
+    </div>
+
+
+    <div id="savedItemsGrid">
+
+        <p>
+            Your saved businesses will appear here.
+        </p>
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     EXPLORE MORE
+===================================================== -->
+
+<section class="losoja-section">
+
+    <div class="losoja-section-header">
+
+        <h2>Explore More</h2>
+
+    </div>
+
+
+    <div class="explore-grid">
+
+
+        <div
+            class="explore-card"
+            id="exploreProperty"
+        >
+
+            <h3>🏠 Property</h3>
+
+            <p>
+                Find homes, land and other property listings.
+            </p>
+
+        </div>
+
+
+
+        <div
+            class="explore-card"
+            id="exploreMobility"
+        >
+
+            <h3>🚕 Mobility</h3>
+
+            <p>
+                Cab, Tricycle, Bike and truck services.
+            </p>
+
+        </div>
+
+
+
+        <div
+            class="explore-card"
+            id="exploreMarketplace"
+        >
+
+            <h3>🛒 Marketplace</h3>
+
+            <p>
+                Discover products listed by sellers.
+            </p>
+
+        </div>
+
+
+
+        <div
+            class="explore-card"
+            id="exploreServices"
+        >
+
+            <h3>🛠️ Services</h3>
+
+            <p>
+                Find skilled professionals near you.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     ADD BUSINESS CTA
+===================================================== -->
+
+<section class="add-business-cta">
+
+    <h2>Grow Your Business With LosOja</h2>
+
+    <p>
+        List your business and let customers across Nigeria find you.
+    </p>
+
+    <button
+        id="addBusinessCta"
+        type="button"
+    >
+        Add Your Business
+    </button>
+
+</section>
+
+
+</main>
+
+
+
+<!-- =====================================================
+     ADD BUSINESS MODAL
+===================================================== -->
+
+<div
+    class="modal"
+    id="addBusinessModal"
+>
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+
+            <h2>Add Business</h2>
+
+            <button
+                class="close-modal"
+                type="button"
+                data-close="addBusinessModal"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <form id="addBusinessForm">
+
+            <div class="form-group">
+
+                <label for="businessName">
+                    Business Name
+                </label>
+
+                <input
+                    id="businessName"
+                    name="businessName"
+                    type="text"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="businessCategory">
+                    Category
+                </label>
+
+                <select
+                    id="businessCategory"
+                    name="category"
+                    required
+                >
+
+                    <option value="">
+                        Select category
+                    </option>
+
+                    <option>Food</option>
+                    <option>Fashion</option>
+                    <option>Phones</option>
+                    <option>Vehicles</option>
+                    <option>Property</option>
+                    <option>Furniture & Home</option>
+                    <option>Plumbing</option>
+                    <option>Electrical</option>
+                    <option>Carpentry</option>
+                    <option>Construction</option>
+                    <option>Healthcare</option>
+                    <option>Beauty</option>
+                    <option>Cleaning</option>
+                    <option>Repairs & Maintenance</option>
+                    <option>Technology</option>
+                    <option>Agriculture</option>
+                    <option>Logistics & Moving</option>
+                    <option>Education & Tutors</option>
+                    <option>Professional Services</option>
+                    <option>Services</option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="businessLocation">
+                    Location
+                </label>
+
+                <input
+                    id="businessLocation"
+                    name="location"
+                    type="text"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="businessPhone">
+                    Phone
+                </label>
+
+                <input
+                    id="businessPhone"
+                    name="phone"
+                    type="tel"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="businessDescription">
+                    Description
+                </label>
+
+                <textarea
+                    id="businessDescription"
+                    name="description"
+                    required
+                ></textarea>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="businessImage">
+                    Business Photo
+                </label>
+
+                <input
+                    id="businessImage"
+                    name="image"
+                    type="file"
+                    accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
+                >
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="form-submit"
+            >
+                Save Business
+            </button>
+
+        </form>
+
+    </div>
 
 </div>
 
 
-<nav class="bottom">
 
-    <a class="on">
-        🏠 Home
+<!-- =====================================================
+     BUSINESS DETAILS MODAL
+===================================================== -->
+
+<div
+    class="modal"
+    id="businessDetailsModal"
+>
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+
+            <h2>Business Details</h2>
+
+            <button
+                class="close-modal"
+                type="button"
+                data-close="businessDetailsModal"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div id="businessDetailsContent">
+
+            <p>
+                Loading...
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     LOGIN MODAL
+===================================================== -->
+
+<div
+    class="modal"
+    id="loginModal"
+>
+
+    <div class="modal-content">
+
+        <div class="auth-logo">
+            L
+        </div>
+
+
+        <div class="auth-title">
+
+            <h2>LosOja</h2>
+
+            <p>
+                Welcome back
+            </p>
+
+        </div>
+
+
+        <form id="loginForm">
+
+            <div class="form-group">
+
+                <label for="loginEmail">
+                    Email
+                </label>
+
+                <input
+                    id="loginEmail"
+                    name="email"
+                    type="email"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="loginPassword">
+                    Password
+                </label>
+
+                <input
+                    id="loginPassword"
+                    name="password"
+                    type="password"
+                    required
+                >
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="form-submit"
+            >
+                Sign In
+            </button>
+
+        </form>
+
+
+        <p style="text-align:center;margin-top:15px;">
+
+            Don't have an account?
+
+            <button
+                id="openSignupFromLogin"
+                type="button"
+                style="border:none;background:none;color:#087a3e;font-weight:700;cursor:pointer;"
+            >
+                Sign Up
+            </button>
+
+        </p>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     SIGNUP MODAL
+===================================================== -->
+
+<div
+    class="modal"
+    id="signupModal"
+>
+
+    <div class="modal-content">
+
+        <div class="auth-logo">
+            L
+        </div>
+
+
+        <div class="auth-title">
+
+            <h2>LosOja</h2>
+
+            <p>
+                Create your account
+            </p>
+
+        </div>
+
+
+        <form id="signupForm">
+
+            <div class="form-group">
+
+                <label for="signupName">
+                    Full Name
+                </label>
+
+                <input
+                    id="signupName"
+                    name="name"
+                    type="text"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="signupEmail">
+                    Email
+                </label>
+
+                <input
+                    id="signupEmail"
+                    name="email"
+                    type="email"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="signupPassword">
+                    Password
+                </label>
+
+                <input
+                    id="signupPassword"
+                    name="password"
+                    type="password"
+                    required
+                >
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="form-submit"
+            >
+                Create Account
+            </button>
+
+        </form>
+
+
+        <p style="text-align:center;margin-top:15px;">
+
+            Already have an account?
+
+            <button
+                id="openLoginFromSignup"
+                type="button"
+                style="border:none;background:none;color:#087a3e;font-weight:700;cursor:pointer;"
+            >
+                Sign In
+            </button>
+
+        </p>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     TOAST
+===================================================== -->
+
+<div id="toast"></div>
+
+
+
+<!-- =====================================================
+     BOTTOM NAVIGATION
+===================================================== -->
+
+<nav
+    class="bottom-nav"
+    id="bottomNav"
+>
+
+    <a
+        href="index.html"
+        class="active"
+    >
+
+        <span class="bottom-nav-icon">
+            🏠
+        </span>
+
+        Home
+
     </a>
 
-    <a>
-        🔍 Search
-    </a>
 
-    <a>
-        ❤️ Saved
-    </a>
+    <button
+        id="bottomExploreBtn"
+        type="button"
+    >
 
-    <a>
-        👤 Profile
-    </a>
+        <span class="bottom-nav-icon">
+            🔎
+        </span>
+
+        Explore
+
+    </button>
+
+
+    <button
+        id="plusBtn"
+        type="button"
+    >
+
+        <span class="bottom-nav-icon">
+            ➕
+        </span>
+
+        Add
+
+    </button>
+
+
+    <button
+        id="bottomSavedBtn"
+        type="button"
+    >
+
+        <span class="bottom-nav-icon">
+            ❤️
+        </span>
+
+        Saved
+
+    </button>
+
+
+    <button
+        id="bottomAccountBtn"
+        type="button"
+    >
+
+        <span class="bottom-nav-icon">
+            👤
+        </span>
+
+        Account
+
+    </button>
 
 </nav>
 
 
-<script src="js/businesses.js"></script>
+
+<!-- =====================================================
+     SAVED ITEMS SCRIPT
+===================================================== -->
+
+<script>
+
+window.renderSavedItems = function () {
+
+    const container =
+        document.getElementById("savedItemsGrid");
+
+    if (!container) return;
+
+    try {
+
+        const saved =
+            JSON.parse(
+                localStorage.getItem("losoja_saved_items") || "[]"
+            );
+
+        if (!saved.length) {
+
+            container.innerHTML =
+                "<p>No saved businesses yet.</p>";
+
+            return;
+        }
+
+        container.innerHTML = "";
+
+        saved.forEach(function (item) {
+
+            const card =
+                document.createElement("div");
+
+            card.className =
+                "business-card";
+
+            card.innerHTML = `
+
+                <div class="business-card-body">
+
+                    <h3>
+                        ${item.name || "Saved Business"}
+                    </h3>
+
+                    <p>
+                        ${item.category || ""}
+                    </p>
+
+                    <p>
+                        ${item.location || ""}
+                    </p>
+
+                </div>
+
+            `;
+
+            container.appendChild(card);
+
+        });
+
+    } catch (error) {
+
+        console.error(
+            "Saved items error:",
+            error
+        );
+
+    }
+
+};
+
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        window.renderSavedItems();
+
+    }
+);
+
+</script>
+
+
+
+<!-- =====================================================
+     WALLET BALANCE
+===================================================== -->
+
+<script>
+
+(function () {
+
+    "use strict";
+
+
+    const SUPABASE_URL =
+        "https://ycxshwgeebskdozmornh.supabase.co";
+
+
+    const SUPABASE_KEY =
+        "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
+
+
+    const balanceElement =
+        document.getElementById("walletBalance");
+
+
+    const toggleButton =
+        document.getElementById("toggleBalanceBtn");
+
+
+    let actualBalance = 0;
+
+    let balanceVisible = true;
+
+
+    function formatNaira(amount) {
+
+        return new Intl.NumberFormat(
+            "en-NG",
+            {
+                style: "currency",
+                currency: "NGN",
+                minimumFractionDigits: 2
+            }
+        ).format(amount);
+
+    }
+
+
+    async function loadWalletBalance() {
+
+        try {
+
+            if (
+                typeof window.ensureValidSupabaseSession ===
+                "function"
+            ) {
+
+                await window.ensureValidSupabaseSession();
+
+            }
+
+
+            let token = null;
+
+
+            if (
+                typeof window.getSupabaseAccessToken ===
+                "function"
+            ) {
+
+                token =
+                    await window.getSupabaseAccessToken();
+
+            }
+
+
+            let session = null;
+
+
+            if (
+                typeof window.getSupabaseSession ===
+                "function"
+            ) {
+
+                session =
+                    await window.getSupabaseSession();
+
+            }
+
+
+            let user = null;
+
+
+            if (
+                typeof window.getCurrentUser ===
+                "function"
+            ) {
+
+                user =
+                    await window.getCurrentUser();
+
+            }
+
+
+            const userId =
+                user?.id ||
+                session?.user?.id;
+
+
+            if (!userId || !token) {
+
+                balanceElement.textContent =
+                    "₦0.00";
+
+                return;
+
+            }
+
+
+            const response =
+                await fetch(
+
+                    SUPABASE_URL +
+                    "/rest/v1/wallets?user_id=eq." +
+                    encodeURIComponent(userId) +
+                    "&select=balance&limit=1",
+
+                    {
+                        headers: {
+
+                            apikey:
+                                SUPABASE_KEY,
+
+                            Authorization:
+                                "Bearer " + token
+
+                        }
+
+                    }
+
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Wallet request failed"
+                );
+
+            }
+
+
+            const data =
+                await response.json();
+
+
+            actualBalance =
+                Number(
+                    data?.[0]?.balance || 0
+                );
+
+
+            updateBalanceDisplay();
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "Wallet balance error:",
+                error
+            );
+
+            balanceElement.textContent =
+                "₦0.00";
+
+        }
+
+    }
+
+
+    function updateBalanceDisplay() {
+
+        if (balanceVisible) {
+
+            balanceElement.textContent =
+                formatNaira(actualBalance);
+
+        } else {
+
+            balanceElement.textContent =
+                "₦••••••";
+
+        }
+
+    }
+
+
+    if (toggleButton) {
+
+        toggleButton.addEventListener(
+            "click",
+            function () {
+
+                balanceVisible =
+                    !balanceVisible;
+
+                updateBalanceDisplay();
+
+            }
+        );
+
+    }
+
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+            loadWalletBalance();
+
+        }
+    );
+
+
+    window.loadLosOjaWalletBalance =
+        loadWalletBalance;
+
+})();
+
+</script>
+
+
+
+<!-- =====================================================
+     PAGE CONNECTIONS
+===================================================== -->
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+
+        /* =================================================
+           OPEN ADD BUSINESS
+        ================================================= */
+
+        function openAddBusiness() {
+
+            const modal =
+                document.getElementById(
+                    "addBusinessModal"
+                );
+
+            if (modal) {
+
+                modal.classList.add("active");
+
+            }
+
+        }
+
+
+        const addBusinessButtons = [
+
+            document.getElementById(
+                "addBusinessBtn"
+            ),
+
+            document.getElementById(
+                "addBusinessCta"
+            ),
+
+            document.getElementById(
+                "plusBtn"
+            )
+
+        ];
+
+
+        addBusinessButtons.forEach(
+            function (button) {
+
+                if (button) {
+
+                    button.addEventListener(
+                        "click",
+                        openAddBusiness
+                    );
+
+                }
+
+            }
+        );
+
+
+        /* =================================================
+           CLOSE MODALS
+        ================================================= */
+
+        document
+            .querySelectorAll(
+                "[data-close]"
+            )
+            .forEach(
+                function (button) {
+
+                    button.addEventListener(
+                        "click",
+                        function () {
+
+                            const id =
+                                button.getAttribute(
+                                    "data-close"
+                                );
+
+                            const modal =
+                                document.getElementById(
+                                    id
+                                );
+
+                            if (modal) {
+
+                                modal.classList.remove(
+                                    "active"
+                                );
+
+                            }
+
+                        }
+                    );
+
+                }
+            );
+
+
+        document
+            .querySelectorAll(".modal")
+            .forEach(
+                function (modal) {
+
+                    modal.addEventListener(
+                        "click",
+                        function (event) {
+
+                            if (
+                                event.target === modal
+                            ) {
+
+                                modal.classList.remove(
+                                    "active"
+                                );
+
+                            }
+
+                        }
+                    );
+
+                }
+            );
+
+
+        /* =================================================
+           ACCOUNT
+        ================================================= */
+
+        function openAccount() {
+
+            window.location.href =
+                "account.html";
+
+        }
+
+
+        const accountButtons = [
+
+            document.getElementById(
+                "accountBtn"
+            ),
+
+            document.getElementById(
+                "bottomAccountBtn"
+            )
+
+        ];
+
+
+        accountButtons.forEach(
+            function (button) {
+
+                if (button) {
+
+                    button.addEventListener(
+                        "click",
+                        openAccount
+                    );
+
+                }
+
+            }
+        );
+
+
+        /* =================================================
+           WALLET
+        ================================================= */
+
+        const viewWallet =
+            document.getElementById(
+                "viewWalletBtn"
+            );
+
+
+        if (viewWallet) {
+
+            viewWallet.addEventListener(
+                "click",
+                function () {
+
+                    window.location.href =
+                        "balance.html";
+
+                }
+            );
+
+        }
+
+
+        const payBills =
+            document.getElementById(
+                "payBillsWalletBtn"
+            );
+
+
+        if (payBills) {
+
+            payBills.addEventListener(
+                "click",
+                function () {
+
+                    window.location.href =
+                        "bills.html";
+
+                }
+            );
+
+        }
+
+
+        /* =================================================
+           PROPERTY
+        ================================================= */
+
+        const propertyButtons = [
+
+            document.getElementById(
+                "propertyBtn"
+            ),
+
+            document.getElementById(
+                "exploreProperty"
+            )
+
+        ];
+
+
+        propertyButtons.forEach(
+            function (button) {
+
+                if (button) {
+
+                    button.addEventListener(
+                        "click",
+                        function () {
+
+                            window.location.href =
+                                "property.html";
+
+                        }
+                    );
+
+                }
+
+            }
+        );
+
+
+        /* =================================================
+           MOBILITY
+        ================================================= */
+
+        const mobilityButtons = [
+
+            document.getElementById(
+                "mobilityBtn"
+            ),
+
+            document.getElementById(
+                "exploreMobility"
+            )
+
+        ];
+
+
+        mobilityButtons.forEach(
+            function (button) {
+
+                if (button) {
+
+                    button.addEventListener(
+                        "click",
+                        function () {
+
+                            window.location.href =
+                                "mobility.html";
+
+                        }
+                    );
+
+                }
+
+            }
+        );
+
+
+        /* =================================================
+           MARKETPLACE
+        ================================================= */
+
+        const marketplaceButtons = [
+
+            document.getElementById(
+                "marketplaceBtn"
+            ),
+
+            document.getElementById(
+                "exploreMarketplace"
+            )
+
+        ];
+
+marketplaceButtons.forEach(
+    function (button) {
+
+        if (button) {
+
+            button.addEventListener(
+                "click",
+                function () {
+
+                    window.location.href =
+                        "oja.html";
+
+                }
+            );
+
+        }
+
+    }
+);
+
+        /* =================================================
+           SERVICES
+        ================================================= */
+
+        const servicesButton =
+            document.getElementById(
+                "exploreServices"
+            );
+
+
+        if (servicesButton) {
+
+            servicesButton.addEventListener(
+                "click",
+                function () {
+
+                    const category =
+                        document.querySelector(
+                            '[data-category="Services"]'
+                        );
+
+                    if (category) {
+
+                        category.click();
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        /* =================================================
+           CATEGORIES
+        ================================================= */
+
+        const categoriesButton =
+            document.getElementById(
+                "categoriesBtn"
+            );
+
+
+        if (categoriesButton) {
+
+            categoriesButton.addEventListener(
+                "click",
+                function () {
+
+                    const section =
+                        document.getElementById(
+                            "categoriesSection"
+                        );
+
+                    if (section) {
+
+                        section.scrollIntoView({
+                            behavior: "smooth"
+                        });
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        /* =================================================
+           BOTTOM EXPLORE
+        ================================================= */
+
+        const bottomExplore =
+            document.getElementById(
+                "bottomExploreBtn"
+            );
+
+
+        if (bottomExplore) {
+
+            bottomExplore.addEventListener(
+                "click",
+                function () {
+
+                    const section =
+                        document.querySelector(
+                            ".explore-grid"
+                        );
+
+                    if (section) {
+
+                        section.scrollIntoView({
+                            behavior: "smooth"
+                        });
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        /* =================================================
+           SAVED
+        ================================================= */
+
+        const bottomSaved =
+            document.getElementById(
+                "bottomSavedBtn"
+            );
+
+
+        if (bottomSaved) {
+
+            bottomSaved.addEventListener(
+                "click",
+                function () {
+
+                    const section =
+                        document.getElementById(
+                            "savedSection"
+                        );
+
+                    if (section) {
+
+                        section.scrollIntoView({
+                            behavior: "smooth"
+                        });
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        /* =================================================
+           SIGNUP / LOGIN SWITCH
+        ================================================= */
+
+        const loginModal =
+            document.getElementById(
+                "loginModal"
+            );
+
+
+        const signupModal =
+            document.getElementById(
+                "signupModal"
+            );
+
+
+        const signupFromLogin =
+            document.getElementById(
+                "openSignupFromLogin"
+            );
+
+
+        const loginFromSignup =
+            document.getElementById(
+                "openLoginFromSignup"
+            );
+
+
+        if (signupFromLogin) {
+
+            signupFromLogin.addEventListener(
+                "click",
+                function () {
+
+                    if (loginModal) {
+
+                        loginModal.classList.remove(
+                            "active"
+                        );
+
+                    }
+
+                    if (signupModal) {
+
+                        signupModal.classList.add(
+                            "active"
+                        );
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        if (loginFromSignup) {
+
+            loginFromSignup.addEventListener(
+                "click",
+                function () {
+
+                    if (signupModal) {
+
+                        signupModal.classList.remove(
+                            "active"
+                        );
+
+                    }
+
+                    if (loginModal) {
+
+                        loginModal.classList.add(
+                            "active"
+                        );
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        /* =================================================
+           SEARCH
+        ================================================= */
+
+        const searchInput =
+            document.getElementById(
+                "searchInput"
+            );
+
+
+        const searchButton =
+            document.getElementById(
+                "searchBtn"
+            );
+
+
+        function performSearch() {
+
+            const query =
+                searchInput
+                    ? searchInput.value.trim()
+                    : "";
+
+
+            if (
+                typeof window.searchBusinesses ===
+                "function"
+            ) {
+
+                window.searchBusinesses(query);
+
+            }
+
+            const grid =
+                document.getElementById(
+                    "businessGrid"
+                );
+
+            if (grid) {
+
+                grid.scrollIntoView({
+                    behavior: "smooth"
+                });
+
+            }
+
+        }
+
+
+        if (searchButton) {
+
+            searchButton.addEventListener(
+                "click",
+                performSearch
+            );
+
+        }
+
+
+        if (searchInput) {
+
+            searchInput.addEventListener(
+                "keydown",
+                function (event) {
+
+                    if (
+                        event.key === "Enter"
+                    ) {
+
+                        performSearch();
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        /* =================================================
+           CATEGORY FILTER
+        ================================================= */
+
+        document
+            .querySelectorAll(
+                ".category-card"
+            )
+            .forEach(
+                function (card) {
+
+                    card.addEventListener(
+                        "click",
+                        function () {
+
+                            const category =
+                                card.getAttribute(
+                                    "data-category"
+                                );
+
+
+                            if (
+                                typeof window.filterByCategory ===
+                                "function"
+                            ) {
+
+                                window.filterByCategory(
+                                    category
+                                );
+
+                            }
+
+
+                            const grid =
+                                document.getElementById(
+                                    "businessGrid"
+                                );
+
+
+                            if (grid) {
+
+                                grid.scrollIntoView({
+                                    behavior: "smooth"
+                                });
+
+                            }
+
+                        }
+                    );
+
+                }
+            );
+
+
+        /* =================================================
+           DISCOVER NEAR ME
+        ================================================= */
+
+        const discover =
+            document.getElementById(
+                "discoverBtn"
+            );
+
+
+        if (discover) {
+
+            discover.addEventListener(
+                "click",
+                function () {
+
+                    if (
+                        typeof window.findNearbyBusinesses ===
+                        "function"
+                    ) {
+
+                        window.findNearbyBusinesses();
+
+                    }
+
+                    const grid =
+                        document.getElementById(
+                            "businessGrid"
+                        );
+
+                    if (grid) {
+
+                        grid.scrollIntoView({
+                            behavior: "smooth"
+                        });
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        /* =================================================
+           NOTIFICATIONS
+        ================================================= */
+
+        const notification =
+            document.getElementById(
+                "notificationBtn"
+            );
+
+
+        if (notification) {
+
+            notification.addEventListener(
+                "click",
+                function () {
+
+                    const toast =
+                        document.getElementById(
+                            "toast"
+                        );
+
+                    if (!toast) return;
+
+                    toast.textContent =
+                        "No new notifications.";
+
+                    toast.classList.add(
+                        "show"
+                    );
+
+
+                    setTimeout(
+                        function () {
+
+                            toast.classList.remove(
+                                "show"
+                            );
+
+                        },
+                        2500
+                    );
+
+                }
+            );
+
+        }
+
+
+    }
+);
+
+</script>
+
+
+
+<!-- =====================================================
+     LOSOJA SCRIPTS
+===================================================== -->
+
+<script
+    src="js/businesses.js?v=4"
+></script>
+
+
+<script
+    src="js/auth.js?v=2"
+></script>
+
+
+<script
+    src="js/app.js?v=4"
+></script>
+
 
 </body>
 
 </html>
-```
