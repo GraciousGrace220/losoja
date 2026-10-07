@@ -3850,7 +3850,6 @@ bindAccountButton() {
         }
 
     };
-
 /* =====================================================
    BUSINESS DETAILS
    DIRECT BUSINESS SHOP
@@ -4004,13 +4003,92 @@ window.showBusinessDetails = async function (business) {
 
 
     /* ---------------------------------------------------
-       OPEN THIS BUSINESS'S SHOP
+       OPEN BUSINESS SHOP
     --------------------------------------------------- */
 
     window.location.href =
         shopUrl;
 
 };
-document.addEventListener("DOMContentLoaded", function () {
-    App.init();
-});
+
+
+/* =====================================================
+   BUSINESS CARD CLICK BRIDGE
+   Directly opens the business storefront
+===================================================== */
+
+document.addEventListener(
+    "click",
+    function (event) {
+
+        const card =
+            event.target.closest(
+                "[data-business-id], .business-card, .business-card-item"
+            );
+
+        if (!card) {
+            return;
+        }
+
+
+        /* ---------------------------------------------
+           Ignore controls inside the business card
+        --------------------------------------------- */
+
+        if (
+            event.target.closest(
+                "button, a, input, textarea, select"
+            )
+        ) {
+            return;
+        }
+
+
+        /* ---------------------------------------------
+           Get business ID
+        --------------------------------------------- */
+
+        let businessId =
+            card.getAttribute(
+                "data-business-id"
+            );
+
+
+        if (!businessId) {
+
+            businessId =
+                card.getAttribute(
+                    "data-id"
+                );
+
+        }
+
+
+        if (!businessId) {
+
+            console.warn(
+                "LosOja: Business card clicked, but no business ID was found.",
+                card
+            );
+
+            return;
+        }
+
+
+        console.log(
+            "LosOja: Business card bridge opening:",
+            businessId
+        );
+
+
+        window.location.href =
+            "shop.html?id=" +
+            encodeURIComponent(
+                String(
+                    businessId
+                )
+            );
+
+    },
+    false
+);
