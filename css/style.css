@@ -337,9 +337,26 @@ button{cursor:pointer}
   .wallet-card,.bills-card{margin-left:12px;margin-right:12px}
   .losoja-section{padding-left:12px;padding-right:12px}
   .add-business-cta{margin-left:12px;margin-right:12px}
-  .bottom-nav,.bottom-nav a,.bottom-nav button{min-height:64px}
+   .bottom-nav,.bottom-nav a,.bottom-nav button{min-height:64px}
+}
+
+/* FORCE 2 COLUMNS ON PHONE - MUST BE INSIDE STYLE */
+#businessGrid{
+  display:grid !important;
+  grid-template-columns:1fr 1fr !important;
+  gap:10px !important;
+}
+#businessGrid .business-card img{
+  height:130px !important;
+}
+
+@media(min-width:900px){
+  #businessGrid{
+    grid-template-columns:repeat(4,1fr) !important;
+    gap:14px !important;
+  }
+  #businessGrid .business-card img{
+    height:170px !important;
+  }
 }
 </style>
-/* FORCE 2 COLUMNS ON PHONE */
-#businessGrid{display:grid !important;grid-template-columns:1fr 1fr !important;gap:10px !important}
-@media(min-width:900px){ #businessGrid{grid-template-columns:repeat(4,1fr) !important;gap:14px !important} }
