@@ -37,7 +37,8 @@
         button,
         a,
         input,
-        textarea{
+        textarea,
+        select{
             font:inherit;
         }
 
@@ -412,7 +413,7 @@
         }
 
         /* =====================================================
-           CONFIRM MODAL
+           GENERAL MODALS
         ===================================================== */
 
         .modal{
@@ -468,6 +469,274 @@
             background:#b91c1c;
             color:#fff;
             border-color:#b91c1c;
+        }
+
+        /* =====================================================
+           EDIT BUSINESS MODAL
+        ===================================================== */
+
+        .modal-overlay{
+            position:fixed;
+            inset:0;
+            z-index:6500;
+            display:none;
+            align-items:center;
+            justify-content:center;
+            background:rgba(0,0,0,.58);
+            padding:18px;
+            overflow-y:auto;
+        }
+
+        .modal-overlay.show{
+            display:flex;
+        }
+
+        .modal-content{
+            position:relative;
+            width:min(520px,100%);
+            max-height:92vh;
+            overflow-y:auto;
+            background:#fff;
+            border-radius:18px;
+            padding:24px;
+            box-shadow:0 25px 70px rgba(0,0,0,.28);
+        }
+
+        .modal-content.large{
+            width:min(650px,100%);
+        }
+
+        .modal-content h2{
+            margin:0 42px 20px 0;
+            color:#123d25;
+        }
+
+        .modal-close{
+            position:absolute;
+            top:14px;
+            right:14px;
+            width:40px;
+            height:40px;
+            border:0;
+            border-radius:50%;
+            background:#f1f5f2;
+            color:#26352c;
+            font-size:25px;
+            cursor:pointer;
+        }
+
+        .modal-close:hover{
+            background:#e5ece7;
+        }
+
+        .form-group{
+            margin-bottom:15px;
+        }
+
+        .form-group label{
+            display:block;
+            margin-bottom:7px;
+            color:#24352b;
+            font-size:14px;
+            font-weight:700;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select{
+            width:100%;
+            border:1px solid #d7e1da;
+            border-radius:10px;
+            padding:12px;
+            outline:none;
+            background:#fff;
+            color:#17201b;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus{
+            border-color:#087a3e;
+            box-shadow:0 0 0 3px rgba(8,122,62,.10);
+        }
+
+        .form-help{
+            margin:6px 0 0;
+            color:#718078;
+            font-size:12px;
+            line-height:1.45;
+        }
+
+        .form-error{
+            color:#b91c1c;
+            background:#fef2f2;
+            border:1px solid #fecaca;
+            border-radius:10px;
+            padding:10px 12px;
+            line-height:1.45;
+        }
+
+        .edit-images-section{
+            margin-top:20px;
+            padding-top:18px;
+            border-top:1px solid #e4ebe6;
+        }
+
+        .edit-images-title{
+            margin:0 0 5px;
+            color:#123d25;
+            font-size:17px;
+        }
+
+        .edit-images-help{
+            margin:0 0 13px;
+            color:#718078;
+            font-size:13px;
+            line-height:1.5;
+        }
+
+        .edit-image-grid{
+            display:grid;
+            grid-template-columns:repeat(3,minmax(0,1fr));
+            gap:10px;
+            margin-bottom:13px;
+        }
+
+        .edit-image-item{
+            position:relative;
+            aspect-ratio:1/1;
+            overflow:hidden;
+            border-radius:11px;
+            background:#eef3ef;
+            border:1px solid #dce6df;
+        }
+
+        .edit-image-item img{
+            width:100%;
+            height:100%;
+            object-fit:cover;
+            display:block;
+        }
+
+        .edit-image-remove{
+            position:absolute;
+            top:6px;
+            right:6px;
+            width:30px;
+            height:30px;
+            border:0;
+            border-radius:50%;
+            background:rgba(185,28,28,.94);
+            color:#fff;
+            cursor:pointer;
+            font-size:17px;
+            font-weight:700;
+            line-height:30px;
+            padding:0;
+        }
+
+        .edit-image-remove:hover{
+            background:#991b1b;
+        }
+
+        .edit-image-main{
+            position:absolute;
+            left:6px;
+            bottom:6px;
+            background:rgba(8,122,62,.92);
+            color:#fff;
+            padding:4px 7px;
+            border-radius:6px;
+            font-size:10px;
+            font-weight:700;
+        }
+
+        .new-image-preview{
+            display:grid;
+            grid-template-columns:repeat(3,minmax(0,1fr));
+            gap:10px;
+            margin-top:12px;
+        }
+
+        .new-image-item{
+            position:relative;
+            aspect-ratio:1/1;
+            overflow:hidden;
+            border-radius:11px;
+            background:#eef3ef;
+            border:1px solid #dce6df;
+        }
+
+        .new-image-item img{
+            width:100%;
+            height:100%;
+            object-fit:cover;
+        }
+
+        .new-image-label{
+            position:absolute;
+            left:5px;
+            right:5px;
+            bottom:5px;
+            padding:4px 5px;
+            background:rgba(0,0,0,.65);
+            color:#fff;
+            border-radius:5px;
+            font-size:10px;
+            white-space:nowrap;
+            overflow:hidden;
+            text-overflow:ellipsis;
+        }
+
+        .image-picker{
+            width:100%;
+            border:1px dashed #b9cbbf;
+            background:#f7faf8;
+            border-radius:11px;
+            padding:15px;
+            cursor:pointer;
+        }
+
+        .image-picker:hover{
+            background:#eef8f2;
+            border-color:#087a3e;
+        }
+
+        .edit-buttons{
+            display:flex;
+            gap:10px;
+            flex-wrap:wrap;
+            margin-top:18px;
+        }
+
+        .edit-buttons .btn{
+            flex:1;
+            min-width:130px;
+            border-radius:10px;
+            padding:12px 15px;
+            cursor:pointer;
+            font-weight:700;
+            border:1px solid #d7e1da;
+        }
+
+        .btn-outline{
+            background:#fff;
+            color:#24352b;
+        }
+
+        .btn-primary{
+            background:#087a3e;
+            color:#fff;
+            border-color:#087a3e !important;
+        }
+
+        .btn-primary:hover{
+            background:#055c2e;
+        }
+
+        .btn:disabled{
+            opacity:.65;
+            cursor:not-allowed;
         }
 
         .toast{
@@ -542,6 +811,15 @@
                 min-width:100%;
             }
 
+            .modal-content{
+                padding:20px;
+            }
+
+            .edit-image-grid,
+            .new-image-preview{
+                grid-template-columns:repeat(2,minmax(0,1fr));
+            }
+
         }
 
     </style>
@@ -605,10 +883,6 @@
             style="display:none;"
         >
 
-            <!-- =================================================
-                 HERO
-            ================================================== -->
-
             <section
                 id="hero"
                 class="hero"
@@ -616,10 +890,6 @@
 
 
             <div class="content">
-
-                <!-- =================================================
-                     SAVE
-                ================================================== -->
 
                 <div class="save-row">
 
@@ -633,10 +903,6 @@
 
                 </div>
 
-
-                <!-- =================================================
-                     ACTIONS
-                ================================================== -->
 
                 <section class="section">
 
@@ -673,10 +939,6 @@
                 </section>
 
 
-                <!-- =================================================
-                     BUSINESS INFORMATION
-                ================================================== -->
-
                 <section class="section">
 
                     <h2 class="section-title">
@@ -690,10 +952,6 @@
 
                 </section>
 
-
-                <!-- =================================================
-                     DESCRIPTION
-                ================================================== -->
 
                 <section
                     id="descriptionSection"
@@ -712,10 +970,6 @@
                 </section>
 
 
-                <!-- =================================================
-                     PHOTOS
-                ================================================== -->
-
                 <section class="section">
 
                     <h2 class="section-title">
@@ -729,10 +983,6 @@
 
                 </section>
 
-
-                <!-- =================================================
-                     PRODUCTS / SERVICES
-                ================================================== -->
 
                 <section class="section">
 
@@ -749,10 +999,6 @@
 
                 </section>
 
-
-                <!-- =================================================
-                     LOCATION
-                ================================================== -->
 
                 <section class="section">
 
@@ -781,10 +1027,6 @@
     </footer>
 
 
-    <!-- =========================================================
-         IMAGE VIEWER
-    ========================================================== -->
-
     <div
         id="imageViewer"
         class="viewer"
@@ -808,10 +1050,6 @@
 
     </div>
 
-
-    <!-- =========================================================
-         DELETE CONFIRMATION
-    ========================================================== -->
 
     <div
         id="deleteModal"
@@ -861,2912 +1099,4326 @@
     ></div>
 
 
- <script src="js/auth.js?v=2"></script>
+<script src="js/auth.js?v=2"></script>
+
 <script>
-    "use strict";
+
+"use strict";
 
 
-        /* =========================================================
-           SUPABASE
-        ========================================================== */
+/* =========================================================
+   SUPABASE
+========================================================= */
 
-        const SUPABASE_URL =
-            "https://ycxshwgeebskdozmornh.supabase.co";
+const SUPABASE_URL =
+    "https://ycxshwgeebskdozmornh.supabase.co";
 
-        const SUPABASE_KEY =
-            "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
+const SUPABASE_KEY =
+    "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
 
+const BUSINESS_IMAGE_BUCKET =
+    "business-images";
 
-        /* =========================================================
-           DOM
-        ========================================================== */
+const MAX_BUSINESS_IMAGES =
+    5;
 
-        const loading =
-            document.getElementById(
-                "loading"
-            );
-
-        const errorBox =
-            document.getElementById(
-                "errorBox"
-            );
-
-        const shopCard =
-            document.getElementById(
-                "shopCard"
-            );
-
-        const hero =
-            document.getElementById(
-                "hero"
-            );
-
-        const publicActions =
-            document.getElementById(
-                "publicActions"
-            );
-
-        const ownerActions =
-            document.getElementById(
-                "ownerActions"
-            );
-
-        const buyerActions =
-            document.getElementById(
-                "buyerActions"
-            );
-
-        const actionNote =
-            document.getElementById(
-                "actionNote"
-            );
-
-        const businessInfo =
-            document.getElementById(
-                "businessInfo"
-            );
-
-        const description =
-            document.getElementById(
-                "description"
-            );
-
-        const descriptionSection =
-            document.getElementById(
-                "descriptionSection"
-            );
-
-        const gallery =
-            document.getElementById(
-                "gallery"
-            );
-
-        const locationText =
-            document.getElementById(
-                "locationText"
-            );
-
-        const saveBtn =
-            document.getElementById(
-                "saveBtn"
-            );
-
-        const imageViewer =
-            document.getElementById(
-                "imageViewer"
-            );
-
-        const viewerImage =
-            document.getElementById(
-                "viewerImage"
-            );
-
-        const deleteModal =
-            document.getElementById(
-                "deleteModal"
-            );
-
-        const toast =
-            document.getElementById(
-                "toast"
-            );
+const MAX_IMAGE_SIZE =
+    5 * 1024 * 1024;
 
 
-        /* =========================================================
-           STATE
-        ========================================================== */
+/* =========================================================
+   DOM
+========================================================= */
 
-        let currentBusiness =
-            null;
+const loading =
+    document.getElementById(
+        "loading"
+    );
 
-        let currentUser =
-            null;
+const errorBox =
+    document.getElementById(
+        "errorBox"
+    );
 
-        let currentAccessToken =
-            null;
+const shopCard =
+    document.getElementById(
+        "shopCard"
+    );
+
+const hero =
+    document.getElementById(
+        "hero"
+    );
+
+const publicActions =
+    document.getElementById(
+        "publicActions"
+    );
+
+const ownerActions =
+    document.getElementById(
+        "ownerActions"
+    );
+
+const buyerActions =
+    document.getElementById(
+        "buyerActions"
+    );
+
+const actionNote =
+    document.getElementById(
+        "actionNote"
+    );
+
+const businessInfo =
+    document.getElementById(
+        "businessInfo"
+    );
+
+const description =
+    document.getElementById(
+        "description"
+    );
+
+const descriptionSection =
+    document.getElementById(
+        "descriptionSection"
+    );
+
+const gallery =
+    document.getElementById(
+        "gallery"
+    );
+
+const locationText =
+    document.getElementById(
+        "locationText"
+    );
+
+const saveBtn =
+    document.getElementById(
+        "saveBtn"
+    );
+
+const imageViewer =
+    document.getElementById(
+        "imageViewer"
+    );
+
+const viewerImage =
+    document.getElementById(
+        "viewerImage"
+    );
+
+const deleteModal =
+    document.getElementById(
+        "deleteModal"
+    );
+
+const toast =
+    document.getElementById(
+        "toast"
+    );
 
 
-        /* =========================================================
-           HELPERS
-        ========================================================== */
+/* =========================================================
+   STATE
+========================================================= */
 
-        function escapeHTML(value){
+let currentBusiness =
+    null;
 
-            return String(
-                value ?? ""
-            )
-                .replace(
-                    /&/g,
-                    "&amp;"
-                )
-                .replace(
-                    /</g,
-                    "&lt;"
-                )
-                .replace(
-                    />/g,
-                    "&gt;"
-                )
-                .replace(
-                    /"/g,
-                    "&quot;"
-                )
-                .replace(
-                    /'/g,
-                    "&#039;"
-                );
+let currentUser =
+    null;
 
-        }
+let currentAccessToken =
+    null;
+
+let currentBusinessImages =
+    [];
+
+let editImagesToRemove =
+    new Set();
+
+let editSelectedFiles =
+    [];
 
 
-        function showToast(
-            message
-        ){
+/* =========================================================
+   HELPERS
+========================================================= */
 
-            if(!toast){
-                return;
-            }
+function escapeHTML(value){
 
-            toast.textContent =
-                message;
+    return String(
+        value ?? ""
+    )
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
 
-            toast.classList.add(
+}
+
+
+function showToast(
+    message
+){
+
+    if(!toast){
+        return;
+    }
+
+    toast.textContent =
+        message;
+
+    toast.classList.add(
+        "show"
+    );
+
+    setTimeout(
+        function(){
+
+            toast.classList.remove(
                 "show"
             );
 
-            setTimeout(
-                function(){
+        },
+        2800
+    );
 
-                    toast.classList.remove(
-                        "show"
-                    );
-
-                },
-                2800
-            );
-
-        }
+}
 
 
-        function getBusinessId(){
+function getBusinessId(){
 
-            const params =
-                new URLSearchParams(
-                    window.location.search
-                );
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
 
-            return params.get(
-                "id"
-            );
+    return params.get(
+        "id"
+    );
 
-        }
+}
 
 
-        function extractUser(
-            result
+function extractUser(
+    result
+){
+
+    if(!result){
+        return null;
+    }
+
+    if(
+        result.user &&
+        result.user.id
+    ){
+
+        return result.user;
+
+    }
+
+    if(
+        result.data &&
+        result.data.user &&
+        result.data.user.id
+    ){
+
+        return result.data.user;
+
+    }
+
+    if(
+        result.id
+    ){
+
+        return result;
+
+    }
+
+    return null;
+
+}
+
+
+function extractToken(
+    result
+){
+
+    if(!result){
+        return null;
+    }
+
+    if(
+        typeof result ===
+        "string"
+    ){
+
+        return result;
+
+    }
+
+    if(
+        result.access_token
+    ){
+
+        return result.access_token;
+
+    }
+
+    if(
+        result.session &&
+        result.session.access_token
+    ){
+
+        return result.session.access_token;
+
+    }
+
+    if(
+        result.data &&
+        result.data.session &&
+        result.data.session.access_token
+    ){
+
+        return result.data.session.access_token;
+
+    }
+
+    return null;
+
+}
+
+
+/* =========================================================
+   AUTH
+========================================================= */
+
+async function getShopUser(){
+
+    try{
+
+        if(
+            typeof window.getCurrentUser ===
+            "function"
         ){
 
-            if(!result){
-                return null;
-            }
-
-            if(
-                result.user &&
-                result.user.id
-            ){
-
-                return result.user;
-
-            }
-
-            if(
-                result.data &&
-                result.data.user &&
-                result.data.user.id
-            ){
-
-                return result.data.user;
-
-            }
-
-            if(
-                result.id
-            ){
-
-                return result;
-
-            }
-
-            return null;
-
-        }
-
-
-        function extractToken(
-            result
-        ){
-
-            if(!result){
-                return null;
-            }
-
-            if(
-                typeof result ===
-                "string"
-            ){
-
-                return result;
-
-            }
-
-            if(
-                result.access_token
-            ){
-
-                return result.access_token;
-
-            }
-
-            if(
-                result.session &&
-                result.session.access_token
-            ){
-
-                return result.session.access_token;
-
-            }
-
-            if(
-                result.data &&
-                result.data.session &&
-                result.data.session.access_token
-            ){
-
-                return result.data.session.access_token;
-
-            }
-
-            return null;
-
-        }
-
-
-        /* =========================================================
-           AUTH
-        ========================================================== */
-
-        async function getShopUser(){
-
-            /*
-             * First use the existing LosOja authentication
-             * helper so we do not create a second auth system.
-             */
-
-            try{
-
-                if(
-                    typeof window.getCurrentUser ===
-                    "function"
-                ){
-
-                    const result =
-                        await window.getCurrentUser();
-
-                    const user =
-                        extractUser(
-                            result
-                        );
-
-                    if(user){
-                        return user;
-                    }
-
-                }
-
-            }catch(error){
-
-                console.warn(
-                    "LosOja shop: getCurrentUser failed.",
-                    error
-                );
-
-            }
-
-
-            /*
-             * Direct Supabase session fallback.
-             */
-
-            try{
-
-                if(
-                    window.losojaSupabase &&
-                    window.losojaSupabase.auth &&
-                    typeof window.losojaSupabase.auth.getSession ===
-                    "function"
-                ){
-
-                    const result =
-                        await window.losojaSupabase.auth.getSession();
-
-                    const user =
-                        extractUser(
-                            result
-                        );
-
-                    if(user){
-                        return user;
-                    }
-
-                }
-
-            }catch(error){
-
-                console.warn(
-                    "LosOja shop: Supabase session lookup failed.",
-                    error
-                );
-
-            }
-
-
-            /*
-             * Read LosOja local session.
-             */
-
-            try{
-
-                const raw =
-                    localStorage.getItem(
-                        "losoja_supabase_session"
-                    );
-
-                if(raw){
-
-                    const parsed =
-                        JSON.parse(
-                            raw
-                        );
-
-                    const user =
-                        extractUser(
-                            parsed
-                        );
-
-                    if(user){
-                        return user;
-                    }
-
-                }
-
-            }catch(error){
-
-                console.warn(
-                    "LosOja shop: local session lookup failed."
-                );
-
-            }
-
-
-            return null;
-
-        }
-
-
-        async function getShopAccessToken(){
-
-            try{
-
-                if(
-                    typeof window.ensureValidSupabaseSession ===
-                    "function"
-                ){
-
-                    const result =
-                        await window.ensureValidSupabaseSession();
-
-                    const token =
-                        extractToken(
-                            result
-                        );
-
-                    if(token){
-                        return token;
-                    }
-
-                }
-
-            }catch(error){
-
-                console.warn(
-                    "LosOja shop: session validation failed."
-                );
-
-            }
-
-
-            try{
-
-                if(
-                    typeof window.getSupabaseAccessToken ===
-                    "function"
-                ){
-
-                    const result =
-                        await window.getSupabaseAccessToken();
-
-                    const token =
-                        extractToken(
-                            result
-                        );
-
-                    if(token){
-                        return token;
-                    }
-
-                }
-
-            }catch(error){
-
-                console.warn(
-                    "LosOja shop: access token helper failed."
-                );
-
-            }
-
-
-            try{
-
-                if(
-                    window.losojaSupabase &&
-                    window.losojaSupabase.auth &&
-                    typeof window.losojaSupabase.auth.getSession ===
-                    "function"
-                ){
-
-                    const result =
-                        await window.losojaSupabase.auth.getSession();
-
-                    const token =
-                        extractToken(
-                            result
-                        );
-
-                    if(token){
-                        return token;
-                    }
-
-                }
-
-            }catch(error){
-
-                console.warn(
-                    "LosOja shop: direct session token lookup failed."
-                );
-
-            }
-
-
-            try{
-
-                const raw =
-                    localStorage.getItem(
-                        "losoja_supabase_session"
-                    );
-
-                if(raw){
-
-                    const parsed =
-                        JSON.parse(
-                            raw
-                        );
-
-                    const token =
-                        extractToken(
-                            parsed
-                        );
-
-                    if(token){
-                        return token;
-                    }
-
-                }
-
-            }catch(error){
-
-                console.warn(
-                    "LosOja shop: local token lookup failed."
-                );
-
-            }
-
-
-            return null;
-
-        }
-
-
-        async function requireShopLogin(){
+            const result =
+                await window.getCurrentUser();
 
             const user =
-                await getShopUser();
+                extractUser(
+                    result
+                );
 
             if(user){
                 return user;
             }
 
-            try{
+        }
 
-                sessionStorage.setItem(
-                    "losoja_return_to_shop",
-                    window.location.href
+    }catch(error){
+
+        console.warn(
+            "LosOja shop: getCurrentUser failed.",
+            error
+        );
+
+    }
+
+
+    try{
+
+        if(
+            window.losojaSupabase &&
+            window.losojaSupabase.auth &&
+            typeof window.losojaSupabase.auth.getSession ===
+            "function"
+        ){
+
+            const result =
+                await window.losojaSupabase.auth.getSession();
+
+            const user =
+                extractUser(
+                    result
                 );
 
-            }catch(error){
-
-                console.warn(
-                    "LosOja: Could not save return URL."
-                );
-
+            if(user){
+                return user;
             }
-
-            window.location.href =
-                "index.html#login";
-
-            return null;
 
         }
 
+    }catch(error){
 
-        /* =========================================================
-           LOAD BUSINESS
-        ========================================================== */
+        console.warn(
+            "LosOja shop: Supabase session lookup failed.",
+            error
+        );
 
-        async function loadBusiness(){
+    }
 
-            const businessId =
-                getBusinessId();
 
-            if(!businessId){
+    try{
 
-                showError(
-                    "No business was selected."
+        const raw =
+            localStorage.getItem(
+                "losoja_supabase_session"
+            );
+
+        if(raw){
+
+            const parsed =
+                JSON.parse(
+                    raw
                 );
 
-                return;
+            const user =
+                extractUser(
+                    parsed
+                );
 
+            if(user){
+                return user;
             }
 
+        }
+
+    }catch(error){
+
+        console.warn(
+            "LosOja shop: local session lookup failed."
+        );
+
+    }
+
+
+    return null;
+
+}
+
+
+async function getShopAccessToken(){
+
+    try{
+
+        if(
+            typeof window.ensureValidSupabaseSession ===
+            "function"
+        ){
+
+            const result =
+                await window.ensureValidSupabaseSession();
+
+            const token =
+                extractToken(
+                    result
+                );
+
+            if(token){
+                return token;
+            }
+
+        }
+
+    }catch(error){
+
+        console.warn(
+            "LosOja shop: session validation failed."
+        );
+
+    }
+
+
+    try{
+
+        if(
+            typeof window.getSupabaseAccessToken ===
+            "function"
+        ){
+
+            const result =
+                await window.getSupabaseAccessToken();
+
+            const token =
+                extractToken(
+                    result
+                );
+
+            if(token){
+                return token;
+            }
+
+        }
+
+    }catch(error){
+
+        console.warn(
+            "LosOja shop: access token helper failed."
+        );
+
+    }
+
+
+    try{
+
+        if(
+            window.losojaSupabase &&
+            window.losojaSupabase.auth &&
+            typeof window.losojaSupabase.auth.getSession ===
+            "function"
+        ){
+
+            const result =
+                await window.losojaSupabase.auth.getSession();
+
+            const token =
+                extractToken(
+                    result
+                );
+
+            if(token){
+                return token;
+            }
+
+        }
+
+    }catch(error){
+
+        console.warn(
+            "LosOja shop: direct session token lookup failed."
+        );
+
+    }
+
+
+    try{
+
+        const raw =
+            localStorage.getItem(
+                "losoja_supabase_session"
+            );
+
+        if(raw){
+
+            const parsed =
+                JSON.parse(
+                    raw
+                );
+
+            const token =
+                extractToken(
+                    parsed
+                );
+
+            if(token){
+                return token;
+            }
+
+        }
+
+    }catch(error){
+
+        console.warn(
+            "LosOja shop: local token lookup failed."
+        );
+
+    }
+
+
+    return null;
+
+}
+
+
+async function requireShopLogin(){
+
+    const user =
+        await getShopUser();
+
+    if(user){
+        return user;
+    }
+
+    try{
+
+        sessionStorage.setItem(
+            "losoja_return_to_shop",
+            window.location.href
+        );
+
+    }catch(error){
+
+        console.warn(
+            "LosOja: Could not save return URL."
+        );
+
+    }
+
+    window.location.href =
+        "index.html#login";
+
+    return null;
+
+}
+
+
+/* =========================================================
+   LOAD BUSINESS
+========================================================= */
+
+async function loadBusiness(){
+
+    const businessId =
+        getBusinessId();
+
+    if(!businessId){
+
+        showError(
+            "No business was selected."
+        );
+
+        return;
+
+    }
+
+
+    try{
+
+        loading.style.display =
+            "block";
+
+        errorBox.style.display =
+            "none";
+
+        shopCard.style.display =
+            "none";
+
+
+        const response =
+            await fetch(
+                SUPABASE_URL +
+                "/rest/v1/businesses?id=eq." +
+                encodeURIComponent(
+                    businessId
+                ) +
+                "&select=*",
+                {
+                    method:"GET",
+
+                    headers:{
+                        apikey:
+                            SUPABASE_KEY,
+
+                        Authorization:
+                            "Bearer " +
+                            SUPABASE_KEY,
+
+                        Accept:
+                            "application/json"
+                    }
+                }
+            );
+
+
+        if(!response.ok){
+
+            let message =
+                "Could not load this business.";
 
             try{
 
-                loading.style.display =
-                    "block";
-
-                errorBox.style.display =
-                    "none";
-
-                shopCard.style.display =
-                    "none";
-
-
-                const response =
-                    await fetch(
-                        SUPABASE_URL +
-                        "/rest/v1/businesses?id=eq." +
-                        encodeURIComponent(
-                            businessId
-                        ) +
-                        "&select=*",
-                        {
-                            method:"GET",
-
-                            headers:{
-                                apikey:
-                                    SUPABASE_KEY,
-
-                                Authorization:
-                                    "Bearer " +
-                                    SUPABASE_KEY,
-
-                                Accept:
-                                    "application/json"
-                            }
-                        }
-                    );
-
-
-                if(!response.ok){
-
-                    let message =
-                        "Could not load this business.";
-
-                    try{
-
-                        const data =
-                            await response.json();
-
-                        message =
-                            data.message ||
-                            data.error_description ||
-                            data.details ||
-                            message;
-
-                    }catch(error){
-
-                        /* Ignore JSON error. */
-
-                    }
-
-                    throw new Error(
-                        message
-                    );
-
-                }
-
-
-                const businesses =
+                const data =
                     await response.json();
 
-
-                if(
-                    !Array.isArray(
-                        businesses
-                    ) ||
-                    businesses.length === 0
-                ){
-
-                    throw new Error(
-                        "This business could not be found."
-                    );
-
-                }
-
-
-                currentBusiness =
-                    businesses[0];
-
-
-                await renderBusiness(
-                    currentBusiness
-                );
-
-
-                loading.style.display =
-                    "none";
-
-                shopCard.style.display =
-                    "block";
-
+                message =
+                    data.message ||
+                    data.error_description ||
+                    data.details ||
+                    message;
 
             }catch(error){
 
-                console.error(
-                    "LosOja shop load error:",
-                    error
-                );
-
-                showError(
-                    error.message ||
-                    "Unable to load this business."
-                );
+                /* Ignore JSON error. */
 
             }
+
+            throw new Error(
+                message
+            );
 
         }
 
 
-        function showError(
-            message
+        const businesses =
+            await response.json();
+
+
+        if(
+            !Array.isArray(
+                businesses
+            ) ||
+            businesses.length === 0
         ){
 
-            loading.style.display =
-                "none";
-
-            shopCard.style.display =
-                "none";
-
-            errorBox.style.display =
-                "block";
-
-            errorBox.innerHTML =
-                `
-                    <strong>
-                        LosOja
-                    </strong>
-
-                    <div style="margin-top:8px;">
-                        ${escapeHTML(message)}
-                    </div>
-
-                    <button
-                        type="button"
-                        onclick="window.location.href='index.html'"
-                        style="
-                            margin-top:16px;
-                            padding:10px 15px;
-                            border:0;
-                            border-radius:9px;
-                            background:#087a3e;
-                            color:#fff;
-                            cursor:pointer;
-                            font-weight:700;
-                        "
-                    >
-                        Back to LosOja
-                    </button>
-                `;
+            throw new Error(
+                "This business could not be found."
+            );
 
         }
 
 
-        /* =========================================================
-           RENDER BUSINESS
-        ========================================================== */
-
-        async function renderBusiness(
-            business
-        ){
-
-            const name =
-                business.name ||
-                "LosOja Business";
-
-            const category =
-                business.category ||
-                "Business";
-
-            const location =
-                business.location ||
-                "Nigeria";
-
-            const phone =
-                business.phone ||
-                "";
-
-            const image =
-                business.image_url ||
-                business.image ||
-                "";
+        currentBusiness =
+            businesses[0];
 
 
-            document.title =
-                name +
-                " | LosOja";
+        await renderBusiness(
+            currentBusiness
+        );
 
 
-            /* =====================================================
-               HERO
-            ====================================================== */
+        loading.style.display =
+            "none";
 
-            if(image){
-
-                hero.innerHTML =
-                    `
-                        <img
-                            class="hero-image"
-                            src="${escapeHTML(image)}"
-                            alt="${escapeHTML(name)}"
-                            onerror="
-                                this.style.display='none';
-                                document.getElementById('heroFallback').style.display='flex';
-                            "
-                        >
-
-                        <div
-                            id="heroFallback"
-                            class="hero-placeholder"
-                            style="display:none;"
-                        >
-                            🏪
-                        </div>
-
-                        <div class="hero-overlay">
-
-                            <h1 class="hero-title">
-                                ${escapeHTML(name)}
-                            </h1>
-
-                            <div class="hero-meta">
-
-                                <span class="badge">
-                                    ${escapeHTML(category)}
-                                </span>
-
-                                <span class="badge">
-                                    📍 ${escapeHTML(location)}
-                                </span>
-
-                            </div>
-
-                        </div>
-                    `;
-
-            }else{
-
-                hero.innerHTML =
-                    `
-                        <div class="hero-placeholder">
-                            🏪
-                        </div>
-
-                        <div class="hero-overlay">
-
-                            <h1 class="hero-title">
-                                ${escapeHTML(name)}
-                            </h1>
-
-                            <div class="hero-meta">
-
-                                <span class="badge">
-                                    ${escapeHTML(category)}
-                                </span>
-
-                                <span class="badge">
-                                    📍 ${escapeHTML(location)}
-                                </span>
-
-                            </div>
-
-                        </div>
-                    `;
-
-            }
+        shopCard.style.display =
+            "block";
 
 
-            /* =====================================================
-               INFORMATION
-            ====================================================== */
+    }catch(error){
 
-            businessInfo.innerHTML =
-                `
-                    <div class="info-item">
+        console.error(
+            "LosOja shop load error:",
+            error
+        );
 
-                        <span class="info-label">
-                            Category
-                        </span>
+        showError(
+            error.message ||
+            "Unable to load this business."
+        );
 
-                        <span class="info-value">
+    }
+
+}
+
+
+function showError(
+    message
+){
+
+    loading.style.display =
+        "none";
+
+    shopCard.style.display =
+        "none";
+
+    errorBox.style.display =
+        "block";
+
+    errorBox.innerHTML =
+        `
+            <strong>
+                LosOja
+            </strong>
+
+            <div style="margin-top:8px;">
+                ${escapeHTML(message)}
+            </div>
+
+            <button
+                type="button"
+                onclick="window.location.href='index.html'"
+                style="
+                    margin-top:16px;
+                    padding:10px 15px;
+                    border:0;
+                    border-radius:9px;
+                    background:#087a3e;
+                    color:#fff;
+                    cursor:pointer;
+                    font-weight:700;
+                "
+            >
+                Back to LosOja
+            </button>
+        `;
+
+}
+
+
+/* =========================================================
+   RENDER BUSINESS
+========================================================= */
+
+async function renderBusiness(
+    business
+){
+
+    const name =
+        business.name ||
+        "LosOja Business";
+
+    const category =
+        business.category ||
+        "Business";
+
+    const location =
+        business.location ||
+        "Nigeria";
+
+    const phone =
+        business.phone ||
+        "";
+
+    const price =
+        business.price !== null &&
+        business.price !== undefined &&
+        String(business.price).trim() !== ""
+            ? business.price
+            : "";
+
+    const image =
+        business.image_url ||
+        business.image ||
+        "";
+
+
+    document.title =
+        name +
+        " | LosOja";
+
+
+    /* =====================================================
+       HERO
+    ====================================================== */
+
+    if(image){
+
+        hero.innerHTML =
+            `
+                <img
+                    class="hero-image"
+                    src="${escapeHTML(image)}"
+                    alt="${escapeHTML(name)}"
+                    onerror="
+                        this.style.display='none';
+                        document.getElementById('heroFallback').style.display='flex';
+                    "
+                >
+
+                <div
+                    id="heroFallback"
+                    class="hero-placeholder"
+                    style="display:none;"
+                >
+                    🏪
+                </div>
+
+                <div class="hero-overlay">
+
+                    <h1 class="hero-title">
+                        ${escapeHTML(name)}
+                    </h1>
+
+                    <div class="hero-meta">
+
+                        <span class="badge">
                             ${escapeHTML(category)}
                         </span>
 
-                    </div>
-
-                    <div class="info-item">
-
-                        <span class="info-label">
-                            Location
-                        </span>
-
-                        <span class="info-value">
-                            ${escapeHTML(location)}
+                        <span class="badge">
+                            📍 ${escapeHTML(location)}
                         </span>
 
                     </div>
 
-                    ${
-                        phone
-                            ?
-                            `
-                                <div class="info-item">
+                </div>
+            `;
 
-                                    <span class="info-label">
-                                        Phone
-                                    </span>
+    }else{
 
-                                    <span class="info-value">
-                                        ${escapeHTML(phone)}
-                                    </span>
+        hero.innerHTML =
+            `
+                <div class="hero-placeholder">
+                    🏪
+                </div>
 
-                                </div>
-                            `
-                            :
-                            ""
-                    }
+                <div class="hero-overlay">
 
-                    <div class="info-item">
+                    <h1 class="hero-title">
+                        ${escapeHTML(name)}
+                    </h1>
 
-                        <span class="info-label">
-                            LosOja Listing
+                    <div class="hero-meta">
+
+                        <span class="badge">
+                            ${escapeHTML(category)}
                         </span>
 
-                        <span class="info-value">
-                            Verified listing record
+                        <span class="badge">
+                            📍 ${escapeHTML(location)}
                         </span>
 
                     </div>
-                `;
+
+                </div>
+            `;
+
+    }
 
 
-            /* =====================================================
-               DESCRIPTION
-            ====================================================== */
+    /* =====================================================
+       INFORMATION
+    ====================================================== */
 
-            if(
-                business.description &&
-                String(
-                    business.description
-                ).trim()
-            ){
+    businessInfo.innerHTML =
+        `
+            <div class="info-item">
 
-                description.textContent =
-                    business.description;
+                <span class="info-label">
+                    Category
+                </span>
 
-                descriptionSection.style.display =
-                    "block";
+                <span class="info-value">
+                    ${escapeHTML(category)}
+                </span>
 
-            }else{
+            </div>
 
-                descriptionSection.style.display =
-                    "none";
+            <div class="info-item">
 
+                <span class="info-label">
+                    Location
+                </span>
+
+                <span class="info-value">
+                    ${escapeHTML(location)}
+                </span>
+
+            </div>
+
+            ${
+                phone
+                    ?
+                    `
+                        <div class="info-item">
+
+                            <span class="info-label">
+                                Phone
+                            </span>
+
+                            <span class="info-value">
+                                ${escapeHTML(phone)}
+                            </span>
+
+                        </div>
+                    `
+                    :
+                    ""
             }
 
+            ${
+                price !== ""
+                    ?
+                    `
+                        <div class="info-item">
 
-            /* =====================================================
-               PUBLIC ACTIONS
-            ====================================================== */
+                            <span class="info-label">
+                                Price
+                            </span>
 
-            renderPublicActions(
-                business
+                            <span class="info-value">
+                                ₦${escapeHTML(
+                                    Number(price).toLocaleString()
+                                )}
+                            </span>
+
+                        </div>
+                    `
+                    :
+                    ""
+            }
+
+            <div class="info-item">
+
+                <span class="info-label">
+                    LosOja Listing
+                </span>
+
+                <span class="info-value">
+                    Verified listing record
+                </span>
+
+            </div>
+        `;
+
+
+    /* =====================================================
+       DESCRIPTION
+    ====================================================== */
+
+    if(
+        business.description &&
+        String(
+            business.description
+        ).trim()
+    ){
+
+        description.textContent =
+            business.description;
+
+        descriptionSection.style.display =
+            "block";
+
+    }else{
+
+        descriptionSection.style.display =
+            "none";
+
+    }
+
+
+    /* =====================================================
+       PUBLIC ACTIONS
+    ====================================================== */
+
+    renderPublicActions(
+        business
+    );
+
+
+    /* =====================================================
+       OWNER / BUYER ACTIONS
+    ====================================================== */
+
+    await renderOwnerBuyerActions(
+        business
+    );
+
+
+    /* =====================================================
+       LOCATION
+    ====================================================== */
+
+    locationText.innerHTML =
+        `
+            <span class="info-label">
+                Business Location
+            </span>
+
+            <span class="info-value">
+                📍 ${escapeHTML(location)}
+            </span>
+        `;
+
+
+    /* =====================================================
+       SAVE
+    ====================================================== */
+
+    setupSaveButton(
+        business
+    );
+
+
+    /* =====================================================
+       PHOTOS
+    ====================================================== */
+
+    await loadBusinessImages(
+        business.id
+    );
+
+}
+
+
+/* =========================================================
+   PUBLIC ACTIONS
+========================================================= */
+
+function renderPublicActions(
+    business
+){
+
+    publicActions.innerHTML =
+        "";
+
+
+    if(
+        business.phone &&
+        String(
+            business.phone
+        ).trim()
+    ){
+
+        const cleanPhone =
+            String(
+                business.phone
+            )
+                .replace(
+                    /[^0-9+]/g,
+                    ""
+                );
+
+
+        const whatsappPhone =
+            cleanPhone
+                .replace(
+                    /^\+/,
+                    ""
+                );
+
+
+        const chatButton =
+            document.createElement(
+                "button"
             );
 
+        chatButton.type =
+            "button";
 
-            /* =====================================================
-               OWNER / BUYER ACTIONS
-            ====================================================== */
+        chatButton.className =
+            "action-btn action-primary";
 
-            await renderOwnerBuyerActions(
-                business
+        chatButton.textContent =
+            "💬 WhatsApp";
+
+        chatButton.addEventListener(
+            "click",
+            function(){
+
+                window.open(
+                    "https://wa.me/" +
+                    encodeURIComponent(
+                        whatsappPhone
+                    ),
+                    "_blank"
+                );
+
+            }
+        );
+
+        publicActions.appendChild(
+            chatButton
+        );
+
+
+        const callButton =
+            document.createElement(
+                "button"
             );
 
+        callButton.type =
+            "button";
 
-            /* =====================================================
-               LOCATION
-            ====================================================== */
+        callButton.className =
+            "action-btn";
 
-            locationText.innerHTML =
-                `
-                    <span class="info-label">
-                        Business Location
-                    </span>
+        callButton.textContent =
+            "📞 Call";
 
-                    <span class="info-value">
-                        📍 ${escapeHTML(location)}
-                    </span>
-                `;
+        callButton.addEventListener(
+            "click",
+            function(){
+
+                window.location.href =
+                    "tel:" +
+                    cleanPhone;
+
+            }
+        );
+
+        publicActions.appendChild(
+            callButton
+        );
+
+    }
 
 
-            /* =====================================================
-               SAVE
-            ====================================================== */
+    const directionsButton =
+        document.createElement(
+            "button"
+        );
 
-            setupSaveButton(
-                business
-            );
+    directionsButton.type =
+        "button";
 
+    directionsButton.className =
+        "action-btn";
 
-            /* =====================================================
-               PHOTOS
-            ====================================================== */
+    directionsButton.textContent =
+        "🧭 Directions";
 
-            await loadBusinessImages(
-                business.id
+    directionsButton.addEventListener(
+        "click",
+        function(){
+
+            const location =
+                String(
+                    business.location ||
+                    ""
+                ).trim();
+
+            const destination =
+                location
+                    ?
+                    (
+                        business.name +
+                        ", " +
+                        location
+                    )
+                    :
+                    business.name;
+
+            window.open(
+                "https://www.google.com/maps/search/?api=1&query=" +
+                encodeURIComponent(
+                    destination
+                ),
+                "_blank"
             );
 
         }
+    );
+
+    publicActions.appendChild(
+        directionsButton
+    );
+
+}
 
 
-        /* =========================================================
-           PUBLIC ACTIONS
-        ========================================================== */
+/* =========================================================
+   OWNER / BUYER CONTROLS
+========================================================= */
 
-        function renderPublicActions(
+async function renderOwnerBuyerActions(
+    business
+){
+
+    ownerActions.innerHTML =
+        "";
+
+    buyerActions.innerHTML =
+        "";
+
+    ownerActions.style.display =
+        "none";
+
+    buyerActions.style.display =
+        "none";
+
+    actionNote.style.display =
+        "none";
+
+    currentUser =
+        await getShopUser();
+
+
+    if(!currentUser){
+
+        renderBuyerActions(
             business
-        ){
+        );
 
-            publicActions.innerHTML =
-                "";
+        return;
+
+    }
 
 
-            if(
-                business.phone &&
-                String(
-                    business.phone
-                ).trim()
-            ){
+    const currentUserId =
+        String(
+            currentUser.id ||
+            ""
+        ).trim();
 
-                const cleanPhone =
-                    String(
-                        business.phone
-                    )
-                        .replace(
-                            /[^0-9+]/g,
+    const ownerId =
+        String(
+            business.user_id ||
+            ""
+        ).trim();
+
+
+    const isOwner =
+        currentUserId &&
+        ownerId &&
+        currentUserId ===
+        ownerId;
+
+
+    if(isOwner){
+
+        renderOwnerActions(
+            business
+        );
+
+    }else{
+
+        renderBuyerActions(
+            business
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   OWNER ACTIONS
+========================================================= */
+
+function renderOwnerActions(
+    business
+){
+
+    ownerActions.style.display =
+        "flex";
+
+    actionNote.style.display =
+        "block";
+
+    actionNote.className =
+        "owner-note";
+
+    actionNote.textContent =
+        "You own this LosOja business listing.";
+
+
+    const editButton =
+        document.createElement(
+            "button"
+        );
+
+    editButton.type =
+        "button";
+
+    editButton.className =
+        "action-btn action-primary";
+
+    editButton.textContent =
+        "✏️ Edit Business";
+
+    editButton.addEventListener(
+        "click",
+        function(){
+
+            editCurrentBusiness(
+                business
+            );
+
+        }
+    );
+
+
+    const deleteButton =
+        document.createElement(
+            "button"
+        );
+
+    deleteButton.type =
+        "button";
+
+    deleteButton.className =
+        "action-btn action-danger";
+
+    deleteButton.textContent =
+        "🗑️ Delete Business";
+
+    deleteButton.addEventListener(
+        "click",
+        function(){
+
+            openDeleteModal();
+
+        }
+    );
+
+
+    ownerActions.appendChild(
+        editButton
+    );
+
+    ownerActions.appendChild(
+        deleteButton
+    );
+
+}
+
+
+/* =========================================================
+   BUYER ACTIONS
+========================================================= */
+
+function renderBuyerActions(
+    business
+){
+
+    buyerActions.style.display =
+        "flex";
+
+    actionNote.style.display =
+        "block";
+
+    actionNote.className =
+        "buyer-note";
+
+    actionNote.textContent =
+        "Contact the owner directly on LosOja or use escrow for a protected transaction.";
+
+
+    const chatButton =
+        document.createElement(
+            "button"
+        );
+
+    chatButton.type =
+        "button";
+
+    chatButton.className =
+        "action-btn action-primary";
+
+    chatButton.textContent =
+        "💬 Chat on LosOja";
+
+    chatButton.addEventListener(
+        "click",
+        async function(){
+
+            await openLosOjaChat(
+                business
+            );
+
+        }
+    );
+
+
+    const escrowButton =
+        document.createElement(
+            "button"
+        );
+
+    escrowButton.type =
+        "button";
+
+    escrowButton.className =
+        "action-btn";
+
+    escrowButton.textContent =
+        "🔐 View / Create Escrow";
+
+    escrowButton.addEventListener(
+        "click",
+        async function(){
+
+            await openBusinessEscrow(
+                business
+            );
+
+        }
+    );
+
+
+    buyerActions.appendChild(
+        chatButton
+    );
+
+    buyerActions.appendChild(
+        escrowButton
+    );
+
+}
+
+
+/* =========================================================
+   LOSOJA CHAT
+========================================================= */
+
+async function openLosOjaChat(
+    business
+){
+
+    const user =
+        await requireShopLogin();
+
+    if(!user){
+        return;
+    }
+
+
+    if(
+        !business.user_id
+    ){
+
+        showToast(
+            "This business does not have an owner account."
+        );
+
+        return;
+
+    }
+
+
+    if(
+        String(user.id) ===
+        String(business.user_id)
+    ){
+
+        showToast(
+            "You cannot chat with yourself."
+        );
+
+        return;
+
+    }
+
+
+    const chatUrl =
+        "chat.html?user=" +
+        encodeURIComponent(
+            String(
+                business.user_id
+            )
+        ) +
+        "&business=" +
+        encodeURIComponent(
+            String(
+                business.id
+            )
+        );
+
+
+    window.location.href =
+        chatUrl;
+
+}
+
+
+/* =========================================================
+   ESCROW
+========================================================= */
+
+async function openBusinessEscrow(
+    business
+){
+
+    const user =
+        await requireShopLogin();
+
+    if(!user){
+        return;
+    }
+
+
+    if(
+        !business.user_id
+    ){
+
+        showToast(
+            "This business does not have an owner account."
+        );
+
+        return;
+
+    }
+
+
+    if(
+        String(user.id) ===
+        String(business.user_id)
+    ){
+
+        showToast(
+            "You cannot create escrow with your own business."
+        );
+
+        return;
+
+    }
+
+
+    try{
+
+        sessionStorage.setItem(
+            "losoja_escrow_business",
+            JSON.stringify(
+                {
+                    id:
+                        String(
+                            business.id
+                        ),
+
+                    name:
+                        String(
+                            business.name ||
                             ""
-                        );
+                        ),
 
-
-                const whatsappPhone =
-                    cleanPhone
-                        .replace(
-                            /^\+/,
+                    user_id:
+                        String(
+                            business.user_id ||
                             ""
-                        );
+                        ),
 
+                    category:
+                        String(
+                            business.category ||
+                            ""
+                        ),
 
-                const chatButton =
-                    document.createElement(
-                        "button"
-                    );
-
-                chatButton.type =
-                    "button";
-
-                chatButton.className =
-                    "action-btn action-primary";
-
-                chatButton.textContent =
-                    "💬 WhatsApp";
-
-                chatButton.addEventListener(
-                    "click",
-                    function(){
-
-                        window.open(
-                            "https://wa.me/" +
-                            encodeURIComponent(
-                                whatsappPhone
-                            ),
-                            "_blank"
-                        );
-
-                    }
-                );
-
-                publicActions.appendChild(
-                    chatButton
-                );
-
-
-                const callButton =
-                    document.createElement(
-                        "button"
-                    );
-
-                callButton.type =
-                    "button";
-
-                callButton.className =
-                    "action-btn";
-
-                callButton.textContent =
-                    "📞 Call";
-
-                callButton.addEventListener(
-                    "click",
-                    function(){
-
-                        window.location.href =
-                            "tel:" +
-                            cleanPhone;
-
-                    }
-                );
-
-                publicActions.appendChild(
-                    callButton
-                );
-
-            }
-
-
-            const directionsButton =
-                document.createElement(
-                    "button"
-                );
-
-            directionsButton.type =
-                "button";
-
-            directionsButton.className =
-                "action-btn";
-
-            directionsButton.textContent =
-                "🧭 Directions";
-
-            directionsButton.addEventListener(
-                "click",
-                function(){
-
-                    const location =
+                    location:
                         String(
                             business.location ||
                             ""
-                        ).trim();
-
-                    const destination =
-                        location
-                            ?
-                            (
-                                business.name +
-                                ", " +
-                                location
-                            )
-                            :
-                            business.name;
-
-                    window.open(
-                        "https://www.google.com/maps/search/?api=1&query=" +
-                        encodeURIComponent(
-                            destination
                         ),
-                        "_blank"
-                    );
 
+                    phone:
+                        String(
+                            business.phone ||
+                            ""
+                        ),
+
+                    image:
+                        String(
+                            business.image_url ||
+                            business.image ||
+                            ""
+                        )
                 }
+            )
+        );
+
+    }catch(error){
+
+        console.warn(
+            "LosOja: Could not save escrow business context.",
+            error
+        );
+
+    }
+
+
+    window.location.href =
+        "balance.html";
+
+}
+
+
+/* =========================================================
+   LOAD EDITOR IMAGES
+========================================================= */
+
+async function getEditableBusinessImages(
+    businessId,
+    accessToken
+){
+
+    const response =
+        await fetch(
+            SUPABASE_URL +
+            "/rest/v1/business_images" +
+            "?business_id=eq." +
+            encodeURIComponent(
+                String(
+                    businessId
+                )
+            ) +
+            "&select=*" +
+            "&order=sort_order.asc,created_at.asc",
+            {
+                method:"GET",
+
+                headers:{
+                    apikey:
+                        SUPABASE_KEY,
+
+                    Authorization:
+                        "Bearer " +
+                        accessToken,
+
+                    Accept:
+                        "application/json"
+                }
+            }
+        );
+
+
+    if(!response.ok){
+
+        throw new Error(
+            "Could not load your business photos."
+        );
+
+    }
+
+
+    const data =
+        await response.json();
+
+
+    return Array.isArray(data)
+        ? data
+        : [];
+
+}
+
+
+/* =========================================================
+   RENDER EDITOR IMAGES
+========================================================= */
+
+function renderEditImages(
+    container
+){
+
+    if(!container){
+        return;
+    }
+
+
+    container.innerHTML =
+        "";
+
+
+    let visibleCount =
+        0;
+
+
+    /*
+     * Legacy/main business image.
+     *
+     * It is shown here as the current main picture.
+     * If removed, image_url will be cleared on save.
+     */
+
+    const mainImage =
+        currentBusiness &&
+        (
+            currentBusiness.image_url ||
+            currentBusiness.image ||
+            ""
+        );
+
+
+    if(
+        mainImage &&
+        !editImagesToRemove.has(
+            "__main__"
+        )
+    ){
+
+        visibleCount++;
+
+
+        const item =
+            document.createElement(
+                "div"
             );
 
-            publicActions.appendChild(
-                directionsButton
+        item.className =
+            "edit-image-item";
+
+
+        const image =
+            document.createElement(
+                "img"
             );
 
-        }
+        image.src =
+            mainImage;
+
+        image.alt =
+            currentBusiness.name ||
+            "Business photo";
 
 
-        /* =========================================================
-           OWNER / BUYER CONTROLS
-        ========================================================== */
+        const removeButton =
+            document.createElement(
+                "button"
+            );
 
-        async function renderOwnerBuyerActions(
-            business
-        ){
+        removeButton.type =
+            "button";
 
-            ownerActions.innerHTML =
-                "";
+        removeButton.className =
+            "edit-image-remove";
 
-            buyerActions.innerHTML =
-                "";
+        removeButton.textContent =
+            "×";
 
-            ownerActions.style.display =
-                "none";
-
-            buyerActions.style.display =
-                "none";
-
-            actionNote.style.display =
-                "none";
-
-            currentUser =
-                await getShopUser();
+        removeButton.title =
+            "Remove main picture";
 
 
-            /*
-             * Logged out:
-             * Show buyer actions, but clicking them will
-             * require login.
-             */
+        removeButton.addEventListener(
+            "click",
+            function(){
 
-            if(!currentUser){
-
-                renderBuyerActions(
-                    business
+                editImagesToRemove.add(
+                    "__main__"
                 );
+
+                renderEditImages(
+                    container
+                );
+
+                updateEditImageCount();
+
+            }
+        );
+
+
+        const label =
+            document.createElement(
+                "span"
+            );
+
+        label.className =
+            "edit-image-main";
+
+        label.textContent =
+            "Main picture";
+
+
+        item.appendChild(
+            image
+        );
+
+        item.appendChild(
+            removeButton
+        );
+
+        item.appendChild(
+            label
+        );
+
+        container.appendChild(
+            item
+        );
+
+    }
+
+
+    currentBusinessImages.forEach(
+        function(item){
+
+            const id =
+                String(
+                    item.id ||
+                    ""
+                );
+
+
+            if(
+                !id ||
+                editImagesToRemove.has(
+                    id
+                )
+            ){
 
                 return;
 
             }
 
 
-            const currentUserId =
-                String(
-                    currentUser.id ||
-                    ""
-                ).trim();
-
-            const ownerId =
-                String(
-                    business.user_id ||
-                    ""
-                ).trim();
+            const imageUrl =
+                item.image_url ||
+                item.url ||
+                item.image ||
+                "";
 
 
-            const isOwner =
-                currentUserId &&
-                ownerId &&
-                currentUserId ===
-                ownerId;
-
-
-            if(isOwner){
-
-                renderOwnerActions(
-                    business
-                );
-
-            }else{
-
-                renderBuyerActions(
-                    business
-                );
-
+            if(!imageUrl){
+                return;
             }
 
-        }
+
+            visibleCount++;
 
 
-        /* =========================================================
-           OWNER ACTIONS
-        ========================================================== */
+            const wrapper =
+                document.createElement(
+                    "div"
+                );
 
-        function renderOwnerActions(
-            business
-        ){
-
-            ownerActions.style.display =
-                "flex";
-
-            actionNote.style.display =
-                "block";
-
-            actionNote.className =
-                "owner-note";
-
-            actionNote.textContent =
-                "You own this LosOja business listing.";
+            wrapper.className =
+                "edit-image-item";
 
 
-            const editButton =
+            const image =
+                document.createElement(
+                    "img"
+                );
+
+            image.src =
+                imageUrl;
+
+            image.alt =
+                currentBusiness.name ||
+                "Business photo";
+
+
+            const removeButton =
                 document.createElement(
                     "button"
                 );
 
-            editButton.type =
+            removeButton.type =
                 "button";
 
-            editButton.className =
-                "action-btn action-primary";
+            removeButton.className =
+                "edit-image-remove";
 
-            editButton.textContent =
-                "✏️ Edit Business";
+            removeButton.textContent =
+                "×";
 
-            editButton.addEventListener(
+            removeButton.title =
+                "Remove picture";
+
+
+            removeButton.addEventListener(
                 "click",
                 function(){
 
-                    editCurrentBusiness(
-                        business
+                    editImagesToRemove.add(
+                        id
                     );
+
+                    renderEditImages(
+                        container
+                    );
+
+                    updateEditImageCount();
 
                 }
             );
 
 
-            const deleteButton =
-                document.createElement(
-                    "button"
+            wrapper.appendChild(
+                image
+            );
+
+            wrapper.appendChild(
+                removeButton
+            );
+
+            container.appendChild(
+                wrapper
+            );
+
+        }
+    );
+
+
+    if(
+        visibleCount === 0
+    ){
+
+        container.innerHTML =
+            `
+                <div
+                    style="
+                        grid-column:1/-1;
+                        padding:15px;
+                        border:1px dashed #d5dfd8;
+                        border-radius:10px;
+                        color:#718078;
+                        background:#fafcfb;
+                        text-align:center;
+                    "
+                >
+                    No business pictures currently saved.
+                </div>
+            `;
+
+    }
+
+}
+
+
+/* =========================================================
+   IMAGE COUNT
+========================================================= */
+
+function getCurrentEditImageCount(){
+
+    let count =
+        0;
+
+
+    const mainImage =
+        currentBusiness &&
+        (
+            currentBusiness.image_url ||
+            currentBusiness.image ||
+            ""
+        );
+
+
+    if(
+        mainImage &&
+        !editImagesToRemove.has(
+            "__main__"
+        )
+    ){
+
+        count++;
+
+    }
+
+
+    currentBusinessImages.forEach(
+        function(item){
+
+            const id =
+                String(
+                    item.id ||
+                    ""
                 );
 
-            deleteButton.type =
-                "button";
+            const url =
+                item.image_url ||
+                item.url ||
+                item.image ||
+                "";
 
-            deleteButton.className =
-                "action-btn action-danger";
 
-            deleteButton.textContent =
-                "🗑️ Delete Business";
+            if(
+                id &&
+                url &&
+                !editImagesToRemove.has(
+                    id
+                )
+            ){
 
-            deleteButton.addEventListener(
-                "click",
+                count++;
+
+            }
+
+        }
+    );
+
+
+    return count;
+
+}
+
+
+function updateEditImageCount(){
+
+    const count =
+        getCurrentEditImageCount() +
+        editSelectedFiles.length;
+
+
+    const countElement =
+        document.getElementById(
+            "shopEditBusinessImageCount"
+        );
+
+
+    if(countElement){
+
+        countElement.textContent =
+            count +
+            " / " +
+            MAX_BUSINESS_IMAGES +
+            " pictures";
+
+    }
+
+
+    const input =
+        document.getElementById(
+            "shopEditBusinessImages"
+        );
+
+
+    if(input){
+
+        input.disabled =
+            count >= MAX_BUSINESS_IMAGES;
+
+    }
+
+}
+
+
+/* =========================================================
+   NEW IMAGE PREVIEW
+========================================================= */
+
+function renderNewImagePreviews(){
+
+    const container =
+        document.getElementById(
+            "shopEditNewImagePreview"
+        );
+
+
+    if(!container){
+        return;
+    }
+
+
+    container.innerHTML =
+        "";
+
+
+    editSelectedFiles.forEach(
+        function(file){
+
+            const item =
+                document.createElement(
+                    "div"
+                );
+
+            item.className =
+                "new-image-item";
+
+
+            const image =
+                document.createElement(
+                    "img"
+                );
+
+
+            const objectUrl =
+                URL.createObjectURL(
+                    file
+                );
+
+
+            image.src =
+                objectUrl;
+
+
+            image.onload =
                 function(){
 
-                    openDeleteModal();
-
-                }
-            );
-
-
-            ownerActions.appendChild(
-                editButton
-            );
-
-            ownerActions.appendChild(
-                deleteButton
-            );
-
-        }
-
-
-        /* =========================================================
-           BUYER ACTIONS
-        ========================================================== */
-
-        function renderBuyerActions(
-            business
-        ){
-
-            buyerActions.style.display =
-                "flex";
-
-            actionNote.style.display =
-                "block";
-
-            actionNote.className =
-                "buyer-note";
-
-            actionNote.textContent =
-                "Contact the owner directly on LosOja or use escrow for a protected transaction.";
-
-
-            const chatButton =
-                document.createElement(
-                    "button"
-                );
-
-            chatButton.type =
-                "button";
-
-            chatButton.className =
-                "action-btn action-primary";
-
-            chatButton.textContent =
-                "💬 Chat on LosOja";
-
-            chatButton.addEventListener(
-                "click",
-                async function(){
-
-                    await openLosOjaChat(
-                        business
+                    URL.revokeObjectURL(
+                        objectUrl
                     );
 
-                }
-            );
+                };
 
 
-            const escrowButton =
+            const label =
                 document.createElement(
-                    "button"
+                    "div"
                 );
 
-            escrowButton.type =
-                "button";
+            label.className =
+                "new-image-label";
 
-            escrowButton.className =
-                "action-btn";
+            label.textContent =
+                file.name;
 
-            escrowButton.textContent =
-                "🔐 View / Create Escrow";
 
-            escrowButton.addEventListener(
-                "click",
-                async function(){
+            item.appendChild(
+                image
+            );
 
-                    await openBusinessEscrow(
-                        business
-                    );
+            item.appendChild(
+                label
+            );
 
-                }
+            container.appendChild(
+                item
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   IMAGE FILE VALIDATION
+========================================================= */
+
+function validateBusinessImage(
+    file
+){
+
+    if(!file){
+        return "Invalid image.";
+    }
+
+
+    const allowedTypes = [
+        "image/jpeg",
+        "image/jpg",
+        "image/png",
+        "image/webp",
+        "image/gif"
+    ];
+
+
+    if(
+        !allowedTypes.includes(
+            file.type
+        )
+    ){
+
+        return (
+            file.name +
+            " is not a supported image type."
+        );
+
+    }
+
+
+    if(
+        file.size >
+        MAX_IMAGE_SIZE
+    ){
+
+        return (
+            file.name +
+            " is larger than 5 MB."
+        );
+
+    }
+
+
+    return "";
+
+}
+
+
+/* =========================================================
+   HANDLE NEW IMAGES
+========================================================= */
+
+function handleEditImageSelection(
+    event
+){
+
+    const input =
+        event.target;
+
+    const files =
+        Array.from(
+            input.files || []
+        );
+
+
+    if(!files.length){
+        return;
+    }
+
+
+    const currentCount =
+        getCurrentEditImageCount();
+
+
+    const availableSlots =
+        MAX_BUSINESS_IMAGES -
+        currentCount;
+
+
+    if(
+        availableSlots <= 0
+    ){
+
+        showToast(
+            "You already have the maximum of 5 pictures."
+        );
+
+        input.value =
+            "";
+
+        return;
+
+    }
+
+
+    const selected =
+        files.slice(
+            0,
+            availableSlots
+        );
+
+
+    for(
+        let index = 0;
+        index < selected.length;
+        index++
+    ){
+
+        const file =
+            selected[index];
+
+        const error =
+            validateBusinessImage(
+                file
             );
 
 
-            buyerActions.appendChild(
-                chatButton
+        if(error){
+
+            showToast(
+                error
             );
 
-            buyerActions.appendChild(
-                escrowButton
-            );
+            continue;
 
         }
 
 
-        /* =========================================================
-           LOSOJA CHAT
-        ========================================================== */
+        editSelectedFiles.push(
+            file
+        );
 
-        async function openLosOjaChat(
-            business
-        ){
+    }
 
-            const user =
-                await requireShopLogin();
 
-            if(!user){
-                return;
+    if(
+        files.length >
+        availableSlots
+    ){
+
+        showToast(
+            "Only " +
+            availableSlots +
+            " more picture(s) can be added."
+        );
+
+    }
+
+
+    input.value =
+        "";
+
+
+    renderNewImagePreviews();
+
+    updateEditImageCount();
+
+}
+
+
+/* =========================================================
+   UPLOAD BUSINESS IMAGE
+========================================================= */
+
+async function uploadBusinessImage(
+    file,
+    businessId,
+    userId,
+    accessToken,
+    sortOrder
+){
+
+    const extension =
+        (
+            file.name
+                .split(".")
+                .pop() ||
+            "jpg"
+        )
+        .toLowerCase()
+        .replace(
+            /[^a-z0-9]/g,
+            ""
+        );
+
+
+    const safeExtension =
+        extension ||
+        "jpg";
+
+
+    const randomPart =
+        Math.random()
+            .toString(36)
+            .slice(2,10);
+
+
+    const uploadPath =
+        "businesses/" +
+        "business_" +
+        String(
+            businessId
+        ) +
+        "_" +
+        Date.now() +
+        "_" +
+        randomPart +
+        "." +
+        safeExtension;
+
+
+    const uploadResponse =
+        await fetch(
+            SUPABASE_URL +
+            "/storage/v1/object/" +
+            BUSINESS_IMAGE_BUCKET +
+            "/" +
+            uploadPath,
+            {
+                method:"POST",
+
+                headers:{
+                    apikey:
+                        SUPABASE_KEY,
+
+                    Authorization:
+                        "Bearer " +
+                        accessToken,
+
+                    "Content-Type":
+                        file.type ||
+                        "image/jpeg"
+                },
+
+                body:
+                    file
             }
+        );
 
 
-            if(
-                !business.user_id
-            ){
+    if(!uploadResponse.ok){
 
-                showToast(
-                    "This business does not have an owner account."
-                );
+        let message =
+            "Could not upload picture.";
 
-                return;
+        try{
 
-            }
+            const data =
+                await uploadResponse.json();
 
+            message =
+                data.message ||
+                data.error ||
+                data.statusCode ||
+                message;
 
-            if(
-                String(user.id) ===
-                String(business.user_id)
-            ){
+        }catch(error){
 
-                showToast(
-                    "You cannot chat with yourself."
-                );
-
-                return;
-
-            }
-
-
-            const chatUrl =
-                "chat.html?user=" +
-                encodeURIComponent(
-                    String(
-                        business.user_id
-                    )
-                ) +
-                "&business=" +
-                encodeURIComponent(
-                    String(
-                        business.id
-                    )
-                );
-
-
-            console.log(
-                "LosOja: Opening business chat:",
-                chatUrl
-            );
-
-
-            window.location.href =
-                chatUrl;
+            /* Ignore response parsing errors. */
 
         }
 
 
-        /* =========================================================
-           ESCROW
-        ========================================================== */
+        throw new Error(
+            message
+        );
 
-        async function openBusinessEscrow(
-            business
-        ){
-
-            const user =
-                await requireShopLogin();
-
-            if(!user){
-                return;
-            }
+    }
 
 
-            if(
-                !business.user_id
-            ){
-
-                showToast(
-                    "This business does not have an owner account."
-                );
-
-                return;
-
-            }
+    const imageUrl =
+        SUPABASE_URL +
+        "/storage/v1/object/public/" +
+        BUSINESS_IMAGE_BUCKET +
+        "/" +
+        uploadPath;
 
 
-            if(
-                String(user.id) ===
-                String(business.user_id)
-            ){
+    const insertResponse =
+        await fetch(
+            SUPABASE_URL +
+            "/rest/v1/business_images",
+            {
+                method:"POST",
 
-                showToast(
-                    "You cannot create escrow with your own business."
-                );
+                headers:{
+                    apikey:
+                        SUPABASE_KEY,
 
-                return;
+                    Authorization:
+                        "Bearer " +
+                        accessToken,
 
-            }
+                    "Content-Type":
+                        "application/json",
 
+                    Accept:
+                        "application/json",
 
-            /*
-             * Preserve the selected business for the
-             * existing LosOja balance/escrow flow.
-             */
+                    Prefer:
+                        "return=representation"
+                },
 
-            try{
-
-                sessionStorage.setItem(
-                    "losoja_escrow_business",
+                body:
                     JSON.stringify(
                         {
-                            id:
+                            business_id:
                                 String(
-                                    business.id
-                                ),
-
-                            name:
-                                String(
-                                    business.name ||
-                                    ""
+                                    businessId
                                 ),
 
                             user_id:
                                 String(
-                                    business.user_id ||
-                                    ""
+                                    userId
                                 ),
 
-                            category:
-                                String(
-                                    business.category ||
-                                    ""
-                                ),
+                            image_url:
+                                imageUrl,
 
-                            location:
-                                String(
-                                    business.location ||
-                                    ""
-                                ),
-
-                            phone:
-                                String(
-                                    business.phone ||
-                                    ""
-                                ),
-
-                            image:
-                                String(
-                                    business.image_url ||
-                                    business.image ||
-                                    ""
-                                )
+                            sort_order:
+                                sortOrder
                         }
                     )
-                );
-
-            }catch(error){
-
-                console.warn(
-                    "LosOja: Could not save escrow business context.",
-                    error
-                );
-
             }
+        );
 
 
-            window.location.href =
-                "balance.html";
+    if(!insertResponse.ok){
+
+        let message =
+            "Picture uploaded but could not be saved.";
+
+        try{
+
+            const data =
+                await insertResponse.json();
+
+            message =
+                data.message ||
+                data.details ||
+                data.hint ||
+                message;
+
+        }catch(error){
+
+            /* Ignore response parsing errors. */
 
         }
 
-        /* =========================================================
-           EDIT BUSINESS
-        ========================================================== */
 
-        async function editCurrentBusiness(
-            business
-        ){
+        throw new Error(
+            message
+        );
 
-            const user =
-                await requireShopLogin();
-
-            if(!user){
-                return;
-            }
+    }
 
 
-            if(
-                !business ||
-                !business.id
-            ){
+    return imageUrl;
 
-                showToast(
-                    "Business information is missing."
-                );
-
-                return;
-
-            }
+}
 
 
-            /* -----------------------------------------------------
-               OWNERSHIP CHECK
-            ----------------------------------------------------- */
+/* =========================================================
+   EDIT BUSINESS
+========================================================= */
 
-            if(
-                String(user.id) !==
-                String(
-                    business.user_id
-                )
-            ){
+async function editCurrentBusiness(
+    business
+){
 
-                showToast(
-                    "You can only edit your own business."
-                );
+    const user =
+        await requireShopLogin();
 
-                return;
-
-            }
+    if(!user){
+        return;
+    }
 
 
-            /* -----------------------------------------------------
-               CREATE EDIT MODAL
-            ----------------------------------------------------- */
+    if(
+        !business ||
+        !business.id
+    ){
 
-            let modal =
-                document.getElementById(
-                    "shopEditBusinessModal"
-                );
+        showToast(
+            "Business information is missing."
+        );
 
+        return;
 
-            if(!modal){
-
-                modal =
-                    document.createElement(
-                        "div"
-                    );
-
-                modal.id =
-                    "shopEditBusinessModal";
-
-                modal.className =
-                    "modal-overlay";
-
-                modal.setAttribute(
-                    "aria-hidden",
-                    "true"
-                );
+    }
 
 
-                modal.innerHTML = `
+    if(
+        String(user.id) !==
+        String(
+            business.user_id
+        )
+    ){
+
+        showToast(
+            "You can only edit your own business."
+        );
+
+        return;
+
+    }
+
+
+    let modal =
+        document.getElementById(
+            "shopEditBusinessModal"
+        );
+
+
+    if(!modal){
+
+        modal =
+            document.createElement(
+                "div"
+            );
+
+        modal.id =
+            "shopEditBusinessModal";
+
+        modal.className =
+            "modal-overlay";
+
+        modal.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+
+        modal.innerHTML = `
+
+            <div
+                class="modal-content large"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="shopEditBusinessTitle"
+            >
+
+                <button
+                    type="button"
+                    class="modal-close"
+                    id="shopEditBusinessClose"
+                    aria-label="Close"
+                >
+                    ×
+                </button>
+
+
+                <h2 id="shopEditBusinessTitle">
+                    Edit Your Business
+                </h2>
+
+
+                <form
+                    id="shopEditBusinessForm"
+                >
+
+                    <div class="form-group">
+
+                        <label
+                            for="shopEditBusinessName"
+                        >
+                            Business Name *
+                        </label>
+
+                        <input
+                            type="text"
+                            id="shopEditBusinessName"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label
+                            for="shopEditBusinessCategory"
+                        >
+                            Category *
+                        </label>
+
+                        <input
+                            type="text"
+                            id="shopEditBusinessCategory"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label
+                            for="shopEditBusinessLocation"
+                        >
+                            Location *
+                        </label>
+
+                        <input
+                            type="text"
+                            id="shopEditBusinessLocation"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label
+                            for="shopEditBusinessPhone"
+                        >
+                            Phone Number
+                        </label>
+
+                        <input
+                            type="tel"
+                            id="shopEditBusinessPhone"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label
+                            for="shopEditBusinessPrice"
+                        >
+                            Price
+                        </label>
+
+                        <input
+                            type="number"
+                            id="shopEditBusinessPrice"
+                            min="0"
+                            step="0.01"
+                            inputmode="decimal"
+                            placeholder="Optional"
+                        >
+
+                        <p class="form-help">
+                            Leave empty if there is no fixed price.
+                        </p>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label
+                            for="shopEditBusinessDescription"
+                        >
+                            Description
+                        </label>
+
+                        <textarea
+                            id="shopEditBusinessDescription"
+                            rows="5"
+                        ></textarea>
+
+                    </div>
+
+
+                    <div class="edit-images-section">
+
+                        <h3 class="edit-images-title">
+                            Business Pictures
+                        </h3>
+
+                        <p class="edit-images-help">
+                            Add up to 5 pictures. Each picture can be up to 5 MB.
+                        </p>
+
+                        <div
+                            id="shopEditBusinessImageGrid"
+                            class="edit-image-grid"
+                        ></div>
+
+                        <label
+                            class="image-picker"
+                            for="shopEditBusinessImages"
+                        >
+
+                            <strong>
+                                📷 Add Pictures
+                            </strong>
+
+                            <div
+                                style="
+                                    margin-top:5px;
+                                    color:#718078;
+                                    font-size:12px;
+                                "
+                            >
+                                JPG, JPEG, PNG, WebP or GIF
+                            </div>
+
+                        </label>
+
+                        <input
+                            type="file"
+                            id="shopEditBusinessImages"
+                            accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
+                            multiple
+                            style="display:none;"
+                        >
+
+                        <div
+                            id="shopEditNewImagePreview"
+                            class="new-image-preview"
+                        ></div>
+
+                        <p
+                            id="shopEditBusinessImageCount"
+                            class="form-help"
+                        >
+                            0 / 5 pictures
+                        </p>
+
+                    </div>
+
+
+                    <p
+                        id="shopEditBusinessError"
+                        class="form-error"
+                        style="display:none;"
+                    ></p>
+
 
                     <div
-                        class="modal-content large"
-                        role="dialog"
-                        aria-modal="true"
-                        aria-labelledby="shopEditBusinessTitle"
+                        class="edit-buttons"
                     >
 
                         <button
                             type="button"
-                            class="modal-close"
-                            id="shopEditBusinessClose"
-                            aria-label="Close"
+                            class="btn btn-outline"
+                            id="shopEditBusinessCancel"
                         >
-                            ×
+                            Cancel
                         </button>
 
 
-                        <h2 id="shopEditBusinessTitle">
-                            Edit Your Business
-                        </h2>
-
-
-                        <form
-                            id="shopEditBusinessForm"
+                        <button
+                            type="submit"
+                            class="btn btn-primary"
+                            id="shopEditBusinessSave"
                         >
-
-                            <div class="form-group">
-
-                                <label
-                                    for="shopEditBusinessName"
-                                >
-                                    Business Name *
-                                </label>
-
-                                <input
-                                    type="text"
-                                    id="shopEditBusinessName"
-                                    required
-                                >
-
-                            </div>
-
-
-                            <div class="form-group">
-
-                                <label
-                                    for="shopEditBusinessCategory"
-                                >
-                                    Category *
-                                </label>
-
-                                <input
-                                    type="text"
-                                    id="shopEditBusinessCategory"
-                                    required
-                                >
-
-                            </div>
-
-
-                            <div class="form-group">
-
-                                <label
-                                    for="shopEditBusinessLocation"
-                                >
-                                    Location *
-                                </label>
-
-                                <input
-                                    type="text"
-                                    id="shopEditBusinessLocation"
-                                    required
-                                >
-
-                            </div>
-
-
-                            <div class="form-group">
-
-                                <label
-                                    for="shopEditBusinessPhone"
-                                >
-                                    Phone Number
-                                </label>
-
-                                <input
-                                    type="tel"
-                                    id="shopEditBusinessPhone"
-                                >
-
-                            </div>
-
-
-                            <div class="form-group">
-
-                                <label
-                                    for="shopEditBusinessDescription"
-                                >
-                                    Description
-                                </label>
-
-                                <textarea
-                                    id="shopEditBusinessDescription"
-                                    rows="5"
-                                ></textarea>
-
-                            </div>
-
-
-                            <p
-                                id="shopEditBusinessError"
-                                class="form-error"
-                                style="display:none;"
-                            ></p>
-
-
-                            <div
-                                style="
-                                    display:flex;
-                                    gap:10px;
-                                    flex-wrap:wrap;
-                                    margin-top:16px;
-                                "
-                            >
-
-                                <button
-                                    type="button"
-                                    class="btn btn-outline"
-                                    id="shopEditBusinessCancel"
-                                >
-                                    Cancel
-                                </button>
-
-
-                                <button
-                                    type="submit"
-                                    class="btn btn-primary"
-                                    id="shopEditBusinessSave"
-                                >
-                                    Save Changes
-                                </button>
-
-                            </div>
-
-                        </form>
+                            Save Changes
+                        </button>
 
                     </div>
 
-                `;
+                </form>
 
+            </div>
 
-                document.body.appendChild(
-                    modal
-                );
+        `;
 
 
-                /* -------------------------------------------------
-                   CLOSE MODAL
-                ------------------------------------------------- */
+        document.body.appendChild(
+            modal
+        );
 
-                const closeButton =
-                    document.getElementById(
-                        "shopEditBusinessClose"
-                    );
 
+        /* -----------------------------------------------------
+           CLOSE MODAL
+        ----------------------------------------------------- */
 
-                const cancelButton =
-                    document.getElementById(
-                        "shopEditBusinessCancel"
-                    );
+        const closeButton =
+            document.getElementById(
+                "shopEditBusinessClose"
+            );
 
 
-                function closeEditModal(){
+        const cancelButton =
+            document.getElementById(
+                "shopEditBusinessCancel"
+            );
 
-                    modal.classList.remove(
-                        "show"
-                    );
 
-                    modal.setAttribute(
-                        "aria-hidden",
-                        "true"
-                    );
+        function closeEditModal(){
 
-                    modal.style.display =
-                        "none";
-
-                }
-
-
-                if(closeButton){
-
-                    closeButton.addEventListener(
-                        "click",
-                        closeEditModal
-                    );
-
-                }
-
-
-                if(cancelButton){
-
-                    cancelButton.addEventListener(
-                        "click",
-                        closeEditModal
-                    );
-
-                }
-
-
-                /* -------------------------------------------------
-                   SAVE BUSINESS
-                ------------------------------------------------- */
-
-                const form =
-                    document.getElementById(
-                        "shopEditBusinessForm"
-                    );
-
-
-                if(form){
-
-                    form.addEventListener(
-                        "submit",
-                        async function(event){
-
-                            event.preventDefault();
-
-
-                            const name =
-                                document
-                                    .getElementById(
-                                        "shopEditBusinessName"
-                                    )
-                                    ?.value
-                                    .trim() || "";
-
-
-                            const category =
-                                document
-                                    .getElementById(
-                                        "shopEditBusinessCategory"
-                                    )
-                                    ?.value
-                                    .trim() || "";
-
-
-                            const location =
-                                document
-                                    .getElementById(
-                                        "shopEditBusinessLocation"
-                                    )
-                                    ?.value
-                                    .trim() || "";
-
-
-                            const phone =
-                                document
-                                    .getElementById(
-                                        "shopEditBusinessPhone"
-                                    )
-                                    ?.value
-                                    .trim() || "";
-
-
-                            const description =
-                                document
-                                    .getElementById(
-                                        "shopEditBusinessDescription"
-                                    )
-                                    ?.value
-                                    .trim() || "";
-
-
-                            const errorBox =
-                                document.getElementById(
-                                    "shopEditBusinessError"
-                                );
-
-
-                            const saveButton =
-                                document.getElementById(
-                                    "shopEditBusinessSave"
-                                );
-
-
-                            if(
-                                !name ||
-                                !category ||
-                                !location
-                            ){
-
-                                if(errorBox){
-
-                                    errorBox.textContent =
-                                        "Please complete the required fields.";
-
-                                    errorBox.style.display =
-                                        "block";
-
-                                }
-
-                                return;
-
-                            }
-
-
-                            if(saveButton){
-
-                                saveButton.disabled =
-                                    true;
-
-                                saveButton.textContent =
-                                    "Saving...";
-
-                            }
-
-
-                            try{
-
-                                /* ---------------------------------
-                                   FRESH AUTH TOKEN
-                                --------------------------------- */
-
-                                const accessToken =
-                                    await getShopAccessToken();
-
-
-                                if(!accessToken){
-
-                                    throw new Error(
-                                        "Your login session has expired. Please log in again."
-                                    );
-
-                                }
-
-
-                                /* ---------------------------------
-                                   UPDATE BUSINESS
-                                --------------------------------- */
-
-                                const response =
-                                    await fetch(
-                                        SUPABASE_URL +
-                                        "/rest/v1/businesses?id=eq." +
-                                        encodeURIComponent(
-                                            String(
-                                                business.id
-                                            )
-                                        ) +
-                                        "&user_id=eq." +
-                                        encodeURIComponent(
-                                            String(
-                                                user.id
-                                            )
-                                        ),
-                                        {
-
-                                            method:
-                                                "PATCH",
-
-                                            headers:{
-
-                                                "apikey":
-                                                    SUPABASE_KEY,
-
-                                                "Authorization":
-                                                    "Bearer " +
-                                                    accessToken,
-
-                                                "Content-Type":
-                                                    "application/json",
-
-                                                "Accept":
-                                                    "application/json",
-
-                                                "Prefer":
-                                                    "return=representation"
-
-                                            },
-
-                                            body:
-                                                JSON.stringify({
-
-                                                    name:
-                                                        name,
-
-                                                    category:
-                                                        category,
-
-                                                    location:
-                                                        location,
-
-                                                    phone:
-                                                        phone,
-
-                                                    description:
-                                                        description
-
-                                                })
-
-                                        }
-                                    );
-
-
-                                const responseText =
-                                    await response.text();
-
-
-                                let result =
-                                    null;
-
-
-                                try{
-
-                                    result =
-                                        responseText
-                                            ? JSON.parse(
-                                                responseText
-                                            )
-                                            : null;
-
-                                }catch{
-
-                                    result =
-                                        responseText;
-
-                                }
-
-
-                                if(!response.ok){
-
-                                    const message =
-                                        result &&
-                                        typeof result ===
-                                            "object"
-                                            ? (
-                                                result.message ||
-                                                result.details ||
-                                                result.hint
-                                            )
-                                            : null;
-
-
-                                    throw new Error(
-                                        message ||
-                                        "Could not save your changes."
-                                    );
-
-                                }
-
-
-                                /* ---------------------------------
-                                   UPDATE CURRENT STOREFRONT
-                                --------------------------------- */
-
-                                currentBusiness = {
-
-                                    ...currentBusiness,
-
-                                    name:
-                                        name,
-
-                                    category:
-                                        category,
-
-                                    location:
-                                        location,
-
-                                    phone:
-                                        phone,
-
-                                    description:
-                                        description
-
-                                };
-
-
-                                /* ---------------------------------
-                                   CLOSE MODAL
-                                --------------------------------- */
-
-                                modal.classList.remove(
-                                    "show"
-                                );
-
-                                modal.setAttribute(
-                                    "aria-hidden",
-                                    "true"
-                                );
-
-                                modal.style.display =
-                                    "none";
-
-
-                                /* ---------------------------------
-                                   REFRESH STOREFRONT
-                                --------------------------------- */
-
-                                renderBusiness(
-                                    currentBusiness
-                                );
-
-
-                                showToast(
-                                    "Business updated successfully!",
-                                    "success"
-                                );
-
-
-                            }catch(error){
-
-                                console.error(
-                                    "LosOja: Edit business save error:",
-                                    error
-                                );
-
-
-                                if(errorBox){
-
-                                    errorBox.textContent =
-                                        error.message ||
-                                        "Could not save your changes.";
-
-                                    errorBox.style.display =
-                                        "block";
-
-                                }
-
-
-                            }finally{
-
-                                if(saveButton){
-
-                                    saveButton.disabled =
-                                        false;
-
-                                    saveButton.textContent =
-                                        "Save Changes";
-
-                                }
-
-                            }
-
-                        }
-                    );
-
-                }
-
-            }
-
-
-            /* -----------------------------------------------------
-               FILL FORM
-            ----------------------------------------------------- */
-
-            const nameInput =
-                document.getElementById(
-                    "shopEditBusinessName"
-                );
-
-
-            const categoryInput =
-                document.getElementById(
-                    "shopEditBusinessCategory"
-                );
-
-
-            const locationInput =
-                document.getElementById(
-                    "shopEditBusinessLocation"
-                );
-
-
-            const phoneInput =
-                document.getElementById(
-                    "shopEditBusinessPhone"
-                );
-
-
-            const descriptionInput =
-                document.getElementById(
-                    "shopEditBusinessDescription"
-                );
-
-
-            if(nameInput){
-
-                nameInput.value =
-                    business.name || "";
-
-            }
-
-
-            if(categoryInput){
-
-                categoryInput.value =
-                    business.category || "";
-
-            }
-
-
-            if(locationInput){
-
-                locationInput.value =
-                    business.location || "";
-
-            }
-
-
-            if(phoneInput){
-
-                phoneInput.value =
-                    business.phone || "";
-
-            }
-
-
-            if(descriptionInput){
-
-                descriptionInput.value =
-                    business.description || "";
-
-            }
-
-
-            /* -----------------------------------------------------
-               SHOW MODAL
-            ----------------------------------------------------- */
-
-            modal.style.display =
-                "flex";
-
-            modal.classList.add(
+            modal.classList.remove(
                 "show"
             );
 
             modal.setAttribute(
                 "aria-hidden",
-                "false"
-            );
-
-
-            if(nameInput){
-
-                setTimeout(
-                    function(){
-
-                        nameInput.focus();
-
-                    },
-                    50
-                );
-
-            }
-
-        }
-
-
-        /* =========================================================
-           DELETE MODAL
-        ========================================================== */
-
-        function openDeleteModal(){
-
-            deleteModal.classList.add(
-                "show"
-            );
-
-            deleteModal.setAttribute(
-                "aria-hidden",
-                "false"
-            );
-
-        }
-
-
-        function closeDeleteModal(){
-
-            deleteModal.classList.remove(
-                "show"
-            );
-
-            deleteModal.setAttribute(
-                "aria-hidden",
                 "true"
             );
 
+            modal.style.display =
+                "none";
+
+            editSelectedFiles =
+                [];
+
+            editImagesToRemove =
+                new Set();
+
         }
 
 
-        /* =========================================================
-           DELETE BUSINESS
-        ========================================================== */
+        if(closeButton){
 
-        async function deleteCurrentBusiness(){
+            closeButton.addEventListener(
+                "click",
+                closeEditModal
+            );
 
-            if(
-                !currentBusiness ||
-                !currentBusiness.id
-            ){
-
-                showToast(
-                    "Business information is missing."
-                );
-
-                return;
-
-            }
+        }
 
 
-            const user =
-                await getShopUser();
+        if(cancelButton){
 
-            if(!user){
+            cancelButton.addEventListener(
+                "click",
+                closeEditModal
+            );
 
-                closeDeleteModal();
-
-                await requireShopLogin();
-
-                return;
-
-            }
+        }
 
 
-            if(
-                String(user.id) !==
-                String(
-                    currentBusiness.user_id
-                )
-            ){
+        modal.addEventListener(
+            "click",
+            function(event){
 
-                closeDeleteModal();
+                if(
+                    event.target ===
+                    modal
+                ){
 
-                showToast(
-                    "You can only delete your own business."
-                );
-
-                return;
-
-            }
-
-
-            currentAccessToken =
-                await getShopAccessToken();
-
-
-            if(!currentAccessToken){
-
-                closeDeleteModal();
-
-                try{
-
-                    sessionStorage.setItem(
-                        "losoja_return_to_shop",
-                        window.location.href
-                    );
-
-                }catch(error){
-
-                    /* Ignore storage errors. */
+                    closeEditModal();
 
                 }
 
-                window.location.href =
-                    "index.html#login";
-
-                return;
-
             }
+        );
 
 
-            const confirmButton =
-                document.getElementById(
-                    "confirmDeleteBtn"
-                );
+        /* -----------------------------------------------------
+           IMAGE INPUT
+        ----------------------------------------------------- */
 
-            if(confirmButton){
-
-                confirmButton.disabled =
-                    true;
-
-                confirmButton.textContent =
-                    "Deleting...";
-
-            }
+        const imageInput =
+            document.getElementById(
+                "shopEditBusinessImages"
+            );
 
 
-            try{
+        if(imageInput){
 
-                /*
-                 * IMPORTANT:
-                 *
-                 * The request includes both the business ID
-                 * and authenticated user ID.
-                 *
-                 * Supabase RLS must still enforce ownership.
-                 */
+            imageInput.addEventListener(
+                "change",
+                handleEditImageSelection
+            );
 
-                const response =
-                    await fetch(
-                        SUPABASE_URL +
-                        "/rest/v1/businesses?id=eq." +
-                        encodeURIComponent(
-                            String(
-                                currentBusiness.id
+        }
+
+
+        /* -----------------------------------------------------
+           SAVE BUSINESS
+        ----------------------------------------------------- */
+
+        const form =
+            document.getElementById(
+                "shopEditBusinessForm"
+            );
+
+
+        if(form){
+
+            form.addEventListener(
+                "submit",
+                async function(event){
+
+                    event.preventDefault();
+
+
+                    const name =
+                        document
+                            .getElementById(
+                                "shopEditBusinessName"
                             )
-                        ) +
-                        "&user_id=eq." +
-                        encodeURIComponent(
-                            String(
-                                user.id
+                            ?.value
+                            .trim() || "";
+
+
+                    const category =
+                        document
+                            .getElementById(
+                                "shopEditBusinessCategory"
                             )
-                        ),
-                        {
-                            method:"DELETE",
+                            ?.value
+                            .trim() || "";
 
-                            headers:{
-                                apikey:
-                                    SUPABASE_KEY,
 
-                                Authorization:
-                                    "Bearer " +
-                                    currentAccessToken,
+                    const location =
+                        document
+                            .getElementById(
+                                "shopEditBusinessLocation"
+                            )
+                            ?.value
+                            .trim() || "";
 
-                                Accept:
-                                    "application/json",
 
-                                Prefer:
-                                    "return=minimal"
-                            }
+                    const phone =
+                        document
+                            .getElementById(
+                                "shopEditBusinessPhone"
+                            )
+                            ?.value
+                            .trim() || "";
+
+
+                    const priceInput =
+                        document
+                            .getElementById(
+                                "shopEditBusinessPrice"
+                            )
+                            ?.value
+                            .trim() || "";
+
+
+                    const description =
+                        document
+                            .getElementById(
+                                "shopEditBusinessDescription"
+                            )
+                            ?.value
+                            .trim() || "";
+
+
+                    const errorElement =
+                        document.getElementById(
+                            "shopEditBusinessError"
+                        );
+
+
+                    const saveButton =
+                        document.getElementById(
+                            "shopEditBusinessSave"
+                        );
+
+
+                    if(
+                        !name ||
+                        !category ||
+                        !location
+                    ){
+
+                        if(errorElement){
+
+                            errorElement.textContent =
+                                "Please complete the required fields.";
+
+                            errorElement.style.display =
+                                "block";
+
                         }
-                    );
 
-
-                if(!response.ok){
-
-                    let message =
-                        "Business could not be deleted.";
-
-                    try{
-
-                        const data =
-                            await response.json();
-
-                        message =
-                            data.message ||
-                            data.error_description ||
-                            data.details ||
-                            data.hint ||
-                            message;
-
-                    }catch(error){
-
-                        /* Ignore JSON parsing failure. */
+                        return;
 
                     }
 
-                    throw new Error(
-                        message
-                    );
+
+                    if(
+                        priceInput !== "" &&
+                        (
+                            Number.isNaN(
+                                Number(
+                                    priceInput
+                                )
+                            ) ||
+                            Number(
+                                priceInput
+                            ) < 0
+                        )
+                    ){
+
+                        if(errorElement){
+
+                            errorElement.textContent =
+                                "Please enter a valid price.";
+
+                            errorElement.style.display =
+                                "block";
+
+                        }
+
+                        return;
+
+                    }
+
+
+                    const totalImages =
+                        getCurrentEditImageCount() +
+                        editSelectedFiles.length;
+
+
+                    if(
+                        totalImages >
+                        MAX_BUSINESS_IMAGES
+                    ){
+
+                        if(errorElement){
+
+                            errorElement.textContent =
+                                "You can have a maximum of 5 pictures.";
+
+                            errorElement.style.display =
+                                "block";
+
+                        }
+
+                        return;
+
+                    }
+
+
+                    if(saveButton){
+
+                        saveButton.disabled =
+                            true;
+
+                        saveButton.textContent =
+                            "Saving...";
+
+                    }
+
+
+                    if(errorElement){
+
+                        errorElement.style.display =
+                            "none";
+
+                    }
+
+
+                    try{
+
+                        /* ---------------------------------
+                           FRESH AUTH TOKEN
+                        --------------------------------- */
+
+                        const accessToken =
+                            await getShopAccessToken();
+
+
+                        if(!accessToken){
+
+                            throw new Error(
+                                "Your login session has expired. Please log in again."
+                            );
+
+                        }
+
+
+                        /* ---------------------------------
+                           LOAD CURRENT IMAGES
+                        --------------------------------- */
+
+                        currentBusinessImages =
+                            await getEditableBusinessImages(
+                                business.id,
+                                accessToken
+                            );
+
+
+                        /*
+                         * Re-check the image count after
+                         * loading the latest Supabase data.
+                         */
+
+                        const freshImageCount =
+                            getCurrentEditImageCount() +
+                            editSelectedFiles.length;
+
+
+                        if(
+                            freshImageCount >
+                            MAX_BUSINESS_IMAGES
+                        ){
+
+                            throw new Error(
+                                "You can have a maximum of 5 pictures."
+                            );
+
+                        }
+
+
+                        /* ---------------------------------
+                           UPDATE BUSINESS
+                        --------------------------------- */
+
+                        const businessUpdate = {
+
+                            name:
+                                name,
+
+                            category:
+                                category,
+
+                            location:
+                                location,
+
+                            phone:
+                                phone,
+
+                            description:
+                                description,
+
+                            price:
+                                priceInput === ""
+                                    ? null
+                                    : Number(
+                                        priceInput
+                                    )
+
+                        };
+
+
+                        /*
+                         * If the legacy/main picture was
+                         * removed, clear image_url.
+                         *
+                         * Otherwise preserve it.
+                         */
+
+                        if(
+                            editImagesToRemove.has(
+                                "__main__"
+                            )
+                        ){
+
+                            businessUpdate.image_url =
+                                null;
+
+                        }
+
+
+                        const response =
+                            await fetch(
+                                SUPABASE_URL +
+                                "/rest/v1/businesses?id=eq." +
+                                encodeURIComponent(
+                                    String(
+                                        business.id
+                                    )
+                                ) +
+                                "&user_id=eq." +
+                                encodeURIComponent(
+                                    String(
+                                        user.id
+                                    )
+                                ),
+                                {
+
+                                    method:
+                                        "PATCH",
+
+                                    headers:{
+
+                                        "apikey":
+                                            SUPABASE_KEY,
+
+                                        "Authorization":
+                                            "Bearer " +
+                                            accessToken,
+
+                                        "Content-Type":
+                                            "application/json",
+
+                                        "Accept":
+                                            "application/json",
+
+                                        "Prefer":
+                                            "return=representation"
+
+                                    },
+
+                                    body:
+                                        JSON.stringify(
+                                            businessUpdate
+                                        )
+
+                                }
+                            );
+
+
+                        const responseText =
+                            await response.text();
+
+
+                        let result =
+                            null;
+
+
+                        try{
+
+                            result =
+                                responseText
+                                    ? JSON.parse(
+                                        responseText
+                                    )
+                                    : null;
+
+                        }catch{
+
+                            result =
+                                responseText;
+
+                        }
+
+
+                        if(!response.ok){
+
+                            const message =
+                                result &&
+                                typeof result ===
+                                    "object"
+                                    ? (
+                                        result.message ||
+                                        result.details ||
+                                        result.hint
+                                    )
+                                    : null;
+
+
+                            throw new Error(
+                                message ||
+                                "Could not save your changes."
+                            );
+
+                        }
+
+
+                        /* ---------------------------------
+                           DELETE REMOVED PHOTO ROWS
+                        --------------------------------- */
+
+                        const rowsToDelete =
+                            Array.from(
+                                editImagesToRemove
+                            )
+                            .filter(
+                                function(id){
+
+                                    return (
+                                        id &&
+                                        id !==
+                                        "__main__"
+                                    );
+
+                                }
+                            );
+
+
+                        for(
+                            let index = 0;
+                            index < rowsToDelete.length;
+                            index++
+                        ){
+
+                            const imageId =
+                                rowsToDelete[index];
+
+
+                            const deleteResponse =
+                                await fetch(
+                                    SUPABASE_URL +
+                                    "/rest/v1/business_images?id=eq." +
+                                    encodeURIComponent(
+                                        String(
+                                            imageId
+                                        )
+                                    ) +
+                                    "&business_id=eq." +
+                                    encodeURIComponent(
+                                        String(
+                                            business.id
+                                        )
+                                    ) +
+                                    "&user_id=eq." +
+                                    encodeURIComponent(
+                                        String(
+                                            user.id
+                                        )
+                                    ),
+                                    {
+
+                                        method:
+                                            "DELETE",
+
+                                        headers:{
+
+                                            "apikey":
+                                                SUPABASE_KEY,
+
+                                            "Authorization":
+                                                "Bearer " +
+                                                accessToken,
+
+                                            "Accept":
+                                                "application/json",
+
+                                            "Prefer":
+                                                "return=minimal"
+
+                                        }
+
+                                    }
+                                );
+
+
+                            if(!deleteResponse.ok){
+
+                                throw new Error(
+                                    "Business details saved, but one or more pictures could not be removed."
+                                );
+
+                            }
+
+                        }
+
+
+                        /* ---------------------------------
+                           UPLOAD NEW PICTURES
+                        --------------------------------- */
+
+                        const remainingImageCount =
+                            getCurrentEditImageCount();
+
+
+                        let nextSortOrder =
+                            remainingImageCount;
+
+
+                        for(
+                            let index = 0;
+                            index < editSelectedFiles.length;
+                            index++
+                        ){
+
+                            const file =
+                                editSelectedFiles[index];
+
+
+                            await uploadBusinessImage(
+                                file,
+                                business.id,
+                                user.id,
+                                accessToken,
+                                nextSortOrder
+                            );
+
+
+                            nextSortOrder++;
+
+                        }
+
+
+                        /* ---------------------------------
+                           UPDATE CURRENT STOREFRONT DATA
+                        --------------------------------- */
+
+                        currentBusiness = {
+
+                            ...currentBusiness,
+
+                            ...businessUpdate
+
+                        };
+
+
+                        /*
+                         * Refresh images from Supabase so the
+                         * storefront immediately reflects the
+                         * saved picture changes.
+                         */
+
+                        currentBusinessImages =
+                            await getEditableBusinessImages(
+                                business.id,
+                                accessToken
+                            );
+
+
+                        /* ---------------------------------
+                           CLOSE MODAL
+                        --------------------------------- */
+
+                        modal.classList.remove(
+                            "show"
+                        );
+
+                        modal.setAttribute(
+                            "aria-hidden",
+                            "true"
+                        );
+
+                        modal.style.display =
+                            "none";
+
+
+                        editSelectedFiles =
+                            [];
+
+                        editImagesToRemove =
+                            new Set();
+
+
+                        /* ---------------------------------
+                           REFRESH STOREFRONT
+                        --------------------------------- */
+
+                        await renderBusiness(
+                            currentBusiness
+                        );
+
+
+                        showToast(
+                            "Business updated successfully!"
+                        );
+
+
+                    }catch(error){
+
+                        console.error(
+                            "LosOja: Edit business save error:",
+                            error
+                        );
+
+
+                        if(errorElement){
+
+                            errorElement.textContent =
+                                error.message ||
+                                "Could not save your changes.";
+
+                            errorElement.style.display =
+                                "block";
+
+                        }
+
+                    }finally{
+
+                        if(saveButton){
+
+                            saveButton.disabled =
+                                false;
+
+                            saveButton.textContent =
+                                "Save Changes";
+
+                        }
+
+                    }
 
                 }
+            );
+
+        }
+
+    }
 
 
-                closeDeleteModal();
+    /* -----------------------------------------------------
+       FILL FORM
+    ----------------------------------------------------- */
 
-                showToast(
-                    "Business deleted successfully."
-                );
-
-
-                /*
-                 * Give the toast a moment before leaving.
-                 */
-
-                setTimeout(
-                    function(){
-
-                        window.location.href =
-                            "index.html";
-
-                    },
-                    900
-                );
+    const nameInput =
+        document.getElementById(
+            "shopEditBusinessName"
+        );
 
 
-            }catch(error){
-
-                console.error(
-                    "LosOja delete business error:",
-                    error
-                );
-
-                showToast(
-                    error.message ||
-                    "Business could not be deleted."
-                );
+    const categoryInput =
+        document.getElementById(
+            "shopEditBusinessCategory"
+        );
 
 
-            }finally{
+    const locationInput =
+        document.getElementById(
+            "shopEditBusinessLocation"
+        );
 
-                if(confirmButton){
 
-                    confirmButton.disabled =
-                        false;
+    const phoneInput =
+        document.getElementById(
+            "shopEditBusinessPhone"
+        );
 
-                    confirmButton.textContent =
-                        "Delete Business";
 
-                }
+    const priceInput =
+        document.getElementById(
+            "shopEditBusinessPrice"
+        );
 
-            }
+
+    const descriptionInput =
+        document.getElementById(
+            "shopEditBusinessDescription"
+        );
+
+
+    if(nameInput){
+
+        nameInput.value =
+            business.name || "";
+
+    }
+
+
+    if(categoryInput){
+
+        categoryInput.value =
+            business.category || "";
+
+    }
+
+
+    if(locationInput){
+
+        locationInput.value =
+            business.location || "";
+
+    }
+
+
+    if(phoneInput){
+
+        phoneInput.value =
+            business.phone || "";
+
+    }
+
+
+    if(priceInput){
+
+        priceInput.value =
+            business.price !== null &&
+            business.price !== undefined
+                ? business.price
+                : "";
+
+    }
+
+
+    if(descriptionInput){
+
+        descriptionInput.value =
+            business.description || "";
+
+    }
+
+
+    /* -----------------------------------------------------
+       RESET EDIT STATE
+    ----------------------------------------------------- */
+
+    editImagesToRemove =
+        new Set();
+
+    editSelectedFiles =
+        [];
+
+
+    /* -----------------------------------------------------
+       LOAD CURRENT PICTURES
+    ----------------------------------------------------- */
+
+    try{
+
+        const accessToken =
+            await getShopAccessToken();
+
+
+        if(!accessToken){
+
+            throw new Error(
+                "Your login session has expired."
+            );
 
         }
 
 
-        /* =========================================================
-           BUSINESS PHOTOS
-        ========================================================== */
+        currentBusinessImages =
+            await getEditableBusinessImages(
+                business.id,
+                accessToken
+            );
 
-        async function loadBusinessImages(
-            businessId
+    }catch(error){
+
+        console.error(
+            "LosOja: Could not load edit pictures:",
+            error
+        );
+
+        currentBusinessImages =
+            [];
+
+        showToast(
+            "The business editor opened, but current extra pictures could not be loaded."
+        );
+
+    }
+
+
+    const imageGrid =
+        document.getElementById(
+            "shopEditBusinessImageGrid"
+        );
+
+
+    renderEditImages(
+        imageGrid
+    );
+
+
+    renderNewImagePreviews();
+
+    updateEditImageCount();
+
+
+    /* -----------------------------------------------------
+       SHOW MODAL
+    ----------------------------------------------------- */
+
+    modal.style.display =
+        "flex";
+
+    modal.classList.add(
+        "show"
+    );
+
+    modal.setAttribute(
+        "aria-hidden",
+        "false"
+    );
+
+
+    if(nameInput){
+
+        setTimeout(
+            function(){
+
+                nameInput.focus();
+
+            },
+            50
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   DELETE MODAL
+========================================================= */
+
+function openDeleteModal(){
+
+    deleteModal.classList.add(
+        "show"
+    );
+
+    deleteModal.setAttribute(
+        "aria-hidden",
+        "false"
+    );
+
+}
+
+
+function closeDeleteModal(){
+
+    deleteModal.classList.remove(
+        "show"
+    );
+
+    deleteModal.setAttribute(
+        "aria-hidden",
+        "true"
+    );
+
+}
+
+
+/* =========================================================
+   DELETE BUSINESS
+========================================================= */
+
+async function deleteCurrentBusiness(){
+
+    if(
+        !currentBusiness ||
+        !currentBusiness.id
+    ){
+
+        showToast(
+            "Business information is missing."
+        );
+
+        return;
+
+    }
+
+
+    const user =
+        await getShopUser();
+
+    if(!user){
+
+        closeDeleteModal();
+
+        await requireShopLogin();
+
+        return;
+
+    }
+
+
+    if(
+        String(user.id) !==
+        String(
+            currentBusiness.user_id
+        )
+    ){
+
+        closeDeleteModal();
+
+        showToast(
+            "You can only delete your own business."
+        );
+
+        return;
+
+    }
+
+
+    currentAccessToken =
+        await getShopAccessToken();
+
+
+    if(!currentAccessToken){
+
+        closeDeleteModal();
+
+        try{
+
+            sessionStorage.setItem(
+                "losoja_return_to_shop",
+                window.location.href
+            );
+
+        }catch(error){
+
+            /* Ignore storage errors. */
+
+        }
+
+        window.location.href =
+            "index.html#login";
+
+        return;
+
+    }
+
+
+    const confirmButton =
+        document.getElementById(
+            "confirmDeleteBtn"
+        );
+
+    if(confirmButton){
+
+        confirmButton.disabled =
+            true;
+
+        confirmButton.textContent =
+            "Deleting...";
+
+    }
+
+
+    try{
+
+        const response =
+            await fetch(
+                SUPABASE_URL +
+                "/rest/v1/businesses?id=eq." +
+                encodeURIComponent(
+                    String(
+                        currentBusiness.id
+                    )
+                ) +
+                "&user_id=eq." +
+                encodeURIComponent(
+                    String(
+                        user.id
+                    )
+                ),
+                {
+                    method:"DELETE",
+
+                    headers:{
+                        apikey:
+                            SUPABASE_KEY,
+
+                        Authorization:
+                            "Bearer " +
+                            currentAccessToken,
+
+                        Accept:
+                            "application/json",
+
+                        Prefer:
+                            "return=minimal"
+                    }
+                }
+            );
+
+
+        if(!response.ok){
+
+            let message =
+                "Business could not be deleted.";
+
+            try{
+
+                const data =
+                    await response.json();
+
+                message =
+                    data.message ||
+                    data.error_description ||
+                    data.details ||
+                    data.hint ||
+                    message;
+
+            }catch(error){
+
+                /* Ignore JSON parsing failure. */
+
+            }
+
+            throw new Error(
+                message
+            );
+
+        }
+
+
+        closeDeleteModal();
+
+        showToast(
+            "Business deleted successfully."
+        );
+
+
+        setTimeout(
+            function(){
+
+                window.location.href =
+                    "index.html";
+
+            },
+            900
+        );
+
+
+    }catch(error){
+
+        console.error(
+            "LosOja delete business error:",
+            error
+        );
+
+        showToast(
+            error.message ||
+            "Business could not be deleted."
+        );
+
+
+    }finally{
+
+        if(confirmButton){
+
+            confirmButton.disabled =
+                false;
+
+            confirmButton.textContent =
+                "Delete Business";
+
+        }
+
+    }
+
+}
+
+
+/* =========================================================
+   BUSINESS PHOTOS
+========================================================= */
+
+async function loadBusinessImages(
+    businessId
+){
+
+    gallery.innerHTML =
+        `
+            <div class="empty-gallery">
+                Loading business photos...
+            </div>
+        `;
+
+
+    try{
+
+        const response =
+            await fetch(
+                SUPABASE_URL +
+                "/rest/v1/business_images" +
+                "?business_id=eq." +
+                encodeURIComponent(
+                    String(
+                        businessId
+                    )
+                ) +
+                "&select=*" +
+                "&order=sort_order.asc,created_at.asc",
+                {
+                    method:"GET",
+
+                    headers:{
+                        apikey:
+                            SUPABASE_KEY,
+
+                        Authorization:
+                            "Bearer " +
+                            SUPABASE_KEY,
+
+                        Accept:
+                            "application/json"
+                    }
+                }
+            );
+
+
+        if(!response.ok){
+
+            throw new Error(
+                "Could not load business photos."
+            );
+
+        }
+
+
+        const images =
+            await response.json();
+
+
+        currentBusinessImages =
+            Array.isArray(
+                images
+            )
+                ? images
+                : [];
+
+
+        if(
+            currentBusinessImages.length ===
+            0
         ){
 
             gallery.innerHTML =
                 `
                     <div class="empty-gallery">
-                        Loading business photos...
+                        No additional business photos yet.
                     </div>
                 `;
 
+            return;
 
-            try{
-
-                const response =
-                    await fetch(
-                        SUPABASE_URL +
-                        "/rest/v1/business_images" +
-                        "?business_id=eq." +
-                        encodeURIComponent(
-                            String(
-                                businessId
-                            )
-                        ) +
-                        "&select=*" +
-                        "&order=sort_order.asc,created_at.asc",
-                        {
-                            method:"GET",
-
-                            headers:{
-                                apikey:
-                                    SUPABASE_KEY,
-
-                                Authorization:
-                                    "Bearer " +
-                                    SUPABASE_KEY,
-
-                                Accept:
-                                    "application/json"
-                            }
-                        }
-                    );
+        }
 
 
-                if(!response.ok){
-
-                    throw new Error(
-                        "Could not load business photos."
-                    );
-
-                }
+        gallery.innerHTML =
+            "";
 
 
-                const images =
-                    await response.json();
+        currentBusinessImages.forEach(
+            function(item){
 
+                const imageUrl =
+                    item.image_url ||
+                    item.url ||
+                    item.image;
 
-                if(
-                    !Array.isArray(
-                        images
-                    ) ||
-                    images.length === 0
-                ){
-
-                    gallery.innerHTML =
-                        `
-                            <div class="empty-gallery">
-                                No additional business photos yet.
-                            </div>
-                        `;
-
+                if(!imageUrl){
                     return;
-
                 }
 
 
-                gallery.innerHTML =
-                    "";
+                const button =
+                    document.createElement(
+                        "button"
+                    );
+
+                button.type =
+                    "button";
+
+                button.className =
+                    "gallery-item";
+
+                button.setAttribute(
+                    "aria-label",
+                    "Open business photo"
+                );
 
 
-                images.forEach(
-                    function(item){
+                const image =
+                    document.createElement(
+                        "img"
+                    );
 
-                        const imageUrl =
-                            item.image_url ||
-                            item.url ||
-                            item.image;
+                image.src =
+                    imageUrl;
 
-                        if(!imageUrl){
-                            return;
+                image.alt =
+                    currentBusiness?.name ||
+                    "Business photo";
+
+                image.loading =
+                    "lazy";
+
+
+                image.addEventListener(
+                    "error",
+                    function(){
+
+                        button.remove();
+
+                        if(
+                            gallery.children.length ===
+                            0
+                        ){
+
+                            gallery.innerHTML =
+                                `
+                                    <div class="empty-gallery">
+                                        No business photos are available.
+                                    </div>
+                                `;
+
                         }
 
-
-                        const button =
-                            document.createElement(
-                                "button"
-                            );
-
-                        button.type =
-                            "button";
-
-                        button.className =
-                            "gallery-item";
-
-                        button.setAttribute(
-                            "aria-label",
-                            "Open business photo"
-                        );
+                    }
+                );
 
 
-                        const image =
-                            document.createElement(
-                                "img"
-                            );
-
-                        image.src =
-                            imageUrl;
-
-                        image.alt =
-                            currentBusiness?.name ||
-                            "Business photo";
-
-                        image.loading =
-                            "lazy";
+                button.appendChild(
+                    image
+                );
 
 
-                        image.addEventListener(
-                            "error",
-                            function(){
+                button.addEventListener(
+                    "click",
+                    function(){
 
-                                button.remove();
-
-                                if(
-                                    gallery.children.length ===
-                                    0
-                                ){
-
-                                    gallery.innerHTML =
-                                        `
-                                            <div class="empty-gallery">
-                                                No business photos are available.
-                                            </div>
-                                        `;
-
-                                }
-
-                            }
-                        );
-
-
-                        button.appendChild(
-                            image
-                        );
-
-
-                        button.addEventListener(
-                            "click",
-                            function(){
-
-                                openImageViewer(
-                                    imageUrl
-                                );
-
-                            }
-                        );
-
-
-                        gallery.appendChild(
-                            button
+                        openImageViewer(
+                            imageUrl
                         );
 
                     }
                 );
 
 
-                if(
-                    gallery.children.length ===
-                    0
-                ){
-
-                    gallery.innerHTML =
-                        `
-                            <div class="empty-gallery">
-                                No business photos are available.
-                            </div>
-                        `;
-
-                }
-
-            }catch(error){
-
-                console.error(
-                    "LosOja business images error:",
-                    error
+                gallery.appendChild(
+                    button
                 );
 
-                gallery.innerHTML =
-                    `
-                        <div class="empty-gallery">
-                            Business photos could not be loaded.
-                        </div>
-                    `;
-
             }
-
-        }
-
-
-        /* =========================================================
-           SAVE BUSINESS
-        ========================================================== */
-
-        function getSavedBusinesses(){
-
-            try{
-
-                const raw =
-                    localStorage.getItem(
-                        "losoja_saved_businesses"
-                    );
-
-                if(!raw){
-                    return [];
-                }
-
-                const parsed =
-                    JSON.parse(
-                        raw
-                    );
-
-                return Array.isArray(
-                    parsed
-                )
-                    ? parsed
-                    : [];
-
-            }catch(error){
-
-                return [];
-
-            }
-
-        }
+        );
 
 
-        function setSavedBusinesses(
-            list
+        if(
+            gallery.children.length ===
+            0
         ){
 
-            try{
-
-                localStorage.setItem(
-                    "losoja_saved_businesses",
-                    JSON.stringify(
-                        list
-                    )
-                );
-
-            }catch(error){
-
-                console.warn(
-                    "LosOja: Could not save business locally."
-                );
-
-            }
+            gallery.innerHTML =
+                `
+                    <div class="empty-gallery">
+                        No business photos are available.
+                    </div>
+                `;
 
         }
 
+    }catch(error){
 
-        function setupSaveButton(
-            business
-        ){
+        console.error(
+            "LosOja business images error:",
+            error
+        );
 
-            if(!saveBtn){
-                return;
-            }
+        gallery.innerHTML =
+            `
+                <div class="empty-gallery">
+                    Business photos could not be loaded.
+                </div>
+            `;
+
+    }
+
+}
 
 
-            const saved =
+/* =========================================================
+   SAVE BUSINESS
+========================================================= */
+
+function getSavedBusinesses(){
+
+    try{
+
+        const raw =
+            localStorage.getItem(
+                "losoja_saved_businesses"
+            );
+
+        if(!raw){
+            return [];
+        }
+
+        const parsed =
+            JSON.parse(
+                raw
+            );
+
+        return Array.isArray(
+            parsed
+        )
+            ? parsed
+            : [];
+
+    }catch(error){
+
+        return [];
+
+    }
+
+}
+
+
+function setSavedBusinesses(
+    list
+){
+
+    try{
+
+        localStorage.setItem(
+            "losoja_saved_businesses",
+            JSON.stringify(
+                list
+            )
+        );
+
+    }catch(error){
+
+        console.warn(
+            "LosOja: Could not save business locally."
+        );
+
+    }
+
+}
+
+
+function setupSaveButton(
+    business
+){
+
+    if(!saveBtn){
+        return;
+    }
+
+
+    const saved =
+        getSavedBusinesses();
+
+
+    const id =
+        String(
+            business.id
+        );
+
+
+    if(
+        saved.includes(
+            id
+        )
+    ){
+
+        saveBtn.textContent =
+            "♥ Saved";
+
+        saveBtn.classList.add(
+            "saved"
+        );
+
+    }else{
+
+        saveBtn.textContent =
+            "♡ Save";
+
+        saveBtn.classList.remove(
+            "saved"
+        );
+
+    }
+
+
+    saveBtn.onclick =
+        function(){
+
+            const current =
                 getSavedBusinesses();
 
-
-            const id =
-                String(
-                    business.id
-                );
-
-
-            if(
-                saved.includes(
+            const exists =
+                current.includes(
                     id
-                )
-            ){
-
-                saveBtn.textContent =
-                    "♥ Saved";
-
-                saveBtn.classList.add(
-                    "saved"
                 );
 
-            }else{
+
+            if(exists){
+
+                const updated =
+                    current.filter(
+                        function(item){
+
+                            return String(
+                                item
+                            ) !==
+                            id;
+
+                        }
+                    );
+
+                setSavedBusinesses(
+                    updated
+                );
 
                 saveBtn.textContent =
                     "♡ Save";
@@ -3775,256 +5427,237 @@
                     "saved"
                 );
 
+                showToast(
+                    "Removed from Saved."
+                );
+
+            }else{
+
+                current.push(
+                    id
+                );
+
+                setSavedBusinesses(
+                    current
+                );
+
+                saveBtn.textContent =
+                    "♥ Saved";
+
+                saveBtn.classList.add(
+                    "saved"
+                );
+
+                showToast(
+                    "Business saved."
+                );
+
             }
 
+        };
 
-            saveBtn.onclick =
-                function(){
-
-                    const current =
-                        getSavedBusinesses();
-
-                    const exists =
-                        current.includes(
-                            id
-                        );
+}
 
 
-                    if(exists){
+/* =========================================================
+   IMAGE VIEWER
+========================================================= */
 
-                        const updated =
-                            current.filter(
-                                function(item){
+function openImageViewer(
+    imageUrl
+){
 
-                                    return String(
-                                        item
-                                    ) !==
-                                    id;
+    viewerImage.src =
+        imageUrl;
 
-                                }
-                            );
+    imageViewer.classList.add(
+        "show"
+    );
 
-                        setSavedBusinesses(
-                            updated
-                        );
+    imageViewer.setAttribute(
+        "aria-hidden",
+        "false"
+    );
 
-                        saveBtn.textContent =
-                            "♡ Save";
+    document.body.style.overflow =
+        "hidden";
 
-                        saveBtn.classList.remove(
-                            "saved"
-                        );
+}
 
-                        showToast(
-                            "Removed from Saved."
-                        );
 
-                    }else{
+function closeImageViewer(){
 
-                        current.push(
-                            id
-                        );
+    imageViewer.classList.remove(
+        "show"
+    );
 
-                        setSavedBusinesses(
-                            current
-                        );
+    imageViewer.setAttribute(
+        "aria-hidden",
+        "true"
+    );
 
-                        saveBtn.textContent =
-                            "♥ Saved";
+    viewerImage.src =
+        "";
 
-                        saveBtn.classList.add(
-                            "saved"
-                        );
+    document.body.style.overflow =
+        "";
 
-                        showToast(
-                            "Business saved."
-                        );
+}
 
-                    }
 
-                };
+/* =========================================================
+   BUTTON EVENTS
+========================================================= */
+
+document
+    .getElementById(
+        "backBtn"
+    )
+    .addEventListener(
+        "click",
+        function(){
+
+            if(
+                window.history.length >
+                1
+            ){
+
+                window.history.back();
+
+            }else{
+
+                window.location.href =
+                    "index.html";
+
+            }
 
         }
+    );
 
 
-        /* =========================================================
-           IMAGE VIEWER
-        ========================================================== */
+document
+    .getElementById(
+        "viewerClose"
+    )
+    .addEventListener(
+        "click",
+        function(){
 
-        function openImageViewer(
-            imageUrl
+            closeImageViewer();
+
+        }
+    );
+
+
+imageViewer.addEventListener(
+    "click",
+    function(event){
+
+        if(
+            event.target ===
+            imageViewer
         ){
 
-            viewerImage.src =
-                imageUrl;
-
-            imageViewer.classList.add(
-                "show"
-            );
-
-            imageViewer.setAttribute(
-                "aria-hidden",
-                "false"
-            );
-
-            document.body.style.overflow =
-                "hidden";
+            closeImageViewer();
 
         }
 
+    }
+);
 
-        function closeImageViewer(){
 
-            imageViewer.classList.remove(
-                "show"
-            );
+document
+    .getElementById(
+        "cancelDeleteBtn"
+    )
+    .addEventListener(
+        "click",
+        function(){
 
-            imageViewer.setAttribute(
-                "aria-hidden",
-                "true"
-            );
+            closeDeleteModal();
 
-            viewerImage.src =
-                "";
+        }
+    );
 
-            document.body.style.overflow =
-                "";
+
+document
+    .getElementById(
+        "confirmDeleteBtn"
+    )
+    .addEventListener(
+        "click",
+        function(){
+
+            deleteCurrentBusiness();
+
+        }
+    );
+
+
+deleteModal.addEventListener(
+    "click",
+    function(event){
+
+        if(
+            event.target ===
+            deleteModal
+        ){
+
+            closeDeleteModal();
 
         }
 
-
-        /* =========================================================
-           BUTTON EVENTS
-        ========================================================== */
-
-        document
-            .getElementById(
-                "backBtn"
-            )
-            .addEventListener(
-                "click",
-                function(){
-
-                    if(
-                        window.history.length >
-                        1
-                    ){
-
-                        window.history.back();
-
-                    }else{
-
-                        window.location.href =
-                            "index.html";
-
-                    }
-
-                }
-            );
+    }
+);
 
 
-        document
-            .getElementById(
-                "viewerClose"
-            )
-            .addEventListener(
-                "click",
-                function(){
+document.addEventListener(
+    "keydown",
+    function(event){
 
-                    closeImageViewer();
+        if(
+            event.key ===
+            "Escape"
+        ){
 
-                }
-            );
+            closeImageViewer();
 
+            closeDeleteModal();
 
-        imageViewer.addEventListener(
-            "click",
-            function(event){
+            const editModal =
+                document.getElementById(
+                    "shopEditBusinessModal"
+                );
 
-                if(
-                    event.target ===
-                    imageViewer
-                ){
+            if(editModal){
 
-                    closeImageViewer();
+                editModal.classList.remove(
+                    "show"
+                );
 
-                }
+                editModal.setAttribute(
+                    "aria-hidden",
+                    "true"
+                );
+
+                editModal.style.display =
+                    "none";
 
             }
-        );
+
+        }
+
+    }
+);
 
 
-        document
-            .getElementById(
-                "cancelDeleteBtn"
-            )
-            .addEventListener(
-                "click",
-                function(){
+/* =========================================================
+   START
+========================================================= */
 
-                    closeDeleteModal();
+loadBusiness();
 
-                }
-            );
-
-
-        document
-            .getElementById(
-                "confirmDeleteBtn"
-            )
-            .addEventListener(
-                "click",
-                function(){
-
-                    deleteCurrentBusiness();
-
-                }
-            );
-
-
-        deleteModal.addEventListener(
-            "click",
-            function(event){
-
-                if(
-                    event.target ===
-                    deleteModal
-                ){
-
-                    closeDeleteModal();
-
-                }
-
-            }
-        );
-
-
-        document.addEventListener(
-            "keydown",
-            function(event){
-
-                if(
-                    event.key ===
-                    "Escape"
-                ){
-
-                    closeImageViewer();
-
-                    closeDeleteModal();
-
-                }
-
-            }
-        );
-
-
-        /* =========================================================
-           START
-        ========================================================== */
-
-        loadBusiness();
-
-    </script>
+</script>
 
 </body>
 
