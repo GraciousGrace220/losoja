@@ -21,6 +21,7 @@
 
     <link rel="stylesheet" href="css/style.css">
 
+
 <style>
 
 /* =========================================================
@@ -888,6 +889,7 @@ main {
             🔔
         </button>
 
+
         <button
             class="header-btn"
             id="accountBtn"
@@ -896,12 +898,13 @@ main {
             Account
         </button>
 
-       <a
-    href="oja.html"
-    class="header-btn"
->
-    Oja
-</a>
+
+        <a
+            href="oja.html"
+            class="header-btn"
+        >
+            Oja
+        </a>
 
     </div>
 
@@ -934,6 +937,7 @@ main {
             placeholder="Search businesses, products or services..."
             autocomplete="off"
         >
+
 
         <button
             id="searchBtn"
@@ -1113,11 +1117,14 @@ main {
                 preload="metadata"
                 playsinline
             >
+
                 <source
                     src="videos/how-to-use-oja.mp4"
                     type="video/mp4"
                 >
+
             </video>
+
 
             <div class="video-card-content">
 
@@ -1140,11 +1147,14 @@ main {
                 preload="metadata"
                 playsinline
             >
+
                 <source
                     src="videos/how-to-search.mp4"
                     type="video/mp4"
                 >
+
             </video>
+
 
             <div class="video-card-content">
 
@@ -1167,11 +1177,14 @@ main {
                 preload="metadata"
                 playsinline
             >
+
                 <source
                     src="videos/how-to-add-business.mp4"
                     type="video/mp4"
                 >
+
             </video>
+
 
             <div class="video-card-content">
 
@@ -1194,11 +1207,14 @@ main {
                 preload="metadata"
                 playsinline
             >
+
                 <source
                     src="videos/how-escrow-works.mp4"
                     type="video/mp4"
                 >
+
             </video>
+
 
             <div class="video-card-content">
 
@@ -1221,11 +1237,14 @@ main {
                 preload="metadata"
                 playsinline
             >
+
                 <source
                     src="videos/how-to-pay-bills.mp4"
                     type="video/mp4"
                 >
+
             </video>
+
 
             <div class="video-card-content">
 
@@ -2162,12 +2181,16 @@ window.renderSavedItems = function () {
 
     if (!container) return;
 
+
     try {
 
         const saved =
             JSON.parse(
-                localStorage.getItem("losoja_saved_items") || "[]"
+                localStorage.getItem(
+                    "losoja_saved_items"
+                ) || "[]"
             );
+
 
         if (!saved.length) {
 
@@ -2175,9 +2198,12 @@ window.renderSavedItems = function () {
                 "<p>No saved businesses yet.</p>";
 
             return;
+
         }
 
+
         container.innerHTML = "";
+
 
         saved.forEach(function (item) {
 
@@ -2186,6 +2212,7 @@ window.renderSavedItems = function () {
 
             card.className =
                 "business-card";
+
 
             card.innerHTML = `
 
@@ -2207,9 +2234,11 @@ window.renderSavedItems = function () {
 
             `;
 
+
             container.appendChild(card);
 
         });
+
 
     } catch (error) {
 
@@ -2256,11 +2285,15 @@ document.addEventListener(
 
 
     const balanceElement =
-        document.getElementById("walletBalance");
+        document.getElementById(
+            "walletBalance"
+        );
 
 
     const toggleButton =
-        document.getElementById("toggleBalanceBtn");
+        document.getElementById(
+            "toggleBalanceBtn"
+        );
 
 
     let actualBalance = 0;
@@ -2398,9 +2431,8 @@ document.addEventListener(
 
             updateBalanceDisplay();
 
-        }
 
-        catch (error) {
+        } catch (error) {
 
             console.error(
                 "Wallet balance error:",
@@ -2420,7 +2452,9 @@ document.addEventListener(
         if (balanceVisible) {
 
             balanceElement.textContent =
-                formatNaira(actualBalance);
+                formatNaira(
+                    actualBalance
+                );
 
         } else {
 
@@ -2480,6 +2514,56 @@ document.addEventListener(
 
 
         /* =================================================
+           OPEN LOGIN AFTER REDIRECT
+        ================================================= */
+
+        const loginRedirectParams =
+            new URLSearchParams(
+                window.location.search
+            );
+
+
+        if (
+            loginRedirectParams.get(
+                "openLogin"
+            ) === "1"
+        ) {
+
+            setTimeout(
+                function () {
+
+                    if (
+                        typeof window.openLogin ===
+                        "function"
+                    ) {
+
+                        window.openLogin();
+
+                    } else {
+
+                        const loginModal =
+                            document.getElementById(
+                                "loginModal"
+                            );
+
+                        if (loginModal) {
+
+                            loginModal.classList.add(
+                                "active"
+                            );
+
+                        }
+
+                    }
+
+                },
+                300
+            );
+
+        }
+
+
+        /* =================================================
            OPEN ADD BUSINESS
         ================================================= */
 
@@ -2490,9 +2574,12 @@ document.addEventListener(
                     "addBusinessModal"
                 );
 
+
             if (modal) {
 
-                modal.classList.add("active");
+                modal.classList.add(
+                    "active"
+                );
 
             }
 
@@ -2552,10 +2639,12 @@ document.addEventListener(
                                     "data-close"
                                 );
 
+
                             const modal =
                                 document.getElementById(
                                     id
                                 );
+
 
                             if (modal) {
 
@@ -2582,7 +2671,8 @@ document.addEventListener(
                         function (event) {
 
                             if (
-                                event.target === modal
+                                event.target ===
+                                modal
                             ) {
 
                                 modal.classList.remove(
@@ -2602,7 +2692,45 @@ document.addEventListener(
            ACCOUNT
         ================================================= */
 
-        function openAccount() {
+        async function openAccount() {
+
+            try {
+
+                if (
+                    typeof window.getCurrentUser ===
+                    "function"
+                ) {
+
+                    const user =
+                        await window.getCurrentUser();
+
+
+                    if (!user) {
+
+                        sessionStorage.setItem(
+                            "losoja_return_to_account",
+                            "account.html"
+                        );
+
+
+                        window.location.href =
+                            "index.html?openLogin=1";
+
+                        return;
+
+                    }
+
+                }
+
+            } catch (error) {
+
+                console.warn(
+                    "LosOja: Account auth check failed.",
+                    error
+                );
+
+            }
+
 
             window.location.href =
                 "account.html";
@@ -2777,25 +2905,27 @@ document.addEventListener(
 
         ];
 
-marketplaceButtons.forEach(
-    function (button) {
 
-        if (button) {
+        marketplaceButtons.forEach(
+            function (button) {
 
-            button.addEventListener(
-                "click",
-                function () {
+                if (button) {
 
-                    window.location.href =
-                        "oja.html";
+                    button.addEventListener(
+                        "click",
+                        function () {
+
+                            window.location.href =
+                                "oja.html";
+
+                        }
+                    );
 
                 }
-            );
 
-        }
+            }
+        );
 
-    }
-);
 
         /* =================================================
            SERVICES
@@ -2817,6 +2947,7 @@ marketplaceButtons.forEach(
                         document.querySelector(
                             '[data-category="Services"]'
                         );
+
 
                     if (category) {
 
@@ -2850,6 +2981,7 @@ marketplaceButtons.forEach(
                         document.getElementById(
                             "categoriesSection"
                         );
+
 
                     if (section) {
 
@@ -2886,6 +3018,7 @@ marketplaceButtons.forEach(
                             ".explore-grid"
                         );
 
+
                     if (section) {
 
                         section.scrollIntoView({
@@ -2920,6 +3053,7 @@ marketplaceButtons.forEach(
                         document.getElementById(
                             "savedSection"
                         );
+
 
                     if (section) {
 
@@ -2977,6 +3111,7 @@ marketplaceButtons.forEach(
 
                     }
 
+
                     if (signupModal) {
 
                         signupModal.classList.add(
@@ -3004,6 +3139,7 @@ marketplaceButtons.forEach(
                         );
 
                     }
+
 
                     if (loginModal) {
 
@@ -3048,14 +3184,18 @@ marketplaceButtons.forEach(
                 "function"
             ) {
 
-                window.searchBusinesses(query);
+                window.searchBusinesses(
+                    query
+                );
 
             }
+
 
             const grid =
                 document.getElementById(
                     "businessGrid"
                 );
+
 
             if (grid) {
 
@@ -3177,10 +3317,12 @@ marketplaceButtons.forEach(
 
                     }
 
+
                     const grid =
                         document.getElementById(
                             "businessGrid"
                         );
+
 
                     if (grid) {
 
@@ -3217,10 +3359,13 @@ marketplaceButtons.forEach(
                             "toast"
                         );
 
+
                     if (!toast) return;
+
 
                     toast.textContent =
                         "No new notifications.";
+
 
                     toast.classList.add(
                         "show"
@@ -3263,6 +3408,7 @@ marketplaceButtons.forEach(
 <script
     src="js/auth.js?v=2"
 ></script>
+
 
 <script
     src="js/app.js?v=999"
