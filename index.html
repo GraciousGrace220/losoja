@@ -3429,8 +3429,12 @@ document.addEventListener(
             return;
         }
 
+
         const loginModal =
-            document.getElementById("loginModal");
+            document.getElementById(
+                "loginModal"
+            );
+
 
         if (!loginModal) {
 
@@ -3439,33 +3443,284 @@ document.addEventListener(
             );
 
             return;
+
         }
 
-        loginModal.classList.add("active");
+
+        loginModal.classList.add(
+            "active"
+        );
+
 
         console.log(
             "LosOja: Login modal opened from redirect."
         );
+
 
         window.history.replaceState(
             {},
             document.title,
             "index.html"
         );
+
     }
 
+
+    function restorePendingBusiness() {
+
+        let pendingBusiness = null;
+
+        let shouldReturnToAddBusiness =
+            false;
+
+
+        try {
+
+            shouldReturnToAddBusiness =
+                sessionStorage.getItem(
+                    "losoja_return_to_add_business"
+                ) === "1";
+
+
+            const savedBusiness =
+                sessionStorage.getItem(
+                    "losoja_pending_business"
+                );
+
+
+            if (savedBusiness) {
+
+                pendingBusiness =
+                    JSON.parse(
+                        savedBusiness
+                    );
+
+            }
+
+        } catch (storageError) {
+
+            console.warn(
+                "LosOja: Could not read pending business.",
+                storageError
+            );
+
+        }
+
+
+        if (
+            !shouldReturnToAddBusiness ||
+            !pendingBusiness
+        ) {
+
+            return;
+
+        }
+
+
+        const nameInput =
+            document.getElementById(
+                "businessName"
+            );
+
+        const categoryInput =
+            document.getElementById(
+                "businessCategory"
+            );
+
+        const locationInput =
+            document.getElementById(
+                "businessLocation"
+            );
+
+        const phoneInput =
+            document.getElementById(
+                "businessPhone"
+            );
+
+        const descriptionInput =
+            document.getElementById(
+                "businessDescription"
+            );
+
+
+        if (nameInput) {
+
+            nameInput.value =
+                pendingBusiness.name || "";
+
+        }
+
+
+        if (categoryInput) {
+
+            categoryInput.value =
+                pendingBusiness.category || "";
+
+        }
+
+
+        if (locationInput) {
+
+            locationInput.value =
+                pendingBusiness.location || "";
+
+        }
+
+
+        if (phoneInput) {
+
+            phoneInput.value =
+                pendingBusiness.phone || "";
+
+        }
+
+
+        if (descriptionInput) {
+
+            descriptionInput.value =
+                pendingBusiness.description || "";
+
+        }
+
+
+        const addBusinessModal =
+            document.getElementById(
+                "addBusinessModal"
+            );
+
+
+        if (addBusinessModal) {
+
+            addBusinessModal.classList.add(
+                "active"
+            );
+
+            addBusinessModal.style.display =
+                "flex";
+
+            addBusinessModal.setAttribute(
+                "aria-hidden",
+                "false"
+            );
+
+            document.body.classList.add(
+                "modal-open"
+            );
+
+
+            console.log(
+                "LosOja: Pending business form restored."
+            );
+
+        }
+
+
+        try {
+
+            sessionStorage.removeItem(
+                "losoja_pending_business"
+            );
+
+            sessionStorage.removeItem(
+                "losoja_return_to_add_business"
+            );
+
+        } catch (storageError) {
+
+            console.warn(
+                "LosOja: Could not clear pending business state.",
+                storageError
+            );
+
+        }
+
+    }
+
+function initializeLoginRedirect() {
+
+    openLoginFromRedirect();
+
+    let attempts = 0;
+    const maxAttempts = 30;
+
+    const checkLoginAndRestore = setInterval(
+        async function () {
+
+            attempts++;
+
+            let loggedInUser = null;
+
+            try {
+
+                if (
+                    typeof window.getCurrentUser ===
+                    "function"
+                ) {
+
+                    loggedInUser =
+                        await window.getCurrentUser();
+
+                }
+
+            } catch (authError) {
+
+                console.warn(
+                    "LosOja: Could not check login status.",
+                    authError
+                );
+
+            }
+
+            if (
+                loggedInUser &&
+                loggedInUser.id
+            ) {
+
+                clearInterval(
+                    checkLoginAndRestore
+                );
+
+                console.log(
+                    "LosOja: Login detected. Restoring pending business."
+                );
+
+                restorePendingBusiness();
+
+                return;
+            }
+
+            if (attempts >= maxAttempts) {
+
+                clearInterval(
+                    checkLoginAndRestore
+                );
+
+                console.log(
+                    "LosOja: Waiting for login timed out. Pending business remains saved."
+                );
+
+            }
+
+        },
+        1000
+    );
+
+}
+
+
     if (
-        document.readyState === "loading"
+        document.readyState ===
+        "loading"
     ) {
 
         document.addEventListener(
             "DOMContentLoaded",
-            openLoginFromRedirect
+            initializeLoginRedirect
         );
 
     } else {
 
-        openLoginFromRedirect();
+        initializeLoginRedirect();
 
     }
 
