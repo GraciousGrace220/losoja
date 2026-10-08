@@ -3448,10 +3448,19 @@ function loadCreateEscrowBox() {
     }
 
 
+    /*
+     * The business context is stored by shop.html
+     * using:
+     *
+     * id
+     * name
+     * user_id
+     */
+
     if (
         !escrowBusiness ||
-        !escrowBusiness.business_id ||
-        !escrowBusiness.seller_id
+        !escrowBusiness.id ||
+        !escrowBusiness.user_id
     ) {
 
         return;
@@ -3468,11 +3477,13 @@ function loadCreateEscrowBox() {
             </h3>
 
             <div class="create-escrow-business">
+
                 Buying from:
                 ${escapeHTML(
-                    escrowBusiness.business_name ||
+                    escrowBusiness.name ||
                     "Selected business"
                 )}
+
             </div>
 
             <label for="escrowAmount">
@@ -3565,7 +3576,8 @@ async function createEscrowPayment() {
 
         if (
             !escrowBusiness ||
-            !escrowBusiness.seller_id
+            !escrowBusiness.id ||
+            !escrowBusiness.user_id
         ) {
 
             throw new Error(
@@ -3590,7 +3602,7 @@ async function createEscrowPayment() {
 
         const sellerId =
             String(
-                escrowBusiness.seller_id
+                escrowBusiness.user_id
             );
 
 
@@ -3670,7 +3682,7 @@ async function createEscrowPayment() {
                 "LosOja Escrow\n\n" +
 
                 `Business: ${
-                    escrowBusiness.business_name ||
+                    escrowBusiness.name ||
                     "Selected business"
                 }\n` +
 
@@ -3892,6 +3904,7 @@ async function initializeBalancePage() {
         "LosOja: balance page ready."
     );
 
+
     /*
      * Allow auth.js to finish restoring the
      * existing session before financial queries.
@@ -3899,9 +3912,12 @@ async function initializeBalancePage() {
 
     await wait(500);
 
+
     await loadWallet();
 
+
     await loadTransactions();
+
 
     /*
      * Load the escrow form after the balance page
@@ -3909,10 +3925,13 @@ async function initializeBalancePage() {
      */
 
     loadCreateEscrowBox();
+
 }
 
 
-if (document.readyState === "loading") {
+if (
+    document.readyState === "loading"
+) {
 
     document.addEventListener(
         "DOMContentLoaded",
@@ -3927,8 +3946,3 @@ if (document.readyState === "loading") {
 
 
 </script>
-
-
-</body>
-
-</html>
