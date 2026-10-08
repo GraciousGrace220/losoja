@@ -3352,21 +3352,29 @@ function handleEditImageSelection(
     }
 
 
-    const selected =
-        files.slice(
-            0,
-            availableSlots
-        );
+    let addedCount =
+        0;
 
 
     for(
         let index = 0;
-        index < selected.length;
+        index < files.length;
         index++
     ){
 
+        if(
+            addedCount >=
+            availableSlots
+        ){
+
+            break;
+
+        }
+
+
         const file =
-            selected[index];
+            files[index];
+
 
         const error =
             validateBusinessImage(
@@ -3385,9 +3393,48 @@ function handleEditImageSelection(
         }
 
 
+        /*
+         * Prevent the same file from being selected
+         * more than once before saving.
+         */
+
+        const alreadySelected =
+            editSelectedFiles.some(
+                function(existingFile){
+
+                    return (
+                        existingFile.name ===
+                            file.name &&
+
+                        existingFile.size ===
+                            file.size &&
+
+                        existingFile.lastModified ===
+                            file.lastModified
+                    );
+
+                }
+            );
+
+
+        if(alreadySelected){
+
+            showToast(
+                file.name +
+                " is already selected."
+            );
+
+            continue;
+
+        }
+
+
         editSelectedFiles.push(
             file
         );
+
+
+        addedCount++;
 
     }
 
@@ -3416,7 +3463,6 @@ function handleEditImageSelection(
 
 }
 
-
 /* =========================================================
    UPLOAD BUSINESS IMAGE
 ========================================================= */
@@ -3426,7 +3472,8 @@ async function uploadBusinessImage(
     businessId,
     userId,
     accessToken,
-    sortOrder
+    sortOrder,
+    saveToDatabase = true
 ){
 
     const extension =
@@ -3533,6 +3580,21 @@ async function uploadBusinessImage(
         BUSINESS_IMAGE_BUCKET +
         "/" +
         uploadPath;
+
+
+    /*
+     * When saveToDatabase is false, the picture is
+     * uploaded to storage only.
+     *
+     * This is used when the picture may become the
+     * new main business picture.
+     */
+
+    if(!saveToDatabase){
+
+        return imageUrl;
+
+    }
 
 
     const insertResponse =
@@ -4254,6 +4316,83 @@ async function editCurrentBusiness(
 
 
                         /* ---------------------------------
+                           DETERMINE CURRENT MAIN PICTURE
+                        --------------------------------- */
+
+                        const currentMainUrl =
+                            currentBusiness &&
+                            (
+                                currentBusiness.image_url ||
+                                currentBusiness.image ||
+                                ""
+                            );
+
+
+                        const keepCurrentMain =
+                            Boolean(
+                                currentMainUrl
+                            ) &&
+                            !editImagesToRemove.has(
+                                "__main__"
+                            );
+
+
+                        /*
+                         * If the main picture is kept,
+                         * preserve it.
+                         *
+                         * If it was removed, the first
+                         * newly uploaded picture will become
+                         * the new main picture.
+                         */
+
+                        let uploadedUrls = [];
+
+
+                        /* ---------------------------------
+                           UPLOAD NEW PICTURES TO STORAGE
+                           ONLY
+                        --------------------------------- */
+
+                        for(
+                            let index = 0;
+                            index < editSelectedFiles.length;
+                            index++
+                        ){
+
+                            const file =
+                                editSelectedFiles[index];
+
+
+                            const imageUrl =
+                                await uploadBusinessImage(
+                                    file,
+                                    business.id,
+                                    user.id,
+                                    accessToken,
+                                    0,
+                                    false
+                                );
+
+
+                            uploadedUrls.push(
+                                imageUrl
+                            );
+
+                        }
+
+
+                        let finalMainUrl =
+                            keepCurrentMain
+                                ? currentMainUrl
+                                : (
+                                    uploadedUrls.length
+                                        ? uploadedUrls[0]
+                                        : ""
+                                );
+
+
+                        /* ---------------------------------
                            UPDATE BUSINESS
                         --------------------------------- */
 
@@ -4279,25 +4418,33 @@ async function editCurrentBusiness(
                                     ? null
                                     : Number(
                                         priceInput
-                                    )
+                                    ),
+
+                            image_url:
+                                finalMainUrl ||
+                                null
 
                         };
 
 
                         /*
-                         * If the legacy/main picture was
-                         * removed, clear image_url.
+                         * Clear the legacy image column too
+                         * when it exists on this business.
                          *
-                         * Otherwise preserve it.
+                         * This prevents an old image value from
+                         * coming back after the main picture is
+                         * removed.
                          */
 
                         if(
-                            editImagesToRemove.has(
-                                "__main__"
+                            Object.prototype.hasOwnProperty.call(
+                                currentBusiness,
+                                "image"
                             )
                         ){
 
-                            businessUpdate.image_url =
+                            businessUpdate.image =
+                                finalMainUrl ||
                                 null;
 
                         }
@@ -4489,37 +4636,145 @@ async function editCurrentBusiness(
 
 
                         /* ---------------------------------
-                           UPLOAD NEW PICTURES
+                           SAVE NEW ADDITIONAL PICTURES
                         --------------------------------- */
 
-                        const remainingImageCount =
-                            getCurrentEditImageCount();
+                        const newAdditionalUrls =
+                            keepCurrentMain
+                                ? uploadedUrls
+                                : uploadedUrls.slice(1);
 
 
-                        let nextSortOrder =
-                            remainingImageCount;
-
-
-                        for(
-                            let index = 0;
-                            index < editSelectedFiles.length;
-                            index++
+                        if(
+                            newAdditionalUrls.length
                         ){
 
-                            const file =
-                                editSelectedFiles[index];
+                            const existingAdditionalImages =
+                                Array.isArray(
+                                    currentBusinessImages
+                                )
+                                    ? currentBusinessImages.filter(
+                                        function(item){
+
+                                            return (
+                                                item &&
+                                                item.image_url &&
+                                                !editImagesToRemove.has(
+                                                    String(
+                                                        item.id
+                                                    )
+                                                )
+                                            );
+
+                                        }
+                                    )
+                                    : [];
 
 
-                            await uploadBusinessImage(
-                                file,
-                                business.id,
-                                user.id,
-                                accessToken,
-                                nextSortOrder
-                            );
+                            let nextSortOrder =
+                                existingAdditionalImages.length;
 
 
-                            nextSortOrder++;
+                            /*
+                             * Keep sort_order after the
+                             * existing additional pictures.
+                             */
+
+                            const imageRows =
+                                newAdditionalUrls.map(
+                                    function(imageUrl,index){
+
+                                        return {
+
+                                            business_id:
+                                                String(
+                                                    business.id
+                                                ),
+
+                                            user_id:
+                                                String(
+                                                    user.id
+                                                ),
+
+                                            image_url:
+                                                imageUrl,
+
+                                            sort_order:
+                                                nextSortOrder +
+                                                index
+
+                                        };
+
+                                    }
+                                );
+
+
+                            const insertResponse =
+                                await fetch(
+                                    SUPABASE_URL +
+                                    "/rest/v1/business_images",
+                                    {
+
+                                        method:
+                                            "POST",
+
+                                        headers:{
+
+                                            "apikey":
+                                                SUPABASE_KEY,
+
+                                            "Authorization":
+                                                "Bearer " +
+                                                accessToken,
+
+                                            "Content-Type":
+                                                "application/json",
+
+                                            "Accept":
+                                                "application/json",
+
+                                            "Prefer":
+                                                "return=representation"
+
+                                        },
+
+                                        body:
+                                            JSON.stringify(
+                                                imageRows
+                                            )
+
+                                    }
+                                );
+
+
+                            if(!insertResponse.ok){
+
+                                let message =
+                                    "Pictures uploaded but could not be saved.";
+
+                                try{
+
+                                    const data =
+                                        await insertResponse.json();
+
+                                    message =
+                                        data.message ||
+                                        data.details ||
+                                        data.hint ||
+                                        message;
+
+                                }catch(error){
+
+                                    /* Ignore response parsing errors. */
+
+                                }
+
+
+                                throw new Error(
+                                    message
+                                );
+
+                            }
 
                         }
 
@@ -4820,7 +5075,6 @@ async function editCurrentBusiness(
     }
 
 }
-
 
 /* =========================================================
    DELETE MODAL
