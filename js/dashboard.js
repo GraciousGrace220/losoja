@@ -601,6 +601,16 @@ Handles:
     ===================================================== */
 
     async function openEditBusiness(id) {
+            /* Accept either a business ID or a business object */
+    if (
+        id &&
+        typeof id === "object"
+    ) {
+
+        id = id.id;
+    }
+
+    id = String(id || "").trim();
 
         const user =
             getUser();
