@@ -1348,7 +1348,7 @@ bindAddBusinessButtons() {
                 }
 
 
-                currentUser =
+                               currentUser =
                     await window.getCurrentUser();
 
 
@@ -1364,8 +1364,25 @@ bindAddBusinessButtons() {
 
                     this.showToast(
                         "Please login before adding a business.",
-                        "error"
+                        "info"
                     );
+
+
+                    try {
+
+                        sessionStorage.setItem(
+                            "losoja_return_to_add_business",
+                            "1"
+                        );
+
+                    } catch (storageError) {
+
+                        console.warn(
+                            "LosOja: Could not save Add Business return state.",
+                            storageError
+                        );
+
+                    }
 
 
                     if (submitButton) {
@@ -1378,6 +1395,17 @@ bindAddBusinessButtons() {
                             "Save Business";
 
                     }
+
+
+                    setTimeout(
+                        function () {
+
+                            window.location.href =
+                                "index.html?openLogin=1";
+
+                        },
+                        500
+                    );
 
 
                     return;
@@ -1395,7 +1423,6 @@ bindAddBusinessButtons() {
                     typeof window.getSupabaseAccessToken ===
                     "function"
                 ) {
-
                     accessToken =
                         window.getSupabaseAccessToken();
 
