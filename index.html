@@ -3395,7 +3395,6 @@ document.addEventListener(
 </script>
 
 
-
 <!-- =====================================================
      LOSOJA SCRIPTS
 ===================================================== -->
@@ -3404,17 +3403,74 @@ document.addEventListener(
     src="js/businesses.js?v=4"
 ></script>
 
-
 <script
     src="js/auth.js?v=2"
 ></script>
-
 
 <script
     src="js/app.js?v=999"
 ></script>
 
+<script>
+(function () {
+
+    function openLoginFromRedirect() {
+
+        const params =
+            new URLSearchParams(
+                window.location.search
+            );
+
+        const shouldOpenLogin =
+            params.get("openLogin") === "1" ||
+            window.location.hash === "#login";
+
+        if (!shouldOpenLogin) {
+            return;
+        }
+
+        const loginModal =
+            document.getElementById("loginModal");
+
+        if (!loginModal) {
+
+            console.error(
+                "LosOja: loginModal was not found."
+            );
+
+            return;
+        }
+
+        loginModal.classList.add("active");
+
+        console.log(
+            "LosOja: Login modal opened from redirect."
+        );
+
+        window.history.replaceState(
+            {},
+            document.title,
+            "index.html"
+        );
+    }
+
+    if (
+        document.readyState === "loading"
+    ) {
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            openLoginFromRedirect
+        );
+
+    } else {
+
+        openLoginFromRedirect();
+
+    }
+
+})();
+</script>
 
 </body>
-
 </html>
