@@ -4090,7 +4090,28 @@ document.addEventListener(
             );
 
     },
-       false
+        false
 );
+
+
+/* =========================================================
+   START LOSOJA APP
+========================================================= */
+
+if (document.readyState === "loading") {
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+            App.init();
+        }
+    );
+
+} else {
+
+    App.init();
+
+}
+
 
 })();
