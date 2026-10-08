@@ -862,7 +862,6 @@
 
 
  <script src="js/auth.js?v=2"></script>
-<script src="js/dashboard.js?v=1"></script>
 <script>
     "use strict";
 
@@ -2465,7 +2464,7 @@
 
         }
 
-
+```js
         /* =========================================================
            EDIT BUSINESS
         ========================================================== */
@@ -2496,6 +2495,10 @@
             }
 
 
+            /* -----------------------------------------------------
+               OWNERSHIP CHECK
+            ----------------------------------------------------- */
+
             if(
                 String(user.id) !==
                 String(
@@ -2512,40 +2515,581 @@
             }
 
 
-            /*
-             * If the existing dashboard edit function is
-             * available globally, use it.
-             */
+            /* -----------------------------------------------------
+               CREATE EDIT MODAL
+            ----------------------------------------------------- */
 
-            if(
-                typeof window.openEditBusiness ===
-                "function"
-            ){
+            let modal =
+                document.getElementById(
+                    "shopEditBusinessModal"
+                );
 
-                try{
 
-                    const result =
-                        window.openEditBusiness(
-                            business
-                        );
+            if(!modal){
 
-                    if(
-                        result &&
-                        typeof result.then ===
-                        "function"
-                    ){
+                modal =
+                    document.createElement(
+                        "div"
+                    );
 
-                        await result;
+                modal.id =
+                    "shopEditBusinessModal";
 
-                    }
+                modal.className =
+                    "modal-overlay";
 
-                    return;
+                modal.setAttribute(
+                    "aria-hidden",
+                    "true"
+                );
 
-                }catch(error){
 
-                    console.warn(
-                        "LosOja: Existing edit function failed.",
-                        error
+                modal.innerHTML = `
+
+                    <div
+                        class="modal-content large"
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby="shopEditBusinessTitle"
+                    >
+
+                        <button
+                            type="button"
+                            class="modal-close"
+                            id="shopEditBusinessClose"
+                            aria-label="Close"
+                        >
+                            ×
+                        </button>
+
+
+                        <h2 id="shopEditBusinessTitle">
+                            Edit Your Business
+                        </h2>
+
+
+                        <form
+                            id="shopEditBusinessForm"
+                        >
+
+                            <div class="form-group">
+
+                                <label
+                                    for="shopEditBusinessName"
+                                >
+                                    Business Name *
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="shopEditBusinessName"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label
+                                    for="shopEditBusinessCategory"
+                                >
+                                    Category *
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="shopEditBusinessCategory"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label
+                                    for="shopEditBusinessLocation"
+                                >
+                                    Location *
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="shopEditBusinessLocation"
+                                    required
+                                >
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label
+                                    for="shopEditBusinessPhone"
+                                >
+                                    Phone Number
+                                </label>
+
+                                <input
+                                    type="tel"
+                                    id="shopEditBusinessPhone"
+                                >
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label
+                                    for="shopEditBusinessDescription"
+                                >
+                                    Description
+                                </label>
+
+                                <textarea
+                                    id="shopEditBusinessDescription"
+                                    rows="5"
+                                ></textarea>
+
+                            </div>
+
+
+                            <p
+                                id="shopEditBusinessError"
+                                class="form-error"
+                                style="display:none;"
+                            ></p>
+
+
+                            <div
+                                style="
+                                    display:flex;
+                                    gap:10px;
+                                    flex-wrap:wrap;
+                                    margin-top:16px;
+                                "
+                            >
+
+                                <button
+                                    type="button"
+                                    class="btn btn-outline"
+                                    id="shopEditBusinessCancel"
+                                >
+                                    Cancel
+                                </button>
+
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-primary"
+                                    id="shopEditBusinessSave"
+                                >
+                                    Save Changes
+                                </button>
+
+                            </div>
+
+                        </form>
+
+                    </div>
+
+                `;
+
+
+                document.body.appendChild(
+                    modal
+                );
+
+
+                /* -------------------------------------------------
+                   CLOSE MODAL
+                ------------------------------------------------- */
+
+                const closeButton =
+                    document.getElementById(
+                        "shopEditBusinessClose"
+                    );
+
+
+                const cancelButton =
+                    document.getElementById(
+                        "shopEditBusinessCancel"
+                    );
+
+
+                function closeEditModal(){
+
+                    modal.classList.remove(
+                        "show"
+                    );
+
+                    modal.setAttribute(
+                        "aria-hidden",
+                        "true"
+                    );
+
+                    modal.style.display =
+                        "none";
+
+                }
+
+
+                if(closeButton){
+
+                    closeButton.addEventListener(
+                        "click",
+                        closeEditModal
+                    );
+
+                }
+
+
+                if(cancelButton){
+
+                    cancelButton.addEventListener(
+                        "click",
+                        closeEditModal
+                    );
+
+                }
+
+
+                /* -------------------------------------------------
+                   SAVE BUSINESS
+                ------------------------------------------------- */
+
+                const form =
+                    document.getElementById(
+                        "shopEditBusinessForm"
+                    );
+
+
+                if(form){
+
+                    form.addEventListener(
+                        "submit",
+                        async function(event){
+
+                            event.preventDefault();
+
+
+                            const name =
+                                document
+                                    .getElementById(
+                                        "shopEditBusinessName"
+                                    )
+                                    ?.value
+                                    .trim() || "";
+
+
+                            const category =
+                                document
+                                    .getElementById(
+                                        "shopEditBusinessCategory"
+                                    )
+                                    ?.value
+                                    .trim() || "";
+
+
+                            const location =
+                                document
+                                    .getElementById(
+                                        "shopEditBusinessLocation"
+                                    )
+                                    ?.value
+                                    .trim() || "";
+
+
+                            const phone =
+                                document
+                                    .getElementById(
+                                        "shopEditBusinessPhone"
+                                    )
+                                    ?.value
+                                    .trim() || "";
+
+
+                            const description =
+                                document
+                                    .getElementById(
+                                        "shopEditBusinessDescription"
+                                    )
+                                    ?.value
+                                    .trim() || "";
+
+
+                            const errorBox =
+                                document.getElementById(
+                                    "shopEditBusinessError"
+                                );
+
+
+                            const saveButton =
+                                document.getElementById(
+                                    "shopEditBusinessSave"
+                                );
+
+
+                            if(
+                                !name ||
+                                !category ||
+                                !location
+                            ){
+
+                                if(errorBox){
+
+                                    errorBox.textContent =
+                                        "Please complete the required fields.";
+
+                                    errorBox.style.display =
+                                        "block";
+
+                                }
+
+                                return;
+
+                            }
+
+
+                            if(saveButton){
+
+                                saveButton.disabled =
+                                    true;
+
+                                saveButton.textContent =
+                                    "Saving...";
+
+                            }
+
+
+                            try{
+
+                                /* ---------------------------------
+                                   FRESH AUTH TOKEN
+                                --------------------------------- */
+
+                                const accessToken =
+                                    await getShopAccessToken();
+
+
+                                if(!accessToken){
+
+                                    throw new Error(
+                                        "Your login session has expired. Please log in again."
+                                    );
+
+                                }
+
+
+                                /* ---------------------------------
+                                   UPDATE BUSINESS
+                                --------------------------------- */
+
+                                const response =
+                                    await fetch(
+                                        SUPABASE_URL +
+                                        "/rest/v1/businesses?id=eq." +
+                                        encodeURIComponent(
+                                            String(
+                                                business.id
+                                            )
+                                        ) +
+                                        "&user_id=eq." +
+                                        encodeURIComponent(
+                                            String(
+                                                user.id
+                                            )
+                                        ),
+                                        {
+
+                                            method:
+                                                "PATCH",
+
+                                            headers:{
+
+                                                "apikey":
+                                                    SUPABASE_KEY,
+
+                                                "Authorization":
+                                                    "Bearer " +
+                                                    accessToken,
+
+                                                "Content-Type":
+                                                    "application/json",
+
+                                                "Accept":
+                                                    "application/json",
+
+                                                "Prefer":
+                                                    "return=representation"
+
+                                            },
+
+                                            body:
+                                                JSON.stringify({
+
+                                                    name:
+                                                        name,
+
+                                                    category:
+                                                        category,
+
+                                                    location:
+                                                        location,
+
+                                                    phone:
+                                                        phone,
+
+                                                    description:
+                                                        description
+
+                                                })
+
+                                        }
+                                    );
+
+
+                                const responseText =
+                                    await response.text();
+
+
+                                let result =
+                                    null;
+
+
+                                try{
+
+                                    result =
+                                        responseText
+                                            ? JSON.parse(
+                                                responseText
+                                            )
+                                            : null;
+
+                                }catch{
+
+                                    result =
+                                        responseText;
+
+                                }
+
+
+                                if(!response.ok){
+
+                                    const message =
+                                        result &&
+                                        typeof result ===
+                                            "object"
+                                            ? (
+                                                result.message ||
+                                                result.details ||
+                                                result.hint
+                                            )
+                                            : null;
+
+
+                                    throw new Error(
+                                        message ||
+                                        "Could not save your changes."
+                                    );
+
+                                }
+
+
+                                /* ---------------------------------
+                                   UPDATE CURRENT STOREFRONT
+                                --------------------------------- */
+
+                                currentBusiness = {
+
+                                    ...currentBusiness,
+
+                                    name:
+                                        name,
+
+                                    category:
+                                        category,
+
+                                    location:
+                                        location,
+
+                                    phone:
+                                        phone,
+
+                                    description:
+                                        description
+
+                                };
+
+
+                                /* ---------------------------------
+                                   CLOSE MODAL
+                                --------------------------------- */
+
+                                modal.classList.remove(
+                                    "show"
+                                );
+
+                                modal.setAttribute(
+                                    "aria-hidden",
+                                    "true"
+                                );
+
+                                modal.style.display =
+                                    "none";
+
+
+                                /* ---------------------------------
+                                   REFRESH STOREFRONT
+                                --------------------------------- */
+
+                                renderBusiness(
+                                    currentBusiness
+                                );
+
+
+                                showToast(
+                                    "Business updated successfully!",
+                                    "success"
+                                );
+
+
+                            }catch(error){
+
+                                console.error(
+                                    "LosOja: Edit business save error:",
+                                    error
+                                );
+
+
+                                if(errorBox){
+
+                                    errorBox.textContent =
+                                        error.message ||
+                                        "Could not save your changes.";
+
+                                    errorBox.style.display =
+                                        "block";
+
+                                }
+
+
+                            }finally{
+
+                                if(saveButton){
+
+                                    saveButton.disabled =
+                                        false;
+
+                                    saveButton.textContent =
+                                        "Save Changes";
+
+                                }
+
+                            }
+
+                        }
                     );
 
                 }
@@ -2553,79 +3097,109 @@
             }
 
 
-            /*
-             * Existing dashboard code also uses
-             * openEditModal(businessId).
-             */
+            /* -----------------------------------------------------
+               FILL FORM
+            ----------------------------------------------------- */
 
-            if(
-                typeof window.openEditModal ===
-                "function"
-            ){
+            const nameInput =
+                document.getElementById(
+                    "shopEditBusinessName"
+                );
 
-                try{
 
-                    const result =
-                        window.openEditModal(
-                            String(
-                                business.id
-                            )
-                        );
+            const categoryInput =
+                document.getElementById(
+                    "shopEditBusinessCategory"
+                );
 
-                    if(
-                        result &&
-                        typeof result.then ===
-                        "function"
-                    ){
 
-                        await result;
+            const locationInput =
+                document.getElementById(
+                    "shopEditBusinessLocation"
+                );
 
-                    }
 
-                    return;
+            const phoneInput =
+                document.getElementById(
+                    "shopEditBusinessPhone"
+                );
 
-                }catch(error){
 
-                    console.warn(
-                        "LosOja: Existing edit modal failed.",
-                        error
-                    );
+            const descriptionInput =
+                document.getElementById(
+                    "shopEditBusinessDescription"
+                );
 
-                }
+
+            if(nameInput){
+
+                nameInput.value =
+                    business.name || "";
 
             }
 
 
-            /*
-             * Safe fallback.
-             *
-             * Store the business ID so dashboard can use it
-             * if its current edit flow supports the parameter.
-             */
+            if(categoryInput){
 
-            try{
-
-                sessionStorage.setItem(
-                    "losoja_edit_business_id",
-                    String(
-                        business.id
-                    )
-                );
-
-            }catch(error){
-
-                /* Ignore storage errors. */
+                categoryInput.value =
+                    business.category || "";
 
             }
 
 
-            window.location.href =
-                "dashboard.html?edit_business=" +
-                encodeURIComponent(
-                    String(
-                        business.id
-                    )
+            if(locationInput){
+
+                locationInput.value =
+                    business.location || "";
+
+            }
+
+
+            if(phoneInput){
+
+                phoneInput.value =
+                    business.phone || "";
+
+            }
+
+
+            if(descriptionInput){
+
+                descriptionInput.value =
+                    business.description || "";
+
+            }
+
+
+            /* -----------------------------------------------------
+               SHOW MODAL
+            ----------------------------------------------------- */
+
+            modal.style.display =
+                "flex";
+
+            modal.classList.add(
+                "show"
+            );
+
+            modal.setAttribute(
+                "aria-hidden",
+                "false"
+            );
+
+
+            if(nameInput){
+
+                setTimeout(
+                    function(){
+
+                        nameInput.focus();
+
+                    },
+                    50
                 );
+
+            }
 
         }
 
