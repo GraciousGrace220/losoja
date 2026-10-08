@@ -3,2140 +3,3455 @@
 
 <head>
 
-<meta charset="UTF-8">
-
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
-
-<title>Business - LosOja</title>
-
-<meta
-    name="description"
-    content="Discover businesses on LosOja."
->
-
-<style>
-
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-    font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-}
-
-:root{
-    --green:#087a3e;
-    --green-dark:#055c2e;
-    --green-light:#eef8f2;
-    --border:#e5e7eb;
-    --gray:#6b7280;
-    --dark:#111827;
-    --page:#f6f7f8;
-    --white:#fff;
-}
-
-body{
-    background:var(--page);
-    color:var(--dark);
-    padding-bottom:90px;
-}
-
-button,
-a{
-    -webkit-tap-highlight-color:transparent;
-}
-
-/* =========================================================
-   HEADER
-========================================================= */
-
-.header{
-    position:sticky;
-    top:0;
-    z-index:50;
-
-    height:62px;
-
-    background:rgba(255,255,255,.96);
-
-    backdrop-filter:blur(10px);
-
-    border-bottom:1px solid var(--border);
-
-    display:flex;
-    align-items:center;
-
-    gap:12px;
-
-    padding:10px 14px;
-}
-
-.back-btn,
-.save-btn{
-    width:40px;
-    height:40px;
-
-    border-radius:50%;
-
-    border:1px solid var(--border);
-
-    background:#fff;
-
-    cursor:pointer;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    font-size:20px;
-
-    transition:.2s;
-}
-
-.back-btn:hover,
-.save-btn:hover{
-    background:var(--green-light);
-}
-
-.header-title{
-    min-width:0;
-    flex:1;
-}
-
-.header-title strong{
-    display:block;
-
-    font-size:15px;
-
-    white-space:nowrap;
-
-    overflow:hidden;
-
-    text-overflow:ellipsis;
-}
-
-.header-title span{
-    display:block;
-
-    font-size:11px;
-
-    color:var(--gray);
-
-    margin-top:2px;
-}
-
-/* =========================================================
-   HERO
-========================================================= */
-
-.hero{
-    width:100%;
-
-    height:280px;
-
-    background:
-        linear-gradient(
-            135deg,
-            #eef8f2,
-            #d1fae5
-        );
-
-    overflow:hidden;
-
-    position:relative;
-}
-
-.hero img{
-    width:100%;
-    height:100%;
-
-    object-fit:cover;
-
-    display:block;
-}
-
-.hero-placeholder{
-    width:100%;
-    height:100%;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    font-size:64px;
-}
-
-.hero-overlay{
-    position:absolute;
-
-    left:0;
-    right:0;
-    bottom:0;
-
-    padding:40px 16px 18px;
-
-    color:#fff;
-
-    background:
-        linear-gradient(
-            transparent,
-            rgba(0,0,0,.72)
-        );
-}
-
-.hero-overlay h1{
-    font-size:25px;
-
-    line-height:1.15;
-
-    font-weight:900;
-
-    text-shadow:0 2px 8px rgba(0,0,0,.3);
-}
-
-.hero-overlay p{
-    margin-top:6px;
-
-    font-size:13px;
-
-    opacity:.95;
-}
-
-/* =========================================================
-   MAIN
-========================================================= */
-
-.container{
-    max-width:980px;
-
-    margin:0 auto;
-}
-
-/* =========================================================
-   BUSINESS PROFILE
-========================================================= */
-
-.profile{
-    background:#fff;
-
-    margin:-25px 12px 0;
-
-    position:relative;
-
-    z-index:5;
-
-    border-radius:20px;
-
-    border:1px solid var(--border);
-
-    box-shadow:0 10px 30px rgba(0,0,0,.08);
-
-    padding:18px;
-}
-
-.profile-top{
-    display:flex;
-
-    align-items:flex-start;
-
-    justify-content:space-between;
-
-    gap:12px;
-}
-
-.category-badge{
-    display:inline-flex;
-
-    align-items:center;
-
-    padding:6px 10px;
-
-    border-radius:999px;
-
-    background:var(--green-light);
-
-    color:var(--green);
-
-    font-size:10px;
-
-    font-weight:900;
-
-    text-transform:uppercase;
-
-    letter-spacing:.3px;
-}
-
-.verified{
-    display:inline-flex;
-
-    align-items:center;
-
-    gap:4px;
-
-    margin-left:6px;
-
-    padding:6px 9px;
-
-    border-radius:999px;
-
-    background:var(--green);
-
-    color:#fff;
-
-    font-size:10px;
-
-    font-weight:900;
-}
-
-.profile h1{
-    font-size:22px;
-
-    line-height:1.2;
-
-    font-weight:900;
-
-    margin-top:10px;
-}
-
-.meta{
-    display:flex;
-
-    align-items:flex-start;
-
-    gap:7px;
-
-    margin-top:8px;
-
-    color:var(--gray);
-
-    font-size:13px;
-
-    line-height:1.4;
-}
-
-.meta strong{
-    color:#374151;
-}
-
-.description{
-    margin-top:16px;
-
-    background:#f9fafb;
-
-    border:1px solid #f0f1f2;
-
-    border-radius:14px;
-
-    padding:14px;
-
-    font-size:14px;
-
-    line-height:1.6;
-
-    color:#374151;
-}
-
-/* =========================================================
-   ACTIONS
-========================================================= */
-
-.actions{
-    display:grid;
-
-    grid-template-columns:repeat(3,1fr);
-
-    gap:9px;
-
-    padding:14px 12px;
-}
-
-.action-btn{
-    min-height:48px;
-
-    border-radius:13px;
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    gap:6px;
-
-    font-size:12px;
-
-    font-weight:900;
-
-    text-decoration:none;
-
-    cursor:pointer;
-
-    border:1px solid var(--border);
-
-    background:#fff;
-
-    color:var(--dark);
-}
-
-.action-primary{
-    background:var(--green);
-
-    color:#fff;
-
-    border-color:var(--green);
-}
-
-.action-primary:hover{
-    background:var(--green-dark);
-}
-
-/* =========================================================
-   SECTIONS
-========================================================= */
-
-.section{
-    margin:8px 12px;
-
-    background:#fff;
-
-    border:1px solid var(--border);
-
-    border-radius:18px;
-
-    overflow:hidden;
-}
-
-.section-header{
-    padding:16px 16px 10px;
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:space-between;
-
-    gap:10px;
-}
-
-.section-header h2{
-    font-size:17px;
-
-    font-weight:900;
-}
-
-.section-header span{
-    color:var(--gray);
-
-    font-size:11px;
-}
-
-/* =========================================================
-   GALLERY
-========================================================= */
-
-.gallery{
-    display:grid;
-
-    grid-template-columns:2fr 1fr 1fr;
-
-    gap:5px;
-
-    padding:0 5px 5px;
-}
-
-.gallery-item{
-    border:0;
-
-    padding:0;
-
-    background:#eef8f2;
-
-    overflow:hidden;
-
-    cursor:pointer;
-
-    min-height:105px;
-}
-
-.gallery-item:first-child{
-    grid-row:span 2;
-
-    min-height:215px;
-}
-
-.gallery-item img{
-    width:100%;
-    height:100%;
-
-    object-fit:cover;
-
-    display:block;
-
-    transition:transform .25s;
-}
-
-.gallery-item:hover img{
-    transform:scale(1.03);
-}
-
-/* =========================================================
-   EMPTY GALLERY
-========================================================= */
-
-.empty{
-    padding:25px 16px;
-
-    text-align:center;
-
-    color:var(--gray);
-
-    font-size:13px;
-}
-
-.empty-icon{
-    font-size:32px;
-
-    margin-bottom:8px;
-}
-
-/* =========================================================
-   PRODUCTS / SERVICES
-========================================================= */
-
-.products-placeholder{
-    margin:0 12px 14px;
-
-    padding:20px;
-
-    background:var(--green-light);
-
-    border-radius:14px;
-
-    text-align:center;
-}
-
-.products-placeholder strong{
-    display:block;
-
-    color:var(--green);
-
-    font-size:14px;
-
-    margin-bottom:5px;
-}
-
-.products-placeholder p{
-    color:#4b5563;
-
-    font-size:12px;
-
-    line-height:1.5;
-}
-
-/* =========================================================
-   LOCATION
-========================================================= */
-
-.location-box{
-    padding:0 16px 16px;
-}
-
-.location-card{
-    background:#f9fafb;
-
-    border:1px solid var(--border);
-
-    border-radius:14px;
-
-    padding:14px;
-}
-
-.location-card strong{
-    display:block;
-
-    font-size:14px;
-
-    margin-bottom:5px;
-}
-
-.location-card p{
-    font-size:13px;
-
-    color:var(--gray);
-
-    line-height:1.5;
-}
-
-/* =========================================================
-   FOOTER
-========================================================= */
-
-.shop-footer{
-    text-align:center;
-
-    padding:25px 15px;
-
-    color:var(--gray);
-
-    font-size:11px;
-
-    line-height:1.5;
-}
-
-.shop-footer strong{
-    color:var(--green);
-}
-
-/* =========================================================
-   TOAST
-========================================================= */
-
-#toast{
-    position:fixed;
-
-    left:50%;
-    bottom:100px;
-
-    transform:translateX(-50%);
-
-    background:#111827;
-
-    color:#fff;
-
-    padding:11px 17px;
-
-    border-radius:12px;
-
-    font-size:13px;
-
-    display:none;
-
-    z-index:200;
-
-    box-shadow:0 8px 25px rgba(0,0,0,.2);
-
-    max-width:90%;
-
-    text-align:center;
-}
-
-/* =========================================================
-   IMAGE VIEWER
-========================================================= */
-
-#imageViewer{
-    position:fixed;
-
-    inset:0;
-
-    background:rgba(0,0,0,.94);
-
-    z-index:300;
-
-    display:none;
-
-    align-items:center;
-
-    justify-content:center;
-
-    padding:20px;
-}
-
-#imageViewer img{
-    max-width:100%;
-
-    max-height:90vh;
-
-    object-fit:contain;
-
-    border-radius:8px;
-}
-
-.viewer-close{
-    position:absolute;
-
-    top:18px;
-    right:18px;
-
-    width:42px;
-    height:42px;
-
-    border:0;
-
-    border-radius:50%;
-
-    background:#fff;
-
-    font-size:22px;
-
-    cursor:pointer;
-}
-
-/* =========================================================
-   DESKTOP
-========================================================= */
-
-@media(min-width:700px){
-
-    .hero{
-        height:380px;
-    }
-
-    .profile{
-        margin-left:auto;
-        margin-right:auto;
-
-        max-width:980px;
-    }
-
-    .actions{
-        max-width:980px;
-
-        margin:0 auto;
-
-        padding-left:12px;
-        padding-right:12px;
-    }
-
-    .section{
-        max-width:980px;
-
-        margin-left:auto;
-        margin-right:auto;
-    }
-
-    .hero-overlay{
-        padding-left:max(20px,calc((100% - 980px)/2));
-    }
-
-}
-
-@media(max-width:430px){
-
-    .actions{
-        grid-template-columns:1fr 1fr;
-    }
-
-    .action-btn:last-child{
-        grid-column:span 2;
-    }
-
-}
-
-</style>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>LosOja Business</title>
+
+    <meta
+        name="description"
+        content="View a business on LosOja."
+    >
+
+    <style>
+
+        *{
+            box-sizing:border-box;
+        }
+
+        html{
+            scroll-behavior:smooth;
+        }
+
+        body{
+            margin:0;
+            font-family:Arial,Helvetica,sans-serif;
+            background:#f5f7f6;
+            color:#17201b;
+        }
+
+        button,
+        a,
+        input,
+        textarea{
+            font:inherit;
+        }
+
+        button,
+        a{
+            -webkit-tap-highlight-color:transparent;
+        }
+
+        .topbar{
+            position:sticky;
+            top:0;
+            z-index:1000;
+            background:#087a3e;
+            color:#fff;
+            padding:14px 18px;
+            box-shadow:0 2px 10px rgba(0,0,0,.12);
+        }
+
+        .topbar-inner{
+            max-width:1100px;
+            margin:auto;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:15px;
+        }
+
+        .brand{
+            display:flex;
+            align-items:center;
+            gap:10px;
+            color:#fff;
+            text-decoration:none;
+            font-weight:800;
+            font-size:20px;
+        }
+
+        .brand-mark{
+            width:38px;
+            height:38px;
+            border-radius:10px;
+            background:#fff;
+            color:#087a3e;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-weight:900;
+        }
+
+        .back-btn{
+            border:1px solid rgba(255,255,255,.35);
+            background:rgba(255,255,255,.12);
+            color:#fff;
+            border-radius:9px;
+            padding:9px 13px;
+            cursor:pointer;
+        }
+
+        .page{
+            width:min(1100px,calc(100% - 28px));
+            margin:22px auto 60px;
+        }
+
+        .loading{
+            text-align:center;
+            padding:70px 20px;
+            color:#64736a;
+        }
+
+        .error-box{
+            background:#fff;
+            border:1px solid #fecaca;
+            color:#991b1b;
+            border-radius:14px;
+            padding:22px;
+            margin-top:30px;
+            text-align:center;
+        }
+
+        .shop-card{
+            background:#fff;
+            border-radius:18px;
+            overflow:hidden;
+            box-shadow:0 5px 22px rgba(0,0,0,.08);
+        }
+
+        .hero{
+            min-height:250px;
+            position:relative;
+            background:#e8efeb;
+            display:flex;
+            align-items:flex-end;
+        }
+
+        .hero-image{
+            width:100%;
+            height:330px;
+            object-fit:cover;
+            display:block;
+        }
+
+        .hero-placeholder{
+            width:100%;
+            height:330px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:70px;
+            background:#eaf4ee;
+        }
+
+        .hero-overlay{
+            position:absolute;
+            left:0;
+            right:0;
+            bottom:0;
+            padding:28px 22px 20px;
+            background:linear-gradient(
+                transparent,
+                rgba(0,0,0,.72)
+            );
+            color:#fff;
+        }
+
+        .hero-title{
+            margin:0 0 6px;
+            font-size:32px;
+            line-height:1.15;
+        }
+
+        .hero-meta{
+            display:flex;
+            gap:10px;
+            flex-wrap:wrap;
+            font-size:14px;
+        }
+
+        .badge{
+            background:rgba(255,255,255,.18);
+            border:1px solid rgba(255,255,255,.28);
+            padding:6px 9px;
+            border-radius:999px;
+        }
+
+        .content{
+            padding:22px;
+        }
+
+        .section{
+            margin-bottom:28px;
+        }
+
+        .section:last-child{
+            margin-bottom:0;
+        }
+
+        .section-title{
+            margin:0 0 12px;
+            font-size:19px;
+            color:#123d25;
+        }
+
+        .description{
+            color:#4d5b52;
+            line-height:1.65;
+            white-space:pre-wrap;
+        }
+
+        .info-grid{
+            display:grid;
+            grid-template-columns:repeat(2,minmax(0,1fr));
+            gap:12px;
+        }
+
+        .info-item{
+            border:1px solid #e1e8e3;
+            border-radius:12px;
+            padding:14px;
+            background:#fafcfb;
+        }
+
+        .info-label{
+            display:block;
+            font-size:12px;
+            color:#718078;
+            margin-bottom:5px;
+        }
+
+        .info-value{
+            font-weight:600;
+            word-break:break-word;
+        }
+
+        .actions{
+            display:flex;
+            flex-wrap:wrap;
+            gap:10px;
+        }
+
+        .action-btn{
+            flex:1;
+            min-width:145px;
+            border:1px solid #d7e1da;
+            background:#fff;
+            color:#123d25;
+            border-radius:11px;
+            padding:12px 14px;
+            cursor:pointer;
+            font-weight:700;
+            transition:.15s ease;
+        }
+
+        .action-btn:hover{
+            background:#f1f8f4;
+            transform:translateY(-1px);
+        }
+
+        .action-primary{
+            background:#087a3e;
+            color:#fff;
+            border-color:#087a3e;
+        }
+
+        .action-primary:hover{
+            background:#055c2e;
+        }
+
+        .action-danger{
+            color:#b91c1c;
+            border-color:#fecaca;
+            background:#fff;
+        }
+
+        .action-danger:hover{
+            background:#fef2f2;
+        }
+
+        .owner-actions,
+        .buyer-actions{
+            display:flex;
+            gap:9px;
+            flex-wrap:wrap;
+            margin-top:12px;
+        }
+
+        .owner-actions .action-btn,
+        .buyer-actions .action-btn{
+            flex:1;
+            min-width:130px;
+        }
+
+        .owner-note,
+        .buyer-note{
+            margin-top:10px;
+            color:#6b776f;
+            font-size:13px;
+            line-height:1.5;
+        }
+
+        .gallery{
+            display:grid;
+            grid-template-columns:repeat(3,minmax(0,1fr));
+            gap:10px;
+        }
+
+        .gallery-item{
+            border:0;
+            padding:0;
+            background:#eef3ef;
+            border-radius:12px;
+            overflow:hidden;
+            cursor:pointer;
+            aspect-ratio:1/1;
+        }
+
+        .gallery-item img{
+            width:100%;
+            height:100%;
+            object-fit:cover;
+            display:block;
+            transition:.2s ease;
+        }
+
+        .gallery-item:hover img{
+            transform:scale(1.03);
+        }
+
+        .empty-gallery{
+            color:#718078;
+            background:#fafcfb;
+            border:1px dashed #d5dfd8;
+            border-radius:12px;
+            padding:20px;
+        }
+
+        .save-row{
+            display:flex;
+            justify-content:flex-end;
+            margin-bottom:15px;
+        }
+
+        .save-btn{
+            border:1px solid #d7e1da;
+            background:#fff;
+            color:#123d25;
+            border-radius:10px;
+            padding:10px 15px;
+            cursor:pointer;
+            font-weight:700;
+        }
+
+        .save-btn.saved{
+            background:#eef8f2;
+            color:#087a3e;
+            border-color:#b8dec8;
+        }
+
+        .product-placeholder{
+            border:1px dashed #ccd8d0;
+            background:#fafcfb;
+            border-radius:14px;
+            padding:25px;
+            text-align:center;
+            color:#68766e;
+        }
+
+        .footer{
+            text-align:center;
+            color:#758078;
+            padding:25px 10px;
+            font-size:13px;
+        }
+
+        /* =====================================================
+           IMAGE VIEWER
+        ===================================================== */
+
+        .viewer{
+            position:fixed;
+            inset:0;
+            z-index:5000;
+            display:none;
+            align-items:center;
+            justify-content:center;
+            background:rgba(0,0,0,.92);
+            padding:20px;
+        }
+
+        .viewer.show{
+            display:flex;
+        }
+
+        .viewer img{
+            max-width:95vw;
+            max-height:88vh;
+            object-fit:contain;
+            border-radius:8px;
+        }
+
+        .viewer-close{
+            position:absolute;
+            top:15px;
+            right:18px;
+            width:44px;
+            height:44px;
+            border:0;
+            border-radius:50%;
+            background:rgba(255,255,255,.15);
+            color:#fff;
+            font-size:25px;
+            cursor:pointer;
+        }
+
+        /* =====================================================
+           CONFIRM MODAL
+        ===================================================== */
+
+        .modal{
+            position:fixed;
+            inset:0;
+            z-index:6000;
+            display:none;
+            align-items:center;
+            justify-content:center;
+            background:rgba(0,0,0,.55);
+            padding:20px;
+        }
+
+        .modal.show{
+            display:flex;
+        }
+
+        .modal-card{
+            width:min(430px,100%);
+            background:#fff;
+            border-radius:17px;
+            padding:24px;
+            box-shadow:0 20px 60px rgba(0,0,0,.25);
+        }
+
+        .modal-card h2{
+            margin:0 0 10px;
+            color:#123d25;
+        }
+
+        .modal-card p{
+            color:#5d6961;
+            line-height:1.55;
+        }
+
+        .modal-actions{
+            display:flex;
+            gap:10px;
+            margin-top:20px;
+        }
+
+        .modal-actions button{
+            flex:1;
+            padding:11px;
+            border-radius:10px;
+            cursor:pointer;
+            border:1px solid #d7e1da;
+            background:#fff;
+            font-weight:700;
+        }
+
+        .modal-actions .danger{
+            background:#b91c1c;
+            color:#fff;
+            border-color:#b91c1c;
+        }
+
+        .toast{
+            position:fixed;
+            left:50%;
+            bottom:25px;
+            transform:translateX(-50%) translateY(20px);
+            background:#17201b;
+            color:#fff;
+            padding:12px 17px;
+            border-radius:10px;
+            z-index:7000;
+            opacity:0;
+            pointer-events:none;
+            transition:.2s ease;
+            max-width:calc(100% - 30px);
+            text-align:center;
+        }
+
+        .toast.show{
+            opacity:1;
+            transform:translateX(-50%) translateY(0);
+        }
+
+        @media(max-width:700px){
+
+            .page{
+                width:min(100% - 18px,1100px);
+                margin-top:12px;
+            }
+
+            .topbar{
+                padding:10px 12px;
+            }
+
+            .brand{
+                font-size:17px;
+            }
+
+            .brand-mark{
+                width:34px;
+                height:34px;
+            }
+
+            .hero-image,
+            .hero-placeholder{
+                height:250px;
+            }
+
+            .hero-title{
+                font-size:25px;
+            }
+
+            .content{
+                padding:17px;
+            }
+
+            .info-grid{
+                grid-template-columns:1fr;
+            }
+
+            .gallery{
+                grid-template-columns:repeat(2,minmax(0,1fr));
+            }
+
+            .action-btn{
+                min-width:100%;
+            }
+
+            .owner-actions .action-btn,
+            .buyer-actions .action-btn{
+                min-width:100%;
+            }
+
+        }
+
+    </style>
 
 </head>
 
 <body>
 
-<!-- =======================================================
-     HEADER
-======================================================= -->
+    <header class="topbar">
 
-<header class="header">
+        <div class="topbar-inner">
 
-    <button
-        class="back-btn"
-        type="button"
-        onclick="history.back()"
-        aria-label="Go back"
-    >
-        ‹
-    </button>
+            <a
+                href="index.html"
+                class="brand"
+            >
 
-    <div class="header-title">
+                <div class="brand-mark">
+                    L
+                </div>
 
-        <strong id="headerTitle">
-            Business
-        </strong>
+                <span>
+                    LosOja
+                </span>
 
-        <span>
-            LosOja Business
-        </span>
+            </a>
 
-    </div>
+            <button
+                type="button"
+                class="back-btn"
+                id="backBtn"
+            >
+                ← Back
+            </button>
 
-    <button
-        class="save-btn"
-        type="button"
-        id="saveBusinessBtn"
-        aria-label="Save business"
-    >
-        ♡
-    </button>
+        </div>
 
-</header>
+    </header>
 
 
-<!-- =======================================================
-     HERO
-======================================================= -->
-
-<section
-    class="hero"
-    id="shopHero"
->
-
-    <div class="hero-placeholder">
-        🏪
-    </div>
-
-</section>
-
-
-<div class="container">
-
-<!-- =======================================================
-     PROFILE
-======================================================= -->
-
-<section
-    class="profile"
-    id="shopInfo"
->
-
-    <p class="empty">
-        Loading business...
-    </p>
-
-</section>
-
-
-<!-- =======================================================
-     ACTIONS
-======================================================= -->
-
-<div
-    class="actions"
-    id="shopActions"
-></div>
-
-
-<!-- =======================================================
-     GALLERY
-======================================================= -->
-
-<section class="section">
-
-    <div class="section-header">
-
-        <h2>
-            Business photos
-        </h2>
-
-        <span id="photoCount">
-            0 photos
-        </span>
-
-    </div>
-
-    <div
-        class="gallery"
-        id="shopGallery"
-    ></div>
-
-</section>
-
-
-<!-- =======================================================
-     PRODUCTS / SERVICES
-======================================================= -->
-
-<section class="section">
-
-    <div class="section-header">
-
-        <h2>
-            Products & Services
-        </h2>
-
-        <span>
-            LosOja
-        </span>
-
-    </div>
-
-    <div
-        class="products-placeholder"
-    >
-
-        <strong>
-            This business is on LosOja
-        </strong>
-
-        <p>
-            Products and services can be displayed here
-            as the business adds them to its LosOja storefront.
-        </p>
-
-    </div>
-
-</section>
-
-
-<!-- =======================================================
-     LOCATION
-======================================================= -->
-
-<section class="section">
-
-    <div class="section-header">
-
-        <h2>
-            Find this business
-        </h2>
-
-    </div>
-
-    <div class="location-box">
+    <main class="page">
 
         <div
-            class="location-card"
-            id="locationCard"
+            id="loading"
+            class="loading"
+        >
+            Loading business...
+        </div>
+
+
+        <div
+            id="errorBox"
+            class="error-box"
+            style="display:none;"
+        ></div>
+
+
+        <article
+            id="shopCard"
+            class="shop-card"
+            style="display:none;"
         >
 
-            <strong>
-                📍 Location
-            </strong>
+            <!-- =================================================
+                 HERO
+            ================================================== -->
+
+            <section
+                id="hero"
+                class="hero"
+            ></section>
+
+
+            <div class="content">
+
+                <!-- =================================================
+                     SAVE
+                ================================================== -->
+
+                <div class="save-row">
+
+                    <button
+                        type="button"
+                        id="saveBtn"
+                        class="save-btn"
+                    >
+                        ♡ Save
+                    </button>
+
+                </div>
+
+
+                <!-- =================================================
+                     ACTIONS
+                ================================================== -->
+
+                <section class="section">
+
+                    <h2 class="section-title">
+                        Contact & Actions
+                    </h2>
+
+                    <div
+                        id="publicActions"
+                        class="actions"
+                    ></div>
+
+
+                    <div
+                        id="ownerActions"
+                        class="owner-actions"
+                        style="display:none;"
+                    ></div>
+
+
+                    <div
+                        id="buyerActions"
+                        class="buyer-actions"
+                        style="display:none;"
+                    ></div>
+
+
+                    <div
+                        id="actionNote"
+                        class="owner-note"
+                        style="display:none;"
+                    ></div>
+
+                </section>
+
+
+                <!-- =================================================
+                     BUSINESS INFORMATION
+                ================================================== -->
+
+                <section class="section">
+
+                    <h2 class="section-title">
+                        Business Information
+                    </h2>
+
+                    <div
+                        id="businessInfo"
+                        class="info-grid"
+                    ></div>
+
+                </section>
+
+
+                <!-- =================================================
+                     DESCRIPTION
+                ================================================== -->
+
+                <section
+                    id="descriptionSection"
+                    class="section"
+                >
+
+                    <h2 class="section-title">
+                        About This Business
+                    </h2>
+
+                    <div
+                        id="description"
+                        class="description"
+                    ></div>
+
+                </section>
+
+
+                <!-- =================================================
+                     PHOTOS
+                ================================================== -->
+
+                <section class="section">
+
+                    <h2 class="section-title">
+                        Business Photos
+                    </h2>
+
+                    <div
+                        id="gallery"
+                        class="gallery"
+                    ></div>
+
+                </section>
+
+
+                <!-- =================================================
+                     PRODUCTS / SERVICES
+                ================================================== -->
+
+                <section class="section">
+
+                    <h2 class="section-title">
+                        Products & Services
+                    </h2>
+
+                    <div class="product-placeholder">
+
+                        Products and services for this business
+                        will appear here.
+
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     LOCATION
+                ================================================== -->
+
+                <section class="section">
+
+                    <h2 class="section-title">
+                        Find This Business
+                    </h2>
+
+                    <div
+                        id="locationText"
+                        class="info-item"
+                    ></div>
+
+                </section>
+
+            </div>
+
+        </article>
+
+    </main>
+
+
+    <footer class="footer">
+
+        © 2026 LosOja — Find What You Need Across Nigeria
+
+    </footer>
+
+
+    <!-- =========================================================
+         IMAGE VIEWER
+    ========================================================== -->
+
+    <div
+        id="imageViewer"
+        class="viewer"
+        aria-hidden="true"
+    >
+
+        <button
+            type="button"
+            id="viewerClose"
+            class="viewer-close"
+            aria-label="Close image"
+        >
+            ×
+        </button>
+
+        <img
+            id="viewerImage"
+            src=""
+            alt="Business photo"
+        >
+
+    </div>
+
+
+    <!-- =========================================================
+         DELETE CONFIRMATION
+    ========================================================== -->
+
+    <div
+        id="deleteModal"
+        class="modal"
+        aria-hidden="true"
+    >
+
+        <div class="modal-card">
+
+            <h2>
+                Delete Business?
+            </h2>
 
             <p>
-                Loading location...
+                This will remove this business listing from
+                LosOja. This action cannot be undone from this
+                page.
             </p>
+
+            <div class="modal-actions">
+
+                <button
+                    type="button"
+                    id="cancelDeleteBtn"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    type="button"
+                    id="confirmDeleteBtn"
+                    class="danger"
+                >
+                    Delete Business
+                </button>
+
+            </div>
 
         </div>
 
     </div>
 
-</section>
 
+    <div
+        id="toast"
+        class="toast"
+    ></div>
+
+
+    <script>
 
-<!-- =======================================================
-     FOOTER
-======================================================= -->
-
-<footer class="shop-footer">
-
-    Powered by
-    <strong>LosOja</strong>
-
-    <br>
-
-    Your business. Your storefront. Your customers.
-
-</footer>
-
-</div>
-
-
-<!-- =======================================================
-     TOAST
-======================================================= -->
-
-<div id="toast"></div>
-
-
-<!-- =======================================================
-     IMAGE VIEWER
-======================================================= -->
-
-<div
-    id="imageViewer"
-    role="dialog"
-    aria-label="Business photo viewer"
->
-
-    <button
-        class="viewer-close"
-        type="button"
-        id="viewerClose"
-        aria-label="Close photo"
-    >
-        ×
-    </button>
-
-    <img
-        id="viewerImage"
-        src=""
-        alt="Business photo"
-    >
-
-</div>
-
-
-<script>
-
-"use strict";
-
-
-/* =========================================================
-   SUPABASE
-========================================================= */
-
-const SUPABASE_URL =
-    "https://ycxshwgeebskdozmornh.supabase.co";
-
-const SUPABASE_KEY =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InljeHNod2dlZWJza2Rvem1vcm5oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzMDY0NjUsImV4cCI6MjEwMzg4MjQ2NX0.tMl7wILdVDhu0RWFaG_84ngJEryLt2c5cB8MEKW3kfU";
-
-
-/* =========================================================
-   HELPERS
-========================================================= */
-
-function escapeHTML(value){
-
-    return String(value ?? "")
-        .replace(/&/g,"&amp;")
-        .replace(/</g,"&lt;")
-        .replace(/>/g,"&gt;")
-        .replace(/"/g,"&quot;")
-        .replace(/'/g,"&#039;");
-
-}
-
-
-function toast(message){
-
-    const element =
-        document.getElementById("toast");
-
-    if(!element) return;
-
-    element.textContent = message;
-
-    element.style.display = "block";
-
-    clearTimeout(window.losojaToastTimer);
-
-    window.losojaToastTimer =
-        setTimeout(function(){
-
-            element.style.display = "none";
-
-        },2500);
-
-}
-
-
-function getBusinessId(){
-
-    const params =
-        new URLSearchParams(
-            window.location.search
-        );
-
-    return params.get("id");
-
-}
-
-
-function cleanPhone(phone){
-
-    return String(phone || "")
-        .replace(/[^\d+]/g,"");
-
-}
-
-
-function whatsappNumber(phone){
-
-    let value =
-        String(phone || "")
-            .replace(/\D/g,"");
-
-    /*
-       Nigerian local numbers:
-       08012345678
-       becomes:
-       2348012345678
-    */
-
-    if(
-        value.length === 11 &&
-        value.startsWith("0")
-    ){
-
-        value =
-            "234" +
-            value.substring(1);
-
-    }
-
-    return value;
-
-}
-
-
-/* =========================================================
-   LOAD BUSINESS
-========================================================= */
-
-async function loadBusiness(){
-
-    const businessId =
-        getBusinessId();
-
-    if(!businessId){
-
-        showPageError(
-            "No business ID was provided."
-        );
-
-        return;
-
-    }
-
-    try{
-
-        const response =
-            await fetch(
-                SUPABASE_URL +
-                "/rest/v1/businesses" +
-                "?id=eq." +
-                encodeURIComponent(businessId) +
-                "&select=*",
-                {
-                    method:"GET",
-
-                    headers:{
-                        "apikey":SUPABASE_KEY,
-                        "Authorization":
-                            "Bearer " +
-                            SUPABASE_KEY
-                    }
-                }
+        "use strict";
+
+
+        /* =========================================================
+           SUPABASE
+        ========================================================== */
+
+        const SUPABASE_URL =
+            "https://ycxshwgeebskdozmornh.supabase.co";
+
+        const SUPABASE_KEY =
+            "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
+
+
+        /* =========================================================
+           DOM
+        ========================================================== */
+
+        const loading =
+            document.getElementById(
+                "loading"
+            );
+
+        const errorBox =
+            document.getElementById(
+                "errorBox"
+            );
+
+        const shopCard =
+            document.getElementById(
+                "shopCard"
+            );
+
+        const hero =
+            document.getElementById(
+                "hero"
+            );
+
+        const publicActions =
+            document.getElementById(
+                "publicActions"
+            );
+
+        const ownerActions =
+            document.getElementById(
+                "ownerActions"
+            );
+
+        const buyerActions =
+            document.getElementById(
+                "buyerActions"
+            );
+
+        const actionNote =
+            document.getElementById(
+                "actionNote"
+            );
+
+        const businessInfo =
+            document.getElementById(
+                "businessInfo"
+            );
+
+        const description =
+            document.getElementById(
+                "description"
+            );
+
+        const descriptionSection =
+            document.getElementById(
+                "descriptionSection"
+            );
+
+        const gallery =
+            document.getElementById(
+                "gallery"
+            );
+
+        const locationText =
+            document.getElementById(
+                "locationText"
+            );
+
+        const saveBtn =
+            document.getElementById(
+                "saveBtn"
+            );
+
+        const imageViewer =
+            document.getElementById(
+                "imageViewer"
+            );
+
+        const viewerImage =
+            document.getElementById(
+                "viewerImage"
+            );
+
+        const deleteModal =
+            document.getElementById(
+                "deleteModal"
+            );
+
+        const toast =
+            document.getElementById(
+                "toast"
             );
 
 
-        if(!response.ok){
+        /* =========================================================
+           STATE
+        ========================================================== */
 
-            throw new Error(
-                "Could not load the business."
-            );
+        let currentBusiness =
+            null;
 
-        }
+        let currentUser =
+            null;
 
+        let currentAccessToken =
+            null;
 
-        const businesses =
-            await response.json();
 
-        const business =
-            businesses[0];
+        /* =========================================================
+           HELPERS
+        ========================================================== */
 
-
-        if(!business){
-
-            showPageError(
-                "Business not found."
-            );
-
-            return;
-
-        }
-
-
-        window.losojaCurrentBusiness =
-            business;
-
-
-        renderBusiness(
-            business
-        );
-
-
-        await loadBusinessImages(
-            business.id
-        );
-
-
-    }catch(error){
-
-        console.error(
-            "LosOja shop error:",
-            error
-        );
-
-        showPageError(
-            "We couldn't load this business. Please try again."
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   RENDER BUSINESS
-========================================================= */
-
-function renderBusiness(business){
-
-    const name =
-        business.name ||
-        "Business";
-
-    const category =
-        business.category ||
-        "Business";
-
-    const location =
-        business.location ||
-        business.address ||
-        "Location not provided";
-
-    const phone =
-        business.phone ||
-        "";
-
-    const description =
-        business.description ||
-        "This business has not added a description yet.";
-
-    const image =
-        business.image_url ||
-        business.image ||
-        business.photo_url ||
-        "";
-
-
-    document.title =
-        name +
-        " - LosOja";
-
-
-    const headerTitle =
-        document.getElementById(
-            "headerTitle"
-        );
-
-    if(headerTitle){
-
-        headerTitle.textContent =
-            name;
-
-    }
-
-
-    /* -----------------------------------------------------
-       HERO
-    ----------------------------------------------------- */
-
-    const hero =
-        document.getElementById(
-            "shopHero"
-        );
-
-    if(hero && image){
-
-        hero.innerHTML =
-
-            '<img src="' +
-            escapeHTML(image) +
-            '" alt="' +
-            escapeHTML(name) +
-            '">';
-
-    }
-
-
-    /* -----------------------------------------------------
-       PROFILE
-    ----------------------------------------------------- */
-
-    const verified =
-        business.verified === true ||
-        business.is_verified === true;
-
-
-    document.getElementById(
-        "shopInfo"
-    ).innerHTML =
-
-        '<div class="profile-top">' +
-
-            '<div>' +
-
-                '<span class="category-badge">' +
-
-                    escapeHTML(category) +
-
-                '</span>' +
-
-                (
-                    verified
-
-                    ?
-
-                    '<span class="verified">✓ Verified</span>'
-
-                    :
-
-                    ''
-                ) +
-
-            '</div>' +
-
-        '</div>' +
-
-        '<h1>' +
-
-            escapeHTML(name) +
-
-        '</h1>' +
-
-        '<div class="meta">' +
-
-            '📍 ' +
-
-            '<span>' +
-
-                escapeHTML(location) +
-
-            '</span>' +
-
-        '</div>' +
-
-        (
-            phone
-
-            ?
-
-            '<div class="meta">' +
-
-                '📞 ' +
-
-                '<span>' +
-
-                    escapeHTML(phone) +
-
-                '</span>' +
-
-            '</div>'
-
-            :
-
-            ''
-        ) +
-
-        '<div class="description">' +
-
-            escapeHTML(description) +
-
-        '</div>';
-
-
-    /* -----------------------------------------------------
-       LOCATION
-    ----------------------------------------------------- */
-
-    const locationCard =
-        document.getElementById(
-            "locationCard"
-        );
-
-    if(locationCard){
-
-        locationCard.innerHTML =
-
-            '<strong>📍 Business location</strong>' +
-
-            '<p>' +
-
-                escapeHTML(location) +
-
-            '</p>';
-
-    }
-
-
-    /* -----------------------------------------------------
-       ACTIONS
-    ----------------------------------------------------- */
-
-    renderActions(
-        business
-    );
-
-
-    /* -----------------------------------------------------
-       SAVE BUTTON
-    ----------------------------------------------------- */
-
-    setupSaveButton(
-        business
-    );
-
-}
-
-
-/* =========================================================
-   ACTION BUTTONS
-========================================================= */
-
-function renderActions(business){
-
-    const actions =
-        document.getElementById(
-            "shopActions"
-        );
-
-    if(!actions) return;
-
-
-    const phone =
-        cleanPhone(
-            business.phone
-        );
-
-    const whatsapp =
-        whatsappNumber(
-            business.phone
-        );
-
-    const name =
-        business.name ||
-        "this business";
-
-
-    let html = "";
-
-
-    if(whatsapp){
-
-        const message =
-            encodeURIComponent(
-                "Hi " +
-                name +
-                ", I found your business on LosOja."
-            );
-
-        html +=
-
-            '<a class="action-btn action-primary"' +
-
-            ' href="https://wa.me/' +
-            whatsapp +
-            '?text=' +
-            message +
-            '"' +
-
-            ' target="_blank"' +
-
-            ' rel="noopener noreferrer">' +
-
-                '💬 Chat' +
-
-            '</a>';
-
-    }else{
-
-        html +=
-
-            '<button' +
-
-            ' class="action-btn"' +
-
-            ' type="button"' +
-
-            ' onclick="toast(\'This business has not added a phone number yet.\')">' +
-
-                '💬 Chat' +
-
-            '</button>';
-
-    }
-
-
-    if(phone){
-
-        html +=
-
-            '<a' +
-
-            ' class="action-btn"' +
-
-            ' href="tel:' +
-            escapeHTML(phone) +
-            '">' +
-
-                '📞 Call' +
-
-            '</a>';
-
-    }else{
-
-        html +=
-
-            '<button' +
-
-            ' class="action-btn"' +
-
-            ' type="button"' +
-
-            ' onclick="toast(\'This business has not added a phone number yet.\')">' +
-
-                '📞 Call' +
-
-            '</button>';
-
-    }
-
-
-    const location =
-        business.location ||
-        business.address ||
-        "";
-
-
-    if(location){
-
-        html +=
-
-            '<a' +
-
-            ' class="action-btn"' +
-
-            ' href="https://www.google.com/maps/search/?api=1&query=' +
-
-            encodeURIComponent(location) +
-
-            '"' +
-
-            ' target="_blank"' +
-
-            ' rel="noopener noreferrer">' +
-
-                '📍 Directions' +
-
-            '</a>';
-
-    }else{
-
-        html +=
-
-            '<button' +
-
-            ' class="action-btn"' +
-
-            ' type="button"' +
-
-            ' onclick="toast(\'Location has not been added yet.\')">' +
-
-                '📍 Directions' +
-
-            '</button>';
-
-    }
-
-
-    actions.innerHTML =
-        html;
-
-}
-
-
-/* =========================================================
-   BUSINESS IMAGES
-========================================================= */
-
-async function loadBusinessImages(
-    businessId
-){
-
-    const gallery =
-        document.getElementById(
-            "shopGallery"
-        );
-
-    const count =
-        document.getElementById(
-            "photoCount"
-        );
-
-
-    try{
-
-        const response =
-            await fetch(
-
-                SUPABASE_URL +
-                "/rest/v1/business_images" +
-                "?business_id=eq." +
-                encodeURIComponent(businessId) +
-                "&select=image_url,sort_order,created_at" +
-                "&order=sort_order.asc,created_at.asc",
-
-                {
-                    headers:{
-                        "apikey":SUPABASE_KEY,
-                        "Authorization":
-                            "Bearer " +
-                            SUPABASE_KEY
-                    }
-                }
-
-            );
-
-
-        if(!response.ok){
-
-            throw new Error(
-                "Could not load business photos."
-            );
-
-        }
-
-
-        const images =
-            await response.json();
-
-
-        const business =
-            window.losojaCurrentBusiness;
-
-
-        const mainImage =
-            business?.image_url ||
-            business?.image ||
-            business?.photo_url ||
-            "";
-
-
-        const urls = [];
-
-
-        if(mainImage){
-
-            urls.push(
-                mainImage
-            );
-
-        }
-
-
-        images.forEach(function(row){
-
-            if(
-                row &&
-                row.image_url &&
-                !urls.includes(
-                    row.image_url
-                )
-            ){
-
-                urls.push(
-                    row.image_url
-                );
-
-            }
-
-        });
-
-
-        if(!urls.length){
-
-            if(count){
-
-                count.textContent =
-                    "No photos";
-
-            }
-
-            gallery.innerHTML =
-
-                '<div class="empty" style="grid-column:1/-1">' +
-
-                    '<div class="empty-icon">📷</div>' +
-
-                    'This business has not added photos yet.' +
-
-                '</div>';
-
-            return;
-
-        }
-
-
-        if(count){
-
-            count.textContent =
-                urls.length +
-                (
-                    urls.length === 1
-                    ? " photo"
-                    : " photos"
-                );
-
-        }
-
-
-        gallery.innerHTML =
-            urls
-                .slice(0,9)
-                .map(function(url,index){
-
-                    return (
-
-                        '<button' +
-
-                        ' class="gallery-item"' +
-
-                        ' type="button"' +
-
-                        ' data-image="' +
-                        escapeHTML(url) +
-                        '"' +
-
-                        ' aria-label="View business photo">' +
-
-                            '<img' +
-
-                            ' src="' +
-                            escapeHTML(url) +
-                            '"' +
-
-                            ' alt="Business photo ' +
-                            (index + 1) +
-                            '"' +
-
-                            ' loading="' +
-                            (
-                                index === 0
-                                ? "eager"
-                                : "lazy"
-                            ) +
-                            '"' +
-
-                            '>' +
-
-                        '</button>'
-
-                    );
-
-                })
-                .join("");
-
-
-        gallery
-            .querySelectorAll(
-                ".gallery-item"
-            )
-            .forEach(function(button){
-
-                button.addEventListener(
-                    "click",
-                    function(){
-
-                        openImage(
-                            button.dataset.image
-                        );
-
-                    }
-                );
-
-            });
-
-
-    }catch(error){
-
-        console.warn(
-            "LosOja gallery:",
-            error
-        );
-
-
-        /*
-           The business page itself still works
-           if the optional gallery request fails.
-        */
-
-        if(count){
-
-            count.textContent =
-                "Photos unavailable";
-
-        }
-
-        gallery.innerHTML =
-
-            '<div class="empty" style="grid-column:1/-1">' +
-
-                '<div class="empty-icon">📷</div>' +
-
-                'Business photos are not available right now.' +
-
-            '</div>';
-
-    }
-
-}
-
-
-/* =========================================================
-   SAVE BUSINESS
-========================================================= */
-
-function setupSaveButton(
-    business
-){
-
-    const button =
-        document.getElementById(
-            "saveBusinessBtn"
-        );
-
-    if(!button) return;
-
-
-    const storageKey =
-        "losoja_saved_items";
-
-
-    let saved = [];
-
-
-    try{
-
-        saved =
-            JSON.parse(
-                localStorage.getItem(
-                    storageKey
-                ) || "[]"
-            );
-
-        if(!Array.isArray(saved)){
-
-            saved = [];
-
-        }
-
-    }catch(error){
-
-        saved = [];
-
-    }
-
-
-    const id =
-        String(
-            business.id
-        );
-
-
-    const isSaved =
-        saved.some(function(item){
+        function escapeHTML(value){
 
             return String(
-                item.id
-            ) === id;
+                value ?? ""
+            )
+                .replace(
+                    /&/g,
+                    "&amp;"
+                )
+                .replace(
+                    /</g,
+                    "&lt;"
+                )
+                .replace(
+                    />/g,
+                    "&gt;"
+                )
+                .replace(
+                    /"/g,
+                    "&quot;"
+                )
+                .replace(
+                    /'/g,
+                    "&#039;"
+                );
 
-        });
+        }
 
 
-    updateSaveButton(
-        button,
-        isSaved
-    );
+        function showToast(
+            message
+        ){
+
+            if(!toast){
+                return;
+            }
+
+            toast.textContent =
+                message;
+
+            toast.classList.add(
+                "show"
+            );
+
+            setTimeout(
+                function(){
+
+                    toast.classList.remove(
+                        "show"
+                    );
+
+                },
+                2800
+            );
+
+        }
 
 
-    button.onclick =
-        function(){
+        function getBusinessId(){
 
-            let current = [];
+            const params =
+                new URLSearchParams(
+                    window.location.search
+                );
+
+            return params.get(
+                "id"
+            );
+
+        }
+
+
+        function extractUser(
+            result
+        ){
+
+            if(!result){
+                return null;
+            }
+
+            if(
+                result.user &&
+                result.user.id
+            ){
+
+                return result.user;
+
+            }
+
+            if(
+                result.data &&
+                result.data.user &&
+                result.data.user.id
+            ){
+
+                return result.data.user;
+
+            }
+
+            if(
+                result.id
+            ){
+
+                return result;
+
+            }
+
+            return null;
+
+        }
+
+
+        function extractToken(
+            result
+        ){
+
+            if(!result){
+                return null;
+            }
+
+            if(
+                typeof result ===
+                "string"
+            ){
+
+                return result;
+
+            }
+
+            if(
+                result.access_token
+            ){
+
+                return result.access_token;
+
+            }
+
+            if(
+                result.session &&
+                result.session.access_token
+            ){
+
+                return result.session.access_token;
+
+            }
+
+            if(
+                result.data &&
+                result.data.session &&
+                result.data.session.access_token
+            ){
+
+                return result.data.session.access_token;
+
+            }
+
+            return null;
+
+        }
+
+
+        /* =========================================================
+           AUTH
+        ========================================================== */
+
+        async function getShopUser(){
+
+            /*
+             * First use the existing LosOja authentication
+             * helper so we do not create a second auth system.
+             */
 
             try{
 
-                current =
-                    JSON.parse(
-                        localStorage.getItem(
-                            storageKey
-                        ) || "[]"
-                    );
+                if(
+                    typeof window.getCurrentUser ===
+                    "function"
+                ){
 
-                if(!Array.isArray(current)){
+                    const result =
+                        await window.getCurrentUser();
 
-                    current = [];
+                    const user =
+                        extractUser(
+                            result
+                        );
+
+                    if(user){
+                        return user;
+                    }
 
                 }
 
             }catch(error){
 
-                current = [];
+                console.warn(
+                    "LosOja shop: getCurrentUser failed.",
+                    error
+                );
 
             }
 
 
-            const index =
-                current.findIndex(
+            /*
+             * Direct Supabase session fallback.
+             */
+
+            try{
+
+                if(
+                    window.losojaSupabase &&
+                    window.losojaSupabase.auth &&
+                    typeof window.losojaSupabase.auth.getSession ===
+                    "function"
+                ){
+
+                    const result =
+                        await window.losojaSupabase.auth.getSession();
+
+                    const user =
+                        extractUser(
+                            result
+                        );
+
+                    if(user){
+                        return user;
+                    }
+
+                }
+
+            }catch(error){
+
+                console.warn(
+                    "LosOja shop: Supabase session lookup failed.",
+                    error
+                );
+
+            }
+
+
+            /*
+             * Read LosOja local session.
+             */
+
+            try{
+
+                const raw =
+                    localStorage.getItem(
+                        "losoja_supabase_session"
+                    );
+
+                if(raw){
+
+                    const parsed =
+                        JSON.parse(
+                            raw
+                        );
+
+                    const user =
+                        extractUser(
+                            parsed
+                        );
+
+                    if(user){
+                        return user;
+                    }
+
+                }
+
+            }catch(error){
+
+                console.warn(
+                    "LosOja shop: local session lookup failed."
+                );
+
+            }
+
+
+            return null;
+
+        }
+
+
+        async function getShopAccessToken(){
+
+            try{
+
+                if(
+                    typeof window.ensureValidSupabaseSession ===
+                    "function"
+                ){
+
+                    const result =
+                        await window.ensureValidSupabaseSession();
+
+                    const token =
+                        extractToken(
+                            result
+                        );
+
+                    if(token){
+                        return token;
+                    }
+
+                }
+
+            }catch(error){
+
+                console.warn(
+                    "LosOja shop: session validation failed."
+                );
+
+            }
+
+
+            try{
+
+                if(
+                    typeof window.getSupabaseAccessToken ===
+                    "function"
+                ){
+
+                    const result =
+                        await window.getSupabaseAccessToken();
+
+                    const token =
+                        extractToken(
+                            result
+                        );
+
+                    if(token){
+                        return token;
+                    }
+
+                }
+
+            }catch(error){
+
+                console.warn(
+                    "LosOja shop: access token helper failed."
+                );
+
+            }
+
+
+            try{
+
+                if(
+                    window.losojaSupabase &&
+                    window.losojaSupabase.auth &&
+                    typeof window.losojaSupabase.auth.getSession ===
+                    "function"
+                ){
+
+                    const result =
+                        await window.losojaSupabase.auth.getSession();
+
+                    const token =
+                        extractToken(
+                            result
+                        );
+
+                    if(token){
+                        return token;
+                    }
+
+                }
+
+            }catch(error){
+
+                console.warn(
+                    "LosOja shop: direct session token lookup failed."
+                );
+
+            }
+
+
+            try{
+
+                const raw =
+                    localStorage.getItem(
+                        "losoja_supabase_session"
+                    );
+
+                if(raw){
+
+                    const parsed =
+                        JSON.parse(
+                            raw
+                        );
+
+                    const token =
+                        extractToken(
+                            parsed
+                        );
+
+                    if(token){
+                        return token;
+                    }
+
+                }
+
+            }catch(error){
+
+                console.warn(
+                    "LosOja shop: local token lookup failed."
+                );
+
+            }
+
+
+            return null;
+
+        }
+
+
+        async function requireShopLogin(){
+
+            const user =
+                await getShopUser();
+
+            if(user){
+                return user;
+            }
+
+            try{
+
+                sessionStorage.setItem(
+                    "losoja_return_to_shop",
+                    window.location.href
+                );
+
+            }catch(error){
+
+                console.warn(
+                    "LosOja: Could not save return URL."
+                );
+
+            }
+
+            window.location.href =
+                "index.html#login";
+
+            return null;
+
+        }
+
+
+        /* =========================================================
+           LOAD BUSINESS
+        ========================================================== */
+
+        async function loadBusiness(){
+
+            const businessId =
+                getBusinessId();
+
+            if(!businessId){
+
+                showError(
+                    "No business was selected."
+                );
+
+                return;
+
+            }
+
+
+            try{
+
+                loading.style.display =
+                    "block";
+
+                errorBox.style.display =
+                    "none";
+
+                shopCard.style.display =
+                    "none";
+
+
+                const response =
+                    await fetch(
+                        SUPABASE_URL +
+                        "/rest/v1/businesses?id=eq." +
+                        encodeURIComponent(
+                            businessId
+                        ) +
+                        "&select=*",
+                        {
+                            method:"GET",
+
+                            headers:{
+                                apikey:
+                                    SUPABASE_KEY,
+
+                                Authorization:
+                                    "Bearer " +
+                                    SUPABASE_KEY,
+
+                                Accept:
+                                    "application/json"
+                            }
+                        }
+                    );
+
+
+                if(!response.ok){
+
+                    let message =
+                        "Could not load this business.";
+
+                    try{
+
+                        const data =
+                            await response.json();
+
+                        message =
+                            data.message ||
+                            data.error_description ||
+                            data.details ||
+                            message;
+
+                    }catch(error){
+
+                        /* Ignore JSON error. */
+
+                    }
+
+                    throw new Error(
+                        message
+                    );
+
+                }
+
+
+                const businesses =
+                    await response.json();
+
+
+                if(
+                    !Array.isArray(
+                        businesses
+                    ) ||
+                    businesses.length === 0
+                ){
+
+                    throw new Error(
+                        "This business could not be found."
+                    );
+
+                }
+
+
+                currentBusiness =
+                    businesses[0];
+
+
+                await renderBusiness(
+                    currentBusiness
+                );
+
+
+                loading.style.display =
+                    "none";
+
+                shopCard.style.display =
+                    "block";
+
+
+            }catch(error){
+
+                console.error(
+                    "LosOja shop load error:",
+                    error
+                );
+
+                showError(
+                    error.message ||
+                    "Unable to load this business."
+                );
+
+            }
+
+        }
+
+
+        function showError(
+            message
+        ){
+
+            loading.style.display =
+                "none";
+
+            shopCard.style.display =
+                "none";
+
+            errorBox.style.display =
+                "block";
+
+            errorBox.innerHTML =
+                `
+                    <strong>
+                        LosOja
+                    </strong>
+
+                    <div style="margin-top:8px;">
+                        ${escapeHTML(message)}
+                    </div>
+
+                    <button
+                        type="button"
+                        onclick="window.location.href='index.html'"
+                        style="
+                            margin-top:16px;
+                            padding:10px 15px;
+                            border:0;
+                            border-radius:9px;
+                            background:#087a3e;
+                            color:#fff;
+                            cursor:pointer;
+                            font-weight:700;
+                        "
+                    >
+                        Back to LosOja
+                    </button>
+                `;
+
+        }
+
+
+        /* =========================================================
+           RENDER BUSINESS
+        ========================================================== */
+
+        async function renderBusiness(
+            business
+        ){
+
+            const name =
+                business.name ||
+                "LosOja Business";
+
+            const category =
+                business.category ||
+                "Business";
+
+            const location =
+                business.location ||
+                "Nigeria";
+
+            const phone =
+                business.phone ||
+                "";
+
+            const image =
+                business.image_url ||
+                business.image ||
+                "";
+
+
+            document.title =
+                name +
+                " | LosOja";
+
+
+            /* =====================================================
+               HERO
+            ====================================================== */
+
+            if(image){
+
+                hero.innerHTML =
+                    `
+                        <img
+                            class="hero-image"
+                            src="${escapeHTML(image)}"
+                            alt="${escapeHTML(name)}"
+                            onerror="
+                                this.style.display='none';
+                                document.getElementById('heroFallback').style.display='flex';
+                            "
+                        >
+
+                        <div
+                            id="heroFallback"
+                            class="hero-placeholder"
+                            style="display:none;"
+                        >
+                            🏪
+                        </div>
+
+                        <div class="hero-overlay">
+
+                            <h1 class="hero-title">
+                                ${escapeHTML(name)}
+                            </h1>
+
+                            <div class="hero-meta">
+
+                                <span class="badge">
+                                    ${escapeHTML(category)}
+                                </span>
+
+                                <span class="badge">
+                                    📍 ${escapeHTML(location)}
+                                </span>
+
+                            </div>
+
+                        </div>
+                    `;
+
+            }else{
+
+                hero.innerHTML =
+                    `
+                        <div class="hero-placeholder">
+                            🏪
+                        </div>
+
+                        <div class="hero-overlay">
+
+                            <h1 class="hero-title">
+                                ${escapeHTML(name)}
+                            </h1>
+
+                            <div class="hero-meta">
+
+                                <span class="badge">
+                                    ${escapeHTML(category)}
+                                </span>
+
+                                <span class="badge">
+                                    📍 ${escapeHTML(location)}
+                                </span>
+
+                            </div>
+
+                        </div>
+                    `;
+
+            }
+
+
+            /* =====================================================
+               INFORMATION
+            ====================================================== */
+
+            businessInfo.innerHTML =
+                `
+                    <div class="info-item">
+
+                        <span class="info-label">
+                            Category
+                        </span>
+
+                        <span class="info-value">
+                            ${escapeHTML(category)}
+                        </span>
+
+                    </div>
+
+                    <div class="info-item">
+
+                        <span class="info-label">
+                            Location
+                        </span>
+
+                        <span class="info-value">
+                            ${escapeHTML(location)}
+                        </span>
+
+                    </div>
+
+                    ${
+                        phone
+                            ?
+                            `
+                                <div class="info-item">
+
+                                    <span class="info-label">
+                                        Phone
+                                    </span>
+
+                                    <span class="info-value">
+                                        ${escapeHTML(phone)}
+                                    </span>
+
+                                </div>
+                            `
+                            :
+                            ""
+                    }
+
+                    <div class="info-item">
+
+                        <span class="info-label">
+                            LosOja Listing
+                        </span>
+
+                        <span class="info-value">
+                            Verified listing record
+                        </span>
+
+                    </div>
+                `;
+
+
+            /* =====================================================
+               DESCRIPTION
+            ====================================================== */
+
+            if(
+                business.description &&
+                String(
+                    business.description
+                ).trim()
+            ){
+
+                description.textContent =
+                    business.description;
+
+                descriptionSection.style.display =
+                    "block";
+
+            }else{
+
+                descriptionSection.style.display =
+                    "none";
+
+            }
+
+
+            /* =====================================================
+               PUBLIC ACTIONS
+            ====================================================== */
+
+            renderPublicActions(
+                business
+            );
+
+
+            /* =====================================================
+               OWNER / BUYER ACTIONS
+            ====================================================== */
+
+            await renderOwnerBuyerActions(
+                business
+            );
+
+
+            /* =====================================================
+               LOCATION
+            ====================================================== */
+
+            locationText.innerHTML =
+                `
+                    <span class="info-label">
+                        Business Location
+                    </span>
+
+                    <span class="info-value">
+                        📍 ${escapeHTML(location)}
+                    </span>
+                `;
+
+
+            /* =====================================================
+               SAVE
+            ====================================================== */
+
+            setupSaveButton(
+                business
+            );
+
+
+            /* =====================================================
+               PHOTOS
+            ====================================================== */
+
+            await loadBusinessImages(
+                business.id
+            );
+
+        }
+
+
+        /* =========================================================
+           PUBLIC ACTIONS
+        ========================================================== */
+
+        function renderPublicActions(
+            business
+        ){
+
+            publicActions.innerHTML =
+                "";
+
+
+            if(
+                business.phone &&
+                String(
+                    business.phone
+                ).trim()
+            ){
+
+                const cleanPhone =
+                    String(
+                        business.phone
+                    )
+                        .replace(
+                            /[^0-9+]/g,
+                            ""
+                        );
+
+
+                const whatsappPhone =
+                    cleanPhone
+                        .replace(
+                            /^\+/,
+                            ""
+                        );
+
+
+                const chatButton =
+                    document.createElement(
+                        "button"
+                    );
+
+                chatButton.type =
+                    "button";
+
+                chatButton.className =
+                    "action-btn action-primary";
+
+                chatButton.textContent =
+                    "💬 WhatsApp";
+
+                chatButton.addEventListener(
+                    "click",
+                    function(){
+
+                        window.open(
+                            "https://wa.me/" +
+                            encodeURIComponent(
+                                whatsappPhone
+                            ),
+                            "_blank"
+                        );
+
+                    }
+                );
+
+                publicActions.appendChild(
+                    chatButton
+                );
+
+
+                const callButton =
+                    document.createElement(
+                        "button"
+                    );
+
+                callButton.type =
+                    "button";
+
+                callButton.className =
+                    "action-btn";
+
+                callButton.textContent =
+                    "📞 Call";
+
+                callButton.addEventListener(
+                    "click",
+                    function(){
+
+                        window.location.href =
+                            "tel:" +
+                            cleanPhone;
+
+                    }
+                );
+
+                publicActions.appendChild(
+                    callButton
+                );
+
+            }
+
+
+            const directionsButton =
+                document.createElement(
+                    "button"
+                );
+
+            directionsButton.type =
+                "button";
+
+            directionsButton.className =
+                "action-btn";
+
+            directionsButton.textContent =
+                "🧭 Directions";
+
+            directionsButton.addEventListener(
+                "click",
+                function(){
+
+                    const location =
+                        String(
+                            business.location ||
+                            ""
+                        ).trim();
+
+                    const destination =
+                        location
+                            ?
+                            (
+                                business.name +
+                                ", " +
+                                location
+                            )
+                            :
+                            business.name;
+
+                    window.open(
+                        "https://www.google.com/maps/search/?api=1&query=" +
+                        encodeURIComponent(
+                            destination
+                        ),
+                        "_blank"
+                    );
+
+                }
+            );
+
+            publicActions.appendChild(
+                directionsButton
+            );
+
+        }
+
+
+        /* =========================================================
+           OWNER / BUYER CONTROLS
+        ========================================================== */
+
+        async function renderOwnerBuyerActions(
+            business
+        ){
+
+            ownerActions.innerHTML =
+                "";
+
+            buyerActions.innerHTML =
+                "";
+
+            ownerActions.style.display =
+                "none";
+
+            buyerActions.style.display =
+                "none";
+
+            actionNote.style.display =
+                "none";
+
+            currentUser =
+                await getShopUser();
+
+
+            /*
+             * Logged out:
+             * Show buyer actions, but clicking them will
+             * require login.
+             */
+
+            if(!currentUser){
+
+                renderBuyerActions(
+                    business
+                );
+
+                return;
+
+            }
+
+
+            const currentUserId =
+                String(
+                    currentUser.id ||
+                    ""
+                ).trim();
+
+            const ownerId =
+                String(
+                    business.user_id ||
+                    ""
+                ).trim();
+
+
+            const isOwner =
+                currentUserId &&
+                ownerId &&
+                currentUserId ===
+                ownerId;
+
+
+            if(isOwner){
+
+                renderOwnerActions(
+                    business
+                );
+
+            }else{
+
+                renderBuyerActions(
+                    business
+                );
+
+            }
+
+        }
+
+
+        /* =========================================================
+           OWNER ACTIONS
+        ========================================================== */
+
+        function renderOwnerActions(
+            business
+        ){
+
+            ownerActions.style.display =
+                "flex";
+
+            actionNote.style.display =
+                "block";
+
+            actionNote.className =
+                "owner-note";
+
+            actionNote.textContent =
+                "You own this LosOja business listing.";
+
+
+            const editButton =
+                document.createElement(
+                    "button"
+                );
+
+            editButton.type =
+                "button";
+
+            editButton.className =
+                "action-btn action-primary";
+
+            editButton.textContent =
+                "✏️ Edit Business";
+
+            editButton.addEventListener(
+                "click",
+                function(){
+
+                    editCurrentBusiness(
+                        business
+                    );
+
+                }
+            );
+
+
+            const deleteButton =
+                document.createElement(
+                    "button"
+                );
+
+            deleteButton.type =
+                "button";
+
+            deleteButton.className =
+                "action-btn action-danger";
+
+            deleteButton.textContent =
+                "🗑️ Delete Business";
+
+            deleteButton.addEventListener(
+                "click",
+                function(){
+
+                    openDeleteModal();
+
+                }
+            );
+
+
+            ownerActions.appendChild(
+                editButton
+            );
+
+            ownerActions.appendChild(
+                deleteButton
+            );
+
+        }
+
+
+        /* =========================================================
+           BUYER ACTIONS
+        ========================================================== */
+
+        function renderBuyerActions(
+            business
+        ){
+
+            buyerActions.style.display =
+                "flex";
+
+            actionNote.style.display =
+                "block";
+
+            actionNote.className =
+                "buyer-note";
+
+            actionNote.textContent =
+                "Contact the owner directly on LosOja or use escrow for a protected transaction.";
+
+
+            const chatButton =
+                document.createElement(
+                    "button"
+                );
+
+            chatButton.type =
+                "button";
+
+            chatButton.className =
+                "action-btn action-primary";
+
+            chatButton.textContent =
+                "💬 Chat on LosOja";
+
+            chatButton.addEventListener(
+                "click",
+                async function(){
+
+                    await openLosOjaChat(
+                        business
+                    );
+
+                }
+            );
+
+
+            const escrowButton =
+                document.createElement(
+                    "button"
+                );
+
+            escrowButton.type =
+                "button";
+
+            escrowButton.className =
+                "action-btn";
+
+            escrowButton.textContent =
+                "🔐 View / Create Escrow";
+
+            escrowButton.addEventListener(
+                "click",
+                async function(){
+
+                    await openBusinessEscrow(
+                        business
+                    );
+
+                }
+            );
+
+
+            buyerActions.appendChild(
+                chatButton
+            );
+
+            buyerActions.appendChild(
+                escrowButton
+            );
+
+        }
+
+
+        /* =========================================================
+           LOSOJA CHAT
+        ========================================================== */
+
+        async function openLosOjaChat(
+            business
+        ){
+
+            const user =
+                await requireShopLogin();
+
+            if(!user){
+                return;
+            }
+
+
+            if(
+                !business.user_id
+            ){
+
+                showToast(
+                    "This business does not have an owner account."
+                );
+
+                return;
+
+            }
+
+
+            if(
+                String(user.id) ===
+                String(business.user_id)
+            ){
+
+                showToast(
+                    "You cannot chat with yourself."
+                );
+
+                return;
+
+            }
+
+
+            const chatUrl =
+                "chat.html?user=" +
+                encodeURIComponent(
+                    String(
+                        business.user_id
+                    )
+                ) +
+                "&business=" +
+                encodeURIComponent(
+                    String(
+                        business.id
+                    )
+                );
+
+
+            console.log(
+                "LosOja: Opening business chat:",
+                chatUrl
+            );
+
+
+            window.location.href =
+                chatUrl;
+
+        }
+
+
+        /* =========================================================
+           ESCROW
+        ========================================================== */
+
+        async function openBusinessEscrow(
+            business
+        ){
+
+            const user =
+                await requireShopLogin();
+
+            if(!user){
+                return;
+            }
+
+
+            if(
+                !business.user_id
+            ){
+
+                showToast(
+                    "This business does not have an owner account."
+                );
+
+                return;
+
+            }
+
+
+            if(
+                String(user.id) ===
+                String(business.user_id)
+            ){
+
+                showToast(
+                    "You cannot create escrow with your own business."
+                );
+
+                return;
+
+            }
+
+
+            /*
+             * Preserve the selected business for the
+             * existing LosOja balance/escrow flow.
+             */
+
+            try{
+
+                sessionStorage.setItem(
+                    "losoja_escrow_business",
+                    JSON.stringify(
+                        {
+                            id:
+                                String(
+                                    business.id
+                                ),
+
+                            name:
+                                String(
+                                    business.name ||
+                                    ""
+                                ),
+
+                            user_id:
+                                String(
+                                    business.user_id ||
+                                    ""
+                                ),
+
+                            category:
+                                String(
+                                    business.category ||
+                                    ""
+                                ),
+
+                            location:
+                                String(
+                                    business.location ||
+                                    ""
+                                ),
+
+                            phone:
+                                String(
+                                    business.phone ||
+                                    ""
+                                ),
+
+                            image:
+                                String(
+                                    business.image_url ||
+                                    business.image ||
+                                    ""
+                                )
+                        }
+                    )
+                );
+
+            }catch(error){
+
+                console.warn(
+                    "LosOja: Could not save escrow business context.",
+                    error
+                );
+
+            }
+
+
+            window.location.href =
+                "balance.html";
+
+        }
+
+
+        /* =========================================================
+           EDIT BUSINESS
+        ========================================================== */
+
+        async function editCurrentBusiness(
+            business
+        ){
+
+            const user =
+                await requireShopLogin();
+
+            if(!user){
+                return;
+            }
+
+
+            if(
+                !business ||
+                !business.id
+            ){
+
+                showToast(
+                    "Business information is missing."
+                );
+
+                return;
+
+            }
+
+
+            if(
+                String(user.id) !==
+                String(
+                    business.user_id
+                )
+            ){
+
+                showToast(
+                    "You can only edit your own business."
+                );
+
+                return;
+
+            }
+
+
+            /*
+             * If the existing dashboard edit function is
+             * available globally, use it.
+             */
+
+            if(
+                typeof window.openEditBusiness ===
+                "function"
+            ){
+
+                try{
+
+                    const result =
+                        window.openEditBusiness(
+                            business
+                        );
+
+                    if(
+                        result &&
+                        typeof result.then ===
+                        "function"
+                    ){
+
+                        await result;
+
+                    }
+
+                    return;
+
+                }catch(error){
+
+                    console.warn(
+                        "LosOja: Existing edit function failed.",
+                        error
+                    );
+
+                }
+
+            }
+
+
+            /*
+             * Existing dashboard code also uses
+             * openEditModal(businessId).
+             */
+
+            if(
+                typeof window.openEditModal ===
+                "function"
+            ){
+
+                try{
+
+                    const result =
+                        window.openEditModal(
+                            String(
+                                business.id
+                            )
+                        );
+
+                    if(
+                        result &&
+                        typeof result.then ===
+                        "function"
+                    ){
+
+                        await result;
+
+                    }
+
+                    return;
+
+                }catch(error){
+
+                    console.warn(
+                        "LosOja: Existing edit modal failed.",
+                        error
+                    );
+
+                }
+
+            }
+
+
+            /*
+             * Safe fallback.
+             *
+             * Store the business ID so dashboard can use it
+             * if its current edit flow supports the parameter.
+             */
+
+            try{
+
+                sessionStorage.setItem(
+                    "losoja_edit_business_id",
+                    String(
+                        business.id
+                    )
+                );
+
+            }catch(error){
+
+                /* Ignore storage errors. */
+
+            }
+
+
+            window.location.href =
+                "dashboard.html?edit_business=" +
+                encodeURIComponent(
+                    String(
+                        business.id
+                    )
+                );
+
+        }
+
+
+        /* =========================================================
+           DELETE MODAL
+        ========================================================== */
+
+        function openDeleteModal(){
+
+            deleteModal.classList.add(
+                "show"
+            );
+
+            deleteModal.setAttribute(
+                "aria-hidden",
+                "false"
+            );
+
+        }
+
+
+        function closeDeleteModal(){
+
+            deleteModal.classList.remove(
+                "show"
+            );
+
+            deleteModal.setAttribute(
+                "aria-hidden",
+                "true"
+            );
+
+        }
+
+
+        /* =========================================================
+           DELETE BUSINESS
+        ========================================================== */
+
+        async function deleteCurrentBusiness(){
+
+            if(
+                !currentBusiness ||
+                !currentBusiness.id
+            ){
+
+                showToast(
+                    "Business information is missing."
+                );
+
+                return;
+
+            }
+
+
+            const user =
+                await getShopUser();
+
+            if(!user){
+
+                closeDeleteModal();
+
+                await requireShopLogin();
+
+                return;
+
+            }
+
+
+            if(
+                String(user.id) !==
+                String(
+                    currentBusiness.user_id
+                )
+            ){
+
+                closeDeleteModal();
+
+                showToast(
+                    "You can only delete your own business."
+                );
+
+                return;
+
+            }
+
+
+            currentAccessToken =
+                await getShopAccessToken();
+
+
+            if(!currentAccessToken){
+
+                closeDeleteModal();
+
+                try{
+
+                    sessionStorage.setItem(
+                        "losoja_return_to_shop",
+                        window.location.href
+                    );
+
+                }catch(error){
+
+                    /* Ignore storage errors. */
+
+                }
+
+                window.location.href =
+                    "index.html#login";
+
+                return;
+
+            }
+
+
+            const confirmButton =
+                document.getElementById(
+                    "confirmDeleteBtn"
+                );
+
+            if(confirmButton){
+
+                confirmButton.disabled =
+                    true;
+
+                confirmButton.textContent =
+                    "Deleting...";
+
+            }
+
+
+            try{
+
+                /*
+                 * IMPORTANT:
+                 *
+                 * The request includes both the business ID
+                 * and authenticated user ID.
+                 *
+                 * Supabase RLS must still enforce ownership.
+                 */
+
+                const response =
+                    await fetch(
+                        SUPABASE_URL +
+                        "/rest/v1/businesses?id=eq." +
+                        encodeURIComponent(
+                            String(
+                                currentBusiness.id
+                            )
+                        ) +
+                        "&user_id=eq." +
+                        encodeURIComponent(
+                            String(
+                                user.id
+                            )
+                        ),
+                        {
+                            method:"DELETE",
+
+                            headers:{
+                                apikey:
+                                    SUPABASE_KEY,
+
+                                Authorization:
+                                    "Bearer " +
+                                    currentAccessToken,
+
+                                Accept:
+                                    "application/json",
+
+                                Prefer:
+                                    "return=minimal"
+                            }
+                        }
+                    );
+
+
+                if(!response.ok){
+
+                    let message =
+                        "Business could not be deleted.";
+
+                    try{
+
+                        const data =
+                            await response.json();
+
+                        message =
+                            data.message ||
+                            data.error_description ||
+                            data.details ||
+                            data.hint ||
+                            message;
+
+                    }catch(error){
+
+                        /* Ignore JSON parsing failure. */
+
+                    }
+
+                    throw new Error(
+                        message
+                    );
+
+                }
+
+
+                closeDeleteModal();
+
+                showToast(
+                    "Business deleted successfully."
+                );
+
+
+                /*
+                 * Give the toast a moment before leaving.
+                 */
+
+                setTimeout(
+                    function(){
+
+                        window.location.href =
+                            "index.html";
+
+                    },
+                    900
+                );
+
+
+            }catch(error){
+
+                console.error(
+                    "LosOja delete business error:",
+                    error
+                );
+
+                showToast(
+                    error.message ||
+                    "Business could not be deleted."
+                );
+
+
+            }finally{
+
+                if(confirmButton){
+
+                    confirmButton.disabled =
+                        false;
+
+                    confirmButton.textContent =
+                        "Delete Business";
+
+                }
+
+            }
+
+        }
+
+
+        /* =========================================================
+           BUSINESS PHOTOS
+        ========================================================== */
+
+        async function loadBusinessImages(
+            businessId
+        ){
+
+            gallery.innerHTML =
+                `
+                    <div class="empty-gallery">
+                        Loading business photos...
+                    </div>
+                `;
+
+
+            try{
+
+                const response =
+                    await fetch(
+                        SUPABASE_URL +
+                        "/rest/v1/business_images" +
+                        "?business_id=eq." +
+                        encodeURIComponent(
+                            String(
+                                businessId
+                            )
+                        ) +
+                        "&select=*" +
+                        "&order=sort_order.asc,created_at.asc",
+                        {
+                            method:"GET",
+
+                            headers:{
+                                apikey:
+                                    SUPABASE_KEY,
+
+                                Authorization:
+                                    "Bearer " +
+                                    SUPABASE_KEY,
+
+                                Accept:
+                                    "application/json"
+                            }
+                        }
+                    );
+
+
+                if(!response.ok){
+
+                    throw new Error(
+                        "Could not load business photos."
+                    );
+
+                }
+
+
+                const images =
+                    await response.json();
+
+
+                if(
+                    !Array.isArray(
+                        images
+                    ) ||
+                    images.length === 0
+                ){
+
+                    gallery.innerHTML =
+                        `
+                            <div class="empty-gallery">
+                                No additional business photos yet.
+                            </div>
+                        `;
+
+                    return;
+
+                }
+
+
+                gallery.innerHTML =
+                    "";
+
+
+                images.forEach(
                     function(item){
 
-                        return String(
-                            item.id
-                        ) === id;
+                        const imageUrl =
+                            item.image_url ||
+                            item.url ||
+                            item.image;
+
+                        if(!imageUrl){
+                            return;
+                        }
+
+
+                        const button =
+                            document.createElement(
+                                "button"
+                            );
+
+                        button.type =
+                            "button";
+
+                        button.className =
+                            "gallery-item";
+
+                        button.setAttribute(
+                            "aria-label",
+                            "Open business photo"
+                        );
+
+
+                        const image =
+                            document.createElement(
+                                "img"
+                            );
+
+                        image.src =
+                            imageUrl;
+
+                        image.alt =
+                            currentBusiness?.name ||
+                            "Business photo";
+
+                        image.loading =
+                            "lazy";
+
+
+                        image.addEventListener(
+                            "error",
+                            function(){
+
+                                button.remove();
+
+                                if(
+                                    gallery.children.length ===
+                                    0
+                                ){
+
+                                    gallery.innerHTML =
+                                        `
+                                            <div class="empty-gallery">
+                                                No business photos are available.
+                                            </div>
+                                        `;
+
+                                }
+
+                            }
+                        );
+
+
+                        button.appendChild(
+                            image
+                        );
+
+
+                        button.addEventListener(
+                            "click",
+                            function(){
+
+                                openImageViewer(
+                                    imageUrl
+                                );
+
+                            }
+                        );
+
+
+                        gallery.appendChild(
+                            button
+                        );
 
                     }
                 );
 
 
-            if(index >= 0){
+                if(
+                    gallery.children.length ===
+                    0
+                ){
 
-                current.splice(
-                    index,
-                    1
+                    gallery.innerHTML =
+                        `
+                            <div class="empty-gallery">
+                                No business photos are available.
+                            </div>
+                        `;
+
+                }
+
+            }catch(error){
+
+                console.error(
+                    "LosOja business images error:",
+                    error
                 );
 
-                updateSaveButton(
-                    button,
-                    false
+                gallery.innerHTML =
+                    `
+                        <div class="empty-gallery">
+                            Business photos could not be loaded.
+                        </div>
+                    `;
+
+            }
+
+        }
+
+
+        /* =========================================================
+           SAVE BUSINESS
+        ========================================================== */
+
+        function getSavedBusinesses(){
+
+            try{
+
+                const raw =
+                    localStorage.getItem(
+                        "losoja_saved_businesses"
+                    );
+
+                if(!raw){
+                    return [];
+                }
+
+                const parsed =
+                    JSON.parse(
+                        raw
+                    );
+
+                return Array.isArray(
+                    parsed
+                )
+                    ? parsed
+                    : [];
+
+            }catch(error){
+
+                return [];
+
+            }
+
+        }
+
+
+        function setSavedBusinesses(
+            list
+        ){
+
+            try{
+
+                localStorage.setItem(
+                    "losoja_saved_businesses",
+                    JSON.stringify(
+                        list
+                    )
                 );
 
-                toast(
-                    "Business removed from Saved."
+            }catch(error){
+
+                console.warn(
+                    "LosOja: Could not save business locally."
+                );
+
+            }
+
+        }
+
+
+        function setupSaveButton(
+            business
+        ){
+
+            if(!saveBtn){
+                return;
+            }
+
+
+            const saved =
+                getSavedBusinesses();
+
+
+            const id =
+                String(
+                    business.id
+                );
+
+
+            if(
+                saved.includes(
+                    id
+                )
+            ){
+
+                saveBtn.textContent =
+                    "♥ Saved";
+
+                saveBtn.classList.add(
+                    "saved"
                 );
 
             }else{
 
-                current.push({
+                saveBtn.textContent =
+                    "♡ Save";
 
-                    id:business.id,
-
-                    name:business.name || "Business",
-
-                    category:
-                        business.category ||
-                        "",
-
-                    location:
-                        business.location ||
-                        business.address ||
-                        "",
-
-                    image:
-                        business.image_url ||
-                        business.image ||
-                        business.photo_url ||
-                        "",
-
-                    savedAt:
-                        new Date().toISOString()
-
-                });
-
-
-                updateSaveButton(
-                    button,
-                    true
-                );
-
-                toast(
-                    "Business saved."
+                saveBtn.classList.remove(
+                    "saved"
                 );
 
             }
 
 
-            localStorage.setItem(
-                storageKey,
-                JSON.stringify(current)
-            );
+            saveBtn.onclick =
+                function(){
 
-        };
+                    const current =
+                        getSavedBusinesses();
 
-}
-
-
-function updateSaveButton(
-    button,
-    saved
-){
-
-    button.textContent =
-        saved
-        ? "♥"
-        : "♡";
-
-    button.setAttribute(
-        "aria-label",
-        saved
-        ? "Remove saved business"
-        : "Save business"
-    );
-
-}
+                    const exists =
+                        current.includes(
+                            id
+                        );
 
 
-/* =========================================================
-   IMAGE VIEWER
-========================================================= */
+                    if(exists){
 
-function openImage(
-    url
-){
+                        const updated =
+                            current.filter(
+                                function(item){
 
-    const viewer =
-        document.getElementById(
-            "imageViewer"
-        );
+                                    return String(
+                                        item
+                                    ) !==
+                                    id;
 
-    const image =
-        document.getElementById(
-            "viewerImage"
-        );
+                                }
+                            );
 
+                        setSavedBusinesses(
+                            updated
+                        );
 
-    if(!viewer || !image){
+                        saveBtn.textContent =
+                            "♡ Save";
 
-        return;
+                        saveBtn.classList.remove(
+                            "saved"
+                        );
 
-    }
+                        showToast(
+                            "Removed from Saved."
+                        );
 
+                    }else{
 
-    image.src =
-        url;
+                        current.push(
+                            id
+                        );
 
-    viewer.style.display =
-        "flex";
+                        setSavedBusinesses(
+                            current
+                        );
 
-}
+                        saveBtn.textContent =
+                            "♥ Saved";
 
+                        saveBtn.classList.add(
+                            "saved"
+                        );
 
-function closeImage(){
+                        showToast(
+                            "Business saved."
+                        );
 
-    const viewer =
-        document.getElementById(
-            "imageViewer"
-        );
+                    }
 
-    const image =
-        document.getElementById(
-            "viewerImage"
-        );
-
-
-    if(viewer){
-
-        viewer.style.display =
-            "none";
-
-    }
-
-
-    if(image){
-
-        image.src =
-            "";
-
-    }
-
-}
-
-
-/* =========================================================
-   ERROR
-========================================================= */
-
-function showPageError(
-    message
-){
-
-    document.getElementById(
-        "shopInfo"
-    ).innerHTML =
-
-        '<div class="empty">' +
-
-            '<div class="empty-icon">🏪</div>' +
-
-            '<strong style="display:block;color:#111827;margin-bottom:6px">' +
-
-                escapeHTML(message) +
-
-            '</strong>' +
-
-            '<button' +
-
-            ' type="button"' +
-
-            ' class="action-btn"' +
-
-            ' style="margin:15px auto 0;max-width:180px"' +
-
-            ' onclick="location.reload()">' +
-
-                'Try again' +
-
-            '</button>' +
-
-        '</div>';
-
-
-    document.getElementById(
-        "shopActions"
-    ).innerHTML = "";
-
-}
-
-
-/* =========================================================
-   VIEWER EVENTS
-========================================================= */
-
-document
-    .getElementById(
-        "viewerClose"
-    )
-    .addEventListener(
-        "click",
-        closeImage
-    );
-
-
-document
-    .getElementById(
-        "imageViewer"
-    )
-    .addEventListener(
-        "click",
-        function(event){
-
-            if(
-                event.target.id ===
-                "imageViewer"
-            ){
-
-                closeImage();
-
-            }
+                };
 
         }
-    );
 
 
-document.addEventListener(
-    "keydown",
-    function(event){
+        /* =========================================================
+           IMAGE VIEWER
+        ========================================================== */
 
-        if(
-            event.key === "Escape"
+        function openImageViewer(
+            imageUrl
         ){
 
-            closeImage();
+            viewerImage.src =
+                imageUrl;
+
+            imageViewer.classList.add(
+                "show"
+            );
+
+            imageViewer.setAttribute(
+                "aria-hidden",
+                "false"
+            );
+
+            document.body.style.overflow =
+                "hidden";
 
         }
 
-    }
-);
+
+        function closeImageViewer(){
+
+            imageViewer.classList.remove(
+                "show"
+            );
+
+            imageViewer.setAttribute(
+                "aria-hidden",
+                "true"
+            );
+
+            viewerImage.src =
+                "";
+
+            document.body.style.overflow =
+                "";
+
+        }
 
 
-/* =========================================================
-   START
-========================================================= */
+        /* =========================================================
+           BUTTON EVENTS
+        ========================================================== */
 
-loadBusiness();
+        document
+            .getElementById(
+                "backBtn"
+            )
+            .addEventListener(
+                "click",
+                function(){
 
-</script>
+                    if(
+                        window.history.length >
+                        1
+                    ){
+
+                        window.history.back();
+
+                    }else{
+
+                        window.location.href =
+                            "index.html";
+
+                    }
+
+                }
+            );
+
+
+        document
+            .getElementById(
+                "viewerClose"
+            )
+            .addEventListener(
+                "click",
+                function(){
+
+                    closeImageViewer();
+
+                }
+            );
+
+
+        imageViewer.addEventListener(
+            "click",
+            function(event){
+
+                if(
+                    event.target ===
+                    imageViewer
+                ){
+
+                    closeImageViewer();
+
+                }
+
+            }
+        );
+
+
+        document
+            .getElementById(
+                "cancelDeleteBtn"
+            )
+            .addEventListener(
+                "click",
+                function(){
+
+                    closeDeleteModal();
+
+                }
+            );
+
+
+        document
+            .getElementById(
+                "confirmDeleteBtn"
+            )
+            .addEventListener(
+                "click",
+                function(){
+
+                    deleteCurrentBusiness();
+
+                }
+            );
+
+
+        deleteModal.addEventListener(
+            "click",
+            function(event){
+
+                if(
+                    event.target ===
+                    deleteModal
+                ){
+
+                    closeDeleteModal();
+
+                }
+
+            }
+        );
+
+
+        document.addEventListener(
+            "keydown",
+            function(event){
+
+                if(
+                    event.key ===
+                    "Escape"
+                ){
+
+                    closeImageViewer();
+
+                    closeDeleteModal();
+
+                }
+
+            }
+        );
+
+
+        /* =========================================================
+           START
+        ========================================================== */
+
+        loadBusiness();
+
+    </script>
 
 </body>
+
 </html>
