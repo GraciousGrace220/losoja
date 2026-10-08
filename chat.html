@@ -945,30 +945,19 @@ const ALLOWED_CHAT_IMAGE_TYPES = [
 ========================================================= */
 
 let currentUser = null;
-
 let currentConversationId = null;
-
 let currentOtherUserId = null;
-
 let currentBusinessId = null;
-
 let currentListingId = null;
-
 let currentPropertyId = null;
-
 let currentPropertyTitle = null;
-
 let currentEscrowId = null;
-
 let currentEscrow = null;
-
 let currentOjaListingId = null;
-
 let currentOjaListing = null;
-
 let currentOjaImages = [];
-
 let messagePolling = null;
+let notificationPolling = null;
 
 /* =========================================================
    BASIC UI HELPERS
@@ -977,9 +966,7 @@ let messagePolling = null;
 function showError(message) {
 
     const box =
-        document.getElementById(
-            "errorMessage"
-        );
+        document.getElementById("errorMessage");
 
     if (!box) {
         return;
@@ -992,13 +979,10 @@ function showError(message) {
         "block";
 }
 
-
 function clearError() {
 
     const box =
-        document.getElementById(
-            "errorMessage"
-        );
+        document.getElementById("errorMessage");
 
     if (!box) {
         return;
@@ -1016,9 +1000,7 @@ function clearError() {
 
 function escapeHTML(value) {
 
-    return String(
-        value ?? ""
-    )
+    return String(value ?? "")
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
@@ -1087,7 +1069,6 @@ async function getValidAccessToken() {
 
 /* =========================================================
    SUPABASE HEADERS
-   IMPORTANT: KEEP THIS SECTION EXACTLY AS IT IS
 ========================================================= */
 
 async function getHeaders() {
@@ -1106,13 +1087,6 @@ async function getHeaders() {
         "Prefer":
             "return=representation"
     };
-
-    /*
-     * Only attach Authorization when a real
-     * authenticated Supabase access token exists.
-     *
-     * NEVER use SUPABASE_KEY as a Bearer token.
-     */
 
     if (token) {
 
@@ -1200,11 +1174,8 @@ async function loadEscrowChatContext() {
         await supabaseRequest(
 
             "/rest/v1/escrow_transactions" +
-
             "?select=*" +
-
             "&id=eq." +
-
             encodeURIComponent(
                 currentEscrowId
             )
@@ -1245,9 +1216,7 @@ async function loadEscrowChatContext() {
     currentOtherUserId =
         String(currentUser.id) ===
             String(buyerId)
-
             ? sellerId
-
             : buyerId;
 
     return true;
@@ -1367,6 +1336,20 @@ function renderEscrowDetails() {
 
 async function findOrCreateConversation() {
 
+    /*
+     * IMPORTANT:
+     * If a conversation was already loaded by its exact ID,
+     * never search for another conversation.
+     */
+
+    if (currentConversationId) {
+
+        return {
+            id:
+                currentConversationId
+        };
+    }
+
     if (!currentUser) {
 
         throw new Error(
@@ -1401,7 +1384,11 @@ async function findOrCreateConversation() {
         );
     }
 
-    let query;
+    let query = "";
+
+    /* =====================================================
+       OJA CHAT
+    ===================================================== */
 
     if (currentOjaListingId) {
 
@@ -1425,6 +1412,10 @@ async function findOrCreateConversation() {
             ")" +
             ")";
 
+    /* =====================================================
+       BARTER CHAT
+    ===================================================== */
+
     } else if (currentListingId) {
 
         query =
@@ -1446,6 +1437,10 @@ async function findOrCreateConversation() {
             encodeURIComponent(currentUser.id) +
             ")" +
             ")";
+
+    /* =====================================================
+       BUSINESS CHAT
+    ===================================================== */
 
     } else if (currentBusinessId) {
 
@@ -1469,6 +1464,10 @@ async function findOrCreateConversation() {
             ")" +
             ")";
 
+    /* =====================================================
+       GENERAL CHAT
+    ===================================================== */
+
     } else {
 
         query =
@@ -1485,18 +1484,21 @@ async function findOrCreateConversation() {
             ",user_two_id.eq." +
             encodeURIComponent(currentUser.id) +
             ")" +
-            ")";
+            ")" +
+            "&order=updated_at.desc" +
+            "&limit=1";
     }
 
     const existing =
-        await supabaseRequest(
-            query
-        );
+        await supabaseRequest(query);
 
     if (
         Array.isArray(existing) &&
         existing.length > 0
     ) {
+
+        currentConversationId =
+            existing[0].id;
 
         return existing[0];
     }
@@ -1546,6 +1548,9 @@ async function findOrCreateConversation() {
         );
     }
 
+    currentConversationId =
+        created[0].id;
+
     return created[0];
 }
 
@@ -1568,7 +1573,8 @@ async function loadConversationById(
             "&id=eq." +
             encodeURIComponent(
                 conversationId
-            )
+            ) +
+            "&limit=1"
         );
 
     if (
@@ -1588,16 +1594,12 @@ async function loadConversationById(
         String(
             conversation.user_one_id
         ) ===
-            String(
-                currentUser.id
-            ) ||
+            String(currentUser.id) ||
 
         String(
             conversation.user_two_id
         ) ===
-            String(
-                currentUser.id
-            );
+            String(currentUser.id);
 
     if (!isParticipant) {
 
@@ -1607,31 +1609,42 @@ async function loadConversationById(
     }
 
     currentConversationId =
-        conversation.id;
+        String(conversation.id);
 
     currentOtherUserId =
         String(
             conversation.user_one_id
         ) ===
-            String(
-                currentUser.id
+            String(currentUser.id)
+
+            ? String(
+                conversation.user_two_id
             )
 
-            ? conversation.user_two_id
+            : String(
+                conversation.user_one_id
+            );
 
-            : conversation.user_one_id;
+    /*
+     * The database conversation is authoritative.
+     * This prevents URL parameters from accidentally
+     * switching the chat to another business/listing.
+     */
 
     currentBusinessId =
-        conversation.business_id ||
-        null;
+        conversation.business_id
+            ? String(conversation.business_id)
+            : null;
 
     currentListingId =
-        conversation.barter_listing_id ||
-        null;
+        conversation.barter_listing_id
+            ? String(conversation.barter_listing_id)
+            : null;
 
     currentOjaListingId =
-        conversation.oja_listing_id ||
-        null;
+        conversation.oja_listing_id
+            ? String(conversation.oja_listing_id)
+            : null;
 
     return conversation;
 }
@@ -1689,11 +1702,6 @@ async function createChatNotification() {
                 false
         };
 
-        /*
-         * The authenticated Bearer token is added
-         * automatically by supabaseRequest().
-         */
-
         await supabaseRequest(
             "/rest/v1/notifications",
             {
@@ -1710,6 +1718,10 @@ async function createChatNotification() {
                         notification
                     )
             }
+        );
+
+        console.log(
+            "LosOja chat notification created."
         );
 
     } catch (error) {
@@ -1760,15 +1772,17 @@ async function updateChatUnreadIndicator() {
                 notifications
             ) &&
             notifications.some(
-                notification =>
-                    String(
+                function(notification) {
+
+                    return String(
                         notification?.type ||
                         ""
                     )
                         .toLowerCase()
                         .startsWith(
                             "chat:"
-                        )
+                        );
+                }
             );
 
         indicator.classList.toggle(
@@ -1800,6 +1814,13 @@ async function markCurrentChatNotificationsRead() {
     }
 
     try {
+
+        /*
+         * Notifications sent by the other user
+         * have this structure:
+         *
+         * chat:OTHER_USER_ID:CONVERSATION_ID
+         */
 
         const notificationTypePattern =
             "chat:" +
@@ -1906,7 +1927,7 @@ function renderMessages(messages) {
     container.innerHTML =
         messages
             .map(
-                message => {
+                function(message) {
 
                     const mine =
                         String(
@@ -1939,7 +1960,8 @@ function renderMessages(messages) {
                             ? message.message
                             : "";
 
-                    let imageHTML = "";
+                    let imageHTML =
+                        "";
 
                     if (
                         message.image_url
@@ -1961,7 +1983,8 @@ function renderMessages(messages) {
                         `;
                     }
 
-                    let textHTML = "";
+                    let textHTML =
+                        "";
 
                     if (actualText) {
 
@@ -2292,6 +2315,11 @@ async function sendMessage() {
             }
         );
 
+        /*
+         * Notification is created only after
+         * the message has successfully saved.
+         */
+
         await createChatNotification();
 
         input.value =
@@ -2408,7 +2436,7 @@ function initializeImageButton() {
 
     imageButton.addEventListener(
         "click",
-        function () {
+        function() {
 
             imageInput.click();
 
@@ -2417,7 +2445,7 @@ function initializeImageButton() {
 
     imageInput.addEventListener(
         "change",
-        function () {
+        function() {
 
             const file =
                 imageInput.files?.[0];
@@ -2566,7 +2594,7 @@ function renderOjaDetails() {
             "";
 
         currentOjaImages.forEach(
-            image => {
+            function(image) {
 
                 if (!image.image_url) {
                     return;
@@ -2621,7 +2649,8 @@ async function loadOjaListing(
                 "&id=eq." +
                 encodeURIComponent(
                     listingId
-                )
+                ) +
+                "&limit=1"
             );
 
         if (
@@ -2656,7 +2685,7 @@ async function loadOjaListing(
                 : [];
 
         currentOjaListingId =
-            listing.id;
+            String(listing.id);
 
         renderOjaDetails();
 
@@ -2774,7 +2803,8 @@ async function renderConversationList(
                         "&id=eq." +
                         encodeURIComponent(
                             conversation.barter_listing_id
-                        )
+                        ) +
+                        "&limit=1"
                     );
 
                 if (
@@ -2810,7 +2840,8 @@ async function renderConversationList(
                         "&id=eq." +
                         encodeURIComponent(
                             conversation.oja_listing_id
-                        )
+                        ) +
+                        "&limit=1"
                     );
 
                 if (
@@ -2860,7 +2891,7 @@ async function renderConversationList(
 
         card.addEventListener(
             "click",
-            function () {
+            function() {
 
                 let url =
                     "chat.html" +
@@ -2933,49 +2964,55 @@ async function openSpecificChat() {
             "conversation"
         );
 
+    /*
+     * Reset context before reading the URL.
+     */
+
+    currentConversationId =
+        null;
+
     currentOtherUserId =
-        params.get(
-            "user"
-        );
+        params.get("user");
 
     currentBusinessId =
-        params.get(
-            "business"
-        );
+        params.get("business");
 
     currentListingId =
-        params.get(
-            "listing"
-        );
+        params.get("listing");
 
     currentPropertyId =
-        params.get(
-            "property_id"
-        );
+        params.get("property_id");
 
     currentPropertyTitle =
-        params.get(
-            "property_title"
-        );
+        params.get("property_title");
 
     currentOjaListingId =
-        params.get(
-            "oja_listing"
-        );
+        params.get("oja_listing");
 
     currentEscrowId =
-        params.get(
-            "escrow"
-        );
+        params.get("escrow");
 
-    if (currentBusinessId) {
+    currentEscrow =
+        null;
 
-        currentEscrowId =
-            null;
+    currentOjaListing =
+        null;
 
-        currentEscrow =
-            null;
-    }
+    currentOjaImages =
+        [];
+
+    /*
+     * =====================================================
+     * MOST IMPORTANT PART
+     *
+     * If a conversation ID was supplied, that exact
+     * conversation is authoritative.
+     * Do NOT call findOrCreateConversation() afterward.
+     * =====================================================
+     */
+
+    let exactConversationLoaded =
+        false;
 
     if (
         requestedConversationId
@@ -2993,9 +3030,40 @@ async function openSpecificChat() {
             );
         }
 
-        currentConversationId =
-            conversation.id;
+        exactConversationLoaded =
+            true;
+
+        /*
+         * If this is an Oja conversation,
+         * load the exact listing from the database.
+         */
+
+        if (
+            currentOjaListingId
+        ) {
+
+            await loadOjaListing(
+                currentOjaListingId
+            );
+        }
     }
+
+    /*
+     * Business context clears escrow context.
+     */
+
+    if (currentBusinessId) {
+
+        currentEscrowId =
+            null;
+
+        currentEscrow =
+            null;
+    }
+
+    /*
+     * Property chat.
+     */
 
     if (
         currentPropertyId &&
@@ -3008,9 +3076,13 @@ async function openSpecificChat() {
             );
     }
 
+    /*
+     * Direct Oja chat without an existing conversation.
+     */
+
     if (
         currentOjaListingId &&
-        !requestedConversationId
+        !exactConversationLoaded
     ) {
 
         const ojaListing =
@@ -3036,16 +3108,27 @@ async function openSpecificChat() {
         }
 
         currentOtherUserId =
-            ojaListing.user_id;
+            String(
+                ojaListing.user_id
+            );
     }
+
+    /*
+     * Escrow chat without an existing conversation.
+     */
 
     if (
         currentEscrowId &&
-        !currentBusinessId
+        !currentBusinessId &&
+        !exactConversationLoaded
     ) {
 
         await loadEscrowChatContext();
     }
+
+    /*
+     * No target user means show conversation list.
+     */
 
     if (!currentOtherUserId) {
 
@@ -3101,6 +3184,12 @@ async function openSpecificChat() {
         document.getElementById(
             "listingInfo"
         );
+
+    /*
+     * =====================================================
+     * HEADER
+     * =====================================================
+     */
 
     if (
         currentEscrowId &&
@@ -3208,15 +3297,42 @@ async function openSpecificChat() {
         }
     }
 
-    const conversation =
-        await findOrCreateConversation();
+    /*
+     * =====================================================
+     * CONVERSATION
+     * =====================================================
+     *
+     * Exact conversation:
+     * use it directly.
+     *
+     * New/direct context:
+     * find or create it.
+     */
 
-    currentConversationId =
-        conversation.id;
+    if (!exactConversationLoaded) {
+
+        const conversation =
+            await findOrCreateConversation();
+
+        currentConversationId =
+            conversation.id;
+    }
+
+    /*
+     * =====================================================
+     * READ + LOAD
+     * =====================================================
+     */
 
     await markCurrentChatNotificationsRead();
 
     await loadMessages();
+
+    /*
+     * =====================================================
+     * MESSAGE POLLING
+     * =====================================================
+     */
 
     if (messagePolling) {
 
@@ -3227,13 +3343,11 @@ async function openSpecificChat() {
 
     messagePolling =
         setInterval(
-            async function () {
+            async function() {
 
                 try {
 
                     await loadMessages();
-
-                    await updateChatUnreadIndicator();
 
                 } catch (error) {
 
@@ -3265,7 +3379,7 @@ function initializeLoginButton() {
 
     loginButton.addEventListener(
         "click",
-        function () {
+        function() {
 
             localStorage.setItem(
                 "losoja_return_to_chat",
@@ -3305,7 +3419,7 @@ function initializeChatForm() {
 
     chatForm.addEventListener(
         "submit",
-        async function (event) {
+        async function(event) {
 
             event.preventDefault();
 
@@ -3320,7 +3434,7 @@ function initializeChatForm() {
 
 document.addEventListener(
     "DOMContentLoaded",
-    async function () {
+    async function() {
 
         try {
 
@@ -3416,7 +3530,7 @@ document.addEventListener(
                     "Account";
 
                 loginButton.onclick =
-                    function () {
+                    function() {
 
                         window.location.href =
                             "account.html";
@@ -3441,6 +3555,38 @@ document.addEventListener(
             await openSpecificChat();
 
             await updateChatUnreadIndicator();
+
+            /*
+             * Keep the chat notification indicator
+             * updated while the user is on this page.
+             */
+
+            if (notificationPolling) {
+
+                clearInterval(
+                    notificationPolling
+                );
+            }
+
+            notificationPolling =
+                setInterval(
+                    async function() {
+
+                        try {
+
+                            await updateChatUnreadIndicator();
+
+                        } catch (error) {
+
+                            console.warn(
+                                "Notification refresh failed:",
+                                error
+                            );
+                        }
+
+                    },
+                    5000
+                );
 
             console.log(
                 "LosOja Chat initialized successfully."
