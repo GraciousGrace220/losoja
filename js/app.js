@@ -1397,6 +1397,29 @@ bindAddBusinessButtons() {
                     }
 
 
+                                       try {
+
+                        sessionStorage.setItem(
+                            "losoja_pending_business",
+                            JSON.stringify({
+                                name: name,
+                                category: category,
+                                location: location,
+                                phone: phone,
+                                description: description
+                            })
+                        );
+
+                    } catch (storageError) {
+
+                        console.warn(
+                            "LosOja: Could not save pending business form.",
+                            storageError
+                        );
+
+                    }
+
+
                     setTimeout(
                         function () {
 
@@ -1412,7 +1435,6 @@ bindAddBusinessButtons() {
 
                 }
 
-
                 userId =
                     String(
                         currentUser.id
@@ -1423,6 +1445,7 @@ bindAddBusinessButtons() {
                     typeof window.getSupabaseAccessToken ===
                     "function"
                 ) {
+
                     accessToken =
                         window.getSupabaseAccessToken();
 
