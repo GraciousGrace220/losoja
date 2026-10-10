@@ -103,21 +103,13 @@ function saveSession(session) {
 ========================================================= */
 
 function getAccessToken() {
+    const session = getSession();
 
-    const session =
-        getSession();
-
-    if (
-        !session ||
-        !session.access_token
-    ) {
-
+    if (!session) {
         return null;
-
     }
 
-    return session.access_token;
-
+    return session.access_token || null;
 }
   /* =========================================================
    PUBLIC SESSION ACCESS
