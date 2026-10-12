@@ -1,7 +1,7 @@
 // LosOja Shop Addon - Makes any shop shoppable without breaking old code
 (function(){
 const grid = document.getElementById('productGrid') || document.querySelector('.product-placeholder');
-if(!grid) return;
+
 const CART_KEY='losoja_cart_'+(new URLSearchParams(location.search).get('id')||'general');
 let CART=JSON.parse(localStorage.getItem(CART_KEY)||'[]');
 let PRODUCTS=[];
