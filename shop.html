@@ -1248,9 +1248,63 @@ a{
                         will appear here.
 
                     </div>
+                    <!-- OWNER PRODUCT MANAGEMENT -->
+<section id="manageProductsSection" class="section" style="display:none;">
+
+    <h2 class="section-title">Manage Products</h2>
+
+    <form id="productForm">
+
+        <input type="hidden" id="productId">
+
+        <label for="productName">Product Name *</label>
+        <input
+            type="text"
+            id="productName"
+            required
+            maxlength="120"
+            placeholder="e.g. Rice Bag 50kg"
+        >
+
+        <label for="productPrice">Price (₦) *</label>
+        <input
+            type="number"
+            id="productPrice"
+            required
+            min="0.01"
+            step="0.01"
+            placeholder="50000"
+        >
+
+        <label for="productDescription">Description</label>
+        <textarea
+            id="productDescription"
+            rows="3"
+            maxlength="2000"
+            placeholder="Describe your product"
+        ></textarea>
+
+        <button type="submit">Save Product</button>
+
+        <button
+            type="button"
+            id="cancelProductEdit"
+            style="display:none;"
+        >
+            Cancel Edit
+        </button>
+
+    </form>
+
+    <p id="productFormMessage" role="status"></p>
+
+    <div id="manageProductsList"></div>
+
+</section>
+<!-- END OWNER PRODUCT MANAGEMENT -->
 
                 </section>
-
+                
 
                 <section class="section">
 
@@ -1407,124 +1461,7 @@ const publicActions =
         "publicActions"
     );
 
-const ownerActions =
-    document.getElementById(
-        "ownerActions"
-    );
-
-const buyerActions =
-    document.getElementById(
-        "buyerActions"
-    );
-
-const actionNote =
-    document.getElementById(
-        "actionNote"
-    );
-
-const businessInfo =
-    document.getElementById(
-        "businessInfo"
-    );
-
-const description =
-    document.getElementById(
-        "description"
-    );
-
-const descriptionSection =
-    document.getElementById(
-        "descriptionSection"
-    );
-
-const gallery =
-    document.getElementById(
-        "gallery"
-    );
-
-const locationText =
-    document.getElementById(
-        "locationText"
-    );
-
-const saveBtn =
-    document.getElementById(
-        "saveBtn"
-    );
-
-const imageViewer =
-    document.getElementById(
-        "imageViewer"
-    );
-
-const viewerImage =
-    document.getElementById(
-        "viewerImage"
-    );
-
-const deleteModal =
-    document.getElementById(
-        "deleteModal"
-    );
-
-const toast =
-    document.getElementById(
-        "toast"
-    );
-
-
-/* =========================================================
-   STATE
-========================================================= */
-
-let currentBusiness =
-    null;
-
-let currentUser =
-    null;
-
-let currentAccessToken =
-    null;
-
-let currentBusinessImages =
-    [];
-
-let editImagesToRemove =
-    new Set();
-
-let editSelectedFiles =
-    [];
-
-
-/* =========================================================
-   HELPERS
-========================================================= */
-
-function escapeHTML(value){
-
-    return String(
-        value ?? ""
-    )
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-        .replace(
-            /</g,
-            "&lt;"
-        )
-        .replace(
-            />/g,
-            "&gt;"
-        )
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-        .replace(
-            /'/g,
-            "&#039;"
-        );
+c
 
 }
 
