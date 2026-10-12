@@ -2044,9 +2044,11 @@ async function loadBusiness(){
             businesses[0];
 
 
-        await renderBusiness(
-            currentBusiness
-        );
+      await renderBusiness(currentBusiness);
+
+if (typeof window.loadShopProducts === "function") {
+    await window.loadShopProducts(currentBusiness);
+}
 
 
         loading.style.display =
