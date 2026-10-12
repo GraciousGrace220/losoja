@@ -3919,7 +3919,7 @@ async function uploadBusinessImage(
 /* =========================================================
    EDIT BUSINESS
 ========================================================= */
-
+const editImagesToRemove = new Set();
 async function editCurrentBusiness(
     business
 ){
