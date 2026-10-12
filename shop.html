@@ -6140,6 +6140,312 @@ document.addEventListener(
 <!-- 1. Load cart addon FIRST -->
 <script src="js/shop-addon.js"></script>
 
+<script>
+/* =========================================================
+   LOSOJA PRODUCT MANAGER
+   Add, edit and delete products for the business owner
+========================================================= */
+(function () {
+    "use strict";
+
+    const form = document.getElementById("productForm");
+    const section = document.getElementById("manageProductsSection");
+
+    if (!form || form.dataset.managerReady === "yes") return;
+    form.dataset.managerReady = "yes";
+
+    const nameInput = document.getElementById("productName");
+    const priceInput = document.getElementById("productPrice");
+    const descriptionInput = document.getElementById("productDescription");
+    const idInput = document.getElementById("productId");
+    const message = document.getElementById("productFormMessage");
+    const list = document.getElementById("manageProductsList");
+    const cancelButton = document.getElementById("cancelProductEdit");
+
+    const SUPABASE_URL =
+        "https://ycxshwgeebskdozmornh.supabase.co";
+
+    let busy = false;
+
+    function showMessage(text, isError) {
+        if (!message) return;
+        message.textContent = text;
+        message.style.color = isError ? "#b42318" : "#087a3e";
+    }
+
+    function escapeText(value) {
+        return String(value ?? "").replace(/[&<>"']/g, function (c) {
+            return {
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#39;"
+            }[c];
+        });
+    }
+
+    async function getOwnerContext() {
+        const business = window.losojaShopBusiness;
+
+        if (!business || !business.id) {
+            throw new Error("Please refresh the business page and try again.");
+        }
+
+       if (typeof getShopUser !== "function") {
+            throw new Error("Login verification is unavailable. Refresh the page.");
+        }
+
+       const user = await getShopUser();
+
+        if (!user || !user.id) {
+            throw new Error("Please log in before managing products.");
+        }
+
+        if (String(business.user_id) !== String(user.id)) {
+            throw new Error("Only the owner of this business can manage its products.");
+        }
+
+       if (typeof getShopAccessToken !== "function") {
+            throw new Error("Secure login token is unavailable. Please log in again.");
+        }
+
+       const token = await getShopAccessToken();
+
+        if (!token) {
+            throw new Error("Your login session has expired. Please log in again.");
+        }
+
+        const key = window.SUPABASE_KEY;
+
+        if (!key) {
+            throw new Error("Supabase configuration is unavailable.");
+        }
+
+        return { business, token, key };
+    }
+
+    async function requestProducts(path, options, context) {
+        const response = await fetch(SUPABASE_URL + "/rest/v1/products" + path, {
+            ...options,
+            headers: {
+                apikey: context.key,
+                Authorization: "Bearer " + context.token,
+                "Content-Type": "application/json",
+                ...(options && options.headers ? options.headers : {})
+            }
+        });
+
+        if (!response.ok) {
+            let detail = "";
+            try {
+                const body = await response.json();
+                detail = body.message || body.details || body.hint || "";
+            } catch (_) {}
+
+            throw new Error(
+                detail || "Product request failed (HTTP " + response.status + ")."
+            );
+        }
+
+        if (response.status === 204) return null;
+
+        const text = await response.text();
+        return text ? JSON.parse(text) : null;
+    }
+
+    function resetForm() {
+        form.reset();
+        idInput.value = "";
+        if (cancelButton) cancelButton.style.display = "none";
+        const submit = form.querySelector('[type="submit"]');
+        if (submit) submit.textContent = "Save Product";
+    }
+
+    async function refreshProducts(context) {
+        const business = context.business;
+        const query =
+            "?business_id=eq." + encodeURIComponent(business.id) +
+            "&select=id,business_id,name,price,description" +
+            "&order=created_at.desc";
+
+        const rows = await requestProducts(
+            query,
+            { method: "GET" },
+            context
+        );
+
+        list.innerHTML = "";
+
+        if (!Array.isArray(rows) || !rows.length) {
+            list.textContent = "No products added yet.";
+        } else {
+            rows.forEach(function (product) {
+                const card = document.createElement("div");
+                card.style.cssText =
+                    "border:1px solid #ddd;border-radius:10px;padding:12px;margin:10px 0";
+
+                card.innerHTML =
+                    "<strong>" + escapeText(product.name) + "</strong>" +
+                    "<p>₦" + Number(product.price).toLocaleString("en-NG") + "</p>" +
+                    "<p>" + escapeText(product.description || "") + "</p>" +
+                    '<button type="button" data-edit="' + escapeText(product.id) +
+                    '">Edit</button> ' +
+                    '<button type="button" data-delete="' + escapeText(product.id) +
+                    '">Delete</button>';
+
+                list.appendChild(card);
+            });
+        }
+
+        if (typeof window.loadShopProducts === "function") {
+            await window.loadShopProducts(business);
+        }
+    }
+
+    form.addEventListener("submit", async function (event) {
+        event.preventDefault();
+        if (busy) return;
+
+        const name = nameInput.value.trim();
+        const price = Number(priceInput.value);
+        const description = descriptionInput.value.trim();
+
+        if (!name || !Number.isFinite(price) || price <= 0) {
+            showMessage("Enter a product name and a price greater than zero.", true);
+            return;
+        }
+
+        busy = true;
+        const submit = form.querySelector('[type="submit"]');
+        if (submit) submit.disabled = true;
+
+        try {
+            const context = await getOwnerContext();
+            const editingId = idInput.value.trim();
+
+            const payload = {
+                name: name,
+                price: price,
+                description: description
+            };
+
+            let path;
+
+            if (editingId) {
+                path = "?id=eq." + encodeURIComponent(editingId) +
+                    "&business_id=eq." + encodeURIComponent(context.business.id);
+
+                await requestProducts(path, {
+                    method: "PATCH",
+                    headers: { Prefer: "return=minimal" },
+                    body: JSON.stringify(payload)
+                }, context);
+
+                showMessage("Product updated successfully.", false);
+            } else {
+                payload.business_id = context.business.id;
+
+                await requestProducts("", {
+                    method: "POST",
+                    headers: { Prefer: "return=minimal" },
+                    body: JSON.stringify(payload)
+                }, context);
+
+                showMessage("Product added successfully.", false);
+            }
+
+            resetForm();
+            await refreshProducts(context);
+        } catch (error) {
+            console.error("LosOja product manager:", error);
+            showMessage(error.message || "Could not save the product.", true);
+        } finally {
+            busy = false;
+            if (submit) submit.disabled = false;
+        }
+    });
+
+    list.addEventListener("click", async function (event) {
+        const editButton = event.target.closest("[data-edit]");
+        const deleteButton = event.target.closest("[data-delete]");
+
+        if (!editButton && !deleteButton) return;
+        if (busy) return;
+
+        busy = true;
+
+        try {
+            const context = await getOwnerContext();
+
+            if (editButton) {
+                const rows = await requestProducts(
+                    "?id=eq." + encodeURIComponent(editButton.dataset.edit) +
+                    "&business_id=eq." + encodeURIComponent(context.business.id) +
+                    "&select=id,name,price,description",
+                    { method: "GET" },
+                    context
+                );
+
+                const product = Array.isArray(rows) ? rows[0] : null;
+                if (!product) throw new Error("Product not found.");
+
+                idInput.value = product.id;
+                nameInput.value = product.name || "";
+                priceInput.value = product.price;
+                descriptionInput.value = product.description || "";
+
+                if (cancelButton) cancelButton.style.display = "inline-block";
+
+                const submit = form.querySelector('[type="submit"]');
+                if (submit) submit.textContent = "Update Product";
+
+                if (section) {
+                    section.scrollIntoView({ behavior: "smooth", block: "start" });
+                }
+
+                showMessage("Edit the details, then select Update Product.", false);
+            }
+
+            if (deleteButton) {
+                if (!confirm("Delete this product? This cannot be undone.")) {
+                    return;
+                }
+
+                await requestProducts(
+                    "?id=eq." + encodeURIComponent(deleteButton.dataset.delete) +
+                    "&business_id=eq." + encodeURIComponent(context.business.id),
+                    { method: "DELETE" },
+                    context
+                );
+
+                showMessage("Product deleted.", false);
+                await refreshProducts(context);
+            }
+        } catch (error) {
+            console.error("LosOja product manager:", error);
+            showMessage(error.message || "Could not complete that action.", true);
+        } finally {
+            busy = false;
+        }
+    });
+
+    if (cancelButton) {
+        cancelButton.addEventListener("click", function () {
+            resetForm();
+            showMessage("", false);
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        if (section && section.style.display !== "none") {
+            getOwnerContext()
+                .then(refreshProducts)
+                .catch(function () {});
+        }
+    });
+})();
+</script>
 <!-- 2. Cart Drawer HTML -->
 <div id="cartDrawer" style="position:fixed;inset:0;z-index:8000;display:none">
   <div onclick="closeCart()" style="position:absolute;inset:0;background:rgba(0,0,0,.45)"></div>
