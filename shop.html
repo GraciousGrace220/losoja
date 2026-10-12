@@ -4253,11 +4253,9 @@ async function editCurrentBusiness(
             modal.style.display =
                 "none";
 
-            editSelectedFiles =
-                [];
+                       window.editSelectedFiles = [];
 
-            editImagesToRemove =
-                new Set();
+            window.editImagesToRemove = new Set();
 
         }
 
@@ -5207,16 +5205,13 @@ window.editImagesToRemove = new Set();
     }
 
 
-    /* -----------------------------------------------------
+       /* -----------------------------------------------------
        RESET EDIT STATE
     ----------------------------------------------------- */
 
-    editImagesToRemove =
-        new Set();
+    window.editImagesToRemove = new Set();
 
-   window.editSelectedFiles = [];
-        [];
-
+    window.editSelectedFiles = [];
 
     /* -----------------------------------------------------
        LOAD CURRENT PICTURES
