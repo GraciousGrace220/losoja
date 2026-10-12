@@ -1432,6 +1432,20 @@ const MAX_BUSINESS_IMAGES =
 const MAX_IMAGE_SIZE =
     5 * 1024 * 1024;
 let currentBusiness = null;
+    
+function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, function (char) {
+        const entities = {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;"
+        };
+        return entities[char];
+    });
+}
+
 
 /* =========================================================
    DOM
