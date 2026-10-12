@@ -6452,6 +6452,37 @@ document.addEventListener(
                 .catch(function () {});
         }
     });
+    /* OPEN AND CLOSE PRODUCT MANAGER */
+    function openProductManager() {
+        if (section) {
+            section.style.display = "block";
+            document.body.style.overflow = "hidden";
+        }
+    }
+
+    function closeProductManager() {
+        if (section) {
+            section.style.display = "none";
+            document.body.style.overflow = "";
+        }
+    }
+
+    document.getElementById("closeProductManager")
+        ?.addEventListener("click", closeProductManager);
+
+    document.getElementById("cancelProductManager")
+        ?.addEventListener("click", closeProductManager);
+
+    document.addEventListener("click", function (event) {
+        const button = event.target.closest(
+            "#manageProductsBtn, #manageProductsButton, .manage-products-btn"
+        );
+
+        if (button) {
+            event.preventDefault();
+            openProductManager();
+        }
+    });
 })();
 </script>
 <!-- 2. Cart Drawer HTML -->
