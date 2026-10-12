@@ -3055,9 +3055,9 @@ function renderEditImages(
 
     if(
         mainImage &&
-        !editImagesToRemove.has(
-            "__main__"
-        )
+        !window.editImagesToRemove.has(
+    "__main__"
+)
     ){
 
         visibleCount++;
@@ -3919,7 +3919,7 @@ async function uploadBusinessImage(
 /* =========================================================
    EDIT BUSINESS
 ========================================================= */
-const editImagesToRemove = new Set();
+window.editImagesToRemove = new Set();
 async function editCurrentBusiness(
     business
 ){
