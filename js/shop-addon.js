@@ -55,8 +55,22 @@ function updateCount(){
 
 window.removeItem=function(pid){CART=CART.filter(c=>String(c.id)!=String(pid)); localStorage.setItem(CART_KEY,JSON.stringify(CART)); updateCount();}
 
-window.openCart=function(){document.getElementById('cartDrawer').classList.add('show'); updateCount();}
-window.closeCart=function(){document.getElementById('cartDrawer').classList.remove('show');}
+window.openCart = function(){
+    const drawer = document.getElementById('cartDrawer');
+
+    if(!drawer) return;
+
+    drawer.style.display = 'block';
+    updateCount();
+};
+
+window.closeCart = function(){
+    const drawer = document.getElementById('cartDrawer');
+
+    if(!drawer) return;
+
+    drawer.style.display = 'none';
+};
 
 document.addEventListener('DOMContentLoaded',updateCount);
 })();
