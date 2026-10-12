@@ -8,14 +8,48 @@ let PRODUCTS=[];
 
 function escapeHTML(v){return String(v||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
-window.loadShopProducts = async function(business){
-  PRODUCTS=[
-    {id:business.id+'_1', name: business.name+' Package', price: business.price||2500, image: business.image_url||'', description: 'Top quality from '+business.name},
-    {id:business.id+'_2', name: 'Premium Service', price: 5000, image: business.image_url||'', description: 'Best seller'},
-    {id:business.id+'_3', name: 'Delivery Package', price: 1500, image: '', description: 'Fast delivery'}
-  ];
-  render();
-}
+
+window.loadShopProducts = async function(business) {
+  try {
+    const response = await fetch(
+      'https://ycxshwgeebskdozmornh.supabase.co/rest/v1/products?business_id=eq.' +
+      encodeURIComponent(business.id) +
+      '&select=id,name,price,image_url,description',
+      {
+        headers: {
+          apikey: SUPABASE_KEY,
+          Authorization: 'Bearer ' + SUPABASE_KEY
+        }
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error('Could not load products: HTTP ' + response.status);
+    }
+
+    const rows = await response.json();
+
+    PRODUCTS = rows.map(product => ({
+      id: product.id,
+      name: product.name,
+      price: Number(product.price),
+      image: product.image_url || '',
+      description: product.description || ''
+    }));
+
+    render();
+
+    if (!PRODUCTS.length) {
+      document.getElementById('productGrid').innerHTML =
+        '<p>No products have been added to this business yet.</p>';
+    }
+  } catch (error) {
+    console.error('LosOja product loading failed:', error);
+    document.getElementById('productGrid').innerHTML =
+      '<p>Products could not be loaded. Please refresh and try again.</p>';
+  }
+};
+
 
 function render(){
  const parent = document.getElementById('productGrid');
