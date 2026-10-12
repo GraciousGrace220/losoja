@@ -1241,7 +1241,8 @@ a{
                         Products & Services
                     </h2>
 
-                    <div class="product-placeholder">
+                   <div id="productGrid" class="product-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px"></div>
+<div class="product-placeholder" style="display:none">
 
                         Products and services for this business
                         will appear here.
@@ -6157,13 +6158,54 @@ document.addEventListener(
 
 
 /* =========================================================
-   START
+   START - FIXED ORDER
 ========================================================= */
+</script>
 
+<!-- 1. Load cart addon FIRST -->
+<script src="js/shop-addon.js"></script>
+
+<!-- 2. Cart Drawer HTML -->
+<div id="cartDrawer" style="position:fixed;inset:0;z-index:8000;display:none">
+  <div onclick="closeCart()" style="position:absolute;inset:0;background:rgba(0,0,0,.45)"></div>
+  <div style="position:absolute;right:0;top:0;bottom:0;width:92%;max-width:400px;background:#fff;display:flex;flex-direction:column">
+    <div style="padding:16px;display:flex;justify-content:space-between;border-bottom:1px solid #eee">
+      <h3 style="margin:0">Your Cart</h3>
+      <button onclick="closeCart()" style="width:32px;height:32px;border-radius:50%;border:0">×</button>
+    </div>
+    <div id="cartItems" style="flex:1;overflow:auto;padding:12px"></div>
+    <div style="padding:12px;border-top:1px solid #eee">
+      <div style="display:flex;justify-content:space-between;font-weight:900;margin-bottom:10px">
+        <span>Total</span><span id="cartTotal">₦0</span>
+      </div>
+      <button id="checkoutWA" style="width:100%;background:#087a3e;color:#fff;padding:12px;border-radius:10px;border:0;font-weight:800">Checkout on WhatsApp</button>
+    </div>
+  </div>
+</div>
+
+<button id="openCartBtn" style="position:fixed;bottom:20px;right:20px;background:#087a3e;color:#fff;border:0;border-radius:50px;padding:14px 20px;font-weight:900;z-index:7000;box-shadow:0 6px 20px rgba(0,0,0,.25)">🛒 Cart <span id="cartCount" style="background:#fff;color:#087a3e;border-radius:999px;padding:2px 8px;display:none">0</span></button>
+
+<!-- 3. START BUSINESS AFTER addon -->
+<script>
 loadBusiness();
 
+document.getElementById('openCartBtn')?.addEventListener('click',()=>{
+  document.getElementById('cartDrawer').style.display='block';
+});
+window.closeCart=function(){
+  document.getElementById('cartDrawer').style.display='none';
+};
+document.getElementById('checkoutWA')?.addEventListener('click',()=>{
+  const key='losoja_cart_'+(new URLSearchParams(location.search).get('id')||'general');
+  const CART=JSON.parse(localStorage.getItem(key)||'[]');
+  if(!CART.length){ alert('Cart empty'); return; }
+  let phone=(currentBusiness?.phone||'').replace(/[^0-9]/g,'').replace(/^0/,'234');
+  let msg=`Hello ${currentBusiness?.name}%0AI want to order:%0A`;
+  CART.forEach((it,i)=>{ msg+=`${i+1}. ${it.name} x${it.qty}%0A`; });
+  const url=phone?`https://wa.me/${phone}?text=${msg}`:`https://wa.me/?text=${msg}`;
+  window.open(url,'_blank');
+});
 </script>
 
 </body>
-
 </html>
