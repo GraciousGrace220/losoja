@@ -2643,16 +2643,39 @@ function renderOwnerActions(
         }
     );
 
+ownerActions.appendChild(editButton);
+ownerActions.appendChild(deleteButton);
 
-    ownerActions.appendChild(
-        editButton
-    );
+// Manage Products button
+const manageProductsButton = document.createElement("button");
 
-    ownerActions.appendChild(
-        deleteButton
-    );
+manageProductsButton.type = "button";
+manageProductsButton.className = "action-btn action-primary";
+manageProductsButton.textContent = "📦 Manage Products";
 
-}
+manageProductsButton.addEventListener("click", function () {
+    const section = document.getElementById("manageProductsSection");
+
+    if (!section) {
+        alert("Manage Products section was not found.");
+        return;
+    }
+
+    const isHidden = section.style.display === "none";
+
+    section.style.display = isHidden ? "block" : "none";
+
+    if (isHidden) {
+        section.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+    }
+});
+
+ownerActions.appendChild(manageProductsButton);
+
+    }
 
 
 /* =========================================================
