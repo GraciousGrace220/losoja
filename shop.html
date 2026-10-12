@@ -2534,8 +2534,8 @@ async function renderOwnerBuyerActions(
     actionNote.style.display =
         "none";
 
-    currentUser =
-        await getShopUser();
+    const currentUser =
+    await getShopUser();
 
 
     if(!currentUser){
