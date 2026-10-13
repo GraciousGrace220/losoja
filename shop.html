@@ -6219,6 +6219,72 @@ if (imageInput && imagePreview) {
         "https://ycxshwgeebskdozmornh.supabase.co";
 
     let busy = false;
+    
+async function uploadProductImage(file, context) {
+    if (!file) return "";
+
+    const allowedTypes = [
+        "image/jpeg",
+        "image/png",
+        "image/webp"
+    ];
+
+    if (!allowedTypes.includes(file.type)) {
+        throw new Error("Choose a JPG, PNG, or WebP image.");
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+        throw new Error("Product image must be 5 MB or smaller.");
+    }
+
+    const extension = file.type === "image/png"
+        ? "png"
+        : file.type === "image/webp"
+            ? "webp"
+            : "jpg";
+
+    const fileName =
+        Date.now() + "-" +
+        Math.random().toString(36).slice(2) +
+        "." + extension;
+
+    const businessId = encodeURIComponent(context.business.id);
+    const safeFileName = encodeURIComponent(fileName);
+
+    const uploadUrl =
+        SUPABASE_URL +
+        "/storage/v1/object/product-images/" +
+        businessId + "/" + safeFileName;
+
+    const response = await fetch(uploadUrl, {
+        method: "POST",
+        headers: {
+            apikey: context.key,
+            Authorization: "Bearer " + context.token,
+            "Content-Type": file.type,
+            "x-upsert": "false"
+        },
+        body: file
+    });
+
+    if (!response.ok) {
+        let detail = "";
+
+        try {
+            const result = await response.json();
+            detail = result.message || result.error || "";
+        } catch (_) {}
+
+        throw new Error(
+            detail || "Product image upload failed (HTTP " +
+            response.status + ")."
+        );
+    }
+
+    return SUPABASE_URL +
+        "/storage/v1/object/public/product-images/" +
+        businessId + "/" + safeFileName;
+}
 
     function showMessage(text, isError) {
         if (!message) return;
@@ -6373,15 +6439,25 @@ if (imageInput && imagePreview) {
         const submit = form.querySelector('[type="submit"]');
         if (submit) submit.disabled = true;
 
-        try {
-            const context = await getOwnerContext();
-            const editingId = idInput.value.trim();
+try {
+    const context = await getOwnerContext();
+    const editingId = idInput.value.trim();
 
-            const payload = {
-                name: name,
-                price: price,
-                description: description
-            };
+    const imageFile =
+        imageInput && imageInput.files
+            ? imageInput.files[0]
+            : null;
+
+    const payload = {
+        name: name,
+        price: price,
+        description: description
+    };
+
+    if (imageFile) {
+        showMessage("Uploading product picture...", false);
+        payload.image_url = await uploadProductImage(imageFile, context);
+    }
 
             let path;
 
