@@ -1282,7 +1282,25 @@ a{
             <label for="productDescription" style="display:block;font-weight:700;margin-bottom:7px;">Description</label>
             <textarea id="productDescription" rows="4" maxlength="2000"
                 placeholder="Describe your product"
-                style="width:100%;box-sizing:border-box;padding:13px;border:1px solid #ccc;border-radius:9px;margin-bottom:18px;"></textarea>
+              style="width:100%;box-sizing:border-box;padding:13px;border:1px solid #ccc;border-radius:9px;margin-bottom:18px;"></textarea>
+                                                                                                                                      
+<label for="productImageInput" style="display:block;font-weight:700;margin-bottom:7px;">
+    Product Picture
+</label>
+
+<input
+    type="file"
+    id="productImageInput"
+    accept="image/jpeg,image/png,image/webp"
+    style="width:100%;box-sizing:border-box;margin-bottom:12px;"
+>
+
+<img
+    id="imagePreview"
+    alt="Product picture preview"
+    style="display:none;width:100%;max-width:300px;height:200px;object-fit:cover;border-radius:10px;margin-bottom:18px;"
+>
+
 
             <div style="display:flex;gap:10px;flex-wrap:wrap;">
                 <button type="submit"
