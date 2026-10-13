@@ -6176,6 +6176,40 @@ document.addEventListener(
     const nameInput = document.getElementById("productName");
     const priceInput = document.getElementById("productPrice");
     const descriptionInput = document.getElementById("productDescription");
+    
+const imageInput = document.getElementById("productImageInput");
+const imagePreview = document.getElementById("imagePreview");
+
+if (imageInput && imagePreview) {
+    imageInput.addEventListener("change", function () {
+        const file = this.files && this.files[0];
+
+        if (!file) {
+            imagePreview.removeAttribute("src");
+            imagePreview.style.display = "none";
+            return;
+        }
+
+        if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+            showMessage("Choose a JPG, PNG, or WebP image.", true);
+            this.value = "";
+            imagePreview.style.display = "none";
+            return;
+        }
+
+        if (file.size > 5 * 1024 * 1024) {
+            showMessage("Choose an image smaller than 5 MB.", true);
+            this.value = "";
+            imagePreview.style.display = "none";
+            return;
+        }
+
+        imagePreview.src = URL.createObjectURL(file);
+        imagePreview.style.display = "block";
+        showMessage("", false);
+    });
+}
+
     const idInput = document.getElementById("productId");
     const message = document.getElementById("productFormMessage");
     const list = document.getElementById("manageProductsList");
