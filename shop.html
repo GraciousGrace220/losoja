@@ -6446,19 +6446,35 @@ document.addEventListener(
         }
     });
     /* OPEN AND CLOSE PRODUCT MANAGER */
-    function openProductManager() {
+  
+    async function openProductManager() {
         if (section) {
             section.style.display = "block";
             document.body.style.overflow = "hidden";
         }
-    }
 
+        if (busy) return;
+
+        try {
+            const context = await getOwnerContext();
+            await refreshProducts(context);
+        } catch (error) {
+            console.error("LosOja product loading:", error);
+            showMessage(
+                error.message || "Could not load saved products. Please log in again.",
+                true
+            );
+        }
+    }
+    
     function closeProductManager() {
         if (section) {
             section.style.display = "none";
             document.body.style.overflow = "";
         }
     }
+
+
 
     document.getElementById("closeProductManager")
         ?.addEventListener("click", closeProductManager);
