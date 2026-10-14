@@ -786,15 +786,18 @@ async function callPayBill(payload, token) {
             }
 
           
+
 const response = await fetch(
     "https://ycxshwgeebskdozmornh.supabase.co/rest/v1/bill_transactions?select=*&order=created_at.desc",
     {
         method: "GET",
         headers: {
             "Authorization": "Bearer " + token,
-"apikey": "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe"        }
+            "apikey": "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe"
+        }
     }
 );
+
 
 if (!response.ok) {
     const errorText = await response.text();
