@@ -729,9 +729,17 @@ if (isFailed(result)) {
 
                 stopProcessingTimer();
 
-                // If the payment request never started,
-                // it is safe to restore the form.
-                if (!requestStarted) {
+               // Unlock only when the request definitely never started,
+// or the backend explicitly confirms payment was not started.
+const errData = error.data || {};
+
+if (
+    !requestStarted ||
+    (
+        errData.payment_not_started === true &&
+        errData.stage === "bill_creation"
+    )
+) {
                     restoreFormState(
                         form,
                         button,
