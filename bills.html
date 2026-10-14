@@ -702,20 +702,46 @@ async function callPayBill(payload, token) {
                 );
 
             } catch (error) {
-                console.error(config.label + " payment error:", error);
+                console.error(
+                    config.label + " payment error:",
+                    error
+                );
+
+                console.error("Payment error details:", {
+                    message: error.message,
+                    httpStatus: error.httpStatus,
+                    data: error.data,
+                    uncertainPayment: error.uncertainPayment
+                });
+
                 stopProcessingTimer();
 
+                // If the payment request never started,
+                // it is safe to restore the form.
                 if (!requestStarted) {
-                    restoreFormState(form, button, processing, config.buttonText);
+                    restoreFormState(
+                        form,
+                        button,
+                        processing,
+                        config.buttonText
+                    );
+
                     unlockPayment();
-                    alert(error.message || "The payment could not be started.");
+
+                    alert(
+                        error.message ||
+                        "The payment could not be started."
+                    );
+
                     return;
                 }
 
+                // Once the request starts, its outcome may be
+                // uncertain. Do not automatically retry or unlock.
                 setUnconfirmedState(
                     button,
                     processing,
-                    "The result could not be confirmed. Check Bill History before trying again."
+                    "The payment result could not be confirmed. Check Bill History before trying again."
                 );
             }
         });
