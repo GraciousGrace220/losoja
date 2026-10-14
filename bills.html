@@ -675,25 +675,38 @@ async function callPayBill(payload, token) {
                     return;
                 }
 
-                if (isFailed(result)) {
-                    stopProcessingTimer();
+              
+if (isFailed(result)) {
+    stopProcessingTimer();
 
-                    showProcessing(
-                        processing,
-                        result.message || "The payment was reported as failed. Check Bill History for the final record."
-                    );
+    if (result.refunded === true) {
+        restoreFormState(
+            form,
+            button,
+            processing,
+            config.buttonText
+        );
 
-                    alert(result.message || "Payment failed. Check Bill History.");
+        unlockPayment();
 
-                    // Do not assume that a refund has completed.
-                    // Check history/backend before attempting another payment.
-                    setUnconfirmedState(
-                        button,
-                        processing,
-                        "The provider reported a failure. Check Bill History and confirm the wallet balance before trying again."
-                    );
-                    return;
-                }
+        alert(
+            result.message ||
+            "Payment failed and the wallet refund was processed."
+        );
+
+        loadBillHistory();
+        return;
+    }
+
+    setUnconfirmedState(
+        button,
+        processing,
+        "The provider reported a failure, but the refund is not confirmed. Check Bill History before trying again."
+    );
+
+    return;
+}
+
 
                 setUnconfirmedState(
                     button,
