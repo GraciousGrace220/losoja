@@ -808,14 +808,15 @@ if (!response.ok) {
         errorText
     );
 
+   
     throw new Error(
         "Could not load bill history (HTTP " +
         response.status + "). Check the console for details."
     );
 }
 
+const rows = await response.json();
 
-            const rows = await response.json();
 
             if (!Array.isArray(rows) || rows.length === 0) {
                 container.textContent = "No bill payments yet.";
