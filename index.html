@@ -3070,91 +3070,46 @@ document.addEventListener(
         }
 
 
-        /* =================================================
-           SIGNUP / LOGIN SWITCH
-        ================================================= */
+       
+/* =================================================
+   SIGNUP / LOGIN SWITCH
+================================================= */
 
-        const loginModal =
-            document.getElementById(
-                "loginModal"
-            );
+const loginModal =
+    document.getElementById("loginModal");
 
+const signupModal =
+    document.getElementById("signupModal");
 
-        const signupModal =
-            document.getElementById(
-                "signupModal"
-            );
+const signupFromLogin =
+    document.getElementById("openSignupFromLogin");
 
+const loginFromSignup =
+    document.getElementById("openLoginFromSignup");
 
-        const signupFromLogin =
-            document.getElementById(
-                "openSignupFromLogin"
-            );
+if (signupFromLogin) {
+    signupFromLogin.addEventListener("click", function (event) {
+        event.preventDefault();
 
-
-        const loginFromSignup =
-            document.getElementById(
-                "openLoginFromSignup"
-            );
-
-
-        if (signupFromLogin) {
-
-            signupFromLogin.addEventListener(
-                "click",
-                function () {
-
-                    if (loginModal) {
-
-                        loginModal.classList.remove(
-                            "active"
-                        );
-
-                    }
-
-
-                    if (signupModal) {
-
-                        signupModal.classList.add(
-                            "active"
-                        );
-
-                    }
-
-                }
-            );
-
+        if (typeof window.openSignup === "function") {
+            window.openSignup();
+        } else {
+            console.error("LosOja: openSignup is not available.");
         }
+    });
+}
 
+if (loginFromSignup) {
+    loginFromSignup.addEventListener("click", function (event) {
+        event.preventDefault();
 
-        if (loginFromSignup) {
-
-            loginFromSignup.addEventListener(
-                "click",
-                function () {
-
-                    if (signupModal) {
-
-                        signupModal.classList.remove(
-                            "active"
-                        );
-
-                    }
-
-
-                    if (loginModal) {
-
-                        loginModal.classList.add(
-                            "active"
-                        );
-
-                    }
-
-                }
-            );
-
+        if (typeof window.openLogin === "function") {
+            window.openLogin();
+        } else {
+            console.error("LosOja: openLogin is not available.");
         }
-
+    });
+}
 
         /* =================================================
            SEARCH
