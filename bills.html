@@ -450,30 +450,62 @@
         });
     });
 
-    async function getAccessToken() {
-        if (typeof window.getSupabaseAccessToken === "function") {
-            const result = await window.getSupabaseAccessToken();
-            if (typeof result === "string") return result;
-            if (result && result.access_token) return result.access_token;
-        }
-
+   
+async function getAccessToken() {
+    try {
+        // First, ask the existing authentication system
+        // to refresh or validate the session.
         if (typeof window.ensureValidSupabaseSession === "function") {
             const result = await window.ensureValidSupabaseSession();
-            if (typeof result === "string") return result;
-            if (result && result.access_token) return result.access_token;
+
+            if (typeof result === "string" && result) {
+                return result;
+            }
+
+            if (result && typeof result.access_token === "string") {
+                return result.access_token;
+            }
+
+            if (result === false) {
+                console.error("Session validation failed.");
+                return null;
+            }
         }
 
-        const sessionText = localStorage.getItem("losoja_supabase_session");
-        if (!sessionText) return null;
+        // Read the session after validation/refresh.
+        const sessionText = localStorage.getItem(
+            "losoja_supabase_session"
+        );
 
-        try {
-            const session = JSON.parse(sessionText);
-            return session.access_token || null;
-        } catch (error) {
-            console.error("Session parse error:", error);
+        if (!sessionText) {
             return null;
         }
+
+        const session = JSON.parse(sessionText);
+
+        if (!session.access_token) {
+            return null;
+        }
+
+        // Never use a session known to be expired.
+        if (
+            session.expires_at &&
+            Number(session.expires_at) * 1000 <= Date.now()
+        ) {
+            console.error(
+                "Supabase session is expired and needs refreshing."
+            );
+            return null;
+        }
+
+        return session.access_token;
+
+    } catch (error) {
+        console.error("Access token error:", error);
+        return null;
     }
+}
+
 
 async function callPayBill(payload, token) {
     const response = await fetch(
