@@ -785,20 +785,33 @@ async function callPayBill(payload, token) {
                 return;
             }
 
-            const response = await fetch(
-                "https://ycxshwgeebskdozmornh.supabase.co/rest/v1/bill_transactions?select=*&order=created_at.desc",
-                {
-                    method: "GET",
-                    headers: {
-                        "Authorization": "Bearer " + token,
-                        "apikey": "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe"
-                    }
-                }
-            );
+          
+const response = await fetch(
+    "https://ycxshwgeebskdozmornh.supabase.co/rest/v1/bill_transactions?select=*&order=created_at.desc",
+    {
+        method: "GET",
+        headers: {
+            "Authorization": "Bearer " + token,
+            "apikey": SUPABASE_KEY
+        }
+    }
+);
 
-            if (!response.ok) {
-                throw new Error("Could not load bill history.");
-            }
+if (!response.ok) {
+    const errorText = await response.text();
+
+    console.error(
+        "Bill history HTTP error:",
+        response.status,
+        errorText
+    );
+
+    throw new Error(
+        "Could not load bill history (HTTP " +
+        response.status + "). Check the console for details."
+    );
+}
+
 
             const rows = await response.json();
 
