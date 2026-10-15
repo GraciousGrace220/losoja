@@ -262,10 +262,39 @@
 
     </section>
 
+    <!-- =========================================
+         ID VERIFICATION
+    ========================================== -->
+
+    <section class="card" id="verificationSection">
+        <h2>ID & Business Verification</h2>
+
+        <p>Review submitted verification requests.</p>
+
+        <button
+            class="refresh-btn"
+            id="refreshVerificationButton"
+            type="button"
+        >
+            Refresh Verification Requests
+        </button>
+
+        <div
+            id="verificationStatus"
+            role="status"
+            aria-live="polite"
+            style="margin-top:12px;"
+        >
+            Verification requests have not been loaded yet.
+        </div>
+
+        <div id="verificationRequests" style="margin-top:16px;"></div>
+       </section>
 
     <!-- =========================================
          DISPUTES
     ========================================== -->
+
 
     <section class="card">
 
