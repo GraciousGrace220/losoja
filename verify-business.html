@@ -258,7 +258,23 @@ footer {
       <span class="hint">If your business has a Google Maps listing, you can include its link.</span>
     </div>
 
-    <p class="hint">Please provide accurate information. Supporting evidence uploads and additional review steps can be added separately after this form is tested.</p>
+       <div class="field">
+      <label for="evidenceFiles">Supporting evidence (optional)</label>
+      <input
+        id="evidenceFiles"
+        name="evidenceFiles"
+        type="file"
+        accept="image/jpeg,image/png,image/webp,image/gif"
+        multiple
+      >
+      <span class="hint">
+        Upload clear photos of relevant business evidence. JPEG, PNG, WebP or GIF only; maximum 5 MB per image.
+      </span>
+    </div>
+
+    <p class="hint">
+      Please provide accurate information. Applications remain pending until reviewed by the LosOja team.
+    </p>
 
     <button class="submit-btn" id="submitButton" type="submit">
       Submit Verification Application
