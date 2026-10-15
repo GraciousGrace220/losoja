@@ -1,0 +1,319 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LosOja | Business Verification Admin</title>
+  <meta name="robots" content="noindex, nofollow">
+  <style>
+    :root {
+      --green: #087a3e;
+      --dark: #055c2e;
+      --light: #eef8f2;
+      --gold: #ffb703;
+      --border: #dce5df;
+      --text: #1c2921;
+      --muted: #65736a;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #f5f8f6;
+      color: var(--text);
+      font-family: Arial, sans-serif;
+    }
+    header {
+      background: var(--green);
+      color: white;
+      padding: 20px;
+    }
+    header .inner, main {
+      width: min(100% - 28px, 1000px);
+      margin: auto;
+    }
+    header h1 { margin: 0 0 6px; font-size: 23px; }
+    header p { margin: 0; font-size: 14px; }
+    main { padding: 24px 0 50px; }
+    .panel {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+      margin-bottom: 18px;
+    }
+    h2 { margin: 0 0 12px; font-size: 19px; }
+    .muted { color: var(--muted); font-size: 14px; line-height: 1.5; }
+    button {
+      border: 0;
+      border-radius: 8px;
+      padding: 11px 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .primary { background: var(--green); color: white; }
+    .secondary { background: var(--light); color: var(--dark); }
+    button:disabled { opacity: .5; cursor: not-allowed; }
+    #status { margin-top: 12px; white-space: pre-wrap; font-size: 14px; }
+    .request {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      margin-top: 14px;
+    }
+    .request h3 { margin: 0 0 8px; font-size: 17px; }
+    .request p { margin: 7px 0; overflow-wrap: anywhere; }
+    .tag {
+      display: inline-block;
+      background: var(--light);
+      color: var(--dark);
+      padding: 5px 9px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    textarea {
+      display: block;
+      width: 100%;
+      min-height: 75px;
+      margin: 12px 0;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font: inherit;
+      resize: vertical;
+    }
+    .actions { display: flex; flex-wrap: wrap; gap: 8px; }
+    .approve { background: var(--green); color: white; }
+    .reject { background: #a82c2c; color: white; }
+    a { color: var(--green); }
+    .warning { border-left: 4px solid var(--gold); }
+    footer { text-align: center; padding: 20px; color: var(--muted); font-size: 12px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="inner">
+      <h1>LosOja Business Verification</h1>
+      <p>Administrator review dashboard</p>
+    </div>
+  </header>
+
+  <main>
+    <section class="panel warning">
+      <h2>Administrator access</h2>
+      <p class="muted">
+        Sign in to LosOja in this browser before loading requests.
+        Only an account with the administrator role can access the review API.
+        Approval here updates the verification request status only; it does not
+        automatically publish a verified badge on a business.
+      </p>
+      <div class="actions">
+        <button class="primary" id="loadBtn">Load verification requests</button>
+        <button class="secondary" id="refreshBtn">Refresh</button>
+      </div>
+      <div id="status" role="status" aria-live="polite">Ready.</div>
+    </section>
+
+    <section class="panel">
+      <h2>Submissions</h2>
+      <p class="muted" id="summary">No requests loaded yet.</p>
+      <div id="requests"></div>
+    </section>
+  </main>
+
+  <footer>LosOja · Private administrator tools</footer>
+
+  <script>
+    "use strict";
+
+    const FUNCTION_URL =
+      "https://ycxshwgeebskdozmornh.supabase.co/functions/v1/admin-verification";
+
+    const statusBox = document.getElementById("status");
+    const requestsBox = document.getElementById("requests");
+    const summary = document.getElementById("summary");
+    const loadBtn = document.getElementById("loadBtn");
+    const refreshBtn = document.getElementById("refreshBtn");
+
+    function setStatus(message) {
+      statusBox.textContent = message;
+    }
+
+    function getToken() {
+      if (typeof window.getSupabaseAccessToken !== "function") {
+        throw new Error(
+          "LosOja session helper is unavailable. Open LosOja and sign in first."
+        );
+      }
+
+      const value = window.getSupabaseAccessToken();
+
+      if (typeof value !== "string" || !value) {
+        throw new Error(
+          "No access token found. Sign in to LosOja, then reload this page."
+        );
+      }
+
+      return value;
+    }
+
+    async function callAdmin(payload) {
+      const token = getToken();
+
+      const response = await fetch(FUNCTION_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const result = await response.json().catch(() => ({}));
+
+      if (!response.ok || !result.success) {
+        throw new Error(
+          result.error || "Request failed with HTTP " + response.status
+        );
+      }
+
+      return result;
+    }
+
+    function addText(parent, tag, text, className) {
+      const element = document.createElement(tag);
+      element.textContent = text == null || text === "" ? "Not provided" : String(text);
+      if (className) element.className = className;
+      parent.appendChild(element);
+      return element;
+    }
+
+    function renderRequests(items) {
+      requestsBox.replaceChildren();
+      summary.textContent = items.length + " verification request(s) returned.";
+
+      if (!items.length) {
+        addText(requestsBox, "p", "No verification requests found.", "muted");
+        return;
+      }
+
+      for (const item of items) {
+        const card = document.createElement("article");
+        card.className = "request";
+
+        addText(card, "h3", item.business_name || "Unnamed business");
+        addText(card, "span", "Status: " + (item.status || "pending"), "tag");
+
+        const details = [
+          ["Owner", item.owner_name],
+          ["Phone", item.phone],
+          ["Email", item.email],
+          ["Category", item.category],
+          ["Address", item.address],
+          ["State", item.state],
+          ["Description", item.description],
+          ["Maps link", item.maps_link],
+          ["Submitted", item.created_at]
+        ];
+
+        for (const [label, value] of details) {
+          const p = document.createElement("p");
+          const strong = document.createElement("strong");
+          strong.textContent = label + ": ";
+          p.appendChild(strong);
+          p.appendChild(document.createTextNode(
+            value == null || value === "" ? "Not provided" : String(value)
+          ));
+          card.appendChild(p);
+        }
+
+        if (item.review_note) {
+          addText(card, "p", "Review note: " + item.review_note);
+        }
+
+        if (Array.isArray(item.evidence_paths) && item.evidence_paths.length) {
+          addText(
+            card,
+            "p",
+            "Evidence files submitted: " + item.evidence_paths.length +
+              ". Secure evidence viewing is not connected yet.",
+            "muted"
+          );
+        } else {
+          addText(card, "p", "No evidence paths listed.", "muted");
+        }
+
+        const isPending = !["approved", "rejected"].includes(item.status);
+        if (isPending) {
+          const note = document.createElement("textarea");
+          note.maxLength = 2000;
+          note.placeholder = "Optional review note (up to 2,000 characters)";
+          note.setAttribute("aria-label", "Review note for " + (item.business_name || "business"));
+          card.appendChild(note);
+
+          const actions = document.createElement("div");
+          actions.className = "actions";
+
+          for (const decision of ["approved", "rejected"]) {
+            const button = document.createElement("button");
+            button.className = decision === "approved" ? "approve" : "reject";
+            button.textContent = decision === "approved" ? "Approve request" : "Reject request";
+
+            button.addEventListener("click", async () => {
+              const promptText = decision === "approved"
+                ? "Approve this verification request?"
+                : "Reject this verification request?";
+
+              if (!window.confirm(promptText)) return;
+
+              button.disabled = true;
+              setStatus("Submitting review...");
+
+              try {
+                await callAdmin({
+                  action: "review",
+                  id: item.id,
+                  decision,
+                  review_note: note.value
+                });
+                setStatus("Review saved. Reloading requests...");
+                await loadRequests();
+              } catch (error) {
+                setStatus("Review failed: " + error.message);
+                button.disabled = false;
+              }
+            });
+
+            actions.appendChild(button);
+          }
+
+          card.appendChild(actions);
+        }
+
+        requestsBox.appendChild(card);
+      }
+    }
+
+    async function loadRequests() {
+      loadBtn.disabled = true;
+      refreshBtn.disabled = true;
+      setStatus("Loading verification requests...");
+
+      try {
+        const result = await callAdmin({ action: "list" });
+        renderRequests(Array.isArray(result.requests) ? result.requests : []);
+        setStatus("Requests loaded successfully.");
+      } catch (error) {
+        setStatus("Could not load requests: " + error.message);
+      } finally {
+        loadBtn.disabled = false;
+        refreshBtn.disabled = false;
+      }
+    }
+
+    loadBtn.addEventListener("click", loadRequests);
+    refreshBtn.addEventListener("click", loadRequests);
+  </script>
+</body>
+</html>
