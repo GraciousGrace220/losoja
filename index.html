@@ -852,6 +852,128 @@ main {
     z-index: 1;
 }
 
+/* =====================================================
+   LOSOJA HOMEPAGE BUTTON POLISH
+   Visual improvements only — preserve existing actions
+===================================================== */
+
+.losoja-home button,
+.losoja-home a.header-btn,
+.losoja-home a.bills-btn {
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.losoja-home button {
+    cursor: pointer;
+    border-radius: 12px;
+    font-weight: 600;
+}
+
+.losoja-home button:hover,
+.losoja-home a.header-btn:hover,
+.losoja-home a.bills-btn:hover {
+    box-shadow: 0 5px 14px rgba(8, 122, 62, 0.16);
+    transform: translateY(-2px);
+}
+
+.losoja-home button:active,
+.losoja-home a.header-btn:active,
+.losoja-home a.bills-btn:active {
+    transform: translateY(0);
+}
+
+.losoja-home button:focus-visible,
+.losoja-home a.header-btn:focus-visible,
+.losoja-home a.bills-btn:focus-visible {
+    outline: 3px solid #ffb703;
+    outline-offset: 3px;
+}
+
+.losoja-home .quick-action {
+    border: 1px solid #dce9df;
+    border-radius: 14px;
+    padding: 14px 12px;
+    background: #ffffff;
+    color: #075f31;
+    box-shadow: 0 2px 7px rgba(0, 0, 0, 0.04);
+}
+
+.losoja-home .quick-action:hover {
+    background: #eef8f2;
+    border-color: #087a3e;
+}
+
+.losoja-home .wallet-primary,
+.losoja-home #searchBtn,
+.losoja-home .discover-btn,
+.losoja-home .video-card-content button,
+.losoja-home .bills-btn {
+    border-radius: 12px;
+    font-weight: 700;
+}
+.losoja-home #searchBtn,
+.losoja-home .video-card-content button {
+    background-color: #087a3e;
+    color: #ffffff;
+}
+
+.losoja-home .wallet-primary {
+    background: #ffffff;
+    color: #087a3e;
+}
+
+.losoja-home .wallet-primary:hover,
+.losoja-home #searchBtn:hover,
+.losoja-home .video-card-content button:hover {
+    background-color: #055c2e;
+}
+
+.losoja-home .wallet-secondary {
+    border: 1px solid #dce9df;
+    background: #ffffff;
+    color: #087a3e;
+}
+
+.losoja-home .wallet-secondary:hover {
+    background: #eef8f2;
+}
+
+.losoja-home .header-btn {
+    border-radius: 10px;
+}
+
+.losoja-home .bills-btn {
+    display: inline-block;
+    padding: 12px 22px;
+    background: #087a3e;
+    color: #ffffff;
+    text-decoration: none;
+    text-align: center;
+}
+
+.losoja-home .bills-btn:hover {
+    background: #055c2e;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .losoja-home button,
+    .losoja-home a.header-btn,
+    .losoja-home a.bills-btn {
+        transition: none;
+    }
+
+    .losoja-home button:hover,
+    .losoja-home a.header-btn:hover,
+    .losoja-home a.bills-btn:hover {
+        transform: none;
+    }
+}
+
 </style>
 
 </head>
