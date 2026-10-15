@@ -1,0 +1,380 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Verify Your Business | LosOja</title>
+<meta name="description" content="Apply for free business verification on LosOja. Every application is reviewed manually.">
+
+<style>
+:root {
+  --green: #087a3e;
+  --dark-green: #055c2e;
+  --light-green: #eef8f2;
+  --accent: #ffb703;
+  --text: #202820;
+  --muted: #667067;
+  --border: #dce6de;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  color: var(--text);
+  background: #f6f9f6;
+  line-height: 1.6;
+}
+header {
+  background: white;
+  border-bottom: 1px solid var(--border);
+  padding: 16px 20px;
+}
+.header-inner {
+  max-width: 850px;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.logo {
+  color: var(--green);
+  font-size: 24px;
+  font-weight: 800;
+  text-decoration: none;
+}
+.back-link {
+  color: var(--green);
+  text-decoration: none;
+  font-weight: 700;
+}
+main {
+  max-width: 760px;
+  margin: 30px auto;
+  padding: 0 16px 40px;
+}
+.intro {
+  background: var(--light-green);
+  border: 1px solid #d3e9d9;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 22px;
+}
+.intro h1 {
+  color: var(--dark-green);
+  margin: 0 0 8px;
+  font-size: clamp(25px, 5vw, 34px);
+  line-height: 1.2;
+}
+.intro p { margin: 8px 0; }
+.free-label {
+  display: inline-block;
+  background: var(--accent);
+  color: #282000;
+  font-weight: 800;
+  padding: 4px 11px;
+  border-radius: 20px;
+  margin-bottom: 12px;
+}
+.notice {
+  background: white;
+  border-left: 4px solid var(--green);
+  padding: 12px 14px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+form, .status-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+}
+h2 {
+  font-size: 20px;
+  margin: 0 0 18px;
+}
+.field { margin-bottom: 17px; }
+label {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+input, select, textarea {
+  width: 100%;
+  border: 1px solid #cbd7cd;
+  border-radius: 9px;
+  padding: 12px;
+  font: inherit;
+  background: white;
+  color: var(--text);
+}
+input:focus, select:focus, textarea:focus {
+  outline: 2px solid #9dd8b2;
+  border-color: var(--green);
+}
+textarea {
+  min-height: 105px;
+  resize: vertical;
+}
+.hint {
+  display: block;
+  color: var(--muted);
+  font-size: 13px;
+  margin-top: 5px;
+}
+button {
+  width: 100%;
+  border: 0;
+  border-radius: 10px;
+  padding: 14px 18px;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+.submit-btn {
+  background: var(--green);
+  color: white;
+}
+.submit-btn:hover { background: var(--dark-green); }
+button:disabled { opacity: .65; cursor: wait; }
+#message {
+  display: none;
+  padding: 13px;
+  border-radius: 9px;
+  margin: 0 0 16px;
+  overflow-wrap: anywhere;
+}
+#message.success {
+  display: block;
+  background: #e8f7ed;
+  color: #155d30;
+}
+#message.error {
+  display: block;
+  background: #fff0ef;
+  color: #9a2520;
+}
+.status-card { margin-top: 20px; }
+.status-card p { margin-bottom: 0; color: var(--muted); }
+footer {
+  text-align: center;
+  padding: 22px 16px;
+  color: var(--muted);
+  font-size: 13px;
+}
+@media (max-width: 520px) {
+  main { margin-top: 18px; }
+  .intro, form, .status-card { padding: 18px; }
+}
+</style>
+</head>
+
+<body>
+<header>
+  <div class="header-inner">
+    <a class="logo" href="index.html">LosOja</a>
+    <a class="back-link" href="index.html">← Back to Home</a>
+  </div>
+</header>
+
+<main>
+  <section class="intro">
+    <span class="free-label">FREE APPLICATION</span>
+    <h1>Verify Your Business</h1>
+    <p>Help customers build confidence in your business by applying for a LosOja verification badge.</p>
+    <div class="notice">
+      <strong>Important:</strong> Applications are reviewed manually. Submitting this form does not guarantee approval. LosOja verification is separate from paid advertising.
+    </div>
+  </section>
+
+  <form id="verificationForm">
+    <h2>Business information</h2>
+
+    <div id="message" role="status" aria-live="polite"></div>
+
+    <div class="field">
+      <label for="businessName">Business name *</label>
+      <input id="businessName" name="businessName" required maxlength="150"
+        placeholder="Enter your registered or trading name">
+    </div>
+
+    <div class="field">
+      <label for="ownerName">Owner or contact person's name</label>
+      <input id="ownerName" name="ownerName" maxlength="150"
+        placeholder="Full name">
+    </div>
+
+    <div class="field">
+      <label for="phone">Business phone number *</label>
+      <input id="phone" name="phone" type="tel" required maxlength="30"
+        placeholder="e.g. 08012345678">
+    </div>
+
+    <div class="field">
+      <label for="email">Business email</label>
+      <input id="email" name="email" type="email" maxlength="254"
+        placeholder="you@example.com">
+    </div>
+
+    <div class="field">
+      <label for="category">Business category *</label>
+      <select id="category" name="category" required>
+        <option value="">Choose a category</option>
+        <option>Food</option>
+        <option>Fashion</option>
+        <option>Phones & Electronics</option>
+        <option>Vehicles</option>
+        <option>Property</option>
+        <option>Services</option>
+        <option>Beauty</option>
+        <option>Technology</option>
+        <option>Other</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="address">Business address</label>
+      <input id="address" name="address" maxlength="300"
+        placeholder="Street, area or landmark">
+    </div>
+
+    <div class="field">
+      <label for="state">State or Federal Capital Territory</label>
+      <input id="state" name="state" maxlength="100"
+        placeholder="e.g. Lagos">
+    </div>
+
+    <div class="field">
+      <label for="description">Describe your business *</label>
+      <textarea id="description" name="description" required maxlength="2000"
+        placeholder="Tell us what your business offers and how customers can reach you."></textarea>
+    </div>
+
+    <div class="field">
+      <label for="mapsLink">Google Maps link (optional)</label>
+      <input id="mapsLink" name="mapsLink" type="url" maxlength="1000"
+        placeholder="https://maps.google.com/...">
+      <span class="hint">If your business has a Google Maps listing, you can include its link.</span>
+    </div>
+
+    <p class="hint">Please provide accurate information. Supporting evidence uploads and additional review steps can be added separately after this form is tested.</p>
+
+    <button class="submit-btn" id="submitButton" type="submit">
+      Submit Verification Application
+    </button>
+  </form>
+
+  <section class="status-card">
+    <h2>What happens next?</h2>
+    <p>Your application will be marked as pending review. The LosOja team must review and approve it before any verification badge is granted. This form does not charge you or activate a badge automatically.</p>
+  </section>
+</main>
+
+<footer>© LosOja — Connecting people with businesses across Nigeria.</footer>
+
+<script src="js/auth.js?v=2"></script>
+<script>
+(function () {
+  "use strict";
+
+  const SUPABASE_URL = "https://ycxshwgeebskdozmornh.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
+
+  const form = document.getElementById("verificationForm");
+  const message = document.getElementById("message");
+  const submitButton = document.getElementById("submitButton");
+
+  function showMessage(text, type) {
+    message.textContent = text;
+    message.className = type;
+  }
+
+  form.addEventListener("submit", async function (event) {
+    event.preventDefault();
+    message.className = "";
+    message.textContent = "";
+
+    if (typeof window.getCurrentUser !== "function" ||
+        typeof window.getSupabaseAccessToken !== "function") {
+      showMessage(
+        "The login system did not load. Please refresh the page and try again.",
+        "error"
+      );
+      return;
+    }
+
+    submitButton.disabled = true;
+    submitButton.textContent = "Submitting...";
+
+    try {
+      const user = await window.getCurrentUser();
+      const token = window.getSupabaseAccessToken();
+
+      if (!user || !user.id || !token) {
+        showMessage(
+          "Please log in to LosOja before submitting your verification application.",
+          "error"
+        );
+        return;
+      }
+
+      const payload = {
+        user_id: user.id,
+        business_name: document.getElementById("businessName").value.trim(),
+        owner_name: document.getElementById("ownerName").value.trim() || null,
+        phone: document.getElementById("phone").value.trim(),
+        email: document.getElementById("email").value.trim() || null,
+        category: document.getElementById("category").value,
+        address: document.getElementById("address").value.trim() || null,
+        state: document.getElementById("state").value.trim() || null,
+        description: document.getElementById("description").value.trim(),
+        maps_link: document.getElementById("mapsLink").value.trim() || null
+      };
+
+      const response = await fetch(
+        SUPABASE_URL + "/rest/v1/verification_requests",
+        {
+          method: "POST",
+          headers: {
+            "apikey": SUPABASE_KEY,
+            "Authorization": "Bearer " + token,
+            "Content-Type": "application/json",
+            "Prefer": "return=minimal"
+          },
+          body: JSON.stringify(payload)
+        }
+      );
+
+      if (!response.ok) {
+        let detail = "";
+        try {
+          const result = await response.json();
+          detail = result.message || result.error || result.details || "";
+        } catch (_) {}
+
+        throw new Error(
+          detail || "The application could not be saved. Please try again."
+        );
+      }
+
+      showMessage(
+        "Your verification application was submitted successfully and is pending review. No payment has been taken.",
+        "success"
+      );
+      form.reset();
+    } catch (error) {
+      console.error("Verification application error:", error);
+      showMessage(
+        error.message || "Something went wrong. Please try again.",
+        "error"
+      );
+    } finally {
+      submitButton.disabled = false;
+      submitButton.textContent = "Submit Verification Application";
+    }
+  });
+})();
+</script>
+</body>
+</html>
