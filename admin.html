@@ -337,6 +337,9 @@ const SUPABASE_KEY =
 const ADMIN_FUNCTION_URL =
     SUPABASE_URL +
     "/functions/v1/admin-escrow";
+    const VERIFICATION_FUNCTION_URL =
+    SUPABASE_URL +
+    "/functions/v1/admin-verification";
 
 
 /* =========================================================
@@ -483,7 +486,50 @@ async function adminRequest(
     return data;
 
 }
+/* =========================================================
+   VERIFICATION REQUEST
+========================================================= */
 
+async function verificationRequest(body) {
+
+    const token = await getAccessToken();
+
+    if (!token) {
+        throw new Error("You are not logged in.");
+    }
+
+    const response = await fetch(
+        VERIFICATION_FUNCTION_URL,
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "apikey": SUPABASE_KEY,
+                "Authorization": "Bearer " + token
+            },
+            body: JSON.stringify(body)
+        }
+    );
+
+    const text = await response.text();
+    let data = null;
+
+    try {
+        data = text ? JSON.parse(text) : null;
+    } catch {
+        data = text;
+    }
+
+    if (!response.ok) {
+        throw new Error(
+            data?.error ||
+            data?.message ||
+            "Verification request failed."
+        );
+    }
+
+    return data;
+}
 
 /* =========================================================
    CHECK ADMIN
@@ -610,7 +656,176 @@ function formatAmount(
     );
 
 }
+/* =========================================================
+   LOAD VERIFICATION REQUESTS
+========================================================= */
 
+async function loadVerificationRequests() {
+    const status = document.getElementById("verificationStatus");
+    const container = document.getElementById("verificationRequests");
+    const refreshButton = document.getElementById("refreshVerificationButton");
+
+    if (!status || !container) return;
+
+    status.textContent = "Loading verification requests...";
+    status.className = "loading";
+    container.innerHTML = "";
+
+    if (refreshButton) refreshButton.disabled = true;
+
+    try {
+        const isAdmin = await checkAdmin();
+
+        if (!isAdmin) {
+            throw new Error("Administrator access required.");
+        }
+
+        const result = await verificationRequest({ action: "list" });
+        const requests = result?.requests || [];
+
+        if (!requests.length) {
+            status.textContent = "No verification requests found.";
+            status.className = "empty";
+            return;
+        }
+
+        status.textContent = requests.length + " verification request(s) found.";
+        status.className = "";
+
+        container.innerHTML = requests.map(function (request) {
+            const isPending = String(request.status || "").toLowerCase() === "pending";
+
+            return `
+                <div class="escrow-item verification-item"
+                     data-verification-id="${escapeHTML(request.id)}">
+
+                    <div class="escrow-description">
+                        ${escapeHTML(request.business_name || "Business verification")}
+                    </div>
+
+                    <div class="escrow-line">
+                        <strong>Owner:</strong>
+                        ${escapeHTML(request.owner_name || "Not provided")}
+                    </div>
+
+                    <div class="escrow-line">
+                        <strong>Status:</strong>
+                        <span class="status">${escapeHTML(request.status || "unknown")}</span>
+                    </div>
+
+                    <div class="escrow-line">
+                        <strong>Submitted:</strong>
+                        ${escapeHTML(formatDate(request.created_at) || "Unknown")}
+                    </div>
+
+                    ${request.review_note ? `
+                        <div class="reason">
+                            <strong>Review note:</strong>
+                            <div style="margin-top:6px;">${escapeHTML(request.review_note)}</div>
+                        </div>
+                    ` : ""}
+
+                    ${isPending ? `
+                        <label style="display:block;margin-top:14px;font-weight:bold;font-size:14px;">
+                            Review note (optional)
+                        </label>
+
+                        <textarea
+                            class="verification-note"
+                            rows="3"
+                            maxlength="2000"
+                            placeholder="Add a reason or note for this decision"
+                            style="width:100%;margin-top:7px;padding:10px;border:1px solid #d1d5db;border-radius:8px;font:14px Arial,sans-serif;resize:vertical;"
+                        ></textarea>
+
+                        <div class="actions">
+                            <button
+                                class="release-btn verification-review-btn"
+                                type="button"
+                                data-decision="approved"
+                            >Approve</button>
+
+                            <button
+                                class="refund-btn verification-review-btn"
+                                type="button"
+                                data-decision="rejected"
+                            >Reject</button>
+                        </div>
+                    ` : ""}
+                </div>
+            `;
+        }).join("");
+
+        container.querySelectorAll(".verification-review-btn").forEach(function (button) {
+            button.addEventListener("click", function () {
+                const item = button.closest(".verification-item");
+                const id = item?.dataset.verificationId;
+                const decision = button.dataset.decision;
+
+                if (id && decision) {
+                    reviewVerification(id, decision, button);
+                }
+            });
+        });
+
+    } catch (error) {
+        console.error("LosOja verification loading error:", error);
+        status.textContent = error.message || "Unable to load verification requests.";
+        status.className = "error";
+    } finally {
+        if (refreshButton) refreshButton.disabled = false;
+    }
+}
+
+
+/* =========================================================
+   APPROVE OR REJECT VERIFICATION
+========================================================= */
+
+async function reviewVerification(id, decision, button) {
+    const decisionText = decision === "approved" ? "approve" : "reject";
+
+    if (!confirm("Are you sure you want to " + decisionText + " this verification request?")) {
+        return;
+    }
+
+    const item = button?.closest(".verification-item");
+    const noteField = item?.querySelector(".verification-note");
+    const reviewNote = noteField ? noteField.value.trim() : "";
+    const buttons = item?.querySelectorAll("button");
+
+    if (buttons) {
+        buttons.forEach(function (btn) {
+            btn.disabled = true;
+        });
+    }
+
+    try {
+        await verificationRequest({
+            action: "review",
+            id: id,
+            decision: decision,
+            review_note: reviewNote
+        });
+
+        alert(
+    decision === "approved"
+        ? "Verification request approved successfully."
+        : "Verification request rejected successfully."
+);
+        await loadVerificationRequests();
+
+    } catch (error) {
+        console.error("LosOja verification review error:", error);
+        alert(error.message || "Unable to review this request.");
+
+        if (buttons) {
+            buttons.forEach(function (btn) {
+                btn.disabled = false;
+            });
+        }
+    }
+}
 
 /* =========================================================
    LOAD DISPUTES
@@ -1017,29 +1232,30 @@ async function resolveEscrow(
 document.addEventListener(
     "DOMContentLoaded",
     function () {
-
         const refreshButton =
-            document.getElementById(
-                "refreshButton"
-            );
-
+            document.getElementById("refreshButton");
 
         if (refreshButton) {
-
             refreshButton.addEventListener(
                 "click",
                 loadDisputes
             );
-
         }
 
+        const refreshVerificationButton =
+            document.getElementById("refreshVerificationButton");
+
+        if (refreshVerificationButton) {
+            refreshVerificationButton.addEventListener(
+                "click",
+                loadVerificationRequests
+            );
+        }
 
         loadDisputes();
-
+        loadVerificationRequests();
     }
 );
-
-</script>
 
 
 <!-- =======================================================
