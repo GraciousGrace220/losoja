@@ -4520,28 +4520,27 @@ async function editCurrentBusiness(
                            FRESH AUTH TOKEN
                         --------------------------------- */
 
-                       const currentAccessToken =
+                     
+const currentAccessToken =
     await getShopAccessToken();
 
+if (!currentAccessToken) {
+    throw new Error(
+        "Your login session has expired. Please log in again."
+    );
+}
 
-                        if(!accessToken){
-
-                            throw new Error(
-                                "Your login session has expired. Please log in again."
-                            );
-
-                        }
 
 
                         /* ---------------------------------
                            LOAD CURRENT IMAGES
                         --------------------------------- */
 
-                        currentBusinessImages =
-                            await getEditableBusinessImages(
-                                business.id,
-                                accessToken
-                            );
+                       currentBusinessImages =
+    await getEditableBusinessImages(
+        business.id,
+        currentAccessToken
+    );
 
 
                         /*
