@@ -4521,8 +4521,10 @@ async function editCurrentBusiness(
                         --------------------------------- */
 
                      
+
 const currentAccessToken =
     await getShopAccessToken();
+
 
 if (!currentAccessToken) {
     throw new Error(
@@ -5404,9 +5406,8 @@ async function deleteCurrentBusiness(){
     }
 
 
-    currentAccessToken =
-        await getShopAccessToken();
-
+   const currentAccessToken =
+    await getShopAccessToken();
 
     if(!currentAccessToken){
 
