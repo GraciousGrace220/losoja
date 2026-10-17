@@ -3362,44 +3362,33 @@ async function openSpecificChat() {
         );
 }
 
+
 /* =========================================================
    LOGIN BUTTON
 ========================================================= */
 
 function initializeLoginButton() {
-
     const loginButton =
-        document.getElementById(
-            "loginButton"
-        );
+        document.getElementById("loginButton");
 
     if (!loginButton) {
         return;
     }
 
-    loginButton.addEventListener(
-        "click",
-        function() {
+    loginButton.addEventListener("click", function () {
+        // Tell auth.js to return to chat after login.
+        sessionStorage.setItem(
+            "losoja_return_to_chat",
+            "true"
+        );
 
-            localStorage.setItem(
-                "losoja_return_to_chat",
-                window.location.href
-            );
-
-            if (
-                typeof window.openLogin ===
-                "function"
-            ) {
-
-                window.openLogin();
-
-                return;
-            }
-
-            window.location.href =
-                "index.html?login=1";
+        if (typeof window.openLogin === "function") {
+            window.openLogin();
+        } else {
+            // Load the homepage login fallback.
+            window.location.href = "index.html?login=1";
         }
-    );
+    });
 }
 
 /* =========================================================
