@@ -78,17 +78,14 @@
            this.createBackButton();
 this.bindBabaOjaChat();
 },
-       bindBabaOjaChat() {
+      bindBabaOjaChat() {
     const btn = document.getElementById("chatBabaOjaBtn");
     if (!btn || btn.dataset.losojaChatReady === "true") return;
     btn.dataset.losojaChatReady = "true";
     
     btn.addEventListener("click", (e) => {
         e.preventDefault();
-        // For now shows toast so button is not dead
-        this.showToast("Baba Oja chat is coming soon!", "info");
-        // When you create chat.html, change to:
-        // window.location.href = "chat.html";
+        window.location.href = "chat.html";
     });
 },
 
