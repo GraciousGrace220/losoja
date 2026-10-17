@@ -367,7 +367,80 @@ Adds:
         console.log("LosOja: Opening storefront:", businessId);
         window.location.href = "shop.html?id=" + encodeURIComponent(String(businessId));
     }
+    /* =====================================================
+       DISCOVER NEAR ME - SAFE ADDITION
+    ===================================================== */
 
+    function findNearbyBusinesses() {
+        if (!navigator.geolocation) {
+            showToast("Location not supported on your phone");
+            renderBusinesses(businesses);
+            return;
+        }
+
+        if (businessGrid) {
+            businessGrid.innerHTML = `
+                <div class="loading-card">
+                    <div class="loading-spinner"></div>
+                    <p>Finding businesses near you...</p>
+                </div>
+            `;
+        }
+
+        navigator.geolocation.getCurrentPosition(
+            function(position) {
+                // For now LosOja shows all businesses as nearby
+                // Later when you add latitude/longitude to Supabase,
+                // we will filter by real distance
+                console.log("User location:", position.coords.latitude, position.coords.longitude);
+                
+                // Show toast and all businesses
+                if (typeof showToast === 'function') {
+                    // toast exists in index.html
+                    const toast = document.getElementById('toast');
+                    if (toast) {
+                        toast.textContent = "📍 Showing businesses near you in Nigeria";
+                        toast.classList.add('show');
+                        setTimeout(() => toast.classList.remove('show'), 3000);
+                    }
+                }
+
+                // Since most businesses don't have GPS yet,
+                // we show all, with Lagos businesses first
+                const sorted = [...businesses].sort(function(a, b) {
+                    const locA = (a.location || "").toLowerCase();
+                    const locB = (b.location || "").toLowerCase();
+                    const aLagos = locA.includes("lagos") ? 0 : 1;
+                    const bLagos = locB.includes("lagos") ? 0 : 1;
+                    return aLagos - bLagos;
+                });
+
+                renderBusinesses(sorted);
+                
+                const grid = document.getElementById("businessGrid");
+                if (grid) grid.scrollIntoView({ behavior: "smooth" });
+            },
+            function(error) {
+                console.error("Geolocation error:", error);
+                const toast = document.getElementById('toast');
+                if (toast) {
+                    toast.textContent = "Could not get location - showing all businesses";
+                    toast.classList.add('show');
+                    setTimeout(() => toast.classList.remove('show'), 3000);
+                }
+                renderBusinesses(businesses);
+            },
+            { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 }
+        );
+    }
+
+    function showToast(msg) {
+        const toast = document.getElementById('toast');
+        if (!toast) return;
+        toast.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(function() { toast.classList.remove('show'); }, 3000);
+    }
     /* =====================================================
        PUBLIC FUNCTIONS
     ===================================================== */
@@ -377,6 +450,7 @@ Adds:
     window.filterBusinessesByCategory = filterByCategory;
     window.filterByCategory = filterByCategory;
     window.openBusiness = openBusiness;
+ window.findNearbyBusinesses = findNearbyBusinesses;
 
     /* =====================================================
        START
