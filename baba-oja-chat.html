@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chat with Baba Oja - LosOja</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f4f7f5;min-height:100vh;display:flex;flex-direction:column}
+header{background:#087a3e;color:white;padding:14px 16px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:10}
+.back{border:none;background:transparent;color:white;font-size:28px;cursor:pointer}
+.header-title{font-weight:700;font-size:18px;display:flex;align-items:center;gap:8px}
+.baba-avatar{width:36px;height:36px;border-radius:50%;background:#eef8f2;color:#087a3e;display:flex;align-items:center;justify-content:center;font-weight:800}
+.page{max-width:800px;width:100%;margin:0 auto;flex:1;display:flex;flex-direction:column;padding:12px}
+.messages{flex:1;background:white;border:1px solid #e5e7eb;border-radius:12px;padding:16px;overflow-y:auto;min-height:60vh;max-height:68vh;margin-bottom:12px}
+.msg-row{display:flex;margin-bottom:12px;gap:8px}
+.msg-row.user{justify-content:flex-end}
+.bubble{max-width:80%;padding:10px 14px;border-radius:16px;line-height:1.45;white-space:pre-wrap;font-size:14.5px}
+.msg-row.baba .bubble{background:#eef2f0;color:#111827;border-bottom-left-radius:4px}
+.msg-row.user .bubble{background:#087a3e;color:white;border-bottom-right-radius:4px}
+.quick-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.chip{border:1px solid #c7e8d3;background:white;color:#087a3e;padding:7px 12px;border-radius:20px;font-size:13px;cursor:pointer;font-weight:600}
+.chip:hover{background:#eef8f2}
+.form{display:flex;gap:8px;background:white;padding:10px;border-radius:12px;border:1px solid #e5e7eb}
+.input{flex:1;border:1px solid #d1d5db;border-radius:9px;padding:11px 12px;outline:none;font-size:15px}
+.input:focus{border-color:#087a3e}
+.send{width:48px;border:none;border-radius:9px;background:#087a3e;color:white;font-size:20px;font-weight:700;cursor:pointer}
+.typing{color:#6b7280;font-size:13px;padding:4px 2px;display:none}
+</style>
+</head>
+<body>
+<header>
+<button class="back" onclick="history.back()">‹</button>
+<div class="baba-avatar">B</div>
+<div class="header-title">Baba Oja • Your Market Guide</div>
+</header>
+
+<main class="page">
+<div id="messages" class="messages"></div>
+<div id="typing" class="typing">Baba Oja is typing...</div>
+<div class="quick-chips" id="chips">
+<button class="chip" onclick="sendQuick('Find rice business near me')">Find rice business</button>
+<button class="chip" onclick="sendQuick('How to add my business?')">How to add business?</button>
+<button class="chip" onclick="sendQuick('What is LosOja?')">What is LosOja?</button>
+<button class="chip" onclick="sendQuick('Help with chat')">Help with chat</button>
+</div>
+<form class="form" id="chatForm">
+<input id="input" class="input" type="text" placeholder="Ask Baba Oja anything..." autocomplete="off">
+<button class="send" type="submit">›</button>
+</form>
+</main>
+
+<script>
+const messagesEl = document.getElementById('messages');
+const inputEl = document.getElementById('input');
+const typingEl = document.getElementById('typing');
+
+function addMsg(text, who){
+ const row = document.createElement('div');
+ row.className = 'msg-row ' + who;
+ row.innerHTML = `<div class="bubble">${escapeHtml(text)}</div>`;
+ messagesEl.appendChild(row);
+ messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+function escapeHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+
+function babaReply(userText){
+ const t = userText.toLowerCase();
+ if(t.includes('rice') || t.includes('food')){
+  return "For rice businesses, go to homepage > search 'rice' or click Food category. You'll see all rice sellers near your location. Want me to open search for you?";
+ }
+ if(t.includes('add') && t.includes('business')){
+  return "To add business:\n1. Click Login\n2. Click Add Business\n3. Fill name, category, location, phone\n4. Upload image\n5. Save\n\nIt will appear instantly for buyers near you. Need help with login?";
+ }
+ if(t.includes('what') && t.includes('losoja')){
+  return "LosOja is your local market online. Find businesses, services, keke, cab, properties around you in Lagos. Chat with sellers, buy with escrow protection. Like Oja in your phone.";
+ }
+ if(t.includes('chat') || t.includes('message')){
+  return "Chat works like this:\n- Open any business > Chat with Business\n- Your messages are in chat.html\n- Seller gets notification\n- You can send photos too.\n\nIf you see many 'Business chat' entries, those are real conversations - now it shows business name.";
+ }
+ if(t.includes('baba')){
+  return "Na me be Baba Oja! 😊 I be your guide for this market. I fit help you find anything for LosOja. Wetin you dey find?";
+ }
+ if(t.includes('location') || t.includes('near')){
+  return "LosOja uses your location. Allow location when asked, or set location manually. Then businesses near you show first. If business location wrong, owner needs to update it.";
+ }
+ return "I hear you: '"+userText+"'\n\nBaba Oja here to help. You can:\n• Search businesses on homepage\n• Add your own business\n• Chat with sellers\n• Request Keke/Cab/Bike\n\nTell me what you want to find and I go guide you.";
+}
+
+function sendQuick(text){
+ inputEl.value = text;
+ document.getElementById('chatForm').dispatchEvent(new Event('submit'));
+}
+
+document.getElementById('chatForm').addEventListener('submit', function(e){
+ e.preventDefault();
+ const text = inputEl.value.trim();
+ if(!text) return;
+ addMsg(text,'user');
+ inputEl.value='';
+ typingEl.style.display='block';
+ setTimeout(()=>{
+  typingEl.style.display='none';
+  addMsg(babaReply(text),'baba');
+ }, 600);
+});
+
+// welcome
+addMsg("Welcome! I'm Baba Oja, your LosOja market guide.\n\nAsk me anything about finding businesses, adding your business, or using chat.",'baba');
+</script>
+</body>
+</html>
