@@ -2863,13 +2863,26 @@ async function renderConversationList(
             }
         }
 
-        if (
-            conversation.business_id
-        ) {
-
-            listingTitle =
-                "Business chat";
+      if (
+    conversation.business_id
+) {
+    try {
+        const biz = await supabaseRequest(
+            "/rest/v1/businesses" +
+            "?select=name" +
+            "&id=eq." +
+            encodeURIComponent(conversation.business_id) +
+            "&limit=1"
+        );
+        if (Array.isArray(biz) && biz[0] && biz[0].name) {
+            listingTitle = biz[0].name;
+        } else {
+            listingTitle = "Business chat";
         }
+    } catch (e) {
+        listingTitle = "Business chat";
+    }
+}
 
         const card =
             document.createElement(
