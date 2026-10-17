@@ -85,7 +85,7 @@ this.bindBabaOjaChat();
     
     btn.addEventListener("click", (e) => {
         e.preventDefault();
-        window.location.href = "chat.html";
+       window.location.href = "baba-oja-chat.html";
     });
 },
 
