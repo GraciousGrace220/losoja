@@ -336,9 +336,9 @@ Adds:
             renderBusinesses(businesses);
             return;
         }
-        const results = businesses.filter(function (business) {
+              const results = businesses.filter(function (business) {
             const businessCategory = String(business.category || "").trim().toLowerCase();
-            return businessCategory === category;
+            return businessCategory === category || businessCategory.includes(category) || category.includes(businessCategory);
         });
         renderBusinesses(results);
         const section = document.getElementById("businesses");
