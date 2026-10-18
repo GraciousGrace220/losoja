@@ -1703,57 +1703,44 @@ bindAddBusinessButtons() {
 
             }
 
-
             /* -----------------------------------------
                GET SAVED USER LOCATION
             ----------------------------------------- */
 
             let latitude = null;
-
             let longitude = null;
 
-
             try {
-
-                const savedLocation =
-                    localStorage.getItem(
-                        "losoja_user_location"
-                    );
-
+                const savedLocation = localStorage.getItem("losoja_user_location");
 
                 if (savedLocation) {
-
-                    const parsedLocation =
-                        JSON.parse(
-                            savedLocation
-                        );
-
+                    const parsedLocation = JSON.parse(savedLocation);
 
                     if (
-                        typeof parsedLocation.latitude ===
-                        "number" &&
-                        typeof parsedLocation.longitude ===
-                        "number"
+                        typeof parsedLocation.latitude === "number" &&
+                        typeof parsedLocation.longitude === "number"
                     ) {
-
-                        latitude =
-                            parsedLocation.latitude;
-
-                        longitude =
-                            parsedLocation.longitude;
-
+                        latitude = parsedLocation.latitude;
+                        longitude = parsedLocation.longitude;
                     }
-
                 }
-
             } catch (locationError) {
-
-                console.warn(
-                    "LosOja: Could not read saved location.",
-                    locationError
-                );
-
+                console.warn("Could not parse saved location", locationError);
             }
+
+            const { data, error } = await supabase
+                .from("businesses")
+                .insert([{
+                    name: businessName,
+                    category: businessCategory,
+                    description: businessDescription,
+                    location: businessLocation,
+                    phone: businessPhone,
+                    whatsapp: businessWhatsapp,
+                    latitude: latitude,
+                    longitude: longitude
+                }])
+                .select();
 
 
             /* -----------------------------------------
