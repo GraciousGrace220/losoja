@@ -144,7 +144,8 @@ document.getElementById("imageInput").addEventListener("change", async (e)=>{
  const file=e.target.files[0]; if(!file) return;
  showToast("Uploading...");
  try{
-  const fileName=`${currentChat.id}/${Date.now()}_${file.name}`;
+  const cleanName=file.name.replace(/\s+/g,'_').replace(/[^a-zA-Z0-9._-]/g,'');
+const fileName=`${currentChat.id}/${Date.now()}_${cleanName}`;
   const res=await fetch(`${SUPABASE_URL}/storage/v1/object/chat-images/${fileName}`,{
    method:"POST",
    headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${accessToken}`, "Content-Type": file.type},
