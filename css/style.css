@@ -616,3 +616,11 @@ nav.bottom a.on {
     }
 
 }
+.distance-badge {
+    background: #0d6efd;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
