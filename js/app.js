@@ -683,10 +683,12 @@ bindModalClosers() {
 
               bindLocationButton() {
 
-            const locationBtn =
-                document.getElementById(
-                    "locationButton"
-                );
+           const locationBtn =
+    document.getElementById(
+        "discoverBtn"
+    ) || document.getElementById(
+        "locationButton"
+    );
 
             if (!locationBtn) {
                 return;
@@ -1707,7 +1709,7 @@ bindAddBusinessButtons() {
                GET SAVED USER LOCATION
             ----------------------------------------- */
 
-            let latitude = null;
+                      let latitude = null;
             let longitude = null;
 
             try {
@@ -1727,21 +1729,6 @@ bindAddBusinessButtons() {
             } catch (locationError) {
                 console.warn("Could not parse saved location", locationError);
             }
-
-            const { data, error } = await supabase
-                .from("businesses")
-                .insert([{
-                    name: businessName,
-                    category: businessCategory,
-                    description: businessDescription,
-                    location: businessLocation,
-                    phone: businessPhone,
-                    whatsapp: businessWhatsapp,
-                    latitude: latitude,
-                    longitude: longitude
-                }])
-                .select();
-
 
             /* -----------------------------------------
                BUSINESS DATA
@@ -1778,13 +1765,7 @@ bindAddBusinessButtons() {
 
             };
 
-
-            console.log(
-                "LosOja business data before save:",
-                businessData
-            );
-
-
+           
             /* -----------------------------------------
                SAVE BUSINESS
             ----------------------------------------- */
