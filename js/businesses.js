@@ -306,7 +306,7 @@ Adds:
        SEARCH - SAME AS BEFORE (SAFE)
     ===================================================== */
 
-    function searchBusinesses(searchTerm, location) {
+       function searchBusinesses(searchTerm, location) {
         searchTerm = String(searchTerm || "").trim().toLowerCase();
         location = String(location || "").trim().toLowerCase();
 
@@ -324,7 +324,7 @@ Adds:
             return;
         }
 
-        const results = businesses.filter(function (business) {
+        let results = businesses.filter(function (business) {
             const searchable = [business.name, business.category, business.location, business.address, business.phone, business.description]
                 .filter(Boolean).join(" ").toLowerCase();
             const matchesSearch = !searchTerm || searchable.includes(searchTerm);
@@ -332,9 +332,43 @@ Adds:
             return matchesSearch && matchesLocation;
         });
 
+        /* =================================================
+           SORT BY NEAREST DISTANCE
+        ================================================= */
+
+        try {
+            const savedLocStr = localStorage.getItem("losoja_user_location");
+            const savedLoc = savedLocStr ? JSON.parse(savedLocStr) : null;
+
+            if (savedLoc && savedLoc.latitude && savedLoc.longitude) {
+
+                results.sort(function (a, b) {
+                    const distA = App.calculateDistance(
+                        savedLoc.latitude,
+                        savedLoc.longitude,
+                        a.latitude,
+                        a.longitude
+                    );
+
+                    const distB = App.calculateDistance(
+                        savedLoc.latitude,
+                        savedLoc.longitude,
+                        b.latitude,
+                        b.longitude
+                    );
+
+                    if (distA == null) return 1;
+                    if (distB == null) return -1;
+
+                    return distA - distB;
+                });
+
+                console.log("Sorted by nearest!");
+            }
+        } catch(e) {}
+
         renderBusinesses(results);
     }
-
     /* =====================================================
        CATEGORY FILTER - SAME AS BEFORE (SAFE)
     ===================================================== */
