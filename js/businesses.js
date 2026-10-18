@@ -371,76 +371,79 @@ Adds:
        DISCOVER NEAR ME - SAFE ADDITION
     ===================================================== */
 
-    function findNearbyBusinesses() {
-        if (!navigator.geolocation) {
-            showToast("Location not supported on your phone");
-            renderBusinesses(businesses);
-            return;
-        }
-
-        if (businessGrid) {
-            businessGrid.innerHTML = `
-                <div class="loading-card">
-                    <div class="loading-spinner"></div>
-                    <p>Finding businesses near you...</p>
-                </div>
-            `;
-        }
-
-        navigator.geolocation.getCurrentPosition(
-            function(position) {
-                // For now LosOja shows all businesses as nearby
-                // Later when you add latitude/longitude to Supabase,
-                // we will filter by real distance
-                console.log("User location:", position.coords.latitude, position.coords.longitude);
-                
-                // Show toast and all businesses
-                if (typeof showToast === 'function') {
-                    // toast exists in index.html
-                    const toast = document.getElementById('toast');
-                    if (toast) {
-                        toast.textContent = "📍 Showing businesses near you in Nigeria";
-                        toast.classList.add('show');
-                        setTimeout(() => toast.classList.remove('show'), 3000);
-                    }
-                }
-
-                // Since most businesses don't have GPS yet,
-                // we show all, with Lagos businesses first
-                const sorted = [...businesses].sort(function(a, b) {
-                    const locA = (a.location || "").toLowerCase();
-                    const locB = (b.location || "").toLowerCase();
-                    const aLagos = locA.includes("lagos") ? 0 : 1;
-                    const bLagos = locB.includes("lagos") ? 0 : 1;
-                    return aLagos - bLagos;
-                });
-
-                renderBusinesses(sorted);
-                
-                const grid = document.getElementById("businessGrid");
-                if (grid) grid.scrollIntoView({ behavior: "smooth" });
-            },
-            function(error) {
-                console.error("Geolocation error:", error);
-                const toast = document.getElementById('toast');
-                if (toast) {
-                    toast.textContent = "Could not get location - showing all businesses";
-                    toast.classList.add('show');
-                    setTimeout(() => toast.classList.remove('show'), 3000);
-                }
-                renderBusinesses(businesses);
-            },
-            { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 }
-        );
+   function findNearbyBusinesses(maxDistanceKm = 10) {
+    if (!navigator.geolocation) {
+        showToast("Geolocation not supported", "error");
+        return;
     }
 
-    function showToast(msg) {
-        const toast = document.getElementById('toast');
-        if (!toast) return;
-        toast.textContent = msg;
-        toast.classList.add('show');
-        setTimeout(function() { toast.classList.remove('show'); }, 3000);
-    }
+    showToast("Getting your location...", "info");
+
+    navigator.geolocation.getCurrentPosition(position => {
+        const userLat = position.coords.latitude;
+        const userLng = position.coords.longitude;
+
+        localStorage.setItem("losoja_user_location", JSON.stringify({
+            latitude: userLat,
+            longitude: userLng
+        }));
+
+        // Haversine distance calc
+        function getDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371;
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                      Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+
+        let nearby = [];
+
+        allBusinesses.forEach(b => {
+            if (b.latitude && b.longitude) {
+                const dist = getDistance(userLat, userLng, Number(b.latitude), Number(b.longitude));
+                if (dist <= maxDistanceKm) {
+                    b._distance = dist;
+                    nearby.push(b);
+                }
+            }
+        });
+
+        // If businesses no get lat/lng, show all for now
+        if (nearby.length === 0) {
+            const hasLocationData = allBusinesses.some(b => b.latitude && b.longitude);
+            if (!hasLocationData) {
+                nearby = [...allBusinesses];
+                showToast(`📍 Location found! Showing ${nearby.length} businesses near you (Add location to businesses to filter by ${maxDistanceKm}km)`, "success");
+            } else {
+                showToast(`No businesses found within ${maxDistanceKm}km of you`, "info");
+                renderBusinesses([]);
+                return;
+            }
+        } else {
+            nearby.sort((a,b) => a._distance - b._distance);
+            showToast(`📍 Showing ${nearby.length} businesses within ${maxDistanceKm}km of you`, "success");
+        }
+
+        filteredBusinesses = nearby;
+        renderBusinesses(nearby);
+
+        const section = document.getElementById("businesses");
+        if (section) section.scrollIntoView({ behavior: "smooth", block: "start" });
+
+    }, error => {
+        console.error(error);
+        if (error.code === 1) showToast("Location permission denied", "error");
+        else showToast("Unable to get your location", "error");
+    }, {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
+    });
+}
     /* =====================================================
        PUBLIC FUNCTIONS
     ===================================================== */
