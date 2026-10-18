@@ -3442,45 +3442,56 @@ if (loginFromSignup) {
     import { supabase } from './js/supabase.js';
 
     function setupAuth() {
-        const signupBtn = document.getElementById('signupBtn');
-        const emailInput = document.getElementById('email');
-        const passwordInput = document.getElementById('password');
+        // Find the form - it contains Create Account button
+        const signupForm = document.querySelector('#signupForm') || document.querySelector('form');
+        const submitBtn = document.querySelector('.form-submit');
+        const emailInput = document.getElementById('email') || document.querySelector('input[type="email"]');
+        const passwordInput = document.getElementById('password') || document.querySelector('input[type="password"]');
 
-        console.log("Auth elements:", signupBtn, emailInput, passwordInput);
+        console.log("Found:", { signupForm, submitBtn, emailInput, passwordInput });
 
-        if (!signupBtn) {
-            console.error("signupBtn not found - check HTML id");
+        if (!signupForm && !submitBtn) {
+            console.error("No signup form/button found");
             return;
         }
 
-        signupBtn.addEventListener('click', async (e) => {
-            e.preventDefault();
-            console.log("Sign up clicked");
-            
-            const email = emailInput ? emailInput.value.trim() : "";
-            const password = passwordInput ? passwordInput.value : "";
+        // Listen to FORM submit, not just button click
+        const formToUse = signupForm || submitBtn.closest('form');
 
-            if (!email || !password) {
-                alert("Put email and password");
-                return;
-            }
+        if (formToUse) {
+            formToUse.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                console.log("Create Account clicked!");
 
-            signupBtn.textContent = "Signing up...";
-            signupBtn.disabled = true;
+                const email = emailInput ? emailInput.value.trim() : "";
+                const password = passwordInput ? passwordInput.value : "";
 
-            try {
-                const { data, error } = await supabase.auth.signUp({ email, password });
-                if (error) throw error;
-                alert("Success! Check your email to confirm");
-                console.log(data);
-            } catch (err) {
-                console.error(err);
-                alert("Error: " + err.message);
-            } finally {
-                signupBtn.textContent = "Sign Up";
-                signupBtn.disabled = false;
-            }
-        });
+                if (!email || !password) {
+                    alert("Put email and password");
+                    return;
+                }
+
+                submitBtn.textContent = "Creating...";
+                submitBtn.disabled = true;
+
+                try {
+                    const { data, error } = await supabase.auth.signUp({ email, password });
+                    if (error) throw error;
+                    alert("Success! Check your email");
+                    console.log("Signup success:", data);
+                    // Close modal
+                    const modal = document.getElementById('signupModal') || document.getElementById('loginModal');
+                    if (modal) modal.classList.remove('active');
+                } catch (err) {
+                    console.error(err);
+                    alert("Error: " + err.message);
+                } finally {
+                    submitBtn.textContent = "Create Account";
+                    submitBtn.disabled = false;
+                }
+            });
+            console.log("LosOja: Signup listener attached to FORM");
+        }
     }
 
     if (document.readyState === 'loading') {
