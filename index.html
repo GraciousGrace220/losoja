@@ -3440,27 +3440,28 @@ if (loginFromSignup) {
 <!-- AUTH FIX - This makes Sign Up button work -->
 <script>
   function testSignup() {
-    const btn = document.querySelector('.form-submit');
-    const form = document.querySelector('#signupForm') || document.querySelector('form');
-    
-    console.log("TEST - Found button:", btn);
-    console.log("TEST - Found form:", form);
+    const allSubmitBtns = document.querySelectorAll('.form-submit');
+    console.log("Found", allSubmitBtns.length, "submit buttons");
 
-    if (form) {
-      form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        console.log("TEST SUCCESS! Form submit caught!");
-        alert("TEST SUCCESS! Button dey work! Now we go add supabase");
-      });
-    }
-
-    if (btn) {
+    allSubmitBtns.forEach((btn, i) => {
+      console.log("Button", i, btn.textContent.trim(), btn);
       btn.addEventListener('click', function(e) {
         e.preventDefault();
-        console.log("TEST SUCCESS! Button click caught!");
-        alert("TEST SUCCESS! Button dey work!");
+        e.stopPropagation();
+        console.log("BUTTON", i, "CLICKED!", btn.textContent);
+        alert("Button " + i + " clicked: " + btn.textContent.trim());
       });
-    }
+    });
+
+    const allForms = document.querySelectorAll('form');
+    console.log("Found", allForms.length, "forms");
+    allForms.forEach((form, i) => {
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        console.log("FORM", i, "SUBMITTED!");
+        alert("Form " + i + " submitted!");
+      });
+    });
   }
 
   if (document.readyState === 'loading') {
