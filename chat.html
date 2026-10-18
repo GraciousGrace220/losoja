@@ -31,7 +31,10 @@
 <div id="chatWrap" class="chat-wrap"><div style="text-align:center;color:#888;padding:40px">Loading chat... If e stay here, login first!</div></div>
 <div id="escrowList" style="max-width:800px;width:100%;margin:0 auto;padding:0 16px"></div>
 <div class="input-bar">
-<input id="msgInput" placeholder="Type message..."><button class="btn-send" id="sendBtn">Send</button><button class="btn-escrow" onclick="openEscrowModal()">🔐</button>
+<label style="padding:12px;background:#fff;border:1px solid #d7e1da;border-radius:10px;cursor:pointer">📷<input type="file" id="imageInput" accept="image/*" style="display:none"></label>
+<input id="msgInput" placeholder="Type message...">
+<button class="btn-send" id="sendBtn">Send</button>
+<button class="btn-escrow" onclick="openEscrowModal()">🔐</button>
 </div>
 <div id="escrowModal" class="modal"><div class="modal-card">
 <h3 style="margin:0;color:#087a3e">🔐 Create Escrow</h3>
