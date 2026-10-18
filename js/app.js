@@ -681,7 +681,7 @@ bindModalClosers() {
            LOCATION BUTTON
         ================================================= */
 
-        bindLocationButton() {
+              bindLocationButton() {
 
             const locationBtn =
                 document.getElementById(
@@ -723,16 +723,6 @@ bindModalClosers() {
                             const longitude =
                                 position.coords.longitude;
 
-                            console.log(
-                                "LosOja location:",
-                                latitude,
-                                longitude
-                            );
-
-                            console.log(
-                                "LosOja: checking nearby businesses..."
-                            );
-
                             localStorage.setItem(
                                 "losoja_user_location",
                                 JSON.stringify({
@@ -746,72 +736,12 @@ bindModalClosers() {
                                 "success"
                             );
 
-                           if (
-    typeof window.findNearbyBusinesses ===
-    "function"
-) {
-    window.findNearbyBusinesses();
-    return;
-                                console.log(
-                                    "LosOja nearby businesses:",
-                                    nearbyBusinesses
-                                );
-
-                                if (
-                                    nearbyBusinesses.length > 0
-                                ) {
-
-                                    console.log(
-                                        "LosOja: Nearby businesses found:",
-                                        nearbyBusinesses.length
-                                    );
-
-                                    if (
-                                        typeof window.renderBusinesses ===
-                                        "function"
-                                    ) {
-
-                                        window.renderBusinesses(
-                                            nearbyBusinesses
-                                        );
-
-                                        console.log(
-                                            "LosOja: Nearby businesses rendered."
-                                        );
-
-                                        const section =
-                                            document.getElementById(
-                                                "businesses"
-                                            );
-
-                                        if (section) {
-
-                                            section.scrollIntoView({
-                                                behavior: "smooth",
-                                                block: "start"
-                                            });
-
-                                        }
-
-                                    } else {
-
-                                        console.error(
-                                            "LosOja: renderBusinesses is not available."
-                                        );
-
-                                    }
-
-                                } else {
-
-                                    this.showToast(
-                                        "No businesses found within 10 km yet.",
-                                        "info"
-                                    );
-
-                                }
-
+                            if (
+                                typeof window.findNearbyBusinesses ===
+                                "function"
+                            ) {
+                                window.findNearbyBusinesses();
                             }
-
                         },
 
                         error => {
@@ -824,37 +754,18 @@ bindModalClosers() {
                             let message =
                                 "Unable to get your location.";
 
-                            if (
-                                error.code ===
-                                error.PERMISSION_DENIED
-                            ) {
-
-                                message =
-                                    "Location permission was denied.";
-
-                            } else if (
-                                error.code ===
-                                error.POSITION_UNAVAILABLE
-                            ) {
-
-                                message =
-                                    "Your location is currently unavailable.";
-
-                            } else if (
-                                error.code ===
-                                error.TIMEOUT
-                            ) {
-
-                                message =
-                                    "Location request timed out. Please try again.";
-
+                            if (error.code === error.PERMISSION_DENIED) {
+                                message = "Location permission was denied.";
+                            } else if (error.code === error.POSITION_UNAVAILABLE) {
+                                message = "Your location is currently unavailable.";
+                            } else if (error.code === error.TIMEOUT) {
+                                message = "Location request timed out. Please try again.";
                             }
 
                             this.showToast(
                                 message,
                                 "error"
                             );
-
                         },
 
                         {
@@ -862,12 +773,9 @@ bindModalClosers() {
                             timeout: 10000,
                             maximumAge: 300000
                         }
-
                     );
-
                 }
             );
-
         },
 
 
