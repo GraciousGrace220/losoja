@@ -418,83 +418,84 @@ Adds:
         console.log("LosOja: Opening storefront:", businessId);
         window.location.href = "shop.html?id=" + encodeURIComponent(String(businessId));
     }
-    /* =====================================================
-       DISCOVER NEAR ME - SAFE ADDITION
+      /* =====================================================
+       DISCOVER NEAR ME - FINAL WORKING VERSION
     ===================================================== */
 
-   function findNearbyBusinesses(maxDistanceKm = 10) {
-    if (!navigator.geolocation) {
-        showToast("Geolocation not supported", "error");
-        return;
+    function findNearbyBusinesses(maxDistanceKm = 10) {
+        if (!navigator.geolocation) {
+            showToast("Geolocation not supported", "error");
+            return;
+        }
+
+        showToast("Getting your location...", "info");
+
+        navigator.geolocation.getCurrentPosition(position => {
+            const userLat = position.coords.latitude;
+            const userLng = position.coords.longitude;
+
+            localStorage.setItem("losoja_user_location", JSON.stringify({
+                latitude: userLat,
+                longitude: userLng
+            }));
+
+            showToast("Your location was found successfully.", "success");
+
+            // Use businesses or allBusinesses - whichever exists
+            const sourceList = (typeof allBusinesses !== 'undefined' && allBusinesses.length) ? allBusinesses : businesses;
+
+            // If no location data for businesses, just show all sorted by App.calculateDistance if possible
+            let nearby = [...sourceList];
+
+            // Try filter by distance if lat/lng exists
+            if (sourceList.some(b => b.latitude && b.longitude)) {
+                nearby = nearby.filter(b => {
+                    if (!b.latitude || !b.longitude) return false;
+                    const dist = App.calculateDistance(userLat, userLng, Number(b.latitude), Number(b.longitude));
+                    b._distance = dist;
+                    return dist <= maxDistanceKm;
+                });
+
+                // Sort nearest first
+                nearby.sort((a,b) => (a._distance || 9999) - (b._distance || 9999));
+            }
+
+            if (nearby.length === 0) {
+                // If no one within 10km, show all sorted
+                nearby = [...sourceList].sort((a,b) => {
+                    if (!a.latitude || !b.latitude) return 0;
+                    const dA = App.calculateDistance(userLat, userLng, Number(a.latitude), Number(a.longitude));
+                    const dB = App.calculateDistance(userLat, userLng, Number(b.latitude), Number(b.longitude));
+                    return (dA || 9999) - (dB || 9999);
+                });
+                showToast(`📍 Showing ${nearby.length} closest businesses to you!`, "info");
+            } else {
+                showToast(`📍 Showing ${nearby.length} businesses near you!`, "success");
+            }
+
+            if (typeof filteredBusinesses !== 'undefined') {
+                filteredBusinesses = nearby;
+            }
+
+            renderBusinesses(nearby);
+
+            const section = document.getElementById("businesses");
+            if (section) section.scrollIntoView({ behavior: "smooth", block: "start" });
+
+        }, error => {
+            console.error("LosOja location error:", error);
+            let msg = "Unable to get your location.";
+            if (error.code === 1) msg = "Location permission denied - Abeg allow location!";
+            if (error.code === 2) msg = "Location unavailable";
+            if (error.code === 3) msg = "Location timeout - Try again near window/outside";
+            showToast(msg, "error");
+        }, {
+            enableHighAccuracy: true,
+            timeout: 15000,
+            maximumAge: 0
+        });
     }
 
-    showToast("Getting your location...", "info");
-
-    navigator.geolocation.getCurrentPosition(position => {
-        const userLat = position.coords.latitude;
-        const userLng = position.coords.longitude;
-
-        localStorage.setItem("losoja_user_location", JSON.stringify({
-            latitude: userLat,
-            longitude: userLng
-        }));
-
-        // Haversine distance calc
-        function getDistance(lat1, lon1, lat2, lon2) {
-            const R = 6371;
-            const dLat = (lat2 - lat1) * Math.PI / 180;
-            const dLon = (lon2 - lon1) * Math.PI / 180;
-            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-                      Math.sin(dLon/2) * Math.sin(dLon/2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-            return R * c;
-        }
-
-        let nearby = [];
-
-        allBusinesses.forEach(b => {
-            if (b.latitude && b.longitude) {
-                const dist = getDistance(userLat, userLng, Number(b.latitude), Number(b.longitude));
-                if (dist <= maxDistanceKm) {
-                    b._distance = dist;
-                    nearby.push(b);
-                }
-            }
-        });
-
-        // If businesses no get lat/lng, show all for now
-        if (nearby.length === 0) {
-            const hasLocationData = allBusinesses.some(b => b.latitude && b.longitude);
-            if (!hasLocationData) {
-                nearby = [...allBusinesses];
-                showToast(`📍 Location found! Showing ${nearby.length} businesses near you (Add location to businesses to filter by ${maxDistanceKm}km)`, "success");
-            } else {
-                showToast(`No businesses found within ${maxDistanceKm}km of you`, "info");
-                renderBusinesses([]);
-                return;
-            }
-        } else {
-            nearby.sort((a,b) => a._distance - b._distance);
-            showToast(`📍 Showing ${nearby.length} businesses within ${maxDistanceKm}km of you`, "success");
-        }
-
-        filteredBusinesses = nearby;
-        renderBusinesses(nearby);
-
-        const section = document.getElementById("businesses");
-        if (section) section.scrollIntoView({ behavior: "smooth", block: "start" });
-
-    }, error => {
-        console.error(error);
-        if (error.code === 1) showToast("Location permission denied", "error");
-        else showToast("Unable to get your location", "error");
-    }, {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 0
-    });
-}
     /* =====================================================
        PUBLIC FUNCTIONS
     ===================================================== */
@@ -504,7 +505,7 @@ Adds:
     window.filterBusinessesByCategory = filterByCategory;
     window.filterByCategory = filterByCategory;
     window.openBusiness = openBusiness;
- window.findNearbyBusinesses = findNearbyBusinesses;
+    window.findNearbyBusinesses = findNearbyBusinesses;
 
     /* =====================================================
        START
@@ -521,4 +522,4 @@ Adds:
         init();
     }
 
-})();
+})();   // <-- LAST LINE, ONLY ONE!
