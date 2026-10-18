@@ -269,7 +269,7 @@ Adds:
         return `
             <article class="business-card" data-business-id="${id}" onclick="openBusiness('${id}')" style="cursor:pointer;">
                 ${imageHTML}
-                <div class="business-card-content">
+              <div class="business-card-content">
                     <h3>${name}</h3>
                     <p>${category}</p>
                     <p>📍 ${location}</p>
@@ -279,6 +279,23 @@ Adds:
                     <span style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap; align-items:center;">
                         <span class="business-category">${category}</span>
                         ${verifiedBadge}
+                        ${(() => {
+                            try {
+                                const savedLoc = JSON.parse(localStorage.getItem("losoja_user_location") || "null");
+                                if (savedLoc && business.latitude && business.longitude) {
+                                    const dist = App.calculateDistance(
+                                        savedLoc.latitude,
+                                        savedLoc.longitude,
+                                        business.latitude,
+                                        business.longitude
+                                    );
+                                    if (dist != null) {
+                                        return `<span class="distance-badge">📍 ${App.formatDistance(dist)}</span>`;
+                                    }
+                                }
+                            } catch(e) {}
+                            return "";
+                        })()}
                     </span>
                 </div>
             </article>
