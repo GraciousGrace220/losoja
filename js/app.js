@@ -746,14 +746,12 @@ bindModalClosers() {
                                 "success"
                             );
 
-                            if (
-                                typeof window.findNearbyBusinesses ===
-                                "function"
-                            ) {
-
-                                const nearbyBusinesses =
-                                    window.findNearbyBusinesses(10);
-
+                           if (
+    typeof window.findNearbyBusinesses ===
+    "function"
+) {
+    window.findNearbyBusinesses();
+    return;
                                 console.log(
                                     "LosOja nearby businesses:",
                                     nearbyBusinesses
