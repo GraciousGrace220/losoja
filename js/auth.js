@@ -900,32 +900,28 @@ async function handleSignup(event) {
         event.currentTarget;
 
 
-    const name =
-        document
-            .getElementById(
-                "signupName"
-            )
-            ?.value
-            .trim();
+  const name =
+    document
+        .getElementById(
+            "signupName"
+        )
+        ?.value?.trim() || "";
 
 
-    const email =
-        document
-            .getElementById(
-                "signupEmail"
-            )
-            ?.value
-            .trim()
-            .toLowerCase();
+  const email =
+    (document
+        .getElementById(
+            "signupEmail"
+        )
+        ?.value?.trim() || "")
+        .toLowerCase();
 
-
-    const password =
-        document
-            .getElementById(
-                "signupPassword"
-            )
-            ?.value;
-
+const password =
+    document
+        .getElementById(
+            "signupPassword"
+        )
+        ?.value || "";
 
     if (!name || !email || !password) {
 
