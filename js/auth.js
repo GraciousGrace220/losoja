@@ -891,7 +891,7 @@ if (
 ========================================================= */
 
 async function handleSignup(event) {
-       console.log("LosOja: handleSignup triggered!");
+     
 
     event.preventDefault();
 
