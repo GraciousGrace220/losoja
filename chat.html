@@ -28,7 +28,7 @@
 <div id="chatHeader" style="flex:1;text-align:center;font-weight:700">Loading...</div>
 <button onclick="openEscrowModal()" style="background:#fff;color:#087a3e;border:0;padding:8px 12px;border-radius:8px;font-weight:700">🔐 Escrow</button>
 </header>
-<div id="chatWrap" class="chat-wrap"><div style="text-align:center;color:#888;padding:40px">Loading...</div></div>
+<div id="chatWrap" class="chat-wrap"><div style="text-align:center;color:#888;padding:40px">Loading chat... If e stay here, login first!</div></div>
 <div id="escrowList" style="max-width:800px;width:100%;margin:0 auto;padding:0 16px"></div>
 <div class="input-bar">
 <input id="msgInput" placeholder="Type message..."><button class="btn-send" id="sendBtn">Send</button><button class="btn-escrow" onclick="openEscrowModal()">🔐</button>
@@ -51,24 +51,29 @@ let currentUser=null,currentChat=null,sellerId=null,businessId=null,accessToken=
 function esc(s){return String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function showToast(m){toast.textContent=m;toast.classList.add("show");setTimeout(()=>toast.classList.remove("show"),3000)}
 function getParams(){const p=new URLSearchParams(location.search);return {sellerId:p.get("user"),businessId:p.get("business"),escrow:p.get("escrow")}}
+
 async function getUserAndToken(){
- try{if(typeof window.getCurrentUser==="function"){const r=await window.getCurrentUser();if(r?.user?.id){currentUser=r.user}} }catch{}
- try{if(typeof window.getSupabaseAccessToken==="function"){const t=await window.getSupabaseAccessToken();accessToken=t?.access_token||t}}catch{}
- if(!currentUser){try{const raw=localStorage.getItem("losoja_supabase_session");if(raw){const j=JSON.parse(raw);currentUser=j?.user||j?.data?.user;accessToken=j?.access_token||j?.session?.access_token||j?.data?.session?.access_token}}catch{}}
+ try{if(typeof window.getCurrentUser==="function"){const r=await window.getCurrentUser();if(r?.user?.id) currentUser=r.user; else if(r?.data?.user?.id) currentUser=r.data.user; else if(r?.id) currentUser=r;}}catch(e){}
+ try{if(window.losojaSupabase?.auth?.getSession){const {data}=await window.losojaSupabase.auth.getSession(); if(data?.session?.user){currentUser=data.session.user; accessToken=data.session.access_token}}}catch(e){}
+ try{const raw=localStorage.getItem("losoja_supabase_session"); if(raw){const j=JSON.parse(raw); if(!currentUser) currentUser=j?.user||j?.data?.user||j?.data?.session?.user; if(!accessToken) accessToken=j?.access_token||j?.session?.access_token||j?.data?.session?.access_token}}catch(e){}
+ try{if(!accessToken && typeof window.getSupabaseAccessToken==="function"){const t=await window.getSupabaseAccessToken(); accessToken=t?.access_token||t}}catch(e){}
+ console.log("LosOja Debug - User:", currentUser?.id, "Token:", accessToken? "YES":"NO");
  return currentUser;
 }
+
 async function api(path,method="GET",body=null){
  const headers={apikey:SUPABASE_KEY,Authorization:`Bearer ${accessToken||SUPABASE_KEY}`,"Content-Type":"application/json"};
- if(method==="GET")delete headers["Content-Type"];
+ if(method==="GET") delete headers["Content-Type"];
  const res=await fetch(`${SUPABASE_URL}/rest/v1/${path}`,{method,headers,body:body?JSON.stringify(body):null});
- if(!res.ok){const t=await res.text();throw new Error(t)}
- const txt=await res.text();return txt?JSON.parse(txt):null;
+ if(!res.ok){const t=await res.text(); throw new Error(t)}
+ const txt=await res.text(); return txt?JSON.parse(txt):null;
 }
+
 async function init(){
- const {sellerId:sId,businessId:bId,escrow}=getParams();sellerId=sId;businessId=bId;
- if(!sellerId){chatWrap.innerHTML="No seller";return}
+ const {sellerId:sId,businessId:bId,escrow}=getParams(); sellerId=sId; businessId=bId;
+ if(!sellerId){chatWrap.innerHTML="No seller selected"; return}
  await getUserAndToken();
- if(!currentUser||!accessToken){showToast("Login first");setTimeout(()=>location.href="index.html#login",800);return}
+ if(!currentUser||!accessToken){chatWrap.innerHTML=`<div style="text-align:center;padding:40px"><b>You never login!</b><br><br><a href="index.html#login" style="padding:10px 16px;background:#087a3e;color:#fff;border-radius:8px;text-decoration:none">Login Now</a></div>`; return}
  chatHeader.textContent="Oja Chat...";
  try{
   let chats=await api(`chats?buyer_id=eq.${currentUser.id}&seller_id=eq.${sellerId}${businessId?`&business_id=eq.${businessId}`:""}&select=*`);
@@ -77,57 +82,64 @@ async function init(){
    chats=await api(`chats?buyer_id=eq.${currentUser.id}&seller_id=eq.${sellerId}&order=created_at.desc&limit=1&select=*`);
   }
   currentChat=chats[0];
-  if(businessId){try{const biz=await api(`businesses?id=eq.${businessId}&select=name`);if(biz[0])chatHeader.textContent=biz[0].name}catch{}}
-  loadMessages();loadEscrows();
+  if(businessId){try{const biz=await api(`businesses?id=eq.${businessId}&select=name`); if(biz[0]) chatHeader.textContent=biz[0].name}catch{}}
+  loadMessages(); loadEscrows();
   if(escrow==="1"){setTimeout(()=>openEscrowModal(),800)}
- }catch(e){chatWrap.innerHTML=`<div style="color:red;text-align:center">Error: ${esc(e.message)}</div>`}
+ }catch(e){chatWrap.innerHTML=`<div style="color:red;text-align:center;padding:20px">Error: ${esc(e.message)}<br><br>Check console (F12)</div>`; console.error(e)}
 }
+
 async function loadMessages(){
- if(!currentChat)return;
+ if(!currentChat) return;
  try{
   const msgs=await api(`messages?chat_id=eq.${currentChat.id}&order=created_at.asc&select=*`);
   chatWrap.innerHTML="";
-  if(!msgs.length)chatWrap.innerHTML=`<div style="text-align:center;color:#888">No messages yet. Start chat!<br><br>🔐 Use Escrow button to lock money safe.</div>`;
-  msgs.forEach(m=>{const div=document.createElement("div");div.className="msg "+(m.sender_id===currentUser.id?"me":"them");div.textContent=m.message;chatWrap.appendChild(div);});
+  if(!msgs.length) chatWrap.innerHTML=`<div style="text-align:center;color:#888">No messages yet. Start chat!<br><br>🔐 Use Escrow button to lock money safe.</div>`;
+  msgs.forEach(m=>{const div=document.createElement("div"); div.className="msg "+(m.sender_id===currentUser.id?"me":"them"); div.textContent=m.message; chatWrap.appendChild(div);});
   chatWrap.scrollTop=chatWrap.scrollHeight;
  }catch(e){console.error(e)}
 }
+
 async function sendMessage(){
- const text=msgInput.value.trim();if(!text||!currentChat)return;
+ const text=msgInput.value.trim(); if(!text||!currentChat) return;
  msgInput.value="";
- try{await api(`messages`,"POST",{chat_id:currentChat.id,sender_id:currentUser.id,message:text});loadMessages()}catch(e){showToast("Failed to send");msgInput.value=text}
+ try{await api(`messages`,"POST",{chat_id:currentChat.id,sender_id:currentUser.id,message:text}); loadMessages()}catch(e){showToast("Failed to send"); msgInput.value=text}
 }
+
 async function loadEscrows(){
- if(!currentChat)return;
+ if(!currentChat) return;
  try{
   const escrows=await api(`escrows?chat_id=eq.${currentChat.id}&order=created_at.desc&select=*`);
   escrowList.innerHTML="";
   escrows.forEach(es=>{
-   const div=document.createElement("div");div.className="escrow-card";
+   const div=document.createElement("div"); div.className="escrow-card";
    div.innerHTML=`<h4>🔐 Escrow ₦${Number(es.amount).toLocaleString()} - ${esc(es.status.toUpperCase())}</h4><p style="font-size:13px;margin:6px 0">${esc(es.description||"")}</p><small style="color:#888">${new Date(es.created_at).toLocaleString()}</small><div style="margin-top:8px"><button onclick="updateEscrow('${es.id}','completed')" style="padding:6px 10px;background:#087a3e;color:#fff;border:0;border-radius:6px;margin-right:6px">Confirm Delivery</button><button onclick="updateEscrow('${es.id}','disputed')" style="padding:6px 10px;background:#fff;border:1px solid #ccc;border-radius:6px">Dispute</button></div>`;
    escrowList.appendChild(div);
   });
  }catch(e){console.error(e)}
 }
+
 async function updateEscrow(id,status){
- try{await api(`escrows?id=eq.${id}`,"PATCH",{status});showToast("Escrow "+status);loadEscrows()}catch(e){showToast(e.message)}
+ try{await api(`escrows?id=eq.${id}`,"PATCH",{status}); showToast("Escrow "+status); loadEscrows()}catch(e){showToast(e.message)}
 }
+
 function openEscrowModal(){escrowModal.classList.add("show")}
 function closeEscrowModal(){escrowModal.classList.remove("show")}
+
 async function createEscrow(){
  const amount=Number(document.getElementById("escrowAmount").value),desc=document.getElementById("escrowDesc").value.trim();
- if(!amount||amount<=0){showToast("Enter amount");return}
- if(!desc){showToast("Describe item");return}
+ if(!amount||amount<=0){showToast("Enter amount"); return}
+ if(!desc){showToast("Describe item"); return}
  try{
   await api(`escrows`,"POST",{chat_id:currentChat.id,business_id:businessId||null,buyer_id:currentUser.id,seller_id:sellerId,amount,description:desc,status:"pending"});
-  closeEscrowModal();document.getElementById("escrowAmount").value="";document.getElementById("escrowDesc").value="";
-  showToast("Escrow locked! Money safe");loadEscrows();
+  closeEscrowModal(); document.getElementById("escrowAmount").value=""; document.getElementById("escrowDesc").value="";
+  showToast("Escrow locked! Money safe"); loadEscrows();
   await api(`messages`,"POST",{chat_id:currentChat.id,sender_id:currentUser.id,message:`🔐 ESCROW: ₦${amount.toLocaleString()} for ${desc} - Pending`});
   loadMessages();
  }catch(e){showToast("Failed: "+e.message)}
 }
+
 sendBtn.onclick=sendMessage;
-msgInput.addEventListener("keydown",e=>{if(e.key==="Enter")sendMessage()});
+msgInput.addEventListener("keydown",e=>{if(e.key==="Enter") sendMessage()});
 init();
 </script>
 </body>
