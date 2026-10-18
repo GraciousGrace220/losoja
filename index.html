@@ -3353,13 +3353,8 @@ if (loginFromSignup) {
      LOSOJA SCRIPTS
 ===================================================== -->
 
-<script
-    src="js/businesses.js?v=4"
-></script>
-
-<script
-    src="js/auth.js?v=2"
-></script>
+<script src="js/businesses.js?v=4"></script>
+<script src="js/auth.js?v=2"></script>
 <script src="js/app.js?v=999"></script>
 
 <script>
@@ -3370,105 +3365,19 @@ if (loginFromSignup) {
         if (!shouldOpenLogin) return;
         const loginModal = document.getElementById("loginModal");
         if (!loginModal) return;
-        loginModal.classList.add("active");
+        loginModal.classList.remove("hidden");
+        loginModal.style.display = "flex";
+        loginModal.setAttribute("aria-hidden", "false");
         window.history.replaceState({}, document.title, "index.html");
     }
 
-    function restorePendingBusiness() {
-        let pendingBusiness = null;
-        let shouldReturn = false;
-        try {
-            shouldReturn = sessionStorage.getItem("losoja_return_to_add_business") === "1";
-            const saved = sessionStorage.getItem("losoja_pending_business");
-            if (saved) pendingBusiness = JSON.parse(saved);
-        } catch (e) {}
-        if (!shouldReturn || !pendingBusiness) return;
-
-        const nameInput = document.getElementById("businessName");
-        const categoryInput = document.getElementById("businessCategory");
-        const locationInput = document.getElementById("businessLocation");
-        const phoneInput = document.getElementById("businessPhone");
-        const descriptionInput = document.getElementById("businessDescription");
-
-        if (nameInput) nameInput.value = pendingBusiness.name || "";
-        if (categoryInput) categoryInput.value = pendingBusiness.category || "";
-        if (locationInput) locationInput.value = pendingBusiness.location || "";
-        if (phoneInput) phoneInput.value = pendingBusiness.phone || "";
-        if (descriptionInput) descriptionInput.value = pendingBusiness.description || "";
-
-        const addBusinessModal = document.getElementById("addBusinessModal");
-        if (addBusinessModal) {
-            addBusinessModal.classList.add("active");
-            addBusinessModal.style.display = "flex";
-            document.body.classList.add("modal-open");
-        }
-        try {
-            sessionStorage.removeItem("losoja_pending_business");
-            sessionStorage.removeItem("losoja_return_to_add_business");
-        } catch (e) {}
-    }
-
-    function initializeLoginRedirect() {
-        openLoginFromRedirect();
-        let attempts = 0;
-        const maxAttempts = 30;
-        const check = setInterval(async function () {
-            attempts++;
-            let loggedInUser = null;
-            try {
-                if (typeof window.getCurrentUser === "function") {
-                    loggedInUser = await window.getCurrentUser();
-                }
-            } catch (e) {}
-            if (loggedInUser && loggedInUser.id) {
-                clearInterval(check);
-                restorePendingBusiness();
-                return;
-            }
-            if (attempts >= maxAttempts) clearInterval(check);
-        }, 1000);
-    }
-
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initializeLoginRedirect);
+        document.addEventListener('DOMContentLoaded', openLoginFromRedirect);
     } else {
-        initializeLoginRedirect();
+        openLoginFromRedirect();
     }
 })();
 </script>
 
-<!-- AUTH FIX - This makes Sign Up button work -->
-<script>
-  function testSignup() {
-    const allSubmitBtns = document.querySelectorAll('.form-submit');
-    console.log("Found", allSubmitBtns.length, "submit buttons");
-
-    allSubmitBtns.forEach((btn, i) => {
-      console.log("Button", i, btn.textContent.trim(), btn);
-      btn.addEventListener('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        console.log("BUTTON", i, "CLICKED!", btn.textContent);
-        alert("Button " + i + " clicked: " + btn.textContent.trim());
-      });
-    });
-
-    const allForms = document.querySelectorAll('form');
-    console.log("Found", allForms.length, "forms");
-    allForms.forEach((form, i) => {
-      form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        console.log("FORM", i, "SUBMITTED!");
-        alert("Form " + i + " submitted!");
-      });
-    });
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', testSignup);
-  } else {
-    testSignup();
-  }
-</script>
 </body>
 </html>
