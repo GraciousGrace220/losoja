@@ -17,7 +17,7 @@
 .hero-title{margin:0 0 10px;font-size:38px;line-height:1.1}.badge{background:rgba(255,255,255,.17);border:1px solid rgba(255,255,255,.32);padding:7px 11px;border-radius:999px;font-weight:600}
 .content{padding:0 28px 30px}.section{padding:28px 0;border-bottom:1px solid #e7ede9}.section-title{margin:0 0 15px;font-size:21px;color:#123d25}
 .actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}.action-btn{width:100%;min-height:48px;border:1px solid #d7e1da;background:#fff;color:#123d25;border-radius:12px;padding:12px 14px;cursor:pointer;font-weight:700}
-.action-primary{background:#087a3e;color:#fff;border-color:#087a3e}.owner-actions,.buyer-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}
+.action-primary{background:#087a3e;color:#fff;border-color:#087a3e}.owner-actions,.buyer-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
 .owner-note,.buyer-note{margin-top:12px;padding:11px 13px;border-radius:10px;background:#f7faf8;border:1px solid #e2ebe5;color:#637168;font-size:13px}
 .info-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.info-item{border:1px solid #e0e8e2;border-radius:13px;padding:15px;background:#fafcfb}
 .info-label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#718078;margin-bottom:6px;font-weight:700}.info-value{font-weight:650;word-break:break-word}
@@ -89,14 +89,43 @@ async function renderOwnerBuyerActions(b){
  if(String(user.id)===String(b.user_id)){renderOwnerActions(b)}else{renderBuyerActions(b)}
 }
 function renderOwnerActions(b){
- ownerActions.style.display="flex";actionNote.style.display="block";actionNote.textContent="You own this listing. Manage from here.";
- const btnEdit=document.createElement("button");btnEdit.className="action-btn action-primary";btnEdit.textContent="✏️ Edit";btnEdit.onclick=()=>location.href=`edit-business.html?id=${b.id}`;ownerActions.appendChild(btnEdit);
- const btnDel=document.createElement("button");btnDel.className="action-btn";btnDel.style.color="#b91c1c";btnDel.textContent="🗑️ Delete";btnDel.onclick=()=>{if(confirm("Delete this business?"))deleteBusiness(b.id)};ownerActions.appendChild(btnDel);
+ ownerActions.style.display="grid";
+ actionNote.style.display="block";
+ actionNote.textContent="You own this listing. Manage from here.";
+ ownerActions.innerHTML="";
+ const btnEdit=document.createElement("button");
+ btnEdit.className="action-btn action-primary";
+ btnEdit.textContent="✏️ Edit Business";
+ btnEdit.onclick=()=>location.href=`edit-business.html?id=${b.id}`;
+ ownerActions.appendChild(btnEdit);
+ const btnAddProduct=document.createElement("button");
+ btnAddProduct.className="action-btn";
+ btnAddProduct.style.border="2px solid #087a3e";
+ btnAddProduct.style.color="#087a3e";
+ btnAddProduct.style.fontWeight="800";
+ btnAddProduct.textContent="+ Add Product";
+ btnAddProduct.onclick=()=>location.href=`add-product.html?business=${b.id}`;
+ ownerActions.appendChild(btnAddProduct);
+ const btnDel=document.createElement("button");
+ btnDel.className="action-btn";
+ btnDel.style.color="#b91c1c";
+ btnDel.textContent="🗑️ Delete";
+ btnDel.onclick=()=>{if(confirm("Delete this business?"))deleteBusiness(b.id)};
+ ownerActions.appendChild(btnDel);
 }
 function renderBuyerActions(b){
- buyerActions.style.display="flex";actionNote.style.display="block";actionNote.textContent="🔐 Safe with LosOja Escrow: Chat seller, then create escrow inside chat. Money safe until delivery!";
- const btnChat=document.createElement("button");btnChat.className="action-btn action-primary";btnChat.textContent="💬 Oja Chat + Escrow";btnChat.onclick=async()=>{await openLosOjaChat(b,false)};buyerActions.appendChild(btnChat);
- const btnEscrow=document.createElement("button");btnEscrow.className="action-btn";btnEscrow.style.border="2px solid #087a3e";btnEscrow.style.color="#087a3e";btnEscrow.textContent="🔐 Create Escrow Now";btnEscrow.onclick=async()=>{await openLosOjaChat(b,true)};buyerActions.appendChild(btnEscrow);
+ buyerActions.style.display="grid";
+ actionNote.style.display="block";
+ actionNote.textContent="🔐 Safe with LosOja Escrow: Chat seller, then create escrow inside chat. Money safe until delivery!";
+ buyerActions.innerHTML="";
+ const btnChat=document.createElement("button");
+ btnChat.className="action-btn action-primary";
+ btnChat.textContent="💬 Oja Chat / Escrow";
+ btnChat.style.gridColumn="1 / -1";
+ btnChat.style.minHeight="52px";
+ btnChat.style.fontSize="16px";
+ btnChat.onclick=async()=>{await openLosOjaChat(b,false)};
+ buyerActions.appendChild(btnChat);
 }
 async function openLosOjaChat(b,openEscrow=false){
  const user=await requireShopLogin();if(!user)return;
