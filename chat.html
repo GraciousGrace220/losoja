@@ -97,9 +97,9 @@ async function loadMessages(){
    const div=document.createElement("div"); 
    div.className="msg "+(m.sender_id===currentUser.id?"me":"them");
    const urlMatch=m.message.match(/https?:\/\/[^\s]+/);
-   if(urlMatch && (m.message.includes("storage") || m.message.includes(".jpg") || m.message.includes(".png") || m.message.includes("Image"))){
+   if(urlMatch && (m.message.includes("storage") || m.message.toLowerCase().match(/\.(jpg|png|jpeg|jfif|webp)/) || m.message.includes("Image"))){
      const url=urlMatch[0];
-     div.innerHTML=`<img src="${url}" style="max-width:200px;border-radius:8px;display:block" onclick="window.open('${url}','_blank')"><small>${esc(m.message)}</small>`;
+     div.innerHTML=`<img src="${encodeURI(url)}" style="max-width:250px;border-radius:10px;display:block;border:2px solid #e0e8e2" onclick="window.open('${encodeURI(url)}','_blank')"><br><small>${esc(m.message)}</small>`;
    } else {
      div.textContent=m.message;
    }
