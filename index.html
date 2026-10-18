@@ -3360,325 +3360,134 @@ if (loginFromSignup) {
 <script
     src="js/auth.js?v=2"
 ></script>
-
-<script
-    src="js/app.js?v=999"
-></script>
+<script src="js/app.js?v=999"></script>
 
 <script>
 (function () {
-
     function openLoginFromRedirect() {
-
-        const params =
-            new URLSearchParams(
-                window.location.search
-            );
-
-        const shouldOpenLogin =
-            params.get("openLogin") === "1" ||
-            window.location.hash === "#login";
-
-        if (!shouldOpenLogin) {
-            return;
-        }
-
-
-        const loginModal =
-            document.getElementById(
-                "loginModal"
-            );
-
-
-        if (!loginModal) {
-
-            console.error(
-                "LosOja: loginModal was not found."
-            );
-
-            return;
-
-        }
-
-
-        loginModal.classList.add(
-            "active"
-        );
-
-
-        console.log(
-            "LosOja: Login modal opened from redirect."
-        );
-
-
-        window.history.replaceState(
-            {},
-            document.title,
-            "index.html"
-        );
-
+        const params = new URLSearchParams(window.location.search);
+        const shouldOpenLogin = params.get("openLogin") === "1" || window.location.hash === "#login";
+        if (!shouldOpenLogin) return;
+        const loginModal = document.getElementById("loginModal");
+        if (!loginModal) return;
+        loginModal.classList.add("active");
+        window.history.replaceState({}, document.title, "index.html");
     }
-
 
     function restorePendingBusiness() {
-
         let pendingBusiness = null;
-
-        let shouldReturnToAddBusiness =
-            false;
-
-
+        let shouldReturn = false;
         try {
+            shouldReturn = sessionStorage.getItem("losoja_return_to_add_business") === "1";
+            const saved = sessionStorage.getItem("losoja_pending_business");
+            if (saved) pendingBusiness = JSON.parse(saved);
+        } catch (e) {}
+        if (!shouldReturn || !pendingBusiness) return;
 
-            shouldReturnToAddBusiness =
-                sessionStorage.getItem(
-                    "losoja_return_to_add_business"
-                ) === "1";
+        const nameInput = document.getElementById("businessName");
+        const categoryInput = document.getElementById("businessCategory");
+        const locationInput = document.getElementById("businessLocation");
+        const phoneInput = document.getElementById("businessPhone");
+        const descriptionInput = document.getElementById("businessDescription");
 
+        if (nameInput) nameInput.value = pendingBusiness.name || "";
+        if (categoryInput) categoryInput.value = pendingBusiness.category || "";
+        if (locationInput) locationInput.value = pendingBusiness.location || "";
+        if (phoneInput) phoneInput.value = pendingBusiness.phone || "";
+        if (descriptionInput) descriptionInput.value = pendingBusiness.description || "";
 
-            const savedBusiness =
-                sessionStorage.getItem(
-                    "losoja_pending_business"
-                );
-
-
-            if (savedBusiness) {
-
-                pendingBusiness =
-                    JSON.parse(
-                        savedBusiness
-                    );
-
-            }
-
-        } catch (storageError) {
-
-            console.warn(
-                "LosOja: Could not read pending business.",
-                storageError
-            );
-
-        }
-
-
-        if (
-            !shouldReturnToAddBusiness ||
-            !pendingBusiness
-        ) {
-
-            return;
-
-        }
-
-
-        const nameInput =
-            document.getElementById(
-                "businessName"
-            );
-
-        const categoryInput =
-            document.getElementById(
-                "businessCategory"
-            );
-
-        const locationInput =
-            document.getElementById(
-                "businessLocation"
-            );
-
-        const phoneInput =
-            document.getElementById(
-                "businessPhone"
-            );
-
-        const descriptionInput =
-            document.getElementById(
-                "businessDescription"
-            );
-
-
-        if (nameInput) {
-
-            nameInput.value =
-                pendingBusiness.name || "";
-
-        }
-
-
-        if (categoryInput) {
-
-            categoryInput.value =
-                pendingBusiness.category || "";
-
-        }
-
-
-        if (locationInput) {
-
-            locationInput.value =
-                pendingBusiness.location || "";
-
-        }
-
-
-        if (phoneInput) {
-
-            phoneInput.value =
-                pendingBusiness.phone || "";
-
-        }
-
-
-        if (descriptionInput) {
-
-            descriptionInput.value =
-                pendingBusiness.description || "";
-
-        }
-
-
-        const addBusinessModal =
-            document.getElementById(
-                "addBusinessModal"
-            );
-
-
+        const addBusinessModal = document.getElementById("addBusinessModal");
         if (addBusinessModal) {
-
-            addBusinessModal.classList.add(
-                "active"
-            );
-
-            addBusinessModal.style.display =
-                "flex";
-
-            addBusinessModal.setAttribute(
-                "aria-hidden",
-                "false"
-            );
-
-            document.body.classList.add(
-                "modal-open"
-            );
-
-
-            console.log(
-                "LosOja: Pending business form restored."
-            );
-
+            addBusinessModal.classList.add("active");
+            addBusinessModal.style.display = "flex";
+            document.body.classList.add("modal-open");
         }
-
-
         try {
-
-            sessionStorage.removeItem(
-                "losoja_pending_business"
-            );
-
-            sessionStorage.removeItem(
-                "losoja_return_to_add_business"
-            );
-
-        } catch (storageError) {
-
-            console.warn(
-                "LosOja: Could not clear pending business state.",
-                storageError
-            );
-
-        }
-
+            sessionStorage.removeItem("losoja_pending_business");
+            sessionStorage.removeItem("losoja_return_to_add_business");
+        } catch (e) {}
     }
 
-function initializeLoginRedirect() {
-
-    openLoginFromRedirect();
-
-    let attempts = 0;
-    const maxAttempts = 30;
-
-    const checkLoginAndRestore = setInterval(
-        async function () {
-
+    function initializeLoginRedirect() {
+        openLoginFromRedirect();
+        let attempts = 0;
+        const maxAttempts = 30;
+        const check = setInterval(async function () {
             attempts++;
-
             let loggedInUser = null;
-
             try {
-
-                if (
-                    typeof window.getCurrentUser ===
-                    "function"
-                ) {
-
-                    loggedInUser =
-                        await window.getCurrentUser();
-
+                if (typeof window.getCurrentUser === "function") {
+                    loggedInUser = await window.getCurrentUser();
                 }
-
-            } catch (authError) {
-
-                console.warn(
-                    "LosOja: Could not check login status.",
-                    authError
-                );
-
-            }
-
-            if (
-                loggedInUser &&
-                loggedInUser.id
-            ) {
-
-                clearInterval(
-                    checkLoginAndRestore
-                );
-
-                console.log(
-                    "LosOja: Login detected. Restoring pending business."
-                );
-
+            } catch (e) {}
+            if (loggedInUser && loggedInUser.id) {
+                clearInterval(check);
                 restorePendingBusiness();
+                return;
+            }
+            if (attempts >= maxAttempts) clearInterval(check);
+        }, 1000);
+    }
 
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeLoginRedirect);
+    } else {
+        initializeLoginRedirect();
+    }
+})();
+</script>
+
+<!-- AUTH FIX - This makes Sign Up button work -->
+<script type="module">
+    import { supabase } from './js/supabase.js';
+
+    function setupAuth() {
+        const signupBtn = document.getElementById('signupBtn');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+
+        console.log("Auth elements:", signupBtn, emailInput, passwordInput);
+
+        if (!signupBtn) {
+            console.error("signupBtn not found - check HTML id");
+            return;
+        }
+
+        signupBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            console.log("Sign up clicked");
+            
+            const email = emailInput ? emailInput.value.trim() : "";
+            const password = passwordInput ? passwordInput.value : "";
+
+            if (!email || !password) {
+                alert("Put email and password");
                 return;
             }
 
-            if (attempts >= maxAttempts) {
+            signupBtn.textContent = "Signing up...";
+            signupBtn.disabled = true;
 
-                clearInterval(
-                    checkLoginAndRestore
-                );
-
-                console.log(
-                    "LosOja: Waiting for login timed out. Pending business remains saved."
-                );
-
+            try {
+                const { data, error } = await supabase.auth.signUp({ email, password });
+                if (error) throw error;
+                alert("Success! Check your email to confirm");
+                console.log(data);
+            } catch (err) {
+                console.error(err);
+                alert("Error: " + err.message);
+            } finally {
+                signupBtn.textContent = "Sign Up";
+                signupBtn.disabled = false;
             }
-
-        },
-        1000
-    );
-
-}
-
-
-    if (
-        document.readyState ===
-        "loading"
-    ) {
-
-        document.addEventListener(
-            "DOMContentLoaded",
-            initializeLoginRedirect
-        );
-
-    } else {
-
-        initializeLoginRedirect();
-
+        });
     }
 
-})();
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', setupAuth);
+    } else {
+        setupAuth();
+    }
 </script>
 
 </body>
