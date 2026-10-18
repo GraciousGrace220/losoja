@@ -422,76 +422,65 @@ Adds:
        DISCOVER NEAR ME - FINAL WORKING VERSION
     ===================================================== */
 
-    function findNearbyBusinesses(maxDistanceKm = 10) {
-        if (!navigator.geolocation) {
-            showToast("Geolocation not supported", "error");
-            return;
+        function findNearbyBusinesses(maxDistanceKm = 10) {
+        if (!navigator.geolocation) { 
+            showToast("Geolocation not supported", "error"); 
+            return; 
         }
+        
+        showToast("Getting your location... move near window", "info");
 
-        showToast("Getting your location...", "info");
-
-        navigator.geolocation.getCurrentPosition(position => {
+        // Try high accuracy first, then low accuracy if fail
+        function success(position) {
             const userLat = position.coords.latitude;
             const userLng = position.coords.longitude;
-
-            localStorage.setItem("losoja_user_location", JSON.stringify({
-                latitude: userLat,
-                longitude: userLng
+            localStorage.setItem("losoja_user_location", JSON.stringify({ 
+                latitude: userLat, 
+                longitude: userLng 
             }));
-
             showToast("Your location was found successfully.", "success");
-
-            // Use businesses or allBusinesses - whichever exists
-            const sourceList = (typeof allBusinesses !== 'undefined' && allBusinesses.length) ? allBusinesses : businesses;
-
-            // If no location data for businesses, just show all sorted by App.calculateDistance if possible
-            let nearby = [...sourceList];
-
-            // Try filter by distance if lat/lng exists
-            if (sourceList.some(b => b.latitude && b.longitude)) {
-                nearby = nearby.filter(b => {
+            
+            let nearby = [...businesses];
+            if (businesses.some(b => b.latitude && b.longitude)) {
+                nearby = businesses.filter(b => {
                     if (!b.latitude || !b.longitude) return false;
                     const dist = App.calculateDistance(userLat, userLng, Number(b.latitude), Number(b.longitude));
                     b._distance = dist;
                     return dist <= maxDistanceKm;
                 });
-
-                // Sort nearest first
-                nearby.sort((a,b) => (a._distance || 9999) - (b._distance || 9999));
+                nearby.sort((a,b) => (a._distance||9999) - (b._distance||9999));
             }
-
             if (nearby.length === 0) {
-                // If no one within 10km, show all sorted
-                nearby = [...sourceList].sort((a,b) => {
-                    if (!a.latitude || !b.latitude) return 0;
+                nearby = [...businesses].sort((a,b) => {
                     const dA = App.calculateDistance(userLat, userLng, Number(a.latitude), Number(a.longitude));
                     const dB = App.calculateDistance(userLat, userLng, Number(b.latitude), Number(b.longitude));
-                    return (dA || 9999) - (dB || 9999);
+                    return (dA||9999) - (dB||9999);
                 });
-                showToast(`📍 Showing ${nearby.length} closest businesses to you!`, "info");
+                showToast(`📍 Showing ${nearby.length} closest businesses!`, "info");
             } else {
                 showToast(`📍 Showing ${nearby.length} businesses near you!`, "success");
             }
-
-            if (typeof filteredBusinesses !== 'undefined') {
-                filteredBusinesses = nearby;
-            }
-
             renderBusinesses(nearby);
+        }
 
-            const section = document.getElementById("businesses");
-            if (section) section.scrollIntoView({ behavior: "smooth", block: "start" });
+        function error(err) {
+            console.log("High accuracy failed, trying low accuracy...", err);
+            // Second try with low accuracy - e dey work inside house!
+            navigator.geolocation.getCurrentPosition(success, function(err2){
+                console.error("Both failed:", err2);
+                let msg = "Location timeout - Try near window/outside & allow location!";
+                if (err2.code === 1) msg = "Permission denied - Go settings allow location!";
+                showToast(msg, "error");
+            }, {
+                enableHighAccuracy: false, // <-- This one no go timeout
+                timeout: 20000,
+                maximumAge: 60000
+            });
+        }
 
-        }, error => {
-            console.error("LosOja location error:", error);
-            let msg = "Unable to get your location.";
-            if (error.code === 1) msg = "Location permission denied - Abeg allow location!";
-            if (error.code === 2) msg = "Location unavailable";
-            if (error.code === 3) msg = "Location timeout - Try again near window/outside";
-            showToast(msg, "error");
-        }, {
+        navigator.geolocation.getCurrentPosition(success, error, {
             enableHighAccuracy: true,
-            timeout: 15000,
+            timeout: 10000,
             maximumAge: 0
         });
     }
