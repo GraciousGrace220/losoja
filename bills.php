@@ -46,7 +46,7 @@ if($_POST['buy'] ?? false){
 $bal=toppa_call("/v1/balance");
 if(!$bal['json']) $bal=toppa_call("/balance");
 ?>
-<html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>LosOja - Cheaper than Opay</title>
+<html><head><link rel="icon" href="data:,"><meta name="viewport" content="width=device-width,initial-scale=1"><title>LosOja - Cheaper than Opay</title>
 <style>body{background:#0a0a0a;color:#fff;font-family:sans-serif;padding:20px}.card{background:#1a1a1a;border-radius:15px;padding:20px;margin-bottom:15px}.btn{background:#00ff88;color:#000;padding:14px;border:none;border-radius:10px;width:100%;font-weight:bold}input,select{width:100%;padding:12px;border-radius:10px;background:#111;color:#fff;border:1px solid #333;margin:8px 0}</style>
 </head><body>
 <h2>LosOja.com <span style="background:#ffaa00;color:#000;padding:3px 8px;border-radius:5px">CHEAPER THAN OPAY</span></h2>
