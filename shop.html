@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LosOja Business</title>
-<style>/* YOUR SAME CSS - I keep am */
+<style>
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f4f7f5;color:#17201b}
 .topbar{position:sticky;top:0;z-index:1000;background:#087a3e;color:#fff;padding:12px 18px}
 .topbar-inner{max-width:1150px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:15px}
@@ -13,8 +13,6 @@
 .page{width:min(1150px,calc(100% - 28px));margin:24px auto 50px}.shop-card{background:#fff;border-radius:22px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.09);border:1px solid #e5ebe7}
 .hero{min-height:360px;position:relative;background:#dfeae3;display:flex;align-items:flex-end;overflow:hidden}.hero-image{width:100%;height:390px;object-fit:cover}
 .hero-placeholder{width:100%;height:390px;display:flex;align-items:center;justify-content:center;font-size:85px;background:radial-gradient(circle at center,#f5faf7 0,#e6f1ea 48%,#d9e9df 100%)}
-.hero-overlay{position:absolute;left:0;right:0;bottom:0;padding:75px 30px 27px;background:linear-gradient(transparent 0%,rgba(0,0,0,.12) 18%,rgba(0,0,0,.78) 100%);color:#fff}
-.hero-title{margin:0 0 10px;font-size:38px;line-height:1.1}.badge{background:rgba(255,255,255,.17);border:1px solid rgba(255,255,255,.32);padding:7px 11px;border-radius:999px;font-weight:600}
 .content{padding:0 28px 30px}.section{padding:28px 0;border-bottom:1px solid #e7ede9}.section-title{margin:0 0 15px;font-size:21px;color:#123d25}
 .actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}.action-btn{width:100%;min-height:48px;border:1px solid #d7e1da;background:#fff;color:#123d25;border-radius:12px;padding:12px 14px;cursor:pointer;font-weight:700}
 .action-primary{background:#087a3e;color:#fff;border-color:#087a3e}.owner-actions,.buyer-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
@@ -39,6 +37,12 @@
 <div style="display:flex;justify-content:flex-end;padding:18px 0 3px"><button type="button" id="saveBtn" style="border:1px solid #cfdcd3;background:#fff;border-radius:999px;padding:10px 17px;font-weight:700;cursor:pointer">♡ Save</button></div>
 <section class="section"><h2 class="section-title">Contact & Actions</h2><div id="publicActions" class="actions"></div><div id="ownerActions" class="owner-actions" style="display:none;"></div><div id="buyerActions" class="buyer-actions" style="display:none;"></div><div id="actionNote" class="owner-note" style="display:none;"></div></section>
 <section class="section"><h2 class="section-title">Business Information</h2><div id="businessInfo" class="info-grid"></div></section>
+
+<section class="section" id="productsSection">
+<h2 class="section-title">🛍️ Products from this business</h2>
+<div id="productsList" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px">Loading products...</div>
+</section>
+
 <section id="descriptionSection" class="section"><h2 class="section-title">About This Business</h2><div id="description" class="description"></div></section>
 <section class="section"><h2 class="section-title">Business Photos</h2><div id="gallery" class="gallery"></div></section>
 <section class="section"><h2 class="section-title">Find This Business</h2><div id="locationText" class="info-item"></div></section>
@@ -62,7 +66,7 @@ async function requireShopLogin(){const u=await getShopUser();if(u)return u;try{
 backBtn.onclick=()=>history.back();
 async function loadBusiness(){
  const id=getBusinessId();if(!id){loading.style.display="none";errorBox.style.display="block";errorBox.textContent="No business selected";return}
- try{const res=await fetch(`${SUPABASE_URL}/rest/v1/businesses?id=eq.${encodeURIComponent(id)}&select=*`,{headers:{apikey:SUPABASE_KEY,Authorization:"Bearer "+SUPABASE_KEY}});const data=await res.json();if(!data.length)throw new Error("Business not found");currentBusiness=data[0];await renderBusiness(currentBusiness);loading.style.display="none";shopCard.style.display="block"}catch(e){loading.style.display="none";errorBox.style.display="block";errorBox.innerHTML=`<b>Error:</b> ${esc(e.message)}<br><br><button onclick="location.href='index.html'" style="padding:10px 15px;background:#087a3e;color:#fff;border:0;border-radius:9px">Back to LosOja</button>`}
+ try{const res=await fetch(`${SUPABASE_URL}/rest/v1/businesses?id=eq.${encodeURIComponent(id)}&select=*`,{headers:{apikey:SUPABASE_KEY,Authorization:"Bearer "+SUPABASE_KEY}});const data=await res.json();if(!data.length)throw new Error("Business not found");currentBusiness=data[0];await renderBusiness(currentBusiness);loading.style.display="none";shopCard.style.display="block";loadProducts();}catch(e){loading.style.display="none";errorBox.style.display="block";errorBox.innerHTML=`<b>Error:</b> ${esc(e.message)}<br><br><button onclick="location.href='index.html'" style="padding:10px 15px;background:#087a3e;color:#fff;border:0;border-radius:9px">Back to LosOja</button>`}
 }
 async function renderBusiness(b){
  const name=b.name||"Business",cat=b.category||"Business",loc=b.location||"Nigeria",phone=(b.phone||"").trim(),img=b.image_url||b.image||"",price=b.price;
@@ -137,6 +141,34 @@ async function openLosOjaChat(b,openEscrow=false){
 }
 async function deleteBusiness(id){
  try{const token=await (async()=>{try{if(typeof window.getSupabaseAccessToken==="function"){const r=await window.getSupabaseAccessToken();return r?.access_token||r} }catch{}return null})();const res=await fetch(`${SUPABASE_URL}/rest/v1/businesses?id=eq.${id}`,{method:"DELETE",headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${token||SUPABASE_KEY}`}});if(!res.ok)throw new Error("Delete failed");showToast("Deleted!");setTimeout(()=>location.href="index.html",1000)}catch(e){showToast(e.message)}
+}
+async function loadProducts(){
+ const businessId = getBusinessId();
+ const list = document.getElementById("productsList");
+ if(!list) return;
+ try{
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/products?business_id=eq.${businessId}&order=created_at.desc`,{headers:{apikey:SUPABASE_KEY,Authorization:"Bearer "+SUPABASE_KEY}});
+  const products = await res.json();
+  if(!products.length){list.innerHTML='<p style="color:#888;font-size:14px">No products yet. Click + Add Product if you own this business.</p>';return}
+  const user = await getShopUser();
+  const isOwner = user && currentBusiness && String(user.id)===String(currentBusiness.user_id);
+  list.innerHTML = products.map(p=>`
+   <div style="border:1px solid #e5ebe7;border-radius:14px;overflow:hidden;background:#fff">
+    <img src="${esc(p.image_url||'https://via.placeholder.com/300')}" style="width:100%;height:140px;object-fit:cover;cursor:pointer" onclick="location.href='product.html?id=${p.id}'">
+    <div style="padding:10px">
+     <div style="font-weight:800;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(p.name)}</div>
+     <div style="color:#087a3e;font-weight:800;margin-top:4px">₦${Number(p.price||0).toLocaleString()}</div>
+     ${isOwner?`<div style="display:flex;gap:6px;margin-top:8px"><button onclick="location.href='edit-product.html?id=${p.id}'" style="flex:1;padding:7px;border:1px solid #d7e1da;border-radius:8px;background:#fff;cursor:pointer;font-size:12px;font-weight:700">✏️ Edit</button><button onclick="deleteProd('${p.id}')" style="flex:1;padding:7px;border:0;border-radius:8px;background:#ffe5e5;color:#b91c1c;cursor:pointer;font-size:12px;font-weight:700">🗑️ Delete</button></div>`:''}
+    </div>
+   </div>
+  `).join("");
+ }catch(e){list.innerHTML='Error loading products'}
+}
+async function deleteProd(id){
+ if(!confirm("Delete this product?")) return;
+ let token=null;try{token=JSON.parse(localStorage.getItem("losoja_supabase_session"))?.access_token}catch{}
+ await fetch(`${SUPABASE_URL}/rest/v1/products?id=eq.${id}`,{method:"DELETE",headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${token||SUPABASE_KEY}`}});
+ showToast("Product deleted");loadProducts();
 }
 loadBusiness();
 </script>
