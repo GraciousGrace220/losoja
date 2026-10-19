@@ -2,121 +2,75 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Edit Business - LosOja</title>
+<title>Edit Product | LosOja</title>
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:Arial;background:#f4f7f5}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f4f7f5;color:#17201b}
 .topbar{position:sticky;top:0;background:#087a3e;color:#fff;padding:12px 18px}
 .topbar-inner{max-width:900px;margin:auto;display:flex;justify-content:space-between;align-items:center}
-.brand{color:#fff;text-decoration:none;font-weight:800;font-size:20px;display:flex;gap:10px;align-items:center}
-.brand-mark{width:38px;height:38px;background:#fff;color:#087a3e;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900}
-.back-btn{border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.15);color:#fff;border-radius:9px;padding:8px 14px;cursor:pointer;font-weight:700}
-.page{width:min(650px,calc(100% - 24px));margin:28px auto}
-.card{background:#fff;border-radius:18px;padding:26px;box-shadow:0 8px 32px rgba(0,0,0,.08);border:1px solid #e5ebe7}
-h1{margin:0 0 18px;color:#123d25;font-size:23px}
-label{display:block;margin:14px 0 6px;font-weight:700;font-size:13px;color:#123d25}
-input,textarea,select{width:100%;padding:12px 13px;border:1px solid #d7e1da;border-radius:11px;font-size:15px;outline:none;background:#fff}
-input:focus,textarea:focus,select:focus{border-color:#087a3e;box-shadow:0 0 0 3px rgba(8,122,62,.12)}
-textarea{min-height:100px;resize:vertical}
-.image-preview{width:100%;height:200px;border:2px dashed #d7e1da;border-radius:12px;margin-top:8px;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#fafcfb}
-.image-preview img{width:100%;height:100%;object-fit:cover}
-.upload-box{margin-top:8px;display:flex;gap:8px}
-.upload-btn{flex:1;background:#eef8f2;color:#087a3e;border:1px solid #cce8d7;border-radius:10px;padding:11px;font-weight:700;cursor:pointer;text-align:center}
-.btn{width:100%;margin-top:20px;background:#087a3e;color:#fff;border:0;border-radius:11px;padding:13px;font-weight:800;font-size:15px;cursor:pointer}
-.btn2{width:100%;margin-top:10px;background:#fff;color:#123d25;border:1px solid #d7e1da;border-radius:11px;padding:12px;font-weight:700;cursor:pointer}
-.toast{position:fixed;left:50%;bottom:25px;transform:translateX(-50%);background:#17201b;color:#fff;padding:12px 17px;border-radius:10px;z-index:999;opacity:0;transition:.2s}
-.toast.show{opacity:1}
+.brand{color:#fff;text-decoration:none;font-weight:800;font-size:20px}
+.back-btn{border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.15);color:#fff;border-radius:8px;padding:8px 12px;cursor:pointer}
+.page{width:min(600px,calc(100% - 28px));margin:24px auto}
+.card{background:#fff;border-radius:18px;padding:24px;box-shadow:0 8px 20px rgba(0,0,0,.08);border:1px solid #e5ebe7}
+input,textarea,select{width:100%;padding:12px;border:1px solid #d7e1da;border-radius:10px;margin-top:6px;font-size:15px}
+label{font-weight:700;margin-top:14px;display:block;color:#123d25;font-size:14px}
+.btn{margin-top:20px;width:100%;padding:13px;background:#087a3e;color:#fff;border:0;border-radius:10px;font-weight:800;cursor:pointer;font-size:16px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.toast{position:fixed;left:50%;bottom:25px;transform:translateX(-50%);background:#17201b;color:#fff;padding:12px 17px;border-radius:10px;opacity:0;transition:.2s;z-index:999}.toast.show{opacity:1}
 </style>
 </head>
 <body>
-<header class="topbar"><div class="topbar-inner"><a href="index.html" class="brand"><div class="brand-mark">L</div>LosOja</a><button class="back-btn" onclick="history.back()">← Back</button></div></header>
-<main class="page">
-<div class="card">
-<h1>✏️ Edit Business</h1>
-<div id="loading">Loading...</div>
-<form id="form" style="display:none">
-<label>Business Name *</label><input id="name" required>
-<label>Category</label><select id="category"><option>Business</option><option>Fashion</option><option>Electronics</option><option>Food</option><option>Services</option><option>Mobility</option><option>Beauty</option><option>Other</option></select>
-<label>Location *</label><input id="location" required>
-<label>Phone</label><input id="phone">
-<label>Price</label><input id="price" type="number">
-<label>Business Image</label>
-<div class="image-preview" id="preview"><span style="color:#9aa7a0">No image</span></div>
-<div class="upload-box">
-<label class="upload-btn" for="fileInput">📸 Choose from Gallery</label>
-<input type="file" id="fileInput" accept="image/*" style="display:none">
+<header class="topbar"><div class="topbar-inner"><a class="brand" href="index.html">LosOja</a><button class="back-btn" onclick="history.back()">← Back</button></div></header>
+<main class="page"><div class="card">
+<h2 style="margin-top:0">Edit Product</h2>
+<label>Product Name</label><input id="name">
+<label>Description</label><textarea id="description" rows="3"></textarea>
+<div class="row">
+<div><label>Price (₦)</label><input id="price" type="number"></div>
+<div><label>Stock</label><input id="stock" type="number" min="0"></div>
 </div>
-<input id="image_url" type="url" placeholder="Image URL go appear here auto" style="margin-top:8px">
-<label>Description</label><textarea id="description"></textarea>
-<button type="submit" class="btn" id="saveBtn">Save Changes</button>
-<button type="button" class="btn2" onclick="history.back()">Cancel</button>
-</form>
-</div>
-</main>
+<label>Category</label>
+<select id="product_category">
+<option value="General">General</option><option value="Food">Food</option><option value="Fashion">Fashion</option><option value="Electronics">Electronics</option><option value="Beauty">Beauty</option><option value="Services">Services</option>
+</select>
+<label>Image URL</label><input id="image_url">
+<button class="btn" id="saveBtn">Update Product</button>
+</div></main>
 <div id="toast" class="toast"></div>
 <script src="js/auth.js?v=2"></script>
 <script>
 const SUPABASE_URL="https://ycxshwgeebskdozmornh.supabase.co";
 const SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InljeHNod2dlZWJza2Rvem1vcm5oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzMDY0NjUsImV4cCI6MjEwMzg4MjQ2NX0.tMl7wILdVDhu0RWFaG_84ngJEryLt2c5cB8MEKW3kfU";
-const toast=document.getElementById("toast"),form=document.getElementById("form"),loading=document.getElementById("loading"),preview=document.getElementById("preview"),fileInput=document.getElementById("fileInput"),imageInput=document.getElementById("image_url");
-function showToast(m){toast.textContent=m;toast.classList.add("show");setTimeout(()=>toast.classList.remove("show"),3000)}
-function getId(){return new URLSearchParams(location.search).get("id")}
-async function getUser(){try{if(window.getCurrentUser){const r=await window.getCurrentUser();if(r?.user?.id)return r.user;if(r?.id)return r}}catch{}try{const raw=localStorage.getItem("losoja_supabase_session");if(raw){const j=JSON.parse(raw);return j.user||j.data?.user}}catch{}return null}
-function updatePreview(url){if(!url){preview.innerHTML='<span style="color:#9aa7a0">No image</span>';return}preview.innerHTML=`<img src="${url}" onerror="this.parentElement.innerHTML='Invalid image'">`}
-imageInput.addEventListener("input",()=>updatePreview(imageInput.value.trim()))
-fileInput.addEventListener("change",async()=>{
- const file=fileInput.files[0];if(!file)return;
- if(file.size>4*1024*1024){showToast("Image too big (max 4MB)");return}
- showToast("Uploading image...");
- const formData=new FormData();formData.append("image",file);
- try{
-  // Using free imgbb upload - no key needed fallback to base64 local preview
-  const reader=new FileReader();
-  reader.onload=async()=>{
-   // Try Supabase Storage first
-   try{
-    let token=null;try{token=JSON.parse(localStorage.getItem("losoja_supabase_session"))?.access_token}catch{}
-    const fileName=`business-${Date.now()}-${file.name}`.replace(/[^a-zA-Z0-9.-]/g,"-");
-    const res=await fetch(`${SUPABASE_URL}/storage/v1/object/business-images/${fileName}`,{method:"POST",headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${token||SUPABASE_KEY}`,"x-upsert":"true"},body:file});
-    if(res.ok){
-     const publicUrl=`${SUPABASE_URL}/storage/v1/object/public/business-images/${fileName}`;
-     imageInput.value=publicUrl;updatePreview(publicUrl);showToast("Image uploaded!");return;
-    }
-   }catch(e){}
-   // Fallback: use base64 as URL (works for now) + keep preview
-   updatePreview(reader.result);
-   // For permanent, we store as image_url via img hosting - here we use data url for preview but save as file
-   // Upload to free endpoint
-   try{
-    const up=await fetch(`https://api.imgbb.com/1/upload?key=7f3f6b7b0b5b6c9f1b0b1b0b1b0b1b0b1`,{method:"POST",body:formData});
-   }catch{}
-   imageInput.value=reader.result;
-   showToast("Image selected - will save with business");
-  };
-  reader.readAsDataURL(file);
- }catch(e){showToast("Upload failed, but preview set")}
-});
+function showToast(m){const t=document.getElementById("toast");t.textContent=m;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2500)}
+const productId=new URLSearchParams(location.search).get("id");
+let businessIdRef=null;
 async function load(){
- const id=getId();if(!id){loading.textContent="No business id";return}
- const user=await getUser();if(!user){location.href="index.html#login";return}
  try{
-  const res=await fetch(`${SUPABASE_URL}/rest/v1/businesses?id=eq.${id}&select=*`,{headers:{apikey:SUPABASE_KEY,Authorization:"Bearer "+SUPABASE_KEY}});
-  const data=await res.json();if(!data.length)throw new Error("Business not found");
-  const b=data[0];if(String(b.user_id)!==String(user.id)){showToast("You no own this business");setTimeout(()=>location.href=`shop.html?id=${id}`,1500);return}
-  document.getElementById("name").value=b.name||"";document.getElementById("category").value=b.category||"Business";document.getElementById("location").value=b.location||"";document.getElementById("phone").value=b.phone||"";document.getElementById("price").value=b.price||"";document.getElementById("image_url").value=b.image_url||b.image||"";document.getElementById("description").value=b.description||"";
-  updatePreview(b.image_url||b.image||"");
-  loading.style.display="none";form.style.display="block";
- }catch(e){loading.textContent=e.message}
+  const res=await fetch(`${SUPABASE_URL}/rest/v1/products?id=eq.${productId}`,{headers:{apikey:SUPABASE_KEY,Authorization:"Bearer "+SUPABASE_KEY}});
+  const data=await res.json();const p=data[0];if(!p){showToast("Product not found");return}
+  businessIdRef=p.business_id;
+  document.getElementById("name").value=p.name||"";
+  document.getElementById("description").value=p.description||"";
+  document.getElementById("price").value=p.price||0;
+  document.getElementById("stock").value=p.stock!=null?p.stock:1;
+  document.getElementById("product_category").value=p.product_category||"General";
+  document.getElementById("image_url").value=p.image_url||"";
+ }catch(e){showToast("Error loading")}
 }
-form.onsubmit=async(e)=>{
- e.preventDefault();const id=getId();const btn=document.getElementById("saveBtn");btn.disabled=true;btn.textContent="Saving...";
- const payload={name:document.getElementById("name").value.trim(),category:document.getElementById("category").value,location:document.getElementById("location").value.trim(),phone:document.getElementById("phone").value.trim(),price:document.getElementById("price").value?parseFloat(document.getElementById("price").value):null,image_url:document.getElementById("image_url").value.trim()||null,description:document.getElementById("description").value.trim()||null};
- try{
-  let token=null;try{token=JSON.parse(localStorage.getItem("losoja_supabase_session"))?.access_token}catch{}
-  const res=await fetch(`${SUPABASE_URL}/rest/v1/businesses?id=eq.${id}`,{method:"PATCH",headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${token||SUPABASE_KEY}`,"Content-Type":"application/json",Prefer:"return=representation"},body:JSON.stringify(payload)});
-  if(!res.ok){const t=await res.text();throw new Error(t)}
-  showToast("Saved!");setTimeout(()=>location.href=`shop.html?id=${id}`,1000);
- }catch(err){showToast("Error: "+err.message);btn.disabled=false;btn.textContent="Save Changes"}
-};
+document.getElementById("saveBtn").onclick=async()=>{
+ const raw=localStorage.getItem("losoja_supabase_session");let token=null;try{token=JSON.parse(raw||"{}").access_token}catch{}
+ if(!token){showToast("Login first");return}
+ const body={
+  name:document.getElementById("name").value.trim(),
+  description:document.getElementById("description").value.trim(),
+  price:Number(document.getElementById("price").value)||0,
+  stock:Number(document.getElementById("stock").value)||0,
+  product_category:document.getElementById("product_category").value,
+  image_url:document.getElementById("image_url").value.trim()
+ };
+ const res=await fetch(`${SUPABASE_URL}/rest/v1/products?id=eq.${productId}`,{method:"PATCH",headers:{apikey:SUPABASE_KEY,Authorization:"Bearer "+token,"Content-Type":"application/json"},body:JSON.stringify(body)});
+ if(!res.ok){showToast("Failed to update");return}
+ showToast("Updated!");setTimeout(()=>{location.href=`shop.html?id=${businessIdRef}`},800);
+}
 load();
 </script>
 </body>
