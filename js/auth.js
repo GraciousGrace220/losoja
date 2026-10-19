@@ -61,3 +61,9 @@ document.addEventListener("DOMContentLoaded",()=>{
     }
   }
 });
+// Make logout global for account.html
+window.logout = async function() {
+  if(window.supabaseClient) await window.supabaseClient.auth.signOut();
+  if(window.supabase) await window.supabase.auth.signOut();
+  localStorage.clear();
+}
