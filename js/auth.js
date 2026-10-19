@@ -7,11 +7,14 @@ function saveSession(session){
 function getSession(){
   try{ return JSON.parse(localStorage.getItem("losoja_supabase_session")||"null"); }catch{ return null; }
 }
+
 async function getCurrentUser(){
   const sess=getSession();
-  if(sess?.user) return {user:sess.user, session:sess};
-  return {user:null};
+  if(!sess) return null;
+  // Return user directly - account.html expects user object
+  return sess.user || sess.session?.user || sess;
 }
+
 async function signUp(email,password){
   const res=await fetch(`${SUPABASE_URL}/auth/v1/signup`,{
     method:"POST",
@@ -22,6 +25,7 @@ async function signUp(email,password){
   if(!res.ok) throw new Error(data.msg||data.error_description||"Signup failed");
   return data;
 }
+
 async function signIn(email,password){
   const res=await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`,{
     method:"POST",
@@ -33,16 +37,22 @@ async function signIn(email,password){
   saveSession(data);
   return data;
 }
-function signOut(){
-  localStorage.removeItem("losoja_supabase_session");
-  location.reload();
-}
-window.getCurrentUser=getCurrentUser;
-window.signUp=signUp;
-window.signIn=signIn;
-window.signOut=signOut;
 
-// Auto bind buttons if they exist
+// SINGLE logout function - for all pages
+function doLogout(){
+  localStorage.removeItem("losoja_supabase_session");
+  localStorage.removeItem("supabase.auth.token");
+  sessionStorage.clear();
+  window.location.href = "index.html";
+}
+
+window.getCurrentUser = getCurrentUser;
+window.signUp = signUp;
+window.signIn = signIn;
+window.logout = doLogout;
+window.signOut = doLogout;
+
+// Auto bind buttons
 document.addEventListener("DOMContentLoaded",()=>{
   const loginBtn=document.getElementById("loginBtn");
   const signupBtn=document.getElementById("signupBtn");
@@ -50,7 +60,7 @@ document.addEventListener("DOMContentLoaded",()=>{
     loginBtn.onclick=async()=>{
       const e=document.getElementById("email")?.value||prompt("Email");
       const p=document.getElementById("password")?.value||prompt("Password");
-      try{ await signIn(e,p); alert("Welcome back!"); location.reload(); }catch(err){ alert(err.message); }
+      try{ await signIn(e,p); alert("Welcome back!"); location.href="account.html"; }catch(err){ alert(err.message); }
     }
   }
   if(signupBtn){
@@ -61,9 +71,3 @@ document.addEventListener("DOMContentLoaded",()=>{
     }
   }
 });
-// Make logout global for account.html
-window.logout = async function() {
-  if(window.supabaseClient) await window.supabaseClient.auth.signOut();
-  if(window.supabase) await window.supabase.auth.signOut();
-  localStorage.clear();
-}
