@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LosOja - Buy Data & Airtime</title>
+<style>
+body{font-family:Arial;background:#f0fdf4;margin:0;padding:15px}
+.box{max-width:450px;margin:30px auto;background:#fff;padding:25px;border-radius:18px;box-shadow:0 10px 30px rgba(0,0,0,.1)}
+h2{text-align:center;color:#0a7a3d}
+input,select,button{width:100%;padding:14px;margin:10px 0;border-radius:12px;border:1px solid #ddd;font-size:16px;box-sizing:border-box}
+button{background:#25D366;color:#fff;font-weight:bold;border:none;cursor:pointer;font-size:18px}
+button:active{transform:scale(.97)}
+.note{text-align:center;font-size:13px;color:#666;margin-top:10px}
+</style>
+</head>
+<body>
+<div class="box">
+<h2>🛒 LosOja Data Store</h2>
+<p style="text-align:center">Instant Order via WhatsApp</p>
+
+<label>Network</label>
+<select id="network">
+<option>MTN</option>
+<option>GLO</option>
+<option>AIRTEL</option>
+<option>9MOBILE</option>
+</select>
+
+<label>Plan</label>
+<select id="plan">
+<option>500MB - ₦300 (30 Days)</option>
+<option>1GB - ₦500 (30 Days)</option>
+<option>2GB - ₦1000 (30 Days)</option>
+<option>5GB - ₦2500 (30 Days)</option>
+</select>
+
+<label>Phone Number</label>
+<input id="phone" type="tel" placeholder="080...">
+
+<label>Payment? (Optional)</label>
+<select id="paid">
+<option>I will pay now</option>
+<option>I have paid to LosOja account</option>
+</select>
+
+<button onclick="order()">Order on WhatsApp ✅</button>
+<p class="note">You go be redirected to WhatsApp. We deliver in 2 mins after payment.</p>
+<p id="msg" style="text-align:center;color:red"></p>
+</div>
+
+<script>
+function order(){
+ const network=document.getElementById('network').value;
+ const plan=document.getElementById('plan').value;
+ const phone=document.getElementById('phone').value;
+ const paid=document.getElementById('paid').value;
+ if(phone.length < 11){document.getElementById('msg').innerText='Enter correct phone number'; return;}
+
+ const myWhatsappNumber = "2348109099981"; // <-- CHANGE TO YOUR NUMBER e.g 23480...
+
+ const message = `*NEW LOSOJA ORDER*%0A%0A📱 Network: ${network}%0A📦 Plan: ${plan}%0A📞 Number to credit: ${phone}%0A💳 Payment: ${paid}%0A%0APlease confirm availability.`;
+
+ window.open(`https://wa.me/${myWhatsappNumber}?text=${message}`, '_blank');
+}
+</script>
+</body>
+</html>
