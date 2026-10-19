@@ -560,65 +560,33 @@
             }
 
 
-            logoutButton.addEventListener(
-                "click",
-                async function () {
+         logoutButton.addEventListener("click", async function () {
+    logoutButton.disabled = true;
+    logoutButton.textContent = "Logging out...";
+    try {
+        // 1. Try your own auth.js function
+        if (typeof window.logout === "function") {
+            await window.logout();
+        } 
+        // 2. Try Supabase directly (most LosOja sites use this)
+        else if (window.supabase && window.supabase.auth) {
+            await window.supabase.auth.signOut();
+        } 
+        // 3. Try supabase from auth.js
+        else if (typeof window.supabaseClient !== 'undefined') {
+            await window.supabaseClient.auth.signOut();
+        }
 
-                    logoutButton.disabled =
-                        true;
+        // Always clear and redirect
+        localStorage.clear();
+        sessionStorage.clear();
+        window.location.href = "index.html";
 
-                    logoutButton.textContent =
-                        "Logging out...";
-
-
-                    try {
-
-                        if (
-                            typeof window.logout ===
-                            "function"
-                        ) {
-
-                            await window.logout();
-
-                            window.location.href =
-                                "index.html";
-
-                            return;
-
-                        }
-
-
-                        throw new Error(
-                            "Logout function is not available."
-                        );
-
-                    } catch (error) {
-
-                        console.error(
-                            "LosOja logout error:",
-                            error
-                        );
-
-                        logoutButton.disabled =
-                            false;
-
-                        logoutButton.textContent =
-                            "🚪 Logout";
-
-                        showError(
-                            "Unable to log out right now."
-                        );
-
-                    }
-
-                }
-            );
-
-        })();
-
-    </script>
-
-
-</body>
-
-</html>
+    } catch (error) {
+        console.error("LosOja logout error:", error);
+        // Force logout even if error
+        localStorage.clear();
+        sessionStorage.clear();
+        window.location.href = "index.html";
+    }
+});
