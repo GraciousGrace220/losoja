@@ -1,115 +1,58 @@
 const SUPABASE_URL="https://ycxshwgeebskdozmornh.supabase.co";
 const SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InljeHNod2dlZWJza2Rvem1vcm5oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzMDY0NjUsImV4cCI6MjEwMzg4MjQ2NX0.tMl7wILdVDhu0RWFaG_84ngJEryLt2c5cB8MEKW3kfU";
 
-function saveSession(session){
-  try{ localStorage.setItem("losoja_supabase_session", JSON.stringify(session)); }catch{}
-}
-function getSession(){
-  try{ return JSON.parse(localStorage.getItem("losoja_supabase_session")||"null"); }catch{ return null; }
-}
+// STOP DOUBLE LOAD
+if(window.__losoja_auth_loaded){ console.warn("auth.js already loaded - skipping"); } else {
+window.__losoja_auth_loaded = true;
 
-async function getCurrentUser(){
-  const sess=getSession();
-  if(!sess) return null;
-  return sess.user || sess.session?.user || sess;
-}
+function saveSession(s){ try{ localStorage.setItem("losoja_supabase_session", JSON.stringify(s)); }catch{} }
+function getSession(){ try{ return JSON.parse(localStorage.getItem("losoja_supabase_session")||"null"); }catch{ return null; } }
+async function getCurrentUser(){ const sess=getSession(); if(!sess) return null; return sess.user || null; }
 
-async function signUp(email,password){
-  const res=await fetch(`${SUPABASE_URL}/auth/v1/signup`,{
-    method:"POST",
-    headers:{apikey:SUPABASE_KEY,"Content-Type":"application/json"},
-    body:JSON.stringify({email,password})
-  });
-  const data=await res.json();
-  if(!res.ok) throw new Error(data.msg||data.error_description||"Signup failed");
+async function signUp(email,password,name){
+  const res=await fetch(`${SUPABASE_URL}/auth/v1/signup`,{method:"POST",headers:{apikey:SUPABASE_KEY,"Content-Type":"application/json"},body:JSON.stringify({email,password,data:{full_name:name}})});
+  const data=await res.json(); if(!res.ok) throw new Error(data.msg||data.error_description||"Signup failed");
+  // auto signin after signup
+  await signIn(email,password);
   return data;
 }
-
 async function signIn(email,password){
-  const res=await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`,{
-    method:"POST",
-    headers:{apikey:SUPABASE_KEY,"Content-Type":"application/json"},
-    body:JSON.stringify({email,password})
-  });
-  const data=await res.json();
-  if(!res.ok) throw new Error(data.error_description||"Login failed");
-  saveSession(data);
-  return data;
+  const res=await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`,{method:"POST",headers:{apikey:SUPABASE_KEY,"Content-Type":"application/json"},body:JSON.stringify({email,password})});
+  const data=await res.json(); if(!res.ok) throw new Error(data.error_description||"Login failed");
+  saveSession(data); return data;
 }
+function doLogout(){ localStorage.removeItem("losoja_supabase_session"); localStorage.removeItem("supabase.auth.token"); sessionStorage.clear(); window.location.href="index.html"; }
 
-function doLogout(){
-  localStorage.removeItem("losoja_supabase_session");
-  localStorage.removeItem("supabase.auth.token");
-  sessionStorage.clear();
-  window.location.href = "index.html";
-}
-
-// FIXED MODAL CENTERING
 function tryOpenModal(type){
-  const modal = document.getElementById("authModal") || document.getElementById("loginModal") || document.querySelector(".modal");
-  if(modal){
-    modal.style.display = "flex";
-    modal.style.justifyContent = "center";
-    modal.style.alignItems = "center";
-    modal.classList.add("active","open","show");
-  }
-  // Switch tab if your modal get tabs
-  const loginForm = document.getElementById("loginForm") || document.getElementById("loginTab");
-  const signupForm = document.getElementById("signupForm") || document.getElementById("signupTab");
-  
-  if(type==="signup"){
-    if(loginForm) loginForm.style.display = "none";
-    if(signupForm) signupForm.style.display = "block";
-    document.querySelectorAll('[data-tab="signup"]').forEach(b=>b.click());
-  } else {
-    if(signupForm) signupForm.style.display = "none";
-    if(loginForm) loginForm.style.display = "block";
-    document.querySelectorAll('[data-tab="login"]').forEach(b=>b.click());
-  }
+  const modal = document.getElementById("authModal");
+  if(!modal){ console.error("authModal not found"); return; }
+  const loginBox = document.getElementById("loginBox");
+  const signupBox = document.getElementById("signupBox");
+  modal.style.display="flex"; modal.classList.remove("hidden"); modal.classList.add("active");
+  if(type==="signup"){ loginBox.style.display="none"; signupBox.style.display="block"; }
+  else { signupBox.style.display="none"; loginBox.style.display="block"; }
   console.log("LosOja: Opened "+type);
 }
 
-window.getCurrentUser = getCurrentUser;
-window.signUp = signUp;
-window.signIn = signIn;
-window.logout = doLogout;
-window.signOut = doLogout;
-window.openLogin = () => tryOpenModal("login");
-window.openSignup = () => tryOpenModal("signup");
+window.getCurrentUser=getCurrentUser; window.signUp=signUp; window.signIn=signIn; window.logout=doLogout; window.signOut=doLogout;
+window.openLogin=()=>tryOpenModal("login"); window.openSignup=()=>tryOpenModal("signup");
 
-// Auto
 document.addEventListener("DOMContentLoaded",()=>{
-  const params = new URLSearchParams(window.location.search);
-  if(params.get("openLogin")==="1") setTimeout(()=> window.openLogin(), 300);
-  if(params.get("openSignup")==="1") setTimeout(()=> window.openSignup(), 300);
-
-  // Close modal on overlay click
-  const modal = document.getElementById("authModal");
-  if(modal){
-    modal.addEventListener("click", (e)=>{
-      if(e.target===modal){
-        modal.style.display="none";
-        modal.classList.remove("active","show");
-      }
-    });
-  }
-
-  // Smart Account Button
-  const accountBtn = document.getElementById("accountBtn");
-  if(accountBtn){
-    accountBtn.addEventListener("click", async (e)=>{
-      e.preventDefault();
-      e.stopPropagation();
-      const user = await getCurrentUser();
-      if(user){
-        window.location.href = "account.html";
-      } else {
-        window.openLogin();
-      }
-    });
-  }
+  // forms
+  document.getElementById("loginForm")?.addEventListener("submit", async (e)=>{
+    e.preventDefault(); const email=document.getElementById("loginEmail").value; const pass=document.getElementById("loginPassword").value;
+    try{ await signIn(email,pass); location.reload(); }catch(err){ alert(err.message); }
+  });
+  document.getElementById("signupForm")?.addEventListener("submit", async (e)=>{
+    e.preventDefault(); const email=document.getElementById("signupEmail").value; const pass=document.getElementById("signupPassword").value; const name=document.getElementById("signupName").value;
+    try{ await signUp(email,pass,name); alert("Account created!"); location.reload(); }catch(err){ alert(err.message); }
+  });
+  // close on overlay
+  const modal=document.getElementById("authModal");
+  modal?.addEventListener("click",(e)=>{ if(e.target===modal){ modal.style.display="none"; modal.classList.add("hidden"); }});
+  // switch buttons
+  document.getElementById("openSignupFromLogin")?.addEventListener("click",(e)=>{e.preventDefault(); window.openSignup();});
+  document.getElementById("openLoginFromSignup")?.addEventListener("click",(e)=>{e.preventDefault(); window.openLogin();});
 });
 
-window.checkAuthAndRedirect = async function(){
-  return await getCurrentUser();
-}
+} // end guard
