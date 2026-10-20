@@ -3358,29 +3358,17 @@ if (loginFromSignup) {
 ===================================================== -->
 
 <script src="js/businesses.js?v=4"></script>
-   <script src="js/auth.js?v=7"></script><script src="js/app.js?v=999"></script>
+<script src="js/app.js?v=999"></script>
+<script src="js/auth.js?v=12"></script>
 
 <script>
-(function () {
-    function openLoginFromRedirect() {
-        const params = new URLSearchParams(window.location.search);
-        const shouldOpenLogin = params.get("openLogin") === "1" || window.location.hash === "#login";
-        if (!shouldOpenLogin) return;
-        const loginModal = document.getElementById("loginModal");
-        if (!loginModal) return;
-        loginModal.classList.remove("hidden");
-        loginModal.style.display = "flex";
-        loginModal.setAttribute("aria-hidden", "false");
-        window.history.replaceState({}, document.title, "index.html");
-    }
-
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', openLoginFromRedirect);
-    } else {
-        openLoginFromRedirect();
-    }
+// Only one login opener
+(function(){
+  const p = new URLSearchParams(location.search);
+  if(p.get("openLogin")==="1"){
+    setTimeout(()=>{ window.openLogin && window.openLogin(); }, 400);
+    history.replaceState({}, "", "index.html");
+  }
 })();
 </script>
-
-</body>
-</html>
+</body></html>
