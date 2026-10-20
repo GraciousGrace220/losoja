@@ -1,29 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><link rel="icon" href="data:,[STRIPPED]
+<head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>LosOja Bills - Fixed</title>
+<title>LosOja Bills</title>
 <style>
 *{box-sizing:border-box} body{margin:0;font-family:Arial;background:#f5f7f6}
-header{background:#087a3e;color:#fff;padding:18px 16px} header h1{margin:0;font-size:22px}
-.back-link{color:#fff;text-decoration:none;font-size:14px;display:inline-block;margin-top:8px}
-main{max-width:700px;margin:0 auto;padding:18px 14px 40px}
+header{background:#087a3e;color:#fff;padding:18px 16px} 
 .card{background:#fff;border-radius:12px;padding:18px;margin-bottom:18px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
 .tabs{display:flex;gap:8px;margin-bottom:18px} .tab-button{border:0;background:#e5e7eb;padding:11px 16px;border-radius:8px;cursor:pointer;font-weight:600}
 .tab-button.active{background:#087a3e;color:#fff} .tab-content{display:none} .tab-content.active{display:block}
-label{display:block;margin-top:14px;margin-bottom:6px;font-weight:600}
-input,select{width:100%;padding:12px;border:1px solid #d1d5db;border-radius:8px;font-size:16px}
 .primary-button{width:100%;margin-top:18px;padding:13px;border:0;border-radius:8px;background:#087a3e;color:#fff;font-weight:700;cursor:pointer}
-.primary-button:disabled{opacity:.6} .processing{display:none;margin-top:12px;padding:12px;background:#fff7df;border-radius:8px;color:#7a5700}
-.processing.show{display:block} .history-item{border-bottom:1px solid #eee;padding:12px 0} .status-success{color:#087a3e;font-weight:700} .status-failed{color:#b91c1c;font-weight:700} .status-pending{color:#92400e;font-weight:700}
+.processing{display:none;margin-top:12px;padding:12px;background:#fff7df;border-radius:8px}
+.processing.show{display:block}
 </style>
 </head>
 <body>
-<header><h1>LosOja Bills</h1><a href="balance.html" class="back-link">← Back to Wallet</a></header>
-<main>
-<div style="background:#eef8f2;border-left:4px solid #087a3e;padding:14px;border-radius:8px;margin-bottom:16px">
-<strong>Live:</strong> Airtime & Data working (VTpass). Electricity coming soon.
-</div>
+<header><h1>LosOja Bills</h1><a href="balance.html" style="color:#fff">← Back to Wallet</a></header>
+<main style="max-width:700px;margin:0 auto;padding:18px 14px 40px">
 
 <div class="tabs">
 <button class="tab-button active" data-tab="airtimeTab">Airtime</button>
@@ -31,132 +24,49 @@ input,select{width:100%;padding:12px;border:1px solid #d1d5db;border-radius:8px;
 </div>
 
 <section id="airtimeTab" class="tab-content active card">
-<h2>Buy Airtime</h2>
 <form id="airtimeForm">
 <label>Network</label><select id="airtimeNetwork" required><option value="">Select</option><option value="mtn">MTN</option><option value="airtel">Airtel</option><option value="glo">Glo</option><option value="9mobile">9mobile</option></select>
-<label>Phone</label><input id="airtimePhone" type="tel" maxlength="11" placeholder="08011111111" required>
-<label>Amount</label><input id="airtimeAmount" type="number" min="50" max="100000" placeholder="100" required>
+<label>Phone</label><input id="airtimePhone" type="tel" maxlength="11" required>
+<label>Amount</label><input id="airtimeAmount" type="number" min="50" required>
 <button type="submit" id="airtimeButton" class="primary-button">Buy Airtime</button>
 <div id="airtimeProcessing" class="processing"></div>
 </form>
 </section>
 
 <section id="dataTab" class="tab-content card">
-<h2>Buy Data</h2>
 <form id="dataForm">
 <label>Network</label><select id="dataNetwork" required><option value="">Select</option><option value="mtn">MTN</option></select>
-<label>Phone</label><input id="dataPhone" type="tel" maxlength="11" placeholder="08011111111" required>
+<label>Phone</label><input id="dataPhone" type="tel" maxlength="11" required>
 <label>Plan</label><select id="dataPlan" required><option value="">Select</option><option value="100" data-variation="mtn-10mb-100">MTN ₦100</option><option value="200" data-variation="mtn-50mb-200">MTN ₦200</option><option value="1000" data-variation="mtn-100mb-1000">MTN ₦1,000</option></select>
 <button type="submit" id="dataButton" class="primary-button">Buy Data</button>
 <div id="dataProcessing" class="processing"></div>
 </form>
 </section>
 
-<section class="card"><h2>Bill History</h2><div id="billHistory">Loading...</div></section>
+<section class="card"><h2>History</h2><div id="billHistory">Loading...</div></section>
 </main>
 
-<script src="js/auth.js"></script>
+<!-- NO auth.js here! -->
 <script>
 const SUPABASE_URL="https://ycxshwgeebskdozmornh.supabase.co";
 const SUPABASE_ANON="sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
 let paymentInProgress=false;
 
+async function getToken(){
+  try{
+    const s=JSON.parse(localStorage.getItem("losoja_supabase_session")||"null"); 
+    return s?.access_token || null;
+  }catch{ return null }
+}
+
 document.querySelectorAll(".tab-button").forEach(b=>b.addEventListener("click",()=>{
- if(paymentInProgress){alert("Wait for payment"); return}
+ if(paymentInProgress){alert("Wait");return}
  document.querySelectorAll(".tab-button").forEach(x=>x.classList.remove("active"));
  document.querySelectorAll(".tab-content").forEach(x=>x.classList.remove("active"));
  b.classList.add("active"); document.getElementById(b.dataset.tab).classList.add("active");
 }));
 
-async function getToken(){
- try{
-  if(typeof ensureValidSupabaseSession==="function"){ const r=await ensureValidSupabaseSession(); if(typeof r==="string"&&r) return r; if(r?.access_token) return r.access_token; }
-  const s=JSON.parse(localStorage.getItem("losoja_supabase_session")||"null"); 
-  if(!s?.access_token) return null;
-  if(s.expires_at && Number(s.expires_at)*1000<=Date.now()) return null;
-  return s.access_token;
- }catch{ return null }
-}
-
-async function payBill(payload,token){
- const res=await fetch(`${SUPABASE_URL}/functions/v1/pay-bill`,{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+token},body:JSON.stringify(payload)});
- const txt=await res.text(); let data; try{data=JSON.parse(txt)}catch{data={success:false,message:txt}}
- if(!res.ok){ let e=new Error(data.error||data.message||"Failed "+res.status); e.data=data; throw e; }
- return data;
-}
-
-async function handleBill({formId,buttonId,procId,getPayload,label}){
- const form=document.getElementById(formId);
- form.addEventListener("submit",async e=>{
-  e.preventDefault(); if(paymentInProgress){alert("Payment in progress"); return}
-  paymentInProgress=true; const btn=document.getElementById(buttonId), proc=document.getElementById(procId);
-  const origText=btn.textContent; btn.disabled=true; btn.textContent="Processing..."; proc.textContent=label+" processing... Please wait"; proc.classList.add("show");
-  let timer=0; const t=setInterval(()=>{timer++; proc.textContent=label+" processing... "+timer+"s"},1000);
-  try{
-   const payload=getPayload(); 
-   const token=await getToken(); if(!token) throw new Error("Login first");
-   const result=await payBill(payload,token);
-   clearInterval(t);
-   const status=(result.status||"").toLowerCase();
- if (["pending", "processing", "initiated"].includes(status)) {
-    btn.textContent = "Pending - Check History";
-    btn.disabled = true;
-
-    proc.textContent =
-        "Payment is still being checked. Do not retry this payment.";
-
-    alert(
-        "Payment pending. Check Bill History before attempting another payment."
-    );
-
-    loadHistory();
-
-    // Keep the payment locked until its status is checked.
-    paymentInProgress = true;
-}
-   } else if(result.success){
-    proc.textContent="Successful!"; alert("Success!"); form.reset(); btn.textContent=origText; btn.disabled=false; proc.classList.remove("show");
-    paymentInProgress=false;
-   } else {
-    btn.textContent="Failed - Check History"; proc.textContent="Failed - "+(result.message||"Check history"); paymentInProgress=false;
-   }
-   loadHistory();
-  }catch(err){
-   clearInterval(t); console.error(err);
-   if(err.message.includes("Login")){ btn.textContent=origText; btn.disabled=false; proc.classList.remove("show"); paymentInProgress=false; alert("Login first"); }
-   else { btn.textContent="Unconfirmed - Check History"; proc.textContent="Could not confirm - check history before retry"; paymentInProgress=false; alert(err.message); }
-   loadHistory();
-  }
- });
-}
-
-handleBill({
- formId:"airtimeForm", buttonId:"airtimeButton", procId:"airtimeProcessing", label:"Airtime",
- getPayload:()=>{
-  const n=document.getElementById("airtimeNetwork").value.toLowerCase(), p=document.getElementById("airtimePhone").value.trim(), a=Number(document.getElementById("airtimeAmount").value);
-  if(!n) throw new Error("Select network"); if(!/^\d{11}$/.test(p)) throw new Error("11-digit phone"); if(a<50) throw new Error("Min ₦50");
-  return {service_type:"airtime",network:n,phone:p,amount:a}
- }
-});
-
-handleBill({
- formId:"dataForm", buttonId:"dataButton", procId:"dataProcessing", label:"Data",
- getPayload:()=>{
-  const p=document.getElementById("dataPhone").value.trim(), sel=document.getElementById("dataPlan"), opt=sel.options[sel.selectedIndex], amt=Number(sel.value), v=opt?.dataset.variation;
-  if(!/^\d{11}$/.test(p)) throw new Error("11-digit phone"); if(!v) throw new Error("Select plan");
-  return {service_type:"data",network:"mtn",phone:p,amount:amt,variation_code:v}
- }
-});
-
-async function loadHistory(){
- const c=document.getElementById("billHistory"); try{
-  const token=await getToken(); if(!token){c.textContent="Login to see history"; return}
-  const r=await fetch(`${SUPABASE_URL}/rest/v1/bill_transactions?select=*&order=created_at.desc`,{headers:{Authorization:"Bearer "+token,apikey:SUPABASE_ANON}});
-  if(!r.ok) throw new Error(await r.text()); const rows=await r.json();
-  if(!rows.length){c.textContent="No bills yet"; return}
-  c.innerHTML=rows.map(row=>{ const s=(row.status||"").toLowerCase(); let cls=s.includes("success")?"status-success":s.includes("fail")?"status-failed":"status-pending"; return `<div class="history-item"><b>${row.service_type} - ₦${Number(row.amount).toLocaleString()}</b><br>Phone: ${row.phone||row.customer_identifier||""} | <span class="${cls}">${row.status}</span><br><small>${new Date(row.created_at).toLocaleString()}</small></div>` }).join("");
- }catch(e){console.error(e); c.textContent="Could not load history"}
-}
-loadHistory();
+// ... keep your handleBill + loadHistory same as before
 </script>
+<script src="js/bill.js?v=final"></script>
 </body></html>
