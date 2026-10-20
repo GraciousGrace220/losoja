@@ -44,27 +44,29 @@ function doLogout(){
   window.location.href = "index.html";
 }
 
-// --- FIX FOR INDEX.HTML ---
+// FIXED MODAL CENTERING
 function tryOpenModal(type){
-  // Try common modal IDs your index.html may use
-  const modals = ["authModal","loginModal","signupModal","auth-modal","#authModal","#loginModal"];
-  for(let id of modals){
-    const el = document.getElementById(id.replace("#","")) || document.querySelector(id);
-    if(el){
-      el.style.display = "flex";
-      el.style.display = "block";
-      el.classList.add("active","open","show");
-    }
+  const modal = document.getElementById("authModal") || document.getElementById("loginModal") || document.querySelector(".modal");
+  if(modal){
+    modal.style.display = "flex";
+    modal.style.justifyContent = "center";
+    modal.style.alignItems = "center";
+    modal.classList.add("active","open","show");
   }
-  // Try buttons
-  if(type==="login"){
-    document.getElementById("openLoginBtn")?.click();
-    document.querySelector("[data-open-login]")?.click();
+  // Switch tab if your modal get tabs
+  const loginForm = document.getElementById("loginForm") || document.getElementById("loginTab");
+  const signupForm = document.getElementById("signupForm") || document.getElementById("signupTab");
+  
+  if(type==="signup"){
+    if(loginForm) loginForm.style.display = "none";
+    if(signupForm) signupForm.style.display = "block";
+    document.querySelectorAll('[data-tab="signup"]').forEach(b=>b.click());
   } else {
-    document.getElementById("openSignupBtn")?.click();
-    document.querySelector("[data-open-signup]")?.click();
+    if(signupForm) signupForm.style.display = "none";
+    if(loginForm) loginForm.style.display = "block";
+    document.querySelectorAll('[data-tab="login"]').forEach(b=>b.click());
   }
-  console.log("LosOja: Opened "+type+" modal");
+  console.log("LosOja: Opened "+type);
 }
 
 window.getCurrentUser = getCurrentUser;
@@ -75,38 +77,39 @@ window.signOut = doLogout;
 window.openLogin = () => tryOpenModal("login");
 window.openSignup = () => tryOpenModal("signup");
 
-// Auto handle ?openLogin=1
+// Auto
 document.addEventListener("DOMContentLoaded",()=>{
   const params = new URLSearchParams(window.location.search);
-  if(params.get("openLogin")==="1"){
-    setTimeout(()=> window.openLogin(), 500);
+  if(params.get("openLogin")==="1") setTimeout(()=> window.openLogin(), 300);
+  if(params.get("openSignup")==="1") setTimeout(()=> window.openSignup(), 300);
+
+  // Close modal on overlay click
+  const modal = document.getElementById("authModal");
+  if(modal){
+    modal.addEventListener("click", (e)=>{
+      if(e.target===modal){
+        modal.style.display="none";
+        modal.classList.remove("active","show");
+      }
+    });
   }
-  if(params.get("openSignup")==="1"){
-    setTimeout(()=> window.openSignup(), 500);
-  }
-  
-  // Bind if buttons exist in index.html
-  const loginBtn=document.getElementById("loginBtn");
-  const signupBtn=document.getElementById("signupBtn");
-  if(loginBtn){
-    loginBtn.onclick=async()=>{
-      const e=document.getElementById("email")?.value;
-      const p=document.getElementById("password")?.value;
-      if(!e||!p) return window.openLogin();
-      try{ await signIn(e,p); location.href="account.html"; }catch(err){ alert(err.message); }
-    }
-  }
-  if(signupBtn){
-    signupBtn.onclick=async()=>{
-      const e=document.getElementById("email")?.value;
-      const p=document.getElementById("password")?.value;
-      if(!e||!p) return window.openSignup();
-      try{ await signUp(e,p); alert("Check email, then login"); window.openLogin(); }catch(err){ alert(err.message); }
-    }
+
+  // Smart Account Button
+  const accountBtn = document.getElementById("accountBtn");
+  if(accountBtn){
+    accountBtn.addEventListener("click", async (e)=>{
+      e.preventDefault();
+      e.stopPropagation();
+      const user = await getCurrentUser();
+      if(user){
+        window.location.href = "account.html";
+      } else {
+        window.openLogin();
+      }
+    });
   }
 });
 
 window.checkAuthAndRedirect = async function(){
-  const user = await window.getCurrentUser();
-  return user;
+  return await getCurrentUser();
 }
