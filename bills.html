@@ -98,11 +98,21 @@ async function handleBill({formId,buttonId,procId,getPayload,label}){
    const result=await payBill(payload,token);
    clearInterval(t);
    const status=(result.status||"").toLowerCase();
-  if(["pending","processing","initiated"].includes(status)){
-    btn.textContent="Pending - Check History";
-    proc.textContent="Payment is still being checked. Do not retry this payment.";
-    paymentInProgress=false;
-    alert("Payment pending. Check Bill History before attempting another payment.");
+ if (["pending", "processing", "initiated"].includes(status)) {
+    btn.textContent = "Pending - Check History";
+    btn.disabled = true;
+
+    proc.textContent =
+        "Payment is still being checked. Do not retry this payment.";
+
+    alert(
+        "Payment pending. Check Bill History before attempting another payment."
+    );
+
+    loadHistory();
+
+    // Keep the payment locked until its status is checked.
+    paymentInProgress = true;
 }
    } else if(result.success){
     proc.textContent="Successful!"; alert("Success!"); form.reset(); btn.textContent=origText; btn.disabled=false; proc.classList.remove("show");
