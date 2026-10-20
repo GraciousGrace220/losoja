@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#087a3e">
     <meta name="description" content="Manage your LosOja account.">
-
     <title>My Account - LosOja</title>
 
     <style>
@@ -25,6 +24,10 @@
 
         button {
             font: inherit;
+        }
+
+        [hidden] {
+            display: none !important;
         }
 
         .header {
@@ -233,13 +236,8 @@
             <section class="profile-card" aria-label="Your profile">
                 <div class="profile-icon" aria-hidden="true">👤</div>
 
-                <div id="profileName" class="profile-name">
-                    LosOja User
-                </div>
-
-                <div id="profileEmail" class="profile-email">
-                    —
-                </div>
+                <div id="profileName" class="profile-name">LosOja User</div>
+                <div id="profileEmail" class="profile-email">—</div>
             </section>
 
             <div
@@ -284,15 +282,33 @@
         const backButton = document.getElementById("backButton");
 
         let accountLoaded = false;
-
-        function showError(message) {
-            errorMessage.textContent = message;
-            errorMessage.style.display = "block";
-        }
+        let loading = false;
+        let retryButton = null;
 
         function hideError() {
-            errorMessage.textContent = "";
+            errorMessage.replaceChildren();
             errorMessage.style.display = "none";
+            retryButton = null;
+        }
+
+        function showError(message, canRetry = false) {
+            hideError();
+
+            const messageText = document.createElement("div");
+            messageText.textContent = message;
+            errorMessage.appendChild(messageText);
+
+            if (canRetry) {
+                retryButton = document.createElement("button");
+                retryButton.type = "button";
+                retryButton.className = "retry-button";
+                retryButton.textContent = "Try Again";
+                retryButton.addEventListener("click", loadAccount);
+
+                errorMessage.appendChild(retryButton);
+            }
+
+            errorMessage.style.display = "block";
         }
 
         function showAccount() {
@@ -316,8 +332,15 @@
         });
 
         async function loadAccount() {
+            if (loading) return;
+
+            loading = true;
             hideError();
             showLoading("Loading your account...");
+
+            if (retryButton) {
+                retryButton.disabled = true;
+            }
 
             try {
                 if (typeof window.getCurrentUser !== "function") {
@@ -342,39 +365,31 @@
                 profileName.textContent = name;
                 profileEmail.textContent = user.email || "Email unavailable";
 
+                hideError();
                 showAccount();
 
             } catch (error) {
                 console.error("LosOja account loading error:", error);
 
-                status.style.display = "none";
-                accountContent.hidden = false;
-
-                if (!accountLoaded) {
-                    profileName.textContent = "Account unavailable";
+                if (accountLoaded) {
+                    accountContent.hidden = false;
+                    status.style.display = "none";
+                } else {
+                    status.style.display = "none";
+                    accountContent.hidden = false;
+                    profileName.textContent = "Account temporarily unavailable";
                     profileEmail.textContent =
-                        "We could not verify your account.";
+                        "Your account details could not be verified.";
                 }
 
                 showError(
-                    "Unable to load your account right now. " +
-                    "Please check your internet connection and try again."
+                    "Unable to load your account. Check your internet connection " +
+                    "and try again. If the problem continues, refresh the page.",
+                    true
                 );
 
-                if (!accountLoaded) {
-                    const retryButton = document.createElement("button");
-                    retryButton.type = "button";
-                    retryButton.className = "retry-button";
-                    retryButton.textContent = "Try Again";
-
-                    retryButton.addEventListener("click", loadAccount);
-
-                    errorMessage.appendChild(
-                        document.createElement("br")
-                    );
-
-                    errorMessage.appendChild(retryButton);
-                }
+            } finally {
+                loading = false;
             }
         }
 
@@ -386,24 +401,27 @@
                 return;
             }
 
-            const originalText = "🚪 Logout";
-
             logoutButton.disabled = true;
             logoutButton.textContent = "Logging out...";
             hideError();
 
             try {
                 await window.logout();
-                window.location.replace("index.html");
+
+                // The existing auth.js may already redirect.
+                // This is a fallback if it returns without navigating.
+                if (!window.location.pathname.endsWith("/index.html")) {
+                    window.location.replace("index.html");
+                }
 
             } catch (error) {
                 console.error("LosOja logout error:", error);
 
                 logoutButton.disabled = false;
-                logoutButton.textContent = originalText;
+                logoutButton.textContent = "🚪 Logout";
 
                 showError(
-                    "Could not log out. Please check your connection and try again."
+                    "Could not complete logout. Please try again."
                 );
             }
         });
