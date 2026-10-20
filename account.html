@@ -78,10 +78,24 @@
             logoutButton.addEventListener("click", async function () {
                 logoutButton.disabled = true;
                 logoutButton.textContent = "Logging out...";
-                try { if (typeof window.logout === "function") await window.logout(); } catch(e){}
-                localStorage.clear();
-                sessionStorage.clear();
-                window.location.href = "index.html";
+             try {
+    if (typeof window.logout === "function") {
+        await window.logout();
+    } else {
+        showError("Logout is unavailable. Please try again.");
+        logoutButton.disabled = false;
+        logoutButton.textContent = "🚪 Logout";
+        return;
+    }
+} catch (error) {
+    console.error("LosOja logout error:", error);
+    showError("Could not log out. Please try again.");
+    logoutButton.disabled = false;
+    logoutButton.textContent = "🚪 Logout";
+    return;
+}
+
+window.location.href = "index.html";
             });
         }
     })();
