@@ -273,320 +273,81 @@
             ></div>
 
 
-            <div class="section-title">
-                My LosOja
-            </div>
+           <div class="section-title">
+    Account
+</div>
+
+<div id="status">Loading your account...</div>
+
+<div id="accountContent" style="display:none;">
+    <div id="profileName"></div>
+    <div id="profileEmail"></div>
+    <div id="errorMessage" style="display:none; color:red;"></div>
+
+    <!-- LOGOUT - ONLY ONE -->
+    <button id="logoutButton" class="logout-button" type="button">
+        🚪 Logout
+    </button>
+</div>
+
+</main>
+
+<script src="js/auth.js?v=2"></script>
+<script>
+(async function () {
+    const status = document.getElementById("status");
+    const accountContent = document.getElementById("accountContent");
+    const profileName = document.getElementById("profileName");
+    const profileEmail = document.getElementById("profileEmail");
+    const errorMessage = document.getElementById("errorMessage");
+    const logoutButton = document.getElementById("logoutButton");
+
+    function showError(message) {
+        errorMessage.textContent = message;
+        errorMessage.style.display = "block";
+    }
 
-
-            <!-- BALANCE -->
-
-            <div class="account-card">
-
-                <button
-                    class="account-link"
-                    type="button"
-                    onclick="window.location.href='balance.html'"
-                >
-
-                    <div class="account-icon">
-                        💰
-                    </div>
-
-                    <div class="account-text">
-
-                        <div class="account-title">
-                            Balance
-                        </div>
-
-                        <div class="account-description">
-                            View your LosOja wallet balance
-                        </div>
-
-                    </div>
-
-                    <div class="arrow">
-                        ›
-                    </div>
-
-                </button>
-
-            </div>
-
-
-            <!-- BARTER -->
-
-            <div class="account-card">
-
-                <button
-                    class="account-link"
-                    type="button"
-                    onclick="window.location.href='barter.html'"
-                >
-
-                    <div class="account-icon">
-                        🔄
-                    </div>
-
-                    <div class="account-text">
-
-                        <div class="account-title">
-                            My Barter Listings
-                        </div>
-
-                        <div class="account-description">
-                            Manage your Trade by Barter listings
-                        </div>
-
-                    </div>
-
-                    <div class="arrow">
-                        ›
-                    </div>
-
-                </button>
-
-            </div>
-
-
-            <!-- CHATS -->
-
-            <div class="account-card">
-
-                <button
-                    class="account-link"
-                    type="button"
-                    onclick="window.location.href='chat.html'"
-                >
-
-                    <div class="account-icon">
-                        💬
-                    </div>
-
-                    <div class="account-text">
-
-                        <div class="account-title">
-                            My Chats
-                        </div>
-
-                        <div class="account-description">
-                            Open your LosOja conversations
-                        </div>
-
-                    </div>
-
-                    <div class="arrow">
-                        ›
-                    </div>
-
-                </button>
-
-            </div>
-
-
-            <!-- BUSINESSES -->
-
-            <div class="account-card">
-
-                <button
-                    class="account-link"
-                    type="button"
-                    onclick="window.location.href='index.html#businesses'"
-                >
-
-                    <div class="account-icon">
-                        🏪
-                    </div>
-
-                    <div class="account-text">
-
-                        <div class="account-title">
-                            My Businesses
-                        </div>
-
-                        <div class="account-description">
-                            Manage businesses connected to LosOja
-                        </div>
-
-                    </div>
-
-                    <div class="arrow">
-                        ›
-                    </div>
-
-                </button>
-
-            </div>
-
-
-            <div class="section-title">
-                Account
-            </div>
-
-
-            <!-- LOGOUT -->
-
-            <button
-                id="logoutButton"
-                class="logout-button"
-                type="button"
-            >
-                🚪 Logout
-            </button>
-
-        </div>
-
-    </main>
-
-
-    <script src="js/auth.js?v=2"></script>
-
-
-    <script>
-
-        (async function () {
-
-            const status =
-                document.getElementById(
-                    "status"
-                );
-
-            const accountContent =
-                document.getElementById(
-                    "accountContent"
-                );
-
-            const profileName =
-                document.getElementById(
-                    "profileName"
-                );
-
-            const profileEmail =
-                document.getElementById(
-                    "profileEmail"
-                );
-
-            const errorMessage =
-                document.getElementById(
-                    "errorMessage"
-                );
-
-            const logoutButton =
-                document.getElementById(
-                    "logoutButton"
-                );
-
-
-            function showError(message) {
-
-                errorMessage.textContent =
-                    message;
-
-                errorMessage.style.display =
-                    "block";
-
-            }
-
-
-            try {
-
-                if (
-                    typeof window.getCurrentUser !==
-                    "function"
-                ) {
-
-                    throw new Error(
-                        "Authentication system is not ready."
-                    );
-
-                }
-
-
-                const user =
-                    await window.getCurrentUser();
-
-
-                if (!user) {
-
-                    window.location.href =
-                        "index.html?openLogin=1";
-
-                    return;
-
-                }
-
-
-                const metadata =
-                    user.user_metadata || {};
-
-
-                const name =
-                    metadata.full_name ||
-                    metadata.name ||
-                    user.email?.split("@")[0] ||
-                    "LosOja User";
-
-
-                profileName.textContent =
-                    name;
-
-                profileEmail.textContent =
-                    user.email || "—";
-
-
-                status.style.display =
-                    "none";
-
-                accountContent.style.display =
-                    "block";
-
-
-            } catch (error) {
-
-                console.error(
-                    "LosOja account error:",
-                    error
-                );
-
-                status.style.display =
-                    "none";
-
-                accountContent.style.display =
-                    "block";
-
-                showError(
-                    "Unable to load your account right now."
-                );
-
-            }
-
-
-         logoutButton.addEventListener("click", async function () {
-    logoutButton.disabled = true;
-    logoutButton.textContent = "Logging out...";
     try {
-        // 1. Try your own auth.js function
-        if (typeof window.logout === "function") {
-            await window.logout();
-        } 
-        // 2. Try Supabase directly (most LosOja sites use this)
-        else if (window.supabase && window.supabase.auth) {
-            await window.supabase.auth.signOut();
-        } 
-        // 3. Try supabase from auth.js
-        else if (typeof window.supabaseClient !== 'undefined') {
-            await window.supabaseClient.auth.signOut();
+        if (typeof window.getCurrentUser !== "function") {
+            throw new Error("Authentication system is not ready.");
         }
 
-        // Always clear and redirect
-        localStorage.clear();
-        sessionStorage.clear();
-        window.location.href = "index.html";
+        const user = await window.getCurrentUser();
+
+        if (!user) {
+            window.location.href = "index.html?openLogin=1";
+            return;
+        }
+
+        const metadata = user.user_metadata || {};
+        const name = metadata.full_name || metadata.name || user.email?.split("@")[0] || "LosOja User";
+
+        profileName.textContent = name;
+        profileEmail.textContent = user.email || "—";
+        status.style.display = "none";
+        accountContent.style.display = "block";
 
     } catch (error) {
-        console.error("LosOja logout error:", error);
-        // Force logout even if error
-        localStorage.clear();
-        sessionStorage.clear();
-        window.location.href = "index.html";
+        console.error("LosOja account error:", error);
+        status.style.display = "none";
+        accountContent.style.display = "block";
+        showError("Unable to load your account right now.");
     }
-});
+
+    // LOGOUT - inside same script
+    if(logoutButton){
+        logoutButton.addEventListener("click", async function () {
+            logoutButton.disabled = true;
+            logoutButton.textContent = "Logging out...";
+            try {
+                if (typeof window.logout === "function") {
+                    await window.logout();
+                }
+            } catch(e){}
+            localStorage.clear();
+            sessionStorage.clear();
+            window.location.href = "index.html";
+        });
+    }
+})();
+</script>
