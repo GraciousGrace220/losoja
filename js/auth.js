@@ -11,7 +11,6 @@ function getSession(){
 async function getCurrentUser(){
   const sess=getSession();
   if(!sess) return null;
-  // Return user directly - account.html expects user object
   return sess.user || sess.session?.user || sess;
 }
 
@@ -38,7 +37,6 @@ async function signIn(email,password){
   return data;
 }
 
-// SINGLE logout function - for all pages
 function doLogout(){
   localStorage.removeItem("losoja_supabase_session");
   localStorage.removeItem("supabase.auth.token");
@@ -46,43 +44,69 @@ function doLogout(){
   window.location.href = "index.html";
 }
 
+// --- FIX FOR INDEX.HTML ---
+function tryOpenModal(type){
+  // Try common modal IDs your index.html may use
+  const modals = ["authModal","loginModal","signupModal","auth-modal","#authModal","#loginModal"];
+  for(let id of modals){
+    const el = document.getElementById(id.replace("#","")) || document.querySelector(id);
+    if(el){
+      el.style.display = "flex";
+      el.style.display = "block";
+      el.classList.add("active","open","show");
+    }
+  }
+  // Try buttons
+  if(type==="login"){
+    document.getElementById("openLoginBtn")?.click();
+    document.querySelector("[data-open-login]")?.click();
+  } else {
+    document.getElementById("openSignupBtn")?.click();
+    document.querySelector("[data-open-signup]")?.click();
+  }
+  console.log("LosOja: Opened "+type+" modal");
+}
+
 window.getCurrentUser = getCurrentUser;
 window.signUp = signUp;
 window.signIn = signIn;
 window.logout = doLogout;
 window.signOut = doLogout;
+window.openLogin = () => tryOpenModal("login");
+window.openSignup = () => tryOpenModal("signup");
 
-// Auto bind buttons
+// Auto handle ?openLogin=1
 document.addEventListener("DOMContentLoaded",()=>{
+  const params = new URLSearchParams(window.location.search);
+  if(params.get("openLogin")==="1"){
+    setTimeout(()=> window.openLogin(), 500);
+  }
+  if(params.get("openSignup")==="1"){
+    setTimeout(()=> window.openSignup(), 500);
+  }
+  
+  // Bind if buttons exist in index.html
   const loginBtn=document.getElementById("loginBtn");
   const signupBtn=document.getElementById("signupBtn");
   if(loginBtn){
     loginBtn.onclick=async()=>{
-      const e=document.getElementById("email")?.value||prompt("Email");
-      const p=document.getElementById("password")?.value||prompt("Password");
-      try{ await signIn(e,p); alert("Welcome back!"); location.href="account.html"; }catch(err){ alert(err.message); }
+      const e=document.getElementById("email")?.value;
+      const p=document.getElementById("password")?.value;
+      if(!e||!p) return window.openLogin();
+      try{ await signIn(e,p); location.href="account.html"; }catch(err){ alert(err.message); }
     }
   }
   if(signupBtn){
     signupBtn.onclick=async()=>{
-      const e=document.getElementById("email")?.value||prompt("Email");
-      const p=document.getElementById("password")?.value||prompt("Password");
-      try{ await signUp(e,p); alert("Check email to confirm, then login"); }catch(err){ alert(err.message); }
+      const e=document.getElementById("email")?.value;
+      const p=document.getElementById("password")?.value;
+      if(!e||!p) return window.openSignup();
+      try{ await signUp(e,p); alert("Check email, then login"); window.openLogin(); }catch(err){ alert(err.message); }
     }
   }
 });
-// FIX for Loading stuck
+
 window.checkAuthAndRedirect = async function(){
   const user = await window.getCurrentUser();
-  if(!user){
-    console.log("No session, redirecting");
-    const loader = document.getElementById("loading");
-    if(loader) loader.innerHTML = 'Please <a href="index.html">login</a> first';
-    return null;
-  }
-  const loader = document.getElementById("loading");
-  if(loader) loader.style.display = "none";
-  const content = document.getElementById("accountContent");
-  if(content) content.style.display = "block";
   return user;
 }
