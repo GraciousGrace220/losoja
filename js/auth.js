@@ -71,3 +71,18 @@ document.addEventListener("DOMContentLoaded",()=>{
     }
   }
 });
+// FIX for Loading stuck
+window.checkAuthAndRedirect = async function(){
+  const user = await window.getCurrentUser();
+  if(!user){
+    console.log("No session, redirecting");
+    const loader = document.getElementById("loading");
+    if(loader) loader.innerHTML = 'Please <a href="index.html">login</a> first';
+    return null;
+  }
+  const loader = document.getElementById("loading");
+  if(loader) loader.style.display = "none";
+  const content = document.getElementById("accountContent");
+  if(content) content.style.display = "block";
+  return user;
+}
