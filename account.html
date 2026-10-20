@@ -1,52 +1,280 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Account - LosOja</title>
     <meta name="theme-color" content="#087a3e">
+    <meta name="description" content="Manage your LosOja account.">
+
+    <title>My Account - LosOja</title>
+
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: Arial, Helvetica, sans-serif; background: #f5f7f6; color: #111827; min-height: 100vh; }
-        .header { background: #087a3e; color: white; padding: 16px; display: flex; align-items: center; gap: 12px; position: sticky; top: 0; z-index: 10; }
-        .back-button { border: none; background: rgba(255,255,255,0.15); color: white; width: 40px; height: 40px; border-radius: 10px; font-size: 20px; cursor: pointer; }
-        .header h1 { font-size: 21px; }
-        .container { width: 100%; max-width: 600px; margin: 0 auto; padding: 20px 16px 40px; }
-        .profile-card { background: white; border-radius: 18px; padding: 22px; margin-bottom: 20px; box-shadow: 0 4px 18px rgba(0,0,0,0.06); }
-        .profile-icon { width: 62px; height: 62px; background: #e8f5ee; color: #087a3e; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; margin-bottom: 14px; }
-        .profile-name { font-size: 22px; font-weight: 700; margin-bottom: 6px; overflow-wrap: anywhere; }
-        .profile-email { color: #6b7280; font-size: 14px; overflow-wrap: anywhere; }
-        .section-title { font-size: 16px; font-weight: 700; margin: 22px 4px 10px; }
-        .logout-button { width: 100%; border: none; background: white; color: #dc2626; padding: 16px; border-radius: 16px; font-size: 15px; font-weight: 700; cursor: pointer; box-shadow: 0 3px 14px rgba(0,0,0,0.05); }
-        .logout-button:disabled { opacity: 0.65; cursor: wait; }
-        .status { text-align: center; padding: 40px 20px; color: #6b7280; }
-        .error { background: #fee2e2; color: #991b1b; padding: 14px; border-radius: 12px; margin-bottom: 15px; display: none; overflow-wrap: anywhere; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f5f7f6;
+            color: #111827;
+            min-height: 100vh;
+        }
+
+        button {
+            font: inherit;
+        }
+
+        .header {
+            background: #087a3e;
+            color: white;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .back-button {
+            border: none;
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+            border-radius: 10px;
+            font-size: 22px;
+            cursor: pointer;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .header h1 {
+            font-size: 21px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px 16px 40px;
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: 18px;
+            padding: 22px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+        }
+
+        .profile-icon {
+            width: 62px;
+            height: 62px;
+            background: #e8f5ee;
+            color: #087a3e;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            margin-bottom: 14px;
+        }
+
+        .profile-name {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            overflow-wrap: anywhere;
+        }
+
+        .profile-email {
+            color: #6b7280;
+            font-size: 14px;
+            overflow-wrap: anywhere;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin: 22px 4px 10px;
+        }
+
+        .account-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            width: 100%;
+            padding: 16px;
+            margin-bottom: 10px;
+            background: white;
+            color: #111827;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 600;
+            box-shadow: 0 3px 14px rgba(0, 0, 0, 0.03);
+        }
+
+        .account-link:hover {
+            border-color: #087a3e;
+            background: #f8fcf9;
+        }
+
+        .link-arrow {
+            color: #087a3e;
+            font-size: 20px;
+        }
+
+        .logout-button {
+            width: 100%;
+            border: 1px solid #fee2e2;
+            background: white;
+            color: #dc2626;
+            padding: 16px;
+            border-radius: 16px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 3px 14px rgba(0, 0, 0, 0.05);
+        }
+
+        .logout-button:hover {
+            background: #fff7f7;
+        }
+
+        .logout-button:disabled {
+            opacity: 0.65;
+            cursor: wait;
+        }
+
+        .status {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6b7280;
+            line-height: 1.6;
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 14px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            display: none;
+            overflow-wrap: anywhere;
+            line-height: 1.5;
+        }
+
+        .retry-button {
+            margin-top: 14px;
+            padding: 11px 18px;
+            border: none;
+            border-radius: 10px;
+            background: #087a3e;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .retry-button:hover {
+            background: #055c2e;
+        }
+
+        button:focus-visible,
+        a:focus-visible {
+            outline: 3px solid #ffb703;
+            outline-offset: 3px;
+        }
+
+        @media (max-width: 380px) {
+            .container {
+                padding: 16px 12px 30px;
+            }
+
+            .profile-card {
+                padding: 18px;
+            }
+
+            .header h1 {
+                font-size: 19px;
+            }
+        }
     </style>
 </head>
+
 <body>
     <header class="header">
-        <button class="back-button" type="button" id="backButton" aria-label="Go back">←</button>
+        <button
+            class="back-button"
+            type="button"
+            id="backButton"
+            aria-label="Go back"
+        >←</button>
+
         <h1>My Account</h1>
     </header>
+
     <main class="container">
-        <div id="status" class="status">Loading your account...</div>
-        <div id="accountContent" style="display:none;">
-            <section class="profile-card">
-                <div class="profile-icon">👤</div>
-                <div id="profileName" class="profile-name">LosOja User</div>
-                <div id="profileEmail" class="profile-email">—</div>
+        <div id="status" class="status" role="status" aria-live="polite">
+            Loading your account...
+        </div>
+
+        <div id="accountContent" hidden>
+            <section class="profile-card" aria-label="Your profile">
+                <div class="profile-icon" aria-hidden="true">👤</div>
+
+                <div id="profileName" class="profile-name">
+                    LosOja User
+                </div>
+
+                <div id="profileEmail" class="profile-email">
+                    —
+                </div>
             </section>
-            <div id="errorMessage" class="error" role="alert" aria-live="polite"></div>
+
+            <div
+                id="errorMessage"
+                class="error"
+                role="alert"
+                aria-live="polite"
+            ></div>
+
             <div class="section-title">Account</div>
-            <button id="logoutButton" class="logout-button" type="button">🚪 Logout</button>
+
+            <a class="account-link" href="balance.html">
+                <span>💳 Wallet &amp; Balance</span>
+                <span class="link-arrow" aria-hidden="true">›</span>
+            </a>
+
+            <a class="account-link" href="index.html">
+                <span>🏪 Explore LosOja</span>
+                <span class="link-arrow" aria-hidden="true">›</span>
+            </a>
+
+            <button
+                id="logoutButton"
+                class="logout-button"
+                type="button"
+            >🚪 Logout</button>
         </div>
     </main>
 
-    <!-- UPDATED TO V8 -->
     <script src="js/auth.js?v=8"></script>
+
     <script>
     (async function () {
         "use strict";
+
         const status = document.getElementById("status");
         const accountContent = document.getElementById("accountContent");
         const profileName = document.getElementById("profileName");
@@ -55,57 +283,132 @@
         const logoutButton = document.getElementById("logoutButton");
         const backButton = document.getElementById("backButton");
 
+        let accountLoaded = false;
+
         function showError(message) {
             errorMessage.textContent = message;
             errorMessage.style.display = "block";
         }
+
+        function hideError() {
+            errorMessage.textContent = "";
+            errorMessage.style.display = "none";
+        }
+
         function showAccount() {
             status.style.display = "none";
-            accountContent.style.display = "block";
+            accountContent.hidden = false;
+            accountLoaded = true;
         }
+
+        function showLoading(message) {
+            status.textContent = message;
+            status.style.display = "block";
+            accountContent.hidden = true;
+        }
+
         backButton.addEventListener("click", function () {
-            if (window.history.length > 1) window.history.back();
-            else window.location.href = "index.html";
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = "index.html";
+            }
         });
 
-        try {
-            if (typeof window.getCurrentUser !== "function") throw new Error("Auth system not ready");
-            const user = await window.getCurrentUser();
-            if (!user) {
-                window.location.href = "index.html?openLogin=1";
-                return;
+        async function loadAccount() {
+            hideError();
+            showLoading("Loading your account...");
+
+            try {
+                if (typeof window.getCurrentUser !== "function") {
+                    throw new Error("Authentication service is not ready.");
+                }
+
+                const user = await window.getCurrentUser();
+
+                if (!user) {
+                    window.location.replace("index.html?openLogin=1");
+                    return;
+                }
+
+                const metadata = user.user_metadata || {};
+
+                const name =
+                    metadata.full_name ||
+                    metadata.name ||
+                    (user.email ? user.email.split("@")[0] : "") ||
+                    "LosOja User";
+
+                profileName.textContent = name;
+                profileEmail.textContent = user.email || "Email unavailable";
+
+                showAccount();
+
+            } catch (error) {
+                console.error("LosOja account loading error:", error);
+
+                status.style.display = "none";
+                accountContent.hidden = false;
+
+                if (!accountLoaded) {
+                    profileName.textContent = "Account unavailable";
+                    profileEmail.textContent =
+                        "We could not verify your account.";
+                }
+
+                showError(
+                    "Unable to load your account right now. " +
+                    "Please check your internet connection and try again."
+                );
+
+                if (!accountLoaded) {
+                    const retryButton = document.createElement("button");
+                    retryButton.type = "button";
+                    retryButton.className = "retry-button";
+                    retryButton.textContent = "Try Again";
+
+                    retryButton.addEventListener("click", loadAccount);
+
+                    errorMessage.appendChild(
+                        document.createElement("br")
+                    );
+
+                    errorMessage.appendChild(retryButton);
+                }
             }
-            const metadata = user.user_metadata || {};
-            const name = metadata.full_name || metadata.name || (user.email ? user.email.split("@")[0] : "") || "LosOja User";
-            profileName.textContent = name;
-            profileEmail.textContent = user.email || "—";
-            showAccount();
-        } catch (error) {
-            console.error("LosOja account error:", error);
-            status.style.display = "none";
-            accountContent.style.display = "block";
-            showError("Unable to load your account right now. Please refresh and try again.");
         }
 
         logoutButton.addEventListener("click", async function () {
             if (typeof window.logout !== "function") {
-                showError("The logout service is unavailable. Please refresh.");
+                showError(
+                    "The logout service is unavailable. Please refresh the page."
+                );
                 return;
             }
+
             const originalText = "🚪 Logout";
+
             logoutButton.disabled = true;
             logoutButton.textContent = "Logging out...";
-            errorMessage.style.display = "none";
+            hideError();
+
             try {
                 await window.logout();
                 window.location.replace("index.html");
+
             } catch (error) {
                 console.error("LosOja logout error:", error);
+
                 logoutButton.disabled = false;
                 logoutButton.textContent = originalText;
-                showError("Could not log out. Please try again.");
+
+                showError(
+                    "Could not log out. Please check your connection and try again."
+                );
             }
         });
+
+        await loadAccount();
     })();
     </script>
 </body>
