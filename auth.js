@@ -800,25 +800,25 @@ Handles:
     }
 
 
-    /* =====================================================
-       OPEN LOGIN
-    ===================================================== */
+/* =====================================================
+   OPEN LOGIN
+===================================================== */
 
-    function openLogin() {
+function openLogin() {
+    const modal = document.getElementById("loginModal");
 
-        if (
-            window.App &&
-            typeof window.App.openModal ===
-            "function"
-        ) {
-
-            window.App.openModal(
-                "loginModal"
-            );
-
-        }
-
+    if (
+        window.App &&
+        typeof window.App.openModal === "function"
+    ) {
+        window.App.openModal("loginModal");
     }
+
+    if (modal && !modal.classList.contains("active")) {
+        modal.classList.add("active");
+    }
+}
+
 
 
     /* =====================================================
