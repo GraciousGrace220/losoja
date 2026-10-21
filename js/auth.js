@@ -434,24 +434,25 @@ function tryOpenModal(type) {
 
 
   
-    /* -------------------------
-       CLOSE WHEN CLICKING OUTSIDE
-    ------------------------- */
+  
+/* -------------------------
+   CLOSE WHEN CLICKING OUTSIDE
+------------------------- */
 
-    ["loginModal", "signupModal"].forEach(function (modalId) {
-      const modal = document.getElementById(modalId);
+["loginModal", "signupModal"].forEach(function (modalId) {
+  const modal = document.getElementById(modalId);
 
-      if (!modal || modal.dataset.authCloseBound) return;
+  if (!modal || modal.dataset.authCloseBound) return;
 
-      modal.dataset.authCloseBound = "true";
+  modal.dataset.authCloseBound = "true";
 
-      modal.addEventListener("click", function (event) {
-        if (event.target === modal) {
-          modal.classList.remove("active");
-          modal.style.display = "none";
-        }
-      });
-    });
+  modal.addEventListener("click", function (event) {
+    if (event.target === modal) {
+      modal.classList.remove("active");
+      modal.style.display = "none";
+    }
+  });
+});
 
 
 
