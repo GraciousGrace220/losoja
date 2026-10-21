@@ -2690,85 +2690,44 @@ document.addEventListener(
             );
 
 
-        /* =================================================
-           ACCOUNT
-        ================================================= */
+      /* =================================================
+   ACCOUNT
+================================================= */
 
-        async function openAccount() {
+async function openAccount(event) {
+    if (event) {
+        event.preventDefault();
+    }
 
-            try {
+    try {
+        if (typeof window.getCurrentUser === "function") {
+            const user = await window.getCurrentUser();
 
-                if (
-                    typeof window.getCurrentUser ===
-                    "function"
-                ) {
-
-                    const user =
-                        await window.getCurrentUser();
-
-
-                    if (!user) {
-
-                        sessionStorage.setItem(
-                            "losoja_return_to_account",
-                            "account.html"
-                        );
-
-
-                        window.location.href =
-                            "index.html?openLogin=1";
-
-                        return;
-
-                    }
-
-                }
-
-            } catch (error) {
-
-                console.warn(
-                    "LosOja: Account auth check failed.",
-                    error
+            if (!user) {
+                sessionStorage.setItem(
+                    "losoja_return_to_account",
+                    "account.html"
                 );
 
+                window.location.href = "index.html?openLogin=1";
+                return;
             }
-
-
-            window.location.href =
-                "account.html";
-
         }
+    } catch (error) {
+        console.warn("LosOja: Account auth check failed.", error);
+    }
 
+    window.location.href = "account.html";
+}
 
-        const accountButtons = [
-
-            document.getElementById(
-                "accountBtn"
-            ),
-
-            document.getElementById(
-                "bottomAccountBtn"
-            )
-
-        ];
-
-
-        accountButtons.forEach(
-            function (button) {
-
-                if (button) {
-
-                    button.addEventListener(
-                        "click",
-                        openAccount
-                    );
-
-                }
-
-            }
-        );
-
-
+[
+    document.getElementById("accountBtn"),
+    document.getElementById("bottomAccountBtn")
+].forEach(function (button) {
+    if (button) {
+        button.addEventListener("click", openAccount);
+    }
+});
         /* =================================================
            WALLET
         ================================================= */
