@@ -2,16 +2,20 @@
 (() => {
   "use strict";
 
-  const SUPABASE_URL = "https://ycxshwgeebskdozmornh.supabase.co";
-  const SUPABASE_KEY =
+  const URL_BASE = "https://ycxshwgeebskdozmornh.supabase.co";
+
+  // Same public anon JWT used by the existing root auth.js.
+  const API_KEY =
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InljeHNod2dlZWJza2Rvem1vcm5oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzMDY0NjUsImV4cCI6MjEwMzg4MjQ2NX0.tMl7wILdVDhu0RWFaG_G84ngJEryLt2c5cB8MEKW3kfU";
 
   const $ = id => document.getElementById(id);
-  let user = null;
-  let session = null;
-  let paymentLocked = false;
 
-  function getSession() {
+  let busy = false;
+  let uncertain = false;
+  let currentUser = null;
+  let currentSession = null;
+
+  function readSession() {
     try {
       return JSON.parse(
         localStorage.getItem("losoja_supabase_session") || "null"
@@ -21,278 +25,280 @@
     }
   }
 
-  function showMessage(id, message, keepVisible = true) {
+  function message(id, text) {
     const box = $(id);
     if (!box) return;
-
-    box.textContent = message;
-    box.classList.toggle("show", keepVisible);
+    box.textContent = text;
+    box.classList.add("show");
   }
 
-  function setButtonsDisabled(disabled) {
+  function lockPayment(value) {
+    busy = value;
+    window.paymentInProgress = value;
+
     ["airtimeButton", "dataButton"].forEach(id => {
-      const button = $(id);
-      if (button) button.disabled = disabled;
+      if ($(id)) $(id).disabled = value;
     });
   }
 
-  function setPaymentLock(locked) {
-    paymentLocked = locked;
-    window.paymentInProgress = locked;
-    setButtonsDisabled(locked);
-  }
-
-  function formatNaira(value) {
-    const amount = Number(value);
-    return Number.isFinite(amount)
-      ? "₦" + amount.toLocaleString("en-NG")
-      : "—";
-  }
-
-  function addHistoryRow(container, bill) {
-    const row = document.createElement("div");
-    row.style.cssText =
-      "padding:12px 0;border-bottom:1px solid #e5e7eb;overflow-wrap:anywhere";
-
-    const title = document.createElement("strong");
-    title.textContent =
-      String(bill.service_type || "Bill").toUpperCase() +
-      " · " + formatNaira(bill.amount);
-
-    const details = document.createElement("div");
-    details.style.cssText =
-      "font-size:14px;color:#555;margin-top:5px";
-
-    const parts = [
-      bill.network,
-      bill.phone || bill.customer_identifier,
-      bill.status,
-      bill.created_at
-        ? new Date(bill.created_at).toLocaleString()
-        : ""
-    ].filter(Boolean);
-
-    details.textContent = parts.join(" · ");
-    row.append(title, details);
-    container.appendChild(row);
+  function money(value) {
+    const number = Number(value);
+    return Number.isFinite(number)
+      ? "₦" + number.toLocaleString("en-NG")
+      : "Amount unavailable";
   }
 
   async function loadHistory() {
-    const container = $("billHistory");
-    if (!container || !user || !session?.access_token) return;
+    const output = $("billHistory");
+    if (!output) return;
 
-    container.textContent = "Loading bill history…";
+    currentSession = readSession();
+    currentUser = currentSession?.user || null;
+
+    if (!currentUser || !currentSession?.access_token) {
+      output.textContent = "Please log in to view bill history.";
+      return;
+    }
+
+    output.textContent = "Loading history…";
 
     try {
-      const params = new URLSearchParams({
-        select: "*",
-        user_id: "eq." + user.id,
+      const query = new URLSearchParams({
+        select: "id,user_id,service_type,network,phone,customer_identifier,amount,status,created_at",
+        user_id: "eq." + currentUser.id,
         order: "created_at.desc",
         limit: "20"
       });
 
       const response = await fetch(
-        `${SUPABASE_URL}/rest/v1/bill_transactions?${params}`,
+        `${URL_BASE}/rest/v1/bill_transactions?${query}`,
         {
           headers: {
-            apikey: SUPABASE_KEY,
-            Authorization: "Bearer " + session.access_token
+            apikey: API_KEY,
+            Authorization: "Bearer " + currentSession.access_token
           }
         }
       );
 
       if (!response.ok) {
-        throw new Error("History could not be loaded (" + response.status + ").");
+        throw new Error("History request failed: HTTP " + response.status);
       }
 
       const rows = await response.json();
-      container.replaceChildren();
+      output.replaceChildren();
 
       if (!Array.isArray(rows) || rows.length === 0) {
-        container.textContent = "No bill transactions found yet.";
+        output.textContent = "No bill transactions found yet.";
         return;
       }
 
-      rows.forEach(bill => addHistoryRow(container, bill));
+      rows.forEach(item => {
+        const row = document.createElement("div");
+        row.className = "history-row";
+
+        const heading = document.createElement("strong");
+        heading.textContent =
+          String(item.service_type || "Bill").toUpperCase() +
+          " — " + money(item.amount);
+
+        const details = document.createElement("div");
+        details.className = "history-details";
+
+        const values = [
+          item.network,
+          item.phone || item.customer_identifier,
+          "Status: " + String(item.status || "unknown"),
+          item.created_at
+            ? new Date(item.created_at).toLocaleString()
+            : ""
+        ].filter(Boolean);
+
+        details.textContent = values.join(" · ");
+        row.append(heading, details);
+        output.appendChild(row);
+      });
     } catch (error) {
-      console.error("LosOja bill history error:", error);
-      container.textContent =
-        "Bill history is temporarily unavailable. Please refresh to try again.";
+      console.error("LosOja history error:", error);
+      output.textContent =
+        "History could not load. Check the table permissions and session, then refresh.";
     }
   }
 
-  async function submitBill(event, serviceType) {
+  async function submitBill(event, type) {
     event.preventDefault();
 
-    if (paymentLocked) {
-      alert("A payment is still being resolved. Check history before trying again.");
+    if (busy || uncertain) {
+      alert(
+        "A payment may still be processing. Refresh history and confirm its status before making another purchase."
+      );
       return;
     }
 
-    session = getSession();
-    user = session?.user || null;
+    currentSession = readSession();
+    currentUser = currentSession?.user || null;
 
-    if (!user || !session?.access_token) {
-      alert("Your login session is missing. Please log in again.");
+    if (!currentUser || !currentSession?.access_token) {
+      alert("Your LosOja login session is missing. Please log in again.");
       window.location.href = "index.html?openLogin=1";
       return;
     }
 
-    const isAirtime = serviceType === "airtime";
-    const prefix = isAirtime ? "airtime" : "data";
+    const airtime = type === "airtime";
+    const prefix = airtime ? "airtime" : "data";
     const network = $(prefix + "Network")?.value;
     const phone = $(prefix + "Phone")?.value.trim();
-    const amount = Number($(isAirtime ? "airtimeAmount" : "dataPlan")?.value);
-    const processingId = prefix + "Processing";
+    const amount = Number(
+      $(airtime ? "airtimeAmount" : "dataPlan")?.value
+    );
+    const statusId = prefix + "Processing";
 
     if (!network || !/^\d{11}$/.test(phone || "")) {
-      showMessage(processingId, "Select a network and enter an 11-digit phone number.");
+      message(statusId, "Select a network and enter an 11-digit phone number.");
       return;
     }
 
-    if (!Number.isFinite(amount) || amount <= 0) {
-      showMessage(processingId, "Please select a valid amount or data plan.");
+    if (!Number.isInteger(amount) || amount <= 0) {
+      message(statusId, "Please choose a valid amount or data plan.");
       return;
     }
 
     let variationCode = null;
 
-    if (!isAirtime) {
+    if (airtime) {
+      if (!["mtn", "airtel", "glo", "9mobile"].includes(network)) {
+        message(statusId, "Please select a supported network.");
+        return;
+      }
+
+      if (amount < 50 || amount > 100000) {
+        message(statusId, "Airtime must be between ₦50 and ₦100,000.");
+        return;
+      }
+    } else {
       const plan = $("dataPlan");
-      variationCode = plan?.selectedOptions?.[0]?.dataset?.variation || null;
+      variationCode =
+        plan?.selectedOptions?.[0]?.dataset?.variation || null;
 
       if (
         network !== "mtn" ||
-        !["mtn-10mb-100", "mtn-50mb-200", "mtn-100mb-1000"]
-          .includes(variationCode)
+        ![
+          "mtn-10mb-100",
+          "mtn-50mb-200",
+          "mtn-100mb-1000"
+        ].includes(variationCode)
       ) {
-        showMessage(processingId, "Please select a supported MTN data plan.");
+        message(statusId, "Please select a supported MTN data plan.");
         return;
       }
     }
 
-    if (isAirtime && (amount < 50 || amount > 100000)) {
-      showMessage(processingId, "Airtime must be between ₦50 and ₦100,000.");
-      return;
-    }
-
-    const payload = {
-      service_type: serviceType,
-      network,
-      phone,
-      amount,
-      variation_code: variationCode
-    };
-
-    setPaymentLock(true);
-    showMessage(processingId, "Submitting payment securely. Please wait.");
-
-    let responseReceived = false;
+    lockPayment(true);
+    message(statusId, "Submitting your request. Please wait…");
 
     try {
-      const response = await fetch(
-        `${SUPABASE_URL}/functions/v1/pay-bill`,
-        {
-          method: "POST",
-          headers: {
-            apikey: SUPABASE_KEY,
-            Authorization: "Bearer " + session.access_token,
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(payload)
-        }
-      );
+      const response = await fetch(`${URL_BASE}/functions/v1/pay-bill`, {
+        method: "POST",
+        headers: {
+          apikey: API_KEY,
+          Authorization: "Bearer " + currentSession.access_token,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          service_type: type,
+          network,
+          phone,
+          amount,
+          variation_code: variationCode
+        })
+      });
 
-      responseReceived = true;
-
-      let result;
+      let result = {};
       try {
         result = await response.json();
       } catch {
-        result = {};
+        // An unreadable response does not prove the payment failed.
       }
 
-      if (result.status === "successful" && result.success) {
-        showMessage(processingId, "Payment successful!");
-        $(isAirtime ? "airtimePhone" : "dataPhone").value = "";
+      if (result.success === true && result.status === "successful") {
+        message(statusId, "Payment successful.");
+        uncertain = false;
+        lockPayment(false);
 
-        if (isAirtime) {
-          $("airtimeAmount").value = "";
+        if (airtime) {
           $("airtimeNetwork").value = "";
+          $("airtimePhone").value = "";
+          $("airtimeAmount").value = "";
         } else {
+          $("dataPhone").value = "";
           $("dataPlan").value = "";
         }
 
-        setPaymentLock(false);
         await loadHistory();
         return;
       }
 
       if (
-        result.status === "pending" ||
-        response.status >= 500 ||
-        !result.status && response.ok
+        result.payment_not_started === true ||
+        response.status === 400 ||
+        response.status === 401 ||
+        response.status === 403 ||
+        response.status === 405
       ) {
-        setPaymentLock(true);
-        showMessage(
-          processingId,
-          "Payment status is not confirmed. Do not submit again yet. Check your bill history before retrying."
-        );
-        await loadHistory();
-        return;
-      }
-
-      if (result.payment_not_started === true) {
-        setPaymentLock(false);
-        showMessage(
-          processingId,
-          result.error || "Payment was not started. Please correct the issue and try again."
+        // These responses indicate the request was rejected before
+        // a provider payment was confirmed as started.
+        lockPayment(false);
+        message(
+          statusId,
+          result.error || "Request rejected. Check your login and the details."
         );
         return;
       }
 
       if (result.status === "failed" && result.refunded === true) {
-        setPaymentLock(false);
-        showMessage(
-          processingId,
-          result.message || "Payment failed and the backend confirmed the refund."
+        uncertain = false;
+        lockPayment(false);
+        message(
+          statusId,
+          result.message || "Payment failed; the backend reports a refund."
         );
         await loadHistory();
         return;
       }
 
-      // A response without a confirmed final outcome is treated cautiously.
-      setPaymentLock(true);
-      showMessage(
-        processingId,
-        result.error || "Payment outcome could not be confirmed. Do not retry yet; check history."
+      // Pending, server errors, and unknown outcomes must not be retried
+      // automatically: the provider may already have received the request.
+      uncertain = true;
+      lockPayment(true);
+      message(
+        statusId,
+        result.error ||
+          "Payment outcome is unconfirmed. Do not submit again. Check history and confirm the transaction status first."
       );
       await loadHistory();
 
     } catch (error) {
-      console.error("LosOja bill payment error:", error);
+      console.error("LosOja payment request error:", error);
 
-      // A lost connection may happen after the provider has received the request.
-      setPaymentLock(true);
-      showMessage(
-        processingId,
-        responseReceived
-          ? "We could not verify the result. Do not retry yet; check history."
-          : "Connection interrupted. The payment result may be uncertain. Do not retry yet; check history."
+      // A network error cannot tell us whether the backend processed payment.
+      uncertain = true;
+      lockPayment(true);
+      message(
+        statusId,
+        "Connection interrupted. The payment result is unknown. Do not retry until the transaction has been checked."
       );
     }
   }
 
   document.addEventListener("DOMContentLoaded", async () => {
     if (typeof window.getCurrentUser !== "function") {
-      alert("LosOja login service did not load. Please refresh the page.");
+      alert("LosOja authentication did not load. Refresh and try again.");
       return;
     }
 
-    session = getSession();
-    user = await window.getCurrentUser();
+    currentSession = readSession();
+    currentUser = await window.getCurrentUser();
 
-    if (!user || !session?.access_token) {
+    if (!currentUser || !currentSession?.access_token) {
       window.location.href = "index.html?openLogin=1";
       return;
     }
@@ -304,6 +310,8 @@
     $("dataForm")?.addEventListener("submit", event =>
       submitBill(event, "data")
     );
+
+    $("refreshHistory")?.addEventListener("click", loadHistory);
 
     await loadHistory();
   });
