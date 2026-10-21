@@ -8,8 +8,7 @@
   const SUPABASE_URL =
     "https://ycxshwgeebskdozmornh.supabase.co";
 
-  const SUPABASE_KEY =
-sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe
+  const SUPABASE_KEY = "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
   const API = `${SUPABASE_URL}/functions/v1/pay-bill`;
   const HISTORY_API = `${SUPABASE_URL}/rest/v1/bill_transactions`;
 
