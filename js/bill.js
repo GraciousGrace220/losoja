@@ -1,6 +1,5 @@
 **File:** `js/bill.js`
 
-```javascript
 (() => {
   "use strict";
 
@@ -416,4 +415,3 @@
 
   window.losojaLoadBillHistory = loadHistory;
 })();
-```
