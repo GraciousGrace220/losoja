@@ -1,78 +1,280 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>LosOja Bills</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<style>
-*{box-sizing:border-box} body{margin:0;font-family:Arial;background:#f5f7f6}
-header{background:#087a3e;color:#fff;padding:18px 16px;display:flex;justify-content:space-between;align-items:center} 
-.card{background:#fff;border-radius:12px;padding:18px;margin-bottom:18px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
-.tabs{display:flex;gap:8px;margin-bottom:18px} .tab-button{border:0;background:#e5e7eb;padding:11px 16px;border-radius:8px;cursor:pointer;font-weight:600}
-.tab-button.active{background:#087a3e;color:#fff} .tab-content{display:none} .tab-content.active{display:block}
-.primary-button{width:100%;margin-top:18px;padding:13px;border:0;border-radius:8px;background:#087a3e;color:#fff;font-weight:700;cursor:pointer}
-.processing{display:none;margin-top:12px;padding:12px;background:#fff7df;border-radius:8px}
-.processing.show{display:block}
-a{color:inherit;text-decoration:none}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#087a3e">
+  <title>LosOja Bills</title>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f7f6;
+      color: #202820;
+    }
+
+    header {
+      background: #087a3e;
+      color: white;
+      padding: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    header h1 { margin: 0; font-size: 21px; }
+
+    header nav {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    header a { color: white; text-decoration: none; }
+
+    main {
+      width: 100%;
+      max-width: 700px;
+      margin: auto;
+      padding: 20px 14px 40px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 18px;
+      margin-bottom: 18px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.06);
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .tab-button {
+      flex: 1;
+      border: 0;
+      background: #e5e7eb;
+      padding: 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .tab-button.active {
+      background: #087a3e;
+      color: white;
+    }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    label {
+      display: block;
+      margin: 14px 0 7px;
+      font-weight: 600;
+    }
+
+    input, select {
+      width: 100%;
+      min-height: 44px;
+      padding: 11px;
+      border: 1px solid #cbd5cf;
+      border-radius: 8px;
+      background: white;
+      font: inherit;
+    }
+
+    .primary-button {
+      width: 100%;
+      margin-top: 18px;
+      padding: 14px;
+      border: 0;
+      border-radius: 8px;
+      background: #087a3e;
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .primary-button:disabled {
+      opacity: .6;
+      cursor: not-allowed;
+    }
+
+    .processing {
+      display: none;
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 8px;
+      background: #fff7df;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
+    .processing.show { display: block; }
+
+    .history-row {
+      padding: 13px 0;
+      border-bottom: 1px solid #e5e7eb;
+      overflow-wrap: anywhere;
+    }
+
+    .history-details {
+      color: #555;
+      font-size: 13px;
+      line-height: 1.6;
+      margin-top: 5px;
+    }
+
+    .muted { color: #66716a; line-height: 1.5; }
+
+    @media (max-width: 420px) {
+      header h1 { font-size: 18px; }
+      header nav { gap: 10px; font-size: 14px; }
+      .card { padding: 15px; }
+    }
+  </style>
 </head>
+
 <body>
-<header>
-  <h1 style="margin:0">LosOja Bills</h1>
-  <div style="display:flex;gap:12px">
-    <a href="balance.html">Wallet</a>
-    <a href="account.html" id="accountBtn">Account</a>
-  </div>
-</header>
-<main style="max-width:700px;margin:0 auto;padding:18px 14px 40px">
+  <header>
+    <h1>LosOja Bills</h1>
+    <nav>
+      <a href="balance.html">Wallet</a>
+      <a href="account.html" id="accountBtn">Account</a>
+      <a href="index.html">Home</a>
+    </nav>
+  </header>
 
-<div class="tabs">
-<button class="tab-button active" data-tab="airtimeTab">Airtime</button>
-<button class="tab-button" data-tab="dataTab">Data</button>
-</div>
+  <main>
+    <section class="card">
+      <h2>Pay your bills</h2>
+      <p class="muted">
+        Buy airtime or an available MTN data plan using your LosOja account.
+      </p>
+    </section>
 
-<section id="airtimeTab" class="tab-content active card">
-<form id="airtimeForm">
-<label>Network</label><select id="airtimeNetwork" required><option value="">Select</option><option value="mtn">MTN</option><option value="airtel">Airtel</option><option value="glo">Glo</option><option value="9mobile">9mobile</option></select><br><br>
-<label>Phone</label><input id="airtimePhone" type="tel" maxlength="11" required><br><br>
-<label>Amount</label><input id="airtimeAmount" type="number" min="50" required>
-<button type="submit" id="airtimeButton" class="primary-button">Buy Airtime</button>
-<div id="airtimeProcessing" class="processing"></div>
-</form>
-</section>
+    <div class="tabs">
+      <button type="button"
+        class="tab-button active"
+        data-tab="airtimeTab">Airtime</button>
 
-<section id="dataTab" class="tab-content card">
-<form id="dataForm">
-<label>Network</label><select id="dataNetwork" required><option value="">Select</option><option value="mtn">MTN</option></select><br><br>
-<label>Phone</label><input id="dataPhone" type="tel" maxlength="11" required><br><br>
-<label>Plan</label><select id="dataPlan" required><option value="">Select</option><option value="100" data-variation="mtn-10mb-100">MTN ₦100</option><option value="200" data-variation="mtn-50mb-200">MTN ₦200</option><option value="1000" data-variation="mtn-100mb-1000">MTN ₦1,000</option></select>
-<button type="submit" id="dataButton" class="primary-button">Buy Data</button>
-<div id="dataProcessing" class="processing"></div>
-</form>
-</section>
+      <button type="button"
+        class="tab-button"
+        data-tab="dataTab">Data</button>
+    </div>
 
-<section class="card"><h2>History</h2><div id="billHistory">Loading...</div></section>
-</main>
+    <section id="airtimeTab" class="tab-content active card">
+      <h2>Buy Airtime</h2>
 
-<script>
-const SUPABASE_URL="https://ycxshwgeebskdozmornh.supabase.co";
-const SUPABASE_ANON="sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
-let paymentInProgress=false;
+      <form id="airtimeForm">
+        <label for="airtimeNetwork">Network</label>
+        <select id="airtimeNetwork" required>
+          <option value="">Select network</option>
+          <option value="mtn">MTN</option>
+          <option value="airtel">Airtel</option>
+          <option value="glo">Glo</option>
+          <option value="9mobile">9mobile</option>
+        </select>
 
-// Check login like other pages
-(async ()=>{
-  const {data:{session}} = await supabase.auth.getSession();
-  if(!session){ window.location.href="login.html"; }
-})();
+        <label for="airtimePhone">Phone number</label>
+        <input id="airtimePhone" type="tel"
+          inputmode="numeric" maxlength="11"
+          pattern="[0-9]{11}" placeholder="11-digit phone number"
+          required>
 
-document.querySelectorAll(".tab-button").forEach(b=>b.addEventListener("click",()=>{
- if(paymentInProgress){alert("Wait");return}
- document.querySelectorAll(".tab-button").forEach(x=>x.classList.remove("active"));
- document.querySelectorAll(".tab-content").forEach(x=>x.classList.remove("active"));
- b.classList.add("active"); document.getElementById(b.dataset.tab).classList.add("active");
-}));
-</script>
-<script src="js/bill.js?v=5"></script>
+        <label for="airtimeAmount">Amount (₦)</label>
+        <input id="airtimeAmount" type="number"
+          min="50" max="100000" step="1"
+          placeholder="Enter amount" required>
+
+        <button type="submit" id="airtimeButton"
+          class="primary-button">Buy Airtime</button>
+
+        <div id="airtimeProcessing"
+          class="processing" role="status" aria-live="polite"></div>
+      </form>
+    </section>
+
+    <section id="dataTab" class="tab-content card">
+      <h2>Buy MTN Data</h2>
+
+      <form id="dataForm">
+        <label for="dataNetwork">Network</label>
+        <select id="dataNetwork" required>
+          <option value="mtn">MTN</option>
+        </select>
+
+        <label for="dataPhone">Phone number</label>
+        <input id="dataPhone" type="tel"
+          inputmode="numeric" maxlength="11"
+          pattern="[0-9]{11}" placeholder="11-digit phone number"
+          required>
+
+        <label for="dataPlan">Data plan</label>
+        <select id="dataPlan" required>
+          <option value="">Select a plan</option>
+          <option value="100"
+            data-variation="mtn-10mb-100">MTN ₦100</option>
+          <option value="200"
+            data-variation="mtn-50mb-200">MTN ₦200</option>
+          <option value="1000"
+            data-variation="mtn-100mb-1000">MTN ₦1,000</option>
+        </select>
+
+        <button type="submit" id="dataButton"
+          class="primary-button">Buy Data</button>
+
+        <div id="dataProcessing"
+          class="processing" role="status" aria-live="polite"></div>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>Bill history</h2>
+      <p class="muted">
+        Check the status of your recent bill transactions here.
+      </p>
+      <div id="billHistory" aria-live="polite">Loading history…</div>
+      <button type="button" id="refreshHistory"
+        class="primary-button">Refresh History</button>
+    </section>
+  </main>
+
+  <!-- Use LosOja's existing authentication system. -->
+  <script src="auth.js"></script>
+  <script>
+    window.paymentInProgress = false;
+
+    document.querySelectorAll(".tab-button").forEach(button => {
+      button.addEventListener("click", () => {
+        if (window.paymentInProgress) {
+          alert("Please wait while the current payment is being resolved.");
+          return;
+        }
+
+        document.querySelectorAll(".tab-button").forEach(item =>
+          item.classList.remove("active")
+        );
+
+        document.querySelectorAll(".tab-content").forEach(item =>
+          item.classList.remove("active")
+        );
+
+        button.classList.add("active");
+        document.getElementById(button.dataset.tab).classList.add("active");
+      });
+    });
+  </script>
+
+  <script src="js/bill.js?v=1"></script>
 </body>
 </html>
