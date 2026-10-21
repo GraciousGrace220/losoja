@@ -14,21 +14,10 @@ if (!window.__losoja_auth_loaded) {
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXAiLCJyZWYiOiJ5Y3hzd2hnZWVic2tkb3ptb3JuaCIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNzg4MzA2NDY1LCJleHAiOjIxMDM4ODI0NjV9.tMl7wILdVDhu0RWFaG_84ngJEryLt2c5cB8MEKW3kfU";
 
 
+ 
   /* =========================================================
      SESSION
   ========================================================= */
-
-  function saveSession(session) {
-    try {
-      localStorage.setItem(
-        "losoja_supabase_session",
-        JSON.stringify(session)
-      );
-    } catch (error) {
-      console.error("LosOja: Could not save session.", error);
-    }
-  }
-
 
   function getSession() {
     try {
@@ -39,6 +28,122 @@ if (!window.__losoja_auth_loaded) {
       return null;
     }
   }
+
+  /* =========================================================
+     SESSION REFRESH — KEEP EXISTING LOGIN SYSTEM
+  ========================================================= */
+
+  let losojaRefreshPromise = null;
+
+  function getTokenExpiry(token) {
+    try {
+      const payload = token.split(".")[1];
+      if (!payload) return 0;
+
+      const base64 = payload
+        .replace(/-/g, "+")
+        .replace(/_/g, "/");
+
+      const decoded = atob(
+        base64 + "=".repeat((4 - base64.length % 4) % 4)
+      );
+
+      return Number(JSON.parse(decoded).exp) * 1000 || 0;
+    } catch (error) {
+      return 0;
+    }
+  }
+
+  async function refreshSupabaseSession() {
+    if (losojaRefreshPromise) {
+      return losojaRefreshPromise;
+    }
+
+    losojaRefreshPromise = (async () => {
+      const session = getSession();
+
+      if (!session?.refresh_token) {
+        throw new Error("Please log in again to refresh your session.");
+      }
+
+      const response = await fetch(
+        `${SUPABASE_URL}/auth/v1/token?grant_type=refresh_token`,
+        {
+          method: "POST",
+          headers: {
+            apikey: SUPABASE_KEY,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            refresh_token: session.refresh_token
+          })
+        }
+      );
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok || !data.access_token) {
+        throw new Error(
+          data.msg ||
+          data.message ||
+          data.error_description ||
+          data.error ||
+          "Session refresh failed. Please log in again."
+        );
+      }
+
+      const updatedSession = {
+        ...session,
+        ...data,
+        user: data.user || session.user,
+        expires_at:
+          data.expires_at ||
+          Math.floor(Date.now() / 1000) +
+            Number(data.expires_in || 3600)
+      };
+
+      saveSession(updatedSession);
+      return updatedSession;
+    })();
+
+    try {
+      return await losojaRefreshPromise;
+    } finally {
+      losojaRefreshPromise = null;
+    }
+  }
+
+  async function ensureValidSupabaseSession() {
+    const session = getSession();
+
+    if (!session?.access_token) {
+      throw new Error("Please log in to continue.");
+    }
+
+    const tokenExpiry = getTokenExpiry(session.access_token);
+    const savedExpiry = Number(session.expires_at || 0) * 1000;
+    const expiry = tokenExpiry || savedExpiry;
+
+    if (expiry && expiry > Date.now() + 60000) {
+      return session;
+    }
+
+    return await refreshSupabaseSession();
+  }
+
+  async function getSupabaseAccessToken() {
+    const session = await ensureValidSupabaseSession();
+    return session.access_token;
+  }
+
+  async function getSupabaseSession() {
+    return await ensureValidSupabaseSession();
+  }
+
+  window.refreshSupabaseSession = refreshSupabaseSession;
+  window.ensureValidSupabaseSession = ensureValidSupabaseSession;
+  window.getSupabaseAccessToken = getSupabaseAccessToken;
+  window.getSupabaseSession = getSupabaseSession;
 
 
   async function getCurrentUser() {
