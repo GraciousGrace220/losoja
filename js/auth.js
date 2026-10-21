@@ -179,42 +179,43 @@ if (!window.__losoja_auth_loaded) {
      OPEN AND CLOSE LOGIN / SIGNUP MODALS
   ========================================================= */
 
-  function closeAuthModals() {
-    const loginModal = document.getElementById("loginModal");
-    const signupModal = document.getElementById("signupModal");
+ 
+function closeAuthModals() {
+  const loginModal = document.getElementById("loginModal");
+  const signupModal = document.getElementById("signupModal");
 
-    if (loginModal) {
-      loginModal.classList.remove("active");
-    }
-
-    if (signupModal) {
-      signupModal.classList.remove("active");
-    }
+  if (loginModal) {
+    loginModal.classList.remove("active");
+    loginModal.style.display = "none";
   }
 
+  if (signupModal) {
+    signupModal.classList.remove("active");
+    signupModal.style.display = "none";
+  }
+}
 
-  function tryOpenModal(type) {
-    const loginModal = document.getElementById("loginModal");
-    const signupModal = document.getElementById("signupModal");
+function tryOpenModal(type) {
+  const loginModal = document.getElementById("loginModal");
+  const signupModal = document.getElementById("signupModal");
 
-    if (!loginModal || !signupModal) {
-      console.error(
-        "LosOja: Login or signup modal was not found on this page."
-      );
-      return;
-    }
-
-    closeAuthModals();
-
-    if (type === "signup") {
-      signupModal.classList.add("active");
-    } else {
-      loginModal.classList.add("active");
-    }
-
-    console.log("LosOja: Opened " + type);
+  if (!loginModal || !signupModal) {
+    console.error("LosOja: Login or signup modal was not found.");
+    return;
   }
 
+  closeAuthModals();
+
+  if (type === "signup") {
+    signupModal.style.display = "flex";
+    signupModal.classList.add("active");
+  } else {
+    loginModal.style.display = "flex";
+    loginModal.classList.add("active");
+  }
+
+  console.log("LosOja: Opened " + type);
+}
 
   window.openLogin = function () {
     tryOpenModal("login");
@@ -444,8 +445,10 @@ if (!window.__losoja_auth_loaded) {
       modal.dataset.authCloseBound = "true";
 
       modal.addEventListener("click", function (event) {
-        if (event.target === modal) {
-          modal.classList.remove("active");
+       if (event.target === modal) {
+  modal.classList.remove("active");
+  modal.style.display = "none";
+}
         }
       });
     });
@@ -464,9 +467,10 @@ if (!window.__losoja_auth_loaded) {
         const targetId = button.getAttribute("data-close");
         const target = document.getElementById(targetId);
 
-        if (target) {
-          target.classList.remove("active");
-        }
+       if (target) {
+  target.classList.remove("active");
+  target.style.display = "none";
+}
       });
     });
   }
