@@ -203,41 +203,49 @@
         <div id="airtimeProcessing"
           class="processing" role="status" aria-live="polite"></div>
       </form>
-    </section>
 
-    <section id="dataTab" class="tab-content card">
-      <h2>Buy MTN Data</h2>
+<section id="dataTab" class="tab-content card">
+  <h2>Buy MTN Data</h2>
 
-      <form id="dataForm">
-        <label for="dataNetwork">Network</label>
-        <select id="dataNetwork" required>
-          <option value="mtn">MTN</option>
-        </select>
+  <form id="dataForm">
+    <label for="dataNetwork">Network</label>
+    <select id="dataNetwork" required>
+      <option value="mtn">MTN</option>
+    </select>
 
-        <label for="dataPhone">Phone number</label>
-        <input id="dataPhone" type="tel"
-          inputmode="numeric" maxlength="11"
-          pattern="[0-9]{11}" placeholder="11-digit phone number"
-          required>
+    <label for="dataPhone">Phone number</label>
+    <input
+      id="dataPhone"
+      type="tel"
+      inputmode="numeric"
+      maxlength="11"
+      pattern="[0-9]{11}"
+      placeholder="11-digit phone number"
+      required
+    >
 
-        <label for="dataPlan">Data plan</label>
-        <select id="dataPlan" required>
-          <option value="">Select a plan</option>
-          <option value="100"
-            data-variation="mtn-10mb-100">MTN ₦100</option>
-          <option value="200"
-            data-variation="mtn-50mb-200">MTN ₦200</option>
-          <option value="1000"
-            data-variation="mtn-100mb-1000">MTN ₦1,000</option>
-        </select>
+    <label for="dataPlan">Data plan</label>
+    <select id="dataPlan" required>
+      <option value="">Select a plan</option>
+      <option value="mtn-10mb-100">MTN ₦100</option>
+      <option value="mtn-50mb-200">MTN ₦200</option>
+      <option value="mtn-100mb-1000">MTN ₦1,000</option>
+    </select>
 
-        <button type="submit" id="dataButton"
-          class="primary-button">Buy Data</button>
+    <button
+      type="submit"
+      id="dataButton"
+      class="primary-button"
+    >Buy Data</button>
 
-        <div id="dataProcessing"
-          class="processing" role="status" aria-live="polite"></div>
-      </form>
-    </section>
+    <div
+      id="dataProcessing"
+      class="processing"
+      role="status"
+      aria-live="polite"
+    ></div>
+  </form>
+</section>
 
     <section class="card">
       <h2>Bill history</h2>
