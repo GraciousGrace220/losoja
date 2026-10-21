@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -186,4 +185,4 @@
 <script src="js/bill.js?v=1"></script>
 </body>
 </html>
-```
+
