@@ -1,4 +1,3 @@
-**File:** `js/bill.js`
 
 (() => {
   "use strict";
