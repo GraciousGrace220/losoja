@@ -1,188 +1,524 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#087a3e">
-  <title>LosOja Bills</title>
 
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f5f7f6;
-      color: #17211b;
+/* LosOja Bills
+   Uses the existing auth.js session.
+   Does not expose service-role credentials.
+*/
+(function () {
+  "use strict";
+
+  const SUPABASE_URL =
+    "https://ycxshwgeebskdozmornh.supabase.co";
+
+  const SUPABASE_KEY =
+    "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
+
+  const BILL_FUNCTION =
+    SUPABASE_URL + "/functions/v1/pay-bill";
+
+  const HISTORY_URL =
+    SUPABASE_URL +
+    "/rest/v1/bill_transactions";
+
+  const $ = (id) => document.getElementById(id);
+
+  let paymentInProgress = false;
+  let unresolvedPayment = false;
+  let currentUserId = null;
+
+  const money = (value) =>
+    "₦" + Number(value || 0).toLocaleString("en-NG", {
+      maximumFractionDigits: 2
+    });
+
+  function showNotice(id, message, type) {
+    const element = $(id);
+    if (!element) return;
+
+    element.className = "notice show " + (type || "info");
+    element.textContent = message;
+  }
+
+  function clearNotice(id) {
+    const element = $(id);
+    if (!element) return;
+
+    element.className = "notice";
+    element.textContent = "";
+  }
+
+  function setButtonsDisabled(disabled) {
+    ["airtimeButton", "dataButton"].forEach((id) => {
+      if ($(id)) $(id).disabled = disabled;
+    });
+  }
+
+  function setPaymentLock(locked) {
+    window.paymentInProgress = locked;
+    setButtonsDisabled(locked);
+  }
+
+  async function getSessionAndToken() {
+    if (typeof window.ensureValidSupabaseSession === "function") {
+      await window.ensureValidSupabaseSession();
     }
-    header {
-      background: #087a3e;
-      color: white;
-      padding: 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
+
+    if (typeof window.getSupabaseSession !== "function") {
+      throw new Error(
+        "LosOja authentication is unavailable. Please check auth.js."
+      );
     }
-    header h1 { margin: 0; font-size: 22px; }
-    header a { color: white; text-decoration: none; }
-    nav { display: flex; gap: 16px; }
-    main { max-width: 720px; margin: auto; padding: 20px 14px 40px; }
-    .card {
-      background: white;
-      border-radius: 12px;
-      padding: 18px;
-      margin-bottom: 18px;
-      box-shadow: 0 2px 8px rgba(0,0,0,.06);
+
+    const session = window.getSupabaseSession();
+
+    if (!session || !session.access_token) {
+      throw new Error("Please log in to your LosOja account first.");
     }
-    .tabs { display: flex; gap: 8px; margin-bottom: 18px; }
-    .tab-button {
-      flex: 1;
-      border: 0;
-      background: #e5e7eb;
-      padding: 12px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
+
+    if (session.expires_at &&
+        session.expires_at <= Math.floor(Date.now() / 1000)) {
+      throw new Error(
+        "Your login session has expired. Please log in again."
+      );
     }
-    .tab-button.active { background: #087a3e; color: white; }
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
-    label { display: block; margin: 14px 0 6px; font-weight: 600; }
-    input, select {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid #cbd5ce;
-      border-radius: 8px;
-      font: inherit;
-      background: white;
+
+    const token =
+      typeof window.getSupabaseAccessToken === "function"
+        ? window.getSupabaseAccessToken()
+        : session.access_token;
+
+    if (!token) {
+      throw new Error("Could not retrieve your login token.");
     }
-    .primary-button {
-      width: 100%;
-      margin-top: 18px;
-      padding: 13px;
-      border: 0;
-      border-radius: 8px;
-      background: #087a3e;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
+
+    return { session, token };
+  }
+
+  async function getCurrentUser(token) {
+    const response = await fetch(
+      SUPABASE_URL + "/auth/v1/user",
+      {
+        headers: {
+          apikey: SUPABASE_KEY,
+          Authorization: "Bearer " + token
+        }
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(
+        "Could not verify your login. Please refresh or log in again."
+      );
     }
-    .primary-button:disabled { opacity: .6; cursor: wait; }
-    .notice {
-      display: none;
-      padding: 12px;
-      border-radius: 8px;
-      margin-top: 14px;
-      overflow-wrap: anywhere;
+
+    return response.json();
+  }
+
+  async function apiHistory(token) {
+    const url = new URL(HISTORY_URL);
+
+    url.searchParams.set("select", "*");
+    url.searchParams.set("user_id", "eq." + currentUserId);
+    url.searchParams.set("order", "created_at.desc");
+    url.searchParams.set("limit", "50");
+
+    const response = await fetch(url.toString(), {
+      headers: {
+        apikey: SUPABASE_KEY,
+        Authorization: "Bearer " + token
+      },
+      cache: "no-store"
+    });
+
+    if (!response.ok) {
+      const text = await response.text();
+      throw new Error(
+        "History could not load (" + response.status + "). " +
+        text.slice(0, 180)
+      );
     }
-    .notice.show { display: block; }
-    .notice.info { background: #eff6ff; color: #1e40af; }
-    .notice.success { background: #ecfdf5; color: #065f46; }
-    .notice.error { background: #fef2f2; color: #991b1b; }
-    .notice.warning { background: #fff7df; color: #854d0e; }
-    .history-item {
-      border-bottom: 1px solid #e5e7eb;
-      padding: 12px 0;
-      overflow-wrap: anywhere;
+
+    return response.json();
+  }
+
+  function normalizeStatus(value) {
+    return String(value || "unknown").toLowerCase();
+  }
+
+  function renderHistory(rows) {
+    const container = $("billHistory");
+    if (!container) return;
+
+    container.replaceChildren();
+
+    if (!Array.isArray(rows) || rows.length === 0) {
+      container.textContent = "No bill transactions found yet.";
+      unresolvedPayment = false;
+      setPaymentLock(false);
+      return;
     }
-    .history-item:last-child { border-bottom: 0; }
-    .muted { color: #647067; font-size: 13px; }
-    .small-link { color: #087a3e; font-weight: bold; }
-  </style>
-</head>
 
-<body>
-<header>
-  <h1>LosOja Bills</h1>
-  <nav>
-    <a href="balance.html">Wallet</a>
-    <a href="account.html">Account</a>
-  </nav>
-</header>
+    const hasPending = rows.some((row) =>
+      ["pending", "processing", "initiated"].includes(
+        normalizeStatus(row.status)
+      )
+    );
 
-<main>
-  <div id="authNotice" class="notice warning show">
-    Checking your LosOja login…
-  </div>
+    unresolvedPayment = hasPending;
 
-  <section class="card">
-    <h2>Buy airtime or data</h2>
-    <p class="muted">Confirm the network, phone number and amount before paying.</p>
+    rows.forEach((row) => {
+      const item = document.createElement("div");
+      item.className = "history-item";
 
-    <div class="tabs">
-      <button type="button" class="tab-button active" data-tab="airtimeTab">Airtime</button>
-      <button type="button" class="tab-button" data-tab="dataTab">Data</button>
-    </div>
+      const title = document.createElement("strong");
+      title.textContent =
+        String(row.service_type || "Bill")
+          .replace(/_/g, " ")
+          .replace(/\b\w/g, (char) => char.toUpperCase()) +
+        (row.network ? " · " + String(row.network).toUpperCase() : "");
 
-    <section id="airtimeTab" class="tab-content active">
-      <form id="airtimeForm">
-        <label for="airtimeNetwork">Network</label>
-        <select id="airtimeNetwork" required>
-          <option value="">Select network</option>
-          <option value="mtn">MTN</option>
-          <option value="airtel">Airtel</option>
-          <option value="glo">Glo</option>
-          <option value="9mobile">9mobile</option>
-        </select>
+      const amount = document.createElement("div");
+      amount.textContent = money(
+        row.total_amount != null
+          ? row.total_amount
+          : Number(row.amount || 0) + Number(row.fee || 0)
+      );
 
-        <label for="airtimePhone">Phone number</label>
-        <input id="airtimePhone" type="tel" inputmode="numeric"
-               maxlength="11" pattern="[0-9]{11}"
-               placeholder="11-digit phone number" required>
+      const status = document.createElement("div");
+      status.textContent =
+        "Status: " + normalizeStatus(row.status).toUpperCase();
 
-        <label for="airtimeAmount">Amount (₦)</label>
-        <input id="airtimeAmount" type="number" min="50" max="100000"
-               step="1" placeholder="e.g. 100" required>
+      const details = document.createElement("div");
+      details.className = "muted";
 
-        <button id="airtimeButton" type="submit" class="primary-button">
-          Buy Airtime
-        </button>
-        <div id="airtimeNotice" class="notice" role="status" aria-live="polite"></div>
-      </form>
-    </section>
+      const phone =
+        row.customer_identifier || row.phone || "Not provided";
 
-    <section id="dataTab" class="tab-content">
-      <form id="dataForm">
-        <label for="dataNetwork">Network</label>
-        <select id="dataNetwork" required>
-          <option value="mtn">MTN</option>
-        </select>
+      const date = row.created_at
+        ? new Date(row.created_at).toLocaleString("en-NG")
+        : "Date unavailable";
 
-        <label for="dataPhone">Phone number</label>
-        <input id="dataPhone" type="tel" inputmode="numeric"
-               maxlength="11" pattern="[0-9]{11}"
-               placeholder="11-digit phone number" required>
+      details.textContent = "Phone: " + phone + " · " + date;
 
-        <label for="dataPlan">Data plan</label>
-        <select id="dataPlan" required>
-          <option value="">Select a plan</option>
-          <option value="100" data-variation="mtn-10mb-100">MTN ₦100 plan</option>
-          <option value="200" data-variation="mtn-50mb-200">MTN ₦200 plan</option>
-          <option value="1000" data-variation="mtn-100mb-1000">MTN ₦1,000 plan</option>
-        </select>
+      item.append(title, amount, status, details);
 
-        <button id="dataButton" type="submit" class="primary-button">
-          Buy Data
-        </button>
-        <div id="dataNotice" class="notice" role="status" aria-live="polite"></div>
-      </form>
-    </section>
-  </section>
+      if (row.failure_reason) {
+        const reason = document.createElement("div");
+        reason.className = "muted";
+        reason.textContent = "Details: " + row.failure_reason;
+        item.appendChild(reason);
+      }
 
-  <section class="card">
-    <h2>Transaction history</h2>
-    <button id="refreshHistory" type="button" class="primary-button"
-            style="margin-top:0;margin-bottom:12px">
-      Refresh History
-    </button>
-    <div id="billHistory" aria-live="polite">Loading transaction history…</div>
-  </section>
-</main>
+      container.appendChild(item);
+    });
 
-<!-- Keep LosOja's existing authentication system -->
-<script src="auth.js"></script>
-<script src="js/bill.js?v=1"></script>
-</body>
-</html>
+    setPaymentLock(unresolvedPayment);
+  }
 
+  async function refreshHistory() {
+    const container = $("billHistory");
+
+    if (!currentUserId) {
+      if (container) {
+        container.textContent =
+          "Log in to view your bill transaction history.";
+      }
+      return;
+    }
+
+    if (container) container.textContent = "Loading transaction history…";
+
+    try {
+      const { token } = await getSessionAndToken();
+      const rows = await apiHistory(token);
+      renderHistory(rows);
+
+      if (unresolvedPayment) {
+        showNotice(
+          "authNotice",
+          "A bill transaction is still pending. Check history before attempting another payment.",
+          "warning"
+        );
+      }
+    } catch (error) {
+      if (container) {
+        container.textContent = error.message ||
+          "Unable to load bill history.";
+      }
+    }
+  }
+
+  async function submitPayment({
+    serviceType,
+    network,
+    phone,
+    amount,
+    variationCode,
+    noticeId,
+    buttonId
+  }) {
+    if (paymentInProgress || unresolvedPayment) {
+      showNotice(
+        noticeId,
+        "A previous payment is unresolved. Refresh transaction history and confirm its status before paying again.",
+        "warning"
+      );
+      return;
+    }
+
+    if (!/^\d{11}$/.test(phone)) {
+      showNotice(noticeId, "Enter a valid 11-digit phone number.", "error");
+      return;
+    }
+
+    if (!Number.isFinite(amount) || amount <= 0) {
+      showNotice(noticeId, "Enter a valid payment amount.", "error");
+      return;
+    }
+
+    if (
+      serviceType === "airtime" &&
+      (amount < 50 || amount > 100000)
+    ) {
+      showNotice(
+        noticeId,
+        "Airtime must be between ₦50 and ₦100,000.",
+        "error"
+      );
+      return;
+    }
+
+    const expectedDataPrices = {
+      "mtn-10mb-100": 100,
+      "mtn-50mb-200": 200,
+      "mtn-100mb-1000": 1000
+    };
+
+    if (
+      serviceType === "data" &&
+      expectedDataPrices[variationCode] !== amount
+    ) {
+      showNotice(noticeId, "Invalid data plan selection.", "error");
+      return;
+    }
+
+    clearNotice(noticeId);
+    paymentInProgress = true;
+    setPaymentLock(true);
+
+    const button = $(buttonId);
+    const originalText = button ? button.textContent : "";
+
+    if (button) button.textContent = "Processing…";
+
+    showNotice(
+      noticeId,
+      "Submitting your request. Please do not refresh or submit another payment.",
+      "info"
+    );
+
+    let serverAcceptedRequest = false;
+
+    try {
+      const { token } = await getSessionAndToken();
+
+      const payload = {
+        service_type: serviceType,
+        network,
+        phone,
+        amount
+      };
+
+      if (serviceType === "data") {
+        payload.variation_code = variationCode;
+      }
+
+      const response = await fetch(BILL_FUNCTION, {
+        method: "POST",
+        headers: {
+          apikey: SUPABASE_KEY,
+          Authorization: "Bearer " + token,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      });
+
+      let result;
+
+      try {
+        result = await response.json();
+      } catch {
+        throw new Error(
+          "The payment result could not be confirmed. Check transaction history before retrying."
+        );
+      }
+
+      if (result.transaction_id) {
+        serverAcceptedRequest = true;
+      }
+
+      if (result.status === "successful" && result.success) {
+        showNotice(
+          noticeId,
+          "Payment successful! Check your transaction history for details.",
+          "success"
+        );
+      } else if (
+        result.status === "failed" &&
+        result.refunded === true
+      ) {
+        showNotice(
+          noticeId,
+          result.message || "Payment failed and the server reports a refund.",
+          "error"
+        );
+      } else if (
+        result.status === "pending" ||
+        result.transaction_id ||
+        response.status >= 500
+      ) {
+        unresolvedPayment = true;
+
+        showNotice(
+          noticeId,
+          result.error ||
+            "Payment status is not confirmed. Check transaction history before trying again.",
+          "warning"
+        );
+      } else {
+        showNotice(
+          noticeId,
+          result.error ||
+            "The request was rejected. No successful payment was confirmed.",
+          "error"
+        );
+      }
+
+      await refreshHistory();
+
+      if (result.status === "pending" || result.transaction_id) {
+        unresolvedPayment = true;
+        setPaymentLock(true);
+      }
+    } catch (error) {
+      if (serverAcceptedRequest) {
+        unresolvedPayment = true;
+        setPaymentLock(true);
+      }
+
+      showNotice(
+        noticeId,
+        error.message ||
+          "The payment result is uncertain. Check history before retrying.",
+        "warning"
+      );
+    } finally {
+      paymentInProgress = false;
+
+      if (button) button.textContent = originalText;
+
+      setPaymentLock(unresolvedPayment);
+    }
+  }
+
+  function initializeTabs() {
+    document.querySelectorAll(".tab-button").forEach((button) => {
+      button.addEventListener("click", () => {
+        if (paymentInProgress || unresolvedPayment) {
+          alert(
+            "Please resolve the pending payment before starting another transaction."
+          );
+          return;
+        }
+
+        document.querySelectorAll(".tab-button").forEach((tab) =>
+          tab.classList.remove("active")
+        );
+
+        document.querySelectorAll(".tab-content").forEach((tab) =>
+          tab.classList.remove("active")
+        );
+
+        button.classList.add("active");
+
+        const target = $(button.dataset.tab);
+        if (target) target.classList.add("active");
+      });
+    });
+  }
+
+  function initializeForms() {
+    $("airtimeForm").addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      await submitPayment({
+        serviceType: "airtime",
+        network: $("airtimeNetwork").value,
+        phone: $("airtimePhone").value.trim(),
+        amount: Number($("airtimeAmount").value),
+        noticeId: "airtimeNotice",
+        buttonId: "airtimeButton"
+      });
+    });
+
+    $("dataForm").addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const plan = $("dataPlan");
+      const selected = plan.options[plan.selectedIndex];
+
+      await submitPayment({
+        serviceType: "data",
+        network: $("dataNetwork").value,
+        phone: $("dataPhone").value.trim(),
+        amount: Number(plan.value),
+        variationCode: selected
+          ? selected.dataset.variation
+          : "",
+        noticeId: "dataNotice",
+        buttonId: "dataButton"
+      });
+    });
+
+    $("refreshHistory").addEventListener("click", refreshHistory);
+  }
+
+  async function initialize() {
+    initializeTabs();
+    initializeForms();
+    setPaymentLock(true);
+
+    try {
+      const { token } = await getSessionAndToken();
+      const user = await getCurrentUser(token);
+
+      if (!user || !user.id) {
+        throw new Error("Please log in to use LosOja Bills.");
+      }
+
+      currentUserId = user.id;
+
+      showNotice(
+        "authNotice",
+        "You are logged in. Your bill history is linked to your account.",
+        "success"
+      );
+
+      await refreshHistory();
+    } catch (error) {
+      showNotice(
+        "authNotice",
+        error.message || "Please log in to continue.",
+        "warning"
+      );
+
+      const history = $("billHistory");
+      if (history) {
+        history.textContent = "Log in to view your bill history.";
+      }
+
+      setPaymentLock(true);
+    }
+  }
+
+  initialize();
+})();
