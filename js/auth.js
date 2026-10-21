@@ -27,7 +27,12 @@ if (!window.__losoja_auth_loaded) {
       return null;
     }
   }
-
+function saveSession(session) {
+  localStorage.setItem(
+    "losoja_supabase_session",
+    JSON.stringify(session)
+  );
+}
   /* =========================================================
      SESSION REFRESH — KEEP EXISTING LOGIN SYSTEM
   ========================================================= */
