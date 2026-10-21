@@ -433,6 +433,7 @@ function tryOpenModal(type) {
     }
 
 
+  
     /* -------------------------
        CLOSE WHEN CLICKING OUTSIDE
     ------------------------- */
@@ -445,13 +446,13 @@ function tryOpenModal(type) {
       modal.dataset.authCloseBound = "true";
 
       modal.addEventListener("click", function (event) {
-       if (event.target === modal) {
-  modal.classList.remove("active");
-  modal.style.display = "none";
-}
+        if (event.target === modal) {
+          modal.classList.remove("active");
+          modal.style.display = "none";
         }
       });
     });
+
 
 
     /* -------------------------
