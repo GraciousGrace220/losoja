@@ -88,21 +88,30 @@
     return date.toLocaleString("en-NG");
   }
 
-  async function requestHeaders(json = false) {
-    const token = getAccessToken();
+ 
+async function requestHeaders(json = false) {
+  let token;
 
-    if (!token) {
-      throw new Error(
-        "You are not logged in. Please sign in, then return to Bills."
-      );
-    }
-
-    return {
-      apikey: SUPABASE_KEY,
-      Authorization: `Bearer ${token}`,
-      ...(json ? { "Content-Type": "application/json" } : {})
-    };
+  if (typeof window.ensureValidSupabaseSession === "function") {
+    const session = await window.ensureValidSupabaseSession();
+    token = session?.access_token;
+  } else {
+    token = getAccessToken();
   }
+
+  if (!token) {
+    throw new Error(
+      "Your session is unavailable. Please sign in again."
+    );
+  }
+
+  return {
+    apikey: SUPABASE_KEY,
+    Authorization: `Bearer ${token}`,
+    ...(json ? { "Content-Type": "application/json" } : {})
+  };
+}
+
 
   async function readResponse(response) {
     const text = await response.text();
