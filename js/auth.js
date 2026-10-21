@@ -11,8 +11,7 @@ if (!window.__losoja_auth_loaded) {
     "https://ycxshwgeebskdozmornh.supabase.co";
 
   const SUPABASE_KEY =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXAiLCJyZWYiOiJ5Y3hzd2hnZWVic2tkb3ptb3JuaCIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNzg4MzA2NDY1LCJleHAiOjIxMDM4ODI0NjV9.tMl7wILdVDhu0RWFaG_84ngJEryLt2c5cB8MEKW3kfU";
-
+sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe
 
  
   /* =========================================================
