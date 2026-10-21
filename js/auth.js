@@ -10,8 +10,8 @@ if (!window.__losoja_auth_loaded) {
   const SUPABASE_URL =
     "https://ycxshwgeebskdozmornh.supabase.co";
 
-  const SUPABASE_KEY =
-sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe
+ const SUPABASE_KEY =
+    "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
 
  
   /* =========================================================
