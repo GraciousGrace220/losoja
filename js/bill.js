@@ -9,8 +9,7 @@
     "https://ycxshwgeebskdozmornh.supabase.co";
 
   const SUPABASE_KEY =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InljeHNod2dlZWJza2Rvem1vcm5oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzMDY0NjUsImV4cCI6MjEwMzg4MjQ2NX0.tMl7wILdVDhu0RWFaG_84ngJEryLt2c5cB8MEKW3kfU";
-
+sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe
   const API = `${SUPABASE_URL}/functions/v1/pay-bill`;
   const HISTORY_API = `${SUPABASE_URL}/rest/v1/bill_transactions`;
 
