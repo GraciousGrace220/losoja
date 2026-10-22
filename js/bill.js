@@ -525,6 +525,7 @@
         "dataProcessing"
       );
 
+     
       const result = await apiRequest({
         service_type: "data",
         network,
@@ -532,9 +533,54 @@
         plan_id: planId
       });
 
-     
+      if (result.status === "pending") {
+        pendingData = true;
+        setButton(button, true, "Pending — Check History");
+
+        showNotice(
+          `${result.message || "The result is still pending."} Do not buy the same data again until the transaction is resolved.`,
+          "warning",
+          "dataProcessing"
+        );
+
+      } else if (result.status === "failed") {
+        pendingData = false;
+
+        showNotice(
+          result.refunded === true
+            ? "Data purchase failed. The server reports that your wallet refund was processed."
+            : "Data purchase failed. Check your wallet and transaction history before trying again.",
+          "error",
+          "dataProcessing"
+        );
+
+        $("dataForm")?.reset();
+
+      } else if (
+        result.success === true &&
+        result.status === "successful"
+      ) {
+        pendingData = false;
+
+        showNotice(
+          result.message || "Data purchase confirmed.",
+          "success",
+          "dataProcessing"
+        );
+
+        $("dataForm")?.reset();
+
+      } else {
+        throw new Error(
+          getErrorMessage(
+            result,
+            "The data purchase was not confirmed."
+          )
+        );
+      }
 
       await loadHistory();
+
 
     } catch (error) {
       showNotice(
