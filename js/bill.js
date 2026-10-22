@@ -8,59 +8,36 @@
   const SUPABASE_URL =
     "https://ycxshwgeebskdozmornh.supabase.co";
 
- const SUPABASE_KEY = "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
+  const SUPABASE_KEY =
+    "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
+
   const API = `${SUPABASE_URL}/functions/v1/pay-bill`;
   const HISTORY_API = `${SUPABASE_URL}/rest/v1/bill_transactions`;
-
-  const DATA_PLANS = {
-    "mtn-10mb-100": 100,
-    "mtn-50mb-200": 200,
-    "mtn-100mb-1000": 1000
-  };
 
   const $ = (id) => document.getElementById(id);
 
   let airtimeBusy = false;
   let dataBusy = false;
+  let dataPlansLoading = false;
+  let pendingAirtime = false;
+  let pendingData = false;
 
   function getSession() {
     try {
       return JSON.parse(
         localStorage.getItem("losoja_supabase_session") || "null"
       );
-    } catch (error) {
+    } catch {
       return null;
     }
   }
 
   function getAccessToken() {
-    const session = getSession();
-    return session?.access_token || null;
+    return getSession()?.access_token || null;
   }
 
   function getUserId() {
-    const session = getSession();
-    return session?.user?.id || null;
-  }
-
-  function showNotice(message, type = "info") {
-    const notice = $("authNotice");
-    if (!notice) {
-      alert(message);
-      return;
-    }
-
-    notice.textContent = message;
-    notice.style.display = "block";
-    notice.style.padding = "12px";
-    notice.style.margin = "12px 0";
-    notice.style.borderRadius = "8px";
-    notice.style.background =
-      type === "error" ? "#fdecec" :
-      type === "success" ? "#e8f7ed" : "#eef4ff";
-    notice.style.color =
-      type === "error" ? "#a11" :
-      type === "success" ? "#176b35" : "#173d75";
+    return getSession()?.user?.id || null;
   }
 
   function escapeHTML(value) {
@@ -83,35 +60,70 @@
     if (!value) return "Date unavailable";
 
     const date = new Date(value);
-    if (Number.isNaN(date.getTime())) return "Date unavailable";
-
-    return date.toLocaleString("en-NG");
+    return Number.isNaN(date.getTime())
+      ? "Date unavailable"
+      : date.toLocaleString("en-NG");
   }
 
- 
-async function requestHeaders(json = false) {
-  let token;
+  function showNotice(message, type = "info", targetId = null) {
+    const target =
+      $(targetId) ||
+      $("authNotice") ||
+      (
+        $("dataTab")?.classList.contains("active")
+          ? $("dataProcessing")
+          : $("airtimeProcessing")
+      );
 
-  if (typeof window.ensureValidSupabaseSession === "function") {
-    const session = await window.ensureValidSupabaseSession();
-    token = session?.access_token;
-  } else {
-    token = getAccessToken();
+    if (!target) {
+      console.log(message);
+      return;
+    }
+
+    target.textContent = message;
+    target.style.background =
+      type === "error" ? "#fdecec" :
+      type === "success" ? "#e8f7ed" :
+      type === "warning" ? "#fff7df" : "#eef4ff";
+
+    target.style.color =
+      type === "error" ? "#a11" :
+      type === "success" ? "#176b35" :
+      type === "warning" ? "#805900" : "#173d75";
+
+    target.style.display = "block";
+    target.classList.add("show");
   }
 
-  if (!token) {
-    throw new Error(
-      "Your session is unavailable. Please sign in again."
-    );
+  function hideNotice(targetId) {
+    const target = $(targetId);
+    if (target) {
+      target.textContent = "";
+      target.classList.remove("show");
+      target.style.display = "none";
+    }
   }
 
-  return {
-    apikey: SUPABASE_KEY,
-    Authorization: `Bearer ${token}`,
-    ...(json ? { "Content-Type": "application/json" } : {})
-  };
-}
+  async function requestHeaders(json = false) {
+    let token;
 
+    if (typeof window.ensureValidSupabaseSession === "function") {
+      const session = await window.ensureValidSupabaseSession();
+      token = session?.access_token;
+    } else {
+      token = getAccessToken();
+    }
+
+    if (!token) {
+      throw new Error("Your session is unavailable. Please sign in again.");
+    }
+
+    return {
+      apikey: SUPABASE_KEY,
+      Authorization: `Bearer ${token}`,
+      ...(json ? { "Content-Type": "application/json" } : {})
+    };
+  }
 
   async function readResponse(response) {
     const text = await response.text();
@@ -126,13 +138,28 @@ async function requestHeaders(json = false) {
   }
 
   function getErrorMessage(data, fallback) {
-    return (
-      data?.error ||
-      data?.message ||
-      data?.msg ||
-      data?.details ||
-      fallback
-    );
+    return data?.error || data?.message || data?.msg ||
+      data?.details || fallback;
+  }
+
+  async function apiRequest(payload) {
+    const headers = await requestHeaders(true);
+
+    const response = await fetch(API, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(payload)
+    });
+
+    const data = await readResponse(response);
+
+    if (!response.ok) {
+      throw new Error(
+        getErrorMessage(data, `Request failed (${response.status}).`)
+      );
+    }
+
+    return data;
   }
 
   async function loadHistory() {
@@ -147,7 +174,7 @@ async function requestHeaders(json = false) {
       return;
     }
 
-    container.innerHTML = "<p>Loading bill history...</p>";
+    container.textContent = "Loading bill history...";
 
     try {
       const headers = await requestHeaders();
@@ -156,20 +183,10 @@ async function requestHeaders(json = false) {
         `${HISTORY_API}?select=*&user_id=eq.${encodeURIComponent(userId)}` +
         "&order=created_at.desc&limit=20";
 
-      const response = await fetch(url, {
-        method: "GET",
-        headers
-      });
-
+      const response = await fetch(url, { headers });
       const data = await readResponse(response);
 
       if (!response.ok) {
-        if (response.status === 401) {
-          throw new Error(
-            "Your login session may have expired. Sign in again, then reopen Bills."
-          );
-        }
-
         throw new Error(
           getErrorMessage(data, "Could not load bill history.")
         );
@@ -184,217 +201,350 @@ async function requestHeaders(json = false) {
         const status = String(item.status || "pending").toLowerCase();
 
         const statusColor =
-          status === "success" || status === "completed"
+          ["success", "successful", "completed"].includes(status)
             ? "#087a3e"
-            : status === "failed" || status === "refunded"
+            : ["failed", "refunded", "reversed"].includes(status)
               ? "#b42318"
               : "#946200";
 
         const phone = item.phone || item.customer_identifier || "";
-        const service = item.service_type || "Bill payment";
 
         return `
-          <article style="
-            padding:14px;
-            margin:10px 0;
-            border:1px solid #e3e8e5;
-            border-radius:10px;
-            background:#fff;
-          ">
-            <div style="
-              display:flex;
-              justify-content:space-between;
-              gap:12px;
-              flex-wrap:wrap;
-            ">
-              <strong>${escapeHTML(service)}</strong>
+          <article class="history-row">
+            <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap">
+              <strong>${escapeHTML(item.service_type || "Bill payment")}</strong>
               <strong>${money(item.amount)}</strong>
             </div>
-
-            <p style="margin:8px 0">
-              ${escapeHTML(item.network || "")}
+            <div class="history-details">
+              ${escapeHTML(item.provider || "")}
+              ${item.network ? " · " + escapeHTML(item.network) : ""}
               ${phone ? " · " + escapeHTML(phone) : ""}
-            </p>
-
-            <p style="margin:6px 0;color:${statusColor}">
+              ${item.variation_code
+                ? " · Plan " + escapeHTML(item.variation_code)
+                : ""}
+            </div>
+            <p style="color:${statusColor};margin:8px 0">
               Status: ${escapeHTML(status)}
             </p>
-
-            <small style="color:#667085">
-              ${escapeHTML(formatDate(item.created_at))}
-            </small>
+            <small class="muted">${escapeHTML(formatDate(item.created_at))}</small>
           </article>
         `;
       }).join("");
 
     } catch (error) {
-      container.innerHTML =
-        `<p>${escapeHTML(error.message || "Could not load bill history.")}</p>`;
+      container.textContent =
+        error.message || "Could not load bill history.";
     }
   }
 
-  function setButton(button, processing, originalText) {
+  function setButton(button, disabled, text) {
     if (!button) return;
-
-    button.disabled = processing;
-    button.textContent = processing ? "Processing..." : originalText;
+    button.disabled = disabled;
+    button.textContent = text;
   }
 
   function validatePhone(phone) {
     return /^\d{11}$/.test(phone);
   }
 
-  async function payBill(payload, button, originalText) {
-    const headers = await requestHeaders(true);
+  async function loadDataPlans() {
+    const select = $("dataPlan");
+    if (!select || dataPlansLoading) return;
 
-    const response = await fetch(API, {
-      method: "POST",
-      headers,
-      body: JSON.stringify(payload)
-    });
+    dataPlansLoading = true;
+    select.disabled = true;
+    select.innerHTML = '<option value="">Loading Toppa plans...</option>';
+    hideNotice("dataProcessing");
 
-    const data = await readResponse(response);
+    try {
+      const network = $("dataNetwork")?.value?.trim().toLowerCase();
 
-    if (!response.ok) {
-      throw new Error(
-        getErrorMessage(data, `Payment request failed (${response.status}).`)
+      const result = await apiRequest({
+        service_type: "get_data_plans",
+        network: network || "mtn"
+      });
+
+      if (result.success !== true || !result.plans) {
+        throw new Error(
+          getErrorMessage(result, "Could not load data plans.")
+        );
+      }
+
+      const networkKey = String(result.network || network || "mtn").toUpperCase();
+      const networkPlans = result.plans[networkKey];
+
+      const plans = [];
+
+      function collectPlans(value) {
+        if (Array.isArray(value)) {
+          value.forEach((plan) => {
+            if (
+              plan &&
+              plan.id != null &&
+              (plan.price_raw != null || plan.price != null)
+            ) {
+              plans.push(plan);
+            }
+          });
+          return;
+        }
+
+        if (value && typeof value === "object") {
+          Object.values(value).forEach(collectPlans);
+        }
+      }
+
+      collectPlans(networkPlans);
+
+      const uniquePlans = [
+        ...new Map(plans.map((plan) => [String(plan.id), plan])).values()
+      ].sort((a, b) => {
+        const priceA = Number(a.price_raw ?? 0);
+        const priceB = Number(b.price_raw ?? 0);
+        return priceA - priceB || String(a.name || "").localeCompare(String(b.name || ""));
+      });
+
+      if (!uniquePlans.length) {
+        select.innerHTML = '<option value="">No plans available</option>';
+        showNotice(
+          "No plans were returned for this network. Try refreshing later.",
+          "warning",
+          "dataProcessing"
+        );
+        return;
+      }
+
+      select.innerHTML = '<option value="">Select a data plan</option>';
+
+      uniquePlans.forEach((plan) => {
+        const option = document.createElement("option");
+        option.value = String(plan.id);
+
+        const name = plan.name || plan.size || `Plan ${plan.id}`;
+        const size = plan.size && plan.name
+          ? ` — ${plan.size}`
+          : "";
+        const validity = plan.validity
+          ? ` · ${plan.validity}`
+          : "";
+        const price = Number(plan.price_raw);
+
+        const displayPrice = Number.isFinite(price) && price > 0
+          ? money(price)
+          : String(plan.price || "");
+
+        option.textContent =
+          `${name}${size}${validity} — ${displayPrice}`;
+
+        select.appendChild(option);
+      });
+
+    } catch (error) {
+      select.innerHTML = '<option value="">Unable to load plans — retry</option>';
+
+      showNotice(
+        `${error.message} You can retry by changing the network or reopening Bills.`,
+        "error",
+        "dataProcessing"
       );
-    }
 
-    return data;
+    } finally {
+      dataPlansLoading = false;
+      select.disabled = false;
+    }
   }
 
   async function submitAirtime(event) {
     event.preventDefault();
 
-    if (airtimeBusy) return;
+    if (airtimeBusy || pendingAirtime) {
+      showNotice(
+        "An airtime result is still pending. Check bill history before attempting another purchase.",
+        "warning",
+        "airtimeProcessing"
+      );
+      return;
+    }
 
     const network = $("airtimeNetwork")?.value?.trim().toLowerCase();
     const phone = $("airtimePhone")?.value?.trim();
     const amount = Number($("airtimeAmount")?.value);
     const button = $("airtimeButton");
-    const originalText = button?.textContent || "Buy Airtime";
+    const originalText = "Buy Airtime";
 
     if (!["mtn", "airtel", "glo", "9mobile"].includes(network)) {
-      showNotice("Please select a valid network.", "error");
+      showNotice("Please select a valid network.", "error", "airtimeProcessing");
       return;
     }
 
     if (!validatePhone(phone)) {
-      showNotice("Enter a valid 11-digit phone number.", "error");
+      showNotice("Enter a valid 11-digit phone number.", "error", "airtimeProcessing");
       return;
     }
 
-    if (!Number.isFinite(amount) || amount < 50 || amount > 100000) {
-      showNotice("Airtime amount must be between ₦50 and ₦100,000.", "error");
+    if (!Number.isFinite(amount) || amount < 50 || amount > 50000) {
+      showNotice(
+        "Airtime amount must be between ₦50 and ₦50,000.",
+        "error",
+        "airtimeProcessing"
+      );
       return;
     }
 
     try {
       if (!getUserId() || !getAccessToken()) {
-        throw new Error(
-          "You are not logged in. Please sign in, then return to Bills."
-        );
+        throw new Error("Please sign in before buying airtime.");
       }
 
       airtimeBusy = true;
-      setButton(button, true, originalText);
-      showNotice("Submitting airtime request. Please wait.");
+      window.paymentInProgress = true;
+      setButton(button, true, "Processing...");
+      showNotice(
+        "Submitting airtime request. Please wait and do not refresh this page.",
+        "info",
+        "airtimeProcessing"
+      );
 
-      const result = await payBill({
+      const result = await apiRequest({
         service_type: "airtime",
         network,
         phone,
         amount
-      }, button, originalText);
+      });
 
-      showNotice(
-        getErrorMessage(result, "Airtime request submitted.") ,
-        "success"
-      );
+      if (result.status === "pending") {
+        pendingAirtime = true;
+        setButton(button, true, "Pending — Check History");
+        showNotice(
+          `${result.message || "The result is still pending."} Do not buy the same airtime again until the transaction is resolved.`,
+          "warning",
+          "airtimeProcessing"
+        );
+      } else if (result.success === true && result.status === "successful") {
+        showNotice(
+          result.message || "Airtime purchase confirmed.",
+          "success",
+          "airtimeProcessing"
+        );
+        $("airtimeForm")?.reset();
+      } else {
+        throw new Error(
+          getErrorMessage(result, "The airtime purchase was not confirmed.")
+        );
+      }
 
-      $("airtimeForm")?.reset();
       await loadHistory();
 
     } catch (error) {
       showNotice(
-        `${error.message || "Airtime request failed."} If the request timed out or its outcome is unclear, check bill history before trying again.`,
-        "error"
+        `${error.message || "Airtime request failed."} If the outcome is unclear, check bill history before retrying.`,
+        "error",
+        "airtimeProcessing"
       );
-
       await loadHistory();
 
     } finally {
       airtimeBusy = false;
-      setButton(button, false, originalText);
+      window.paymentInProgress = false;
+
+      if (!pendingAirtime) {
+        setButton(button, false, originalText);
+      }
     }
   }
 
   async function submitData(event) {
     event.preventDefault();
 
-    if (dataBusy) return;
+    if (dataBusy || pendingData) {
+      showNotice(
+        "A data purchase result is still pending. Check bill history before trying again.",
+        "warning",
+        "dataProcessing"
+      );
+      return;
+    }
 
     const network = $("dataNetwork")?.value?.trim().toLowerCase();
     const phone = $("dataPhone")?.value?.trim();
-    const variationCode = $("dataPlan")?.value?.trim();
-    const amount = DATA_PLANS[variationCode];
+    const planId = Number($("dataPlan")?.value);
     const button = $("dataButton");
-    const originalText = button?.textContent || "Buy Data";
+    const originalText = "Buy Data";
 
-    if (network !== "mtn") {
-      showNotice("Only MTN data plans are currently supported.", "error");
+    if (!network) {
+      showNotice("Please select a network.", "error", "dataProcessing");
       return;
     }
 
     if (!validatePhone(phone)) {
-      showNotice("Enter a valid 11-digit phone number.", "error");
+      showNotice("Enter a valid 11-digit phone number.", "error", "dataProcessing");
       return;
     }
 
-    if (!variationCode || !amount) {
-      showNotice("Please select a valid MTN data plan.", "error");
+    if (!Number.isSafeInteger(planId) || planId <= 0) {
+      showNotice("Please select an available data plan.", "error", "dataProcessing");
       return;
     }
 
     try {
       if (!getUserId() || !getAccessToken()) {
-        throw new Error(
-          "You are not logged in. Please sign in, then return to Bills."
-        );
+        throw new Error("Please sign in before buying data.");
       }
 
       dataBusy = true;
-      setButton(button, true, originalText);
-      showNotice("Submitting data request. Please wait.");
-
-      const result = await payBill({
-        service_type: "data",
-        network: "mtn",
-        phone,
-        amount,
-        variation_code: variationCode
-      }, button, originalText);
-
+      window.paymentInProgress = true;
+      setButton(button, true, "Processing...");
       showNotice(
-        getErrorMessage(result, "Data request submitted."),
-        "success"
+        "Submitting data request. Please wait and do not refresh this page.",
+        "info",
+        "dataProcessing"
       );
 
-      $("dataForm")?.reset();
+      const result = await apiRequest({
+        service_type: "data",
+        network,
+        phone,
+        plan_id: planId
+      });
+
+      if (result.status === "pending") {
+        pendingData = true;
+        setButton(button, true, "Pending — Check History");
+        showNotice(
+          `${result.message || "The result is still pending."} Do not buy the same data again until the transaction is resolved.`,
+          "warning",
+          "dataProcessing"
+        );
+      } else if (result.success === true && result.status === "successful") {
+        showNotice(
+          result.message || "Data purchase confirmed.",
+          "success",
+          "dataProcessing"
+        );
+        $("dataForm")?.reset();
+      } else {
+        throw new Error(
+          getErrorMessage(result, "The data purchase was not confirmed.")
+        );
+      }
+
       await loadHistory();
 
     } catch (error) {
       showNotice(
-        `${error.message || "Data request failed."} If the request timed out or its outcome is unclear, check bill history before trying again.`,
-        "error"
+        `${error.message || "Data request failed."} If the outcome is unclear, check bill history before retrying.`,
+        "error",
+        "dataProcessing"
       );
-
       await loadHistory();
 
     } finally {
       dataBusy = false;
-      setButton(button, false, originalText);
+      window.paymentInProgress = false;
+
+      if (!pendingData) {
+        setButton(button, false, originalText);
+      }
     }
   }
 
@@ -403,14 +553,18 @@ async function requestHeaders(json = false) {
     $("dataForm")?.addEventListener("submit", submitData);
     $("refreshHistory")?.addEventListener("click", loadHistory);
 
+    $("dataNetwork")?.addEventListener("change", loadDataPlans);
+
     if (!getAccessToken() || !getUserId()) {
       showNotice(
-        "Please sign in to buy airtime, buy data, and view your bill history.",
-        "error"
+        "Please sign in to buy airtime, buy data, and view bill history.",
+        "error",
+        "airtimeProcessing"
       );
     }
 
     loadHistory();
+    loadDataPlans();
   }
 
   if (document.readyState === "loading") {
