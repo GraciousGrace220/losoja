@@ -229,44 +229,46 @@ function saveSession(session) {
   window.signIn = signIn;
 
 
-  /* =========================================================
-     SIGNUP
-  ========================================================= */
+  
+/* =========================================================
+   SIGNUP
+========================================================= */
 
-  async function signUp(email, password, name) {
-    const data = await authRequest(
-      "signup",
-      {
-        email: email.trim(),
-        password: password,
-        data: {
-          full_name: name.trim()
-        }
-      }
-    );
+async function signUp(email, password, name) {
+  const data = await authRequest("signup", {
+    email: email.trim(),
+    password: password,
+    data: {
+      full_name: name.trim()
+    },
+    redirect_to: "https://losoja.com.ng/"
+  });
 
-    /*
-      If Supabase requires email confirmation, a session
-      might not be created immediately. Handle that case
-      without falsely reporting a successful login.
-    */
+  // Supabase may require email confirmation before login.
+  if (data.user && !data.access_token) {
+    return {
+      ...data,
+      requiresEmailConfirmation: true
+    };
+  }
 
-    if (data.access_token && data.user) {
-      saveSession(data);
-    } else if (data.user && !data.session) {
-      return {
-        ...data,
-        requiresEmailConfirmation: true
-      };
-    } else {
-      await signIn(email, password);
-    }
-
+  // Save a session only when Supabase returns one.
+  if (data.access_token && data.user) {
+    saveSession(data);
     return data;
   }
 
+  if (data.user && data.session?.access_token) {
+    saveSession(data.session);
+    return data;
+  }
 
-  window.signUp = signUp;
+  throw new Error(
+    "Signup response was incomplete. Please try again."
+  );
+}
+
+window.signUp = signUp;
 
 
   /* =========================================================
