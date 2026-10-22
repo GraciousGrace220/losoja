@@ -7,13 +7,11 @@
 
   const SUPABASE_URL =
     "https://ycxshwgeebskdozmornh.supabase.co";
-
   const SUPABASE_KEY =
     "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
 
   const API = `${SUPABASE_URL}/functions/v1/pay-bill`;
   const HISTORY_API = `${SUPABASE_URL}/rest/v1/bill_transactions`;
-
   const $ = (id) => document.getElementById(id);
 
   let airtimeBusy = false;
@@ -58,7 +56,6 @@
 
   function formatDate(value) {
     if (!value) return "Date unavailable";
-
     const date = new Date(value);
     return Number.isNaN(date.getTime())
       ? "Date unavailable"
@@ -127,7 +124,6 @@
 
   async function readResponse(response) {
     const text = await response.text();
-
     if (!text) return {};
 
     try {
@@ -154,12 +150,79 @@
     const data = await readResponse(response);
 
     if (!response.ok) {
-      throw new Error(
+      const error = new Error(
         getErrorMessage(data, `Request failed (${response.status}).`)
       );
+      error.paymentNotStarted = data?.payment_not_started === true;
+      throw error;
     }
 
     return data;
+  }
+
+  function attemptStorageKey(serviceType) {
+    const userId = getUserId();
+    if (!userId) throw new Error("Please sign in again.");
+
+    return `losoja_bill_attempt_v1_${userId}_${serviceType}`;
+  }
+
+  function readAttempt(serviceType) {
+    try {
+      const value = localStorage.getItem(attemptStorageKey(serviceType));
+      return value ? JSON.parse(value) : null;
+    } catch {
+      return null;
+    }
+  }
+
+  function saveAttempt(serviceType, attempt) {
+    localStorage.setItem(
+      attemptStorageKey(serviceType),
+      JSON.stringify(attempt)
+    );
+  }
+
+  function clearAttempt(serviceType) {
+    try {
+      localStorage.removeItem(attemptStorageKey(serviceType));
+    } catch (error) {
+      console.error("Could not clear bill attempt:", error);
+    }
+  }
+
+  function makeFingerprint(serviceType, details) {
+    return JSON.stringify({
+      serviceType,
+      network: details.network,
+      phone: details.phone,
+      amount: details.amount ?? null,
+      planId: details.planId ?? null
+    });
+  }
+
+  function getOrCreateAttempt(serviceType, details) {
+    const fingerprint = makeFingerprint(serviceType, details);
+    const existing = readAttempt(serviceType);
+
+    if (existing) {
+      if (existing.fingerprint !== fingerprint) {
+        throw new Error(
+          "A previous purchase attempt is still saved. Check bill history first. Do not start a different purchase until the earlier result is resolved."
+        );
+      }
+
+      return existing;
+    }
+
+    const attempt = {
+      key: crypto.randomUUID(),
+      fingerprint,
+      createdAt: new Date().toISOString()
+    };
+
+    saveAttempt(serviceType, attempt);
+    return attempt;
   }
 
   async function loadHistory() {
@@ -270,9 +333,9 @@
         );
       }
 
-      const networkKey = String(result.network || network || "mtn").toUpperCase();
+      const networkKey =
+        String(result.network || network || "mtn").toUpperCase();
       const networkPlans = result.plans[networkKey];
-
       const plans = [];
 
       function collectPlans(value) {
@@ -299,9 +362,10 @@
       const uniquePlans = [
         ...new Map(plans.map((plan) => [String(plan.id), plan])).values()
       ].sort((a, b) => {
-        const priceA = Number(a.price_raw ?? 0);
-        const priceB = Number(b.price_raw ?? 0);
-        return priceA - priceB || String(a.name || "").localeCompare(String(b.name || ""));
+        const priceA = Number(a.price_raw ?? a.price ?? 0);
+        const priceB = Number(b.price_raw ?? b.price ?? 0);
+        return priceA - priceB ||
+          String(a.name || "").localeCompare(String(b.name || ""));
       });
 
       if (!uniquePlans.length) {
@@ -321,13 +385,9 @@
         option.value = String(plan.id);
 
         const name = plan.name || plan.size || `Plan ${plan.id}`;
-        const size = plan.size && plan.name
-          ? ` — ${plan.size}`
-          : "";
-        const validity = plan.validity
-          ? ` · ${plan.validity}`
-          : "";
-        const price = Number(plan.price_raw);
+        const size = plan.size && plan.name ? ` — ${plan.size}` : "";
+        const validity = plan.validity ? ` · ${plan.validity}` : "";
+        const price = Number(plan.price_raw ?? plan.price);
 
         const displayPrice = Number.isFinite(price) && price > 0
           ? money(price)
@@ -340,7 +400,8 @@
       });
 
     } catch (error) {
-      select.innerHTML = '<option value="">Unable to load plans — retry</option>';
+      select.innerHTML =
+        '<option value="">Unable to load plans — retry</option>';
 
       showNotice(
         `${error.message} You can retry by changing the network or reopening Bills.`,
@@ -354,12 +415,45 @@
     }
   }
 
+  function restoreAttemptStates() {
+    const airtime = readAttempt("airtime");
+    const data = readAttempt("data");
+
+    if (airtime) {
+      pendingAirtime = true;
+      setButton(
+        $("airtimeButton"),
+        true,
+        "Previous Attempt — Check History"
+      );
+      showNotice(
+        "A previous airtime attempt is saved. Check bill history before proceeding. Do not create another purchase while its outcome is uncertain.",
+        "warning",
+        "airtimeProcessing"
+      );
+    }
+
+    if (data) {
+      pendingData = true;
+      setButton(
+        $("dataButton"),
+        true,
+        "Previous Attempt — Check History"
+      );
+      showNotice(
+        "A previous data attempt is saved. Check bill history before proceeding. Do not create another purchase while its outcome is uncertain.",
+        "warning",
+        "dataProcessing"
+      );
+    }
+  }
+
   async function submitAirtime(event) {
     event.preventDefault();
 
     if (airtimeBusy || pendingAirtime) {
       showNotice(
-        "An airtime result is still pending. Check bill history before attempting another purchase.",
+        "A previous airtime attempt is unresolved. Check bill history before starting another purchase.",
         "warning",
         "airtimeProcessing"
       );
@@ -370,7 +464,6 @@
     const phone = $("airtimePhone")?.value?.trim();
     const amount = Number($("airtimeAmount")?.value);
     const button = $("airtimeButton");
-    const originalText = "Buy Airtime";
 
     if (!["mtn", "airtel", "glo", "9mobile"].includes(network)) {
       showNotice("Please select a valid network.", "error", "airtimeProcessing");
@@ -391,14 +484,21 @@
       return;
     }
 
+    let attempt = null;
+
     try {
       if (!getUserId() || !getAccessToken()) {
         throw new Error("Please sign in before buying airtime.");
       }
 
+      attempt = getOrCreateAttempt("airtime", {
+        network, phone, amount
+      });
+
       airtimeBusy = true;
       window.paymentInProgress = true;
       setButton(button, true, "Processing...");
+
       showNotice(
         "Submitting airtime request. Please wait and do not refresh this page.",
         "info",
@@ -409,26 +509,26 @@
         service_type: "airtime",
         network,
         phone,
-        amount
+        amount,
+        idempotency_key: attempt.key
       });
 
-          if (result.status === "pending") {
+      if (result.status === "pending") {
         pendingAirtime = true;
-        setButton(button, true, "Pending — Check History");
-
         showNotice(
-          `${result.message || "The result is still pending."} Do not buy the same airtime again until the transaction is resolved.`,
+          `${result.message || "The result is still pending."} Check bill history before taking further action.`,
           "warning",
           "airtimeProcessing"
         );
 
-      } else if (result.status === "failed") {
+      } else if (result.status === "failed" || result.status === "reversed") {
+        clearAttempt("airtime");
         pendingAirtime = false;
 
         showNotice(
           result.refunded === true
-            ? "Airtime purchase failed. The server reports that your wallet refund was processed."
-            : "Airtime purchase failed. Check your wallet and transaction history before trying again.",
+            ? "The purchase failed and the wallet refund is confirmed."
+            : "The transaction reached a final status. Check your wallet and history before starting another purchase.",
           "error",
           "airtimeProcessing"
         );
@@ -439,6 +539,7 @@
         result.success === true &&
         result.status === "successful"
       ) {
+        clearAttempt("airtime");
         pendingAirtime = false;
 
         showNotice(
@@ -450,22 +551,33 @@
         $("airtimeForm")?.reset();
 
       } else {
+        // Keep the key unless the server explicitly confirms
+        // that no transaction was created.
+        if (result.payment_not_started === true) {
+          clearAttempt("airtime");
+        }
+
         throw new Error(
-          getErrorMessage(
-            result,
-            "The airtime purchase was not confirmed."
-          )
+          getErrorMessage(result, "The airtime purchase was not confirmed.")
         );
       }
 
       await loadHistory();
 
     } catch (error) {
+      if (error.paymentNotStarted === true) {
+        clearAttempt("airtime");
+      } else if (attempt) {
+        // Preserve the key after network errors or uncertain responses.
+        pendingAirtime = true;
+      }
+
       showNotice(
-        `${error.message || "Airtime request failed."} If the outcome is unclear, check bill history before retrying.`,
+        `${error.message || "Airtime request failed."} Check bill history before retrying.`,
         "error",
         "airtimeProcessing"
       );
+
       await loadHistory();
 
     } finally {
@@ -473,7 +585,9 @@
       window.paymentInProgress = false;
 
       if (!pendingAirtime) {
-        setButton(button, false, originalText);
+        setButton(button, false, "Buy Airtime");
+      } else {
+        setButton(button, true, "Previous Attempt — Check History");
       }
     }
   }
@@ -483,7 +597,7 @@
 
     if (dataBusy || pendingData) {
       showNotice(
-        "A data purchase result is still pending. Check bill history before trying again.",
+        "A previous data attempt is unresolved. Check bill history before starting another purchase.",
         "warning",
         "dataProcessing"
       );
@@ -494,10 +608,9 @@
     const phone = $("dataPhone")?.value?.trim();
     const planId = Number($("dataPlan")?.value);
     const button = $("dataButton");
-    const originalText = "Buy Data";
 
-    if (!network) {
-      showNotice("Please select a network.", "error", "dataProcessing");
+    if (!["mtn", "airtel", "glo", "9mobile"].includes(network)) {
+      showNotice("Please select a valid network.", "error", "dataProcessing");
       return;
     }
 
@@ -511,45 +624,51 @@
       return;
     }
 
+    let attempt = null;
+
     try {
       if (!getUserId() || !getAccessToken()) {
         throw new Error("Please sign in before buying data.");
       }
 
+      attempt = getOrCreateAttempt("data", {
+        network, phone, planId
+      });
+
       dataBusy = true;
       window.paymentInProgress = true;
       setButton(button, true, "Processing...");
+
       showNotice(
         "Submitting data request. Please wait and do not refresh this page.",
         "info",
         "dataProcessing"
       );
 
-     
       const result = await apiRequest({
         service_type: "data",
         network,
         phone,
-        plan_id: planId
+        plan_id: planId,
+        idempotency_key: attempt.key
       });
 
       if (result.status === "pending") {
         pendingData = true;
-        setButton(button, true, "Pending — Check History");
-
         showNotice(
-          `${result.message || "The result is still pending."} Do not buy the same data again until the transaction is resolved.`,
+          `${result.message || "The result is still pending."} Check bill history before taking further action.`,
           "warning",
           "dataProcessing"
         );
 
-      } else if (result.status === "failed") {
+      } else if (result.status === "failed" || result.status === "reversed") {
+        clearAttempt("data");
         pendingData = false;
 
         showNotice(
           result.refunded === true
-            ? "Data purchase failed. The server reports that your wallet refund was processed."
-            : "Data purchase failed. Check your wallet and transaction history before trying again.",
+            ? "The purchase failed and the wallet refund is confirmed."
+            : "The transaction reached a final status. Check your wallet and history before starting another purchase.",
           "error",
           "dataProcessing"
         );
@@ -560,6 +679,7 @@
         result.success === true &&
         result.status === "successful"
       ) {
+        clearAttempt("data");
         pendingData = false;
 
         showNotice(
@@ -571,23 +691,30 @@
         $("dataForm")?.reset();
 
       } else {
+        if (result.payment_not_started === true) {
+          clearAttempt("data");
+        }
+
         throw new Error(
-          getErrorMessage(
-            result,
-            "The data purchase was not confirmed."
-          )
+          getErrorMessage(result, "The data purchase was not confirmed.")
         );
       }
 
       await loadHistory();
 
-
     } catch (error) {
+      if (error.paymentNotStarted === true) {
+        clearAttempt("data");
+      } else if (attempt) {
+        pendingData = true;
+      }
+
       showNotice(
-        `${error.message || "Data request failed."} If the outcome is unclear, check bill history before retrying.`,
+        `${error.message || "Data request failed."} Check bill history before retrying.`,
         "error",
         "dataProcessing"
       );
+
       await loadHistory();
 
     } finally {
@@ -595,7 +722,9 @@
       window.paymentInProgress = false;
 
       if (!pendingData) {
-        setButton(button, false, originalText);
+        setButton(button, false, "Buy Data");
+      } else {
+        setButton(button, true, "Previous Attempt — Check History");
       }
     }
   }
@@ -604,7 +733,6 @@
     $("airtimeForm")?.addEventListener("submit", submitAirtime);
     $("dataForm")?.addEventListener("submit", submitData);
     $("refreshHistory")?.addEventListener("click", loadHistory);
-
     $("dataNetwork")?.addEventListener("change", loadDataPlans);
 
     if (!getAccessToken() || !getUserId()) {
@@ -615,6 +743,7 @@
       );
     }
 
+    restoreAttemptStates();
     loadHistory();
     loadDataPlans();
   }
