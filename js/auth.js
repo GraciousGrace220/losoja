@@ -228,6 +228,48 @@ function saveSession(session) {
 
   window.signIn = signIn;
 
+/* =========================================================
+   FORGOT PASSWORD — SEND RESET EMAIL
+========================================================= */
+
+async function forgotPassword(email) {
+  email = String(email || "").trim();
+
+  if (!email) {
+    throw new Error("Please enter your email address.");
+  }
+
+  const response = await fetch(
+    `${SUPABASE_URL}/auth/v1/recover?redirect_to=${encodeURIComponent(
+      "https://losoja.com.ng/reset-password.html"
+    )}`,
+    {
+      method: "POST",
+      headers: {
+        apikey: SUPABASE_KEY,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ email })
+    }
+  );
+
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    throw new Error(
+      data.message ||
+      data.msg ||
+      data.error_description ||
+      data.error ||
+      "Unable to send the password reset email. Please try again."
+    );
+  }
+
+  return data;
+}
+
+window.forgotPassword = forgotPassword;
+
 
   
 /* =========================================================
