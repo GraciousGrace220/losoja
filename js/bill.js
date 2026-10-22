@@ -412,24 +412,49 @@
         amount
       });
 
-      if (result.status === "pending") {
+          if (result.status === "pending") {
         pendingAirtime = true;
         setButton(button, true, "Pending — Check History");
+
         showNotice(
           `${result.message || "The result is still pending."} Do not buy the same airtime again until the transaction is resolved.`,
           "warning",
           "airtimeProcessing"
         );
-      } else if (result.success === true && result.status === "successful") {
+
+      } else if (result.status === "failed") {
+        pendingAirtime = false;
+
+        showNotice(
+          result.refunded === true
+            ? "Airtime purchase failed. The server reports that your wallet refund was processed."
+            : "Airtime purchase failed. Check your wallet and transaction history before trying again.",
+          "error",
+          "airtimeProcessing"
+        );
+
+        $("airtimeForm")?.reset();
+
+      } else if (
+        result.success === true &&
+        result.status === "successful"
+      ) {
+        pendingAirtime = false;
+
         showNotice(
           result.message || "Airtime purchase confirmed.",
           "success",
           "airtimeProcessing"
         );
+
         $("airtimeForm")?.reset();
+
       } else {
         throw new Error(
-          getErrorMessage(result, "The airtime purchase was not confirmed.")
+          getErrorMessage(
+            result,
+            "The airtime purchase was not confirmed."
+          )
         );
       }
 
@@ -507,26 +532,7 @@
         plan_id: planId
       });
 
-      if (result.status === "pending") {
-        pendingData = true;
-        setButton(button, true, "Pending — Check History");
-        showNotice(
-          `${result.message || "The result is still pending."} Do not buy the same data again until the transaction is resolved.`,
-          "warning",
-          "dataProcessing"
-        );
-      } else if (result.success === true && result.status === "successful") {
-        showNotice(
-          result.message || "Data purchase confirmed.",
-          "success",
-          "dataProcessing"
-        );
-        $("dataForm")?.reset();
-      } else {
-        throw new Error(
-          getErrorMessage(result, "The data purchase was not confirmed.")
-        );
-      }
+     
 
       await loadHistory();
 
