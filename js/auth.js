@@ -453,6 +453,40 @@ function tryOpenModal(type) {
 
     const loginEmail = document.getElementById("loginEmail");
     const loginPassword = document.getElementById("loginPassword");
+     
+const forgotPasswordBtn = document.getElementById("forgotPasswordBtn");
+
+if (forgotPasswordBtn && !forgotPasswordBtn.dataset.authBound) {
+  forgotPasswordBtn.dataset.authBound = "true";
+
+  forgotPasswordBtn.addEventListener("click", async function () {
+    const email = loginEmail ? loginEmail.value.trim() : "";
+
+    if (!email) {
+      alert("Please enter your email address first.");
+      if (loginEmail) loginEmail.focus();
+      return;
+    }
+
+    forgotPasswordBtn.disabled = true;
+    forgotPasswordBtn.textContent = "Sending...";
+
+    try {
+      await forgotPassword(email);
+
+      alert(
+        "If an account exists for this email, a password reset email will be sent. Check your inbox and spam folder."
+      );
+    } catch (error) {
+      console.error("LosOja password recovery error:", error);
+      alert(error.message || "Unable to send the reset email.");
+    } finally {
+      forgotPasswordBtn.disabled = false;
+      forgotPasswordBtn.textContent = "Forgot Password?";
+    }
+  });
+}
+
 
     const signupName = document.getElementById("signupName");
     const signupEmail = document.getElementById("signupEmail");
