@@ -7,11 +7,14 @@
 
   const SUPABASE_URL =
     "https://ycxshwgeebskdozmornh.supabase.co";
+
   const SUPABASE_KEY =
     "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
 
   const API = `${SUPABASE_URL}/functions/v1/pay-bill`;
   const HISTORY_API = `${SUPABASE_URL}/rest/v1/bill_transactions`;
+  const WALLET_API = `${SUPABASE_URL}/rest/v1/wallet_transactions`;
+
   const $ = (id) => document.getElementById(id);
 
   let airtimeBusy = false;
@@ -50,13 +53,17 @@
 
   function money(value) {
     const amount = Number(value);
-    return "₦" + (Number.isFinite(amount) ? amount : 0)
-      .toLocaleString("en-NG");
+
+    return "₦" + (
+      Number.isFinite(amount) ? amount : 0
+    ).toLocaleString("en-NG");
   }
 
   function formatDate(value) {
     if (!value) return "Date unavailable";
+
     const date = new Date(value);
+
     return Number.isNaN(date.getTime())
       ? "Date unavailable"
       : date.toLocaleString("en-NG");
@@ -78,6 +85,7 @@
     }
 
     target.textContent = message;
+
     target.style.background =
       type === "error" ? "#fdecec" :
       type === "success" ? "#e8f7ed" :
@@ -94,10 +102,38 @@
 
   function hideNotice(targetId) {
     const target = $(targetId);
+
     if (target) {
       target.textContent = "";
       target.classList.remove("show");
       target.style.display = "none";
+    }
+  }
+
+  function hideStaleAttemptNotice(serviceType) {
+    const target = $(
+      serviceType === "airtime"
+        ? "airtimeProcessing"
+        : "dataProcessing"
+    );
+
+    if (!target) return;
+
+    const message = String(target.textContent || "").toLowerCase();
+
+    const isStaleAttemptWarning =
+      message.includes("previous attempt") ||
+      message.includes("previous airtime attempt is saved") ||
+      message.includes("previous data attempt is saved") ||
+      message.includes("previous airtime attempt is unresolved") ||
+      message.includes("previous data attempt is unresolved");
+
+    if (isStaleAttemptWarning) {
+      hideNotice(
+        serviceType === "airtime"
+          ? "airtimeProcessing"
+          : "dataProcessing"
+      );
     }
   }
 
@@ -112,7 +148,9 @@
     }
 
     if (!token) {
-      throw new Error("Your session is unavailable. Please sign in again.");
+      throw new Error(
+        "Your session is unavailable. Please sign in again."
+      );
     }
 
     return {
@@ -124,6 +162,7 @@
 
   async function readResponse(response) {
     const text = await response.text();
+
     if (!text) return {};
 
     try {
@@ -134,8 +173,13 @@
   }
 
   function getErrorMessage(data, fallback) {
-    return data?.error || data?.message || data?.msg ||
-      data?.details || fallback;
+    return (
+      data?.error ||
+      data?.message ||
+      data?.msg ||
+      data?.details ||
+      fallback
+    );
   }
 
   async function apiRequest(payload) {
@@ -151,9 +195,15 @@
 
     if (!response.ok) {
       const error = new Error(
-        getErrorMessage(data, `Request failed (${response.status}).`)
+        getErrorMessage(
+          data,
+          `Request failed (${response.status}).`
+        )
       );
-      error.paymentNotStarted = data?.payment_not_started === true;
+
+      error.paymentNotStarted =
+        data?.payment_not_started === true;
+
       throw error;
     }
 
@@ -162,14 +212,20 @@
 
   function attemptStorageKey(serviceType) {
     const userId = getUserId();
-    if (!userId) throw new Error("Please sign in again.");
+
+    if (!userId) {
+      throw new Error("Please sign in again.");
+    }
 
     return `losoja_bill_attempt_v1_${userId}_${serviceType}`;
   }
 
   function readAttempt(serviceType) {
     try {
-      const value = localStorage.getItem(attemptStorageKey(serviceType));
+      const value = localStorage.getItem(
+        attemptStorageKey(serviceType)
+      );
+
       return value ? JSON.parse(value) : null;
     } catch {
       return null;
@@ -208,11 +264,20 @@
     if (existing) {
       if (existing.fingerprint !== fingerprint) {
         throw new Error(
-          "A previous purchase attempt is still saved. Check bill history first. Do not start a different purchase until the earlier result is resolved."
+          "A previous purchase attempt is still saved. " +
+          "Check bill history first. Do not start a different " +
+          "purchase until the earlier result is resolved."
         );
       }
 
       return existing;
+    }
+
+    if (!crypto.randomUUID) {
+      throw new Error(
+        "Your browser cannot create a secure purchase reference. " +
+        "Please update your browser before continuing."
+      );
     }
 
     const attempt = {
@@ -222,11 +287,222 @@
     };
 
     saveAttempt(serviceType, attempt);
+
     return attempt;
+  }
+
+  /*
+   * Find the exact database transaction associated with a saved
+   * browser attempt. Never reconcile against an unrelated bill.
+   */
+  async function findAttemptTransaction(attempt) {
+    const userId = getUserId();
+
+    if (!userId || !attempt?.key) return null;
+
+    const headers = await requestHeaders();
+
+    const query = new URLSearchParams({
+      select: "id,user_id,status,amount,wallet_reference,idempotency_key",
+      user_id: `eq.${userId}`,
+      idempotency_key: `eq.${attempt.key}`,
+      limit: "1"
+    });
+
+    const response = await fetch(
+      `${HISTORY_API}?${query.toString()}`,
+      { headers }
+    );
+
+    const data = await readResponse(response);
+
+    if (!response.ok || !Array.isArray(data)) {
+      return null;
+    }
+
+    return data.find(
+      (row) =>
+        row.user_id === userId &&
+        row.idempotency_key === attempt.key
+    ) || null;
+  }
+
+  /*
+   * A failed/reversed bill is not enough by itself to unlock
+   * another purchase. Verify a matching completed refund ledger
+   * entry for this bill's exact wallet reference and amount.
+   */
+  async function hasConfirmedRefund(transaction) {
+    const reference = transaction?.wallet_reference;
+    const billAmount = Number(transaction?.amount);
+
+    if (
+      !reference ||
+      !Number.isFinite(billAmount) ||
+      billAmount <= 0
+    ) {
+      return false;
+    }
+
+    try {
+      const headers = await requestHeaders();
+
+      const query = new URLSearchParams({
+        select: "id,type,amount,status,reference",
+        reference: `eq.${reference}-REFUND`,
+        type: "eq.deposit",
+        status: "eq.completed",
+        limit: "5"
+      });
+
+      const response = await fetch(
+        `${WALLET_API}?${query.toString()}`,
+        { headers }
+      );
+
+      if (!response.ok) {
+        return false;
+      }
+
+      const rows = await readResponse(response);
+
+      if (!Array.isArray(rows)) {
+        return false;
+      }
+
+      return rows.some((row) => {
+        const refundAmount = Number(row.amount);
+
+        return (
+          row.reference === `${reference}-REFUND` &&
+          row.type === "deposit" &&
+          row.status === "completed" &&
+          Number.isFinite(refundAmount) &&
+          Math.abs(refundAmount - billAmount) < 0.01
+        );
+      });
+    } catch (error) {
+      console.warn(
+        "Refund verification unavailable; keeping purchase locked.",
+        error
+      );
+
+      return false;
+    }
+  }
+
+  /*
+   * Only remove a saved attempt when its matching transaction
+   * has a safe terminal outcome:
+   *   - successful; or
+   *   - failed/reversed with a verified completed refund.
+   *
+   * Pending, missing, or unverifiable transactions stay locked.
+   */
+  async function reconcileAttempt(serviceType) {
+    const attempt = readAttempt(serviceType);
+
+    if (!attempt?.key) return false;
+
+    let transaction;
+
+    try {
+      transaction = await findAttemptTransaction(attempt);
+    } catch (error) {
+      console.warn(
+        `Could not reconcile ${serviceType} attempt.`,
+        error
+      );
+
+      return false;
+    }
+
+    if (!transaction) {
+      return false;
+    }
+
+    const status = String(
+      transaction.status || ""
+    ).toLowerCase();
+
+    if (
+      status === "successful" ||
+      status === "success" ||
+      status === "completed"
+    ) {
+      clearAttempt(serviceType);
+      return true;
+    }
+
+    if (status === "failed" || status === "reversed") {
+      const refunded = await hasConfirmedRefund(transaction);
+
+      if (refunded) {
+        clearAttempt(serviceType);
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  /*
+   * Reflect the actual saved-attempt state in the buttons.
+   * Never enable a button while a request is actively processing.
+   */
+  function syncAttemptStates() {
+    pendingAirtime = Boolean(readAttempt("airtime"));
+    pendingData = Boolean(readAttempt("data"));
+
+    const airtimeButton = $("airtimeButton");
+    const dataButton = $("dataButton");
+
+    if (airtimeBusy) {
+      setButton(airtimeButton, true, "Processing...");
+    } else if (pendingAirtime) {
+      setButton(
+        airtimeButton,
+        true,
+        "Previous Attempt — Check History"
+      );
+
+      showNotice(
+        "A previous airtime attempt is still unresolved. " +
+        "Check bill history before proceeding. Do not create " +
+        "another purchase while its outcome is uncertain.",
+        "warning",
+        "airtimeProcessing"
+      );
+    } else {
+      setButton(airtimeButton, false, "Buy Airtime");
+      hideStaleAttemptNotice("airtime");
+    }
+
+    if (dataBusy) {
+      setButton(dataButton, true, "Processing...");
+    } else if (pendingData) {
+      setButton(
+        dataButton,
+        true,
+        "Previous Attempt — Check History"
+      );
+
+      showNotice(
+        "A previous data attempt is still unresolved. " +
+        "Check bill history before proceeding. Do not create " +
+        "another purchase while its outcome is uncertain.",
+        "warning",
+        "dataProcessing"
+      );
+    } else {
+      setButton(dataButton, false, "Buy Data");
+      hideStaleAttemptNotice("data");
+    }
   }
 
   async function loadHistory() {
     const container = $("billHistory");
+
     if (!container) return;
 
     const userId = getUserId();
@@ -242,26 +518,46 @@
     try {
       const headers = await requestHeaders();
 
-      const url =
-        `${HISTORY_API}?select=*&user_id=eq.${encodeURIComponent(userId)}` +
-        "&order=created_at.desc&limit=20";
+      const query = new URLSearchParams({
+        select: "*",
+        user_id: `eq.${userId}`,
+        order: "created_at.desc",
+        limit: "20"
+      });
 
-      const response = await fetch(url, { headers });
+      const response = await fetch(
+        `${HISTORY_API}?${query.toString()}`,
+        { headers }
+      );
+
       const data = await readResponse(response);
 
-      if (!response.ok) {
+      if (!response.ok || !Array.isArray(data)) {
         throw new Error(
           getErrorMessage(data, "Could not load bill history.")
         );
       }
 
-      if (!Array.isArray(data) || data.length === 0) {
+      /*
+       * Reconcile only the user's exact saved idempotency keys.
+       * These checks never update or delete database records.
+       */
+      await Promise.all([
+        reconcileAttempt("airtime"),
+        reconcileAttempt("data")
+      ]);
+
+      syncAttemptStates();
+
+      if (data.length === 0) {
         container.innerHTML = "<p>No bill transactions yet.</p>";
         return;
       }
 
       container.innerHTML = data.map((item) => {
-        const status = String(item.status || "pending").toLowerCase();
+        const status = String(
+          item.status || "pending"
+        ).toLowerCase();
 
         const statusColor =
           ["success", "successful", "completed"].includes(status)
@@ -270,7 +566,8 @@
               ? "#b42318"
               : "#946200";
 
-        const phone = item.phone || item.customer_identifier || "";
+        const phone =
+          item.phone || item.customer_identifier || "";
 
         return `
           <article class="history-row">
@@ -297,11 +594,17 @@
     } catch (error) {
       container.textContent =
         error.message || "Could not load bill history.";
+
+      console.error("LosOja bill history error:", error);
+
+    } finally {
+      syncAttemptStates();
     }
   }
 
   function setButton(button, disabled, text) {
     if (!button) return;
+
     button.disabled = disabled;
     button.textContent = text;
   }
@@ -312,15 +615,19 @@
 
   async function loadDataPlans() {
     const select = $("dataPlan");
+
     if (!select || dataPlansLoading) return;
 
     dataPlansLoading = true;
     select.disabled = true;
-    select.innerHTML = '<option value="">Loading Toppa plans...</option>';
+    select.innerHTML =
+      '<option value="">Loading Toppa plans...</option>';
+
     hideNotice("dataProcessing");
 
     try {
-      const network = $("dataNetwork")?.value?.trim().toLowerCase();
+      const network = $("dataNetwork")
+        ?.value?.trim().toLowerCase();
 
       const result = await apiRequest({
         service_type: "get_data_plans",
@@ -333,8 +640,10 @@
         );
       }
 
-      const networkKey =
-        String(result.network || network || "mtn").toUpperCase();
+      const networkKey = String(
+        result.network || network || "mtn"
+      ).toUpperCase();
+
       const networkPlans = result.plans[networkKey];
       const plans = [];
 
@@ -349,6 +658,7 @@
               plans.push(plan);
             }
           });
+
           return;
         }
 
@@ -360,38 +670,54 @@
       collectPlans(networkPlans);
 
       const uniquePlans = [
-        ...new Map(plans.map((plan) => [String(plan.id), plan])).values()
+        ...new Map(
+          plans.map((plan) => [String(plan.id), plan])
+        ).values()
       ].sort((a, b) => {
         const priceA = Number(a.price_raw ?? a.price ?? 0);
         const priceB = Number(b.price_raw ?? b.price ?? 0);
+
         return priceA - priceB ||
-          String(a.name || "").localeCompare(String(b.name || ""));
+          String(a.name || "").localeCompare(
+            String(b.name || "")
+          );
       });
 
       if (!uniquePlans.length) {
-        select.innerHTML = '<option value="">No plans available</option>';
+        select.innerHTML =
+          '<option value="">No plans available</option>';
+
         showNotice(
           "No plans were returned for this network. Try refreshing later.",
           "warning",
           "dataProcessing"
         );
+
         return;
       }
 
-      select.innerHTML = '<option value="">Select a data plan</option>';
+      select.innerHTML =
+        '<option value="">Select a data plan</option>';
 
       uniquePlans.forEach((plan) => {
         const option = document.createElement("option");
+
         option.value = String(plan.id);
 
         const name = plan.name || plan.size || `Plan ${plan.id}`;
-        const size = plan.size && plan.name ? ` — ${plan.size}` : "";
-        const validity = plan.validity ? ` · ${plan.validity}` : "";
+        const size = plan.size && plan.name
+          ? ` — ${plan.size}`
+          : "";
+        const validity = plan.validity
+          ? ` · ${plan.validity}`
+          : "";
+
         const price = Number(plan.price_raw ?? plan.price);
 
-        const displayPrice = Number.isFinite(price) && price > 0
-          ? money(price)
-          : String(plan.price || "");
+        const displayPrice =
+          Number.isFinite(price) && price > 0
+            ? money(price)
+            : String(plan.price || "");
 
         option.textContent =
           `${name}${size}${validity} — ${displayPrice}`;
@@ -416,36 +742,7 @@
   }
 
   function restoreAttemptStates() {
-    const airtime = readAttempt("airtime");
-    const data = readAttempt("data");
-
-    if (airtime) {
-      pendingAirtime = true;
-      setButton(
-        $("airtimeButton"),
-        true,
-        "Previous Attempt — Check History"
-      );
-      showNotice(
-        "A previous airtime attempt is saved. Check bill history before proceeding. Do not create another purchase while its outcome is uncertain.",
-        "warning",
-        "airtimeProcessing"
-      );
-    }
-
-    if (data) {
-      pendingData = true;
-      setButton(
-        $("dataButton"),
-        true,
-        "Previous Attempt — Check History"
-      );
-      showNotice(
-        "A previous data attempt is saved. Check bill history before proceeding. Do not create another purchase while its outcome is uncertain.",
-        "warning",
-        "dataProcessing"
-      );
-    }
+    syncAttemptStates();
   }
 
   async function submitAirtime(event) {
@@ -457,30 +754,48 @@
         "warning",
         "airtimeProcessing"
       );
+
       return;
     }
 
-    const network = $("airtimeNetwork")?.value?.trim().toLowerCase();
+    const network = $("airtimeNetwork")
+      ?.value?.trim().toLowerCase();
+
     const phone = $("airtimePhone")?.value?.trim();
     const amount = Number($("airtimeAmount")?.value);
     const button = $("airtimeButton");
 
     if (!["mtn", "airtel", "glo", "9mobile"].includes(network)) {
-      showNotice("Please select a valid network.", "error", "airtimeProcessing");
+      showNotice(
+        "Please select a valid network.",
+        "error",
+        "airtimeProcessing"
+      );
+
       return;
     }
 
     if (!validatePhone(phone)) {
-      showNotice("Enter a valid 11-digit phone number.", "error", "airtimeProcessing");
+      showNotice(
+        "Enter a valid 11-digit phone number.",
+        "error",
+        "airtimeProcessing"
+      );
+
       return;
     }
 
-    if (!Number.isFinite(amount) || amount < 50 || amount > 50000) {
+    if (
+      !Number.isFinite(amount) ||
+      amount < 50 ||
+      amount > 50000
+    ) {
       showNotice(
         "Airtime amount must be between ₦50 and ₦50,000.",
         "error",
         "airtimeProcessing"
       );
+
       return;
     }
 
@@ -488,16 +803,21 @@
 
     try {
       if (!getUserId() || !getAccessToken()) {
-        throw new Error("Please sign in before buying airtime.");
+        throw new Error(
+          "Please sign in before buying airtime."
+        );
       }
 
       attempt = getOrCreateAttempt("airtime", {
-        network, phone, amount
+        network,
+        phone,
+        amount
       });
 
       airtimeBusy = true;
       window.paymentInProgress = true;
-      setButton(button, true, "Processing...");
+
+      syncAttemptStates();
 
       showNotice(
         "Submitting airtime request. Please wait and do not refresh this page.",
@@ -515,25 +835,43 @@
 
       if (result.status === "pending") {
         pendingAirtime = true;
+
         showNotice(
           `${result.message || "The result is still pending."} Check bill history before taking further action.`,
           "warning",
           "airtimeProcessing"
         );
 
-      } else if (result.status === "failed" || result.status === "reversed") {
-        clearAttempt("airtime");
-        pendingAirtime = false;
+      } else if (
+        result.status === "failed" ||
+        result.status === "reversed"
+      ) {
+        /*
+         * A server response alone does not prove the refund
+         * reached the wallet. Leave the attempt saved unless
+         * the server explicitly confirms the refund.
+         */
+        if (result.refunded === true) {
+          clearAttempt("airtime");
+          pendingAirtime = false;
 
-        showNotice(
-          result.refunded === true
-            ? "The purchase failed and the wallet refund is confirmed."
-            : "The transaction reached a final status. Check your wallet and history before starting another purchase.",
-          "error",
-          "airtimeProcessing"
-        );
+          showNotice(
+            "The purchase failed and the wallet refund is confirmed.",
+            "success",
+            "airtimeProcessing"
+          );
 
-        $("airtimeForm")?.reset();
+          $("airtimeForm")?.reset();
+
+        } else {
+          pendingAirtime = true;
+
+          showNotice(
+            "The transaction has a final status, but its refund is not confirmed yet. Check history again before retrying.",
+            "warning",
+            "airtimeProcessing"
+          );
+        }
 
       } else if (
         result.success === true &&
@@ -551,14 +889,15 @@
         $("airtimeForm")?.reset();
 
       } else {
-        // Keep the key unless the server explicitly confirms
-        // that no transaction was created.
         if (result.payment_not_started === true) {
           clearAttempt("airtime");
         }
 
         throw new Error(
-          getErrorMessage(result, "The airtime purchase was not confirmed.")
+          getErrorMessage(
+            result,
+            "The airtime purchase was not confirmed."
+          )
         );
       }
 
@@ -568,7 +907,6 @@
       if (error.paymentNotStarted === true) {
         clearAttempt("airtime");
       } else if (attempt) {
-        // Preserve the key after network errors or uncertain responses.
         pendingAirtime = true;
       }
 
@@ -584,11 +922,7 @@
       airtimeBusy = false;
       window.paymentInProgress = false;
 
-      if (!pendingAirtime) {
-        setButton(button, false, "Buy Airtime");
-      } else {
-        setButton(button, true, "Previous Attempt — Check History");
-      }
+      syncAttemptStates();
     }
   }
 
@@ -601,26 +935,44 @@
         "warning",
         "dataProcessing"
       );
+
       return;
     }
 
-    const network = $("dataNetwork")?.value?.trim().toLowerCase();
+    const network = $("dataNetwork")
+      ?.value?.trim().toLowerCase();
+
     const phone = $("dataPhone")?.value?.trim();
     const planId = Number($("dataPlan")?.value);
     const button = $("dataButton");
 
     if (!["mtn", "airtel", "glo", "9mobile"].includes(network)) {
-      showNotice("Please select a valid network.", "error", "dataProcessing");
+      showNotice(
+        "Please select a valid network.",
+        "error",
+        "dataProcessing"
+      );
+
       return;
     }
 
     if (!validatePhone(phone)) {
-      showNotice("Enter a valid 11-digit phone number.", "error", "dataProcessing");
+      showNotice(
+        "Enter a valid 11-digit phone number.",
+        "error",
+        "dataProcessing"
+      );
+
       return;
     }
 
     if (!Number.isSafeInteger(planId) || planId <= 0) {
-      showNotice("Please select an available data plan.", "error", "dataProcessing");
+      showNotice(
+        "Please select an available data plan.",
+        "error",
+        "dataProcessing"
+      );
+
       return;
     }
 
@@ -628,16 +980,21 @@
 
     try {
       if (!getUserId() || !getAccessToken()) {
-        throw new Error("Please sign in before buying data.");
+        throw new Error(
+          "Please sign in before buying data."
+        );
       }
 
       attempt = getOrCreateAttempt("data", {
-        network, phone, planId
+        network,
+        phone,
+        planId
       });
 
       dataBusy = true;
       window.paymentInProgress = true;
-      setButton(button, true, "Processing...");
+
+      syncAttemptStates();
 
       showNotice(
         "Submitting data request. Please wait and do not refresh this page.",
@@ -655,25 +1012,38 @@
 
       if (result.status === "pending") {
         pendingData = true;
+
         showNotice(
           `${result.message || "The result is still pending."} Check bill history before taking further action.`,
           "warning",
           "dataProcessing"
         );
 
-      } else if (result.status === "failed" || result.status === "reversed") {
-        clearAttempt("data");
-        pendingData = false;
+      } else if (
+        result.status === "failed" ||
+        result.status === "reversed"
+      ) {
+        if (result.refunded === true) {
+          clearAttempt("data");
+          pendingData = false;
 
-        showNotice(
-          result.refunded === true
-            ? "The purchase failed and the wallet refund is confirmed."
-            : "The transaction reached a final status. Check your wallet and history before starting another purchase.",
-          "error",
-          "dataProcessing"
-        );
+          showNotice(
+            "The purchase failed and the wallet refund is confirmed.",
+            "success",
+            "dataProcessing"
+          );
 
-        $("dataForm")?.reset();
+          $("dataForm")?.reset();
+
+        } else {
+          pendingData = true;
+
+          showNotice(
+            "The transaction has a final status, but its refund is not confirmed yet. Check history again before retrying.",
+            "warning",
+            "dataProcessing"
+          );
+        }
 
       } else if (
         result.success === true &&
@@ -696,7 +1066,10 @@
         }
 
         throw new Error(
-          getErrorMessage(result, "The data purchase was not confirmed.")
+          getErrorMessage(
+            result,
+            "The data purchase was not confirmed."
+          )
         );
       }
 
@@ -721,19 +1094,30 @@
       dataBusy = false;
       window.paymentInProgress = false;
 
-      if (!pendingData) {
-        setButton(button, false, "Buy Data");
-      } else {
-        setButton(button, true, "Previous Attempt — Check History");
-      }
+      syncAttemptStates();
     }
   }
 
   function init() {
-    $("airtimeForm")?.addEventListener("submit", submitAirtime);
-    $("dataForm")?.addEventListener("submit", submitData);
-    $("refreshHistory")?.addEventListener("click", loadHistory);
-    $("dataNetwork")?.addEventListener("change", loadDataPlans);
+    $("airtimeForm")?.addEventListener(
+      "submit",
+      submitAirtime
+    );
+
+    $("dataForm")?.addEventListener(
+      "submit",
+      submitData
+    );
+
+    $("refreshHistory")?.addEventListener(
+      "click",
+      loadHistory
+    );
+
+    $("dataNetwork")?.addEventListener(
+      "change",
+      loadDataPlans
+    );
 
     if (!getAccessToken() || !getUserId()) {
       showNotice(
@@ -744,12 +1128,17 @@
     }
 
     restoreAttemptStates();
+
     loadHistory();
     loadDataPlans();
   }
 
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", init, { once: true });
+    document.addEventListener(
+      "DOMContentLoaded",
+      init,
+      { once: true }
+    );
   } else {
     init();
   }
