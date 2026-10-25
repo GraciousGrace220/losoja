@@ -615,126 +615,77 @@
 
   async function loadDataPlans() {
     const select = $("dataPlan");
-
     if (!select || dataPlansLoading) return;
-
     dataPlansLoading = true;
     select.disabled = true;
-    select.innerHTML =
-      '<option value="">Loading Toppa plans...</option>';
-
+    select.innerHTML = '<option value="">Loading Toppa plans...</option>';
     hideNotice("dataProcessing");
-
     try {
-      const network = $("dataNetwork")
-        ?.value?.trim().toLowerCase();
-
+      const networkRaw = $("dataNetwork")?.value?.trim().toLowerCase() || "mtn";
       const result = await apiRequest({
         service_type: "get_data_plans",
-        network: network || "mtn"
+        network: networkRaw
       });
-
-      if (result.success !== true || !result.plans) {
-        throw new Error(
-          getErrorMessage(result, "Could not load data plans.")
-        );
+      if (result.success !== true) {
+        throw new Error(getErrorMessage(result, "Could not load data plans."));
       }
+      // FIX: Support both lowercase and uppercase keys + direct data array
+      const networkLower = String(result.network || networkRaw || "mtn").toLowerCase();
+      const networkUpper = networkLower.toUpperCase();
+      let networkPlans = null;
+      if (result.plans && typeof result.plans === "object") {
+        networkPlans = result.plans[networkUpper] || result.plans[networkLower] || result.plans[networkRaw] || null;
+        // if plans is already array (fallback)
+        if (Array.isArray(result.plans)) networkPlans = result.plans;
+      }
+      // New backend also returns data array directly
+      if (!networkPlans && Array.isArray(result.data)) networkPlans = result.data;
+      if (!networkPlans && Array.isArray(result.mtn_plans)) networkPlans = result.mtn_plans;
 
-      const networkKey = String(
-        result.network || network || "mtn"
-      ).toUpperCase();
-
-      const networkPlans = result.plans[networkKey];
       const plans = [];
-
       function collectPlans(value) {
         if (Array.isArray(value)) {
           value.forEach((plan) => {
-            if (
-              plan &&
-              plan.id != null &&
-              (plan.price_raw != null || plan.price != null)
-            ) {
+            if (plan && plan.id != null && (plan.price_raw != null || plan.price != null)) {
               plans.push(plan);
             }
           });
-
           return;
         }
-
         if (value && typeof value === "object") {
           Object.values(value).forEach(collectPlans);
         }
       }
-
       collectPlans(networkPlans);
 
       const uniquePlans = [
-        ...new Map(
-          plans.map((plan) => [String(plan.id), plan])
-        ).values()
+        ...new Map(plans.map((plan) => [String(plan.id), plan])).values()
       ].sort((a, b) => {
         const priceA = Number(a.price_raw ?? a.price ?? 0);
         const priceB = Number(b.price_raw ?? b.price ?? 0);
-
-        return priceA - priceB ||
-          String(a.name || "").localeCompare(
-            String(b.name || "")
-          );
+        return priceA - priceB || String(a.name || "").localeCompare(String(b.name || ""));
       });
 
       if (!uniquePlans.length) {
-        select.innerHTML =
-          '<option value="">No plans available</option>';
-
-        showNotice(
-          "No plans were returned for this network. Try refreshing later.",
-          "warning",
-          "dataProcessing"
-        );
-
+        select.innerHTML = '<option value="">No plans available</option>';
+        showNotice("No plans were returned for this network. Try refreshing later.", "warning", "dataProcessing");
         return;
       }
-
-      select.innerHTML =
-        '<option value="">Select a data plan</option>';
-
+      select.innerHTML = '<option value="">Select a data plan</option>';
       uniquePlans.forEach((plan) => {
         const option = document.createElement("option");
-
         option.value = String(plan.id);
-
         const name = plan.name || plan.size || `Plan ${plan.id}`;
-        const size = plan.size && plan.name
-          ? ` — ${plan.size}`
-          : "";
-        const validity = plan.validity
-          ? ` · ${plan.validity}`
-          : "";
-
+        const size = plan.size && plan.name ? ` — ${plan.size}` : "";
+        const validity = plan.validity ? ` · ${plan.validity}` : "";
         const price = Number(plan.price_raw ?? plan.price);
-
-        const displayPrice =
-          Number.isFinite(price) && price > 0
-            ? money(price)
-            : String(plan.price || "");
-
-        option.textContent =
-          `${name}${size}${validity} — ${displayPrice}`;
-
+        const displayPrice = Number.isFinite(price) && price > 0 ? money(price) : String(plan.price || "");
+        option.textContent = `${name}${size}${validity} — ${displayPrice}`;
         select.appendChild(option);
       });
-
     } catch (error) {
-      select.innerHTML =
-        '<option value="">Unable to load plans — retry</option>';
-
-      showNotice(
-        `${error.message} You can retry by changing the network or reopening Bills.`,
-        "error",
-        "dataProcessing"
-      );
-
+      select.innerHTML = '<option value="">Unable to load plans — retry</option>';
+      showNotice(`${error.message} You can retry by changing the network or reopening Bills.`, "error", "dataProcessing");
     } finally {
       dataPlansLoading = false;
       select.disabled = false;
