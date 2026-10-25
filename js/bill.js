@@ -792,41 +792,42 @@
         amount,
         idempotency_key: attempt.key
       });
+if (
+  result.status === "failed" ||
+  result.status === "reversed"
+) {
+  clearAttempt("airtime");
+  pendingAirtime = false;
 
-      if (
-        result.status === "failed" ||
-        result.status === "reversed"
-      ) {
-        clearAttempt("airtime");
-        pendingAirtime = false;
+  showNotice(
+    "Transaction failed. Please check your wallet history to confirm the refund.",
+    "warning",
+    "airtimeProcessing"
+  );
 
-        showNotice(
-          "Failed and refunded.",
-          "success",
-          "airtimeProcessing"
-        );
-      } else if (
-        result.success === true &&
-        result.status === "successful"
-      ) {
-        clearAttempt("airtime");
-        pendingAirtime = false;
+} else if (
+  result.success === true &&
+  result.status === "successful"
+) {
+  clearAttempt("airtime");
+  pendingAirtime = false;
 
-        showNotice(
-          "Airtime purchase confirmed.",
-          "success",
-          "airtimeProcessing"
-        );
+  showNotice(
+    "Airtime purchase confirmed.",
+    "success",
+    "airtimeProcessing"
+  );
 
-        $("airtimeForm")?.reset();
-      } else if (result.status === "pending") {
-        pendingAirtime = true;
+  $("airtimeForm")?.reset();
 
-        showNotice(
-          "Pending - check history.",
-          "warning",
-          "airtimeProcessing"
-        );
+} else if (result.status === "pending") {
+  pendingAirtime = true;
+
+  showNotice(
+    "Pending - check history.",
+    "warning",
+    "airtimeProcessing"
+  );
       } else {
         if (result.payment_not_started === true) {
           clearAttempt("airtime");
@@ -932,7 +933,7 @@
         idempotency_key: attempt.key
       });
 
-      if (
+          if (
         result.status === "failed" ||
         result.status === "reversed"
       ) {
@@ -940,10 +941,11 @@
         pendingData = false;
 
         showNotice(
-          "Failed and refunded.",
-          "success",
+          "Transaction failed. Please check your wallet history to confirm the refund.",
+          "warning",
           "dataProcessing"
         );
+
       } else if (
         result.success === true &&
         result.status === "successful"
@@ -958,6 +960,7 @@
         );
 
         $("dataForm")?.reset();
+
       } else if (result.status === "pending") {
         pendingData = true;
 
@@ -966,6 +969,7 @@
           "warning",
           "dataProcessing"
         );
+
       } else {
         if (result.payment_not_started === true) {
           clearAttempt("data");
