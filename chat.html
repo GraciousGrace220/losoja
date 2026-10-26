@@ -130,76 +130,7 @@ function getParams() {
   };
 }
 
-async function getUserAndToken() {
-  currentUser = null;
-  accessToken = null;
-
-  try {
-    if (typeof window.ensureValidSupabaseSession === "function") {
-      const result = await window.ensureValidSupabaseSession();
-      if (result?.user?.id) currentUser = result.user;
-      else if (result?.data?.user?.id) currentUser = result.data.user;
-    }
-  } catch (error) {
-    console.warn("Session refresh did not complete:", error);
-  }
-
-  try {
-    if (window.losojaSupabase?.auth?.getSession) {
-      const { data, error } = await window.losojaSupabase.auth.getSession();
-      if (!error && data?.session) {
-        currentUser = data.session.user;
-        accessToken = data.session.access_token;
-      }
-    }
-  } catch (error) {
-    console.warn("Supabase session lookup:", error);
-  }
-
-  try {
-    if (typeof window.getCurrentUser === "function") {
-      const result = await window.getCurrentUser();
-      const user = result?.user || result?.data?.user || result;
-      if (!currentUser && user?.id) currentUser = user;
-    }
-  } catch (error) {
-    console.warn("Could not read current user:", error);
-  }
-
-  try {
-    const raw = localStorage.getItem("losoja_supabase_session");
-    if (raw) {
-      const session = JSON.parse(raw);
-      const storedUser =
-        session?.user ||
-        session?.data?.user ||
-        session?.session?.user ||
-        session?.data?.session?.user;
-
-      const storedToken =
-        session?.access_token ||
-        session?.session?.access_token ||
-        session?.data?.session?.access_token;
-
-      if (!currentUser && storedUser?.id) currentUser = storedUser;
-      if (!accessToken && storedToken) accessToken = storedToken;
-    }
-  } catch (error) {
-    console.warn("Could not read saved session:", error);
-  }
-
-  try {
-    if (typeof window.getSupabaseAccessToken === "function") {
-      const result = await window.getSupabaseAccessToken();
-      const token = result?.access_token || result;
-      if (token && typeof token === "string") accessToken = token;
-    }
-  } catch (error) {
-    console.warn("Could not obtain access token:", error);
-  }
-
-  return currentUser;
-}
+async function getUserAndToken
 
 async function api(path, method = "GET", body = null, extraHeaders = {}) {
   const headers = {
