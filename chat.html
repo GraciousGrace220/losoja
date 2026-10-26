@@ -5,7 +5,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Oja Chat - LosOja</title>
-
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:Arial,sans-serif;background:#f4f7f5;display:flex;flex-direction:column;height:100dvh}
@@ -42,8 +41,8 @@ body{margin:0;font-family:Arial,sans-serif;background:#f4f7f5;display:flex;flex-
 }
 </style>
 </head>
-
 <body>
+
 <header class="topbar">
   <a href="index.html" class="brand">← LosOja</a>
   <div id="chatHeader">Opening chat...</div>
@@ -69,7 +68,7 @@ body{margin:0;font-family:Arial,sans-serif;background:#f4f7f5;display:flex;flex-
 <div id="escrowModal" class="modal">
   <div class="modal-card">
     <h3 style="margin:0;color:#087a3e">🔐 Create Escrow</h3>
-    <p style="font-size:13px;color:#666">Review the details before proceeding. Creating an escrow record here does not itself transfer or secure funds.</p>
+    <p style="font-size:13px;color:#666">This creates an escrow request record only. It does not transfer or secure funds.</p>
     <input id="escrowAmount" type="number" min="1" step="any" placeholder="Amount ₦ e.g. 50000">
     <textarea id="escrowDesc" placeholder="What are you buying?"></textarea>
     <div style="display:flex;gap:10px;margin-top:12px">
@@ -81,7 +80,8 @@ body{margin:0;font-family:Arial,sans-serif;background:#f4f7f5;display:flex;flex-
 
 <div id="toast" class="toast"></div>
 
-<script src="js/auth.js?v=2"></script>
+<!-- Load the existing LosOja authentication script. -->
+<script src="auth.js?v=10"></script>
 <script>
 "use strict";
 
@@ -89,7 +89,6 @@ const SUPABASE_URL = "https://ycxshwgeebskdozmornh.supabase.co";
 const SUPABASE_KEY = "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
 
 const $ = id => document.getElementById(id);
-
 const chatWrap = $("chatWrap");
 const chatHeader = $("chatHeader");
 const msgInput = $("msgInput");
@@ -108,9 +107,9 @@ let accessToken = null;
 let sending = false;
 
 function esc(value) {
-  return String(value ?? "").replace(/[&<>"']/g, char => ({
-    "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
-  }[char]));
+  return String(value ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
 }
 
 function showToast(message) {
@@ -130,26 +129,140 @@ function getParams() {
   };
 }
 
-async function getUserAndToken
+/*
+  AUTH RECOVERY
+  Prefer LosOja's existing auth.js helpers.
+  If those helpers are unavailable, try the saved LosOja session and
+  refresh its token using the existing Supabase refresh token.
+*/
+async function getUserAndToken() {
+  let session = null;
+
+  if (typeof window.ensureValidSupabaseSession === "function") {
+    try {
+      session = await window.ensureValidSupabaseSession();
+    } catch (error) {
+      console.warn("LosOja session helper failed:", error);
+    }
+  }
+
+  if (!session?.access_token) {
+    try {
+      session = JSON.parse(
+        localStorage.getItem("losoja_supabase_session") || "null"
+      );
+    } catch {
+      session = null;
+    }
+  }
+
+  if (!session?.access_token) {
+    throw new Error(
+      "No LosOja login session was found. Please log in again, then reopen the seller chat."
+    );
+  }
+
+  // Refresh an expired or nearly expired access token when possible.
+  function tokenExpiry(token) {
+    try {
+      const payload = token.split(".")[1];
+      const decoded = atob(
+        payload.replace(/-/g, "+").replace(/_/g, "/")
+      );
+      return JSON.parse(decoded).exp || 0;
+    } catch {
+      return 0;
+    }
+  }
+
+  if (tokenExpiry(session.access_token) * 1000 < Date.now() + 60000) {
+    if (!session.refresh_token) {
+      throw new Error(
+        "Your login session has expired. Log in again to continue chatting."
+      );
+    }
+
+    const refreshResponse = await fetch(
+      SUPABASE_URL + "/auth/v1/token?grant_type=refresh_token",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          apikey: SUPABASE_KEY
+        },
+        body: JSON.stringify({ refresh_token: session.refresh_token })
+      }
+    );
+
+    const refreshed = await refreshResponse.json().catch(() => ({}));
+
+    if (!refreshResponse.ok || !refreshed.access_token) {
+      throw new Error(
+        refreshed.msg || refreshed.message ||
+        "Your login session expired. Log in again to continue."
+      );
+    }
+
+    session = { ...session, ...refreshed };
+
+    try {
+      localStorage.setItem(
+        "losoja_supabase_session",
+        JSON.stringify(session)
+      );
+    } catch (error) {
+      console.warn("Could not update saved session:", error);
+    }
+  }
+
+  accessToken = session.access_token;
+  currentUser = session.user || null;
+
+  if (!currentUser?.id && typeof window.getCurrentUser === "function") {
+    try {
+      currentUser = await window.getCurrentUser();
+    } catch (error) {
+      console.warn("Could not read current user:", error);
+    }
+  }
+
+  if (!currentUser?.id) {
+    throw new Error(
+      "Your session has no user information. Please log out and log in again."
+    );
+  }
+
+  return currentUser;
+}
 
 async function api(path, method = "GET", body = null, extraHeaders = {}) {
-  const headers = {
-    apikey: SUPABASE_KEY,
-    Authorization: "Bearer " + (accessToken || SUPABASE_KEY),
-    ...extraHeaders
-  };
+  async function request() {
+    const headers = {
+      apikey: SUPABASE_KEY,
+      Authorization: "Bearer " + accessToken,
+      ...extraHeaders
+    };
 
-  if (body !== null) headers["Content-Type"] = "application/json";
-  if (method === "POST") headers["Prefer"] = "return=representation";
+    if (body !== null) headers["Content-Type"] = "application/json";
+    if (method === "POST") headers["Prefer"] = "return=representation";
 
-  const response = await fetch(
-    SUPABASE_URL + "/rest/v1/" + path,
-    {
+    return fetch(SUPABASE_URL + "/rest/v1/" + path, {
       method,
       headers,
       body: body === null ? undefined : JSON.stringify(body)
+    });
+  }
+
+  let response = await request();
+
+  if (response.status === 401) {
+    const errorText = await response.clone().text();
+
+    if (/jwt expired|expired jwt|invalid jwt/i.test(errorText)) {
+      await getUserAndToken();
+      response = await request();
     }
-  );
+  }
 
   const text = await response.text();
 
@@ -188,7 +301,9 @@ async function resolveSellerFromListing() {
   );
 
   if (!Array.isArray(rows) || !rows.length) {
-    throw new Error("This Oja listing could not be found, or you do not have permission to view it.");
+    throw new Error(
+      "This Oja listing could not be found, or you do not have permission to view it."
+    );
   }
 
   const listing = rows[0];
@@ -198,9 +313,10 @@ async function resolveSellerFromListing() {
   }
 
   sellerId = listing.user_id;
-
   const title = listing.title || "Oja listing";
-  chatHeader.textContent = title.length > 28 ? title.slice(0, 25) + "..." : title;
+  chatHeader.textContent = title.length > 28
+    ? title.slice(0, 25) + "..."
+    : title;
 
   return listing;
 }
@@ -220,7 +336,6 @@ async function getOrCreateChat() {
     return null;
   }
 
-  // Look up the conversation from the buyer's side.
   let path =
     "chats?buyer_id=eq." + encodeURIComponent(currentUser.id) +
     "&seller_id=eq." + encodeURIComponent(sellerId) +
@@ -239,7 +354,6 @@ async function getOrCreateChat() {
     return currentChat;
   }
 
-  // If this user started the chat as the seller, find the reverse direction.
   let reversePath =
     "chats?buyer_id=eq." + encodeURIComponent(sellerId) +
     "&seller_id=eq." + encodeURIComponent(currentUser.id) +
@@ -258,7 +372,6 @@ async function getOrCreateChat() {
     return currentChat;
   }
 
-  // Create the conversation only if neither direction already exists.
   const created = await api("chats", "POST", {
     buyer_id: currentUser.id,
     seller_id: sellerId,
@@ -270,14 +383,16 @@ async function getOrCreateChat() {
     return currentChat;
   }
 
-  // Some database policies may not return the created row.
   chats = await api(path);
+
   if (Array.isArray(chats) && chats.length) {
     currentChat = chats[0];
     return currentChat;
   }
 
-  throw new Error("Chat could not be opened. Please check your chat table permissions.");
+  throw new Error(
+    "Chat could not be opened. Check your chats table permissions."
+  );
 }
 
 async function init() {
@@ -294,10 +409,7 @@ async function init() {
       return;
     }
 
-    // Oja listing links pass ?oja_listing=LISTING_UUID.
-    if (listingId) {
-      await resolveSellerFromListing();
-    }
+    if (listingId) await resolveSellerFromListing();
 
     if (!sellerId) {
       chatHeader.textContent = "Choose a seller";
@@ -327,6 +439,7 @@ async function init() {
           "businesses?id=eq." + encodeURIComponent(businessId) +
           "&select=id,name&limit=1"
         );
+
         if (businesses?.[0]?.name) {
           chatHeader.textContent = businesses[0].name;
         }
@@ -364,15 +477,15 @@ async function loadMessages() {
     chatWrap.innerHTML = "";
 
     if (!Array.isArray(messages) || messages.length === 0) {
-      chatWrap.innerHTML = '<div class="small-note">No messages yet. Start the conversation!</div>';
+      chatWrap.innerHTML =
+        '<div class="small-note">No messages yet. Start the conversation!</div>';
       return;
     }
 
     for (const message of messages) {
       const bubble = document.createElement("div");
-      bubble.className = "msg " + (
-        message.sender_id === currentUser.id ? "me" : "them"
-      );
+      bubble.className = "msg " +
+        (message.sender_id === currentUser.id ? "me" : "them");
 
       const value = String(message.message || "");
       const match = value.match(/https?:\/\/[^\s]+/);
@@ -387,7 +500,9 @@ async function loadMessages() {
         img.src = imageUrl;
         img.alt = "Shared image";
         img.loading = "lazy";
-        img.addEventListener("click", () => window.open(imageUrl, "_blank", "noopener"));
+        img.addEventListener("click", () =>
+          window.open(imageUrl, "_blank", "noopener")
+        );
         bubble.appendChild(img);
 
         const caption = document.createElement("div");
@@ -404,7 +519,7 @@ async function loadMessages() {
     chatWrap.scrollTop = chatWrap.scrollHeight;
   } catch (error) {
     console.error("Loading messages failed:", error);
-    showToast("Could not load messages. Check chat permissions.");
+    showToast("Could not load messages: " + error.message);
   }
 }
 
@@ -472,7 +587,6 @@ async function loadEscrows() {
     });
   } catch (error) {
     console.warn("Escrow history unavailable:", error);
-    // Chat remains usable if escrow history cannot be read.
   }
 }
 
@@ -481,8 +595,7 @@ function openEscrowModal() {
     showToast("Open a chat with a seller first.");
     return;
   }
-
-  $("escrowModal").classList.add("show");
+  escrowModal.classList.add("show");
 }
 
 function closeEscrowModal() {
@@ -508,7 +621,6 @@ async function createEscrow() {
   button.textContent = "Saving...";
 
   try {
-    // This records an escrow request; it does not debit a wallet or lock funds.
     await api("escrows", "POST", {
       chat_id: currentChat.id,
       business_id: businessId || null,
@@ -535,7 +647,7 @@ async function createEscrow() {
       });
       await loadMessages();
     } catch (messageError) {
-      console.warn("Escrow recorded but chat notice failed:", messageError);
+      console.warn("Escrow notice failed:", messageError);
     }
   } catch (error) {
     console.error("Creating escrow request failed:", error);
@@ -573,7 +685,7 @@ imageInput.addEventListener("change", async event => {
     return;
   }
 
-  if (!["image/jpeg", "image/png", "image/webp", "image/gif"].includes(file.type)) {
+  if (!["image/jpeg","image/png","image/webp","image/gif"].includes(file.type)) {
     showToast("Choose a JPG, PNG, WEBP, or GIF image.");
     imageInput.value = "";
     return;
@@ -616,7 +728,7 @@ imageInput.addEventListener("change", async event => {
     if (!response.ok) {
       const details = await response.text();
       throw new Error(
-        "Image upload failed. Check the chat-images bucket and its storage policies. " +
+        "Image upload failed. Check the chat-images bucket and storage policies. " +
         details
       );
     }
