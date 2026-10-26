@@ -1,2761 +1,973 @@
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
-    <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>Oja - LosOja Marketplace</title>
-
-    <meta
-        name="description"
-        content="Oja is the LosOja marketplace where you can buy and sell products across Nigeria."
-    >
-
-    <link rel="stylesheet" href="css/style.css">
-
-    <style>
-
-        /* =========================================================
-           OJA MARKETPLACE PAGE
-        ========================================================= */
-
-        .oja-page {
-            min-height: 100vh;
-            padding: 20px;
-            padding-bottom: 90px;
-            box-sizing: border-box;
-        }
-
-
-        /* =========================================================
-           HEADER
-        ========================================================= */
-
-        .oja-header {
-            max-width: 1200px;
-            margin: 0 auto 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 15px;
-        }
-
-        .oja-logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 800;
-            font-size: 22px;
-            color: #087a3e;
-        }
-
-        .oja-logo-mark {
-            width: 38px;
-            height: 38px;
-            border-radius: 12px;
-            background: #087a3e;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 900;
-        }
-
-        .oja-login-btn {
-            border: 0;
-            background: #087a3e;
-            color: white;
-            padding: 10px 16px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 700;
-        }
-
-
-        /* =========================================================
-           HERO
-        ========================================================= */
-
-        .oja-hero {
-            max-width: 1200px;
-            margin: 0 auto 20px;
-            padding: 25px;
-            border-radius: 18px;
-            background: linear-gradient(
-                135deg,
-                #087a3e,
-                #055c2e
-            );
-            color: white;
-            box-sizing: border-box;
-        }
-
-        .oja-hero h1 {
-            margin: 0 0 10px;
-            font-size: 34px;
-        }
-
-        .oja-hero p {
-            margin: 0 0 20px;
-            opacity: 0.95;
-            line-height: 1.6;
-        }
-
-        .oja-hero-actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .oja-primary-btn,
-        .oja-secondary-btn {
-            border: 0;
-            padding: 12px 18px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 700;
-        }
-
-        .oja-primary-btn {
-            background: #ffb703;
-            color: #111827;
-        }
-
-        .oja-secondary-btn {
-            background: white;
-            color: #087a3e;
-        }
-
-
-        /* =========================================================
-           SEARCH
-        ========================================================= */
-
-        .oja-search-section {
-            max-width: 1200px;
-            margin: 0 auto 18px;
-        }
-
-        .oja-search {
-            width: 100%;
-            box-sizing: border-box;
-            padding: 14px 16px;
-            border: 1px solid #d1d5db;
-            border-radius: 12px;
-            font-size: 16px;
-            outline: none;
-            background: white;
-        }
-
-        .oja-search:focus {
-            border-color: #087a3e;
-        }
-
-
-        /* =========================================================
-           CATEGORIES
-        ========================================================= */
-
-        .oja-categories {
-            max-width: 1200px;
-            margin: 0 auto 25px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .oja-category-btn {
-            border: 1px solid #d1d5db;
-            background: white;
-            color: #374151;
-            padding: 9px 13px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        .oja-category-btn.active,
-        .oja-category-btn:hover {
-            background: #087a3e;
-            color: white;
-            border-color: #087a3e;
-        }
-
-
-        /* =========================================================
-           LISTINGS
-        ========================================================= */
-
-        .oja-listings-wrapper {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .oja-section-title {
-            margin: 0 0 15px;
-            color: #111827;
-        }
-
-        .oja-listings {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
-            gap: 16px;
-        }
-
-        .oja-listing-card {
-            background: white;
-            border-radius: 14px;
-            overflow: hidden;
-            border: 1px solid #e5e7eb;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-            position: relative;
-        }
-
-        .oja-listing-image {
-            width: 100%;
-            aspect-ratio: 1 / 1;
-            object-fit: cover;
-            display: block;
-            background: #f3f4f6;
-        }
-
-        .oja-listing-body {
-            padding: 12px;
-        }
-
-        .oja-listing-title {
-            font-weight: 800;
-            margin-bottom: 7px;
-            color: #111827;
-            word-break: break-word;
-        }
-
-        .oja-listing-price {
-            color: #087a3e;
-            font-weight: 800;
-            margin-bottom: 5px;
-        }
-
-        .oja-listing-location {
-            color: #6b7280;
-            font-size: 13px;
-            margin-bottom: 10px;
-        }
-
-        .oja-listing-actions {
-            display: flex;
-            gap: 7px;
-            align-items: center;
-        }
-
-        .oja-view-btn {
-            flex: 1;
-            border: 0;
-            background: #087a3e;
-            color: white;
-            padding: 9px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 700;
-        }
-
-        .oja-save-btn {
-            width: 40px;
-            height: 38px;
-            border: 1px solid #d1d5db;
-            background: white;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 18px;
-        }
-
-        .oja-empty {
-            grid-column: 1 / -1;
-            text-align: center;
-            padding: 40px 20px;
-            background: white;
-            border-radius: 14px;
-            color: #6b7280;
-        }
-
-
-        /* =========================================================
-           POST MODAL
-        ========================================================= */
-
-        .oja-modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            z-index: 9999;
-            background: rgba(0, 0, 0, 0.55);
-            padding: 20px;
-            overflow-y: auto;
-            box-sizing: border-box;
-        }
-
-        .oja-modal.show {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .oja-modal-box {
-            width: 100%;
-            max-width: 560px;
-            max-height: calc(100vh - 30px);
-            background: white;
-            border-radius: 16px;
-            padding: 22px;
-            box-sizing: border-box;
-            overflow-y: auto;
-            overflow-x: hidden;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .oja-modal-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            margin-bottom: 18px;
-        }
-
-        .oja-modal-header h2 {
-            margin: 0;
-            color: #111827;
-        }
-
-        .oja-close {
-            width: 38px;
-            height: 38px;
-            border: 0;
-            border-radius: 50%;
-            background: #f3f4f6;
-            cursor: pointer;
-            font-size: 20px;
-        }
-
-
-        /* =========================================================
-           FORM
-        ========================================================= */
-
-        .oja-form-group {
-            margin-bottom: 15px;
-        }
-
-        .oja-form-group label {
-            display: block;
-            margin-bottom: 7px;
-            font-weight: 700;
-            color: #374151;
-        }
-
-        .oja-form-group input,
-        .oja-form-group select,
-        .oja-form-group textarea {
-            width: 100%;
-            box-sizing: border-box;
-            border: 1px solid #d1d5db;
-            border-radius: 10px;
-            padding: 12px;
-            font-size: 15px;
-            outline: none;
-            background: white;
-        }
-
-        .oja-form-group input:focus,
-        .oja-form-group select:focus,
-        .oja-form-group textarea:focus {
-            border-color: #087a3e;
-        }
-
-        .oja-form-group textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
-
-        .oja-photo-preview {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-            margin-top: 10px;
-        }
-
-        .oja-photo-preview img {
-            width: 100%;
-            aspect-ratio: 1 / 1;
-            object-fit: cover;
-            border-radius: 8px;
-            border: 1px solid #e5e7eb;
-        }
-
-        .oja-submit-btn {
-            width: 100%;
-            border: 0;
-            background: #087a3e;
-            color: white;
-            padding: 14px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 800;
-            font-size: 16px;
-            margin-top: 5px;
-        }
-
-        .oja-submit-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .oja-form-error {
-            display: none;
-            margin-bottom: 12px;
-            padding: 10px;
-            border-radius: 8px;
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        .oja-form-success {
-            display: none;
-            margin-bottom: 12px;
-            padding: 10px;
-            border-radius: 8px;
-            background: #dcfce7;
-            color: #166534;
-        }
-
-
-        /* =========================================================
-           DETAILS MODAL
-        ========================================================= */
-
-        .oja-details-images {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            margin-bottom: 18px;
-        }
-
-        .oja-details-images img {
-            width: 100%;
-            aspect-ratio: 1 / 1;
-            object-fit: cover;
-            border-radius: 10px;
-        }
-
-        .oja-details-price {
-            font-size: 22px;
-            font-weight: 900;
-            color: #087a3e;
-            margin-bottom: 8px;
-        }
-
-        .oja-details-location {
-            color: #6b7280;
-            margin-bottom: 15px;
-        }
-
-        .oja-details-description {
-            line-height: 1.7;
-            color: #374151;
-            white-space: pre-wrap;
-            margin-bottom: 20px;
-        }
-
-        .oja-chat-btn {
-            width: 100%;
-            border: 0;
-            background: #087a3e;
-            color: white;
-            padding: 13px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 800;
-        }
-
-
-        /* =========================================================
-           MOBILE
-        ========================================================= */
-
-        @media (max-width: 600px) {
-
-            .oja-page {
-                padding-top: 20px;
-                padding-bottom: 100px;
-            }
-
-            .oja-hero {
-                padding: 20px;
-            }
-
-            .oja-hero h1 {
-                font-size: 27px;
-            }
-
-            .oja-listings {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 12px;
-            }
-
-            .oja-photo-preview {
-                grid-template-columns: repeat(3, 1fr);
-            }
-
-            .oja-modal {
-                padding: 10px;
-                align-items: flex-start;
-            }
-
-            .oja-modal-box {
-                max-height: calc(100vh - 20px);
-                margin: 0 auto;
-                overflow-y: auto;
-            }
-
-            .oja-details-images {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .oja-header {
-                align-items: center;
-            }
-
-            .oja-logo {
-                font-size: 19px;
-            }
-
-            .oja-logo-mark {
-                width: 34px;
-                height: 34px;
-            }
-        }
-
-    </style>
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oja - LosOja Marketplace</title>
+<meta name="description" content="Buy and sell products across Nigeria on LosOja Oja Marketplace.">
+<link rel="stylesheet" href="css/style.css">
+
+<style>
+*{box-sizing:border-box}
+.oja-page{min-height:100vh;padding:20px;padding-bottom:90px}
+.oja-header{max-width:1200px;margin:0 auto 20px;display:flex;align-items:center;justify-content:space-between;gap:15px}
+.oja-logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:22px;color:#087a3e}
+.oja-logo-mark{width:38px;height:38px;border-radius:12px;background:#087a3e;color:white;display:flex;align-items:center;justify-content:center;font-weight:900}
+.oja-login-btn{border:0;background:#087a3e;color:white;padding:10px 16px;border-radius:10px;cursor:pointer;font-weight:700}
+.oja-hero{max-width:1200px;margin:0 auto 20px;padding:25px;border-radius:18px;background:linear-gradient(135deg,#087a3e,#055c2e);color:white}
+.oja-hero h1{margin:0 0 10px;font-size:34px}
+.oja-hero p{margin:0 0 20px;line-height:1.6}
+.oja-hero-actions{display:flex;flex-wrap:wrap;gap:10px}
+.oja-primary-btn,.oja-secondary-btn{border:0;padding:12px 18px;border-radius:10px;cursor:pointer;font-weight:700}
+.oja-primary-btn{background:#ffb703;color:#111827}
+.oja-secondary-btn{background:white;color:#087a3e}
+.oja-search-section,.oja-categories,.oja-listings-wrapper{max-width:1200px;margin-left:auto;margin-right:auto}
+.oja-search-section{margin-bottom:18px}
+.oja-search{width:100%;padding:14px 16px;border:1px solid #d1d5db;border-radius:12px;font-size:16px;background:white}
+.oja-categories{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:25px}
+.oja-category-btn{border:1px solid #d1d5db;background:white;color:#374151;padding:9px 13px;border-radius:20px;cursor:pointer;font-weight:600}
+.oja-category-btn.active,.oja-category-btn:hover{background:#087a3e;color:white;border-color:#087a3e}
+.oja-section-title{margin:0 0 15px;color:#111827}
+.oja-listings{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:16px}
+.oja-listing-card{background:white;border-radius:14px;overflow:hidden;border:1px solid #e5e7eb;box-shadow:0 4px 15px rgba(0,0,0,.05)}
+.oja-listing-image{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;background:#f3f4f6}
+.oja-listing-body{padding:12px}
+.oja-listing-title{font-weight:800;margin-bottom:7px;color:#111827;overflow-wrap:anywhere}
+.oja-listing-price{color:#087a3e;font-weight:800;margin-bottom:5px}
+.oja-listing-location{color:#6b7280;font-size:13px;margin-bottom:10px}
+.oja-listing-actions{display:flex;gap:7px;align-items:center}
+.oja-view-btn{flex:1;border:0;background:#087a3e;color:white;padding:9px;border-radius:8px;cursor:pointer;font-weight:700}
+.oja-save-btn{width:40px;height:38px;border:1px solid #d1d5db;background:white;border-radius:8px;cursor:pointer;font-size:18px}
+.oja-owner-actions{display:flex;gap:8px;margin-top:10px}
+.oja-edit-btn,.oja-delete-btn{flex:1;padding:9px 6px;border:0;border-radius:8px;font-weight:700;cursor:pointer}
+.oja-edit-btn{background:#e8f5ec;color:#087a3e}
+.oja-delete-btn{background:#fee2e2;color:#b91c1c}
+.oja-empty{grid-column:1/-1;text-align:center;padding:40px 20px;background:white;border-radius:14px;color:#6b7280}
+.oja-modal{display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.55);padding:20px;overflow-y:auto}
+.oja-modal.show{display:flex;align-items:center;justify-content:center}
+.oja-modal-box{width:100%;max-width:560px;max-height:calc(100vh - 30px);background:white;border-radius:16px;padding:22px;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
+.oja-modal-header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:18px}
+.oja-modal-header h2{margin:0;color:#111827}
+.oja-close{width:38px;height:38px;flex-shrink:0;border:0;border-radius:50%;background:#f3f4f6;cursor:pointer;font-size:20px}
+.oja-form-group{margin-bottom:15px}
+.oja-form-group label{display:block;margin-bottom:7px;font-weight:700;color:#374151}
+.oja-form-group input,.oja-form-group select,.oja-form-group textarea{width:100%;border:1px solid #d1d5db;border-radius:10px;padding:12px;font-size:15px;background:white}
+.oja-form-group textarea{min-height:120px;resize:vertical}
+.oja-photo-preview{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+.oja-photo-preview img{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:8px;border:1px solid #e5e7eb}
+.oja-existing-photos{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+.oja-existing-photo{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:8px;border:1px solid #e5e7eb}
+.oja-submit-btn{width:100%;border:0;background:#087a3e;color:white;padding:14px;border-radius:10px;cursor:pointer;font-weight:800;font-size:16px;margin-top:5px}
+.oja-submit-btn:disabled{opacity:.6;cursor:not-allowed}
+.oja-form-error,.oja-form-success{display:none;margin-bottom:12px;padding:10px;border-radius:8px;overflow-wrap:anywhere}
+.oja-form-error{background:#fee2e2;color:#991b1b}
+.oja-form-success{background:#dcfce7;color:#166534}
+.oja-details-images{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:18px}
+.oja-details-images img{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:10px}
+.oja-details-price{font-size:22px;font-weight:900;color:#087a3e;margin-bottom:8px}
+.oja-details-location{color:#6b7280;margin-bottom:15px}
+.oja-details-description{line-height:1.7;color:#374151;white-space:pre-wrap;overflow-wrap:anywhere;margin-bottom:20px}
+.oja-chat-btn{width:100%;border:0;background:#087a3e;color:white;padding:13px;border-radius:10px;cursor:pointer;font-weight:800}
+@media(max-width:600px){
+.oja-page{padding-top:20px;padding-bottom:100px}
+.oja-hero{padding:20px}
+.oja-hero h1{font-size:27px}
+.oja-listings{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.oja-photo-preview,.oja-existing-photos{grid-template-columns:repeat(3,1fr)}
+.oja-modal{padding:10px;align-items:flex-start}
+.oja-modal-box{max-height:calc(100vh - 20px);margin:0 auto}
+.oja-details-images{grid-template-columns:repeat(2,1fr)}
+.oja-logo{font-size:19px}
+.oja-logo-mark{width:34px;height:34px}
+}
+</style>
 </head>
 
-
 <body>
-
 <div class="oja-page">
+<header class="oja-header">
+  <div class="oja-logo"><div class="oja-logo-mark">L</div><span>LosOja</span></div>
+  <button type="button" class="oja-login-btn" id="ojaLoginButton" onclick="goToLogin()">Login</button>
+</header>
 
+<section class="oja-hero">
+  <h1>🛍️ Oja</h1>
+  <p>Buy and sell products with people across Nigeria. Find phones, fashion, electronics, vehicles, property, furniture and more.</p>
+  <div class="oja-hero-actions">
+    <button type="button" class="oja-primary-btn" onclick="startPosting()">+ Post an Item</button>
+    <button type="button" class="oja-secondary-btn" onclick="window.location.href='index.html'">← Back to LosOja</button>
+  </div>
+</section>
 
-    <!-- =========================================================
-         HEADER
-    ========================================================== -->
+<section class="oja-search-section">
+  <input type="search" id="ojaSearch" class="oja-search" placeholder="Search products, phones, fashion, vehicles..." autocomplete="off">
+</section>
 
-    <header class="oja-header">
+<section class="oja-categories">
+  <button type="button" class="oja-category-btn active" data-category="all">All</button>
+  <button type="button" class="oja-category-btn" data-category="phones">Phones</button>
+  <button type="button" class="oja-category-btn" data-category="fashion">Fashion</button>
+  <button type="button" class="oja-category-btn" data-category="electronics">Electronics</button>
+  <button type="button" class="oja-category-btn" data-category="vehicles">Vehicles</button>
+  <button type="button" class="oja-category-btn" data-category="property">Property</button>
+  <button type="button" class="oja-category-btn" data-category="home">Home</button>
+  <button type="button" class="oja-category-btn" data-category="other">Other</button>
+</section>
 
-        <div class="oja-logo">
-
-            <div class="oja-logo-mark">
-                L
-            </div>
-
-            <span>LosOja</span>
-
-        </div>
-
-        <button
-            type="button"
-            class="oja-login-btn"
-            id="ojaLoginButton"
-            onclick="goToLogin()"
-        >
-            Login
-        </button>
-
-    </header>
-
-
-    <!-- =========================================================
-         HERO
-    ========================================================== -->
-
-    <section class="oja-hero">
-
-        <h1>
-            🛍️ Oja
-        </h1>
-
-        <p>
-            Buy and sell products with people across Nigeria.
-            Find phones, fashion, electronics, vehicles, property,
-            furniture and more.
-        </p>
-
-        <div class="oja-hero-actions">
-
-            <button
-                type="button"
-                class="oja-primary-btn"
-                onclick="startPosting()"
-            >
-                + Post an Item
-            </button>
-
-            <button
-                type="button"
-                class="oja-secondary-btn"
-                onclick="window.location.href='index.html'"
-            >
-                ← Back to LosOja
-            </button>
-
-        </div>
-
-    </section>
-
-
-    <!-- =========================================================
-         SEARCH
-    ========================================================== -->
-
-    <section class="oja-search-section">
-
-        <input
-            type="search"
-            id="ojaSearch"
-            class="oja-search"
-            placeholder="Search products, phones, fashion, vehicles..."
-            autocomplete="off"
-        >
-
-    </section>
-
-
-    <!-- =========================================================
-         CATEGORIES
-    ========================================================== -->
-
-    <section class="oja-categories">
-
-        <button
-            type="button"
-            class="oja-category-btn active"
-            data-category="all"
-        >
-            All
-        </button>
-
-        <button
-            type="button"
-            class="oja-category-btn"
-            data-category="phones"
-        >
-            Phones
-        </button>
-
-        <button
-            type="button"
-            class="oja-category-btn"
-            data-category="fashion"
-        >
-            Fashion
-        </button>
-
-        <button
-            type="button"
-            class="oja-category-btn"
-            data-category="electronics"
-        >
-            Electronics
-        </button>
-
-        <button
-            type="button"
-            class="oja-category-btn"
-            data-category="vehicles"
-        >
-            Vehicles
-        </button>
-
-        <button
-            type="button"
-            class="oja-category-btn"
-            data-category="property"
-        >
-            Property
-        </button>
-
-        <button
-            type="button"
-            class="oja-category-btn"
-            data-category="home"
-        >
-            Home
-        </button>
-
-        <button
-            type="button"
-            class="oja-category-btn"
-            data-category="other"
-        >
-            Other
-        </button>
-
-    </section>
-
-
-    <!-- =========================================================
-         LISTINGS
-    ========================================================== -->
-
-    <main class="oja-listings-wrapper">
-
-        <h2 class="oja-section-title">
-            Marketplace
-        </h2>
-
-        <div
-            id="ojaListings"
-            class="oja-listings"
-        >
-            <div class="oja-empty">
-                Loading marketplace...
-            </div>
-        </div>
-
-    </main>
-
+<main class="oja-listings-wrapper">
+  <h2 class="oja-section-title">Marketplace</h2>
+  <div id="ojaListings" class="oja-listings"><div class="oja-empty">Loading marketplace...</div></div>
+</main>
 </div>
 
-
-<!-- =========================================================
-     POST ITEM MODAL
-========================================================== -->
-
-<div
-    id="ojaPostModal"
-    class="oja-modal"
->
-
-    <div class="oja-modal-box">
-
-        <div class="oja-modal-header">
-
-            <h2>
-                Post an Item
-            </h2>
-
-            <button
-                type="button"
-                class="oja-close"
-                onclick="closePostModal()"
-                aria-label="Close"
-            >
-                ×
-            </button>
-
-        </div>
-
-
-        <div
-            id="ojaFormError"
-            class="oja-form-error"
-        ></div>
-
-
-        <div
-            id="ojaFormSuccess"
-            class="oja-form-success"
-        ></div>
-
-
-        <form id="ojaPostForm">
-
-
-            <!-- TITLE -->
-
-            <div class="oja-form-group">
-
-                <label for="ojaTitle">
-                    Item Title
-                </label>
-
-                <input
-                    type="text"
-                    id="ojaTitle"
-                    name="title"
-                    placeholder="e.g. iPhone 13 Pro"
-                    required
-                >
-
-            </div>
-
-
-            <!-- CATEGORY -->
-
-            <div class="oja-form-group">
-
-                <label for="ojaCategory">
-                    Category
-                </label>
-
-                <select
-                    id="ojaCategory"
-                    name="category"
-                    required
-                >
-
-                    <option value="">
-                        Select category
-                    </option>
-
-                    <option value="phones">
-                        Phones
-                    </option>
-
-                    <option value="fashion">
-                        Fashion
-                    </option>
-
-                    <option value="electronics">
-                        Electronics
-                    </option>
-
-                    <option value="vehicles">
-                        Vehicles
-                    </option>
-
-                    <option value="property">
-                        Property
-                    </option>
-
-                    <option value="home">
-                        Home & Furniture
-                    </option>
-
-                    <option value="other">
-                        Other
-                    </option>
-
-                </select>
-
-            </div>
-
-
-            <!-- PRICE -->
-
-            <div class="oja-form-group">
-
-                <label for="ojaPrice">
-                    Price (₦)
-                </label>
-
-                <input
-                    type="number"
-                    id="ojaPrice"
-                    name="price"
-                    placeholder="e.g. 250000"
-                    min="0"
-                    step="1"
-                    required
-                >
-
-            </div>
-
-
-            <!-- LOCATION -->
-
-            <div class="oja-form-group">
-
-                <label for="ojaLocation">
-                    Location
-                </label>
-
-                <input
-                    type="text"
-                    id="ojaLocation"
-                    name="location"
-                    placeholder="e.g. Ikeja, Lagos"
-                    required
-                >
-
-            </div>
-
-
-            <!-- PHOTOS -->
-
-            <div class="oja-form-group">
-
-                <label for="ojaImages">
-                    Photos
-                </label>
-
-                <input
-                    type="file"
-                    id="ojaImages"
-                    name="images"
-                    accept="image/jpeg,image/png,image/webp"
-                    multiple
-                >
-
-                <small>
-                    Up to 5 photos. JPG, PNG or WebP. Maximum 5MB each.
-                </small>
-
-                <div
-                    id="ojaPhotoPreview"
-                    class="oja-photo-preview"
-                ></div>
-
-            </div>
-
-
-            <!-- DESCRIPTION -->
-
-            <div class="oja-form-group">
-
-                <label for="ojaDescription">
-                    Description
-                </label>
-
-                <textarea
-                    id="ojaDescription"
-                    name="description"
-                    placeholder="Describe the item, condition, features, etc."
-                    required
-                ></textarea>
-
-            </div>
-
-
-            <!-- SUBMIT -->
-
-            <button
-                type="submit"
-                id="ojaSubmitButton"
-                class="oja-submit-btn"
-            >
-                Post Item
-            </button>
-
-        </form>
-
+<!-- POST / EDIT MODAL -->
+<div id="ojaPostModal" class="oja-modal">
+  <div class="oja-modal-box">
+    <div class="oja-modal-header">
+      <h2 id="ojaFormHeading">Post an Item</h2>
+      <button type="button" class="oja-close" onclick="closePostModal()" aria-label="Close">×</button>
     </div>
 
+    <div id="ojaFormError" class="oja-form-error"></div>
+    <div id="ojaFormSuccess" class="oja-form-success"></div>
+
+    <form id="ojaPostForm">
+      <div class="oja-form-group">
+        <label for="ojaTitle">Item Title</label>
+        <input type="text" id="ojaTitle" name="title" placeholder="e.g. iPhone 13 Pro" maxlength="150" required>
+      </div>
+
+      <div class="oja-form-group">
+        <label for="ojaCategory">Category</label>
+        <select id="ojaCategory" name="category" required>
+          <option value="">Select category</option>
+          <option value="phones">Phones</option>
+          <option value="fashion">Fashion</option>
+          <option value="electronics">Electronics</option>
+          <option value="vehicles">Vehicles</option>
+          <option value="property">Property</option>
+          <option value="home">Home &amp; Furniture</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+
+      <div class="oja-form-group">
+        <label for="ojaPrice">Price (₦)</label>
+        <input type="number" id="ojaPrice" name="price" placeholder="e.g. 250000" min="0" step="1" required>
+      </div>
+
+      <div class="oja-form-group">
+        <label for="ojaLocation">Location</label>
+        <input type="text" id="ojaLocation" name="location" placeholder="e.g. Ikeja, Lagos" maxlength="200" required>
+      </div>
+
+      <div class="oja-form-group">
+        <label for="ojaImages">Photos</label>
+        <input type="file" id="ojaImages" name="images" accept="image/jpeg,image/png,image/webp" multiple>
+        <small id="ojaPhotoHelp">Up to 5 photos total. JPG, PNG or WebP. Maximum 5MB each.</small>
+        <div id="ojaExistingPhotos" class="oja-existing-photos"></div>
+        <div id="ojaPhotoPreview" class="oja-photo-preview"></div>
+      </div>
+
+      <div class="oja-form-group">
+        <label for="ojaDescription">Description</label>
+        <textarea id="ojaDescription" name="description" placeholder="Describe the item, condition, features, etc." maxlength="10000" required></textarea>
+      </div>
+
+      <button type="submit" id="ojaSubmitButton" class="oja-submit-btn">Post Item</button>
+    </form>
+  </div>
 </div>
 
-
-<!-- =========================================================
-     DETAILS MODAL
-========================================================== -->
-
-<div
-    id="ojaDetailsModal"
-    class="oja-modal"
->
-
-    <div class="oja-modal-box">
-
-        <div class="oja-modal-header">
-
-            <h2 id="ojaDetailsTitle">
-                Item Details
-            </h2>
-
-            <button
-                type="button"
-                class="oja-close"
-                onclick="closeOjaDetails()"
-                aria-label="Close"
-            >
-                ×
-            </button>
-
-        </div>
-
-
-        <div
-            id="ojaDetailsImages"
-            class="oja-details-images"
-        ></div>
-
-
-        <div
-            id="ojaDetailsPrice"
-            class="oja-details-price"
-        ></div>
-
-
-        <div
-            id="ojaDetailsLocation"
-            class="oja-details-location"
-        ></div>
-
-
-        <div
-            id="ojaDetailsDescription"
-            class="oja-details-description"
-        ></div>
-
-
-        <button
-            type="button"
-            id="ojaChatSellerButton"
-            class="oja-chat-btn"
-        >
-            💬 Chat Seller
-        </button>
-
+<!-- DETAILS MODAL -->
+<div id="ojaDetailsModal" class="oja-modal">
+  <div class="oja-modal-box">
+    <div class="oja-modal-header">
+      <h2 id="ojaDetailsTitle">Item Details</h2>
+      <button type="button" class="oja-close" onclick="closeOjaDetails()" aria-label="Close">×</button>
     </div>
-
+    <div id="ojaDetailsImages" class="oja-details-images"></div>
+    <div id="ojaDetailsPrice" class="oja-details-price"></div>
+    <div id="ojaDetailsLocation" class="oja-details-location"></div>
+    <div id="ojaDetailsDescription" class="oja-details-description"></div>
+    <button type="button" id="ojaChatSellerButton" class="oja-chat-btn">💬 Chat Seller</button>
+  </div>
 </div>
-
 
 <script src="js/auth.js"></script>
-
-
 <script>
+"use strict";
 
-    /* =========================================================
-       SUPABASE
-    ========================================================== */
+/* Supabase configuration */
+const OJA_SUPABASE_URL = "https://ycxshwgeebskdozmornh.supabase.co";
+const OJA_SUPABASE_KEY = "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
 
-    const OJA_SUPABASE_URL =
-        "https://ycxshwgeebskdozmornh.supabase.co";
+let ojaListings = [];
+let ojaCurrentCategory = "all";
+let ojaCurrentSearch = "";
+let ojaCurrentDetailsId = null;
+let ojaEditingListingId = null;
+let ojaCurrentUser = null;
+let ojaUserLoaded = false;
+let ojaBusy = false;
 
-    const OJA_SUPABASE_KEY =
-        "sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
 
+function formatPrice(value) {
+  const number = Number(value);
+  return Number.isFinite(number) ? number.toLocaleString("en-NG") : "0";
+}
 
-    /* =========================================================
-       STATE
-    ========================================================== */
+function goToLogin() {
+  window.location.href = "login.html";
+}
 
-    let ojaListings = [];
-
-    let ojaCurrentCategory = "all";
-
-    let ojaCurrentSearch = "";
-
-    let ojaCurrentDetailsId = null;
-
-
-    /* =========================================================
-       USER
-    ========================================================== */
-
-   async function getOjaCurrentUser() {
-
-    try {
-
-        if (
-            typeof window.ensureValidSupabaseSession ===
-            "function"
-        ) {
-
-            const result =
-                await window.ensureValidSupabaseSession();
-
-            return result?.user || result || null;
-
-        }
-
-        if (
-            typeof window.getCurrentUser ===
-            "function"
-        ) {
-
-            const result =
-                await window.getCurrentUser();
-
-            return result?.user || result || null;
-
-        }
-
-    } catch (error) {
-
-        console.error(
-            "Oja user lookup error:",
-            error
-        );
-
+async function getOjaCurrentUser() {
+  try {
+    if (typeof window.ensureValidSupabaseSession === "function") {
+      const result = await window.ensureValidSupabaseSession();
+      const user = result?.user || result || null;
+      if (user?.id) return user;
     }
 
+    if (typeof window.getCurrentUser === "function") {
+      const result = await window.getCurrentUser();
+      const user = result?.user || result || null;
+      if (user?.id) return user;
+    }
+  } catch (error) {
+    console.error("Oja user lookup error:", error);
+  }
+
+  return null;
+}
+
+async function refreshOjaUser() {
+  ojaCurrentUser = await getOjaCurrentUser();
+  ojaUserLoaded = true;
+
+  const button = document.getElementById("ojaLoginButton");
+  if (button) button.textContent = ojaCurrentUser ? "My Account" : "Login";
+
+  return ojaCurrentUser;
+}
+
+async function getOjaAccessToken() {
+  try {
+    if (typeof window.getSupabaseAccessToken === "function") {
+      const token = await window.getSupabaseAccessToken();
+      if (token) return token;
+    }
+  } catch (error) {
+    console.error("Access token lookup error:", error);
+  }
+
+  try {
+    const raw = localStorage.getItem("losoja_supabase_session");
+    if (!raw) return null;
+    const session = JSON.parse(raw);
+    return session?.access_token || session?.session?.access_token || null;
+  } catch {
     return null;
-
+  }
 }
 
+async function requireOjaSession() {
+  const user = await refreshOjaUser();
+  const token = await getOjaAccessToken();
 
-    /* =========================================================
-       LOGIN BUTTON
-    ========================================================== */
+  if (!user?.id || !token) {
+    alert("Please log in again to manage your Oja items.");
+    goToLogin();
+    return null;
+  }
 
-    async function updateLoginButton() {
+  return { user, token };
+}
 
-        const button =
-            document.getElementById("ojaLoginButton");
+function showFormError(message) {
+  const el = document.getElementById("ojaFormError");
+  el.textContent = message;
+  el.style.display = "block";
+  document.getElementById("ojaFormSuccess").style.display = "none";
+}
 
-        if (!button) {
-            return;
+function showFormSuccess(message) {
+  const el = document.getElementById("ojaFormSuccess");
+  el.textContent = message;
+  el.style.display = "block";
+  document.getElementById("ojaFormError").style.display = "none";
+}
+
+function clearFormMessages() {
+  document.getElementById("ojaFormError").style.display = "none";
+  document.getElementById("ojaFormSuccess").style.display = "none";
+}
+
+function openPostModal() {
+  document.getElementById("ojaPostModal").classList.add("show");
+  document.body.style.overflow = "hidden";
+}
+
+function closePostModal() {
+  if (ojaBusy) return;
+  document.getElementById("ojaPostModal").classList.remove("show");
+  document.body.style.overflow = "";
+}
+
+function resetOjaForm() {
+  document.getElementById("ojaPostForm").reset();
+  document.getElementById("ojaPhotoPreview").innerHTML = "";
+  document.getElementById("ojaExistingPhotos").innerHTML = "";
+  document.getElementById("ojaFormHeading").textContent = "Post an Item";
+  document.getElementById("ojaSubmitButton").textContent = "Post Item";
+  document.getElementById("ojaPhotoHelp").textContent =
+    "Up to 5 photos total. JPG, PNG or WebP. Maximum 5MB each.";
+  ojaEditingListingId = null;
+  clearFormMessages();
+}
+
+async function startPosting() {
+  const session = await requireOjaSession();
+  if (!session) return;
+
+  resetOjaForm();
+  openPostModal();
+}
+
+function getListingImages(listing) {
+  return Array.isArray(listing.images) ? listing.images : [];
+}
+
+/* Fetch listings and their photos */
+async function loadOjaListings() {
+  const container = document.getElementById("ojaListings");
+  container.innerHTML = '<div class="oja-empty">Loading marketplace...</div>';
+
+  try {
+    await refreshOjaUser();
+
+    const response = await fetch(
+      `${OJA_SUPABASE_URL}/rest/v1/oja_listings?select=*&status=eq.available&order=created_at.desc`,
+      {
+        headers: {
+          apikey: OJA_SUPABASE_KEY,
+          Authorization: `Bearer ${OJA_SUPABASE_KEY}`
         }
+      }
+    );
 
-        const user =
-            await getOjaCurrentUser();
-
-        if (user) {
-
-            button.textContent =
-                "My Account";
-
-        } else {
-
-            button.textContent =
-                "Login";
-
-        }
-
+    if (!response.ok) {
+      const details = await response.text();
+      console.error("Oja listing load error:", details);
+      throw new Error("Could not load marketplace listings.");
     }
 
+    const listings = await response.json();
+    const ids = listings.map(item => item.id).filter(Boolean);
 
-    function goToLogin() {
+    let images = [];
 
-        window.location.href =
-            "login.html";
+    if (ids.length) {
+      const imageResponse = await fetch(
+        `${OJA_SUPABASE_URL}/rest/v1/oja_listing_images?select=*&listing_id=in.(${ids.map(encodeURIComponent).join(",")})&order=sort_order.asc`,
+        {
+          headers: {
+            apikey: OJA_SUPABASE_KEY,
+            Authorization: `Bearer ${OJA_SUPABASE_KEY}`
+          }
+        }
+      );
 
+      if (imageResponse.ok) {
+        images = await imageResponse.json();
+      } else {
+        console.warn("Oja image records could not be loaded:", await imageResponse.text());
+      }
     }
 
+    ojaListings = listings.map(listing => ({
+      ...listing,
+      images: images.filter(image => String(image.listing_id) === String(listing.id))
+    }));
 
-    /* =========================================================
-       ACCESS TOKEN
-    ========================================================== */
+    renderOjaListings();
+  } catch (error) {
+    console.error("Oja listings error:", error);
+    container.innerHTML = `
+      <div class="oja-empty">
+        Unable to load marketplace right now.
+        <button type="button" onclick="loadOjaListings()">Try again</button>
+      </div>`;
+  }
+}
 
-    async function getOjaAccessToken() {
+/* Saved items */
+function getSavedOjaItems() {
+  try {
+    const value = JSON.parse(localStorage.getItem("losoja_saved_items") || "[]");
+    return Array.isArray(value) ? value : [];
+  } catch {
+    return [];
+  }
+}
 
-        try {
+function isOjaItemSaved(listingId) {
+  return getSavedOjaItems().some(item =>
+    item.type === "oja" && String(item.id) === String(listingId)
+  );
+}
 
-            if (
-                typeof window.getSupabaseAccessToken ===
-                "function"
-            ) {
+function toggleSavedOjaItem(listingId) {
+  const saved = getSavedOjaItems();
+  const index = saved.findIndex(item =>
+    item.type === "oja" && String(item.id) === String(listingId)
+  );
 
-                return await window.getSupabaseAccessToken();
+  if (index >= 0) {
+    saved.splice(index, 1);
+  } else {
+    const listing = ojaListings.find(item => String(item.id) === String(listingId));
+    if (!listing) return;
 
-            }
+    saved.push({
+      type: "oja",
+      id: listing.id,
+      title: listing.title,
+      price: listing.price,
+      location: listing.location,
+      image: listing.images?.[0]?.image_url || ""
+    });
+  }
 
-        } catch (error) {
+  localStorage.setItem("losoja_saved_items", JSON.stringify(saved));
+  renderOjaListings();
 
-            console.error(
-                "Access token error:",
-                error
-            );
+  if (typeof window.renderSavedItems === "function") {
+    window.renderSavedItems();
+  }
+}
 
+/* Render cards, including owner-only controls */
+function renderOjaListings() {
+  const container = document.getElementById("ojaListings");
+  let filtered = [...ojaListings];
+
+  if (ojaCurrentCategory !== "all") {
+    filtered = filtered.filter(item =>
+      String(item.category || "").toLowerCase() === ojaCurrentCategory
+    );
+  }
+
+  if (ojaCurrentSearch.trim()) {
+    const search = ojaCurrentSearch.toLowerCase().trim();
+    filtered = filtered.filter(item => {
+      const searchable = `${item.title || ""} ${item.category || ""} ${item.location || ""} ${item.description || ""}`.toLowerCase();
+      return searchable.includes(search);
+    });
+  }
+
+  if (!filtered.length) {
+    container.innerHTML = '<div class="oja-empty">No items found.</div>';
+    return;
+  }
+
+  container.innerHTML = filtered.map(listing => {
+    const image = listing.images?.[0]?.image_url || "https://via.placeholder.com/500x500?text=Oja";
+    const saved = isOjaItemSaved(listing.id);
+    const isOwner = !!ojaCurrentUser?.id &&
+      String(listing.user_id) === String(ojaCurrentUser.id);
+
+    return `
+      <article class="oja-listing-card">
+        <img class="oja-listing-image"
+          src="${escapeHtml(image)}"
+          alt="${escapeHtml(listing.title || "Oja item")}"
+          onerror="this.onerror=null;this.src='https://via.placeholder.com/500x500?text=Oja'">
+
+        <div class="oja-listing-body">
+          <div class="oja-listing-title">${escapeHtml(listing.title || "Untitled item")}</div>
+          <div class="oja-listing-price">₦${formatPrice(listing.price)}</div>
+          <div class="oja-listing-location">📍 ${escapeHtml(listing.location || "Nigeria")}</div>
+
+          <div class="oja-listing-actions">
+            <button type="button" class="oja-view-btn"
+              onclick="viewOjaDetails('${escapeHtml(listing.id)}')">View Details</button>
+            <button type="button" class="oja-save-btn"
+              onclick="toggleSavedOjaItem('${escapeHtml(listing.id)}')"
+              aria-label="Save item">${saved ? "❤️" : "♡"}</button>
+          </div>
+
+          ${isOwner ? `
+            <div class="oja-owner-actions">
+              <button type="button" class="oja-edit-btn"
+                onclick="editOjaListing('${escapeHtml(listing.id)}')">✏️ Edit</button>
+              <button type="button" class="oja-delete-btn"
+                onclick="deleteOjaListing('${escapeHtml(listing.id)}')">🗑️ Delete</button>
+            </div>` : ""}
+        </div>
+      </article>`;
+  }).join("");
+}
+
+/* Populate the existing form for editing */
+async function editOjaListing(listingId) {
+  const session = await requireOjaSession();
+  if (!session) return;
+
+  const listing = ojaListings.find(item => String(item.id) === String(listingId));
+  if (!listing) {
+    alert("This item could not be found. Refresh the marketplace.");
+    return;
+  }
+
+  if (String(listing.user_id) !== String(session.user.id)) {
+    alert("You can only edit your own items.");
+    return;
+  }
+
+  ojaEditingListingId = listing.id;
+  clearFormMessages();
+
+  document.getElementById("ojaFormHeading").textContent = "Edit Your Item";
+  document.getElementById("ojaSubmitButton").textContent = "Save Changes";
+  document.getElementById("ojaTitle").value = listing.title || "";
+  document.getElementById("ojaCategory").value = listing.category || "";
+  document.getElementById("ojaPrice").value = listing.price ?? "";
+  document.getElementById("ojaLocation").value = listing.location || "";
+  document.getElementById("ojaDescription").value = listing.description || "";
+  document.getElementById("ojaImages").value = "";
+
+  const existing = getListingImages(listing);
+  document.getElementById("ojaExistingPhotos").innerHTML = existing.map(image =>
+    `<img class="oja-existing-photo" src="${escapeHtml(image.image_url)}" alt="Existing item photo">`
+  ).join("");
+
+  document.getElementById("ojaPhotoHelp").textContent =
+    `${existing.length} existing photo(s). You can add more, up to 5 photos total. Existing photos are kept.`;
+
+  document.getElementById("ojaPhotoPreview").innerHTML = "";
+  openPostModal();
+}
+
+/* Upload a photo into the existing public bucket */
+async function uploadOjaImage(file, listingId, token) {
+  const extension = (file.name.split(".").pop() || "jpg").toLowerCase();
+  const safeExtension = ["jpg", "jpeg", "png", "webp"].includes(extension) ? extension : "jpg";
+  const fileName = `listing_${listingId}_${Date.now()}_${Math.random().toString(36).slice(2, 9)}.${safeExtension}`;
+  const filePath = `listings/${fileName}`;
+
+  const response = await fetch(
+    `${OJA_SUPABASE_URL}/storage/v1/object/oja-images/${filePath}`,
+    {
+      method: "POST",
+      headers: {
+        apikey: OJA_SUPABASE_KEY,
+        Authorization: `Bearer ${token}`,
+        "Content-Type": file.type,
+        "x-upsert": "false"
+      },
+      body: file
+    }
+  );
+
+  if (!response.ok) {
+    const detail = await response.text();
+    console.error("Oja image upload error:", detail);
+    throw new Error("An image could not be uploaded. Your item may already have been saved; check the marketplace before retrying.");
+  }
+
+  return `${OJA_SUPABASE_URL}/storage/v1/object/public/oja-images/${filePath}`;
+}
+
+async function saveOjaImageRecord(listingId, userId, imageUrl, sortOrder, token) {
+  const response = await fetch(`${OJA_SUPABASE_URL}/rest/v1/oja_listing_images`, {
+    method: "POST",
+    headers: {
+      apikey: OJA_SUPABASE_KEY,
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+      Prefer: "return=minimal"
+    },
+    body: JSON.stringify({
+      listing_id: listingId,
+      user_id: userId,
+      image_url: imageUrl,
+      sort_order: sortOrder
+    })
+  });
+
+  if (!response.ok) {
+    console.error("Oja image record error:", await response.text());
+    throw new Error("The item was saved, but a photo record could not be saved. Check the listing before retrying.");
+  }
+}
+
+/* Post a new item or update an existing item */
+document.getElementById("ojaPostForm").addEventListener("submit", async event => {
+  event.preventDefault();
+  if (ojaBusy) return;
+
+  clearFormMessages();
+
+  const session = await requireOjaSession();
+  if (!session) return;
+
+  const { user, token } = session;
+  const title = document.getElementById("ojaTitle").value.trim();
+  const category = document.getElementById("ojaCategory").value;
+  const price = Number(document.getElementById("ojaPrice").value);
+  const location = document.getElementById("ojaLocation").value.trim();
+  const description = document.getElementById("ojaDescription").value.trim();
+  const files = Array.from(document.getElementById("ojaImages").files || []);
+  const editing = ojaEditingListingId !== null;
+  const existingListing = editing
+    ? ojaListings.find(item => String(item.id) === String(ojaEditingListingId))
+    : null;
+
+  if (editing && (!existingListing || String(existingListing.user_id) !== String(user.id))) {
+    showFormError("You can only edit your own items. Refresh the marketplace and try again.");
+    return;
+  }
+
+  const existingImages = existingListing ? getListingImages(existingListing) : [];
+
+  if (!title || !category || !location || !description) {
+    showFormError("Please complete all required fields.");
+    return;
+  }
+
+  if (!Number.isFinite(price) || price < 0 || !Number.isSafeInteger(price)) {
+    showFormError("Enter a valid whole-number price.");
+    return;
+  }
+
+  if (existingImages.length + files.length > 5) {
+    showFormError(`This item already has ${existingImages.length} photo(s). You can add only ${Math.max(0, 5 - existingImages.length)} more.`);
+    return;
+  }
+
+  if (files.length > 5) {
+    showFormError("You can upload a maximum of 5 photos.");
+    return;
+  }
+
+  for (const file of files) {
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+      showFormError("Only JPG, PNG and WebP images are allowed.");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      showFormError("Each image must be 5MB or smaller.");
+      return;
+    }
+  }
+
+  const submitButton = document.getElementById("ojaSubmitButton");
+  ojaBusy = true;
+  submitButton.disabled = true;
+  submitButton.textContent = editing ? "Saving Changes..." : "Posting...";
+
+  let listingId = existingListing?.id;
+
+  try {
+    if (editing) {
+      const response = await fetch(
+        `${OJA_SUPABASE_URL}/rest/v1/oja_listings?id=eq.${encodeURIComponent(listingId)}&user_id=eq.${encodeURIComponent(user.id)}`,
+        {
+          method: "PATCH",
+          headers: {
+            apikey: OJA_SUPABASE_KEY,
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+            Prefer: "return=representation"
+          },
+          body: JSON.stringify({ title, category, price, location, description })
         }
+      );
 
+      if (!response.ok) {
+        console.error("Oja update error:", await response.text());
+        throw new Error("Could not update this item. Check your connection and Supabase permissions.");
+      }
 
-        try {
+      const updated = await response.json();
+      if (!updated?.length) {
+        throw new Error("No item was updated. Supabase may not allow this account to edit the listing.");
+      }
+    } else {
+      const response = await fetch(`${OJA_SUPABASE_URL}/rest/v1/oja_listings`, {
+        method: "POST",
+        headers: {
+          apikey: OJA_SUPABASE_KEY,
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+          Prefer: "return=representation"
+        },
+        body: JSON.stringify({
+          user_id: user.id,
+          title,
+          category,
+          price,
+          location,
+          description,
+          status: "available"
+        })
+      });
 
-            const session =
-                localStorage.getItem(
-                    "losoja_supabase_session"
-                );
+      if (!response.ok) {
+        const detail = await response.text();
+        console.error("Oja create error:", detail);
+        throw new Error("Failed to post item. Check your login and Supabase permissions.");
+      }
 
-            if (!session) {
-                return null;
-            }
-
-            const parsed =
-                JSON.parse(session);
-
-            return (
-                parsed.access_token ||
-                parsed.session?.access_token ||
-                null
-            );
-
-        } catch (error) {
-
-            return null;
-
-        }
-
+      const created = await response.json();
+      if (!created?.length) throw new Error("The listing was not returned after creation.");
+      listingId = created[0].id;
     }
 
-
-    /* =========================================================
-       START POSTING
-    ========================================================== */
-
-    async function startPosting() {
-
-        const user =
-            await getOjaCurrentUser();
-
-        if (!user) {
-
-            alert(
-                "Please log in before posting an item."
-            );
-
-            goToLogin();
-
-            return;
-
-        }
-
-        const modal =
-            document.getElementById(
-                "ojaPostModal"
-            );
-
-        if (modal) {
-
-            modal.classList.add("show");
-
-            document.body.style.overflow =
-                "hidden";
-
-        }
-
-    }
-
-
-    /* =========================================================
-       CLOSE POST MODAL
-    ========================================================== */
-
-    function closePostModal() {
-
-        const modal =
-            document.getElementById(
-                "ojaPostModal"
-            );
-
-        if (modal) {
-
-            modal.classList.remove("show");
-
-        }
-
-        document.body.style.overflow =
-            "";
-
-    }
-
-
-    /* =========================================================
-       PHOTO PREVIEW
-    ========================================================== */
-
-    document
-        .getElementById("ojaImages")
-        .addEventListener(
-            "change",
-            function () {
-
-                const files =
-                    Array.from(this.files || []);
-
-                const preview =
-                    document.getElementById(
-                        "ojaPhotoPreview"
-                    );
-
-                const error =
-                    document.getElementById(
-                        "ojaFormError"
-                    );
-
-
-                preview.innerHTML = "";
-
-                error.style.display =
-                    "none";
-
-
-                if (files.length > 5) {
-
-                    error.textContent =
-                        "You can upload a maximum of 5 photos.";
-
-                    error.style.display =
-                        "block";
-
-                    this.value = "";
-
-                    return;
-
-                }
-
-
-                files.forEach(
-                    function (file) {
-
-                        const allowedTypes = [
-                            "image/jpeg",
-                            "image/png",
-                            "image/webp"
-                        ];
-
-                        if (
-                            !allowedTypes.includes(
-                                file.type
-                            )
-                        ) {
-
-                            error.textContent =
-                                "Only JPG, PNG and WebP images are allowed.";
-
-                            error.style.display =
-                                "block";
-
-                            return;
-
-                        }
-
-
-                        if (
-                            file.size >
-                            5 * 1024 * 1024
-                        ) {
-
-                            error.textContent =
-                                "Each image must be 5MB or smaller.";
-
-                            error.style.display =
-                                "block";
-
-                            return;
-
-                        }
-
-
-                        const reader =
-                            new FileReader();
-
-                        reader.onload =
-                            function (event) {
-
-                                const img =
-                                    document.createElement(
-                                        "img"
-                                    );
-
-                                img.src =
-                                    event.target.result;
-
-                                preview.appendChild(
-                                    img
-                                );
-
-                            };
-
-                        reader.readAsDataURL(
-                            file
-                        );
-
-                    }
-                );
-
-            }
-        );
-
-
-    /* =========================================================
-       LOAD LISTINGS
-    ========================================================== */
-
-    async function loadOjaListings() {
-
-        const container =
-            document.getElementById(
-                "ojaListings"
-            );
-
-        container.innerHTML =
-            `
-                <div class="oja-empty">
-                    Loading marketplace...
-                </div>
-            `;
-
-
-        try {
-
-            const response =
-                await fetch(
-                    `${OJA_SUPABASE_URL}/rest/v1/oja_listings?select=*&status=eq.available&order=created_at.desc`,
-                    {
-                        headers: {
-                            apikey:
-                                OJA_SUPABASE_KEY,
-                            Authorization:
-                                `Bearer ${OJA_SUPABASE_KEY}`
-                        }
-                    }
-                );
-
-
-            if (!response.ok) {
-
-                throw new Error(
-                    "Failed to load marketplace listings."
-                );
-
-            }
-
-
-            ojaListings =
-                await response.json();
-
-
-            const listingIds =
-                ojaListings.map(
-                    item => item.id
-                );
-
-
-            if (listingIds.length > 0) {
-
-                const imageResponse =
-                    await fetch(
-                        `${OJA_SUPABASE_URL}/rest/v1/oja_listing_images?select=*&listing_id=in.(${listingIds.join(",")})&order=sort_order.asc`,
-                        {
-                            headers: {
-                                apikey:
-                                    OJA_SUPABASE_KEY,
-                                Authorization:
-                                    `Bearer ${OJA_SUPABASE_KEY}`
-                            }
-                        }
-                    );
-
-
-                if (imageResponse.ok) {
-
-                    const images =
-                        await imageResponse.json();
-
-
-                    ojaListings =
-                        ojaListings.map(
-                            listing => ({
-
-                                ...listing,
-
-                                images:
-                                    images.filter(
-                                        image =>
-                                            String(
-                                                image.listing_id
-                                            ) ===
-                                            String(
-                                                listing.id
-                                            )
-                                    )
-
-                            })
-                        );
-
-                }
-
-            }
-
-
-            renderOjaListings();
-
-        } catch (error) {
-
-            console.error(
-                "Oja listings error:",
-                error
-            );
-
-            container.innerHTML =
-                `
-                    <div class="oja-empty">
-                        Unable to load marketplace right now.
-                        Please try again later.
-                    </div>
-                `;
-
-        }
-
-    }
-
-
-    /* =========================================================
-       SAVED ITEMS
-    ========================================================== */
-
-    function getSavedOjaItems() {
-
-        try {
-
-            const saved =
-                JSON.parse(
-                    localStorage.getItem(
-                        "losoja_saved_items"
-                    ) || "[]"
-                );
-
-            return saved;
-
-        } catch (error) {
-
-            return [];
-
-        }
-
-    }
-
-
-    function isOjaItemSaved(
-        listingId
-    ) {
-
-        const saved =
-            getSavedOjaItems();
-
-        return saved.some(
-            item =>
-                item.type === "oja" &&
-                String(item.id) ===
-                String(listingId)
-        );
-
-    }
-
-
-    function toggleSavedOjaItem(
-        listingId
-    ) {
-
-        let saved =
-            getSavedOjaItems();
-
-
-        const existingIndex =
-            saved.findIndex(
-                item =>
-                    item.type === "oja" &&
-                    String(item.id) ===
-                    String(listingId)
-            );
-
-
-        if (existingIndex >= 0) {
-
-            saved.splice(
-                existingIndex,
-                1
-            );
-
-        } else {
-
-            const listing =
-                ojaListings.find(
-                    item =>
-                        String(item.id) ===
-                        String(listingId)
-                );
-
-            if (!listing) {
-                return;
-            }
-
-
-            saved.push({
-
-                type: "oja",
-
-                id: listing.id,
-
-                title: listing.title,
-
-                price: listing.price,
-
-                location: listing.location,
-
-                image:
-                    listing.images?.[0]?.image_url ||
-                    ""
-
-            });
-
-        }
-
-
-        localStorage.setItem(
-            "losoja_saved_items",
-            JSON.stringify(saved)
-        );
-
-
-        renderOjaListings();
-
-
-        if (
-            typeof window.renderSavedItems ===
-            "function"
-        ) {
-
-            window.renderSavedItems();
-
-        }
-
-    }
-
-
-    /* =========================================================
-       RENDER LISTINGS
-    ========================================================== */
-
-    function renderOjaListings() {
-
-        const container =
-            document.getElementById(
-                "ojaListings"
-            );
-
-
-        let filtered =
-            [...ojaListings];
-
-
-        if (
-            ojaCurrentCategory !==
-            "all"
-        ) {
-
-            filtered =
-                filtered.filter(
-                    listing =>
-                        String(
-                            listing.category ||
-                            ""
-                        ).toLowerCase() ===
-                        ojaCurrentCategory
-                );
-
-        }
-
-
-        if (ojaCurrentSearch) {
-
-            const search =
-                ojaCurrentSearch
-                    .toLowerCase()
-                    .trim();
-
-
-            filtered =
-                filtered.filter(
-                    listing => {
-
-                        const text =
-                            `
-                            ${listing.title || ""}
-                            ${listing.category || ""}
-                            ${listing.location || ""}
-                            ${listing.description || ""}
-                            `.toLowerCase();
-
-
-                        return text.includes(
-                            search
-                        );
-
-                    }
-                );
-
-        }
-
-
-        if (!filtered.length) {
-
-            container.innerHTML =
-                `
-                    <div class="oja-empty">
-                        No items found.
-                    </div>
-                `;
-
-            return;
-
-        }
-
-
-        container.innerHTML =
-            filtered.map(
-                listing => {
-
-                    const image =
-                        listing.images?.[0]?.image_url ||
-                        "https://via.placeholder.com/500x500?text=Oja";
-
-
-                    const saved =
-                        isOjaItemSaved(
-                            listing.id
-                        );
-
-
-                    return `
-                        <article
-                            class="oja-listing-card"
-                        >
-
-                            <img
-                                class="oja-listing-image"
-                                src="${escapeHtml(image)}"
-                                alt="${escapeHtml(listing.title || "Oja item")}"
-                                onerror="this.src='https://via.placeholder.com/500x500?text=Oja'"
-                            >
-
-                            <div class="oja-listing-body">
-
-                                <div class="oja-listing-title">
-                                    ${escapeHtml(
-                                        listing.title ||
-                                        "Untitled item"
-                                    )}
-                                </div>
-
-                                <div class="oja-listing-price">
-                                    ₦${formatPrice(
-                                        listing.price
-                                    )}
-                                </div>
-
-                                <div class="oja-listing-location">
-                                    📍 ${escapeHtml(
-                                        listing.location ||
-                                        "Nigeria"
-                                    )}
-                                </div>
-
-                                <div class="oja-listing-actions">
-
-                                    <button
-                                        type="button"
-                                        class="oja-view-btn"
-                                        onclick="viewOjaDetails('${listing.id}')"
-                                    >
-                                        View Details
-                                    </button>
-
-                                    <button
-                                        type="button"
-                                        class="oja-save-btn"
-                                        onclick="toggleSavedOjaItem('${listing.id}')"
-                                        aria-label="Save item"
-                                    >
-                                        ${saved ? "❤️" : "♡"}
-                                    </button>
-
-                                </div>
-
-                            </div>
-
-                        </article>
-                    `;
-
-                }
-            ).join("");
-
-    }
-
-
-    /* =========================================================
-       DETAILS
-    ========================================================== */
-
-    function viewOjaDetails(
-        listingId
-    ) {
-
-        const listing =
-            ojaListings.find(
-                item =>
-                    String(item.id) ===
-                    String(listingId)
-            );
-
-
-        if (!listing) {
-            return;
-        }
-
-
-        ojaCurrentDetailsId =
-            listing.id;
-
-
-        document.getElementById(
-            "ojaDetailsTitle"
-        ).textContent =
-            listing.title ||
-            "Item Details";
-
-
-        document.getElementById(
-            "ojaDetailsPrice"
-        ).textContent =
-            `₦${formatPrice(
-                listing.price
-            )}`;
-
-
-        document.getElementById(
-            "ojaDetailsLocation"
-        ).textContent =
-            `📍 ${
-                listing.location ||
-                "Nigeria"
-            }`;
-
-
-        document.getElementById(
-            "ojaDetailsDescription"
-        ).textContent =
-            listing.description ||
-            "No description provided.";
-
-
-        const imagesContainer =
-            document.getElementById(
-                "ojaDetailsImages"
-            );
-
-
-        const images =
-            listing.images || [];
-
-
-        if (!images.length) {
-
-            imagesContainer.innerHTML =
-                `
-                    <img
-                        src="https://via.placeholder.com/500x500?text=Oja"
-                        alt="Oja item"
-                    >
-                `;
-
-        } else {
-
-            imagesContainer.innerHTML =
-                images.map(
-                    image =>
-                        `
-                            <img
-                                src="${escapeHtml(image.image_url)}"
-                                alt="${escapeHtml(listing.title || "Oja item")}"
-                                onerror="this.src='https://via.placeholder.com/500x500?text=Oja'"
-                            >
-                        `
-                ).join("");
-
-        }
-
-
-        document.getElementById(
-            "ojaChatSellerButton"
-        ).onclick =
-            function () {
-
-                chatWithOjaSeller(
-                    listing.id
-                );
-
-            };
-
-
-        const modal =
-            document.getElementById(
-                "ojaDetailsModal"
-            );
-
-
-        modal.classList.add(
-            "show"
-        );
-
-
-        document.body.style.overflow =
-            "hidden";
-
-    }
-
-
-    function closeOjaDetails() {
-
-        const modal =
-            document.getElementById(
-                "ojaDetailsModal"
-            );
-
-
-        modal.classList.remove(
-            "show"
-        );
-
-
-        document.body.style.overflow =
-            "";
-
-    }
-
-
-    /* =========================================================
-       CHAT SELLER
-    ========================================================== */
-
-    async function chatWithOjaSeller(
-        listingId
-    ) {
-
-        const user =
-            await getOjaCurrentUser();
-
-
-        if (!user) {
-
-            alert(
-                "Please log in to chat with the seller."
-            );
-
-            goToLogin();
-
-            return;
-
-        }
-
-
-        window.location.href =
-            `chat.html?oja_listing=${encodeURIComponent(
-                listingId
-            )}`;
-
-    }
-
-
-    /* =========================================================
-       IMAGE UPLOAD
-    ========================================================== */
-
-    async function uploadOjaImage(
-        file,
+    /* Add newly selected photos without deleting existing photos */
+    for (let i = 0; i < files.length; i++) {
+      const imageUrl = await uploadOjaImage(files[i], listingId, token);
+      await saveOjaImageRecord(
         listingId,
-        userId
-    ) {
-
-        const token =
-            await getOjaAccessToken();
-
-
-        if (!token) {
-
-            throw new Error(
-                "Your session has expired. Please log in again."
-            );
-
-        }
-
-
-        const extension =
-            file.name
-                .split(".")
-                .pop()
-                .toLowerCase();
-
-
-        const fileName =
-            `listing_${listingId}_${Date.now()}_${Math.random()
-                .toString(36)
-                .substring(2, 8)}.${extension}`;
-
-
-        const filePath =
-            `listings/${fileName}`;
-
-
-        const response =
-            await fetch(
-                `${OJA_SUPABASE_URL}/storage/v1/object/oja-images/${filePath}`,
-                {
-                    method: "POST",
-
-                    headers: {
-                        apikey:
-                            OJA_SUPABASE_KEY,
-
-                        Authorization:
-                            `Bearer ${token}`,
-
-                        "Content-Type":
-                            file.type,
-
-                        "x-upsert":
-                            "false"
-                    },
-
-                    body: file
-                }
-            );
-
-
-        if (!response.ok) {
-
-            const text =
-                await response.text();
-
-            console.error(
-                "Oja image upload error:",
-                text
-            );
-
-            throw new Error(
-                "Failed to upload image."
-            );
-
-        }
-
-
-        return (
-            `${OJA_SUPABASE_URL}/storage/v1/object/public/oja-images/${filePath}`
-        );
-
-    }
-
-
-    /* =========================================================
-       SAVE IMAGE RECORD
-    ========================================================== */
-
-    async function saveOjaImageRecord(
-        listingId,
-        userId,
+        user.id,
         imageUrl,
-        sortOrder
-    ) {
-
-        const token =
-            await getOjaAccessToken();
-
-
-        const response =
-            await fetch(
-                `${OJA_SUPABASE_URL}/rest/v1/oja_listing_images`,
-                {
-                    method: "POST",
-
-                    headers: {
-
-                        apikey:
-                            OJA_SUPABASE_KEY,
-
-                        Authorization:
-                            `Bearer ${token}`,
-
-                        "Content-Type":
-                            "application/json",
-
-                        Prefer:
-                            "return=minimal"
-
-                    },
-
-                    body: JSON.stringify({
-
-                        listing_id:
-                            listingId,
-
-                        user_id:
-                            userId,
-
-                        image_url:
-                            imageUrl,
-
-                        sort_order:
-                            sortOrder
-
-                    })
-
-                }
-            );
-
-
-        if (!response.ok) {
-
-            const text =
-                await response.text();
-
-            console.error(
-                "Image record error:",
-                text
-            );
-
-            throw new Error(
-                "Failed to save image record."
-            );
-
-        }
-
+        existingImages.length + i,
+        token
+      );
     }
 
-
-    /* =========================================================
-       POST FORM
-    ========================================================== */
-
-    document
-        .getElementById("ojaPostForm")
-        .addEventListener(
-            "submit",
-            async function (event) {
-
-                event.preventDefault();
-
-
-                const error =
-                    document.getElementById(
-                        "ojaFormError"
-                    );
-
-                const success =
-                    document.getElementById(
-                        "ojaFormSuccess"
-                    );
-
-                const submitButton =
-                    document.getElementById(
-                        "ojaSubmitButton"
-                    );
-
-
-                error.style.display =
-                    "none";
-
-                success.style.display =
-                    "none";
-
-
-                const user =
-                    await getOjaCurrentUser();
-
-
-                if (!user) {
-
-                    error.textContent =
-                        "Please log in before posting an item.";
-
-                    error.style.display =
-                        "block";
-
-                    return;
-
-                }
-
-
-                const title =
-                    document.getElementById(
-                        "ojaTitle"
-                    ).value.trim();
-
-
-                const category =
-                    document.getElementById(
-                        "ojaCategory"
-                    ).value;
-
-
-                const price =
-                    Number(
-                        document.getElementById(
-                            "ojaPrice"
-                        ).value
-                    );
-
-
-                const location =
-                    document.getElementById(
-                        "ojaLocation"
-                    ).value.trim();
-
-
-                const description =
-                    document.getElementById(
-                        "ojaDescription"
-                    ).value.trim();
-
-
-                const files =
-                    Array.from(
-                        document.getElementById(
-                            "ojaImages"
-                        ).files || []
-                    );
-
-
-                if (!title) {
-
-                    error.textContent =
-                        "Please enter an item title.";
-
-                    error.style.display =
-                        "block";
-
-                    return;
-
-                }
-
-
-                if (!category) {
-
-                    error.textContent =
-                        "Please select a category.";
-
-                    error.style.display =
-                        "block";
-
-                    return;
-
-                }
-
-
-                if (
-                    !Number.isFinite(price) ||
-                    price < 0
-                ) {
-
-                    error.textContent =
-                        "Please enter a valid price.";
-
-                    error.style.display =
-                        "block";
-
-                    return;
-
-                }
-
-
-                if (!location) {
-
-                    error.textContent =
-                        "Please enter your location.";
-
-                    error.style.display =
-                        "block";
-
-                    return;
-
-                }
-
-
-                if (!description) {
-
-                    error.textContent =
-                        "Please describe the item.";
-
-                    error.style.display =
-                        "block";
-
-                    return;
-
-                }
-
-
-                if (files.length > 5) {
-
-                    error.textContent =
-                        "You can upload a maximum of 5 photos.";
-
-                    error.style.display =
-                        "block";
-
-                    return;
-
-                }
-
-
-                for (
-                    const file of files
-                ) {
-
-                    if (
-                        ![
-                            "image/jpeg",
-                            "image/png",
-                            "image/webp"
-                        ].includes(
-                            file.type
-                        )
-                    ) {
-
-                        error.textContent =
-                            "Only JPG, PNG and WebP images are allowed.";
-
-                        error.style.display =
-                            "block";
-
-                        return;
-
-                    }
-
-
-                    if (
-                        file.size >
-                        5 * 1024 * 1024
-                    ) {
-
-                        error.textContent =
-                            "Each image must be 5MB or smaller.";
-
-                        error.style.display =
-                            "block";
-
-                        return;
-
-                    }
-
-                }
-
-
-                submitButton.disabled =
-                    true;
-
-                submitButton.textContent =
-                    "Posting...";
-
-
-                try {
-
-                    const token =
-                        await getOjaAccessToken();
-
-
-                    if (!token) {
-
-                        throw new Error(
-                            "Your session has expired. Please log in again."
-                        );
-
-                    }
-
-
-                    /* -----------------------------------------
-                       CREATE LISTING
-                    ----------------------------------------- */
-
-                    const listingResponse =
-                        await fetch(
-                            `${OJA_SUPABASE_URL}/rest/v1/oja_listings`,
-                            {
-                                method: "POST",
-
-                                headers: {
-
-                                    apikey:
-                                        OJA_SUPABASE_KEY,
-
-                                    Authorization:
-                                        `Bearer ${token}`,
-
-                                    "Content-Type":
-                                        "application/json",
-
-                                    Prefer:
-                                        "return=representation"
-
-                                },
-
-                                body:
-                                    JSON.stringify({
-
-                                        user_id:
-                                            user.id,
-
-                                        title:
-                                            title,
-
-                                        category:
-                                            category,
-
-                                        price:
-                                            price,
-
-                                        location:
-                                            location,
-
-                                        description:
-                                            description,
-
-                                        status:
-                                            "available"
-
-                                    })
-
-                            }
-                        );
-
-
-                   if (!listingResponse.ok) {
-
-    const text =
-        await listingResponse.text();
-
-    console.error(
-        "Listing creation error:",
-        text
+    showFormSuccess(editing ? "Your item has been updated." : "Your item has been posted successfully.");
+    resetOjaForm();
+    await loadOjaListings();
+
+    setTimeout(() => {
+      if (!ojaBusy) {
+        document.getElementById("ojaPostModal").classList.remove("show");
+        document.body.style.overflow = "";
+      }
+    }, 900);
+  } catch (error) {
+    console.error("Oja form submission error:", error);
+    showFormError(error.message || "Unable to save this item. Check the marketplace before retrying.");
+  } finally {
+    ojaBusy = false;
+    submitButton.disabled = false;
+    submitButton.textContent = ojaEditingListingId !== null ? "Save Changes" : "Post Item";
+  }
+});
+
+/* Delete only the logged-in owner's listing */
+async function deleteOjaListing(listingId) {
+  const session = await requireOjaSession();
+  if (!session) return;
+
+  const listing = ojaListings.find(item => String(item.id) === String(listingId));
+  if (!listing) {
+    alert("This item could not be found. Refresh the marketplace.");
+    return;
+  }
+
+  if (String(listing.user_id) !== String(session.user.id)) {
+    alert("You can only delete your own items.");
+    return;
+  }
+
+  const confirmed = confirm(
+    `Delete "${listing.title || "this item"}"?\n\nThis cannot be undone.`
+  );
+  if (!confirmed) return;
+
+  try {
+    const response = await fetch(
+      `${OJA_SUPABASE_URL}/rest/v1/oja_listings?id=eq.${encodeURIComponent(listing.id)}&user_id=eq.${encodeURIComponent(session.user.id)}`,
+      {
+        method: "DELETE",
+        headers: {
+          apikey: OJA_SUPABASE_KEY,
+          Authorization: `Bearer ${session.token}`,
+          Prefer: "return=representation"
+        }
+      }
     );
 
-    let errorMessage =
-        "Failed to create marketplace listing.";
+    if (!response.ok) {
+      console.error("Oja delete error:", await response.text());
+      alert("Could not delete this item. Check Supabase ownership policies and try again.");
+      return;
+    }
 
+    const deleted = await response.json();
+
+    if (!deleted?.length) {
+      alert("No item was deleted. Supabase may not allow this account to delete the listing.");
+      return;
+    }
+
+    /* Best-effort cleanup of related image records.
+       The listing deletion is already complete at this point. */
     try {
-
-        const errorData =
-            JSON.parse(text);
-
-        errorMessage =
-            errorData.message ||
-            errorData.error_description ||
-            errorData.details ||
-            errorData.hint ||
-            text ||
-            errorMessage;
-
-    } catch (parseError) {
-
-        if (text) {
-            errorMessage = text;
+      const imageResponse = await fetch(
+        `${OJA_SUPABASE_URL}/rest/v1/oja_listing_images?listing_id=eq.${encodeURIComponent(listing.id)}&user_id=eq.${encodeURIComponent(session.user.id)}`,
+        {
+          method: "DELETE",
+          headers: {
+            apikey: OJA_SUPABASE_KEY,
+            Authorization: `Bearer ${session.token}`
+          }
         }
+      );
 
+      if (!imageResponse.ok) {
+        console.warn("Listing deleted, but some image records may need cleanup:", await imageResponse.text());
+      }
+    } catch (cleanupError) {
+      console.warn("Listing deleted; image record cleanup failed:", cleanupError);
     }
 
-    throw new Error(
-        errorMessage
-    );
+    ojaListings = ojaListings.filter(item => String(item.id) !== String(listing.id));
+    renderOjaListings();
 
+    if (String(ojaCurrentDetailsId) === String(listing.id)) closeOjaDetails();
+
+    alert("Your item has been deleted.");
+    await loadOjaListings();
+  } catch (error) {
+    console.error("Oja delete request failed:", error);
+    alert("A network error occurred. Refresh the marketplace to check whether the item was deleted.");
+  }
 }
 
-                    const createdListings =
-                        await listingResponse.json();
+/* Item details */
+function viewOjaDetails(listingId) {
+  const listing = ojaListings.find(item => String(item.id) === String(listingId));
+  if (!listing) return;
 
+  ojaCurrentDetailsId = listing.id;
+  document.getElementById("ojaDetailsTitle").textContent = listing.title || "Item Details";
+  document.getElementById("ojaDetailsPrice").textContent = `₦${formatPrice(listing.price)}`;
+  document.getElementById("ojaDetailsLocation").textContent = `📍 ${listing.location || "Nigeria"}`;
+  document.getElementById("ojaDetailsDescription").textContent = listing.description || "No description provided.";
 
-                    const listing =
-                        createdListings[0];
+  const images = getListingImages(listing);
+  document.getElementById("ojaDetailsImages").innerHTML = images.length
+    ? images.map(image => `
+        <img src="${escapeHtml(image.image_url)}"
+          alt="${escapeHtml(listing.title || "Oja item")}"
+          onerror="this.onerror=null;this.src='https://via.placeholder.com/500x500?text=Oja'">`).join("")
+    : '<img src="https://via.placeholder.com/500x500?text=Oja" alt="Oja item">';
 
+  document.getElementById("ojaChatSellerButton").onclick = () => chatWithOjaSeller(listing.id);
 
-                    if (!listing) {
+  document.getElementById("ojaDetailsModal").classList.add("show");
+  document.body.style.overflow = "hidden";
+}
 
-                        throw new Error(
-                            "The listing was not created."
-                        );
+function closeOjaDetails() {
+  document.getElementById("ojaDetailsModal").classList.remove("show");
+  document.body.style.overflow = "";
+}
 
-                    }
+async function chatWithOjaSeller(listingId) {
+  const user = await getOjaCurrentUser();
+  if (!user) {
+    alert("Please log in to chat with the seller.");
+    goToLogin();
+    return;
+  }
 
+  window.location.href = `chat.html?oja_listing=${encodeURIComponent(listingId)}`;
+}
 
-                    /* -----------------------------------------
-                       UPLOAD PHOTOS
-                    ----------------------------------------- */
+/* Photo selection and previews */
+document.getElementById("ojaImages").addEventListener("change", function() {
+  const files = Array.from(this.files || []);
+  const listing = ojaEditingListingId !== null
+    ? ojaListings.find(item => String(item.id) === String(ojaEditingListingId))
+    : null;
+  const existingCount = listing ? getListingImages(listing).length : 0;
 
-                    for (
-                        let i = 0;
-                        i < files.length;
-                        i++
-                    ) {
+  document.getElementById("ojaPhotoPreview").innerHTML = "";
+  clearFormMessages();
 
-                        const imageUrl =
-                            await uploadOjaImage(
-                                files[i],
-                                listing.id,
-                                user.id
-                            );
+  if (files.length + existingCount > 5) {
+    showFormError(`Maximum 5 photos total. This item already has ${existingCount} photo(s).`);
+    this.value = "";
+    return;
+  }
 
-
-                        await saveOjaImageRecord(
-                            listing.id,
-                            user.id,
-                            imageUrl,
-                            i
-                        );
-
-                    }
-
-
-                    success.textContent =
-                        "Your item has been posted successfully!";
-
-                    success.style.display =
-                        "block";
-
-
-                    document
-                        .getElementById(
-                            "ojaPostForm"
-                        )
-                        .reset();
-
-
-                    document.getElementById(
-                        "ojaPhotoPreview"
-                    ).innerHTML =
-                        "";
-
-
-                    await loadOjaListings();
-
-
-                    setTimeout(
-                        function () {
-
-                            closePostModal();
-
-                            success.style.display =
-                                "none";
-
-                        },
-                        1200
-                    );
-
-
-                } catch (submitError) {
-
-                    console.error(
-                        "Oja posting error:",
-                        submitError
-                    );
-
-
-                    error.textContent =
-                        submitError.message ||
-                        "Unable to post your item. Please try again.";
-
-                    error.style.display =
-                        "block";
-
-                } finally {
-
-                    submitButton.disabled =
-                        false;
-
-                    submitButton.textContent =
-                        "Post Item";
-
-                }
-
-            }
-        );
-
-
-    /* =========================================================
-       CATEGORY FILTER
-    ========================================================== */
-
-    document
-        .querySelectorAll(
-            ".oja-category-btn"
-        )
-        .forEach(
-            function (button) {
-
-                button.addEventListener(
-                    "click",
-                    function () {
-
-                        document
-                            .querySelectorAll(
-                                ".oja-category-btn"
-                            )
-                            .forEach(
-                                btn =>
-                                    btn.classList.remove(
-                                        "active"
-                                    )
-                            );
-
-
-                        this.classList.add(
-                            "active"
-                        );
-
-
-                        ojaCurrentCategory =
-                            this.dataset.category ||
-                            "all";
-
-
-                        renderOjaListings();
-
-                    }
-                );
-
-            }
-        );
-
-
-    /* =========================================================
-       SEARCH
-    ========================================================== */
-
-    document
-        .getElementById("ojaSearch")
-        .addEventListener(
-            "input",
-            function () {
-
-                ojaCurrentSearch =
-                    this.value || "";
-
-
-                renderOjaListings();
-
-            }
-        );
-
-
-    /* =========================================================
-       ESCAPE HTML
-    ========================================================== */
-
-    function escapeHtml(
-        value
-    ) {
-
-        return String(
-            value ?? ""
-        )
-            .replace(
-                /&/g,
-                "&amp;"
-            )
-            .replace(
-                /</g,
-                "&lt;"
-            )
-            .replace(
-                />/g,
-                "&gt;"
-            )
-            .replace(
-                /"/g,
-                "&quot;"
-            )
-            .replace(
-                /'/g,
-                "&#039;"
-            );
-
+  for (const file of files) {
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+      showFormError("Only JPG, PNG and WebP images are allowed.");
+      this.value = "";
+      document.getElementById("ojaPhotoPreview").innerHTML = "";
+      return;
     }
 
-
-    /* =========================================================
-       FORMAT PRICE
-    ========================================================== */
-
-    function formatPrice(
-        value
-    ) {
-
-        const number =
-            Number(value);
-
-
-        if (
-            !Number.isFinite(
-                number
-            )
-        ) {
-
-            return "0";
-
-        }
-
-
-        return number.toLocaleString(
-            "en-NG"
-        );
-
+    if (file.size > 5 * 1024 * 1024) {
+      showFormError("Each image must be 5MB or smaller.");
+      this.value = "";
+      document.getElementById("ojaPhotoPreview").innerHTML = "";
+      return;
     }
 
+    const reader = new FileReader();
+    reader.onload = event => {
+      const img = document.createElement("img");
+      img.src = event.target.result;
+      img.alt = "Selected item photo preview";
+      document.getElementById("ojaPhotoPreview").appendChild(img);
+    };
+    reader.readAsDataURL(file);
+  }
+});
 
-    /* =========================================================
-       MODAL BACKDROP CLOSE
-    ========================================================== */
+/* Category filters */
+document.querySelectorAll(".oja-category-btn").forEach(button => {
+  button.addEventListener("click", function() {
+    document.querySelectorAll(".oja-category-btn").forEach(btn => btn.classList.remove("active"));
+    this.classList.add("active");
+    ojaCurrentCategory = this.dataset.category || "all";
+    renderOjaListings();
+  });
+});
 
-    document
-        .getElementById("ojaPostModal")
-        .addEventListener(
-            "click",
-            function (event) {
+/* Search */
+document.getElementById("ojaSearch").addEventListener("input", function() {
+  ojaCurrentSearch = this.value || "";
+  renderOjaListings();
+});
 
-                if (
-                    event.target === this
-                ) {
+/* Close modals on backdrop click */
+document.getElementById("ojaPostModal").addEventListener("click", event => {
+  if (event.target === event.currentTarget) closePostModal();
+});
 
-                    closePostModal();
+document.getElementById("ojaDetailsModal").addEventListener("click", event => {
+  if (event.target === event.currentTarget) closeOjaDetails();
+});
 
-                }
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape") {
+    closePostModal();
+    closeOjaDetails();
+  }
+});
 
-            }
-        );
-
-
-    document
-        .getElementById("ojaDetailsModal")
-        .addEventListener(
-            "click",
-            function (event) {
-
-                if (
-                    event.target === this
-                ) {
-
-                    closeOjaDetails();
-
-                }
-
-            }
-        );
-
-
-    /* =========================================================
-       ESC KEY
-    ========================================================== */
-
-    document.addEventListener(
-        "keydown",
-        function (event) {
-
-            if (
-                event.key === "Escape"
-            ) {
-
-                closePostModal();
-
-                closeOjaDetails();
-
-            }
-
-        }
-    );
-
-
-    /* =========================================================
-       INITIALIZE
-    ========================================================== */
-
-    updateLoginButton();
-
-    loadOjaListings();
-
+/* Initialize */
+(async function initOja() {
+  await refreshOjaUser();
+  await loadOjaListings();
+})();
 </script>
-
 </body>
-
 </html>
