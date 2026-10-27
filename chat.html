@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,9 +7,9 @@
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:Arial,sans-serif;background:#f4f7f5;display:flex;flex-direction:column;height:100dvh}
-.topbar{background:#087a3e;color:white;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.topbar{background:#087a3e;color:white;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;gap:8px}
 .brand{color:white;text-decoration:none;font-weight:800;white-space:nowrap}
-#chatHeader{flex:1;text-align:center;font-weight:700;overflow-wrap:anywhere}
+#chatHeader{flex:1;text-align:center;font-weight:700;overflow-wrap:anywhere;font-size:14px}
 .chat-wrap{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;max-width:800px;width:100%;margin:0 auto}
 .msg{max-width:80%;padding:10px 14px;border-radius:14px;line-height:1.5;font-size:14px;word-break:break-word;white-space:pre-wrap}
 .msg.me{align-self:flex-end;background:#087a3e;color:white;border-bottom-right-radius:4px}
@@ -31,11 +30,14 @@ body{margin:0;font-family:Arial,sans-serif;background:#f4f7f5;display:flex;flex-
 .toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#17201b;color:white;padding:10px 14px;border-radius:8px;opacity:0;pointer-events:none;transition:.2s;z-index:10000;max-width:90%;overflow-wrap:anywhere}
 .toast.show{opacity:1}
 .small-note{font-size:12px;color:#777;text-align:center;padding:10px}
+.buyer-list{max-width:800px;width:100%;margin:0 auto;padding:10px 16px;display:flex;flex-direction:column;gap:8px}
+.buyer-item{background:white;border:1px solid #e5e7eb;border-radius:10px;padding:12px;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+.buyer-item:hover{border-color:#087a3e}
 @media(max-width:480px){
- .topbar{padding:10px;gap:6px}
- .brand{font-size:13px}
- .topbar>button{font-size:12px}
- .msg{max-width:90%}
+ .topbar{padding:8px;gap:5px}
+ .brand{font-size:12px}
+ .topbar>button{font-size:11px;padding:6px 8px}
+ .msg{max-width:88%}
  .input-bar{gap:5px;padding:7px}
  .input-bar button{padding:12px 9px}
 }
@@ -46,8 +48,11 @@ body{margin:0;font-family:Arial,sans-serif;background:#f4f7f5;display:flex;flex-
 <header class="topbar">
   <a href="index.html" class="brand">← LosOja</a>
   <div id="chatHeader">Opening chat...</div>
-  <button id="headerEscrowBtn" style="background:white;color:#087a3e;border:0;padding:8px 10px;border-radius:8px;font-weight:700;cursor:pointer">🔐 Escrow</button>
+  <button id="notifyToggle" style="background:#055c2e;color:white;border:1px solid #ffffff55;padding:7px 10px;border-radius:20px;font-weight:700;cursor:pointer">🔔 ON</button>
+  <button id="headerEscrowBtn" style="background:white;color:#087a3e;border:0;padding:7px 10px;border-radius:8px;font-weight:700;cursor:pointer">🔐 Escrow</button>
 </header>
+
+<div id="buyerList" class="buyer-list" style="display:none"></div>
 
 <div id="chatWrap" class="chat-wrap">
   <div class="small-note">Connecting to chat...</div>
@@ -80,8 +85,7 @@ body{margin:0;font-family:Arial,sans-serif;background:#f4f7f5;display:flex;flex-
 
 <div id="toast" class="toast"></div>
 
-<!-- Load the existing LosOja authentication script. -->
-<script src="auth.js?v=10"></script>
+<script src="js/auth.js"></script>
 <script>
 "use strict";
 
@@ -97,6 +101,8 @@ const imageInput = $("imageInput");
 const escrowList = $("escrowList");
 const escrowModal = $("escrowModal");
 const toast = $("toast");
+const buyerListEl = $("buyerList");
+const notifyToggle = $("notifyToggle");
 
 let currentUser = null;
 let currentChat = null;
@@ -105,6 +111,8 @@ let businessId = null;
 let listingId = null;
 let accessToken = null;
 let sending = false;
+let lastMsgCount = 0;
+let pollTimer = null;
 
 function esc(value) {
   return String(value ?? "").replace(/[&<>"']/g, c => ({
@@ -129,533 +137,288 @@ function getParams() {
   };
 }
 
-/*
-  AUTH RECOVERY
-  Prefer LosOja's existing auth.js helpers.
-  If those helpers are unavailable, try the saved LosOja session and
-  refresh its token using the existing Supabase refresh token.
-*/
+/* NOTIFICATION TOGGLE */
+let notifyEnabled = localStorage.getItem("losoja_notify_enabled") !== "0";
+function updateNotifyUI(){
+  notifyToggle.textContent = notifyEnabled ? "🔔 ON" : "🔕 OFF";
+  notifyToggle.style.opacity = notifyEnabled ? "1" : "0.6";
+}
+updateNotifyUI();
+notifyToggle.addEventListener("click", async ()=>{
+  notifyEnabled = !notifyEnabled;
+  localStorage.setItem("losoja_notify_enabled", notifyEnabled ? "1" : "0");
+  updateNotifyUI();
+  if(notifyEnabled){
+    if(Notification && Notification.permission === "default"){
+      await Notification.requestPermission();
+    }
+    showToast("Notifications enabled 🔔");
+    playBeep();
+  } else {
+    showToast("Notifications muted 🔕");
+  }
+});
+function playBeep(){
+  try{
+    const ctx = new (window.AudioContext||window.webkitAudioContext)();
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.type="sine"; o.frequency.value=880;
+    o.connect(g); g.connect(ctx.destination);
+    g.gain.setValueAtTime(0.0001, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.3, ctx.currentTime+0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime+0.3);
+    o.start(); o.stop(ctx.currentTime+0.35);
+  }catch(e){}
+}
+function notifyNewMessage(text, from){
+  if(!notifyEnabled) return;
+  if(document.hasFocus()) return;
+  playBeep();
+  if(Notification && Notification.permission === "granted"){
+    new Notification("New message from "+ (from||"LosOja"), {body: text.slice(0,90)});
+  }
+}
+
+/* AUTH */
 async function getUserAndToken() {
   let session = null;
-
   if (typeof window.ensureValidSupabaseSession === "function") {
-    try {
-      session = await window.ensureValidSupabaseSession();
-    } catch (error) {
-      console.warn("LosOja session helper failed:", error);
-    }
+    try { session = await window.ensureValidSupabaseSession(); } catch(e){ console.warn(e); }
   }
-
   if (!session?.access_token) {
-    try {
-      session = JSON.parse(
-        localStorage.getItem("losoja_supabase_session") || "null"
-      );
-    } catch {
-      session = null;
-    }
+    try { session = JSON.parse(localStorage.getItem("losoja_supabase_session") || "null"); } catch { session = null; }
   }
-
-  if (!session?.access_token) {
-    throw new Error(
-      "No LosOja login session was found. Please log in again, then reopen the seller chat."
-    );
-  }
-
-  // Refresh an expired or nearly expired access token when possible.
+  if (!session?.access_token) throw new Error("No login session. Please log in again.");
   function tokenExpiry(token) {
-    try {
-      const payload = token.split(".")[1];
-      const decoded = atob(
-        payload.replace(/-/g, "+").replace(/_/g, "/")
-      );
-      return JSON.parse(decoded).exp || 0;
-    } catch {
-      return 0;
-    }
+    try { const payload = token.split(".")[1]; const decoded = atob(payload.replace(/-/g,"+").replace(/_/g,"/")); return JSON.parse(decoded).exp || 0; } catch { return 0; }
   }
-
-  if (tokenExpiry(session.access_token) * 1000 < Date.now() + 60000) {
-    if (!session.refresh_token) {
-      throw new Error(
-        "Your login session has expired. Log in again to continue chatting."
-      );
-    }
-
-    const refreshResponse = await fetch(
-      SUPABASE_URL + "/auth/v1/token?grant_type=refresh_token",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          apikey: SUPABASE_KEY
-        },
-        body: JSON.stringify({ refresh_token: session.refresh_token })
-      }
-    );
-
-    const refreshed = await refreshResponse.json().catch(() => ({}));
-
-    if (!refreshResponse.ok || !refreshed.access_token) {
-      throw new Error(
-        refreshed.msg || refreshed.message ||
-        "Your login session expired. Log in again to continue."
-      );
-    }
-
-    session = { ...session, ...refreshed };
-
-    try {
-      localStorage.setItem(
-        "losoja_supabase_session",
-        JSON.stringify(session)
-      );
-    } catch (error) {
-      console.warn("Could not update saved session:", error);
-    }
+  if (tokenExpiry(session.access_token)*1000 < Date.now()+60000) {
+    if(!session.refresh_token) throw new Error("Session expired. Log in again.");
+    const refreshResponse = await fetch(SUPABASE_URL+"/auth/v1/token?grant_type=refresh_token",{
+      method:"POST", headers:{"Content-Type":"application/json", apikey:SUPABASE_KEY},
+      body:JSON.stringify({refresh_token: session.refresh_token})
+    });
+    const refreshed = await refreshResponse.json().catch(()=>({}));
+    if(!refreshResponse.ok || !refreshed.access_token) throw new Error(refreshed.msg||"Session expired. Log in again.");
+    session = {...session, ...refreshed};
+    try{ localStorage.setItem("losoja_supabase_session", JSON.stringify(session)); }catch{}
   }
-
   accessToken = session.access_token;
   currentUser = session.user || null;
-
-  if (!currentUser?.id && typeof window.getCurrentUser === "function") {
-    try {
-      currentUser = await window.getCurrentUser();
-    } catch (error) {
-      console.warn("Could not read current user:", error);
-    }
+  if(!currentUser?.id && typeof window.getCurrentUser==="function"){
+    try{ currentUser = await window.getCurrentUser(); }catch{}
   }
-
-  if (!currentUser?.id) {
-    throw new Error(
-      "Your session has no user information. Please log out and log in again."
-    );
-  }
-
+  if(!currentUser?.id) throw new Error("No user info. Log out and log in again.");
   return currentUser;
 }
 
-async function api(path, method = "GET", body = null, extraHeaders = {}) {
-  async function request() {
-    const headers = {
-      apikey: SUPABASE_KEY,
-      Authorization: "Bearer " + accessToken,
-      ...extraHeaders
-    };
-
-    if (body !== null) headers["Content-Type"] = "application/json";
-    if (method === "POST") headers["Prefer"] = "return=representation";
-
-    return fetch(SUPABASE_URL + "/rest/v1/" + path, {
-      method,
-      headers,
-      body: body === null ? undefined : JSON.stringify(body)
-    });
+async function api(path, method="GET", body=null, extraHeaders={}) {
+  async function request(){
+    const headers={ apikey:SUPABASE_KEY, Authorization:"Bearer "+accessToken, ...extraHeaders };
+    if(body!==null) headers["Content-Type"]="application/json";
+    if(method==="POST") headers["Prefer"]="return=representation";
+    return fetch(SUPABASE_URL+"/rest/v1/"+path,{method,headers,body: body===null? undefined: JSON.stringify(body)});
   }
-
   let response = await request();
-
-  if (response.status === 401) {
+  if(response.status===401){
     const errorText = await response.clone().text();
-
-    if (/jwt expired|expired jwt|invalid jwt/i.test(errorText)) {
+    if(/jwt expired|expired jwt|invalid jwt/i.test(errorText)){
       await getUserAndToken();
       response = await request();
     }
   }
-
   const text = await response.text();
-
-  if (!response.ok) {
-    let message = text || "Supabase request failed (" + response.status + ")";
-    try {
-      const parsed = JSON.parse(text);
-      message = parsed.message || parsed.details || parsed.hint || message;
-    } catch {}
+  if(!response.ok){
+    let message=text||"Request failed ("+response.status+")";
+    try{ const parsed=JSON.parse(text); message=parsed.message||parsed.details||parsed.hint||message; }catch{}
     throw new Error(message);
   }
-
-  if (!text) return null;
-
-  try {
-    return JSON.parse(text);
-  } catch {
-    return text;
-  }
+  if(!text) return null;
+  try{ return JSON.parse(text); }catch{ return text; }
 }
 
-function showLoginMessage() {
-  chatHeader.textContent = "Login required";
-  chatWrap.innerHTML = `
-    <div style="text-align:center;padding:40px 10px">
-      <b>Please log in to chat.</b>
-      <p>You need an account to contact the seller.</p>
-      <a href="index.html" style="display:inline-block;padding:11px 16px;background:#087a3e;color:white;border-radius:8px;text-decoration:none">Go to LosOja</a>
-    </div>`;
+function showLoginMessage(){
+  chatHeader.textContent="Login required";
+  chatWrap.innerHTML=`<div style="text-align:center;padding:40px 10px"><b>Please log in to chat.</b><p>You need an account to contact the seller.</p><a href="login.html" style="display:inline-block;padding:11px 16px;background:#087a3e;color:white;border-radius:8px;text-decoration:none">Go to Login</a></div>`;
 }
 
-async function resolveSellerFromListing() {
-  const rows = await api(
-    "oja_listings?id=eq." + encodeURIComponent(listingId) +
-    "&select=id,user_id,title,price,currency,status&limit=1"
-  );
-
-  if (!Array.isArray(rows) || !rows.length) {
-    throw new Error(
-      "This Oja listing could not be found, or you do not have permission to view it."
-    );
-  }
-
-  const listing = rows[0];
-
-  if (!listing.user_id) {
-    throw new Error("This listing has no seller account linked to it.");
-  }
-
-  sellerId = listing.user_id;
-  const title = listing.title || "Oja listing";
-  chatHeader.textContent = title.length > 28
-    ? title.slice(0, 25) + "..."
-    : title;
-
+async function resolveSellerFromListing(){
+  const rows = await api("oja_listings?id=eq."+encodeURIComponent(listingId)+"&select=id,user_id,title,price&limit=1");
+  if(!Array.isArray(rows)||!rows.length) throw new Error("Listing not found.");
+  const listing=rows[0];
+  if(!listing.user_id) throw new Error("Listing has no seller linked.");
+  sellerId=listing.user_id;
+  const title=listing.title||"Oja listing";
+  chatHeader.textContent = title.length>28? title.slice(0,25)+"...": title;
   return listing;
 }
 
-async function getOrCreateChat() {
-  if (!currentUser?.id || !sellerId) {
-    throw new Error("The buyer or seller account could not be identified.");
-  }
-
-  if (currentUser.id === sellerId) {
-    chatHeader.textContent = "Your own listing";
-    chatWrap.innerHTML = `
-      <div style="text-align:center;padding:40px 10px">
-        <b>This listing belongs to your account.</b>
-        <p>Switch to another account to contact yourself as a buyer.</p>
-      </div>`;
+/* FIXED: SELLER CAN REPLY */
+async function getOrCreateChat(){
+  if(!currentUser?.id) throw new Error("Buyer/Seller not identified.");
+  const isOwner = sellerId && currentUser.id === sellerId;
+  if(isOwner){
+    let path = "chats?seller_id=eq."+encodeURIComponent(currentUser.id)+"&select=*&order=created_at.desc&limit=20";
+    if(businessId) path += "&business_id=eq."+encodeURIComponent(businessId);
+    else path += "&business_id=is.null";
+    const incoming = await api(path);
+    if(!Array.isArray(incoming) || incoming.length===0){
+      chatHeader.textContent="Your listing - No buyers yet";
+      chatWrap.innerHTML=`<div style="text-align:center;padding:40px 10px"><b>This is your listing.</b><p>No buyers have chatted you yet for this listing.</p><p style="font-size:12px;color:#666">When a buyer clicks Chat Seller, their chat will appear here.</p></div>`;
+      return null;
+    }
+    buyerListEl.style.display="flex";
+    buyerListEl.innerHTML = incoming.map(c=>`<div class="buyer-item" data-chat="${c.id}"><div><b>Buyer: ${esc(c.buyer_id.slice(0,8))}</b><br><small>${new Date(c.created_at).toLocaleString()}</small></div><div>💬 Open</div></div>`).join("");
+    buyerListEl.querySelectorAll(".buyer-item").forEach(el=>{
+      el.addEventListener("click", async ()=>{
+        const chatId = el.getAttribute("data-chat");
+        currentChat = incoming.find(x=>String(x.id)===String(chatId));
+        buyerListEl.style.display="none";
+        chatHeader.textContent="Chat with Buyer";
+        msgInput.disabled=false; sendBtn.disabled=false;
+        await Promise.all([loadMessages(), loadEscrows()]);
+        startPolling();
+      });
+    });
+    chatHeader.textContent="Your listing - "+incoming.length+" buyer(s)";
+    chatWrap.innerHTML=`<div class="small-note">Select a buyer chat above to reply. Notifications ${notifyEnabled?'ON 🔔':'OFF 🔕'}</div>`;
     return null;
   }
-
-  let path =
-    "chats?buyer_id=eq." + encodeURIComponent(currentUser.id) +
-    "&seller_id=eq." + encodeURIComponent(sellerId) +
-    "&select=*&order=created_at.desc&limit=1";
-
-  if (businessId) {
-    path += "&business_id=eq." + encodeURIComponent(businessId);
-  } else if (listingId) {
-    path += "&business_id=is.null";
-  }
-
+  if(!sellerId) throw new Error("Seller not identified.");
+  let path = "chats?buyer_id=eq."+encodeURIComponent(currentUser.id)+"&seller_id=eq."+encodeURIComponent(sellerId)+"&select=*&order=created_at.desc&limit=1";
+  if(businessId) path += "&business_id=eq."+encodeURIComponent(businessId); else if(listingId) path += "&business_id=is.null";
   let chats = await api(path);
-
-  if (Array.isArray(chats) && chats.length) {
-    currentChat = chats[0];
-    return currentChat;
-  }
-
-  let reversePath =
-    "chats?buyer_id=eq." + encodeURIComponent(sellerId) +
-    "&seller_id=eq." + encodeURIComponent(currentUser.id) +
-    "&select=*&order=created_at.desc&limit=1";
-
-  if (businessId) {
-    reversePath += "&business_id=eq." + encodeURIComponent(businessId);
-  } else if (listingId) {
-    reversePath += "&business_id=is.null";
-  }
-
+  if(Array.isArray(chats)&&chats.length){ currentChat=chats[0]; return currentChat; }
+  let reversePath = "chats?buyer_id=eq."+encodeURIComponent(sellerId)+"&seller_id=eq."+encodeURIComponent(currentUser.id)+"&select=*&order=created_at.desc&limit=1";
+  if(businessId) reversePath += "&business_id=eq."+encodeURIComponent(businessId); else if(listingId) reversePath += "&business_id=is.null";
   const reverseChats = await api(reversePath);
-
-  if (Array.isArray(reverseChats) && reverseChats.length) {
-    currentChat = reverseChats[0];
-    return currentChat;
-  }
-
-  const created = await api("chats", "POST", {
-    buyer_id: currentUser.id,
-    seller_id: sellerId,
-    business_id: businessId || null
-  });
-
-  if (Array.isArray(created) && created.length) {
-    currentChat = created[0];
-    return currentChat;
-  }
-
+  if(Array.isArray(reverseChats)&&reverseChats.length){ currentChat=reverseChats[0]; return currentChat; }
+  const created = await api("chats","POST",{buyer_id:currentUser.id, seller_id:sellerId, business_id:businessId||null});
+  if(Array.isArray(created)&&created.length){ currentChat=created[0]; return currentChat; }
   chats = await api(path);
-
-  if (Array.isArray(chats) && chats.length) {
-    currentChat = chats[0];
-    return currentChat;
-  }
-
-  throw new Error(
-    "Chat could not be opened. Check your chats table permissions."
-  );
+  if(Array.isArray(chats)&&chats.length){ currentChat=chats[0]; return currentChat; }
+  throw new Error("Chat could not be opened.");
 }
 
-async function init() {
-  const params = getParams();
-  sellerId = params.sellerId;
-  businessId = params.businessId;
-  listingId = params.listingId;
-
-  try {
+async function init(){
+  const params=getParams();
+  sellerId=params.sellerId; businessId=params.businessId; listingId=params.listingId;
+  try{
     await getUserAndToken();
-
-    if (!currentUser?.id || !accessToken) {
-      showLoginMessage();
+    if(!currentUser?.id||!accessToken){ showLoginMessage(); return; }
+    if(listingId) await resolveSellerFromListing();
+    if(!sellerId && !listingId && !businessId){
+      chatHeader.textContent="Choose a seller";
+      chatWrap.innerHTML=`<div style="text-align:center;padding:40px 10px"><b>No seller supplied.</b><p>Open Oja listing and Chat Seller.</p><a href="oja.html" style="color:#087a3e">Return to Oja</a></div>`;
       return;
     }
-
-    if (listingId) await resolveSellerFromListing();
-
-    if (!sellerId) {
-      chatHeader.textContent = "Choose a seller";
-      chatWrap.innerHTML = `
-        <div style="text-align:center;padding:40px 10px">
-          <b>No seller was supplied in this chat link.</b>
-          <p>Open an Oja listing and select Chat Seller, or open a business chat.</p>
-          <a href="oja.html" style="color:#087a3e">Return to Oja</a>
-        </div>`;
-      return;
-    }
-
-    if (!businessId && !listingId) {
-      chatHeader.textContent = "LosOja Chat";
-    }
-
+    if(!businessId && !listingId) chatHeader.textContent="LosOja Chat";
     const chat = await getOrCreateChat();
-    if (!chat) return;
-
-    msgInput.disabled = false;
-    sendBtn.disabled = false;
-    imageInput.disabled = false;
-
-    if (businessId && !listingId) {
-      try {
-        const businesses = await api(
-          "businesses?id=eq." + encodeURIComponent(businessId) +
-          "&select=id,name&limit=1"
-        );
-
-        if (businesses?.[0]?.name) {
-          chatHeader.textContent = businesses[0].name;
-        }
-      } catch (error) {
-        console.warn("Could not load business name:", error);
-      }
-    }
-
+    if(!chat) return;
+    msgInput.disabled=false; sendBtn.disabled=false;
     await Promise.all([loadMessages(), loadEscrows()]);
-
-    if (params.escrow === "1") {
-      setTimeout(openEscrowModal, 500);
-    }
-  } catch (error) {
-    console.error("Chat initialization failed:", error);
-    chatHeader.textContent = "Chat unavailable";
-    chatWrap.innerHTML = `
-      <div style="text-align:center;padding:32px 12px">
-        <b>We couldn't open this chat.</b>
-        <p style="color:#a12626;overflow-wrap:anywhere">${esc(error.message)}</p>
-        <button onclick="location.reload()" style="padding:10px 16px;background:#087a3e;color:white;border:0;border-radius:8px;cursor:pointer">Try again</button>
-      </div>`;
+    startPolling();
+    if(params.escrow==="1") setTimeout(openEscrowModal,500);
+  }catch(error){
+    console.error(error);
+    chatHeader.textContent="Chat unavailable";
+    chatWrap.innerHTML=`<div style="text-align:center;padding:32px 12px"><b>We couldn't open this chat.</b><p style="color:#a12626">${esc(error.message)}</p><button onclick="location.reload()" style="padding:10px 16px;background:#087a3e;color:white;border:0;border-radius:8px;cursor:pointer">Try again</button></div>`;
   }
 }
 
-async function loadMessages() {
-  if (!currentChat?.id) return;
+function startPolling(){
+  clearInterval(pollTimer);
+  pollTimer = setInterval(async ()=>{
+    try{ await loadMessages(true); }catch{}
+  }, 4000);
+}
 
-  try {
-    const messages = await api(
-      "messages?chat_id=eq." + encodeURIComponent(currentChat.id) +
-      "&select=*&order=created_at.asc"
-    );
-
-    chatWrap.innerHTML = "";
-
-    if (!Array.isArray(messages) || messages.length === 0) {
-      chatWrap.innerHTML =
-        '<div class="small-note">No messages yet. Start the conversation!</div>';
+async function loadMessages(isPoll=false){
+  if(!currentChat?.id) return;
+  try{
+    const messages = await api("messages?chat_id=eq."+encodeURIComponent(currentChat.id)+"&select=*&order=created_at.asc");
+    if(!Array.isArray(messages)) return;
+    const isNew = messages.length > lastMsgCount && lastMsgCount!==0;
+    const last = messages[messages.length-1];
+    if(isNew && last && last.sender_id !== currentUser.id){
+      notifyNewMessage(last.message, "Buyer/Seller");
+    }
+    lastMsgCount = messages.length;
+    if(isPoll && chatWrap.querySelectorAll(".msg").length === messages.length){
+      const atBottom = chatWrap.scrollTop + chatWrap.clientHeight >= chatWrap.scrollHeight - 60;
+      if(!atBottom) return;
+    }
+    chatWrap.innerHTML="";
+    if(messages.length===0){
+      chatWrap.innerHTML='<div class="small-note">No messages yet. Start the conversation! Notifications: '+(notifyEnabled?'🔔 ON':'🔕 OFF')+'</div>';
       return;
     }
-
-    for (const message of messages) {
-      const bubble = document.createElement("div");
-      bubble.className = "msg " +
-        (message.sender_id === currentUser.id ? "me" : "them");
-
-      const value = String(message.message || "");
-      const match = value.match(/https?:\/\/[^\s]+/);
-
-      if (match && (
-        value.includes("storage") ||
-        /\.(jpg|jpeg|png|webp|gif)(\?|$)/i.test(match[0]) ||
-        value.includes("📷 Image:")
-      )) {
-        const imageUrl = match[0].replace(/[),]+$/, "");
-        const img = document.createElement("img");
-        img.src = imageUrl;
-        img.alt = "Shared image";
-        img.loading = "lazy";
-        img.addEventListener("click", () =>
-          window.open(imageUrl, "_blank", "noopener")
-        );
+    for(const message of messages){
+      const bubble=document.createElement("div");
+      bubble.className="msg "+(message.sender_id===currentUser.id?"me":"them");
+      const value=String(message.message||"");
+      const match=value.match(/https?:\/\/[^\s]+/);
+      if(match && (value.includes("storage")||/\.(jpg|jpeg|png|webp|gif)(\?|$)/i.test(match[0])||value.includes("📷 Image:"))){
+        const imageUrl=match[0].replace(/[),]+$/,"");
+        const img=document.createElement("img");
+        img.src=imageUrl; img.alt="Shared image"; img.loading="lazy";
+        img.addEventListener("click",()=>window.open(imageUrl,"_blank","noopener"));
         bubble.appendChild(img);
-
-        const caption = document.createElement("div");
-        caption.textContent = "📷 Image";
-        caption.style.marginTop = "5px";
-        bubble.appendChild(caption);
-      } else {
-        bubble.textContent = value;
-      }
-
+        const caption=document.createElement("div"); caption.textContent="📷 Image"; caption.style.marginTop="5px"; bubble.appendChild(caption);
+      }else{ bubble.textContent=value; }
       chatWrap.appendChild(bubble);
     }
-
-    chatWrap.scrollTop = chatWrap.scrollHeight;
-  } catch (error) {
-    console.error("Loading messages failed:", error);
-    showToast("Could not load messages: " + error.message);
+    chatWrap.scrollTop=chatWrap.scrollHeight;
+  }catch(error){
+    console.error(error);
+    if(!isPoll) showToast("Could not load messages: "+error.message);
   }
 }
 
-async function sendMessage() {
-  const message = msgInput.value.trim();
-
-  if (!message || !currentChat?.id || !currentUser?.id || sending) return;
-
-  sending = true;
-  sendBtn.disabled = true;
-  msgInput.value = "";
-
-  try {
-    await api("messages", "POST", {
-      chat_id: currentChat.id,
-      sender_id: currentUser.id,
-      message
-    });
-
+async function sendMessage(){
+  const message=msgInput.value.trim();
+  if(!message||!currentChat?.id||!currentUser?.id||sending) return;
+  sending=true; sendBtn.disabled=true; msgInput.value="";
+  try{
+    await api("messages","POST",{chat_id:currentChat.id, sender_id:currentUser.id, message});
     await loadMessages();
-  } catch (error) {
-    console.error("Sending message failed:", error);
-    msgInput.value = message;
-    showToast("Message failed: " + error.message);
-  } finally {
-    sending = false;
-    sendBtn.disabled = false;
-    msgInput.focus();
-  }
+  }catch(error){
+    console.error(error); msgInput.value=message; showToast("Message failed: "+error.message);
+  }finally{ sending=false; sendBtn.disabled=false; msgInput.focus(); }
 }
 
-async function loadEscrows() {
-  if (!currentChat?.id) return;
-
-  try {
-    const records = await api(
-      "escrows?chat_id=eq." + encodeURIComponent(currentChat.id) +
-      "&select=*&order=created_at.desc"
-    );
-
-    escrowList.innerHTML = "";
-
-    if (!Array.isArray(records)) return;
-
-    records.forEach(record => {
-      const card = document.createElement("div");
-      card.className = "escrow-card";
-
-      const heading = document.createElement("b");
-      heading.textContent =
-        "🔐 ₦" + Number(record.amount || 0).toLocaleString() +
-        " - " + String(record.status || "pending").toUpperCase();
-
-      const description = document.createElement("p");
-      description.textContent = record.description || "";
-      description.style.fontSize = "13px";
-
-      const date = document.createElement("small");
-      date.textContent = record.created_at
-        ? new Date(record.created_at).toLocaleString()
-        : "";
-
-      card.append(heading, description, date);
-      escrowList.appendChild(card);
+async function loadEscrows(){
+  if(!currentChat?.id) return;
+  try{
+    const records=await api("escrows?chat_id=eq."+encodeURIComponent(currentChat.id)+"&select=*&order=created_at.desc");
+    escrowList.innerHTML="";
+    if(!Array.isArray(records)) return;
+    records.forEach(record=>{
+      const card=document.createElement("div"); card.className="escrow-card";
+      const heading=document.createElement("b"); heading.textContent="🔐 ₦"+Number(record.amount||0).toLocaleString()+" - "+String(record.status||"pending").toUpperCase();
+      const description=document.createElement("p"); description.textContent=record.description||""; description.style.fontSize="13px";
+      const date=document.createElement("small"); date.textContent=record.created_at? new Date(record.created_at).toLocaleString(): "";
+      card.append(heading, description, date); escrowList.appendChild(card);
     });
-  } catch (error) {
-    console.warn("Escrow history unavailable:", error);
-  }
+  }catch(e){ console.warn(e); }
 }
 
-function openEscrowModal() {
-  if (!currentChat?.id || !sellerId || !currentUser?.id) {
-    showToast("Open a chat with a seller first.");
-    return;
-  }
-  escrowModal.classList.add("show");
-}
+function openEscrowModal(){ if(!currentChat?.id||!currentUser?.id){ showToast("Open a chat first."); return; } escrowModal.classList.add("show"); }
+function closeEscrowModal(){ escrowModal.classList.remove("show"); }
 
-function closeEscrowModal() {
-  escrowModal.classList.remove("show");
-}
-
-async function createEscrow() {
-  if (!currentChat?.id || !sellerId || !currentUser?.id) {
-    showToast("No active seller chat.");
-    return;
-  }
-
-  const amount = Number($("escrowAmount").value);
-  const description = $("escrowDesc").value.trim();
-
-  if (!Number.isFinite(amount) || amount <= 0 || !description) {
-    showToast("Enter a valid amount and item description.");
-    return;
-  }
-
-  const button = $("createEscrowBtn");
-  button.disabled = true;
-  button.textContent = "Saving...";
-
-  try {
-    await api("escrows", "POST", {
-      chat_id: currentChat.id,
-      business_id: businessId || null,
-      buyer_id: currentUser.id,
-      seller_id: sellerId,
-      amount,
-      description,
-      status: "pending"
-    });
-
-    closeEscrowModal();
-    $("escrowAmount").value = "";
-    $("escrowDesc").value = "";
-
-    showToast("Escrow request recorded. No funds were transferred.");
-    await loadEscrows();
-
-    try {
-      await api("messages", "POST", {
-        chat_id: currentChat.id,
-        sender_id: currentUser.id,
-        message: "🔐 ESCROW REQUEST: ₦" +
-          amount.toLocaleString() + " for " + description
-      });
-      await loadMessages();
-    } catch (messageError) {
-      console.warn("Escrow notice failed:", messageError);
-    }
-  } catch (error) {
-    console.error("Creating escrow request failed:", error);
-    showToast("Could not create escrow request: " + error.message);
-  } finally {
-    button.disabled = false;
-    button.textContent = "Create Record";
-  }
+async function createEscrow(){
+  if(!currentChat?.id||!currentUser?.id){ showToast("No active chat."); return; }
+  const amount=Number($("escrowAmount").value);
+  const description=$("escrowDesc").value.trim();
+  if(!Number.isFinite(amount)||amount<=0||!description){ showToast("Enter amount and description."); return; }
+  const button=$("createEscrowBtn"); button.disabled=true; button.textContent="Saving...";
+  try{
+    await api("escrows","POST",{chat_id:currentChat.id, business_id:businessId||null, buyer_id:currentChat.buyer_id, seller_id:currentChat.seller_id, amount, description, status:"pending"});
+    closeEscrowModal(); $("escrowAmount").value=""; $("escrowDesc").value="";
+    showToast("Escrow recorded. No funds transferred."); await loadEscrows();
+    try{ await api("messages","POST",{chat_id:currentChat.id, sender_id:currentUser.id, message:"🔐 ESCROW REQUEST: ₦"+amount.toLocaleString()+" for "+description}); await loadMessages(); }catch{}
+  }catch(error){ console.error(error); showToast("Could not create escrow: "+error.message); }finally{ button.disabled=false; button.textContent="Create Record"; }
 }
 
 $("headerEscrowBtn").addEventListener("click", openEscrowModal);
@@ -663,95 +426,24 @@ $("bottomEscrowBtn").addEventListener("click", openEscrowModal);
 $("cancelEscrowBtn").addEventListener("click", closeEscrowModal);
 $("createEscrowBtn").addEventListener("click", createEscrow);
 sendBtn.addEventListener("click", sendMessage);
+msgInput.addEventListener("keydown", e=>{ if(e.key==="Enter"){ e.preventDefault(); sendMessage(); }});
+escrowModal.addEventListener("click", e=>{ if(e.target===escrowModal) closeEscrowModal(); });
 
-msgInput.addEventListener("keydown", event => {
-  if (event.key === "Enter") {
-    event.preventDefault();
-    sendMessage();
-  }
-});
-
-escrowModal.addEventListener("click", event => {
-  if (event.target === escrowModal) closeEscrowModal();
-});
-
-imageInput.addEventListener("change", async event => {
-  const file = event.target.files?.[0];
-  if (!file) return;
-
-  if (!currentChat?.id || !currentUser?.id || !accessToken) {
-    showToast("Open a chat and log in before sending an image.");
-    imageInput.value = "";
-    return;
-  }
-
-  if (!["image/jpeg","image/png","image/webp","image/gif"].includes(file.type)) {
-    showToast("Choose a JPG, PNG, WEBP, or GIF image.");
-    imageInput.value = "";
-    return;
-  }
-
-  if (file.size > 5 * 1024 * 1024) {
-    showToast("Image must be 5 MB or smaller.");
-    imageInput.value = "";
-    return;
-  }
-
-  const label = imageInput.parentElement;
-  label.style.opacity = ".5";
-  imageInput.disabled = true;
-  showToast("Uploading image...");
-
-  try {
-    const cleanName = file.name
-      .replace(/\s+/g, "_")
-      .replace(/[^a-zA-Z0-9._-]/g, "");
-
-    const fileName =
-      encodeURIComponent(currentChat.id) + "/" +
-      Date.now() + "_" + cleanName;
-
-    const response = await fetch(
-      SUPABASE_URL + "/storage/v1/object/chat-images/" + fileName,
-      {
-        method: "POST",
-        headers: {
-          apikey: SUPABASE_KEY,
-          Authorization: "Bearer " + accessToken,
-          "Content-Type": file.type,
-          "x-upsert": "false"
-        },
-        body: file
-      }
-    );
-
-    if (!response.ok) {
-      const details = await response.text();
-      throw new Error(
-        "Image upload failed. Check the chat-images bucket and storage policies. " +
-        details
-      );
-    }
-
-    const publicUrl =
-      SUPABASE_URL + "/storage/v1/object/public/chat-images/" + fileName;
-
-    await api("messages", "POST", {
-      chat_id: currentChat.id,
-      sender_id: currentUser.id,
-      message: "📷 Image: " + publicUrl
-    });
-
-    await loadMessages();
-    showToast("Image sent!");
-  } catch (error) {
-    console.error("Image upload failed:", error);
-    showToast(error.message);
-  } finally {
-    label.style.opacity = "1";
-    imageInput.disabled = false;
-    imageInput.value = "";
-  }
+imageInput.addEventListener("change", async e=>{
+  const file=e.target.files?.[0]; if(!file) return;
+  if(!currentChat?.id||!currentUser?.id||!accessToken){ showToast("Open chat and log in."); imageInput.value=""; return; }
+  if(!["image/jpeg","image/png","image/webp","image/gif"].includes(file.type)){ showToast("JPG, PNG, WEBP, GIF only."); imageInput.value=""; return; }
+  if(file.size>5*1024*1024){ showToast("5MB max."); imageInput.value=""; return; }
+  const label=imageInput.parentElement; label.style.opacity=".5"; imageInput.disabled=true; showToast("Uploading...");
+  try{
+    const cleanName=file.name.replace(/\s+/g,"_").replace(/[^a-zA-Z0-9._-]/g,"");
+    const fileName=encodeURIComponent(currentChat.id)+"/"+Date.now()+"_"+cleanName;
+    const response=await fetch(SUPABASE_URL+"/storage/v1/object/chat-images/"+fileName,{method:"POST",headers:{apikey:SUPABASE_KEY,Authorization:"Bearer "+accessToken,"Content-Type":file.type,"x-upsert":"false"},body:file});
+    if(!response.ok){ const details=await response.text(); throw new Error("Upload failed: "+details); }
+    const publicUrl=SUPABASE_URL+"/storage/v1/object/public/chat-images/"+fileName;
+    await api("messages","POST",{chat_id:currentChat.id,sender_id:currentUser.id,message:"📷 Image: "+publicUrl});
+    await loadMessages(); showToast("Image sent!");
+  }catch(error){ console.error(error); showToast(error.message); }finally{ label.style.opacity="1"; imageInput.disabled=false; imageInput.value=""; }
 });
 
 init();
