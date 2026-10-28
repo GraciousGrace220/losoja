@@ -15,6 +15,7 @@ const SUPABASE_KEY =
 
 // Make the project URL available to other classic scripts.
 window.SUPABASE_URL = SUPABASE_URL;
+   window.SUPABASE_KEY = SUPABASE_KEY;
  
   /* =========================================================
      SESSION
