@@ -21,13 +21,13 @@
 
     <link rel="stylesheet" href="css/style.css">
 <style>
-/* LOSOJA LARGE, READABLE IMAGE SLIDESHOW */
+/* LOSOJA FULL-WIDTH IMAGE-ONLY SLIDESHOW */
 
 .losoja-ad-slider {
     position: relative;
     width: 100%;
     max-width: 1280px;
-    height: 420px;
+    height: auto;
     margin: 20px auto 30px;
     overflow: hidden;
     background: transparent;
@@ -38,33 +38,32 @@
 
 .losoja-ad-track {
     display: flex;
-    height: 100%;
+    align-items: flex-start;
+    height: auto;
     transition: transform 0.5s ease;
 }
 
 .losoja-ad-slide {
-    min-width: 100%;
-    height: 100%;
+    flex: 0 0 100%;
+    width: 100%;
+    height: auto;
 }
 
 .losoja-ad-slide img {
     display: block;
     width: 100%;
-    height: 100%;
-    object-fit: contain;
-    object-position: center;
+    height: auto;
+    max-width: 100%;
+    object-fit: initial;
     background: transparent;
-}
-
-@media (max-width: 768px) {
-    .losoja-ad-slider {
-        height: 300px;
-    }
+    border: none;
+    border-radius: 0;
 }
 
 @media (max-width: 600px) {
     .losoja-ad-slider {
-        height: 240px;
+        width: 100%;
+        margin: 12px auto 20px;
     }
 }
 /* =========================================================
