@@ -21,7 +21,7 @@
 
     <link rel="stylesheet" href="css/style.css">
 <style>
-/* LOSOJA BALANCE-BOARD SIZE SLIDESHOW */
+/* LOSOJA CLEAN IMAGE-ONLY SLIDESHOW */
 
 .losoja-ad-slider {
     position: relative;
@@ -30,8 +30,10 @@
     height: 220px;
     margin: 16px auto 24px;
     overflow: hidden;
-    border-radius: 18px;
-    background: #087a3e;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
 }
 
 .losoja-ad-track {
@@ -50,17 +52,16 @@
     width: 100%;
     height: 100%;
     object-fit: contain;
-    aspect-ratio: auto;
+    background: transparent;
+    border: none;
+    border-radius: 0;
 }
-
-
 
 @media (max-width: 600px) {
     .losoja-ad-slider {
-        width: calc(100% - 24px);
+        width: 100%;
         height: 160px;
         margin: 12px auto 20px;
-        border-radius: 14px;
     }
 }
 
