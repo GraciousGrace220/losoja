@@ -1049,7 +1049,44 @@ main {
         transform: none;
     }
 }
+/* LOSOJA COMPACT AD SLIDESHOW */
 
+.losoja-ad-slider {
+    position: relative;
+    width: calc(100% - 36px);
+    max-width: 900px;
+    height: 150px;
+    margin: 12px auto 20px;
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+.losoja-ad-track {
+    display: flex;
+    height: 100%;
+    transition: transform 0.5s ease;
+}
+
+.losoja-ad-slide {
+    min-width: 100%;
+    height: 100%;
+}
+
+.losoja-ad-slide img {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: auto;
+    object-fit: contain;
+    display: block;
+}
+
+@media (max-width: 600px) {
+    .losoja-ad-slider {
+        width: calc(100% - 24px);
+        height: 110px;
+        margin: 10px auto 18px;
+    }
+}
 </style>
 
 </head>
