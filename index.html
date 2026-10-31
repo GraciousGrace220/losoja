@@ -21,13 +21,14 @@
 
     <link rel="stylesheet" href="css/style.css">
 <style>
-/* =====================================================
-   LOSOJA PROMOTIONAL SLIDESHOW
-===================================================== */
+/* LOSOJA BALANCE-BOARD SIZE SLIDESHOW */
 
 .losoja-ad-slider {
     position: relative;
-    margin: 10px 18px 28px;
+    width: calc(100% - 36px);
+    max-width: 1100px;
+    height: 220px;
+    margin: 16px auto 24px;
     overflow: hidden;
     border-radius: 18px;
     background: #087a3e;
@@ -35,64 +36,31 @@
 
 .losoja-ad-track {
     display: flex;
+    height: 100%;
     transition: transform 0.5s ease;
 }
 
 .losoja-ad-slide {
     min-width: 100%;
+    height: 100%;
 }
 
 .losoja-ad-slide img {
     display: block;
     width: 100%;
-    aspect-ratio: 16 / 9;
+    height: 100%;
     object-fit: contain;
-    background: #075f31;
+    aspect-ratio: auto;
 }
 
-.losoja-ad-arrow {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    border: none;
-    border-radius: 50%;
-    width: 38px;
-    height: 38px;
-    background: rgba(255,255,255,0.9);
-    color: #087a3e;
-    font-size: 22px;
-    cursor: pointer;
-    z-index: 2;
-}
 
-.losoja-ad-prev { left: 10px; }
-.losoja-ad-next { right: 10px; }
-
-.losoja-ad-dots {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    padding: 12px;
-    background: #075f31;
-}
-
-.losoja-ad-dot {
-    width: 9px;
-    height: 9px;
-    padding: 0;
-    border: none;
-    border-radius: 50%;
-    background: #ffffff80;
-    cursor: pointer;
-}
-
-.losoja-ad-dot.active {
-    background: #ffb703;
-}
 
 @media (max-width: 600px) {
     .losoja-ad-slider {
-        margin: 8px 12px 22px;
+        width: calc(100% - 24px);
+        height: 160px;
+        margin: 12px auto 20px;
+        border-radius: 14px;
     }
 }
 
@@ -1049,44 +1017,7 @@ main {
         transform: none;
     }
 }
-/* LOSOJA COMPACT AD SLIDESHOW */
 
-.losoja-ad-slider {
-    position: relative;
-    width: calc(100% - 36px);
-    max-width: 900px;
-    height: 150px;
-    margin: 12px auto 20px;
-    overflow: hidden;
-    border-radius: 12px;
-}
-
-.losoja-ad-track {
-    display: flex;
-    height: 100%;
-    transition: transform 0.5s ease;
-}
-
-.losoja-ad-slide {
-    min-width: 100%;
-    height: 100%;
-}
-
-.losoja-ad-slide img {
-    width: 100%;
-    height: 100%;
-    aspect-ratio: auto;
-    object-fit: contain;
-    display: block;
-}
-
-@media (max-width: 600px) {
-    .losoja-ad-slider {
-        width: calc(100% - 24px);
-        height: 110px;
-        margin: 10px auto 18px;
-    }
-}
 </style>
 
 </head>
