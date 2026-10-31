@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head><link rel="icon" href="data:,[STRIPPED]
-    
+<head>
+    <link rel="icon" href="favicon.ico">    
     <meta charset="UTF-8">
 
     <meta
@@ -20,9 +20,81 @@
     <meta name="theme-color" content="#087a3e">
 
     <link rel="stylesheet" href="css/style.css">
-
-
 <style>
+/* =====================================================
+   LOSOJA PROMOTIONAL SLIDESHOW
+===================================================== */
+
+.losoja-ad-slider {
+    position: relative;
+    margin: 10px 18px 28px;
+    overflow: hidden;
+    border-radius: 18px;
+    background: #087a3e;
+}
+
+.losoja-ad-track {
+    display: flex;
+    transition: transform 0.5s ease;
+}
+
+.losoja-ad-slide {
+    min-width: 100%;
+}
+
+.losoja-ad-slide img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: contain;
+    background: #075f31;
+}
+
+.losoja-ad-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    background: rgba(255,255,255,0.9);
+    color: #087a3e;
+    font-size: 22px;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.losoja-ad-prev { left: 10px; }
+.losoja-ad-next { right: 10px; }
+
+.losoja-ad-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px;
+    background: #075f31;
+}
+
+.losoja-ad-dot {
+    width: 9px;
+    height: 9px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: #ffffff80;
+    cursor: pointer;
+}
+
+.losoja-ad-dot.active {
+    background: #ffb703;
+}
+
+@media (max-width: 600px) {
+    .losoja-ad-slider {
+        margin: 8px 12px 22px;
+    }
+}
 
 /* =========================================================
    LOSOJA HOMEPAGE EXTRAS
@@ -1086,7 +1158,63 @@ main {
 
 </section>
 
+<!-- LOSOJA PROMOTIONAL SLIDESHOW -->
 
+<section class="losoja-ad-slider" aria-label="LosOja promotions">
+
+    <div class="losoja-ad-track" id="losojaAdTrack">
+
+        <div class="losoja-ad-slide">
+            <img
+                src="images/losoja-ad-scene-1.png"
+                alt="Discover LosOja"
+            >
+        </div>
+
+        <div class="losoja-ad-slide">
+            <img
+                src="images/losoja-ad-scene-2.png"
+                alt="Explore businesses and categories on LosOja"
+            >
+        </div>
+
+        <div class="losoja-ad-slide">
+            <img
+                src="images/losoja-ad-scene-3.png"
+                alt="Discover businesses, products, property and mobility on LosOja"
+            >
+        </div>
+
+    </div>
+
+    <button
+        class="losoja-ad-arrow losoja-ad-prev"
+        id="losojaAdPrev"
+        type="button"
+        aria-label="Previous slide"
+    >&#8249;</button>
+
+    <button
+        class="losoja-ad-arrow losoja-ad-next"
+        id="losojaAdNext"
+        type="button"
+        aria-label="Next slide"
+    >&#8250;</button>
+
+    <div class="losoja-ad-dots" id="losojaAdDots">
+
+        <button class="losoja-ad-dot active" type="button"
+            aria-label="Go to slide 1"></button>
+
+        <button class="losoja-ad-dot" type="button"
+            aria-label="Go to slide 2"></button>
+
+        <button class="losoja-ad-dot" type="button"
+            aria-label="Go to slide 3"></button>
+
+    </div>
+
+</section>
 
 <!-- =====================================================
      QUICK ACTIONS
@@ -3301,20 +3429,104 @@ if (loginFromSignup) {
 </script>
 
 
+
 <!-- =====================================================
      LOSOJA SCRIPTS
 ===================================================== -->
 
 <script src="js/businesses.js?v=4"></script>
 <script src="js/app.js?v=999"></script>
-<script src="js/auth.js?v=14"></script><script>
-// Only one login opener
-(function(){
-  const p = new URLSearchParams(location.search);
-  if(p.get("openLogin")==="1"){
-    setTimeout(()=>{ window.openLogin && window.openLogin(); }, 400);
-    history.replaceState({}, "", "index.html");
-  }
+<script src="js/auth.js?v=14"></script>
+
+<!-- =====================================================
+     LOSOJA PROMOTIONAL SLIDESHOW
+===================================================== -->
+
+<script>
+(function () {
+    "use strict";
+
+    const track = document.getElementById("losojaAdTrack");
+    const dotsContainer = document.getElementById("losojaAdDots");
+    const previous = document.getElementById("losojaAdPrev");
+    const next = document.getElementById("losojaAdNext");
+
+    if (!track || !dotsContainer || !previous || !next) return;
+
+    const slides = Array.from(track.children);
+    const dots = Array.from(dotsContainer.children);
+
+    if (slides.length < 2 || dots.length !== slides.length) return;
+
+    let current = 0;
+    let timer = null;
+
+    const reducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    function showSlide(index) {
+        current = (index + slides.length) % slides.length;
+
+        track.style.transform =
+            "translateX(-" + (current * 100) + "%)";
+
+        dots.forEach(function (dot, i) {
+            dot.classList.toggle("active", i === current);
+            dot.setAttribute(
+                "aria-current",
+                i === current ? "true" : "false"
+            );
+        });
+    }
+
+    function stopAutoSlide() {
+        if (timer !== null) {
+            clearInterval(timer);
+            timer = null;
+        }
+    }
+
+    function startAutoSlide() {
+        stopAutoSlide();
+
+        if (!reducedMotion) {
+            timer = setInterval(function () {
+                showSlide(current + 1);
+            }, 5000);
+        }
+    }
+
+    previous.addEventListener("click", function () {
+        showSlide(current - 1);
+        startAutoSlide();
+    });
+
+    next.addEventListener("click", function () {
+        showSlide(current + 1);
+        startAutoSlide();
+    });
+
+    dots.forEach(function (dot, index) {
+        dot.addEventListener("click", function () {
+            showSlide(index);
+            startAutoSlide();
+        });
+    });
+
+    const slider = track.closest(".losoja-ad-slider");
+
+    if (slider) {
+        slider.addEventListener("mouseenter", stopAutoSlide);
+        slider.addEventListener("mouseleave", startAutoSlide);
+        slider.addEventListener("focusin", stopAutoSlide);
+        slider.addEventListener("focusout", startAutoSlide);
+    }
+
+    showSlide(0);
+    startAutoSlide();
 })();
 </script>
-</body></html>
+
+</body>
+</html>
