@@ -877,9 +877,9 @@ if (
     const phone =
       $("dataPhone")?.value?.trim();
 
-    const planId =
-      Number($("dataPlan")?.value);
-
+const planId =
+  $("dataPlan")?.value?.trim() || "";
+    
     if (!["mtn", "airtel", "glo", "9mobile"].includes(network)) {
       showNotice(
         "Please select a valid network.",
@@ -898,8 +898,7 @@ if (
       return;
     }
 
-    if (!Number.isSafeInteger(planId) || planId <= 0) {
-      showNotice(
+if (!planId) {      showNotice(
         "Please select a data plan.",
         "error",
         "dataProcessing"
