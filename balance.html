@@ -150,7 +150,30 @@ h2 {
 .transaction:last-child {
     border-bottom: none;
 }
+/* TRANSACTION HISTORY SCROLL BOX */
+.transactions-box {
+    max-height: 320px;
+    overflow-y: auto;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 0 14px;
+    background: #fafafa;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+}
 
+.transactions-box::-webkit-scrollbar {
+    width: 6px;
+}
+
+.transactions-box::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
+.transactions-box::-webkit-scrollbar-track {
+    background: transparent;
+}
 .transaction-row {
     display: flex;
     justify-content: space-between;
