@@ -390,29 +390,27 @@ function tryOpenModal(type) {
      AFTER LOGIN OR SIGNUP
   ========================================================= */
 
-  function finishAuthentication() {
-    /*
-      Return to the account page when the visitor originally
-      clicked Account while signed out.
-    */
+function finishAuthentication() {
+  // Clear the login trigger so the popup cannot reopen.
+  const url = new URL(window.location.href);
 
-    const returnToAccount = sessionStorage.getItem(
-      "losoja_return_to_account"
-    );
+  url.searchParams.delete("openLogin");
 
-    if (returnToAccount === "account.html") {
-      sessionStorage.removeItem("losoja_return_to_account");
-      window.location.href = "account.html";
-      return;
-    }
+  // Preserve the account redirect after login.
+  const returnToAccount = sessionStorage.getItem(
+    "losoja_return_to_account"
+  );
 
-    /*
-      Preserve any other existing return-to-page behaviour
-      if the rest of the site uses this key.
-    */
+  if (returnToAccount === "account.html") {
+    sessionStorage.removeItem("losoja_return_to_account");
 
-    window.location.reload();
+    window.location.replace("account.html");
+    return;
   }
+
+  // Reload without the old openLogin=1 parameter.
+  window.location.replace(url.toString());
+}
 
 
   /* =========================================================
