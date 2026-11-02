@@ -349,10 +349,15 @@
 
                 const user = await window.getCurrentUser();
 
-                if (!user) {
-                    window.location.replace("index.html?openLogin=1");
-                    return;
-                }
+             if (!user) {
+    sessionStorage.setItem(
+        "losoja_return_to_account",
+        "account.html"
+    );
+
+    window.location.replace("index.html?openLogin=1");
+    return;
+}
 
                 const metadata = user.user_metadata || {};
 
