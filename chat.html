@@ -50,6 +50,9 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible{
  .input-bar{gap:5px;padding:7px}
  .input-bar button{padding:12px 9px}
 }
+
+/* Keep the legacy record-only escrow UI out of ordinary conversations. */
+#escrowList,#headerEscrowBtn,#bottomEscrowBtn,#escrowModal{display:none!important}
 </style>
 </head>
 <body>
@@ -451,7 +454,36 @@ async function openExistingChat(chatId) {
   currentChat = chat;
   sellerId = chat.seller_id;
   businessId = chat.business_id || businessId;
+  await updateConversationHeader();
   return chat;
+}
+
+async function updateConversationHeader() {
+  if (!currentChat || !currentUser?.id) return;
+  const isBuyer = currentChat.buyer_id === currentUser.id;
+  const role = isBuyer ? "Seller" : "Buyer";
+  const partnerId = isBuyer ? currentChat.seller_id : currentChat.buyer_id;
+  const suffix = String(partnerId || "").slice(-6);
+  let heading = "Chat with " + role + (suffix ? " · ..." + suffix : "");
+
+  if (currentChat.business_id) {
+    try {
+      const rows = await api("businesses?id=eq." + encodeURIComponent(currentChat.business_id) + "&select=name,category&limit=1");
+      if (Array.isArray(rows) && rows[0]) {
+        heading += " | " + (rows[0].name || "Business") + " · " + (rows[0].category || "Business");
+      } else {
+        heading += " | Business conversation";
+      }
+    } catch (error) {
+      console.warn("Business chat details unavailable.", error);
+      heading += " | Business conversation";
+    }
+  } else if (listingId) {
+    heading += " | Oja listing";
+  } else {
+    heading += " | Direct conversation";
+  }
+  chatHeader.textContent = heading;
 }
 
 async function getOrCreateChat() {
@@ -547,11 +579,14 @@ async function openSellerInbox() {
 
     const info = document.createElement("div");
     const title = document.createElement("b");
-    title.textContent = "Buyer: " + String(chat.buyer_id || "").slice(0, 8);
+    title.textContent = "Buyer account · ..." + String(chat.buyer_id || "").slice(-6);
+    const context = document.createElement("small");
+    context.textContent = chat.business_id ? "Business conversation" : "Direct conversation";
+    context.style.display = "block";
     const date = document.createElement("small");
     date.textContent = chat.created_at ? new Date(chat.created_at).toLocaleString() : "Conversation";
     date.style.display = "block";
-    info.append(title, date);
+    info.append(title, context, date);
 
     const openLabel = document.createElement("span");
     openLabel.textContent = "Open chat 💬";
@@ -576,7 +611,7 @@ async function selectInboxChat(chatId) {
     chatHeader.textContent = "Chat with buyer";
     enableComposer(true);
     lastMessageId = null;
-    await Promise.all([loadMessages(), loadEscrows()]);
+    await loadMessages();
     startPolling();
   } catch (error) {
     console.error(error);
@@ -605,7 +640,7 @@ async function init() {
       await openExistingChat(directChatId);
       chatHeader.textContent = "LosOja Chat";
       enableComposer(true);
-      await Promise.all([loadMessages(), loadEscrows()]);
+      await loadMessages();
       startPolling();
       if (params.escrow === "1") setTimeout(openEscrowModal, 500);
       return;
@@ -638,9 +673,10 @@ async function init() {
 
     const chat = await getOrCreateChat();
     if (!chat) return;
+    await updateConversationHeader();
 
     enableComposer(true);
-    await Promise.all([loadMessages(), loadEscrows()]);
+    await loadMessages();
     startPolling();
 
     if (params.escrow === "1") setTimeout(openEscrowModal, 500);
@@ -667,7 +703,6 @@ function startPolling() {
     if (!currentChat?.id || !isParticipant(currentChat)) return;
     try {
       await loadMessages(true);
-      await loadEscrows(true);
     } catch (error) {
       console.warn("Chat refresh failed.", error);
     }
@@ -768,6 +803,10 @@ async function sendMessage() {
 =========================== */
 
 async function loadEscrows(isPoll = false) {
+  // Legacy escrow records are not wallet-backed. Keep them disabled in chat.
+  // A separate, verified wallet escrow flow can be connected later.
+  return;
+
   if (!currentChat?.id || !isParticipant(currentChat)) return;
 
   try {
