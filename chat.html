@@ -131,6 +131,10 @@ let accessToken = null;
 let sending = false;
 let lastMessageId = null;
 let pollTimer = null;
+let inboxPollTimer = null;
+let inboxChats = [];
+let inboxLastMessageIds = new Map();
+let inboxUnreadCounts = new Map();
 let notifyEnabled = false;
 let notificationKey = null;
 let loadingChat = false;
@@ -231,11 +235,12 @@ async function toggleNotifications() {
 }
 
 function notifyNewMessage(message, senderLabel) {
-  if (!notifyEnabled || document.hasFocus()) return;
+  if (!notifyEnabled) return;
 
+  // Play the chime even while the owner is actively using the inbox.
   playBeep();
 
-  if (browserNotificationsAvailable() && Notification.permission === "granted") {
+  if (!document.hasFocus() && browserNotificationsAvailable() && Notification.permission === "granted") {
     try {
       new Notification("New LosOja message", {
         body: (senderLabel ? senderLabel + ": " : "") + String(message || "You have a new message").slice(0, 100),
@@ -599,12 +604,97 @@ async function openSellerInbox() {
   chatWrap.innerHTML = '<div class="small-note">Select a buyer to open the existing conversation.</div>';
   escrowList.innerHTML = "";
   enableComposer(false);
+  startSellerInboxPolling(incoming);
   return null;
+}
+
+async function getLatestInboxMessage(chatId) {
+  const rows = await api(
+    "messages?chat_id=eq." + encodeURIComponent(chatId) +
+    "&select=id,sender_id,message,created_at&order=created_at.desc&limit=1"
+  );
+  return Array.isArray(rows) && rows.length ? rows[0] : null;
+}
+
+function updateInboxUnreadUI() {
+  let total = 0;
+  for (const count of inboxUnreadCounts.values()) total += count;
+
+  chatHeader.textContent = total
+    ? "Your inbox · " + total + " unread"
+    : "Your inbox";
+
+  for (const chat of inboxChats) {
+    const row = buyerListEl.querySelector('[data-chat-id="' + CSS.escape(String(chat.id)) + '"]');
+    if (!row) continue;
+    let badgeEl = row.querySelector(".losoja-unread-badge");
+    const count = inboxUnreadCounts.get(String(chat.id)) || 0;
+
+    if (count > 0) {
+      if (!badgeEl) {
+        badgeEl = document.createElement("span");
+        badgeEl.className = "losoja-unread-badge";
+        badgeEl.style.cssText = "display:inline-block;margin-left:8px;padding:3px 8px;border-radius:20px;background:#ffb703;color:#222;font-size:11px;font-weight:700";
+        row.appendChild(badgeEl);
+      }
+      badgeEl.textContent = count > 9 ? "9+" : String(count);
+    } else if (badgeEl) {
+      badgeEl.remove();
+    }
+  }
+}
+
+function startSellerInboxPolling(chats) {
+  clearInterval(inboxPollTimer);
+  inboxChats = chats.filter(isParticipant).slice(0, 20);
+  inboxLastMessageIds = new Map();
+  inboxUnreadCounts = new Map();
+
+  // Establish a baseline first, so old messages do not trigger alerts.
+  Promise.all(inboxChats.map(async chat => {
+    try {
+      const latest = await getLatestInboxMessage(chat.id);
+      if (latest?.id) inboxLastMessageIds.set(String(chat.id), String(latest.id));
+    } catch (error) {
+      console.warn("Could not establish inbox message baseline.", error);
+    }
+  })).then(() => {
+    updateInboxUnreadUI();
+    if (inboxPollTimer) clearInterval(inboxPollTimer);
+    inboxPollTimer = setInterval(checkSellerInboxMessages, 10000);
+  });
+}
+
+async function checkSellerInboxMessages() {
+  if (!currentUser?.id || !inboxChats.length) return;
+
+  await Promise.all(inboxChats.map(async chat => {
+    try {
+      const chatKey = String(chat.id);
+      const latest = await getLatestInboxMessage(chat.id);
+      if (!latest?.id) return;
+
+      const latestId = String(latest.id);
+      const previousId = inboxLastMessageIds.get(chatKey);
+      inboxLastMessageIds.set(chatKey, latestId);
+
+      if (previousId && latestId !== previousId && latest.sender_id !== currentUser.id) {
+        inboxUnreadCounts.set(chatKey, (inboxUnreadCounts.get(chatKey) || 0) + 1);
+        updateInboxUnreadUI();
+        notifyNewMessage(latest.message, "New business message");
+      }
+    } catch (error) {
+      console.warn("Inbox message check failed.", error);
+    }
+  }));
 }
 
 async function selectInboxChat(chatId) {
   if (loadingChat) return;
   loadingChat = true;
+  clearInterval(inboxPollTimer);
+  inboxUnreadCounts.delete(String(chatId));
+  updateInboxUnreadUI();
   try {
     await openExistingChat(chatId);
     buyerListEl.style.display = "none";
