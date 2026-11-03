@@ -587,9 +587,29 @@ async function openSellerInbox() {
     const info = document.createElement("div");
     const title = document.createElement("b");
     title.textContent = "Buyer account · ..." + String(chat.buyer_id || "").slice(-6);
+
     const context = document.createElement("small");
-    context.textContent = chat.business_id ? "Business conversation" : "Direct conversation";
+    context.textContent = "Direct conversation";
     context.style.display = "block";
+
+    if (chat.business_id) {
+      try {
+        const businessRows = await api(
+          "businesses?id=eq." + encodeURIComponent(chat.business_id) +
+          "&select=name,category&limit=1"
+        );
+        if (Array.isArray(businessRows) && businessRows[0]) {
+          const businessName = businessRows[0].name || "Business";
+          const businessCategory = businessRows[0].category || "Business";
+          context.textContent = businessName + " · " + businessCategory;
+        } else {
+          context.textContent = "Business conversation";
+        }
+      } catch (error) {
+        console.warn("Could not load inbox business details.", error);
+        context.textContent = "Business conversation";
+      }
+    }
     const date = document.createElement("small");
     date.textContent = chat.created_at ? new Date(chat.created_at).toLocaleString() : "Conversation";
     date.style.display = "block";
