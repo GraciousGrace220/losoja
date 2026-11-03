@@ -586,7 +586,26 @@ async function openSellerInbox() {
 
     const info = document.createElement("div");
     const title = document.createElement("b");
-    title.textContent = "Buyer account · ..." + String(chat.buyer_id || "").slice(-6);
+    const buyerId = String(chat.buyer_id || "");
+    title.textContent = "Customer";
+
+    if (buyerId) {
+      try {
+        const profileRows = await api(
+          "profiles?id=eq." + encodeURIComponent(buyerId) +
+          "&select=display_name&limit=1"
+        );
+        const displayName = Array.isArray(profileRows) &&
+          profileRows[0] &&
+          typeof profileRows[0].display_name === "string"
+            ? profileRows[0].display_name.trim()
+            : "";
+        title.textContent = displayName || "Customer";
+      } catch (error) {
+        console.warn("Could not load customer profile name.", error);
+        title.textContent = "Customer";
+      }
+    }
 
     const context = document.createElement("small");
     context.textContent = "Direct conversation";
