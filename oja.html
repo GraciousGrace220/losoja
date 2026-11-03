@@ -88,7 +88,6 @@
 <div class="oja-page">
 <header class="oja-header">
   <div class="oja-logo"><div class="oja-logo-mark">L</div><span>LosOja</span></div>
-  <button type="button" class="oja-login-btn" id="ojaLoginButton" onclick="goToLogin()">Login</button>
 </header>
 
 <section class="oja-hero">
@@ -227,7 +226,7 @@ function formatPrice(value) {
 }
 
 function goToLogin() {
-  window.location.href = "login.html";
+  window.location.href = "index.html?openLogin=1";
 }
 
 async function getOjaCurrentUser() {
