@@ -582,6 +582,7 @@ async function openSellerInbox() {
 
     const item = document.createElement("div");
     item.className = "buyer-item";
+    item.dataset.chatId = String(chat.id);
 
     const info = document.createElement("div");
     const title = document.createElement("b");
