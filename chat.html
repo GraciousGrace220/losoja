@@ -570,6 +570,7 @@ async function openSellerInbox() {
         <p>When a buyer contacts you about a listing, the conversation will appear here.</p>
       </div>`;
     enableComposer(false);
+    startSellerInboxPolling([]);
     return null;
   }
 
@@ -666,7 +667,34 @@ function startSellerInboxPolling(chats) {
 }
 
 async function checkSellerInboxMessages() {
-  if (!currentUser?.id || !inboxChats.length) return;
+  if (!currentUser?.id) return;
+
+  // Also discover brand-new conversations while the owner is already viewing an empty inbox.
+  try {
+    const latestChats = await api(
+      "chats?seller_id=eq." + encodeURIComponent(currentUser.id) +
+      "&select=*&order=created_at.desc&limit=50"
+    );
+    if (Array.isArray(latestChats)) {
+      const knownIds = new Set(inboxChats.map(chat => String(chat.id)));
+      const newlyCreated = latestChats.filter(chat =>
+        isParticipant(chat) && !knownIds.has(String(chat.id))
+      );
+
+      if (newlyCreated.length) {
+        for (const chat of newlyCreated) {
+          const latest = await getLatestInboxMessage(chat.id);
+          if (latest && latest.sender_id !== currentUser.id) {
+            notifyNewMessage(latest.message, "New business message");
+          }
+        }
+        await openSellerInbox();
+        return;
+      }
+    }
+  } catch (error) {
+    console.warn("Could not refresh seller conversations.", error);
+  }
 
   await Promise.all(inboxChats.map(async chat => {
     try {
