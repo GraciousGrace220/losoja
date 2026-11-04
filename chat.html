@@ -450,6 +450,62 @@ async function resolveSellerFromListing() {
   return listing;
 }
 
+async function openEscrowTransactionChat(escrowId) {
+  const rows = await api(
+    "escrow_transactions?id=eq." + encodeURIComponent(escrowId) +
+    "&select=*&limit=1"
+  );
+
+  if (!Array.isArray(rows) || !rows.length) {
+    throw new Error("This escrow transaction could not be found.");
+  }
+
+  const escrow = rows[0];
+  const buyerId = String(escrow.buyer_id || "");
+  const sellerUserId = String(escrow.seller_id || "");
+
+  if (!buyerId || !sellerUserId) {
+    throw new Error("This escrow transaction is missing its buyer or seller.");
+  }
+
+  if (String(currentUser.id) !== buyerId &&
+      String(currentUser.id) !== sellerUserId) {
+    throw new Error("This escrow conversation does not belong to your account.");
+  }
+
+  // Always use the buyer/seller IDs stored on this exact escrow record.
+  // This prevents an escrow link from opening an unrelated seller inbox.
+  const query =
+    "chats?buyer_id=eq." + encodeURIComponent(buyerId) +
+    "&seller_id=eq." + encodeURIComponent(sellerUserId) +
+    "&select=*&order=created_at.desc&limit=1";
+
+  let chats = await api(query);
+
+  if (!Array.isArray(chats) || !chats.length) {
+    chats = await api("chats", "POST", {
+      buyer_id: buyerId,
+      seller_id: sellerUserId,
+      business_id: escrow.business_id || null
+    });
+  }
+
+  if (!Array.isArray(chats) || !chats.length || !isParticipant(chats[0])) {
+    throw new Error("Could not open the chat for this escrow transaction.");
+  }
+
+  currentChat = chats[0];
+  sellerId = sellerUserId;
+  businessId = currentChat.business_id || escrow.business_id || null;
+  await updateConversationHeader();
+
+  const description = String(escrow.description || "").trim();
+  chatHeader.textContent = description
+    ? "Escrow chat · " + description.slice(0, 42)
+    : "Escrow chat";
+  return currentChat;
+}
+
 async function openExistingChat(chatId) {
   const rows = await api(
     "chats?id=eq." + encodeURIComponent(chatId) + "&select=*&limit=1"
@@ -804,6 +860,14 @@ async function init() {
 
     if (!currentUser?.id || !accessToken) {
       showLoginMessage();
+      return;
+    }
+
+    if (params.escrow && params.escrow !== "1") {
+      await openEscrowTransactionChat(params.escrow);
+      enableComposer(true);
+      await loadMessages();
+      startPolling();
       return;
     }
 
