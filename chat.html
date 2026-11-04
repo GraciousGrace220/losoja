@@ -806,7 +806,7 @@ async function init() {
       enableComposer(true);
       await loadMessages();
       startPolling();
-      if (params.escrow === "1") setTimeout(openEscrowModal, 500);
+      if (params.escrow === "1") setTimeout(openWalletBackedEscrow, 500);
       return;
     }
 
@@ -843,7 +843,7 @@ async function init() {
     await loadMessages();
     startPolling();
 
-    if (params.escrow === "1") setTimeout(openEscrowModal, 500);
+    if (params.escrow === "1") setTimeout(openWalletBackedEscrow, 500);
   } catch (error) {
     console.error("LosOja chat initialization failed:", error);
     chatHeader.textContent = "Chat unavailable";
@@ -1273,7 +1273,7 @@ async function createEscrow() {
 }
 
 $("headerEscrowBtn").addEventListener("click", openWalletBackedEscrow);
-$("bottomEscrowBtn").addEventListener("click", openEscrowModal);
+$("bottomEscrowBtn").addEventListener("click", openWalletBackedEscrow);
 $("cancelEscrowBtn").addEventListener("click", closeEscrowModal);
 $("createEscrowBtn").addEventListener("click", createEscrow);
 $("notifyToggle").addEventListener("click", toggleNotifications);
