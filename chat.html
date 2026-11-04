@@ -51,8 +51,9 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible{
  .input-bar button{padding:12px 9px}
 }
 
-/* Keep the legacy record-only escrow UI out of ordinary conversations. */
-#escrowList,#headerEscrowBtn,#bottomEscrowBtn,#escrowModal{display:none!important}
+/* Keep the legacy record-only escrow form hidden. The header button opens wallet-backed escrow. */
+#escrowList,#bottomEscrowBtn,#escrowModal{display:none!important}
+#headerEscrowBtn{display:none}
 </style>
 </head>
 <body>
@@ -466,6 +467,11 @@ async function openExistingChat(chatId) {
 async function updateConversationHeader() {
   if (!currentChat || !currentUser?.id) return;
   const isBuyer = currentChat.buyer_id === currentUser.id;
+  const escrowButton = $("headerEscrowBtn");
+  if (escrowButton) {
+    escrowButton.style.display = isBuyer && !!currentChat.business_id ? "inline-block" : "none";
+    escrowButton.textContent = "🔐 Create Escrow";
+  }
   const role = isBuyer ? "Seller" : "Buyer";
   const partnerId = isBuyer ? currentChat.seller_id : currentChat.buyer_id;
   const suffix = String(partnerId || "").slice(-6);
@@ -1146,13 +1152,50 @@ async function updateEscrow(id, nextStatus) {
   }
 }
 
-function openEscrowModal() {
+async function openWalletBackedEscrow() {
   if (!currentChat?.id || !isParticipant(currentChat)) {
     showToast("Open a conversation first.");
     return;
   }
-  escrowModal.classList.add("show");
-  $("escrowAmount").focus();
+  if (currentChat.buyer_id !== currentUser?.id) {
+    showToast("Only the buyer can start an escrow payment.");
+    return;
+  }
+  if (!currentChat.business_id || !currentChat.seller_id) {
+    showToast("Open this chat from the seller's business page to create escrow.");
+    return;
+  }
+
+  const button = $("headerEscrowBtn");
+  if (button) {
+    button.disabled = true;
+    button.textContent = "Opening...";
+  }
+
+  try {
+    const rows = await api(
+      "businesses?id=eq." + encodeURIComponent(currentChat.business_id) +
+      "&select=id,name,user_id&limit=1"
+    );
+    const business = Array.isArray(rows) ? rows[0] : null;
+    if (!business || String(business.user_id) !== String(currentChat.seller_id)) {
+      throw new Error("Could not verify this business and its seller.");
+    }
+
+    sessionStorage.setItem("losoja_escrow_business", JSON.stringify({
+      id: business.id,
+      name: business.name || "Selected business",
+      user_id: business.user_id
+    }));
+    location.href = "balance.html";
+  } catch (error) {
+    console.error("Could not open wallet-backed escrow.", error);
+    showToast(error.message || "Could not open escrow.");
+    if (button) {
+      button.disabled = false;
+      button.textContent = "🔐 Create Escrow";
+    }
+  }
 }
 
 function closeEscrowModal() {
@@ -1229,7 +1272,7 @@ async function createEscrow() {
   }
 }
 
-$("headerEscrowBtn").addEventListener("click", openEscrowModal);
+$("headerEscrowBtn").addEventListener("click", openWalletBackedEscrow);
 $("bottomEscrowBtn").addEventListener("click", openEscrowModal);
 $("cancelEscrowBtn").addEventListener("click", closeEscrowModal);
 $("createEscrowBtn").addEventListener("click", createEscrow);
