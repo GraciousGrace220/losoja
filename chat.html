@@ -417,6 +417,13 @@ function enableComposer(enabled) {
   msgInput.disabled = !enabled;
   sendBtn.disabled = !enabled;
   imageInput.disabled = !enabled;
+
+  // Keep the message tools out of the seller inbox until a real chat is open.
+  const imageLabel = imageInput.parentElement;
+  if (imageLabel) imageLabel.style.display = enabled ? "" : "none";
+  msgInput.style.display = enabled ? "" : "none";
+  sendBtn.style.display = enabled ? "" : "none";
+  bottomEscrowBtn.style.display = enabled ? "" : "none";
 }
 
 function isParticipant(chat) {
