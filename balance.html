@@ -3484,8 +3484,8 @@ function loadCreateEscrowBox() {
     if (
         !escrowBusiness ||
         !escrowBusiness.id ||
-        !escrowBusiness.user_id
-    ) {
+        !escrowBusiness.user_id ||
+        !escrowBusiness.chat_id    ) {
 
         return;
 
@@ -3601,8 +3601,8 @@ async function createEscrowPayment() {
         if (
             !escrowBusiness ||
             !escrowBusiness.id ||
-            !escrowBusiness.user_id
-        ) {
+            !escrowBusiness.user_id ||
+            !escrowBusiness.chat_id        ) {
 
             throw new Error(
                 "The selected business could not be identified. Please return to the business and try again."
@@ -3764,7 +3764,10 @@ async function createEscrowPayment() {
                                 amount,
 
                             p_description:
-                                description
+                                description,
+
+                            p_chat_id:
+                                escrowBusiness.chat_id
 
                         })
                 }
@@ -3776,6 +3779,9 @@ async function createEscrowPayment() {
             result
         );
 
+
+        const escrowChatId =
+            escrowBusiness.chat_id;
 
         sessionStorage.removeItem(
             "losoja_escrow_business"
@@ -3797,6 +3803,13 @@ async function createEscrowPayment() {
             "The payment is now protected by LosOja Escrow."
 
         );
+
+
+        location.href =
+            "chat.html?chat_id=" +
+            encodeURIComponent(escrowChatId);
+
+        return;
 
 
         await loadWallet();
