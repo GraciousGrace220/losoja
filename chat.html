@@ -527,6 +527,24 @@ async function openExistingChat(chatId) {
   return chat;
 }
 
+async function getChatPartnerName(userId, fallbackRole) {
+  if (!userId) return fallbackRole || "Chat participant";
+  try {
+    const rows = await api(
+      "profiles?id=eq." + encodeURIComponent(userId) +
+      "&select=display_name&limit=1"
+    );
+    const name = Array.isArray(rows) && rows[0] &&
+      typeof rows[0].display_name === "string"
+        ? rows[0].display_name.trim()
+        : "";
+    if (name) return name;
+  } catch (error) {
+    console.warn("Could not load chat participant name.", error);
+  }
+  return (fallbackRole || "Chat participant") + " · ..." + String(userId).slice(-6);
+}
+
 async function updateConversationHeader() {
   if (!currentChat || !currentUser?.id) return;
   const isBuyer = currentChat.buyer_id === currentUser.id;
@@ -535,10 +553,10 @@ async function updateConversationHeader() {
     escrowButton.style.display = isBuyer && !!currentChat.business_id ? "inline-block" : "none";
     escrowButton.textContent = "🔐 Create Escrow";
   }
-  const role = isBuyer ? "Seller" : "Buyer";
+
   const partnerId = isBuyer ? currentChat.seller_id : currentChat.buyer_id;
-  const suffix = String(partnerId || "").slice(-6);
-  let heading = "Chat with " + role + (suffix ? " · ..." + suffix : "");
+  const partnerName = await getChatPartnerName(partnerId, isBuyer ? "Seller" : "Buyer");
+  let heading = "Chat with " + partnerName;
 
   if (currentChat.business_id) {
     try {
@@ -656,28 +674,10 @@ async function openSellerInbox() {
     const info = document.createElement("div");
     const title = document.createElement("b");
     const buyerId = String(chat.buyer_id || "");
-    title.textContent = "Customer";
-
-    if (buyerId) {
-      try {
-        const profileRows = await api(
-          "profiles?id=eq." + encodeURIComponent(buyerId) +
-          "&select=display_name&limit=1"
-        );
-        const displayName = Array.isArray(profileRows) &&
-          profileRows[0] &&
-          typeof profileRows[0].display_name === "string"
-            ? profileRows[0].display_name.trim()
-            : "";
-        title.textContent = displayName || "Customer";
-      } catch (error) {
-        console.warn("Could not load customer profile name.", error);
-        title.textContent = "Customer";
-      }
-    }
+    title.textContent = await getChatPartnerName(buyerId, "Customer");
 
     const context = document.createElement("small");
-    context.textContent = "Direct conversation";
+    context.textContent = chat.business_id ? "Business conversation" : "Direct conversation";
     context.style.display = "block";
 
     if (chat.business_id) {
