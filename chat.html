@@ -68,6 +68,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible{
 </header>
 
 <div id="buyerList" class="buyer-list" style="display:none"></div>
+<div id="walletEscrowCard" class="escrow-card" style="display:none;max-width:768px;width:calc(100% - 24px);"></div>
 <div id="chatWrap" class="chat-wrap">
   <div class="small-note">Connecting to chat...</div>
 </div>
@@ -473,28 +474,26 @@ async function openEscrowTransactionChat(escrowId) {
     throw new Error("This escrow conversation does not belong to your account.");
   }
 
-  // Always use the buyer/seller IDs stored on this exact escrow record.
-  // This prevents an escrow link from opening an unrelated seller inbox.
-  const query =
-    "chats?buyer_id=eq." + encodeURIComponent(buyerId) +
-    "&seller_id=eq." + encodeURIComponent(sellerUserId) +
-    "&select=*&order=created_at.desc&limit=1";
-
-  let chats = await api(query);
-
-  if (!Array.isArray(chats) || !chats.length) {
-    chats = await api("chats", "POST", {
-      buyer_id: buyerId,
-      seller_id: sellerUserId,
-      business_id: escrow.business_id || null
-    });
+  // Wallet-backed escrow is attached to the exact originating conversation.
+  if (!escrow.chat_id) {
+    throw new Error("This older escrow is not linked to a chat. Open the original conversation from your inbox.");
   }
 
+  const chats = await api(
+    "chats?id=eq." + encodeURIComponent(escrow.chat_id) +
+    "&select=*&limit=1"
+  );
+
   if (!Array.isArray(chats) || !chats.length || !isParticipant(chats[0])) {
-    throw new Error("Could not open the chat for this escrow transaction.");
+    throw new Error("The original chat for this escrow could not be opened.");
   }
 
   currentChat = chats[0];
+
+  if (String(currentChat.buyer_id) !== buyerId ||
+      String(currentChat.seller_id) !== sellerUserId) {
+    throw new Error("This escrow does not match the linked conversation.");
+  }
   sellerId = sellerUserId;
   businessId = currentChat.business_id || escrow.business_id || null;
   await updateConversationHeader();
@@ -867,6 +866,7 @@ async function init() {
       await openEscrowTransactionChat(params.escrow);
       enableComposer(true);
       await loadMessages();
+      await loadWalletEscrowCard();
       startPolling();
       return;
     }
@@ -876,6 +876,7 @@ async function init() {
       chatHeader.textContent = "LosOja Chat";
       enableComposer(true);
       await loadMessages();
+      await loadWalletEscrowCard();
       startPolling();
       if (params.escrow === "1") setTimeout(openWalletBackedEscrow, 500);
       return;
@@ -912,6 +913,7 @@ async function init() {
 
     enableComposer(true);
     await loadMessages();
+    await loadWalletEscrowCard();
     startPolling();
 
     if (params.escrow === "1") setTimeout(openWalletBackedEscrow, 500);
@@ -932,12 +934,132 @@ async function init() {
   }
 }
 
+async function loadWalletEscrowCard() {
+  const card = $("walletEscrowCard");
+  if (!card || !currentChat?.id || !isParticipant(currentChat)) return;
+
+  try {
+    const rows = await api(
+      "escrow_transactions?chat_id=eq." + encodeURIComponent(currentChat.id) +
+      "&select=*&order=created_at.desc&limit=1"
+    );
+    const escrow = Array.isArray(rows) ? rows.find(item =>
+      String(item.buyer_id) === String(currentChat.buyer_id) &&
+      String(item.seller_id) === String(currentChat.seller_id)
+    ) : null;
+
+    if (!escrow) {
+      card.style.display = "none";
+      card.innerHTML = "";
+      return;
+    }
+
+    const isBuyer = String(currentUser.id) === String(escrow.buyer_id);
+    const status = String(escrow.status || "").toLowerCase();
+    const amount = Number(escrow.amount || 0).toLocaleString("en-NG", {
+      style: "currency", currency: "NGN", minimumFractionDigits: 2
+    });
+    const labels = {
+      funded: "Payment held safely in LosOja Escrow",
+      shipped: "Seller marked the order as shipped",
+      delivered: "Delivery confirmed — awaiting buyer release",
+      disputed: "This escrow is under dispute",
+      released: "Payment released to the seller",
+      refunded: "Payment refunded to the buyer"
+    };
+    let actions = "";
+
+    if (isBuyer && status === "funded") {
+      actions = '<button class="btn-cancel" onclick="walletEscrowAction(\'refund\')">Request Refund</button>';
+    } else if (!isBuyer && status === "funded") {
+      actions = '<button class="btn-deliver" onclick="walletEscrowAction(\'shipped\')">Mark as Shipped</button>';
+    } else if (isBuyer && status === "shipped") {
+      actions = '<button class="btn-deliver" onclick="walletEscrowAction(\'delivered\')">Confirm Delivery</button><button class="btn-dispute" onclick="walletEscrowAction(\'dispute\')">Dispute</button>';
+    } else if (isBuyer && status === "delivered") {
+      actions = '<button class="btn-release" onclick="walletEscrowAction(\'release\')">Release to Seller</button><button class="btn-dispute" onclick="walletEscrowAction(\'dispute\')">Dispute</button>';
+    }
+
+    card.innerHTML =
+      '<div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center">' +
+        '<strong>🔐 LosOja Wallet Escrow</strong><strong>' + esc(amount) + '</strong>' +
+      '</div>' +
+      '<p style="margin:8px 0 4px"><b>' + esc(escrow.description || "Purchase payment") + '</b></p>' +
+      '<div style="font-size:12px;color:#52635a">Reference: ' + esc(escrow.reference || escrow.id) + '</div>' +
+      '<p style="margin:8px 0;color:#087a3e;font-weight:700">' + esc(labels[status] || ("Escrow status: " + status)) + '</p>' +
+      '<div style="font-size:12px;color:#52635a">You are the ' + (isBuyer ? "buyer" : "seller") + ' in this protected transaction.</div>' +
+      (actions ? '<div class="escrow-actions">' + actions + '</div>' : '');
+    card.style.display = "block";
+  } catch (error) {
+    console.warn("Could not refresh wallet escrow card.", error);
+  }
+}
+
+async function walletEscrowAction(action) {
+  const card = $("walletEscrowCard");
+  const buttons = card?.querySelectorAll("button");
+  if (buttons) buttons.forEach(button => button.disabled = true);
+
+  try {
+    const rows = await api(
+      "escrow_transactions?chat_id=eq." + encodeURIComponent(currentChat.id) +
+      "&select=*&order=created_at.desc&limit=1"
+    );
+    const escrow = Array.isArray(rows) ? rows[0] : null;
+    if (!escrow ||
+        String(escrow.buyer_id) !== String(currentChat.buyer_id) ||
+        String(escrow.seller_id) !== String(currentChat.seller_id)) {
+      throw new Error("The escrow for this conversation could not be verified.");
+    }
+
+    const messages = {
+      refund: "LosOja Safety Warning\n\nOnly refund if you are sure you want to cancel this protected payment. The held amount will return to your wallet. Continue?",
+      shipped: "Only mark this order as shipped after you have actually handed it to the delivery service or dispatched it. Continue?",
+      delivered: "Confirm that you have received the order and are satisfied before confirming delivery. Continue?",
+      release: "Release the held payment to the seller? Only do this when you are satisfied with the order. This action may not be reversible.",
+      dispute: "Open a dispute if there is a genuine problem with this order. LosOja will need to review it."
+    };
+    if (!messages[action] || !confirm(messages[action])) {
+      if (buttons) buttons.forEach(button => button.disabled = false);
+      return;
+    }
+
+    let result;
+    if (action === "refund") {
+      result = await api("rpc/refund_escrow", "POST", {p_escrow_id: escrow.id});
+    } else if (action === "shipped") {
+      result = await api("rpc/mark_escrow_shipped", "POST", {p_escrow_id: escrow.id});
+    } else if (action === "delivered") {
+      result = await api("rpc/confirm_escrow_delivery", "POST", {p_escrow_id: escrow.id});
+    } else if (action === "release") {
+      result = await api("rpc/release_escrow", "POST", {p_escrow_id: escrow.id});
+    } else if (action === "dispute") {
+      const reason = prompt("Briefly explain the issue with this order:");
+      if (!reason || reason.trim().length < 3) {
+        if (buttons) buttons.forEach(button => button.disabled = false);
+        return;
+      }
+      result = await api("rpc/dispute_escrow", "POST", {
+        p_escrow_id: escrow.id,
+        p_reason: reason.trim()
+      });
+    }
+
+    await loadWalletEscrowCard();
+    showToast("Escrow updated successfully.");
+  } catch (error) {
+    console.error("Wallet escrow action failed.", error);
+    showToast(error.message || "Could not update escrow.");
+    if (buttons) buttons.forEach(button => button.disabled = false);
+  }
+}
+
 function startPolling() {
   clearInterval(pollTimer);
   pollTimer = setInterval(async () => {
     if (!currentChat?.id || !isParticipant(currentChat)) return;
     try {
       await loadMessages(true);
+      await loadWalletEscrowCard();
     } catch (error) {
       console.warn("Chat refresh failed.", error);
     }
@@ -1256,7 +1378,8 @@ async function openWalletBackedEscrow() {
     sessionStorage.setItem("losoja_escrow_business", JSON.stringify({
       id: business.id,
       name: business.name || "Selected business",
-      user_id: business.user_id
+      user_id: business.user_id,
+      chat_id: currentChat.id
     }));
     location.href = "balance.html";
   } catch (error) {
