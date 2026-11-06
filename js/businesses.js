@@ -265,18 +265,18 @@ Adds:
 
         if (selectedBusinessState && stateFilteredList.length === 0) {
             const stateLabel = escapeHTML(selectedBusinessState);
-            businessGrid.innerHTML = \`
+            businessGrid.innerHTML = `
                 <div class="loading-card" style="grid-column:1/-1; padding:30px 18px; background:#fffaf0; border-color:#f2d58a;">
                     <div style="font-size:36px; margin-bottom:10px;">📍</div>
-                    <p style="font-weight:800; font-size:18px; color:#17201b;">No businesses yet in \${stateLabel} - Be the first to add your business!</p>
+                    <p style="font-weight:800; font-size:18px; color:#17201b;">No businesses yet in ${stateLabel} - Be the first to add your business!</p>
                     <a href="account.html" style="display:inline-block; margin-top:16px; padding:12px 20px; border-radius:10px; background:#087a3e; color:#fff; text-decoration:none; font-weight:800;">Add Your Business Free</a>
                 </div>
-            \`;
+            `;
             return;
         }
 
         if (stateFilteredList.length === 0) {
-            businessGrid.innerHTML = \`
+            businessGrid.innerHTML = `
                 <div class="loading-card">
                     <div style="font-size:32px; margin-bottom:8px;">🔍</div>
                     <p style="font-weight:700; font-size:16px;">No businesses found</p>
@@ -287,7 +287,7 @@ Adds:
                         Show All Businesses
                     </button>
                 </div>
-            \`;
+            `;
             return;
         }
 
