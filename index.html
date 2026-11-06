@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <link rel="icon" type="image/svg+xml" href="favicon.svg">    
+    <link rel="icon" href="favicon.ico">    
     <meta charset="UTF-8">
 
     <meta
@@ -142,18 +142,11 @@
 .losoja-ad-slide img {
     display: block;
     width: 100%;
-    max-width: 100%;
-    height: auto;
-    max-height: 100%;
+    height: 100%;
     object-fit: contain;
     object-position: center;
-    background: #FFF3CD;
+    background: #ffffff;
 }
-
-.state-filter-wrap { margin:14px 18px 4px; padding:14px 16px; background:#fff; border:1px solid #e5e7eb; border-radius:14px; }
-.state-filter-wrap label { display:block; margin-bottom:7px; color:#17201b; font-weight:800; }
-#losojaStateFilter { width:100%; max-width:460px; padding:12px 14px; border:1px solid #cfd8d3; border-radius:10px; background:#fff; color:#17201b; font:inherit; }
-@media (max-width:600px) { .state-filter-wrap { margin:12px 12px 4px; } }
 
 @media (max-width: 768px) {
     .losoja-ad-slider {
@@ -1184,10 +1177,6 @@ main {
 
 <main>
 
-<section class="state-filter-wrap" aria-label="Filter businesses by Nigerian state">
-    <label for="losojaStateFilter">Find businesses by location</label>
-    <select id="losojaStateFilter"><option value="">All Nigeria</option></select>
-</section>
 
 <!-- =====================================================
      HERO
@@ -1233,7 +1222,6 @@ main {
 
 </section>
 
-<!-- TODO: Compress these 3 images to under 200KB after launch -->
 <!-- LOSOJA PROMOTIONAL SLIDESHOW -->
 
 <section class="losoja-ad-slider" aria-label="LosOja promotions">
@@ -1247,9 +1235,6 @@ main {
             </div>
             <img
                 src="losoja-ad-scene-1.png"
-                loading="lazy"
-                width="1280"
-                height="420"
                 alt="Discover LosOja"
                 onload="this.closest('.losoja-ad-slide').classList.add('is-loaded')"
                 onerror="this.closest('.losoja-ad-slide').classList.add('is-failed')"
@@ -1263,9 +1248,6 @@ main {
             </div>
             <img
                 src="losoja-ad-scene-2.png"
-                loading="lazy"
-                width="1280"
-                height="420"
                 alt="Explore businesses and categories on LosOja"
                 onload="this.closest('.losoja-ad-slide').classList.add('is-loaded')"
                 onerror="this.closest('.losoja-ad-slide').classList.add('is-failed')"
@@ -1279,9 +1261,6 @@ main {
             </div>
             <img
                 src="losoja-ad-scene-3.png"
-                loading="lazy"
-                width="1280"
-                height="420"
                 alt="Discover businesses, products, property and mobility on LosOja"
                 onload="this.closest('.losoja-ad-slide').classList.add('is-loaded')"
                 onerror="this.closest('.losoja-ad-slide').classList.add('is-failed')"
