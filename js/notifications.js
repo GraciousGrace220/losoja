@@ -77,7 +77,7 @@
     const response = await fetch(url, options || {});
     if (!response.ok) {
       const details = await readSupabaseError(response);
-      console.error("LosOja notifications Supabase " + operation + " failed:", details);
+      console.error("LosOja notifications Supabase " + operation + " failed:", JSON.stringify(details));
       const error = new Error("Notifications are temporarily unavailable. Please try again.");
       error.status = response.status;
       error.details = details;
@@ -202,13 +202,9 @@
     const type = String(notification.type || "").trim().toLowerCase();
     const title = String(notification.title || "").trim().toLowerCase();
     const message = String(notification.message || "").trim().toLowerCase();
-    const relatedBusinessId = notification.related_business_id;
-    const relatedOrderId = notification.related_order_id;
 
     if (type === "shop_saved" || title.includes("saved your shop") || title.includes("saved your business")) {
-      return relatedBusinessId
-        ? "shop.html?id=" + encodeURIComponent(relatedBusinessId)
-        : "saved.html";
+      return "saved.html";
     }
 
     if (
@@ -218,12 +214,7 @@
       title.includes("new message") ||
       message.includes("new losoja message")
     ) {
-      // Older message notifications have no conversation reference, so
-      // open the Baba Oja chat list. Only use a stored related ID when one
-      // is explicitly present; never manufacture a conversation ID.
-      return relatedOrderId
-        ? "chat.html?chat_id=" + encodeURIComponent(relatedOrderId)
-        : "baba-oja-chat.html";
+      return "baba-oja-chat.html";
     }
 
     if (type === "wallet_update" || title.includes("wallet update")) {
@@ -231,9 +222,7 @@
     }
 
     if (type === "escrow_update" || title.includes("escrow update")) {
-      return relatedOrderId
-        ? "chat.html?escrow=" + encodeURIComponent(relatedOrderId)
-        : "balance.html#escrow";
+      return "balance.html#escrow";
     }
 
     return "notifications.html";
@@ -282,7 +271,7 @@
       // Only request fields displayed here. This avoids a failure if optional
       // related-record columns are changed independently of the notification UI.
       const url = SUPABASE_URL +
-        "/rest/v1/notifications?select=id,type,title,message,is_read,created_at,related_business_id,related_order_id" +
+        "/rest/v1/notifications?select=id,type,title,message,is_read,created_at,user_id" +
         "&user_id=eq." + encodeURIComponent(credentials.user.id) +
         "&order=is_read.asc,created_at.desc";
       const rows = await supabaseFetch(url, {
