@@ -51,6 +51,50 @@ Adds:
     ===================================================== */
 
     let businesses = [];
+    const NIGERIAN_STATES = ["Abia","Adamawa","Akwa Ibom","Anambra","Bauchi","Bayelsa","Benue","Borno","Cross River","Delta","Ebonyi","Edo","Ekiti","Enugu","FCT","Gombe","Imo","Jigawa","Kaduna","Kano","Katsina","Kebbi","Kogi","Kwara","Lagos","Nasarawa","Niger","Ogun","Ondo","Osun","Oyo","Plateau","Rivers","Sokoto","Taraba","Yobe","Zamfara"];
+    let selectedBusinessState = "";
+
+    function normalizeState(value) {
+        return String(value || "").trim().toLowerCase().replace(/\s+/g, " ");
+    }
+
+    function getBusinessState(business) {
+        const explicitState = String(business.state || "").trim();
+        if (explicitState) return explicitState;
+        const location = String(business.location || business.address || "").trim();
+        const commaIndex = location.indexOf(",");
+        return commaIndex >= 0 ? location.slice(commaIndex + 1).trim() : "";
+    }
+
+    function updateStateOptions(list) {
+        const select = document.getElementById("losojaStateFilter");
+        if (!select) return;
+        const discovered = (Array.isArray(list) ? list : []).map(getBusinessState).filter(Boolean);
+        const allStates = Array.from(new Set(NIGERIAN_STATES.concat(discovered))).sort((a, b) => a.localeCompare(b));
+        const previous = selectedBusinessState || select.value;
+        select.innerHTML = '<option value="">All Nigeria</option>' + allStates.map(state =>
+            '<option value="' + escapeHTML(state) + '">' + escapeHTML(state) + '</option>'
+        ).join("");
+        if (previous && allStates.some(state => normalizeState(state) === normalizeState(previous))) {
+            select.value = allStates.find(state => normalizeState(state) === normalizeState(previous));
+        }
+        select.onchange = function () {
+            selectedBusinessState = select.value;
+            renderBusinesses(businesses);
+        };
+    }
+
+    function matchesSelectedState(business) {
+        if (!selectedBusinessState) return true;
+        const wanted = normalizeState(selectedBusinessState);
+        const businessState = normalizeState(getBusinessState(business));
+        const location = normalizeState(business.location || business.address || "");
+        const shortName = wanted.replace(/\s+state$/, "");
+        return businessState === wanted || businessState.includes(wanted) ||
+            location.includes(wanted) || location.includes(shortName);
+    }
+
+
     let businessesLoaded = false;
     let businessesLoading = false;
     let loadingPromise = null;
@@ -231,7 +275,7 @@ Adds:
             return;
         }
 
-        businessGrid.innerHTML = list.map(createBusinessCard).join("");
+        businessGrid.innerHTML = stateFilteredList.map(createBusinessCard).join("");
     }
 
     /* =====================================================
