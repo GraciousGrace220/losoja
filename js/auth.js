@@ -679,3 +679,10 @@ if (forgotPasswordBtn && !forgotPasswordBtn.dataset.authBound) {
 
   console.log("LosOja authentication loaded.");
 }
+
+/* LosOja in-app notifications and Saved header navigation */
+(function(){
+  if(window.__losojaNotificationsLoader)return;
+  window.__losojaNotificationsLoader=true;
+  var s=document.createElement("script");s.src="js/notifications.js";s.defer=true;document.head.appendChild(s);
+})();
