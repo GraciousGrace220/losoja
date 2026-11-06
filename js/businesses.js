@@ -259,19 +259,35 @@ Adds:
     function renderBusinesses(list) {
         if (!businessGrid) return;
 
-        if (!Array.isArray(list) || list.length === 0) {
-            businessGrid.innerHTML = `
+        const stateFilteredList = Array.isArray(list)
+            ? list.filter(matchesSelectedState)
+            : [];
+
+        if (selectedBusinessState && stateFilteredList.length === 0) {
+            const stateLabel = escapeHTML(selectedBusinessState);
+            businessGrid.innerHTML = \`
+                <div class="loading-card" style="grid-column:1/-1; padding:30px 18px; background:#fffaf0; border-color:#f2d58a;">
+                    <div style="font-size:36px; margin-bottom:10px;">📍</div>
+                    <p style="font-weight:800; font-size:18px; color:#17201b;">No businesses yet in \${stateLabel} - Be the first to add your business!</p>
+                    <a href="account.html" style="display:inline-block; margin-top:16px; padding:12px 20px; border-radius:10px; background:#087a3e; color:#fff; text-decoration:none; font-weight:800;">Add Your Business Free</a>
+                </div>
+            \`;
+            return;
+        }
+
+        if (stateFilteredList.length === 0) {
+            businessGrid.innerHTML = \`
                 <div class="loading-card">
                     <div style="font-size:32px; margin-bottom:8px;">🔍</div>
                     <p style="font-weight:700; font-size:16px;">No businesses found</p>
                     <p style="font-size:14px; margin-top:6px; opacity:0.8; max-width:300px; margin-left:auto; margin-right:auto;">
-                        Try different keyword - e.g. "phone", "fashion", "food", "Lagos"
+                        Try a different keyword or select All Nigeria.
                     </p>
                     <button type="button" onclick="window.loadBusinesses(true)" style="margin-top:14px; padding:10px 18px; border:0; border-radius:9px; background:#087a3e; color:#ffffff; font-weight:700; cursor:pointer;">
                         Show All Businesses
                     </button>
                 </div>
-            `;
+            \`;
             return;
         }
 
