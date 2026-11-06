@@ -27,6 +27,58 @@
 
 
     /* =====================================================
+       WHATSAPP NIGERIAN NUMBER NORMALIZATION
+    ===================================================== */
+
+    function normalizeLosOjaWhatsAppNumber(phone) {
+        const original = String(phone || "").trim();
+        const compact = original.replace(/[\s()-]/g, "");
+
+        if (!compact || compact.startsWith("+") || compact.startsWith("234")) {
+            return compact;
+        }
+
+        if (/^0(?:80|81|90|70)\d{8}$/.test(compact)) {
+            return "234" + compact.slice(1);
+        }
+
+        return compact;
+    }
+
+    window.normalizeLosOjaWhatsAppNumber = normalizeLosOjaWhatsAppNumber;
+
+    window.losojaWhatsAppUrl = function (phone) {
+        return "https://wa.me/" + normalizeLosOjaWhatsAppNumber(phone);
+    };
+
+    /* Normalize WhatsApp links before navigation, including dynamically added links. */
+    document.addEventListener("click", function (event) {
+        const link = event.target.closest("a[href]");
+        if (!link) return;
+
+        let url;
+        try {
+            url = new URL(link.href, window.location.href);
+        } catch (error) {
+            return;
+        }
+
+        if (!/(^|\.)wa\.me$/i.test(url.hostname)) return;
+
+        const phone = url.pathname.split("/").filter(Boolean)[0] || "";
+        let decodedPhone = phone;
+        try { decodedPhone = decodeURIComponent(phone); } catch (error) {}
+
+        const normalized = normalizeLosOjaWhatsAppNumber(decodedPhone);
+        if (normalized && normalized !== decodedPhone) {
+            url.pathname = "/" + normalized;
+            link.href = url.toString();
+        }
+    }, true);
+
+
+
+    /* =====================================================
        APP OBJECT
     ===================================================== */
 

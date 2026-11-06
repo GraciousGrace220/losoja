@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <link rel="icon" href="favicon.ico">    
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">    
     <meta charset="UTF-8">
 
     <meta
@@ -28,12 +28,98 @@
     width: 100%;
     max-width: 1280px;
     height: 420px;
+    min-height: 120px;
     margin: 20px auto 30px;
     overflow: hidden;
-    background: #ffffff;
+    background: #FFF3CD;
     border: none;
     border-radius: 12px;
     box-shadow: none;
+}
+
+.losoja-ad-fallback {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    min-height: 120px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 22px;
+    overflow: hidden;
+    text-align: center;
+    color: #3f3f3f;
+    background: #FFF3CD;
+}
+
+.losoja-ad-fallback::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: linear-gradient(
+        105deg,
+        transparent 25%,
+        rgba(190, 190, 190, 0.24) 45%,
+        rgba(255, 255, 255, 0.48) 50%,
+        rgba(190, 190, 190, 0.24) 55%,
+        transparent 75%
+    );
+    background-size: 220% 100%;
+    animation: losojaAdShimmer 1.6s linear infinite;
+}
+
+.losoja-ad-fallback > * {
+    position: relative;
+    z-index: 1;
+}
+
+.losoja-ad-fallback p {
+    margin: 0;
+    font-size: clamp(16px, 2.5vw, 25px);
+    line-height: 1.35;
+    font-weight: 800;
+}
+
+.losoja-ad-fallback a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 9px 20px;
+    border-radius: 9px;
+    color: #ffffff;
+    background: #087a3e;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.losoja-ad-slide.is-loaded .losoja-ad-fallback {
+    display: none;
+}
+
+.losoja-ad-slide.is-failed .losoja-ad-fallback::before {
+    animation: none;
+    opacity: 0;
+}
+
+.losoja-ad-slide.is-failed img {
+    display: none !important;
+}
+
+@keyframes losojaAdShimmer {
+    from { background-position: 120% 0; }
+    to { background-position: -120% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .losoja-ad-fallback::before {
+        animation: none;
+    }
 }
 
 .losoja-ad-track {
@@ -43,6 +129,7 @@
 }
 
 .losoja-ad-slide {
+    position: relative;
     flex: 0 0 100%;
     width: 100%;
     height: 100%;
@@ -55,11 +142,18 @@
 .losoja-ad-slide img {
     display: block;
     width: 100%;
-    height: 100%;
+    max-width: 100%;
+    height: auto;
+    max-height: 100%;
     object-fit: contain;
     object-position: center;
-    background: #ffffff;
+    background: #FFF3CD;
 }
+
+.state-filter-wrap { margin:14px 18px 4px; padding:14px 16px; background:#fff; border:1px solid #e5e7eb; border-radius:14px; }
+.state-filter-wrap label { display:block; margin-bottom:7px; color:#17201b; font-weight:800; }
+#losojaStateFilter { width:100%; max-width:460px; padding:12px 14px; border:1px solid #cfd8d3; border-radius:10px; background:#fff; color:#17201b; font:inherit; }
+@media (max-width:600px) { .state-filter-wrap { margin:12px 12px 4px; } }
 
 @media (max-width: 768px) {
     .losoja-ad-slider {
@@ -1090,6 +1184,10 @@ main {
 
 <main>
 
+<section class="state-filter-wrap" aria-label="Filter businesses by Nigerian state">
+    <label for="losojaStateFilter">Find businesses by location</label>
+    <select id="losojaStateFilter"><option value="">All Nigeria</option></select>
+</section>
 
 <!-- =====================================================
      HERO
@@ -1135,6 +1233,7 @@ main {
 
 </section>
 
+<!-- TODO: Compress these 3 images to under 200KB after launch -->
 <!-- LOSOJA PROMOTIONAL SLIDESHOW -->
 
 <section class="losoja-ad-slider" aria-label="LosOja promotions">
@@ -1142,23 +1241,50 @@ main {
     <div class="losoja-ad-track" id="losojaAdTrack">
 
         <div class="losoja-ad-slide">
+            <div class="losoja-ad-fallback">
+                <p>Your Business Here - Advertise on LosOja Across Nigeria - ₦5,000/week</p>
+                <a href="https://wa.me/2348067398731" target="_blank" rel="noopener noreferrer">WhatsApp Us</a>
+            </div>
             <img
                 src="losoja-ad-scene-1.png"
+                loading="lazy"
+                width="1280"
+                height="420"
                 alt="Discover LosOja"
+                onload="this.closest('.losoja-ad-slide').classList.add('is-loaded')"
+                onerror="this.closest('.losoja-ad-slide').classList.add('is-failed')"
             >
         </div>
 
         <div class="losoja-ad-slide">
+            <div class="losoja-ad-fallback">
+                <p>Your Business Here - Advertise on LosOja Across Nigeria - ₦5,000/week</p>
+                <a href="https://wa.me/2348067398731" target="_blank" rel="noopener noreferrer">WhatsApp Us</a>
+            </div>
             <img
                 src="losoja-ad-scene-2.png"
+                loading="lazy"
+                width="1280"
+                height="420"
                 alt="Explore businesses and categories on LosOja"
+                onload="this.closest('.losoja-ad-slide').classList.add('is-loaded')"
+                onerror="this.closest('.losoja-ad-slide').classList.add('is-failed')"
             >
         </div>
 
         <div class="losoja-ad-slide">
+            <div class="losoja-ad-fallback">
+                <p>Your Business Here - Advertise on LosOja Across Nigeria - ₦5,000/week</p>
+                <a href="https://wa.me/2348067398731" target="_blank" rel="noopener noreferrer">WhatsApp Us</a>
+            </div>
             <img
                 src="losoja-ad-scene-3.png"
+                loading="lazy"
+                width="1280"
+                height="420"
                 alt="Discover businesses, products, property and mobility on LosOja"
+                onload="this.closest('.losoja-ad-slide').classList.add('is-loaded')"
+                onerror="this.closest('.losoja-ad-slide').classList.add('is-failed')"
             >
         </div>
 
