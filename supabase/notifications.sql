@@ -105,31 +105,32 @@ declare
   direction text;
   amount_text text;
 begin
-  direction := case
-    when lower(coalesce(new.type, '')) like '%credit%'
-      or lower(coalesce(new.type, '')) like '%deposit%'
-      or lower(coalesce(new.type, '')) like '%refund%'
-      or lower(coalesce(new.type, '')) like '%release%' then 'credited'
-    else 'debited'
-  end;
-  amount_text := '₦' || to_char(coalesce(new.amount, 0), 'FM999,999,999,990.00');
-  insert into public.notifications (user_id, type, title, message)
-  values (
-    new.user_id,
-    'wallet_update',
-    'Wallet update',
-    amount_text || ' ' || direction
-  );
+  if lower(coalesce(new.status, '')) in ('success', 'successful', 'completed', 'complete')
+     and (tg_op = 'INSERT' or old.status is distinct from new.status) then
+    direction := case
+      when lower(coalesce(new.type, '')) like '%credit%'
+        or lower(coalesce(new.type, '')) like '%deposit%'
+        or lower(coalesce(new.type, '')) like '%refund%'
+        or lower(coalesce(new.type, '')) like '%release%' then 'credited'
+      else 'debited'
+    end;
+    amount_text := '₦' || to_char(coalesce(new.amount, 0), 'FM999,999,999,990.00');
+    insert into public.notifications (user_id, type, title, message)
+    values (
+      new.user_id,
+      'wallet_update',
+      'Wallet update',
+      amount_text || ' ' || direction
+    );
+  end if;
   return new;
 end;
 $$;
 
 drop trigger if exists losoja_wallet_transaction_notification on public.wallet_transactions;
 create trigger losoja_wallet_transaction_notification
-after insert on public.wallet_transactions
-for each row
-when (new.status is null or lower(new.status) in ('success', 'successful', 'completed', 'complete'))
-execute function public.losoja_notify_wallet_transaction();
+after insert or update of status on public.wallet_transactions
+for each row execute function public.losoja_notify_wallet_transaction();
 
 -- No order table exists in the supplied schema, so order-created notifications
 -- are intentionally not wired in this migration. Shop-view notifications are
