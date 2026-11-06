@@ -137,34 +137,85 @@ async function renderFiltered(){
 }
 async function deleteProd(id){if(!confirm("Delete this product?"))return;let token=null;try{token=JSON.parse(localStorage.getItem("losoja_supabase_session"))?.access_token}catch{}await fetch(`${SUPABASE_URL}/rest/v1/products?id=eq.${id}`,{method:"DELETE",headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${token||SUPABASE_KEY}`}});showToast("Deleted");loadProducts();}
 
+function getLocallySavedBusinesses(){
+ try{
+  const items=JSON.parse(localStorage.getItem("losoja_saved_items")||"[]");
+  return Array.isArray(items)?items:[];
+ }catch{return []}
+}
+function setSaveButtonState(isSaved){
+ const button=document.getElementById("saveBtn");
+ if(button)button.textContent=isSaved?"♥ Saved":"♡ Save";
+}
+async function getShopAccessToken(){
+ let token=null;
+ try{if(typeof window.getSupabaseAccessToken==="function")token=await window.getSupabaseAccessToken()}catch(error){console.warn("LosOja: Could not refresh saved-business token.",error)}
+ if(!token){try{token=JSON.parse(localStorage.getItem("losoja_supabase_session")||"{}").access_token}catch{}}
+ return token;
+}
+async function refreshBusinessSaveState(){
+ const b=currentBusiness;
+ if(!b||!b.id)return;
+ const locallySaved=getLocallySavedBusinesses().some(item=>String(item.id)===String(b.id));
+ let cloudSaved=false;
+ const user=await getShopUser();
+ if(user){
+  const token=await getShopAccessToken();
+  if(token){
+   try{
+    const url=SUPABASE_URL+"/rest/v1/saved_businesses?select=business_id&user_id=eq."+encodeURIComponent(user.id)+"&business_id=eq."+encodeURIComponent(b.id);
+    const response=await fetch(url,{headers:{apikey:SUPABASE_KEY,Authorization:"Bearer "+token}});
+    if(response.ok){const rows=await response.json();cloudSaved=Array.isArray(rows)&&rows.some(row=>String(row.business_id)===String(b.id))}
+   }catch(error){console.warn("LosOja: Could not check saved-business status.",error)}
+  }
+ }
+ setSaveButtonState(locallySaved||cloudSaved);
+}
 async function saveCurrentBusiness(){
  const b=currentBusiness;
  if(!b||!b.id){showToast("Business details are not ready yet.");return}
- let saved=[];try{saved=JSON.parse(localStorage.getItem("losoja_saved_items")||"[]");if(!Array.isArray(saved))saved=[]}catch{}
- if(!saved.some(x=>String(x.id)===String(b.id))){
-  saved.push({id:b.id,name:b.name||"Business",category:b.category||"",location:b.location||"",phone:b.phone||"",image_url:b.image_url||b.image||""});
-  localStorage.setItem("losoja_saved_items",JSON.stringify(saved));
- }
  const user=await getShopUser();
- if(user){
-  let token=null;try{if(typeof window.getSupabaseAccessToken==="function")token=await window.getSupabaseAccessToken()}catch{}
-  if(!token){try{token=JSON.parse(localStorage.getItem("losoja_supabase_session")||"{}").access_token}catch{}}
-  if(token){
+ const token=user?await getShopAccessToken():null;
+ const saved=getLocallySavedBusinesses();
+ const alreadySaved=saved.some(item=>String(item.id)===String(b.id));
+
+ if(alreadySaved){
+  if(user){
+   if(!token){showToast("Please sign in again to update your saved businesses.");return}
    try{
-    const response=await fetch(SUPABASE_URL+"/rest/v1/saved_businesses",{method:"POST",headers:{apikey:SUPABASE_KEY,Authorization:"Bearer "+token,"Content-Type":"application/json","Prefer":"resolution=ignore-duplicates,return=minimal"},body:JSON.stringify({user_id:user.id,business_id:b.id})});
+    const deleteUrl=SUPABASE_URL+"/rest/v1/saved_businesses?user_id=eq."+encodeURIComponent(user.id)+"&business_id=eq."+encodeURIComponent(b.id);
+    const response=await fetch(deleteUrl,{method:"DELETE",headers:{apikey:SUPABASE_KEY,Authorization:"Bearer "+token,Prefer:"return=minimal"}});
     if(!response.ok)throw new Error(await response.text());
-    showToast("Business saved to your account.");
-    document.getElementById("saveBtn").textContent="♥ Saved";
+   }catch(error){
+    console.error("LosOja cloud unsave failed:",error);
+    showToast("Could not remove this business from your account. Please try again.");
     return;
-   }catch(error){console.warn("LosOja cloud save failed:",error);showToast("Saved on this device. Cloud sync is not ready yet.");document.getElementById("saveBtn").textContent="♥ Saved";return}
+   }
   }
+  const remaining=saved.filter(item=>String(item.id)!==String(b.id));
+  localStorage.setItem("losoja_saved_items",JSON.stringify(remaining));
+  setSaveButtonState(false);
+  showToast("Business removed from Saved.");
+  return;
+ }
+
+ saved.push({id:b.id,name:b.name||"Business",category:b.category||"",location:b.location||"",phone:b.phone||"",image_url:b.image_url||b.image||""});
+ localStorage.setItem("losoja_saved_items",JSON.stringify(saved));
+ setSaveButtonState(true);
+ if(user){
+  if(!token){showToast("Saved on this device. Sign in again to sync to your account.");return}
+  try{
+   const response=await fetch(SUPABASE_URL+"/rest/v1/saved_businesses",{method:"POST",headers:{apikey:SUPABASE_KEY,Authorization:"Bearer "+token,"Content-Type":"application/json","Prefer":"resolution=ignore-duplicates,return=minimal"},body:JSON.stringify({user_id:user.id,business_id:b.id})});
+   if(!response.ok)throw new Error(await response.text());
+   showToast("Business saved to your account.");
+   return;
+  }catch(error){console.warn("LosOja cloud save failed:",error);showToast("Saved on this device. Cloud sync is not ready yet.");return}
  }
  showToast("Business saved on this device.");
- document.getElementById("saveBtn").textContent="♥ Saved";
 }
 document.getElementById("saveBtn").addEventListener("click",saveCurrentBusiness);
 
-loadBusiness();
+loadBusiness().then(refreshBusinessSaveState);
 </script>
 </body>
 </html>
