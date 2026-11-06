@@ -28,12 +28,93 @@
     width: 100%;
     max-width: 1280px;
     height: 420px;
+    min-height: 120px;
     margin: 20px auto 30px;
     overflow: hidden;
-    background: #ffffff;
+    background: #FFF3CD;
     border: none;
     border-radius: 12px;
     box-shadow: none;
+}
+
+.losoja-ad-fallback {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    min-height: 120px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 22px;
+    overflow: hidden;
+    text-align: center;
+    color: #3f3f3f;
+    background: #FFF3CD;
+}
+
+.losoja-ad-fallback::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: linear-gradient(
+        105deg,
+        transparent 25%,
+        rgba(190, 190, 190, 0.24) 45%,
+        rgba(255, 255, 255, 0.48) 50%,
+        rgba(190, 190, 190, 0.24) 55%,
+        transparent 75%
+    );
+    background-size: 220% 100%;
+    animation: losojaAdShimmer 1.6s linear infinite;
+}
+
+.losoja-ad-fallback > * {
+    position: relative;
+    z-index: 1;
+}
+
+.losoja-ad-fallback p {
+    margin: 0;
+    font-size: clamp(16px, 2.5vw, 25px);
+    line-height: 1.35;
+    font-weight: 800;
+}
+
+.losoja-ad-fallback a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 9px 20px;
+    border-radius: 9px;
+    color: #ffffff;
+    background: #087a3e;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.losoja-ad-slide.is-loaded .losoja-ad-fallback {
+    display: none;
+}
+
+.losoja-ad-slide.is-failed img {
+    display: none !important;
+}
+
+@keyframes losojaAdShimmer {
+    from { background-position: 120% 0; }
+    to { background-position: -120% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .losoja-ad-fallback::before {
+        animation: none;
+    }
 }
 
 .losoja-ad-track {
@@ -1142,23 +1223,41 @@ main {
     <div class="losoja-ad-track" id="losojaAdTrack">
 
         <div class="losoja-ad-slide">
+            <div class="losoja-ad-fallback">
+                <p>Your Business Here - Advertise on LosOja Across Nigeria - ₦5,000/week</p>
+                <a href="https://wa.me/2348067398731" target="_blank" rel="noopener noreferrer">WhatsApp Us</a>
+            </div>
             <img
                 src="losoja-ad-scene-1.png"
                 alt="Discover LosOja"
+                onload="this.closest('.losoja-ad-slide').classList.add('is-loaded')"
+                onerror="this.closest('.losoja-ad-slide').classList.add('is-failed')"
             >
         </div>
 
         <div class="losoja-ad-slide">
+            <div class="losoja-ad-fallback">
+                <p>Your Business Here - Advertise on LosOja Across Nigeria - ₦5,000/week</p>
+                <a href="https://wa.me/2348067398731" target="_blank" rel="noopener noreferrer">WhatsApp Us</a>
+            </div>
             <img
                 src="losoja-ad-scene-2.png"
                 alt="Explore businesses and categories on LosOja"
+                onload="this.closest('.losoja-ad-slide').classList.add('is-loaded')"
+                onerror="this.closest('.losoja-ad-slide').classList.add('is-failed')"
             >
         </div>
 
         <div class="losoja-ad-slide">
+            <div class="losoja-ad-fallback">
+                <p>Your Business Here - Advertise on LosOja Across Nigeria - ₦5,000/week</p>
+                <a href="https://wa.me/2348067398731" target="_blank" rel="noopener noreferrer">WhatsApp Us</a>
+            </div>
             <img
                 src="losoja-ad-scene-3.png"
                 alt="Discover businesses, products, property and mobility on LosOja"
+                onload="this.closest('.losoja-ad-slide').classList.add('is-loaded')"
+                onerror="this.closest('.losoja-ad-slide').classList.add('is-failed')"
             >
         </div>
 
