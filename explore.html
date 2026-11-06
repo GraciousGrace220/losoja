@@ -13,6 +13,6 @@ results.innerHTML=rows.map(()=>'<article class="business"><img alt="LosOja busin
 results.querySelectorAll(".business").forEach((el,i)=>{const b=rows[i],img=el.querySelector("img");img.src=b.image_url||b.image||"fallback.svg";el.querySelector("strong").textContent=b.name||"Business";const p=el.querySelectorAll("p");p[0].textContent=b.category||"Business";p[1].textContent=b.location||"Nigeria";el.onclick=()=>location.href="shop.html?id="+encodeURIComponent(b.id)});
 }
 async function load(){try{const r=await fetch(URL+"/rest/v1/businesses?select=*",{headers:{apikey:KEY,Authorization:"Bearer "+KEY}});if(!r.ok)throw new Error("Unable to load businesses");all=await r.json();render()}catch(e){results.innerHTML='<div class="empty">Businesses could not load right now. Please try again later.</div>'}}
-state.addEventListener("change",render);category.addEventListener("change",render);
+state.addEventListener("change",render);category.addEventListener("change",()=>{activeCategory="";document.querySelectorAll(".cat").forEach(x=>x.classList.remove("active"));render()});
 document.querySelectorAll(".cat").forEach(btn=>btn.addEventListener("click",()=>{activeCategory=btn.dataset.category;category.value=activeCategory;document.querySelectorAll(".cat").forEach(x=>x.classList.toggle("active",x===btn));render()}));load();
 </script></body></html>
