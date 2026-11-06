@@ -32,13 +32,13 @@
 
     function normalizeLosOjaWhatsAppNumber(phone) {
         const original = String(phone || "").trim();
-        const compact = original.replace(/[\\s()-]/g, "");
+        const compact = original.replace(/[\s()-]/g, "");
 
         if (!compact || compact.startsWith("+") || compact.startsWith("234")) {
             return compact;
         }
 
-        if (/^0(?:80|81|90|70)\\d{8}$/.test(compact)) {
+        if (/^0(?:80|81|90|70)\d{8}$/.test(compact)) {
             return "234" + compact.slice(1);
         }
 
@@ -63,7 +63,7 @@
             return;
         }
 
-        if (!/(^|\\.)wa\\.me$/i.test(url.hostname)) return;
+        if (!/(^|\.)wa\.me$/i.test(url.hostname)) return;
 
         const phone = url.pathname.split("/").filter(Boolean)[0] || "";
         let decodedPhone = phone;
