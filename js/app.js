@@ -1225,11 +1225,14 @@ bindAddBusinessButtons() {
                     ?.value
                     .trim() || "";
 
-            const location =
-                document
-                    .getElementById("businessLocation")
-                    ?.value
-                    .trim() || "";
+            const city = document.getElementById("businessLocation")?.value.trim() || "";
+            const state = document.getElementById("businessState")?.value.trim() || "";
+            if (!state) {
+                this.showToast("Please select your State", "error");
+                document.getElementById("businessState")?.focus();
+                return;
+            }
+            const location = city ? city + ", " + state : "";
 
             const phone =
                 document
@@ -1247,6 +1250,7 @@ bindAddBusinessButtons() {
             if (
                 !name ||
                 !category ||
+                !city ||
                 !location
             ) {
 
@@ -1377,6 +1381,8 @@ bindAddBusinessButtons() {
                                 name: name,
                                 category: category,
                                 location: location,
+                                state: state,
+                                city: city,
                                 phone: phone,
                                 description: description
                             })
@@ -1502,13 +1508,17 @@ bindAddBusinessButtons() {
 
 
             const imageFile =
-                imageInput &&
-                imageInput.files &&
-                imageInput.files.length > 0
+                imageInput && imageInput.files && imageInput.files.length > 0
                     ? imageInput.files[0]
                     : null;
-
-
+            if (!imageFile) {
+                this.showToast("Please add a business photo.", "error");
+                if (submitButton) {
+                    submitButton.disabled = false;
+                    submitButton.textContent = originalText || "Save Business";
+                }
+                return;
+            }
             let imageUrl = "";
 
 
@@ -1948,7 +1958,7 @@ bindAddBusinessButtons() {
 
 
                 this.showToast(
-                    "Business added successfully!",
+                    "Your business is live across Nigeria!",
                     "success"
                 );
 
