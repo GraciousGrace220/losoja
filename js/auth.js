@@ -684,5 +684,5 @@ if (forgotPasswordBtn && !forgotPasswordBtn.dataset.authBound) {
 (function(){
   if(window.__losojaNotificationsLoader)return;
   window.__losojaNotificationsLoader=true;
-  var s=document.createElement("script");s.src="js/notifications.js";s.defer=true;document.head.appendChild(s);
+  var s=document.createElement("script");s.src="js/notifications.js?v=7";s.defer=true;document.head.appendChild(s);
 })();
