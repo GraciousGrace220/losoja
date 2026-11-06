@@ -77,7 +77,7 @@
     const response = await fetch(url, options || {});
     if (!response.ok) {
       const details = await readSupabaseError(response);
-      console.error("LosOja notifications Supabase " + operation + " failed:", details);
+      console.error("LosOja notifications Supabase " + operation + " failed:", JSON.stringify(details));
       const error = new Error("Notifications are temporarily unavailable. Please try again.");
       error.status = response.status;
       error.details = details;
