@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#087a3e">
+<title>Saved Businesses | LosOja</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f5f8f6;color:#17201b;font-family:Arial,sans-serif;padding-bottom:84px}.topbar{display:flex;align-items:center;justify-content:space-between;padding:15px 5%;background:#fff;border-bottom:1px solid #e4ebe6}.brand{font-weight:800;color:#087a3e;text-decoration:none;font-size:21px}.topbar nav{display:flex;align-items:center;gap:12px}.topbar nav a{color:#087a3e;text-decoration:none;font-weight:700}.page{max-width:1150px;margin:28px auto;padding:0 18px}.page h1{margin:0 0 8px}.muted{color:#68766e}.saved-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(245px,1fr));gap:18px;margin-top:22px}.saved-card{background:#fff;border:1px solid #e1e9e3;border-radius:15px;overflow:hidden;display:flex;flex-direction:column}.saved-card img{width:100%;height:170px;object-fit:cover;background:#fff3cd}.saved-body{padding:15px;display:flex;flex-direction:column;gap:7px;flex:1}.saved-body h2{font-size:18px;margin:0}.saved-body p{margin:0;color:#66736b;font-size:14px}.saved-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;padding-top:12px}.saved-actions a,.saved-actions button,.primary{border:0;border-radius:9px;padding:10px 12px;text-decoration:none;font-weight:700;cursor:pointer;font-size:13px}.whatsapp{background:#e9f8ef;color:#087a3e}.view{background:#087a3e;color:white}.unsave{background:#fff0f0;color:#b42318}.primary{display:inline-block;background:#087a3e;color:#fff;text-decoration:none;margin-top:12px}.empty{background:#fff;border:1px solid #e2e9e4;border-radius:14px;text-align:center;padding:32px 18px;margin-top:22px}.status{margin-top:12px;color:#66736b}@media(max-width:600px){.topbar{padding:13px 14px}.page{margin:22px auto;padding:0 12px}.saved-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="topbar"><a class="brand" href="index.html">LosOja</a><nav><a href="explore.html">Explore</a><a href="saved.html" aria-current="page">Saved</a></nav></header>
+<main class="page"><h1>Saved Businesses</h1><p class="muted">The businesses you save are kept here for easy access.</p><div id="savedStatus" class="status">Loading your saved businesses…</div><div id="savedGrid" class="saved-grid"></div></main>
+<nav style="position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e4ebe6;display:flex;justify-content:space-around;padding:13px 8px"><a href="index.html" style="color:#68766e;text-decoration:none;font-weight:700">🏠 Home</a><a href="explore.html" style="color:#68766e;text-decoration:none;font-weight:700">🔎 Explore</a><a href="saved.html" style="color:#087a3e;text-decoration:none;font-weight:800">❤️ Saved</a><a href="account.html" style="color:#68766e;text-decoration:none;font-weight:700">👤 Account</a></nav>
+<script src="js/auth.js?v=15"></script>
+<script>
+(function(){
+"use strict";
+const URL="https://ycxshwgeebskdozmornh.supabase.co";
+const KEY="sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
+const grid=document.getElementById("savedGrid"),status=document.getElementById("savedStatus");
+function localItems(){try{const x=JSON.parse(localStorage.getItem("losoja_saved_items")||"[]");return Array.isArray(x)?x:[]}catch{return[]}}
+function writeLocal(items){localStorage.setItem("losoja_saved_items",JSON.stringify(items))}
+function phoneLink(phone){const digits=String(phone||"").replace(/\D/g,"");if(!digits)return "";return "https://wa.me/"+(digits.startsWith("0")?"234"+digits.slice(1):digits)}
+function el(tag,cls,txt){const x=document.createElement(tag);if(cls)x.className=cls;if(txt!==undefined)x.textContent=txt;return x}
+function render(items,isLoggedIn){
+grid.replaceChildren();
+if(!isLoggedIn){const note=el("div","empty");note.append(el("p","","Login to see your saved businesses"));const login=el("a","primary","Login");login.href="index.html?openLogin=1";note.append(login);grid.append(note)}
+if(!items.length){const box=el("div","empty");box.style.gridColumn="1/-1";box.append(el("p","","You haven't saved any business yet"));const explore=el("a","primary","Explore businesses");explore.href="explore.html";box.append(explore);grid.append(box);return}
+items.forEach(item=>{
+const card=el("article","saved-card"),img=el("img");img.src=item.image_url||item.image||"fallback.svg";img.alt=item.name||"Business";img.loading="lazy";img.onerror=function(){this.onerror=null;this.src="fallback.svg"};
+const body=el("div","saved-body");body.append(el("h2","",item.name||"Saved Business"),el("p","",item.location||"Nigeria"),el("p","",item.category||"Business category"));
+const actions=el("div","saved-actions");const phone=phoneLink(item.phone);
+if(phone){const wa=el("a","whatsapp","WhatsApp");wa.href=phone;wa.target="_blank";wa.rel="noopener noreferrer";actions.append(wa)}
+const view=el("a","view","View Shop");view.href="shop.html?id="+encodeURIComponent(item.id);actions.append(view);
+const remove=el("button","unsave","♥ Saved");remove.type="button";remove.addEventListener("click",()=>unsave(item,remove));actions.append(remove);
+body.append(actions);card.append(img,body);grid.append(card);
+});
+}
+async function sessionInfo(){let session={};try{session=JSON.parse(localStorage.getItem("losoja_supabase_session")||"{}")||{}}catch{}let user=typeof window.getCurrentUser==="function"?await window.getCurrentUser():session.user||null;let token=session.access_token||null;if(typeof window.getSupabaseAccessToken==="function"){try{token=await window.getSupabaseAccessToken()}catch{}}return{user,token}}
+async function load(){
+const info=await sessionInfo();let items=localItems();
+if(info.user&&info.user.id&&info.token){
+try{
+const r=await fetch(URL+"/rest/v1/saved_businesses?select=business_id&user_id=eq."+encodeURIComponent(info.user.id),{headers:{apikey:KEY,Authorization:"Bearer "+info.token}});
+if(!r.ok)throw new Error("Saved list could not be loaded");
+const rows=await r.json(),ids=rows.map(x=>x.business_id).filter(Boolean);
+if(!ids.length){items=[];writeLocal([])}
+else{
+const b=await fetch(URL+"/rest/v1/businesses?select=id,name,category,location,phone,image_url&id=in.("+ids.map(encodeURIComponent).join(",")+")",{headers:{apikey:KEY,Authorization:"Bearer "+info.token}});
+if(!b.ok)throw new Error("Business details could not be loaded");
+items=await b.json();writeLocal(items);
+}
+status.textContent="Your saved businesses";
+}catch(error){status.textContent="Could not sync your account saves. Showing saved items on this device.";console.warn(error)}
+}else{status.textContent="Device-saved businesses";if(!items.length)status.textContent="Login to see your saved businesses"}
+render(items,!!(info.user&&info.user.id));
+}
+async function unsave(item,button){
+button.disabled=true;
+try{
+const info=await sessionInfo();
+if(info.user&&info.token){
+const url=URL+"/rest/v1/saved_businesses?user_id=eq."+encodeURIComponent(info.user.id)+"&business_id=eq."+encodeURIComponent(item.id);
+const r=await fetch(url,{method:"DELETE",headers:{apikey:KEY,Authorization:"Bearer "+info.token,Prefer:"return=minimal"}});
+if(!r.ok)throw new Error("Could not remove this business from your account. Please try again.");
+}
+const next=localItems().filter(x=>String(x.id)!==String(item.id));writeLocal(next);
+await load();
+}catch(error){alert(error.message||"Could not update Saved.");button.disabled=false}
+}
+load();
+})();
+</script>
+<script src="js/notifications.js" defer></script>
+</body></html>
