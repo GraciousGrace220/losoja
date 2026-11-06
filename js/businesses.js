@@ -310,9 +310,12 @@ Adds:
         searchTerm = String(searchTerm || "").trim().toLowerCase();
         location = String(location || "").trim().toLowerCase();
 
-        if (!businessesLoaded && businessesLoading) {
-            if (loadingPromise) {
-                loadingPromise.then(function () {
+        if (!businessesLoaded) {
+            const pending = businessesLoading && loadingPromise
+                ? loadingPromise
+                : loadBusinesses();
+            if (pending && typeof pending.then === "function") {
+                pending.then(function () {
                     searchBusinesses(searchTerm, location);
                 });
             }
@@ -324,48 +327,131 @@ Adds:
             return;
         }
 
-        let results = businesses.filter(function (business) {
-            const searchable = [business.name, business.category, business.location, business.address, business.phone, business.description]
-                .filter(Boolean).join(" ").toLowerCase();
-            const matchesSearch = !searchTerm || searchable.includes(searchTerm);
-            const matchesLocation = !location || searchable.includes(location);
+        function normalize(value) {
+            return String(value || "")
+                .toLowerCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .replace(/[^a-z0-9]+/g, " ")
+                .trim();
+        }
+
+        function editDistance(left, right) {
+            const previous = Array.from({ length: right.length + 1 }, (_, i) => i);
+            for (let i = 1; i <= left.length; i++) {
+                let diagonal = previous[0];
+                previous[0] = i;
+                for (let j = 1; j <= right.length; j++) {
+                    const above = previous[j];
+                    previous[j] = Math.min(
+                        previous[j] + 1,
+                        previous[j - 1] + 1,
+                        diagonal + (left[i - 1] === right[j - 1] ? 0 : 1)
+                    );
+                    diagonal = above;
+                }
+            }
+            return previous[right.length];
+        }
+
+        function fuzzyMatch(query, text) {
+            if (!query) return true;
+            const normalizedText = normalize(text);
+            if (!normalizedText) return false;
+            if (normalizedText.includes(query)) return true;
+
+            const queryWords = normalize(query).split(/\s+/).filter(Boolean);
+            const textWords = normalizedText.split(/\s+/).filter(Boolean);
+            return queryWords.every(function (queryWord) {
+                return textWords.some(function (word) {
+                    if (word.includes(queryWord) || queryWord.includes(word)) return true;
+                    const longest = Math.max(word.length, queryWord.length);
+                    if (longest < 4 || longest > 12) return false;
+                    return editDistance(queryWord, word) <= Math.max(1, Math.floor(longest * 0.34));
+                });
+            });
+        }
+
+        const results = businesses.filter(function (business) {
+            const searchableFields = [
+                business.name,
+                business.category,
+                business.state,
+                business.city,
+                business.location,
+                business.address,
+                business.phone,
+                business.description
+            ];
+            const searchable = searchableFields.filter(Boolean).join(" ");
+            const matchesSearch = !searchTerm || fuzzyMatch(searchTerm, searchable);
+            const matchesLocation = !location || fuzzyMatch(location, [
+                business.state,
+                business.city,
+                business.location,
+                business.address
+            ].filter(Boolean).join(" "));
             return matchesSearch && matchesLocation;
         });
 
-        /* =================================================
-           SORT BY NEAREST DISTANCE
-        ================================================= */
+        if (results.length === 0) {
+            let state = "";
+            try {
+                state = window.losojaUserState ||
+                    localStorage.getItem("losoja_user_state") ||
+                    localStorage.getItem("losoja_state") ||
+                    "";
+            } catch (e) {}
+            if (!state) {
+                const nigeriaStates = [
+                    "Abia", "Adamawa", "Akwa Ibom", "Anambra", "Bauchi", "Bayelsa",
+                    "Benue", "Borno", "Cross River", "Delta", "Ebonyi", "Edo",
+                    "Ekiti", "Enugu", "Gombe", "Imo", "Jigawa", "Kaduna", "Kano",
+                    "Katsina", "Kebbi", "Kogi", "Kwara", "Lagos", "Nasarawa",
+                    "Niger", "Ogun", "Ondo", "Osun", "Oyo", "Plateau", "Rivers",
+                    "Sokoto", "Taraba", "Yobe", "Zamfara", "Federal Capital Territory"
+                ];
+                state = nigeriaStates.find(function (item) {
+                    return normalize(searchTerm).includes(normalize(item).toLowerCase());
+                }) || "Nigeria";
+            }
+            businessGrid.innerHTML = `
+                <div class="loading-card" style="text-align:center; padding:24px;">
+                    <div style="font-size:32px; margin-bottom:8px;">🔍</div>
+                    <p style="font-weight:700; font-size:16px;">No businesses found in ${escapeHTML(state)} - Be the first to add your business!</p>
+                    <button type="button" id="searchNoResultsAddBusinessBtn"
+                        style="margin-top:14px; padding:10px 18px; border:0; border-radius:9px; background:#087a3e; color:#ffffff; font-weight:700; cursor:pointer;">
+                        Add Business
+                    </button>
+                </div>
+            `;
+            const addButton = document.getElementById("searchNoResultsAddBusinessBtn");
+            if (addButton) {
+                addButton.addEventListener("click", function () {
+                    const existingAddButton = document.getElementById("addBusinessBtn");
+                    if (existingAddButton) existingAddButton.click();
+                    else if (window.App && typeof window.App.openModal === "function") {
+                        window.App.openModal("addBusinessModal");
+                    }
+                });
+            }
+            return;
+        }
 
+        /* Keep the existing nearby-first ordering when a saved location is available. */
         try {
             const savedLocStr = localStorage.getItem("losoja_user_location");
             const savedLoc = savedLocStr ? JSON.parse(savedLocStr) : null;
-
             if (savedLoc && savedLoc.latitude && savedLoc.longitude) {
-
                 results.sort(function (a, b) {
-                    const distA = App.calculateDistance(
-                        savedLoc.latitude,
-                        savedLoc.longitude,
-                        a.latitude,
-                        a.longitude
-                    );
-
-                    const distB = App.calculateDistance(
-                        savedLoc.latitude,
-                        savedLoc.longitude,
-                        b.latitude,
-                        b.longitude
-                    );
-
+                    const distA = App.calculateDistance(savedLoc.latitude, savedLoc.longitude, a.latitude, a.longitude);
+                    const distB = App.calculateDistance(savedLoc.latitude, savedLoc.longitude, b.latitude, b.longitude);
                     if (distA == null) return 1;
                     if (distB == null) return -1;
-
                     return distA - distB;
                 });
-
-                console.log("Sorted by nearest!");
             }
-        } catch(e) {}
+        } catch (e) {}
 
         renderBusinesses(results);
     }

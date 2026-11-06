@@ -566,9 +566,8 @@ bindModalClosers() {
                 );
 
             const searchButton =
-                document.getElementById(
-                    "searchButton"
-                );
+                document.getElementById("searchButton") ||
+                document.getElementById("searchBtn");
 
             if (!searchInput) {
 

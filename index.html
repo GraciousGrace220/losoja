@@ -1110,7 +1110,7 @@ main {
         <input
             type="search"
             id="searchInput"
-            placeholder="Search businesses, products or services..."
+            placeholder="Search businesses and services across Nigeria..."
             autocomplete="off"
         >
 
@@ -3166,89 +3166,6 @@ if (loginFromSignup) {
         }
     });
 }
-
-        /* =================================================
-           SEARCH
-        ================================================= */
-
-        const searchInput =
-            document.getElementById(
-                "searchInput"
-            );
-
-
-        const searchButton =
-            document.getElementById(
-                "searchBtn"
-            );
-
-
-        function performSearch() {
-
-            const query =
-                searchInput
-                    ? searchInput.value.trim()
-                    : "";
-
-
-            if (
-                typeof window.searchBusinesses ===
-                "function"
-            ) {
-
-                window.searchBusinesses(
-                    query
-                );
-
-            }
-
-
-            const grid =
-                document.getElementById(
-                    "businessGrid"
-                );
-
-
-            if (grid) {
-
-                grid.scrollIntoView({
-                    behavior: "smooth"
-                });
-
-            }
-
-        }
-
-
-        if (searchButton) {
-
-            searchButton.addEventListener(
-                "click",
-                performSearch
-            );
-
-        }
-
-
-        if (searchInput) {
-
-            searchInput.addEventListener(
-                "keydown",
-                function (event) {
-
-                    if (
-                        event.key === "Enter"
-                    ) {
-
-                        performSearch();
-
-                    }
-
-                }
-            );
-
-        }
-
 
         /* =================================================
            CATEGORY FILTER
