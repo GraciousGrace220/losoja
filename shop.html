@@ -147,7 +147,7 @@ async function saveCurrentBusiness(){
  }
  const user=await getShopUser();
  if(user){
-  let token=null;try{token=typeof window.getSupabaseAccessToken==="function"?window.getSupabaseAccessToken():null}catch{}
+  let token=null;try{if(typeof window.getSupabaseAccessToken==="function")token=await window.getSupabaseAccessToken()}catch{}
   if(!token){try{token=JSON.parse(localStorage.getItem("losoja_supabase_session")||"{}").access_token}catch{}}
   if(token){
    try{
