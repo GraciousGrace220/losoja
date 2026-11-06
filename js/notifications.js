@@ -218,9 +218,12 @@
       title.includes("new message") ||
       message.includes("new losoja message")
     ) {
-      // Message notifications go to the inbox/list. Never guess a chat ID
-      // for older notifications that did not store one.
-      return "baba-oja-chat.html";
+      // Older message notifications have no conversation reference, so
+      // open the Baba Oja chat list. Only use a stored related ID when one
+      // is explicitly present; never manufacture a conversation ID.
+      return relatedOrderId
+        ? "chat.html?chat_id=" + encodeURIComponent(relatedOrderId)
+        : "baba-oja-chat.html";
     }
 
     if (type === "wallet_update" || title.includes("wallet update")) {
