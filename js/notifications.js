@@ -103,7 +103,7 @@
         padding:0 4px; border-radius:99px; background:#dc2626; color:#fff;
         font:bold 11px Arial; display:flex; align-items:center; justify-content:center;
       }
-      @media(max-width:600px) {
+      .notification-card { cursor:pointer; transition:background .15s ease, box-shadow .15s ease; }\n      .notification-card:hover { background:#eef8f2; box-shadow:0 3px 12px rgba(8,122,62,.10); }\n      .notification-card:focus-visible { outline:2px solid #087a3e; outline-offset:2px; }\n      @media(max-width:600px) {
         .losoja-notif-wrap { margin-left:4px; }
         .losoja-notif-btn, #notificationBtn { padding:8px 10px; }
       }
@@ -198,6 +198,47 @@
     if (markButton) markButton.hidden = true;
   }
 
+  function getNotificationDestination(notification) {
+    const type = String(notification.type || "").trim().toLowerCase();
+    const title = String(notification.title || "").trim().toLowerCase();
+    const message = String(notification.message || "").trim().toLowerCase();
+    const relatedBusinessId = notification.related_business_id;
+    const relatedOrderId = notification.related_order_id;
+
+    if (type === "shop_saved" || title.includes("saved your shop") || title.includes("saved your business")) {
+      return relatedBusinessId
+        ? "shop.html?id=" + encodeURIComponent(relatedBusinessId)
+        : "saved.html";
+    }
+
+    if (
+      type.includes("chat") ||
+      type.includes("message") ||
+      title.includes("new losoja message") ||
+      title.includes("new message") ||
+      message.includes("new losoja message")
+    ) {
+      // Older message notifications have no conversation reference, so
+      // open the Baba Oja chat list. Only use a stored related ID when one
+      // is explicitly present; never manufacture a conversation ID.
+      return relatedOrderId
+        ? "chat.html?chat_id=" + encodeURIComponent(relatedOrderId)
+        : "baba-oja-chat.html";
+    }
+
+    if (type === "wallet_update" || title.includes("wallet update")) {
+      return "balance.html";
+    }
+
+    if (type === "escrow_update" || title.includes("escrow update")) {
+      return relatedOrderId
+        ? "chat.html?escrow=" + encodeURIComponent(relatedOrderId)
+        : "balance.html#escrow";
+    }
+
+    return "notifications.html";
+  }
+
   async function renderPage() {
     const list = document.getElementById("notificationsList");
     if (!list) return;
@@ -241,7 +282,7 @@
       // Only request fields displayed here. This avoids a failure if optional
       // related-record columns are changed independently of the notification UI.
       const url = SUPABASE_URL +
-        "/rest/v1/notifications?select=id,type,title,message,is_read,created_at" +
+        "/rest/v1/notifications?select=id,type,title,message,is_read,created_at,related_business_id,related_order_id" +
         "&user_id=eq." + encodeURIComponent(credentials.user.id) +
         "&order=is_read.asc,created_at.desc";
       const rows = await supabaseFetch(url, {
@@ -273,12 +314,18 @@
 
         card.append(title, message, time);
 
-        if (!notification.is_read) {
-          card.addEventListener("click", async function () {
-            const updateUrl = SUPABASE_URL + "/rest/v1/notifications?id=eq." +
-              encodeURIComponent(notification.id) + "&user_id=eq." +
-              encodeURIComponent(credentials.user.id);
-            try {
+        card.tabIndex = 0;
+        card.setAttribute("role", "link");
+        card.setAttribute("aria-label", (notification.title || "Notification") + ". Open notification destination.");
+        const destination = getNotificationDestination(notification);
+
+        async function openNotification() {
+          card.style.pointerEvents = "none";
+          try {
+            if (!notification.is_read) {
+              const updateUrl = SUPABASE_URL + "/rest/v1/notifications?id=eq." +
+                encodeURIComponent(notification.id) + "&user_id=eq." +
+                encodeURIComponent(credentials.user.id);
               await supabaseFetch(updateUrl, {
                 method: "PATCH",
                 headers: requestHeaders(credentials.token, {
@@ -287,14 +334,29 @@
                 }),
                 body: JSON.stringify({ is_read: true })
               }, "mark read");
+              notification.is_read = true;
               card.classList.remove("unread");
-              card.onclick = null;
               await refreshCount();
-            } catch (error) {
-              status.textContent = error.message;
             }
-          });
+
+            // Generic/unknown notifications intentionally remain on this page.
+            if (destination && destination !== "notifications.html") {
+              window.location.href = destination;
+            }
+          } catch (error) {
+            status.textContent = error.message || "Could not open this notification.";
+          } finally {
+            card.style.pointerEvents = "";
+          }
         }
+
+        card.addEventListener("click", openNotification);
+        card.addEventListener("keydown", function (event) {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            openNotification();
+          }
+        });
         list.appendChild(card);
       });
     } catch (error) {
