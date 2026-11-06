@@ -249,9 +249,9 @@ Adds:
 
         let imageHTML = "";
         if (image) {
-            imageHTML = `<img class="business-card-image" src="${escapeHTML(image)}" alt="${name}" loading="lazy" onerror="this.style.display='none'">`;
+            imageHTML = `<img class="business-card-image" src="${escapeHTML(image)}" alt="${name}" loading="lazy" onerror="this.onerror=null;this.src='fallback.svg'" style="background:#FFC107;">`;
         } else {
-            imageHTML = `<div class="business-card-image" style="display:flex; align-items:center; justify-content:center; font-size:42px;">🏪</div>`;
+            imageHTML = `<img class="business-card-image" src="fallback.svg" alt="LosOja" loading="lazy" style="background:#FFC107;">`;
         }
 
         let ratingHTML = "";
