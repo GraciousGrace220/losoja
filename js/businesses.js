@@ -51,7 +51,7 @@ Adds:
     ===================================================== */
 
     let businesses = [];
-    const NIGERIAN_STATES = ["Abia","Adamawa","Akwa Ibom","Anambra","Bauchi","Bayelsa","Benue","Borno","Cross River","Delta","Ebonyi","Edo","Ekiti","Enugu","FCT","Gombe","Imo","Jigawa","Kaduna","Kano","Katsina","Kebbi","Kogi","Kwara","Lagos","Nasarawa","Niger","Ogun","Ondo","Osun","Oyo","Plateau","Rivers","Sokoto","Taraba","Yobe","Zamfara"];
+    const NIGERIAN_STATES = ["Abia State","Adamawa State","Akwa Ibom State","Anambra State","Bauchi State","Bayelsa State","Benue State","Borno State","Cross River State","Delta State","Ebonyi State","Edo State","Ekiti State","Enugu State","FCT","Gombe State","Imo State","Jigawa State","Kaduna State","Kano State","Katsina State","Kebbi State","Kogi State","Kwara State","Lagos State","Nasarawa State","Niger State","Ogun State","Ondo State","Osun State","Oyo State","Plateau State","Rivers State","Sokoto State","Taraba State","Yobe State","Zamfara State"];
     let selectedBusinessState = "";
 
     function normalizeState(value) {
@@ -63,13 +63,21 @@ Adds:
         if (explicitState) return explicitState;
         const location = String(business.location || business.address || "").trim();
         const commaIndex = location.indexOf(",");
-        return commaIndex >= 0 ? location.slice(commaIndex + 1).trim() : "";
+        return commaIndex >= 0 ? location.slice(commaIndex + 1).trim() : location;
+    }
+
+    function normalizeStateLabel(value) {
+        const raw = String(value || "").trim();
+        if (normalizeState(raw) === "fct") return "FCT";
+        if (/\s+state$/i.test(raw)) return raw;
+        const match = NIGERIAN_STATES.find(state => normalizeState(state).replace(/\s+state$/, "") === normalizeState(raw));
+        return match || raw;
     }
 
     function updateStateOptions(list) {
         const select = document.getElementById("losojaStateFilter");
         if (!select) return;
-        const discovered = (Array.isArray(list) ? list : []).map(getBusinessState).filter(Boolean);
+        const discovered = (Array.isArray(list) ? list : []).map(getBusinessState).filter(Boolean).map(normalizeStateLabel);
         const allStates = Array.from(new Set(NIGERIAN_STATES.concat(discovered))).sort((a, b) => a.localeCompare(b));
         const previous = selectedBusinessState || select.value;
         select.innerHTML = '<option value="">All Nigeria</option>' + allStates.map(state =>
@@ -87,7 +95,7 @@ Adds:
     function matchesSelectedState(business) {
         if (!selectedBusinessState) return true;
         const wanted = normalizeState(selectedBusinessState);
-        const businessState = normalizeState(getBusinessState(business));
+        const businessState = normalizeState(normalizeStateLabel(getBusinessState(business)));
         const location = normalizeState(business.location || business.address || "");
         const shortName = wanted.replace(/\s+state$/, "");
         return businessState === wanted || businessState.includes(wanted) ||
@@ -269,7 +277,7 @@ Adds:
                 <div class="loading-card" style="grid-column:1/-1; padding:30px 18px; background:#fffaf0; border-color:#f2d58a;">
                     <div style="font-size:36px; margin-bottom:10px;">📍</div>
                     <p style="font-weight:800; font-size:18px; color:#17201b;">No businesses yet in ${stateLabel} - Be the first to add your business!</p>
-                    <a href="account.html" style="display:inline-block; margin-top:16px; padding:12px 20px; border-radius:10px; background:#087a3e; color:#fff; text-decoration:none; font-weight:800;">Add Your Business Free</a>
+                    <button type="button" onclick="document.getElementById('addBusinessBtn').click()" style="display:inline-block; margin-top:16px; padding:12px 20px; border:0; border-radius:10px; background:#087a3e; color:#fff; font-weight:800; cursor:pointer;">Add Your Business Free</button>
                 </div>
             `;
             return;
