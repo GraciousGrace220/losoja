@@ -2459,15 +2459,21 @@ window.renderSavedItems = async function () {
             if (response.ok) {
                 const rows = await response.json();
                 const ids = rows.map(row => row.business_id).filter(Boolean);
-                if (ids.length) {
+                if (!ids.length) {
+                    saved = [];
+                    localStorage.setItem("losoja_saved_items", "[]");
+                } else {
                     const businessResponse = await fetch(window.SUPABASE_URL + "/rest/v1/businesses?select=id,name,category,location,phone,image_url&id=in.(" + ids.map(encodeURIComponent).join(",") + ")", {
                         headers: { apikey: window.SUPABASE_KEY, Authorization: "Bearer " + token }
                     });
                     if (businessResponse.ok) {
                         const cloud = await businessResponse.json();
-                        const merged = new Map(saved.map(item => [String(item.id), item]));
-                        cloud.forEach(item => merged.set(String(item.id), item));
-                        saved = Array.from(merged.values());
+                        const localById = new Map(saved.map(item => [String(item.id), item]));
+                        saved = cloud.map(item => Object.assign({}, localById.get(String(item.id)) || {}, item));
+                        localStorage.setItem("losoja_saved_items", JSON.stringify(saved));
+                    } else {
+                        const allowed = new Set(ids.map(String));
+                        saved = saved.filter(item => allowed.has(String(item.id)));
                         localStorage.setItem("losoja_saved_items", JSON.stringify(saved));
                     }
                 }
