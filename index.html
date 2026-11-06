@@ -10,7 +10,7 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>LosOja - Find What You Need Across Nigeria</title>
+    <title>LosOja - Find Businesses Across Nigeria</title>
 
     <meta
         name="description"
@@ -1027,6 +1027,16 @@ main {
     }
 }
 
+
+@media (max-width: 600px) {
+  .losoja-header { gap: 8px; padding: 10px 12px; }
+  .losoja-brand { min-width: 0; gap: 7px; font-size: 19px; white-space: nowrap; }
+  .losoja-brand img { width: 34px; height: 34px; flex: 0 0 34px; }
+  .header-actions { margin-left: auto; flex: 0 0 auto; }
+  #notificationBtn, .header-actions > a { display: none !important; }
+  #accountBtn { white-space: nowrap; padding: 8px 11px; }
+}
+
 </style>
 
 </head>
@@ -1110,7 +1120,7 @@ main {
         <input
             type="search"
             id="searchInput"
-            placeholder="Search businesses, products or services..."
+            placeholder="Search businesses across Nigeria..."
             autocomplete="off"
         >
 
@@ -1865,26 +1875,57 @@ onclick="window.location.href='verify-business.html';"
 
 
             <div class="form-group">
-
-                <label for="businessLocation">
-                    Location
-                </label>
-
-                <input
-                    id="businessLocation"
-                    name="location"
-                    type="text"
-                    required
-                >
-
+                <label for="businessState">State</label>
+                <select id="businessState" name="state" required oninvalid="this.setCustomValidity('Please select your State')" onchange="this.setCustomValidity('')">
+                    <option value="">Please select your State</option>
+                    <option value="Abia State">Abia State</option>
+                    <option value="Adamawa State">Adamawa State</option>
+                    <option value="Akwa Ibom State">Akwa Ibom State</option>
+                    <option value="Anambra State">Anambra State</option>
+                    <option value="Bauchi State">Bauchi State</option>
+                    <option value="Bayelsa State">Bayelsa State</option>
+                    <option value="Benue State">Benue State</option>
+                    <option value="Borno State">Borno State</option>
+                    <option value="Cross River State">Cross River State</option>
+                    <option value="Delta State">Delta State</option>
+                    <option value="Ebonyi State">Ebonyi State</option>
+                    <option value="Edo State">Edo State</option>
+                    <option value="Ekiti State">Ekiti State</option>
+                    <option value="Enugu State">Enugu State</option>
+                    <option value="FCT">FCT</option>
+                    <option value="Gombe State">Gombe State</option>
+                    <option value="Imo State">Imo State</option>
+                    <option value="Jigawa State">Jigawa State</option>
+                    <option value="Kaduna State">Kaduna State</option>
+                    <option value="Kano State">Kano State</option>
+                    <option value="Katsina State">Katsina State</option>
+                    <option value="Kebbi State">Kebbi State</option>
+                    <option value="Kogi State">Kogi State</option>
+                    <option value="Kwara State">Kwara State</option>
+                    <option value="Lagos State">Lagos State</option>
+                    <option value="Nasarawa State">Nasarawa State</option>
+                    <option value="Niger State">Niger State</option>
+                    <option value="Ogun State">Ogun State</option>
+                    <option value="Ondo State">Ondo State</option>
+                    <option value="Osun State">Osun State</option>
+                    <option value="Oyo State">Oyo State</option>
+                    <option value="Plateau State">Plateau State</option>
+                    <option value="Rivers State">Rivers State</option>
+                    <option value="Sokoto State">Sokoto State</option>
+                    <option value="Taraba State">Taraba State</option>
+                    <option value="Yobe State">Yobe State</option>
+                    <option value="Zamfara State">Zamfara State</option>
+                </select>
             </div>
 
+            <div class="form-group">
+                <label for="businessLocation">City</label>
+                <input id="businessLocation" name="city" type="text" required placeholder="e.g. Ibadan">
+            </div>
 
             <div class="form-group">
 
-                <label for="businessPhone">
-                    Phone
-                </label>
+                <label for="businessPhone">WhatsApp Number</label>
 
                 <input
                     id="businessPhone"
@@ -1921,7 +1962,7 @@ onclick="window.location.href='verify-business.html';"
                     id="businessImage"
                     name="image"
                     type="file"
-                    accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
+                    accept="image/jpeg,image/jpg,image/png,image/webp,image/gif" required
                 >
 
             </div>
@@ -2269,94 +2310,72 @@ onclick="window.location.href='verify-business.html';"
 ===================================================== -->
 
 <script>
-
-window.renderSavedItems = function () {
-
-    const container =
-        document.getElementById("savedItemsGrid");
-
+window.renderSavedItems = async function () {
+    const container = document.getElementById("savedItemsGrid");
     if (!container) return;
-
+    let saved = [];
+    try {
+        saved = JSON.parse(localStorage.getItem("losoja_saved_items") || "[]");
+        if (!Array.isArray(saved)) saved = [];
+    } catch (error) { saved = []; }
 
     try {
-
-        const saved =
-            JSON.parse(
-                localStorage.getItem(
-                    "losoja_saved_items"
-                ) || "[]"
-            );
-
-
-        if (!saved.length) {
-
-            container.innerHTML =
-                "<p>No saved businesses yet.</p>";
-
-            return;
-
+        const session = JSON.parse(localStorage.getItem("losoja_supabase_session") || "null");
+        const user = typeof window.getCurrentUser === "function" ? await window.getCurrentUser() : null;
+        if (session && session.access_token && user && user.id && window.SUPABASE_URL && window.SUPABASE_KEY) {
+            const response = await fetch(window.SUPABASE_URL + "/rest/v1/saved_businesses?select=business_id&user_id=eq." + encodeURIComponent(user.id), {
+                headers: { apikey: window.SUPABASE_KEY, Authorization: "Bearer " + session.access_token }
+            });
+            if (response.ok) {
+                const rows = await response.json();
+                const ids = rows.map(row => row.business_id).filter(Boolean);
+                if (ids.length) {
+                    const businessResponse = await fetch(window.SUPABASE_URL + "/rest/v1/businesses?select=id,name,category,location,phone,image_url&id=in.(" + ids.map(encodeURIComponent).join(",") + ")", {
+                        headers: { apikey: window.SUPABASE_KEY, Authorization: "Bearer " + session.access_token }
+                    });
+                    if (businessResponse.ok) {
+                        const cloud = await businessResponse.json();
+                        const merged = new Map(saved.map(item => [String(item.id), item]));
+                        cloud.forEach(item => merged.set(String(item.id), item));
+                        saved = Array.from(merged.values());
+                        localStorage.setItem("losoja_saved_items", JSON.stringify(saved));
+                    }
+                }
+            }
         }
+    } catch (error) { console.warn("LosOja saved business sync unavailable:", error); }
 
+    if (!saved.length) {
+        container.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:28px 18px;background:#fff;border:1px solid #e5ebe7;border-radius:14px;"><p style="font-weight:700;">You haven&#39;t saved any business yet</p><a href="explore.html" style="display:inline-block;margin-top:10px;padding:11px 18px;background:#087a3e;color:#fff;border-radius:9px;text-decoration:none;font-weight:700;">Explore</a></div>';
+        return;
+    }
 
-        container.innerHTML = "";
-
-
-        saved.forEach(function (item) {
-
-            const card =
-                document.createElement("div");
-
-            card.className =
-                "business-card";
-
-
-            card.innerHTML = `
-
-                <div class="business-card-body">
-
-                    <h3>
-                        ${item.name || "Saved Business"}
-                    </h3>
-
-                    <p>
-                        ${item.category || ""}
-                    </p>
-
-                    <p>
-                        ${item.location || ""}
-                    </p>
-
-                </div>
-
-            `;
-
-
-            container.appendChild(card);
-
+    container.innerHTML = "";
+    saved.forEach(function (item) {
+        const card = document.createElement("article");
+        card.className = "business-card";
+        card.style.cursor = "pointer";
+        const img = document.createElement("img");
+        img.src = item.image_url || item.image || "fallback.svg";
+        img.alt = item.name || "LosOja business";
+        img.loading = "lazy";
+        img.onerror = function () { this.onerror = null; this.src = "fallback.svg"; };
+        img.style.cssText = "width:100%;height:150px;object-fit:cover;background:#FFC107;";
+        const body = document.createElement("div");
+        body.className = "business-card-body";
+        const heading = document.createElement("h3");
+        heading.textContent = item.name || "Saved Business";
+        const cat = document.createElement("p"); cat.textContent = item.category || "";
+        const loc = document.createElement("p"); loc.textContent = item.location || "";
+        body.append(heading, cat, loc);
+        card.append(img, body);
+        card.addEventListener("click", function () {
+            if (item.id) location.href = "shop.html?id=" + encodeURIComponent(item.id);
         });
-
-
-    } catch (error) {
-
-        console.error(
-            "Saved items error:",
-            error
-        );
-
-    }
-
+        container.appendChild(card);
+    });
 };
-
-
-document.addEventListener(
-    "DOMContentLoaded",
-    function () {
-
-        window.renderSavedItems();
-
-    }
-);
-
+document.addEventListener("DOMContentLoaded", function () { window.renderSavedItems(); });
 </script>
 
 
@@ -3063,28 +3082,9 @@ async function openAccount(event) {
 
 
         if (bottomExplore) {
-
-            bottomExplore.addEventListener(
-                "click",
-                function () {
-
-                    const section =
-                        document.querySelector(
-                            ".explore-grid"
-                        );
-
-
-                    if (section) {
-
-                        section.scrollIntoView({
-                            behavior: "smooth"
-                        });
-
-                    }
-
-                }
-            );
-
+            bottomExplore.addEventListener("click", function () {
+                window.location.href = "explore.html";
+            });
         }
 
 
