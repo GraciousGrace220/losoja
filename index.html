@@ -102,6 +102,11 @@
     display: none;
 }
 
+.losoja-ad-slide.is-failed .losoja-ad-fallback::before {
+    animation: none;
+    opacity: 0;
+}
+
 .losoja-ad-slide.is-failed img {
     display: none !important;
 }
@@ -124,6 +129,7 @@
 }
 
 .losoja-ad-slide {
+    position: relative;
     flex: 0 0 100%;
     width: 100%;
     height: 100%;
