@@ -270,8 +270,11 @@ Adds:
         const stateFilteredList = Array.isArray(list)
             ? list.filter(matchesSelectedState)
             : [];
+        const allBusinessesInSelectedState = Array.isArray(businesses)
+            ? businesses.filter(matchesSelectedState)
+            : [];
 
-        if (selectedBusinessState && stateFilteredList.length === 0) {
+        if (selectedBusinessState && allBusinessesInSelectedState.length === 0) {
             const stateLabel = escapeHTML(selectedBusinessState);
             businessGrid.innerHTML = `
                 <div class="loading-card" style="grid-column:1/-1; padding:30px 18px; background:#fffaf0; border-color:#f2d58a;">
