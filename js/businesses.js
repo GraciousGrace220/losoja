@@ -418,8 +418,7 @@ Adds:
             businessGrid.innerHTML = `
                 <div class="loading-card" style="text-align:center; padding:24px;">
                     <div style="font-size:32px; margin-bottom:8px;">🔍</div>
-                    <p style="font-weight:700; font-size:16px;">No businesses found in ${escapeHTML(state)}</p>
-                    <p style="font-size:14px; margin-top:6px;">Be the first to add your business!</p>
+                    <p style="font-weight:700; font-size:16px;">No businesses found in ${escapeHTML(state)} - Be the first to add your business!</p>
                     <button type="button" id="searchNoResultsAddBusinessBtn"
                         style="margin-top:14px; padding:10px 18px; border:0; border-radius:9px; background:#087a3e; color:#ffffff; font-weight:700; cursor:pointer;">
                         Add Business
