@@ -2229,6 +2229,13 @@ onclick="window.location.href='verify-business.html';"
         </div>
 <form id="signupForm">
 
+    <input
+        type="hidden"
+        id="signupReferral"
+        name="referral_username"
+        value=""
+    >
+
     <div class="form-group">
         <label for="signupName">
             Full Name
@@ -3370,6 +3377,39 @@ if (loginFromSignup) {
 <!-- =====================================================
      LOSOJA SCRIPTS
 ===================================================== -->
+
+<script>
+(function () {
+    "use strict";
+
+    const params = new URLSearchParams(window.location.search);
+
+    if (params.has("ref")) {
+        const referral = (params.get("ref") || "").trim().toLowerCase();
+
+        if (/^[a-z0-9_]{3,30}$/.test(referral)) {
+            sessionStorage.setItem(
+                "losoja_referral_username",
+                referral
+            );
+        } else {
+            sessionStorage.removeItem(
+                "losoja_referral_username"
+            );
+        }
+    }
+
+    const referralInput =
+        document.getElementById("signupReferral");
+
+    if (referralInput) {
+        referralInput.value =
+            sessionStorage.getItem(
+                "losoja_referral_username"
+            ) || "";
+    }
+})();
+</script>
 
 <script src="js/businesses.js?v=4"></script>
 <script src="js/app.js?v=999"></script>
