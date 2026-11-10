@@ -1219,27 +1219,8 @@ async function loadListings() {
     `;
 
 
-    let token = null;
-
-    // Public visitors use the publishable API key without an Authorization header.
-    // Signed-in visitors get a real access token (not the unresolved Promise).
-    try {
-        const user =
-            typeof window.getCurrentUser === "function"
-                ? await window.getCurrentUser()
-                : null;
-
-        if (user && typeof window.getSupabaseAccessToken === "function") {
-            token = await window.getSupabaseAccessToken();
-        }
-    } catch (authError) {
-        console.warn(
-            "LosOja barter: using public read after session check:",
-            authError
-        );
-        token = null;
-    }
-
+    // Active barter listings are public under the existing SELECT policy.
+    // Do not attach a possibly stale/malformed user JWT to this public GET.
     try {
         const response =
             await fetch(
@@ -1254,7 +1235,7 @@ async function loadListings() {
                         "GET",
 
                     headers:
-                        getHeaders(token)
+                        getHeaders(null)
 
                 }
 
