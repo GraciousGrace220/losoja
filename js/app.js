@@ -1477,7 +1477,7 @@ bindAddBusinessButtons() {
                 ) {
 
                     accessToken =
-                        window.getSupabaseAccessToken();
+                        await window.getSupabaseAccessToken();
 
                 }
 
