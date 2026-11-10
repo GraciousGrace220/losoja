@@ -489,8 +489,8 @@ content="Trade items with other people across LosOja."
     </h2>
 
     <p>
-        You need a LosOja account to view
-        and create barter listings.
+        You can browse active barter listings without signing in.
+        Log in when you want to publish or manage your own listing.
     </p>
 
     <button
@@ -554,6 +554,8 @@ content="Trade items with other people across LosOja."
             <button
                 type="button"
                 class="button"
+                id="addListingButton"
+                style="display:none;"
                 onclick="openAddListing()"
             >
                 + Add Listing
@@ -991,6 +993,7 @@ const SUPABASE_KEY =
 
 
 let allListings = [];
+let currentUserId = null;
 
 
 /* =========================================================
@@ -1154,64 +1157,36 @@ async function checkLogin() {
         );
 
 
-    if (!user) {
-
-        if (loginScreen) {
-
-            loginScreen.style.display =
-                "block";
-
-        }
-
-
-        if (barterArea) {
-
-            barterArea.style.display =
-                "none";
-
-        }
-
-
-        return null;
-    }
-
+    currentUserId = user?.id || null;
 
     if (loginScreen) {
-
-        loginScreen.style.display =
-            "none";
-
+        loginScreen.style.display = user ? "none" : "block";
     }
-
 
     if (barterArea) {
-
-        barterArea.style.display =
-            "block";
-
+        barterArea.style.display = "block";
     }
 
+    const addListingButton =
+        document.getElementById("addListingButton");
 
-    const name =
-        user.user_metadata?.full_name ||
-        user.user_metadata?.name ||
-        user.email?.split("@")[0] ||
-        "User";
-
+    if (addListingButton) {
+        addListingButton.style.display = user ? "inline-block" : "none";
+    }
 
     const welcome =
-        document.getElementById(
-            "welcomeUser"
-        );
-
+        document.getElementById("welcomeUser");
 
     if (welcome) {
+        const name =
+            user?.user_metadata?.full_name ||
+            user?.user_metadata?.name ||
+            user?.email?.split("@")[0];
 
-        welcome.textContent =
-            "Welcome, " + name;
-
+        welcome.textContent = user
+            ? "Welcome, " + name
+            : "Browse Barter Listings";
     }
-
 
     return user;
 }
@@ -1246,42 +1221,26 @@ async function loadListings() {
 
     let token = null;
 
+    // Public visitors use the publishable API key without an Authorization header.
+    // Signed-in visitors get a real access token (not the unresolved Promise).
+    try {
+        const user =
+            typeof window.getCurrentUser === "function"
+                ? await window.getCurrentUser()
+                : null;
+
+        if (user && typeof window.getSupabaseAccessToken === "function") {
+            token = await window.getSupabaseAccessToken();
+        }
+    } catch (authError) {
+        console.warn(
+            "LosOja barter: using public read after session check:",
+            authError
+        );
+        token = null;
+    }
 
     try {
-
-        if (
-            typeof window.ensureValidSupabaseSession ===
-            "function"
-        ) {
-
-            await window.ensureValidSupabaseSession();
-
-        }
-
-
-        if (
-            typeof window.getSupabaseAccessToken ===
-            "function"
-        ) {
-
-            token =
-                window.getSupabaseAccessToken();
-
-        }
-
-
-        if (!token) {
-
-            listingsElement.innerHTML = `
-                <div class="empty">
-                    Please log in to view barter listings.
-                </div>
-            `;
-
-            return;
-        }
-
-
         const response =
             await fetch(
 
@@ -1401,32 +1360,6 @@ function displayListings(listings) {
         `;
 
         return;
-    }
-
-
-    let currentUserId = null;
-
-
-    try {
-
-        const session =
-            typeof window.getSupabaseSession ===
-            "function"
-                ? window.getSupabaseSession()
-                : null;
-
-
-        currentUserId =
-            session?.user?.id ||
-            null;
-
-    } catch (error) {
-
-        console.warn(
-            "LosOja: could not read current user session:",
-            error
-        );
-
     }
 
 
@@ -1754,7 +1687,7 @@ async function viewListingChats(
         ) {
 
             token =
-                window.getSupabaseAccessToken();
+                await window.getSupabaseAccessToken();
 
         }
 
@@ -2152,7 +2085,7 @@ async function saveEditedListing(
     ) {
 
         token =
-            window.getSupabaseAccessToken();
+            await window.getSupabaseAccessToken();
 
     }
 
@@ -2396,7 +2329,7 @@ async function deleteListing(
     ) {
 
         token =
-            window.getSupabaseAccessToken();
+            await window.getSupabaseAccessToken();
 
     }
 
@@ -2654,7 +2587,7 @@ async function submitListing(
         ) {
 
             token =
-                window.getSupabaseAccessToken();
+                await window.getSupabaseAccessToken();
 
         }
 
@@ -3070,11 +3003,7 @@ document.addEventListener(
             await checkLogin();
 
 
-        if (user) {
-
-            await loadListings();
-
-        }
+        await loadListings();
 
     }
 );
