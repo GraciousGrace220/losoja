@@ -3092,48 +3092,6 @@ async function openAccount(event) {
 
 
        
-/* =================================================
-   SIGNUP / LOGIN SWITCH
-================================================= */
-
-const loginModal =
-    document.getElementById("loginModal");
-
-const signupModal =
-    document.getElementById("signupModal");
-
-const signupFromLogin =
-    document.getElementById("openSignupFromLogin");
-
-const loginFromSignup =
-    document.getElementById("openLoginFromSignup");
-
-
-if (signupFromLogin) {
-    signupFromLogin.addEventListener("click", function (event) {
-        event.preventDefault();
-
-        if (typeof window.openSignup === "function") {
-            window.openSignup();
-        } else {
-            console.error("LosOja: openSignup is not available.");
-        }
-    });
-}
-
-
-if (loginFromSignup) {
-    loginFromSignup.addEventListener("click", function (event) {
-        event.preventDefault();
-
-        if (typeof window.openLogin === "function") {
-            window.openLogin();
-        } else {
-            console.error("LosOja: openLogin is not available.");
-        }
-    });
-}
-
         /* =================================================
            SEARCH
         ================================================= */
