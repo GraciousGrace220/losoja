@@ -280,14 +280,35 @@ window.forgotPassword = forgotPassword;
 ========================================================= */
 
 async function signUp(email, password, name) {
+  const referralInput =
+    document.getElementById("signupReferral");
+
+  const referralUsername = String(
+    referralInput?.value ||
+    sessionStorage.getItem("losoja_referral_username") ||
+    ""
+  ).trim().toLowerCase();
+
+  const validReferral =
+    /^[a-z0-9_]{3,30}$/.test(referralUsername)
+      ? referralUsername
+      : null;
+
   const data = await authRequest("signup", {
     email: email.trim(),
     password: password,
     data: {
-      full_name: name.trim()
+      full_name: name.trim(),
+      referral_username: validReferral
     },
     redirect_to: "https://losoja.com.ng/"
   });
+
+  if (data.user) {
+    sessionStorage.removeItem(
+      "losoja_referral_username"
+    );
+  }
 
   // Supabase may require email confirmation before login.
   if (data.user && !data.access_token) {
@@ -678,6 +699,19 @@ if (forgotPasswordBtn && !forgotPasswordBtn.dataset.authBound) {
 
 
   console.log("LosOja authentication loaded.");
+
+  // Referral links open the existing signup modal.
+  const referralToApply = sessionStorage.getItem(
+    "losoja_referral_username"
+  );
+
+  if (
+    referralToApply &&
+    /^[a-z0-9_]{3,30}$/.test(referralToApply)
+  ) {
+    // Existing public modal function, verified in this file.
+    window.openSignup();
+  }
 }
 
 /* LosOja in-app notifications and Saved header navigation */
