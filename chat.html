@@ -1001,23 +1001,29 @@ async function walletEscrowAction(action) {
   if (buttons) buttons.forEach(button => button.disabled = true);
 
   try {
+    if (!currentChat?.id || !isParticipant(currentChat)) {
+      throw new Error("Open a valid escrow conversation first.");
+    }
+
     const rows = await api(
       "escrow_transactions?chat_id=eq." + encodeURIComponent(currentChat.id) +
       "&select=*&order=created_at.desc&limit=1"
     );
-    const escrow = Array.isArray(rows) ? rows[0] : null;
-    if (!escrow ||
-        String(escrow.buyer_id) !== String(currentChat.buyer_id) ||
-        String(escrow.seller_id) !== String(currentChat.seller_id)) {
+    const escrow = Array.isArray(rows) ? rows.find(item =>
+      String(item.buyer_id) === String(currentChat.buyer_id) &&
+      String(item.seller_id) === String(currentChat.seller_id)
+    ) : null;
+
+    if (!escrow) {
       throw new Error("The escrow for this conversation could not be verified.");
     }
 
     const messages = {
-      refund: "LosOja Safety Warning\n\nOnly refund if you are sure you want to cancel this protected payment. The held amount will return to your wallet. Continue?",
-      shipped: "Only mark this order as shipped after you have actually handed it to the delivery service or dispatched it. Continue?",
-      delivered: "Confirm that you have received the order and are satisfied before confirming delivery. Continue?",
-      release: "Release the held payment to the seller? Only do this when you are satisfied with the order. This action may not be reversible.",
-      dispute: "Open a dispute if there is a genuine problem with this order. LosOja will need to review it."
+      refund: "LosOja Safety Warning\\n\\nOnly request a refund if the seller has not fulfilled the order and you want the held payment returned. Continue?",
+      shipped: "Only mark this order as shipped after dispatching it. Continue?",
+      delivered: "Confirm delivery only after you have received the order. Continue?",
+      release: "Release the held payment to the seller? Only do this when you are satisfied with the order.",
+      dispute: "Open a dispute if there is a genuine problem with this order. LosOja will review it."
     };
     if (!messages[action] || !confirm(messages[action])) {
       if (buttons) buttons.forEach(button => button.disabled = false);
@@ -1045,11 +1051,32 @@ async function walletEscrowAction(action) {
       });
     }
 
+    if (result === false || result?.success === false || result?.error) {
+      throw new Error(result?.error || result?.message || "The server did not confirm this escrow action.");
+    }
+
+    const expectedStatus = {
+      refund: "refunded",
+      shipped: "shipped",
+      delivered: "delivered",
+      release: "released",
+      dispute: "disputed"
+    }[action];
+
+    const refreshedRows = await api(
+      "escrow_transactions?id=eq." + encodeURIComponent(escrow.id) +
+      "&select=id,status&limit=1"
+    );
+    const refreshed = Array.isArray(refreshedRows) ? refreshedRows[0] : null;
+    if (!refreshed || String(refreshed.status || "").toLowerCase() !== expectedStatus) {
+      throw new Error("The server did not confirm the expected escrow status. Do not repeat the action; refresh the chat and check the transaction status.");
+    }
+
     await loadWalletEscrowCard();
-    showToast("Escrow updated successfully.");
+    showToast("Escrow status confirmed: " + expectedStatus + ".");
   } catch (error) {
     console.error("Wallet escrow action failed.", error);
-    showToast(error.message || "Could not update escrow.");
+    showToast(error.message || "Could not verify the escrow update.");
     if (buttons) buttons.forEach(button => button.disabled = false);
   }
 }
