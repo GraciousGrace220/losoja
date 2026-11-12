@@ -52,9 +52,6 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible{
  .input-bar button{padding:12px 9px}
 }
 
-/* Keep the legacy record-only escrow form hidden. The header button opens wallet-backed escrow. */
-#escrowList,#bottomEscrowBtn,#escrowModal{display:none!important}
-#headerEscrowBtn{display:none}
 </style>
 </head>
 <body>
@@ -73,7 +70,6 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible{
 <div id="chatWrap" class="chat-wrap">
   <div class="small-note">Connecting to chat...</div>
 </div>
-<div id="escrowList" style="max-width:800px;width:100%;margin:0 auto;padding:0 16px"></div>
 
 <div class="input-bar">
   <label style="padding:11px;background:white;border:1px solid #d7e1da;border-radius:10px;cursor:pointer" title="Send image">
@@ -82,24 +78,6 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible{
   </label>
   <input type="text" id="msgInput" placeholder="Type message..." autocomplete="off" disabled>
   <button class="btn-send" id="sendBtn" type="button" disabled>Send</button>
-  <button class="btn-escrow" id="bottomEscrowBtn" type="button" aria-label="Create escrow record">🔐</button>
-</div>
-
-<div id="escrowModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="escrowTitle">
-  <div class="modal-card">
-    <h3 id="escrowTitle" style="margin:0;color:#087a3e">🔐 Create Escrow Record</h3>
-    <p style="font-size:13px;color:#666">
-      This records the proposed agreement only. It does not hold, transfer, or protect funds.
-    </p>
-    <label for="escrowAmount">Amount in naira</label>
-    <input id="escrowAmount" type="number" min="1" step="0.01" placeholder="e.g. 50000">
-    <label for="escrowDesc">What are you buying?</label>
-    <textarea id="escrowDesc" maxlength="1000" placeholder="Describe the item or service"></textarea>
-    <div style="display:flex;gap:10px;margin-top:12px">
-      <button id="cancelEscrowBtn" type="button" style="flex:1;padding:12px;background:#eee;border:0;border-radius:9px;cursor:pointer">Cancel</button>
-      <button id="createEscrowBtn" type="button" style="flex:1;padding:12px;background:#087a3e;color:white;border:0;border-radius:9px;font-weight:700;cursor:pointer">Create Record</button>
-    </div>
-  </div>
 </div>
 
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
@@ -118,8 +96,6 @@ const chatHeader = $("chatHeader");
 const msgInput = $("msgInput");
 const sendBtn = $("sendBtn");
 const imageInput = $("imageInput");
-const escrowList = $("escrowList");
-const escrowModal = $("escrowModal");
 const toast = $("toast");
 const buyerListEl = $("buyerList");
 const notifyToggle = $("notifyToggle");
@@ -1420,84 +1396,8 @@ async function openWalletBackedEscrow() {
   }
 }
 
-function closeEscrowModal() {
-  escrowModal.classList.remove("show");
-}
-
-async function createEscrow() {
-  if (!currentChat?.id || !isParticipant(currentChat)) {
-    showToast("Open a valid conversation first.");
-    return;
-  }
-
-  const amount = Number($("escrowAmount").value);
-  const description = $("escrowDesc").value.trim();
-
-  if (!Number.isFinite(amount) || amount <= 0) {
-    showToast("Enter a valid amount greater than zero.");
-    return;
-  }
-
-  if (!description) {
-    showToast("Describe what is being bought.");
-    return;
-  }
-
-  if (!currentChat.buyer_id || !currentChat.seller_id) {
-    showToast("This chat is missing buyer or seller details.");
-    return;
-  }
-
-  const button = $("createEscrowBtn");
-  button.disabled = true;
-  button.textContent = "Saving...";
-
-  try {
-    const created = await api("escrows", "POST", {
-      chat_id: currentChat.id,
-      business_id: currentChat.business_id || businessId || null,
-      buyer_id: currentChat.buyer_id,
-      seller_id: currentChat.seller_id,
-      amount,
-      description,
-      status: "pending"
-    });
-
-    if (!Array.isArray(created) || created.length === 0) {
-      throw new Error("Supabase did not confirm the new escrow record.");
-    }
-
-    closeEscrowModal();
-    $("escrowAmount").value = "";
-    $("escrowDesc").value = "";
-    showToast("Escrow record created. No funds were transferred.");
-
-    await loadEscrows();
-
-    try {
-      await api("messages", "POST", {
-        chat_id: currentChat.id,
-        sender_id: currentUser.id,
-        message: "🔐 ESCROW RECORD CREATED: ₦" + amount.toLocaleString() +
-          " for " + description + ". Status: PENDING. Record only; no money transferred."
-      });
-      await loadMessages();
-    } catch (messageError) {
-      console.warn("Escrow saved, but chat notice could not be sent.", messageError);
-    }
-  } catch (error) {
-    console.error("Escrow creation failed:", error);
-    showToast("Escrow failed: " + error.message);
-  } finally {
-    button.disabled = false;
-    button.textContent = "Create Record";
-  }
-}
 
 $("headerEscrowBtn").addEventListener("click", openWalletBackedEscrow);
-$("bottomEscrowBtn").addEventListener("click", openWalletBackedEscrow);
-$("cancelEscrowBtn").addEventListener("click", closeEscrowModal);
-$("createEscrowBtn").addEventListener("click", createEscrow);
 $("notifyToggle").addEventListener("click", toggleNotifications);
 sendBtn.addEventListener("click", sendMessage);
 
@@ -1508,13 +1408,6 @@ msgInput.addEventListener("keydown", event => {
   }
 });
 
-escrowModal.addEventListener("click", event => {
-  if (event.target === escrowModal) closeEscrowModal();
-});
-
-document.addEventListener("keydown", event => {
-  if (event.key === "Escape") closeEscrowModal();
-});
 
 imageInput.addEventListener("change", async event => {
   const file = event.target.files?.[0];
