@@ -1,78 +1,401 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#087a3e">
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Edit Product | LosOja</title>
-<style>
-*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f4f7f5;color:#17201b}
-.topbar{position:sticky;top:0;background:#087a3e;color:#fff;padding:12px 18px}
-.topbar-inner{max-width:900px;margin:auto;display:flex;justify-content:space-between;align-items:center}
-.brand{color:#fff;text-decoration:none;font-weight:800;font-size:20px}
-.back-btn{border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.15);color:#fff;border-radius:8px;padding:8px 12px;cursor:pointer}
-.page{width:min(600px,calc(100% - 28px));margin:24px auto}
-.card{background:#fff;border-radius:18px;padding:24px;box-shadow:0 8px 20px rgba(0,0,0,.08);border:1px solid #e5ebe7}
-input,textarea,select{width:100%;padding:12px;border:1px solid #d7e1da;border-radius:10px;margin-top:6px;font-size:15px}
-label{font-weight:700;margin-top:14px;display:block;color:#123d25;font-size:14px}
-.btn{margin-top:20px;width:100%;padding:13px;background:#087a3e;color:#fff;border:0;border-radius:10px;font-weight:800;cursor:pointer;font-size:16px}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.toast{position:fixed;left:50%;bottom:25px;transform:translateX(-50%);background:#17201b;color:#fff;padding:12px 17px;border-radius:10px;opacity:0;transition:.2s;z-index:999}.toast.show{opacity:1}
-</style>
+    <title>Edit Business | LosOja</title>
+    <style>
+        *{box-sizing:border-box}
+        body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f4f7f5;color:#17201b}
+        .topbar{position:sticky;top:0;z-index:5;background:#087a3e;color:#fff;padding:13px 18px}
+        .topbar-inner{width:min(900px,100%);margin:auto;display:flex;align-items:center;justify-content:space-between}
+        .brand{color:#fff;text-decoration:none;font-weight:800;font-size:21px}
+        .back-btn{border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.15);color:#fff;border-radius:9px;padding:9px 14px;cursor:pointer;font-weight:700}
+        .page{width:min(680px,calc(100% - 28px));margin:25px auto 45px}
+        .card{background:#fff;border:1px solid #e5ebe7;border-radius:18px;padding:24px;box-shadow:0 8px 24px rgba(0,0,0,.07)}
+        h1{margin:0 0 8px;color:#123d25;font-size:25px}
+        .intro{color:#647168;line-height:1.5;margin:0 0 22px;font-size:14px}
+        .form-group{margin-bottom:17px}
+        label{display:block;margin-bottom:7px;font-size:14px;font-weight:700;color:#123d25}
+        input,select,textarea{width:100%;padding:12px;border:1px solid #d7e1da;border-radius:10px;font:inherit;font-size:15px;background:#fff;color:#17201b}
+        textarea{min-height:120px;resize:vertical}
+        input:focus,select:focus,textarea:focus{outline:2px solid rgba(8,122,62,.18);border-color:#087a3e}
+        .row{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+        .help{display:block;color:#718078;font-size:12px;line-height:1.45;margin-top:6px}
+        .image-preview{display:none;width:100%;max-height:240px;object-fit:contain;background:#f4f7f5;border:1px solid #e5ebe7;border-radius:12px;margin-top:10px}
+        .save-btn{width:100%;margin-top:8px;padding:14px;background:#087a3e;color:#fff;border:0;border-radius:11px;font-size:16px;font-weight:800;cursor:pointer}
+        .save-btn:disabled{opacity:.6;cursor:not-allowed}
+        .status{display:none;padding:12px;border-radius:10px;margin-bottom:16px;font-size:14px;line-height:1.5}
+        .status.error{display:block;background:#fff0f0;color:#a32121;border:1px solid #f2caca}
+        .status.success{display:block;background:#edf9f0;color:#176b32;border:1px solid #c9e9d1}
+        .loading{text-align:center;padding:35px 10px;color:#647168}
+        .hidden{display:none!important}
+        .footer{text-align:center;color:#758078;padding:20px;font-size:13px}
+        @media(max-width:520px){.card{padding:18px}.row{grid-template-columns:1fr;gap:0}h1{font-size:22px}}
+    </style>
 </head>
 <body>
-<header class="topbar"><div class="topbar-inner"><a class="brand" href="index.html">LosOja</a><button class="back-btn" onclick="history.back()">← Back</button></div></header>
-<main class="page"><div class="card">
-<h2 style="margin-top:0">Edit Product</h2>
-<label>Product Name</label><input id="name">
-<label>Description</label><textarea id="description" rows="3"></textarea>
-<div class="row">
-<div><label>Price (₦)</label><input id="price" type="number"></div>
-<div><label>Stock</label><input id="stock" type="number" min="0"></div>
-</div>
-<label>Category</label>
-<select id="product_category">
-<option value="General">General</option><option value="Food">Food</option><option value="Fashion">Fashion</option><option value="Electronics">Electronics</option><option value="Beauty">Beauty</option><option value="Services">Services</option>
-</select>
-<label>Image URL</label><input id="image_url">
-<button class="btn" id="saveBtn">Update Product</button>
-</div></main>
-<div id="toast" class="toast"></div>
+<header class="topbar">
+    <div class="topbar-inner">
+        <a class="brand" href="index.html">LosOja</a>
+        <button class="back-btn" id="backBtn" type="button">← Back</button>
+    </div>
+</header>
+
+<main class="page">
+    <div id="loading" class="card loading">Loading your business...</div>
+
+    <section id="editor" class="card hidden">
+        <h1>Edit Business</h1>
+        <p class="intro">Update your business information on LosOja.</p>
+        <div id="status" class="status" role="alert"></div>
+
+        <form id="editBusinessForm">
+            <div class="form-group">
+                <label for="businessName">Business Name *</label>
+                <input id="businessName" type="text" required maxlength="150">
+            </div>
+
+            <div class="form-group">
+                <label for="businessCategory">Category *</label>
+                <select id="businessCategory" required>
+                    <option value="">Select category</option>
+                    <option>Food</option><option>Fashion</option><option>Phones</option>
+                    <option>Vehicles</option><option>Property</option><option>Furniture &amp; Home</option>
+                    <option>Plumbing</option><option>Electrical</option><option>Carpentry</option>
+                    <option>Construction</option><option>Healthcare</option><option>Beauty</option>
+                    <option>Cleaning</option><option>Repairs &amp; Maintenance</option><option>Technology</option>
+                    <option>Agriculture</option><option>Logistics &amp; Moving</option>
+                    <option>Education &amp; Tutors</option><option>Professional Services</option><option>Services</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="businessDescription">Description</label>
+                <textarea id="businessDescription" maxlength="5000" placeholder="Describe your business and services..."></textarea>
+            </div>
+
+            <div class="row">
+                <div class="form-group">
+                    <label for="businessPhone">Phone Number</label>
+                    <input id="businessPhone" type="tel" autocomplete="tel" placeholder="Business phone number">
+                </div>
+                <div class="form-group">
+                    <label for="businessWhatsapp">WhatsApp Number</label>
+                    <input id="businessWhatsapp" type="tel" autocomplete="tel" placeholder="WhatsApp number">
+                    <small class="help">LosOja's current businesses record stores its contact number in the phone field. Saving uses the WhatsApp number when supplied; otherwise it uses the phone number.</small>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="businessAddress">Street Address (optional)</label>
+                <input id="businessAddress" type="text" placeholder="Street, area or landmark">
+            </div>
+
+            <div class="row">
+                <div class="form-group">
+                    <label for="businessCity">City *</label>
+                    <input id="businessCity" type="text" required placeholder="e.g. Ibadan">
+                </div>
+                <div class="form-group">
+                    <label for="businessState">State *</label>
+                    <select id="businessState" required>
+                        <option value="">Select state</option>
+                        <option>Abia State</option><option>Adamawa State</option><option>Akwa Ibom State</option>
+                        <option>Anambra State</option><option>Bauchi State</option><option>Bayelsa State</option>
+                        <option>Benue State</option><option>Borno State</option><option>Cross River State</option>
+                        <option>Delta State</option><option>Ebonyi State</option><option>Edo State</option>
+                        <option>Ekiti State</option><option>Enugu State</option><option>FCT</option>
+                        <option>Gombe State</option><option>Imo State</option><option>Jigawa State</option>
+                        <option>Kaduna State</option><option>Kano State</option><option>Katsina State</option>
+                        <option>Kebbi State</option><option>Kogi State</option><option>Kwara State</option>
+                        <option>Lagos State</option><option>Nasarawa State</option><option>Niger State</option>
+                        <option>Ogun State</option><option>Ondo State</option><option>Osun State</option>
+                        <option>Oyo State</option><option>Plateau State</option><option>Rivers State</option>
+                        <option>Sokoto State</option><option>Taraba State</option><option>Yobe State</option>
+                        <option>Zamfara State</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="businessImage">Business Image URL</label>
+                <input id="businessImage" type="url" placeholder="https://...">
+                <small class="help">Paste the URL of your existing business photo. This keeps the current image unless you change the URL.</small>
+                <img id="businessImagePreview" class="image-preview" alt="Business image preview">
+            </div>
+
+            <button type="submit" class="save-btn" id="saveBtn">Save Business Changes</button>
+        </form>
+    </section>
+</main>
+
+<footer class="footer">© 2026 LosOja</footer>
+
 <script src="js/auth.js?v=2"></script>
 <script>
-const SUPABASE_URL="https://ycxshwgeebskdozmornh.supabase.co";
-const SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InljeHNod2dlZWJza2Rvem1vcm5oIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzMDY0NjUsImV4cCI6MjEwMzg4MjQ2NX0.tMl7wILdVDhu0RWFaG_84ngJEryLt2c5cB8MEKW3kfU";
-function showToast(m){const t=document.getElementById("toast");t.textContent=m;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2500)}
-const productId=new URLSearchParams(location.search).get("id");
-let businessIdRef=null;
-async function load(){
- try{
-  const res=await fetch(`${SUPABASE_URL}/rest/v1/products?id=eq.${productId}`,{headers:{apikey:SUPABASE_KEY,Authorization:"Bearer "+SUPABASE_KEY}});
-  const data=await res.json();const p=data[0];if(!p){showToast("Product not found");return}
-  businessIdRef=p.business_id;
-  document.getElementById("name").value=p.name||"";
-  document.getElementById("description").value=p.description||"";
-  document.getElementById("price").value=p.price||0;
-  document.getElementById("stock").value=p.stock!=null?p.stock:1;
-  document.getElementById("product_category").value=p.product_category||"General";
-  document.getElementById("image_url").value=p.image_url||"";
- }catch(e){showToast("Error loading")}
-}
-document.getElementById("saveBtn").onclick=async()=>{
- const raw=localStorage.getItem("losoja_supabase_session");let token=null;try{token=JSON.parse(raw||"{}").access_token}catch{}
- if(!token){showToast("Login first");return}
- const body={
-  name:document.getElementById("name").value.trim(),
-  description:document.getElementById("description").value.trim(),
-  price:Number(document.getElementById("price").value)||0,
-  stock:Number(document.getElementById("stock").value)||0,
-  product_category:document.getElementById("product_category").value,
-  image_url:document.getElementById("image_url").value.trim()
- };
- const res=await fetch(`${SUPABASE_URL}/rest/v1/products?id=eq.${productId}`,{method:"PATCH",headers:{apikey:SUPABASE_KEY,Authorization:"Bearer "+token,"Content-Type":"application/json"},body:JSON.stringify(body)});
- if(!res.ok){showToast("Failed to update");return}
- showToast("Updated!");setTimeout(()=>{location.href=`shop.html?id=${businessIdRef}`},800);
-}
-load();
+(function () {
+    "use strict";
+
+    const SUPABASE_URL = window.SUPABASE_URL || "https://ycxshwgeebskdozmornh.supabase.co";
+    const SUPABASE_KEY = window.SUPABASE_KEY || "";
+    const businessId = new URLSearchParams(window.location.search).get("id");
+
+    const loading = document.getElementById("loading");
+    const editor = document.getElementById("editor");
+    const form = document.getElementById("editBusinessForm");
+    const statusBox = document.getElementById("status");
+    const saveBtn = document.getElementById("saveBtn");
+    const imageInput = document.getElementById("businessImage");
+    const imagePreview = document.getElementById("businessImagePreview");
+
+    let currentUser = null;
+    let currentBusiness = null;
+
+    function showStatus(message, type) {
+        statusBox.textContent = message;
+        statusBox.className = "status " + (type || "error");
+        statusBox.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+
+    function showLoadError(message) {
+        loading.textContent = message;
+        loading.classList.remove("hidden");
+        editor.classList.add("hidden");
+    }
+
+    async function getSessionDetails() {
+        if (typeof window.ensureValidSupabaseSession === "function") {
+            const session = await window.ensureValidSupabaseSession();
+            if (!session || !session.access_token || !session.user) {
+                throw new Error("Please log in to edit your business.");
+            }
+            return session;
+        }
+
+        const session = JSON.parse(localStorage.getItem("losoja_supabase_session") || "null");
+        if (!session || !session.access_token || !session.user) {
+            throw new Error("Your login session was not found. Please log in again.");
+        }
+        return session;
+    }
+
+    function apiHeaders(token, extra) {
+        return Object.assign({
+            "apikey": SUPABASE_KEY,
+            "Authorization": "Bearer " + token,
+            "Accept": "application/json"
+        }, extra || {});
+    }
+
+    function splitSavedLocation(business) {
+        const raw = String(business.location || business.address || "").trim();
+        const explicitState = String(business.state || "").trim();
+        const explicitCity = String(business.city || "").trim();
+        const explicitAddress = String(business.address || "").trim();
+
+        let city = explicitCity;
+        let state = explicitState;
+        let address = explicitAddress && explicitAddress !== raw ? explicitAddress : "";
+
+        if (raw) {
+            const pieces = raw.split(",").map(part => part.trim()).filter(Boolean);
+            if (!state && pieces.length > 1) {
+                state = pieces[pieces.length - 1];
+            }
+            if (!city && pieces.length > 1) {
+                city = pieces[pieces.length - 2];
+                if (pieces.length > 2 && !address) {
+                    address = pieces.slice(0, -2).join(", ");
+                }
+            } else if (!city && pieces.length === 1) {
+                city = pieces[0];
+            }
+        }
+
+        return { city, state, address };
+    }
+
+    function setField(id, value) {
+        const element = document.getElementById(id);
+        if (element) element.value = value == null ? "" : String(value);
+    }
+
+    function updateImagePreview(value) {
+        const url = String(value || "").trim();
+        if (!url) {
+            imagePreview.removeAttribute("src");
+            imagePreview.style.display = "none";
+            return;
+        }
+        imagePreview.onload = () => { imagePreview.style.display = "block"; };
+        imagePreview.onerror = () => { imagePreview.style.display = "none"; };
+        imagePreview.src = url;
+    }
+
+    async function loadBusiness() {
+        if (!businessId || !/^[0-9a-f-]{20,}$/i.test(businessId)) {
+            showLoadError("Business ID is missing or invalid. Open Edit Business from your business listing.");
+            return;
+        }
+
+        if (!SUPABASE_KEY) {
+            showLoadError("LosOja could not load its Supabase configuration. Please refresh the page.");
+            return;
+        }
+
+        try {
+            const session = await getSessionDetails();
+            currentUser = session.user;
+
+            const response = await fetch(
+                SUPABASE_URL + "/rest/v1/businesses?id=eq." +
+                encodeURIComponent(businessId) + "&select=*",
+                { headers: apiHeaders(session.access_token) }
+            );
+
+            const rows = await response.json().catch(() => []);
+            if (!response.ok) {
+                throw new Error(rows.message || rows.details || "Could not load this business.");
+            }
+
+            if (!Array.isArray(rows) || rows.length === 0) {
+                throw new Error("Business not found, or your account does not have permission to view it.");
+            }
+
+            currentBusiness = rows[0];
+
+            if (currentBusiness.user_id && currentBusiness.user_id !== currentUser.id) {
+                throw new Error("You can only edit a business owned by your account.");
+            }
+
+            const place = splitSavedLocation(currentBusiness);
+
+            setField("businessName", currentBusiness.name);
+            setField("businessCategory", currentBusiness.category);
+            setField("businessDescription", currentBusiness.description);
+            setField("businessPhone", currentBusiness.phone);
+            setField("businessWhatsapp", currentBusiness.whatsapp || currentBusiness.phone);
+            setField("businessAddress", place.address);
+            setField("businessCity", place.city);
+            setField("businessState", place.state);
+            setField("businessImage", currentBusiness.image_url || currentBusiness.image || currentBusiness.photo_url || "");
+            updateImagePreview(imageInput.value);
+
+            loading.classList.add("hidden");
+            editor.classList.remove("hidden");
+        } catch (error) {
+            console.error("LosOja edit business load error:", error);
+            showLoadError(error.message || "Unable to load this business. Please try again.");
+        }
+    }
+
+    imageInput.addEventListener("input", () => updateImagePreview(imageInput.value));
+
+    form.addEventListener("submit", async function (event) {
+        event.preventDefault();
+        statusBox.className = "status";
+        statusBox.textContent = "";
+
+        if (!currentBusiness || !currentUser) {
+            showStatus("Business information has not loaded. Refresh and try again.");
+            return;
+        }
+
+        const name = document.getElementById("businessName").value.trim();
+        const category = document.getElementById("businessCategory").value.trim();
+        const description = document.getElementById("businessDescription").value.trim();
+        const phone = document.getElementById("businessPhone").value.trim();
+        const whatsapp = document.getElementById("businessWhatsapp").value.trim();
+        const address = document.getElementById("businessAddress").value.trim();
+        const city = document.getElementById("businessCity").value.trim();
+        const state = document.getElementById("businessState").value.trim();
+        const imageUrl = imageInput.value.trim();
+
+        if (!name || !category || !city || !state) {
+            showStatus("Please complete Business Name, Category, City and State.");
+            return;
+        }
+
+        if (imageUrl) {
+            try {
+                const parsed = new URL(imageUrl);
+                if (!["http:", "https:"].includes(parsed.protocol)) throw new Error();
+            } catch {
+                showStatus("Please enter a valid image URL beginning with https:// or http://.");
+                return;
+            }
+        }
+
+        const locationParts = [];
+        if (address) locationParts.push(address);
+        locationParts.push(city, state);
+
+        // Keep to the confirmed businesses columns used by LosOja's
+        // existing Add Business flow. City/state/address are represented
+        // in the existing location field; phone/WhatsApp in phone.
+        const update = {
+            name: name,
+            category: category,
+            description: description,
+            phone: whatsapp || phone,
+            location: locationParts.join(", "),
+            image_url: imageUrl
+        };
+
+        saveBtn.disabled = true;
+        saveBtn.textContent = "Saving business...";
+
+        try {
+            const session = await getSessionDetails();
+            if (session.user.id !== currentUser.id) {
+                throw new Error("Your login session changed. Please reload the page.");
+            }
+
+            const response = await fetch(
+                SUPABASE_URL + "/rest/v1/businesses?id=eq." +
+                encodeURIComponent(businessId) + "&user_id=eq." +
+                encodeURIComponent(currentUser.id),
+                {
+                    method: "PATCH",
+                    headers: apiHeaders(session.access_token, {
+                        "Content-Type": "application/json",
+                        "Prefer": "return=representation"
+                    }),
+                    body: JSON.stringify(update)
+                }
+            );
+
+            const result = await response.json().catch(() => []);
+            if (!response.ok) {
+                throw new Error(result.message || result.details || result.hint || "Business update failed.");
+            }
+
+            if (!Array.isArray(result) || result.length === 0) {
+                throw new Error("No business was updated. Check that you own this business and try again.");
+            }
+
+            window.location.href = "shop.html?id=" + encodeURIComponent(businessId);
+        } catch (error) {
+            console.error("LosOja edit business save error:", error);
+            showStatus(error.message || "Unable to save your business changes.");
+            saveBtn.disabled = false;
+            saveBtn.textContent = "Save Business Changes";
+        }
+    });
+
+    document.getElementById("backBtn").addEventListener("click", function () {
+        if (businessId) {
+            window.location.href = "shop.html?id=" + encodeURIComponent(businessId);
+        } else {
+            window.history.back();
+        }
+    });
+
+    loadBusiness();
+})();
 </script>
 </body>
 </html>
