@@ -33,7 +33,7 @@
 <article id="shopCard" class="shop-card" style="display:none;">
 <section id="hero" class="hero"></section>
 <div class="content">
-<div style="display:flex;justify-content:flex-end;padding:18px 0 3px"><button type="button" id="saveBtn" style="border:1px solid #cfdcd3;background:#fff;border-radius:999px;padding:10px 17px;font-weight:700;cursor:pointer">♡ Save</button></div>
+
 <section class="section"><h2 class="section-title">Contact & Actions</h2><div id="publicActions" class="actions"></div><div id="ownerActions" class="owner-actions" style="display:none;"></div><div id="buyerActions" class="buyer-actions" style="display:none;"></div><div id="actionNote" class="owner-note" style="display:none;"></div></section>
 <section class="section"><h2 class="section-title">Business Information</h2><div id="businessInfo" class="info-grid"></div></section>
 <section class="section" id="productsSection"><h2 class="section-title">🛍️ Products from this business</h2><div id="productFilters" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px"></div><div id="productsList" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px">Loading products...</div></section>
@@ -162,130 +162,7 @@ async function renderFiltered(){
 }
 async function deleteProd(id){if(!confirm("Delete this product?"))return;let token=null;try{token=JSON.parse(localStorage.getItem("losoja_supabase_session"))?.access_token}catch{}await fetch(`${SUPABASE_URL}/rest/v1/products?id=eq.${id}`,{method:"DELETE",headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${token||SUPABASE_KEY}`}});showToast("Deleted");loadProducts();}
 
-function getLocalSavedBusinesses(){
- try{
-  const items=JSON.parse(localStorage.getItem("losoja_saved_items")||"[]");
-  return Array.isArray(items)?items:[];
- }catch{return []}
-}
-function setLocalSavedBusinesses(items){
- localStorage.setItem("losoja_saved_items",JSON.stringify(items));
-}
-function setSaveButtonState(isSaved){
- const button=document.getElementById("saveBtn");
- if(button)button.textContent=isSaved?"♥ Saved":"♡ Save";
-}
-async function getSavedApiKey(){
- return window.SUPABASE_KEY||SUPABASE_KEY;
-}
-async function getShopAccessToken(){
- if(typeof window.getSupabaseAccessToken==="function"){
-  return await window.getSupabaseAccessToken();
- }
- try{
-  const session=JSON.parse(localStorage.getItem("losoja_supabase_session")||"{}");
-  if(session.access_token)return session.access_token;
- }catch{}
- throw new Error("Your login session has expired. Please log in again.");
-}
-async function checkCloudSaved(user,b,token){
- const url=SUPABASE_URL+"/rest/v1/saved_businesses?select=business_id&user_id=eq."+encodeURIComponent(user.id)+"&business_id=eq."+encodeURIComponent(b.id);
- const response=await fetch(url,{headers:{apikey:getSavedApiKey(),Authorization:"Bearer "+token}});
- if(!response.ok)throw new Error("Could not check your account's Saved list. "+await response.text());
- const rows=await response.json();
- return Array.isArray(rows)&&rows.some(row=>String(row.business_id)===String(b.id));
-}
-let saveActionBusy=false;
-async function refreshBusinessSaveState(){
- const b=currentBusiness;
- if(!b||!b.id)return;
- const user=await getShopUser();
- let isSaved=false;
- if(user){
-  try{
-   const token=await getShopAccessToken();
-   isSaved=await checkCloudSaved(user,b,token);
-  }catch(error){
-   console.warn("LosOja: Could not refresh account save status.",error);
-   showToast(error.message||"Could not check your saved businesses.");
-  }
- }else{
-  isSaved=getLocalSavedBusinesses().some(item=>String(item.id)===String(b.id));
- }
- setSaveButtonState(isSaved);
- const button=document.getElementById("saveBtn");
- if(button)button.setAttribute("aria-pressed",String(isSaved));
-}
-async function saveCurrentBusiness(){
- const b=currentBusiness;
- if(!b||!b.id){showToast("Business details are not ready yet.");return}
- if(saveActionBusy)return;
- saveActionBusy=true;
- const button=document.getElementById("saveBtn");
- if(button)button.disabled=true;
- try{
-  const user=await getShopUser();
-  const saved=getLocalSavedBusinesses();
-  const item={id:b.id,name:b.name||"Business",category:b.category||"",location:b.location||"",phone:b.phone||"",image_url:b.image_url||b.image||""};
-
-  if(user){
-   // For signed-in users, Supabase is authoritative. Never let an old
-   // device-only save accidentally turn a new account save into a delete.
-   const token=await getShopAccessToken();
-   const alreadySaved=await checkCloudSaved(user,b,token);
-   if(alreadySaved){
-    const deleteUrl=SUPABASE_URL+"/rest/v1/saved_businesses?user_id=eq."+encodeURIComponent(user.id)+"&business_id=eq."+encodeURIComponent(b.id);
-    const response=await fetch(deleteUrl,{method:"DELETE",headers:{apikey:getSavedApiKey(),Authorization:"Bearer "+token,Prefer:"return=minimal"}});
-    if(!response.ok)throw new Error("Could not remove this business from your account. "+await response.text());
-    if(await checkCloudSaved(user,b,token))throw new Error("The business is still in your Saved list. Please try again.");
-    setLocalSavedBusinesses(saved.filter(x=>String(x.id)!==String(b.id)));
-    setSaveButtonState(false);
-    button?.setAttribute("aria-pressed","false");
-    showToast("Business removed from your account's Saved list.");
-   }else{
-    const response=await fetch(SUPABASE_URL+"/rest/v1/saved_businesses",{
-     method:"POST",
-     headers:{apikey:getSavedApiKey(),Authorization:"Bearer "+token,"Content-Type":"application/json","Prefer":"resolution=ignore-duplicates,return=minimal"},
-     body:JSON.stringify({user_id:user.id,business_id:b.id})
-    });
-    if(!response.ok){
-     let details={};try{details=await response.json()}catch{}
-     if(details.code!=="23505")throw new Error(details.message||details.details||"Could not save this business to your account.");
-    }
-    if(!(await checkCloudSaved(user,b,token)))throw new Error("The save was not confirmed by your account. Please try again.");
-    const next=[...saved.filter(x=>String(x.id)!==String(b.id)),item];
-    setLocalSavedBusinesses(next);
-    setSaveButtonState(true);
-    button?.setAttribute("aria-pressed","true");
-    showToast("Business saved to your account.");
-   }
-   return;
-  }
-
-  // Visitors can still save locally before creating an account.
-  const alreadySaved=saved.some(x=>String(x.id)===String(b.id));
-  if(alreadySaved){
-   setLocalSavedBusinesses(saved.filter(x=>String(x.id)!==String(b.id)));
-   setSaveButtonState(false);
-   button?.setAttribute("aria-pressed","false");
-   showToast("Business removed from this device.");
-  }else{
-   setLocalSavedBusinesses([...saved,item]);
-   setSaveButtonState(true);
-   button?.setAttribute("aria-pressed","true");
-   showToast("Business saved on this device. Log in to sync it to your account.");
-  }
- }catch(error){
-  console.error("LosOja saved-business toggle failed:",error);
-  showToast(error.message||"Could not update Saved. Please try again.");
-  await refreshBusinessSaveState();
- }finally{
-  saveActionBusy=false;
-  if(button)button.disabled=false;
- }
-}
-document.getElementById("saveBtn").addEventListener("click",saveCurrentBusiness);
-loadBusiness().then(refreshBusinessSaveState);
+loadBusiness();
 </script>
 </body>
 </html>
