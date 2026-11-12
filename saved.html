@@ -23,7 +23,17 @@ const KEY="sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
 const grid=document.getElementById("savedGrid"),status=document.getElementById("savedStatus");
 function localItems(){try{const x=JSON.parse(localStorage.getItem("losoja_saved_items")||"[]");return Array.isArray(x)?x:[]}catch{return[]}}
 function writeLocal(items){localStorage.setItem("losoja_saved_items",JSON.stringify(items))}
-function phoneLink(phone){const digits=String(phone||"").replace(/\D/g,"");if(!digits)return "";return "https://wa.me/"+(digits.startsWith("0")?"234"+digits.slice(1):digits)}
+function normaliseWhatsAppNumber(phone){
+let digits=String(phone||"").trim().replace(/\D/g,"");
+if(!digits)return "";
+if(digits.startsWith("00"))digits=digits.slice(2);
+if(digits.startsWith("0")&&digits.length===11)digits="234"+digits.slice(1);
+else if(digits.length===10)digits="234"+digits;
+if(digits.startsWith("234")&&digits.length===13)return digits;
+if(!digits.startsWith("0")&&digits.length>=8&&digits.length<=15)return digits;
+return "";
+}
+function phoneLink(phone){const digits=normaliseWhatsAppNumber(phone);return digits?"https://wa.me/"+digits:""}
 function el(tag,cls,txt){const x=document.createElement(tag);if(cls)x.className=cls;if(txt!==undefined)x.textContent=txt;return x}
 function render(items,isLoggedIn){
 grid.replaceChildren();
