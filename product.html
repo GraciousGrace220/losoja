@@ -17,7 +17,7 @@ main{width:min(900px,calc(100% - 24px));margin:22px auto 50px}
 .body{padding:22px}
 h1{font-size:26px;line-height:1.25;margin:0 0 12px;color:#123d25}
 .business{font-size:14px;color:#65736a;margin:0 0 9px}
-.verified{display:none;width:max-content;max-width:100%;margin:0 0 18px;padding:6px 10px;border-radius:999px;background:#eaf7ee;color:#087a3e;font-size:12px;font-weight:800}
+.verified{display:none;width:max-content;max-width:100%;margin:0 0 18px;padding:6px 10px;border-radius:999px;background:#eaf7ee;color:#087a3e;font-size:13px;font-weight:900}
 .price{font-size:23px;font-weight:900;color:#087a3e;margin:14px 0}
 .stock{font-size:13px;color:#58675e;margin:0 0 18px}
 .section-title{font-size:17px;color:#123d25;margin:22px 0 9px}
@@ -53,7 +53,8 @@ const SUPABASE_KEY="sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
 const $=id=>document.getElementById(id);
 const esc=value=>String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 function normaliseWhatsAppNumber(value){let d=String(value||"").replace(/\D/g,"");if(d.startsWith("00"))d=d.slice(2);if(d.startsWith("0")&&d.length===11)d="234"+d.slice(1);else if(d.length===10)d="234"+d;if(d.startsWith("234")&&d.length===13)return d;if(!d.startsWith("0")&&d.length>=8&&d.length<=15)return d;return ""}
-function isHairByBidex(name){const n=String(name||"").toLowerCase();return n.includes("queen faith cuts")||n.includes("hair by bidex")}
+function isHairByBidex(name){return /hair by bidex/i.test(String(name||""))}
+function cleanProductDescription(value){return String(value||"").replace(/Hair by Bidex\s*\|\s*Queen Faith Cuts/gi,"Hair by Bidex").replace(/Queen Faith Cuts/gi,"").replace(/\n{3,}/g,"\n\n").trim()}
 function showError(message){$("state").textContent=message;$("state").style.display="block"}
 async function loadProduct(){
  const id=new URLSearchParams(location.search).get("id");
@@ -68,8 +69,8 @@ async function loadProduct(){
    const br=await fetch(SUPABASE_URL+"/rest/v1/businesses?id=eq."+encodeURIComponent(p.business_id)+"&select=id,name,phone,location,category",{headers:{apikey:SUPABASE_KEY,Authorization:"Bearer "+SUPABASE_KEY}});
    if(br.ok){const businesses=await br.json();business=businesses[0]||null}
   }
-  const businessName=business?.name||"LosOja Business";
-  const verified=isHairByBidex(businessName);
+  const verified=isHairByBidex(business?.name);
+  const businessName=verified?"Hair by Bidex":(business?.name||"LosOja Business");
   const isServiceBusiness=/service|beauty|salon|barber|hair/i.test(String(business?.category||"")+" "+businessName);
   document.title=(p.name||"Product Details")+" | LosOja";
   $("productName").textContent=p.name||"Product";
@@ -90,10 +91,8 @@ async function loadProduct(){
   }else{
    $("stock").textContent=count+" available";$("stock").style.display="block";
   }
-  let fullDescription=String(p.description||"");
-  if(verified&&!fullDescription.includes("Hair by Bidex | Queen Faith Cuts")){
-   fullDescription+=(fullDescription?"\n\n":"")+"Hair by Bidex | Queen Faith Cuts";
-  }
+  let fullDescription=cleanProductDescription(p.description);
+  if(verified&&!/Hair by Bidex/i.test(fullDescription)){fullDescription+=(fullDescription?"\n\n":"")+"Hair by Bidex";}
   $("description").textContent=fullDescription||"No description provided.";
   $("meta").innerHTML=(p.product_category?'<span class="pill">'+esc(p.product_category)+'</span>':"")+(business?.location?'<span class="pill">📍 '+esc(business.location)+'</span>':"");
   $("businessLink").href="shop.html?id="+encodeURIComponent(p.business_id||"");

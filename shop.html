@@ -53,6 +53,7 @@ const SUPABASE_KEY="sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
 const toast=document.getElementById("toast"),loading=document.getElementById("loading"),errorBox=document.getElementById("errorBox"),shopCard=document.getElementById("shopCard"),hero=document.getElementById("hero"),publicActions=document.getElementById("publicActions"),ownerActions=document.getElementById("ownerActions"),buyerActions=document.getElementById("buyerActions"),actionNote=document.getElementById("actionNote"),businessInfo=document.getElementById("businessInfo"),description=document.getElementById("description"),descriptionSection=document.getElementById("descriptionSection"),gallery=document.getElementById("gallery"),locationText=document.getElementById("locationText"),backBtn=document.getElementById("backBtn");
 let currentBusiness=null;let allProducts=[];let activeFilter="All";
 function esc(s){return String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}))}
+function cleanProductDescription(value){return String(value||"").replace(/Hair by Bidex\s*\|\s*Queen Faith Cuts/gi,"Hair by Bidex").replace(/Queen Faith Cuts/gi,"").replace(/\n{3,}/g,"\n\n").trim()}
 function showToast(m){toast.textContent=m;toast.classList.add("show");setTimeout(()=>toast.classList.remove("show"),2800)}
 function getBusinessId(){return new URLSearchParams(location.search).get("id")}
 async function getShopUser(){try{if(typeof window.getCurrentUser==="function"){const r=await window.getCurrentUser();if(r?.user?.id)return r.user;if(r?.data?.user?.id)return r.data.user;if(r?.id)return r}}catch{}try{const raw=localStorage.getItem("losoja_supabase_session");if(raw){const j=JSON.parse(raw);if(j?.user?.id)return j.user;if(j?.data?.user?.id)return j.data.user}}catch{}return null}
@@ -67,7 +68,7 @@ async function loadBusiness(){
  }catch(e){loading.style.display="none";errorBox.style.display="block";errorBox.innerHTML=`<b>Error:</b> ${esc(e.message)}`}
 }
 async function renderBusiness(b){
- const name=b.name||"Business",cat=b.category||"Business",loc=b.location||"Nigeria",phone=(b.phone||"").trim(),img=b.image_url||b.image||"";
+ const isHairByBidex=/hair by bidex/i.test(String(b.name||""));const name=isHairByBidex?"Hair by Bidex":(b.name||"Business"),cat=b.category||"Business",loc=b.location||"Nigeria",phone=(b.phone||"").trim(),img=b.image_url||b.image||"";
  document.title=name+" | LosOja";
  hero.innerHTML=img?`<img class="hero-image" src="${esc(img)}" alt="${esc(name)}" onerror="this.onerror=null;this.src='fallback.svg'"><div style="position:absolute;left:0;right:0;bottom:0;padding:75px 30px 27px;background:linear-gradient(transparent,rgba(0,0,0,.78));color:#fff"><h1 style="margin:0 0 10px;font-size:32px">${esc(name)}</h1><span style="background:rgba(255,255,255,.17);border:1px solid rgba(255,255,255,.32);padding:7px 11px;border-radius:999px;margin-right:6px">${esc(cat)}</span><span style="background:rgba(255,255,255,.17);border:1px solid rgba(255,255,255,.32);padding:7px 11px;border-radius:999px">📍 ${esc(loc)}</span></div>`:`<div style="width:100%;height:320px;display:flex;align-items:center;justify-content:center;font-size:80px;background:#e6f1ea">🏪</div>`;
  businessInfo.innerHTML=`<div class="info-item"><span class="info-label">Category</span><span class="info-value">${esc(cat)}</span></div><div class="info-item"><span class="info-label">Location</span><span class="info-value">${esc(loc)}</span></div>${phone?`<div class="info-item"><span class="info-label">Phone</span><span class="info-value">${esc(phone)}</span></div>`:""}`;
@@ -164,7 +165,8 @@ async function renderFiltered(){
     <img src="${esc(p.image_url||'fallback.svg')}" alt="${esc(p.name||'Product')}" loading="lazy" onerror="this.onerror=null;this.src='fallback.svg'" style="width:100%;height:140px;object-fit:cover;background:#FFC107">
     <div style="padding:10px">
      <div style="font-weight:800;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(p.name)}</div>
-     <div style="color:#5a6b5f;font-size:12px;margin-top:4px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:30px">${esc(p.description||'No description')}</div>
+     ${/hair by bidex/i.test(String(currentBusiness?.name||""))?'<div style="font-size:12px;font-weight:700;color:#344239;margin-top:5px">Hair by Bidex</div><div style="font-size:11px;font-weight:900;color:#087a3e;margin-top:3px">✅ Verified - Hair by Bidex</div>':''}
+     <div style="color:#5a6b5f;font-size:12px;margin-top:4px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:30px">${esc(cleanProductDescription(p.description)||'No description')}</div>
      <div style="color:#087a3e;font-weight:800;margin-top:6px">${esc(priceLabel)}</div>
      <div style="font-size:11px;margin-top:4px">${stockLabel}${stockLabel?' • ':''}${esc(p.product_category||'General')}</div>
      <a href="${detailUrl}" onclick="event.stopPropagation()" style="display:inline-block;margin-top:9px;color:#087a3e;font-size:12px;font-weight:800;text-decoration:none">View Details →</a>
