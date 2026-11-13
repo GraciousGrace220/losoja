@@ -6,8 +6,8 @@ create table if not exists public.notifications (
   type text not null,
   title text not null,
   message text not null,
-  related_business_id uuid null references public.businesses(id) on delete set null,
-  related_order_id text null,
+  business_id uuid null references public.businesses(id) on delete set null,
+  escrow_id uuid null,
   is_read boolean not null default false,
   created_at timestamptz not null default now()
 );
@@ -46,7 +46,7 @@ begin
   where b.id = new.business_id;
 
   if shop_owner is not null and shop_owner <> new.user_id then
-    insert into public.notifications (user_id, type, title, message, related_business_id)
+    insert into public.notifications (user_id, type, title, message, business_id)
     values (
       shop_owner,
       'shop_saved',
@@ -77,12 +77,12 @@ begin
   if new.status is distinct from old.status then
     status_message := 'Escrow update: ' || coalesce(new.status, 'updated');
     if new.buyer_id is not null then
-      insert into public.notifications (user_id, type, title, message)
-      values (new.buyer_id, 'escrow_update', 'Escrow update', status_message);
+      insert into public.notifications (user_id, type, title, message, escrow_id)
+      values (new.buyer_id, 'escrow_update', 'Escrow update', status_message, new.id);
     end if;
     if new.seller_id is not null and new.seller_id is distinct from new.buyer_id then
-      insert into public.notifications (user_id, type, title, message)
-      values (new.seller_id, 'escrow_update', 'Escrow update', status_message);
+      insert into public.notifications (user_id, type, title, message, escrow_id)
+      values (new.seller_id, 'escrow_update', 'Escrow update', status_message, new.id);
     end if;
   end if;
   return new;
