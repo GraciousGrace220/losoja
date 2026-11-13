@@ -60,9 +60,9 @@ async function getShopUser(){try{if(typeof window.getCurrentUser==="function"){c
 async function requireShopLogin(){const u=await getShopUser();if(u)return u;try{sessionStorage.setItem("losoja_return_to_shop",location.href)}catch{}location.href="index.html#login";return null}
 backBtn.onclick=()=>history.back();
 async function loadBusiness(){
- const id=getBusinessId();if(!id){loading.style.display="none";errorBox.style.display="block";errorBox.textContent="No business selected";return}
+ const id=getBusinessId(),slug=getBusinessSlug();if(!id&&!slug){loading.style.display="none";errorBox.style.display="block";errorBox.textContent="No business selected";return}
  try{
-  const res=await fetch(`${SUPABASE_URL}/rest/v1/businesses?id=eq.${encodeURIComponent(id)}`,{headers:{apikey:SUPABASE_KEY,Authorization:"Bearer "+SUPABASE_KEY}});
+  const filter=id?"id=eq."+encodeURIComponent(id):"slug=eq."+encodeURIComponent(slug);\n  const res=await fetch(`${SUPABASE_URL}/rest/v1/businesses?${filter}&limit=1`,{headers:{apikey:SUPABASE_KEY,Authorization:"Bearer "+SUPABASE_KEY}});
   const data=await res.json();if(!data.length)throw new Error("Business not found");
   currentBusiness=data[0];if(currentBusiness.slug){const prettyPath="/"+encodeURIComponent(currentBusiness.slug);if(location.pathname!==prettyPath)history.replaceState({},"",prettyPath)}await renderBusiness(currentBusiness);loading.style.display="none";shopCard.style.display="block";loadProducts();
  }catch(e){loading.style.display="none";errorBox.style.display="block";errorBox.innerHTML=`<b>Error:</b> ${esc(e.message)}`}
