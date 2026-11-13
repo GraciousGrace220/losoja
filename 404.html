@@ -1,33 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>LosOja</title>
-</head>
-<body>
-    <p>Opening LosOja...</p>
-
-    <script>
-    (function () {
-        "use strict";
-
-        const path = window.location.pathname.replace(/\/+$/, "");
-
-        if (path.endsWith("/register")) {
-            const basePath = path.slice(0, -"/register".length);
-            window.location.replace(
-                (basePath || "") + "/" +
-                window.location.search +
-                window.location.hash
-            );
-            return;
-        }
-
-        document.body.innerHTML =
-            "<h1>Page not found</h1>" +
-            "<p><a href='/'>Return to LosOja</a></p>";
-    })();
-    </script>
-</body>
-</html>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>LosOja</title></head>
+<body><p>Opening LosOja...</p>
+<script>
+(function(){
+ "use strict";
+ const path=window.location.pathname.replace(/\\/+$/,"");
+ const slug=path.split("/").filter(Boolean).pop()||"";
+ if(path.endsWith("/register")){
+  const basePath=path.slice(0,-"/register".length);
+  window.location.replace((basePath||"")+"/"+window.location.search+window.location.hash);
+  return;
+ }
+ if(/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)){
+  window.location.replace("/shop.html?slug="+encodeURIComponent(slug)+window.location.search+window.location.hash);
+  return;
+ }
+ document.body.innerHTML="<h1>Page not found</h1><p><a href='/'>Return to LosOja</a></p>";
+})();
+</script></body></html>
