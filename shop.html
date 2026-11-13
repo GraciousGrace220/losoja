@@ -55,14 +55,18 @@ let currentBusiness=null;let allProducts=[];let activeFilter="All";
 function esc(s){return String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}))}
 function cleanProductDescription(value){return String(value||"").replace(/Hair by Bidex\s*\|\s*Queen Faith Cuts/gi,"Hair by Bidex").replace(/Queen Faith Cuts/gi,"").replace(/\n{3,}/g,"\n\n").trim()}
 function showToast(m){toast.textContent=m;toast.classList.add("show");setTimeout(()=>toast.classList.remove("show"),2800)}
-function getBusinessId(){return new URLSearchParams(location.search).get("id")}\nfunction getBusinessSlug(){return new URLSearchParams(location.search).get("slug")}\nfunction makeBusinessSlug(name){return String(name||"").toLowerCase().normalize("NFKD").replace(/[\\u0300-\\u036f]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"")}\nfunction getBusinessShareUrl(b){const slug=String(b?.slug||makeBusinessSlug(b?.name));return "https://losoja.com.ng/"+encodeURIComponent(slug)}
+function getBusinessId(){return new URLSearchParams(location.search).get("id")}
+function getBusinessSlug(){return new URLSearchParams(location.search).get("slug")}
+function makeBusinessSlug(name){return String(name||"").toLowerCase().normalize("NFKD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"")}
+function getBusinessShareUrl(b){const slug=String(b?.slug||makeBusinessSlug(b?.name));return "https://losoja.com.ng/"+encodeURIComponent(slug)}
 async function getShopUser(){try{if(typeof window.getCurrentUser==="function"){const r=await window.getCurrentUser();if(r?.user?.id)return r.user;if(r?.data?.user?.id)return r.data.user;if(r?.id)return r}}catch{}try{const raw=localStorage.getItem("losoja_supabase_session");if(raw){const j=JSON.parse(raw);if(j?.user?.id)return j.user;if(j?.data?.user?.id)return j.data.user}}catch{}return null}
 async function requireShopLogin(){const u=await getShopUser();if(u)return u;try{sessionStorage.setItem("losoja_return_to_shop",location.href)}catch{}location.href="index.html#login";return null}
 backBtn.onclick=()=>history.back();
 async function loadBusiness(){
  const id=getBusinessId(),slug=getBusinessSlug();if(!id&&!slug){loading.style.display="none";errorBox.style.display="block";errorBox.textContent="No business selected";return}
  try{
-  const filter=id?"id=eq."+encodeURIComponent(id):"slug=eq."+encodeURIComponent(slug);\n  const res=await fetch(`${SUPABASE_URL}/rest/v1/businesses?${filter}&limit=1`,{headers:{apikey:SUPABASE_KEY,Authorization:"Bearer "+SUPABASE_KEY}});
+  const filter=id?"id=eq."+encodeURIComponent(id):"slug=eq."+encodeURIComponent(slug);
+  const res=await fetch(`${SUPABASE_URL}/rest/v1/businesses?${filter}&limit=1`,{headers:{apikey:SUPABASE_KEY,Authorization:"Bearer "+SUPABASE_KEY}});
   const data=await res.json();if(!data.length)throw new Error("Business not found");
   currentBusiness=data[0];if(currentBusiness.slug){const prettyPath="/"+encodeURIComponent(currentBusiness.slug);if(location.pathname!==prettyPath)history.replaceState({},"",prettyPath)}await renderBusiness(currentBusiness);loading.style.display="none";shopCard.style.display="block";loadProducts();
  }catch(e){loading.style.display="none";errorBox.style.display="block";errorBox.innerHTML=`<b>Error:</b> ${esc(e.message)}`}
@@ -130,7 +134,7 @@ function renderBuyerActions(b){
 async function openLosOjaChat(b){const user=await requireShopLogin();if(!user)return;if(!b.user_id){showToast("Seller no get account");return}if(String(user.id)===String(b.user_id)){showToast("You own this shop");return}location.href=`chat.html?user=${encodeURIComponent(b.user_id)}&business=${encodeURIComponent(b.id)}`;}
 async function deleteBusiness(id){try{let token=null;try{token=JSON.parse(localStorage.getItem("losoja_supabase_session"))?.access_token}catch{}const res=await fetch(`${SUPABASE_URL}/rest/v1/businesses?id=eq.${id}`,{method:"DELETE",headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${token||SUPABASE_KEY}`}});if(!res.ok)throw new Error("Delete failed");showToast("Deleted!");setTimeout(()=>location.href="index.html",1000)}catch(e){showToast(e.message)}}
 async function loadProducts(){
- const businessId=getBusinessId();const list=document.getElementById("productsList");const filters=document.getElementById("productFilters");if(!list)return;
+ const businessId=currentBusiness?.id||getBusinessId();const list=document.getElementById("productsList");const filters=document.getElementById("productFilters");if(!list)return;
  try{
   const res=await fetch(`${SUPABASE_URL}/rest/v1/products?business_id=eq.${businessId}&order=created_at.desc`,{headers:{apikey:SUPABASE_KEY,Authorization:"Bearer "+SUPABASE_KEY}});
   const products=await res.json();
