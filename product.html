@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<title>Product Details | LosOja</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f4f7f5;color:#17201b;font-family:Arial,Helvetica,sans-serif}
+.topbar{position:sticky;top:0;z-index:10;background:#087a3e;color:#fff;padding:12px 16px}
+.topbar-inner{width:min(900px,100%);margin:auto;display:flex;align-items:center;justify-content:space-between}
+.brand{color:#fff;text-decoration:none;font-weight:800;font-size:20px}
+.back{border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.15);color:#fff;border-radius:9px;padding:9px 13px;font-weight:700;cursor:pointer}
+main{width:min(900px,calc(100% - 24px));margin:22px auto 50px}
+.panel{background:#fff;border:1px solid #e3ebe5;border-radius:18px;overflow:hidden;box-shadow:0 7px 25px rgba(0,0,0,.06)}
+.product-image{width:100%;max-height:520px;aspect-ratio:4/3;object-fit:cover;display:block;background:#eef3ef}
+.body{padding:22px}
+h1{font-size:26px;line-height:1.25;margin:0 0 12px;color:#123d25}
+.business{font-size:14px;color:#65736a;margin:0 0 9px}
+.verified{display:none;width:max-content;max-width:100%;margin:0 0 18px;padding:6px 10px;border-radius:999px;background:#eaf7ee;color:#087a3e;font-size:12px;font-weight:800}
+.price{font-size:23px;font-weight:900;color:#087a3e;margin:14px 0}
+.stock{font-size:13px;color:#58675e;margin:0 0 18px}
+.section-title{font-size:17px;color:#123d25;margin:22px 0 9px}
+.description{font-size:15px;line-height:1.7;color:#344239;white-space:pre-line;overflow-wrap:anywhere}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.pill{background:#f1f6f2;border:1px solid #e0e9e2;border-radius:999px;padding:7px 11px;font-size:12px;color:#4d5b52}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+.action{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;border:0;border-radius:10px;padding:12px 16px;background:#087a3e;color:#fff;font-weight:800;cursor:pointer}
+.action.secondary{background:#fff;color:#087a3e;border:1px solid #b8d5c3}
+.state{text-align:center;padding:65px 18px;color:#66746b}
+@media(max-width:560px){main{width:calc(100% - 14px);margin:12px auto 30px}.body{padding:17px}h1{font-size:22px}.product-image{aspect-ratio:1/1}}
+</style>
+</head>
+<body>
+<header class="topbar"><div class="topbar-inner"><a class="brand" href="index.html">LosOja</a><button class="back" onclick="history.back()">← Back</button></div></header>
+<main><article class="panel" id="panel" style="display:none">
+<img class="product-image" id="productImage" alt="Product">
+<div class="body">
+<h1 id="productName"></h1>
+<p class="business" id="businessName"></p>
+<div class="verified" id="verifiedBadge">✅ Verified - Hair by Bidex</div>
+<div class="price" id="price"></div>
+<div class="stock" id="stock" style="display:none"></div>
+<h2 class="section-title">Product Description</h2>
+<div class="description" id="description"></div>
+<div class="meta" id="meta"></div>
+<div class="actions"><a class="action" id="whatsapp" href="#" target="_blank" rel="noopener noreferrer" style="display:none">Call / WhatsApp</a><a class="action secondary" id="businessLink" href="#">View Business</a></div>
+</div></article><div class="state" id="state">Loading product details...</div></main>
+<script>
+"use strict";
+const SUPABASE_URL="https://ycxshwgeebskdozmornh.supabase.co";
+const SUPABASE_KEY="sb_publishable_jFSLacwNupO6T8EnSqb2bw_bZmy7rVe";
+const $=id=>document.getElementById(id);
+const esc=value=>String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function normaliseWhatsAppNumber(value){let d=String(value||"").replace(/\D/g,"");if(d.startsWith("00"))d=d.slice(2);if(d.startsWith("0")&&d.length===11)d="234"+d.slice(1);else if(d.length===10)d="234"+d;if(d.startsWith("234")&&d.length===13)return d;if(!d.startsWith("0")&&d.length>=8&&d.length<=15)return d;return ""}
+function isHairByBidex(name){const n=String(name||"").toLowerCase();return n.includes("queen faith cuts")||n.includes("hair by bidex")}
+function showError(message){$("state").textContent=message;$("state").style.display="block"}
+async function loadProduct(){
+ const id=new URLSearchParams(location.search).get("id");
+ if(!id){showError("No product was selected.");return}
+ try{
+  const response=await fetch(SUPABASE_URL+"/rest/v1/products?id=eq."+encodeURIComponent(id)+"&select=*",{headers:{apikey:SUPABASE_KEY,Authorization:"Bearer "+SUPABASE_KEY}});
+  if(!response.ok)throw new Error("Could not load this product (HTTP "+response.status+").");
+  const rows=await response.json();if(!Array.isArray(rows)||!rows.length)throw new Error("Product not found.");
+  const p=rows[0];
+  let business=null;
+  if(p.business_id){
+   const br=await fetch(SUPABASE_URL+"/rest/v1/businesses?id=eq."+encodeURIComponent(p.business_id)+"&select=id,name,phone,location",{headers:{apikey:SUPABASE_KEY,Authorization:"Bearer "+SUPABASE_KEY}});
+   if(br.ok){const businesses=await br.json();business=businesses[0]||null}
+  }
+  const businessName=business?.name||"LosOja Business";
+  const verified=isHairByBidex(businessName);
+  document.title=(p.name||"Product Details")+" | LosOja";
+  $("productName").textContent=p.name||"Product";
+  $("businessName").textContent="Sold by "+businessName;
+  if(verified)$("verifiedBadge").style.display="inline-block";
+  const image=p.image_url||"fallback.svg";$("productImage").src=image;$("productImage").alt=p.name||"Product";
+  $("productImage").onerror=()=>{$("productImage").src="fallback.svg"};
+  const numericPrice=Number(p.price);
+  $("price").textContent=p.price===null||p.price===undefined||p.price===""||!Number.isFinite(numericPrice)||numericPrice===0
+    ?"Price on request - Call / WhatsApp":"₦"+numericPrice.toLocaleString();
+  const rawStock=p.stock_quantity!==undefined?p.stock_quantity:p.stock;
+  if(rawStock!==null&&rawStock!==undefined&&rawStock!==""&&Number.isFinite(Number(rawStock))){
+   const count=Number(rawStock);$("stock").textContent=count<=0?"Out of stock":count+" available";$("stock").style.display="block";
+  }
+  let fullDescription=String(p.description||"");
+  if(verified&&!fullDescription.includes("Hair by Bidex | Queen Faith Cuts")){
+   fullDescription+=(fullDescription?"\n\n":"")+"Hair by Bidex | Queen Faith Cuts";
+  }
+  $("description").textContent=fullDescription||"No description provided.";
+  $("meta").innerHTML=(p.product_category?'<span class="pill">'+esc(p.product_category)+'</span>':"")+(business?.location?'<span class="pill">📍 '+esc(business.location)+'</span>':"");
+  $("businessLink").href="shop.html?id="+encodeURIComponent(p.business_id||"");
+  const number=normaliseWhatsAppNumber(business?.phone);
+  if(number){$("whatsapp").href="https://wa.me/"+number+"?text="+encodeURIComponent("Hello, I'm asking about "+(p.name||"your product")+" on LosOja.");$("whatsapp").style.display="inline-flex"}
+  $("panel").style.display="block";$("state").style.display="none";
+ }catch(error){showError(error.message||"Unable to load product details.")}
+}
+loadProduct();
+</script>
+</body>
+</html>
