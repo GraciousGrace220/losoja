@@ -147,9 +147,14 @@ async function renderFiltered(){
  const user=await getShopUser();const isOwner=user&&currentBusiness&&String(user.id)===String(currentBusiness.user_id);
  list.innerHTML=filtered.map(p=>{
   const rawStock=p.stock_quantity!==undefined?p.stock_quantity:p.stock;
-  const hasStock=rawStock!==null&&rawStock!==undefined&&rawStock!=="";
-  const stock=hasStock?Number(rawStock):null;
-  const stockLabel=!hasStock||!Number.isFinite(stock)?"":stock<=0?'<span style="color:#b91c1c">Out of stock</span>':stock<=3?'<span style="color:#d97706">Only '+stock+' left!</span>':esc(stock)+' left';
+  const hasExplicitStock=rawStock!==null&&rawStock!==undefined&&rawStock!=="";
+  const stock=hasExplicitStock?Number(rawStock):null;
+  const isServiceBusiness=/service|beauty|salon|barber|hair/i.test(String(currentBusiness?.category||"")+" "+String(currentBusiness?.name||""));
+  const isOutOfStock=hasExplicitStock&&Number.isFinite(stock)&&stock===0;
+  const stockLabel=isOutOfStock?'<span style="color:#b91c1c">Out of stock</span>':
+   (isServiceBusiness||!hasExplicitStock||!Number.isFinite(stock)||stock===999)
+     ?'<span style="color:#087a3e">Available / Book Now</span>'
+     :stock<=3?'<span style="color:#d97706">Only '+stock+' left!</span>':esc(stock)+' left';
   const price=Number(p.price);
   const priceLabel=p.price===null||p.price===undefined||p.price===""||!Number.isFinite(price)||price===0
    ?"Price on request - Call / WhatsApp":"₦"+price.toLocaleString();
