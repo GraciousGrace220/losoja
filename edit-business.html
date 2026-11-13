@@ -25,8 +25,13 @@
         .row{display:grid;grid-template-columns:1fr 1fr;gap:13px}
         .help{display:block;color:#718078;font-size:12px;line-height:1.45;margin-top:6px}
         .image-preview{display:none;width:100%;max-height:240px;object-fit:contain;background:#f4f7f5;border:1px solid #e5ebe7;border-radius:12px;margin-top:10px}
-        .save-btn{width:100%;margin-top:8px;padding:14px;background:#087a3e;color:#fff;border:0;border-radius:11px;font-size:16px;font-weight:800;cursor:pointer}
-        .save-btn:disabled{opacity:.6;cursor:not-allowed}
+        /* CHANGE: Keep the full-width Save Business action visible above mobile browser controls. */
+        body{padding-bottom:100px}
+        .save-btn{position:fixed;left:50%;bottom:0;transform:translateX(-50%);z-index:30;width:min(680px,100%);margin:0;padding:16px 18px calc(16px + env(safe-area-inset-bottom));background:#aab7ae;color:#fff;border:0;border-radius:0;font-size:16px;font-weight:800;cursor:not-allowed;box-shadow:0 -5px 20px rgba(0,0,0,.12);transition:background .18s ease}
+        .save-btn.is-active{background:#087a3e;cursor:pointer}
+        .save-btn:disabled{opacity:1;cursor:not-allowed;background:#aab7ae}
+        .save-btn.is-saving{background:#075f31;cursor:wait}
+        @media(min-width:700px){.save-btn{border-radius:12px;bottom:16px;padding:16px;box-shadow:0 5px 20px rgba(0,0,0,.2)}body{padding-bottom:115px}}
         .status{display:none;padding:12px;border-radius:10px;margin-bottom:16px;font-size:14px;line-height:1.5}
         .status.error{display:block;background:#fff0f0;color:#a32121;border:1px solid #f2caca}
         .status.success{display:block;background:#edf9f0;color:#176b32;border:1px solid #c9e9d1}
@@ -127,14 +132,14 @@
                 <img id="businessImagePreview" class="image-preview" alt="Business image preview">
             </div>
 
-            <button type="submit" class="save-btn" id="saveBtn">Save Business Changes</button>
+            <button type="submit" class="save-btn" id="saveBtn" disabled>Save Business</button>
         </form>
     </section>
 </main>
 
 <footer class="footer">© 2026 LosOja</footer>
 
-<script src="js/auth.js?v=2"></script>
+<script src="js/auth.js?v=17"></script>
 <script>
 (function () {
     "use strict";
@@ -153,6 +158,23 @@
 
     let currentUser = null;
     let currentBusiness = null;
+    let formIsDirty = false;
+    let saveInProgress = false;
+
+    // CHANGE: The button becomes active only after a user changes a form field.
+    function setDirtyState(dirty) {
+        formIsDirty = Boolean(dirty);
+        saveBtn.disabled = !formIsDirty || saveInProgress;
+        saveBtn.classList.toggle("is-active", formIsDirty && !saveInProgress);
+        saveBtn.textContent = saveInProgress ? "Saving..." : "Save Business";
+    }
+
+    // CHANGE: Keep the fixed action above the on-screen keyboard on mobile browsers.
+    function keepSaveButtonAboveKeyboard() {
+        if (!window.visualViewport) return;
+        const keyboardInset = Math.max(0, window.innerHeight - window.visualViewport.height - window.visualViewport.offsetTop);
+        saveBtn.style.bottom = keyboardInset + "px";
+    }
 
     function showStatus(message, type) {
         statusBox.textContent = message;
@@ -284,6 +306,7 @@
             setField("businessImage", currentBusiness.image_url || currentBusiness.image || currentBusiness.photo_url || "");
             updateImagePreview(imageInput.value);
 
+            setDirtyState(false);
             loading.classList.add("hidden");
             editor.classList.remove("hidden");
         } catch (error) {
@@ -292,7 +315,19 @@
         }
     }
 
-    imageInput.addEventListener("input", () => updateImagePreview(imageInput.value));
+    // CHANGE: Any edit in any existing field activates the sticky Save Business button.
+    form.addEventListener("input", function (event) {
+        if (event.target === imageInput) updateImagePreview(imageInput.value);
+        setDirtyState(true);
+    });
+    form.addEventListener("change", function () {
+        setDirtyState(true);
+    });
+    if (window.visualViewport) {
+        window.visualViewport.addEventListener("resize", keepSaveButtonAboveKeyboard);
+        window.visualViewport.addEventListener("scroll", keepSaveButtonAboveKeyboard);
+    }
+    keepSaveButtonAboveKeyboard();
 
     form.addEventListener("submit", async function (event) {
         event.preventDefault();
@@ -345,8 +380,10 @@
             image_url: imageUrl
         };
 
+        saveInProgress = true;
+        saveBtn.classList.add("is-saving");
         saveBtn.disabled = true;
-        saveBtn.textContent = "Saving business...";
+        saveBtn.textContent = "Saving...";
 
         try {
             const session = await getSessionDetails();
@@ -377,12 +414,25 @@
                 throw new Error("No business was updated. Check that you own this business and try again.");
             }
 
-            window.location.href = "shop.html?id=" + encodeURIComponent(businessId);
+            // CHANGE: Confirm success visibly, then return to the same business profile.
+            showStatus("Business saved successfully", "success");
+            saveInProgress = false;
+            formIsDirty = false;
+            saveBtn.classList.remove("is-saving", "is-active");
+            saveBtn.disabled = true;
+            saveBtn.textContent = "Save Business";
+            window.setTimeout(function () {
+                window.location.href = "shop.html?id=" + encodeURIComponent(businessId);
+            }, 900);
         } catch (error) {
             console.error("LosOja edit business save error:", error);
-            showStatus(error.message || "Unable to save your business changes.");
+            // CHANGE: Keep every entered value and show the requested friendly error.
+            saveInProgress = false;
+            saveBtn.classList.remove("is-saving");
             saveBtn.disabled = false;
-            saveBtn.textContent = "Save Business Changes";
+            saveBtn.classList.add("is-active");
+            saveBtn.textContent = "Save Business";
+            showStatus("Could not save. Please try again.", "error");
         }
     });
 
